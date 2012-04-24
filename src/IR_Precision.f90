@@ -1,12 +1,28 @@
+!> @brief     The module IR_Precision makes available some portable kind-parameters and some usefull procedures to deal with them.
+!> @details   It also provides variables that contain the minimum and maximum representable values, smallest real values and
+!>            smallest representable differences by the running calculator.
+!>
+!>            Finally the module provides procedures to convert a string to number and viceversa, a function to check the endianism
+!>            of the running calculator and a procedure to print all the aboves values.
+!> @author    Stefano Zaghi
+!> @version   1.0
+!> @date      2012-04-24
+!> @copyright GNU Public License version 3.
+!> @todo \b g95_test: Test g95 compiler
+!> @param[out] endianL,endianB,endian
+!> @param[out] R16P, FR16P, DR16P, MinR16P, MaxR16P, smallR16P, ZeroR16
+!> @param[out] R8P,  FR8P,  DR8P,  MinR8P,  MaxR8P,  smallR8P,  ZeroR8
+!> @param[out] R4P,  FR4P,  DR4P,  MinR4P,  MaxR4P,  smallR4P,  ZeroR4
+!> @param[out] R_P,  FR_P,  DR_P,  MinR_P,  MaxR_P,  smallR_P,  Zero
+!> @param[out] I8P,  FI8P,  DI8P,  MinI8P,  MaxI8P
+!> @param[out] I4P,  FI4P,  DI4P,  MinI4P,  MaxI4P
+!> @param[out] I2P,  FI2P,  DI2P,  MinI2P,  MaxI2P
+!> @param[out] I1P,  FI1P,  DI1P,  MinI1P,  MaxI1P
+!> @param[out] I_P,  FI_P,  DI_P,  MinI_P,  MaxI_P
+!> @param[out] check_endian
+!> @param[out] str, strz, cton
+!> @param[out] IR_Print
 module IR_Precision
-!-----------------------------------------------------------------------------------------------------------------------------------
-!!The module IR_Precision makes available some portable kind-parameters and some usefull procedures to deal with them. It also
-!!provides variables that contains the smallest real evaluable by the running calculator, Zero, Zero16, Zero8 and Zero4.
-!!Finally the module provides a function to convert a string to number, 'cton', that accepts both reals and integers, and 2 other
-!!functions that convert a number to string: 'str' that convert real and integer to string and 'strz' that convert only integer to
-!!string prefixing the string with zeros.
-!-----------------------------------------------------------------------------------------------------------------------------------
-
 !-----------------------------------------------------------------------------------------------------------------------------------
 USE, intrinsic:: ISO_FORTRAN_ENV, only: stdout => OUTPUT_UNIT, stderr => ERROR_UNIT ! Standard output/error logical units.
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -32,107 +48,104 @@ public:: IR_Print
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
-!!Bit ordering of the running architecture:
-integer, parameter:: endianL = 1
-integer, parameter:: endianB = 0
-integer::            endian  = endianL
-!!The following are the portable kind parameters available.
-!!
-!!Real precision definitions:
-!!
+! Bit ordering of the running architecture:
+integer, parameter:: endianL = 1       !< Little endian parameter.
+integer, parameter:: endianB = 0       !< Big endian parameter.
+integer::            endian  = endianL !< Bit ordering: Little endian (endianL), or Big endian (endianB).
+
+! The following are the portable kind parameters available.
+! Real precision definitions:
 #ifdef r16p
-integer, parameter:: R16P = selected_real_kind(33,4931) ! 33  digits, range $[10^{-4931}, 10^{+4931} - 1]$
+integer, parameter:: R16P = selected_real_kind(33,4931) !< 33  digits, range \f$[10^{-4931}, 10^{+4931} - 1]\f$.
 #endif
-integer, parameter:: R8P  = selected_real_kind(15,307)  ! 15  digits, range $[10^{-307} , 10^{+307}  - 1]$
-integer, parameter:: R4P  = selected_real_kind(6,37)    ! 6   digits, range $[10^{-37}  , 10^{+37}   - 1]$
-integer, parameter:: R_P  = R8P                         ! default real precision
-!!
-!!Integer precision definitions:
-!!
-integer, parameter:: I8P  = selected_int_kind(18) ! range $[-2^{63},+2^{63} - 1]$, 19 number of digits plus sign
-integer, parameter:: I4P  = selected_int_kind(9)  ! range $[-2^{31},+2^{31} - 1]$, 10 number of digits plus sign
-integer, parameter:: I2P  = selected_int_kind(4)  ! range $[-2^{15},+2^{15} - 1]$, 5  number of digits plus sign
-integer, parameter:: I1P  = selected_int_kind(2)  ! range $[-2^{7} ,+2^{7}  - 1]$, 3  number of digits plus sign
-integer, parameter:: I_P  = I4P                   ! default integer precision
-!!
-!!Besides the kind parameters there are also the format parameters useful for writing in a well-ascii-format numeric variables.
-!!
-!!Real output formats:
-!!
+integer, parameter:: R8P  = selected_real_kind(15,307)  !< 15  digits, range \f$[10^{-307} , 10^{+307}  - 1]\f$.
+integer, parameter:: R4P  = selected_real_kind(6,37)    !< 6   digits, range \f$[10^{-37}  , 10^{+37}   - 1]\f$.
+integer, parameter:: R_P  = R8P                         !< Default real precision.
+! Integer precision definitions:
+integer, parameter:: I8P  = selected_int_kind(18) !< Range \f$[-2^{63},+2^{63} - 1]\f$, 19 number of digits plus sign.
+integer, parameter:: I4P  = selected_int_kind(9)  !< Range \f$[-2^{31},+2^{31} - 1]\f$, 10 number of digits plus sign.
+integer, parameter:: I2P  = selected_int_kind(4)  !< Range \f$[-2^{15},+2^{15} - 1]\f$, 5  number of digits plus sign.
+integer, parameter:: I1P  = selected_int_kind(2)  !< Range \f$[-2^{7} ,+2^{7}  - 1]\f$, 3  number of digits plus sign.
+integer, parameter:: I_P  = I4P                   !< Default integer precision.
+
+! Besides the kind parameters there are also the format parameters useful for writing in a well-ascii-format numeric variables.
+! Real output formats:
 #ifdef r16p
-character(10), parameter:: FR16P = '(E42.33E4)' ! R16P  output format
+character(10), parameter:: FR16P = '(E42.33E4)' !< Output format for kind=R16P variable.
 #endif
-character(10), parameter:: FR8P  = '(E23.15E3)' ! R8P   output format
-character(9),  parameter:: FR4P  = '(E13.6E2)'  ! R4P   output format
-character(10), parameter:: FR_P  = FR8P         ! R\_P  output format
-!!
-!!Real number of digits of output formats:
+character(10), parameter:: FR8P  = '(E23.15E3)' !< Output format for kind=R8P variable.
+character(9),  parameter:: FR4P  = '(E13.6E2)'  !< Output format for kind=R4P variable.
+character(10), parameter:: FR_P  = FR8P         !< Output format for kind=R_P variable.
+! Real number of digits of output formats:
 #ifdef r16p
-integer, parameter:: DR16P = 42   ! R16P output format digits
+integer, parameter:: DR16P = 42   !< Number of digits of output format FR16P.
 #endif
-integer, parameter:: DR8P  = 23   ! R8P  output format digits
-integer, parameter:: DR4P  = 13   ! R4P  output format digits
-integer, parameter:: DR_P  = DR8P ! R\_P  output format digits
-!!
-!!Real min and max values:
+integer, parameter:: DR8P  = 23   !< Number of digits of output format FR8P.
+integer, parameter:: DR4P  = 13   !< Number of digits of output format FR4P.
+integer, parameter:: DR_P  = DR8P !< Number of digits of output format FR_P.
+! Integer output formats:
+character(5), parameter:: FI8P   = '(I20)'    !< Output format                     for kind=I8P variable.
+character(8), parameter:: FI8PZP = '(I20.19)' !< Output format with zero prefixing for kind=I8P variable.
+character(5), parameter:: FI4P   = '(I11)'    !< Output format                     for kind=I4P variable.
+character(8), parameter:: FI4PZP = '(I11.10)' !< Output format with zero prefixing for kind=I4P variable.
+character(4), parameter:: FI2P   = '(I6)'     !< Output format                     for kind=I2P variable.
+character(6), parameter:: FI2PZP = '(I6.5)'   !< Output format with zero prefixing for kind=I2P variable.
+character(4), parameter:: FI1P   = '(I4)'     !< Output format                     for kind=I1P variable.
+character(6), parameter:: FI1PZP = '(I4.3)'   !< Output format with zero prefixing for kind=I1P variable.
+character(5), parameter:: FI_P   = FI4P       !< Output format                     for kind=I_P variable.
+character(8), parameter:: FI_PZP = FI4PZP     !< Output format with zero prefixing for kind=I_P variable.
+! Integer number of digits of output formats:
+integer, parameter:: DI8P = 20   !< Number of digits of output format I8P.
+integer, parameter:: DI4P = 11   !< Number of digits of output format I4P.
+integer, parameter:: DI2P = 6    !< Number of digits of output format I2P.
+integer, parameter:: DI1P = 4    !< Number of digits of output format I1P.
+integer, parameter:: DI_P = DI4P !< Number of digits of output format I_P.
+
+! Useful parameters for handling numbers ranges.
+! Real min and max values:
 #ifdef r16p
-real(R16P), parameter:: MinR16P = -huge(1._R16P), MaxR16P = huge(1._R16P) ! R16P min and max values
+real(R16P), parameter:: MinR16P = -huge(1._R16P), MaxR16P = huge(1._R16P) !< Min and max values of kind=R16P variable.
 #endif
-real(R8P),  parameter:: MinR8P  = -huge(1._R8P ), MaxR8P  = huge(1._R8P ) ! R8P  min and max values
-real(R4P),  parameter:: MinR4P  = -huge(1._R4P ), MaxR4P  = huge(1._R4P ) ! R4P  min and max values
-real(R_P),  parameter:: MinR_P  = MinR8P,         MaxR_P  = MaxR8P        ! R\_P  min and max values
-!!smallest values:
+real(R8P),  parameter:: MinR8P  = -huge(1._R8P ), MaxR8P  = huge(1._R8P ) !< Min and max values of kind=R8P variable.
+real(R4P),  parameter:: MinR4P  = -huge(1._R4P ), MaxR4P  = huge(1._R4P ) !< Min and max values of kind=R4P variable.
+real(R_P),  parameter:: MinR_P  = MinR8P,         MaxR_P  = MaxR8P        !< Min and max values of kind=R_P variable.
+! Real smallest values:
 #ifdef r16p
-real(R16P), parameter:: smallR16P = tiny(1._R16P) ! R16P smallest value
+real(R16P), parameter:: smallR16P = tiny(1._R16P) !< Smallest representable value of kind=R16P variable.
 #endif
-real(R8P),  parameter:: smallR8P  = tiny(1._R8P ) ! R8P  smallest value
-real(R4P),  parameter:: smallR4P  = tiny(1._R4P ) ! R4P  smallest value
-real(R_P),  parameter:: smallR_P  = smallR8P      ! R_P  smallest value
-!!
-!!Integer output formats:
-!!
-character(5), parameter:: FI8P   = '(I20)'    ! I8P output format
-character(8), parameter:: FI8PZP = '(I20.19)' ! I8P output format with zero prefixing
-character(5), parameter:: FI4P   = '(I11)'    ! I4P output format
-character(8), parameter:: FI4PZP = '(I11.10)' ! I4P output format with zero prefixing
-character(4), parameter:: FI2P   = '(I6)'     ! I2P output format
-character(6), parameter:: FI2PZP = '(I6.5)'   ! I2P output format with zero prefixing
-character(4), parameter:: FI1P   = '(I4)'     ! I1P output format
-character(6), parameter:: FI1PZP = '(I4.3)'   ! I1P output format with zero prefixing
-character(5), parameter:: FI_P   = FI4P       ! I\_P output format
-character(8), parameter:: FI_PZP = FI4PZP     ! I\_P output format with zero prefixing
-!!
-!!Integer number of digits of output formats:
-integer, parameter:: DI8P = 20   ! I8P output format digits
-integer, parameter:: DI4P = 11   ! I4P output format digits
-integer, parameter:: DI2P = 6    ! I2P output format digits
-integer, parameter:: DI1P = 4    ! I1P output format digits
-integer, parameter:: DI_P = DI4P ! I\_P output format digits
-!!
-!!Integer min and max values:
-integer(I8P), parameter:: MinI8P = -huge(1_I8P)-1_I8P, MaxI8P = huge(1_I8P) ! I8P min and max values
-integer(I4P), parameter:: MinI4P = -huge(1_I4P)-1_I4P, MaxI4P = huge(1_I4P) ! I4P min and max values
-integer(I2P), parameter:: MinI2P = -huge(1_I2P)-1_I2P, MaxI2P = huge(1_I2P) ! I2P min and max values
-integer(I2P), parameter:: MinI1P = -huge(1_I1P)-1_I1P, MaxI1P = huge(1_I1P) ! I1P min and max values
-integer(I_P), parameter:: MinI_P = MinI4P,             MaxI_P = MaxI4P      ! I\_P min and max values
-!!
-!!IR\_Precision module provides some global variables in order to store the smallest real evaluable by the running calculator.
-!!
+real(R8P),  parameter:: smallR8P  = tiny(1._R8P ) !< Smallest representable value of kind=R8P variable.
+real(R4P),  parameter:: smallR4P  = tiny(1._R4P ) !< Smallest representable value of kind=R4P variable.
+real(R_P),  parameter:: smallR_P  = smallR8P      !< Smallest representable value of kind=R_P variable.
+! Integer min and max values:
+integer(I8P), parameter:: MinI8P = -huge(1_I8P)-1_I8P, MaxI8P = huge(1_I8P) !< Min and max values of kind=I8P variable.
+integer(I4P), parameter:: MinI4P = -huge(1_I4P)-1_I4P, MaxI4P = huge(1_I4P) !< Min and max values of kind=I4P variable.
+integer(I2P), parameter:: MinI2P = -huge(1_I2P)-1_I2P, MaxI2P = huge(1_I2P) !< Min and max values of kind=I2P variable.
+integer(I2P), parameter:: MinI1P = -huge(1_I1P)-1_I1P, MaxI1P = huge(1_I1P) !< Min and max values of kind=I1P variable.
+integer(I_P), parameter:: MinI_P = MinI4P,             MaxI_P = MaxI4P      !< Min and max values of kind=I_P variable.
+
+! Smallest real representable difference by the running calculator.
 #ifdef r16p
-real(R16P), parameter:: ZeroR16 = nearest(1._R16P,1._R16P) - nearest(1._R16P,-1._R16P)
+real(R16P), parameter:: ZeroR16 = nearest(1._R16P,1._R16P) - nearest(1._R16P,-1._R16P) !< Smallest representable difference of
+                                                                                       !< kind=R16P variable.
 #endif
 #ifdef pgf95
 real(R8P),  parameter:: ZeroR8  = 0._R8P
 real(R4P),  parameter:: ZeroR4  = 0._R4P
 #else
-real(R8P),  parameter:: ZeroR8  = nearest(1._R8P,1._R8P) - nearest(1._R8P,-1._R8P)
-real(R4P),  parameter:: ZeroR4  = nearest(1._R4P,1._R4P) - nearest(1._R4P,-1._R4P)
+real(R8P),  parameter:: ZeroR8  = nearest(1._R8P,1._R8P) - nearest(1._R8P,-1._R8P) !< Smallest representable difference of
+                                                                                   !< kind=R8P variable.
+real(R4P),  parameter:: ZeroR4  = nearest(1._R4P,1._R4P) - nearest(1._R4P,-1._R4P) !< Smallest representable difference of
+                                                                                   !< kind=R4P variable.
 #endif
-real(R_P),  parameter:: Zero    = ZeroR8
+real(R_P),  parameter:: Zero    = ZeroR8                                           !< Smallest representable difference of
+                                                                                   !< kind=R_P variable.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
-!! str overloading
+!> @brief The function str converts number (real and integer) to string;
+!> logical, intent(\b IN), optional:: <b>\em no_sign</b> flag for do not write sign;
+!> number,  intent(\b IN)::           <b>\em n</b> input number;
+!> string,  intent(\b OUT)::          <b>\em str</b> output string.
 interface str
   module procedure           &
 #ifdef r16p
@@ -145,14 +158,19 @@ interface str
                    str_I2P,  &
                    str_I1P
 endinterface
-!! strz overloading
+!> @brief The function strz converts number (integer) to string, prefixing with the right number of zeros;
+!> number,  intent(\b IN), optional:: <b>\em no_zpad</b> number of padding zeros;
+!> number,  intent(\b IN)::           <b>\em n  </b> input number;
+!> string,  intent(\b OUT)::          <b>\em str</b> output string.
 interface strz
   module procedure strz_I8P,  &
                    strz_I4P,  &
                    strz_I2P,  &
                    strz_I1P
 endinterface
-!! ctoi overloading
+!> @brief The function cton converts string to number (real or initeger);
+!> string,  intent(\b IN)::  <b>\em str</b> input string;
+!> number,  intent(\b OUT):: <b>\em n  </b> output number.
 interface cton
   module procedure            &
 #ifdef r16p
@@ -167,15 +185,13 @@ interface cton
 endinterface
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
+  !>The subroutine check_endian checks the type bit ordering (big or little endian) of the running architecture; the result is
+  !>stored into the "endian" global variable.
+  !>@return endian
   subroutine check_endian()
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The subroutine check_endian checks the type bit ordering (big or little endian) of the running architecture. The result is
-  !! stored into the endian global variable.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I1P):: int1(1:4) ! One byte integer array for casting 4 bytes integer.
+  integer(I1P):: int1(1:4) !< One byte integer array for casting 4 bytes integer.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -192,7 +208,7 @@ contains
 #ifdef r16p
   elemental function str_R16P(no_sign,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function str\_R16P converts real to string. This function achieves casting of real to string.
+  !!The function str_R16P converts real to string. This function achieves casting of real to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -213,7 +229,7 @@ contains
 
   elemental function str_R8P(no_sign,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function str\_R8P converts real to string. This function achieves casting of real to string.
+  !!The function str_R8P converts real to string. This function achieves casting of real to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -233,7 +249,7 @@ contains
 
   elemental function str_R4P(no_sign,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function str\_R4P converts real to string. This function achieves casting of real to string.
+  !!The function str_R4P converts real to string. This function achieves casting of real to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -253,7 +269,7 @@ contains
 
   elemental function str_I8P(no_sign,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function str\_I8P converts integer to string. This function achieves casting of integer to string.
+  !!The function str_I8P converts integer to string. This function achieves casting of integer to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -274,7 +290,7 @@ contains
 
   elemental function str_I4P(no_sign,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function str\_I4P converts integer to string. This function achieves casting of integer to string.
+  !!The function str_I4P converts integer to string. This function achieves casting of integer to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -295,7 +311,7 @@ contains
 
   elemental function str_I2P(no_sign,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function str\_I2P converts integer to string. This function achieves casting of integer to string.
+  !!The function str_I2P converts integer to string. This function achieves casting of integer to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -316,7 +332,7 @@ contains
 
   elemental function str_I1P(no_sign,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function str\_I1P converts integer to string. This function achieves casting of integer to string.
+  !!The function str_I1P converts integer to string. This function achieves casting of integer to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -337,7 +353,7 @@ contains
 
   elemental function strz_I8P(nz_pad,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function strz\_I8P converts integer to string, prefixing with the right number of zeros. This function achieves casting of
+  !!The function strz_I8P converts integer to string, prefixing with the right number of zeros. This function achieves casting of
   !!integer to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
@@ -358,7 +374,7 @@ contains
 
   elemental function strz_I4P(nz_pad,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function strz\_I4P converts integer to string, prefixing with the right number of zeros. This function achieves casting of
+  !!The function strz_I4P converts integer to string, prefixing with the right number of zeros. This function achieves casting of
   !!integer to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
@@ -379,7 +395,7 @@ contains
 
   elemental function strz_I2P(nz_pad,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function strz\_I2P converts integer to string, prefixing with the right number of zeros. This function achieves casting of
+  !!The function strz_I2P converts integer to string, prefixing with the right number of zeros. This function achieves casting of
   !!integer to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
@@ -400,7 +416,7 @@ contains
 
   elemental function strz_I1P(nz_pad,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function strz\_I1P converts integer to string, prefixing with the right number of zeros. This function achieves casting of
+  !!The function strz_I1P converts integer to string, prefixing with the right number of zeros. This function achieves casting of
   !!integer to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
@@ -422,7 +438,7 @@ contains
 #ifdef r16p
   function ctor_R16P(str,knd) result(n)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function ctor\_R16P converts string to real. This function achieves casting of string to real.
+  !!The function ctor_R16P converts string to real. This function achieves casting of string to real.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -447,7 +463,7 @@ contains
 
   function ctor_R8P(str,knd) result(n)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function ctor\_R8P converts string to real. This function achieves casting of string to real.
+  !!The function ctor_R8P converts string to real. This function achieves casting of string to real.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -471,7 +487,7 @@ contains
 
   function ctor_R4P(str,knd) result(n)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function ctor\_R4P converts string to real. This function achieves casting of string to real.
+  !!The function ctor_R4P converts string to real. This function achieves casting of string to real.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -495,7 +511,7 @@ contains
 
   function ctoi_I8P(str,knd) result(n)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function ctoi\_I8P converts string to integer. This function achieves casting of string to integer.
+  !!The function ctoi_I8P converts string to integer. This function achieves casting of string to integer.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -519,7 +535,7 @@ contains
 
   function ctoi_I4P(str,knd) result(n)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function ctoi\_I4P converts string to integer. This function achieves casting of string to integer.
+  !!The function ctoi_I4P converts string to integer. This function achieves casting of string to integer.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -543,7 +559,7 @@ contains
 
   function ctoi_I2P(str,knd) result(n)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function ctoi\_I2P converts string to integer. This function achieves casting of string to integer.
+  !!The function ctoi_I2P converts string to integer. This function achieves casting of string to integer.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -567,7 +583,7 @@ contains
 
   function ctoi_I1P(str,knd) result(n)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function ctoi\_I1P converts string to integer. This function achieves casting of string to integer.
+  !!The function ctoi_I1P converts string to integer. This function achieves casting of string to integer.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -589,11 +605,8 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction ctoi_I1P
 
+  !>The subroutine IR_Print print to the standard output the kind definition of reals and integers and the utility variables.
   subroutine IR_Print()
-  !---------------------------------------------------------------------------------------------------------------------------------
-  !!The subroutine IR\_Print print to the standard output the kind definition of reals and integers and the utility variables.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   !---------------------------------------------------------------------------------------------------------------------------------

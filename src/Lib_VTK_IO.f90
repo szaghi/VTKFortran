@@ -1,42 +1,73 @@
-!(doc)INCLUDE{/home/szaghi/VTK_IO/LIB_VTK_IO/source/DOC_Header.doc}
+!> @brief   @libvtk is a library of functions for Input and Output pure fortran data in VTK format.
+!> @details It is useful for Paraview visualization tool. Even though there are many wrappers/porting of the VTK source
+!>          code (C++ code), there is not a fortran one. This library is not a porting or a wrapper of the VTK code,
+!>          but it only an exporter/importer of the VTK data format written in pure fortran language (standard Fortran 2003)
+!>          that can be used by fortran coders (yes, there are still a lot of these brave coders...) without mixing fortran with
+!>          C++ language. Fortran is still the best language for high performance computing for scientific purpose, like CFD
+!>          computing. It is necessary a tool to deal with VTK standard directly by fortran code. The library was made to fill
+!>          this empty: it is a simple fortran module able to export native fortran data into VTK data format and to import VTK
+!>          data into a fortran code, both in ascii and binary file format.
+!>
+!>          The library provides an automatic way to deal with VTK data format: all the formatting processes is nested into the
+!>          library and users comunicate with it by a simple API passing only native fortran data (native fortran scalar, vector
+!>          and matrix).
+!>
+!>          The library is still in developing and testing, this is first usable release, but there are not all the features of
+!>          the stable release (the importer is totaly absent and the exporter is not complete). Surely there are a lot of bugs
+!>          and the progamming style is not the best, but the exporter is usable for the 90\% of the VTK data format.
+!>
+!>          The library is an open source project, it is distribuited under the GPL v3. Anyone is interest to use, to develop or
+!>          contribuite to Lib_VTK_IO is welcome.
+!>
+!>          It can be found at: https://github.com/szaghi/Lib_VTK_IO
+!>
+!> @par VTK_Standard
+!>      VTK, Visualization Toolkit, is an open source software that provides a powerful framework for the computer grafich, for
+!>      the images processing and for 3D rendering. It is widely used in the world and so it has a very large comunity of users;
+!>      besides the Kitware (The Kitware homepage can be found here: http://public.kitware.com) company provides professional
+!>      support. The toolkit is written in C++ and a lot of porting/wrappers for Tcl/Tk, Java and Python are provided; unlucky
+!>      there aren't wrappers for Fortran.
+!>
+!>      Because of its good features the VTK toolkit has been used to develop a large set of open source programs. For my work
+!>      the most important family of programs is the scientific visualization programs. A lot of high-quality scientific
+!>      visualization tool are available on the web but for me the best is ParaView: I think that it is one of the best
+!>      scintific visualization program in the world and it is open source! Paraview is based on VTK.
+!> @par Paraview
+!>      ParaView (The ParaView homepage can be found here: http://www.paraview.org) is an open source software voted to scientific
+!>      visualization and able to use the power of parallel architectures. It has an architecture client-server in order to make
+!>      easy the remote visualization of very large set of data. Because it is based on VTK it inherits all VTK features. ParaView
+!>      is very useful for Computational Fluid Dynamics visualizations because it provides powerful post-processing tools; it
+!>      provides a very large set of importers for the most used format like Plot3D and HDF (the list is very large). It is easy to
+!>      extend ParaView because it supports all the scripting language supported by VTK.
+!> @author    Stefano Zaghi
+!> @version   1.0
+!> @date      2012-04-24
+!> @copyright GNU Public License version 3.
+!> @todo \b CompleteExporter: Complete the exporters
+!> @todo \b CompleteImporter: Complete the importers
+!> @todo \b DocExamples: Improve the documentation by means of examples
+!> @todo \b DocMakeFile: Create the documentation of makefile
+!> @todo \b g95_test: Test g95 compiler
+!> @param[out] VTK_INI
+!> @param[out] VTK_GEO
+!> @param[out] VTK_CON
+!> @param[out] VTK_DAT
+!> @param[out] VTK_VAR
+!> @param[out] VTK_END
+!> @param[out] VTK_INI_XML
+!> @param[out] VTK_GEO_XML
+!> @param[out] VTK_CON_XML
+!> @param[out] VTK_DAT_XML
+!> @param[out] VTK_VAR_XML
+!> @param[out] VTK_END_XML
+!> @param[out] VTM_INI_XML
+!> @param[out] VTM_BLK_XML
+!> @param[out] VTM_WRF_XML
+!> @param[out] VTM_END_XML
 module Lib_VTK_IO
 !-----------------------------------------------------------------------------------------------------------------------------------
-!!\LIBVTKIO is a library of functions for Input and Output pure fortran data (both ascii and binary) in VTK format.
-!!
-!!The VTK standard can be separated into two main catagories: the \MaiuscolettoBS{VTK Legacy Standard} and the
-!!\MaiuscolettoBS{VTK XML Standard}. The latter is more powerful and will has a stronger support from VTk comunity than legacy
-!!standard; XML file format would to be preferred despite the legacy one.
-!!
-!!At the present only a few functions of the final library have been implemented. The InPut functions are totaly absent, but the
-!!OutPut functions are almost complete (the \virgo{polydata} functions are the only missing).
-!!
-!!The functions actually present are:
-!!
-!!\begin{boxred}{Functions for Legacy VTK file format}
-!!\begin{enumerate1Red}
-!! \item \MaiuscolettoS{VTK\_INI}
-!! \item \MaiuscolettoS{VTK\_GEO}
-!! \item \MaiuscolettoS{VTK\_CON}
-!! \item \MaiuscolettoS{VTK\_DAT}
-!! \item \MaiuscolettoS{VTK\_VAR}
-!! \item \MaiuscolettoS{VTK\_END}
-!!\end{enumerate1Red}
-!!\end{boxred}
-!!
-!!\begin{boxred}{Functions for XML VTK file format}
-!!\begin{enumerate1Red}
-!! \item \MaiuscolettoS{VTK\_INI\_XML}
-!! \item \MaiuscolettoS{VTK\_GEO\_XML}
-!! \item \MaiuscolettoS{VTK\_CON\_XML}
-!! \item \MaiuscolettoS{VTK\_DAT\_XML}
-!! \item \MaiuscolettoS{VTK\_VAR\_XML}
-!! \item \MaiuscolettoS{VTK\_END\_XML}
-!!\end{enumerate1Red}
-!!\end{boxred}
-!-----------------------------------------------------------------------------------------------------------------------------------
-
-!-----------------------------------------------------------------------------------------------------------------------------------
-USE IR_Precision ! Real and integer portable multi-precision kind definition.
+USE IR_Precision                                                                ! Integers and reals precision definition.
+USE, intrinsic:: ISO_FORTRAN_ENV, only: stdout=>OUTPUT_UNIT, stderr=>ERROR_UNIT ! Standard output/error logical units.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -65,18 +96,40 @@ public:: VTM_END_XML
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
-! overloading of VTK_GEO
+!> @brief Function for saving mesh with different topologies in VTK-legacy standard.
+!> VTK_GEO is an interface to 8 different functions; there are 2 functions for each of 4 different topologies actually supported:
+!> one function for mesh coordinates with R8P precision and one for mesh coordinates with R4P precision.
+!> This function must be called after VTK_INI. It saves the mesh geometry. The inputs that must be passed change depending on
+!> the topologies choiced. Not all VTK topologies have been implemented (\em polydata topologies are absent).
+!> @note Examples of usage are: \n
+!> \b Structured points calling: \n
+!>    E_IO=VTK_GEO(Nx,Ny,Nz,X0,Y0,Z0,Dx,Dy,Dz); real(I8P):: X0,Y0,Z0,Dx,Dy,Dz \n
+!> \b Structured grid calling: \n
+!>    E_IO=VTK_GEO(Nx,Ny,Nz,Nnodes,X,Y,Z); real(I8P):: X(1:Nnodes),Y(1:Nnodes),Z(1:Nnodes) \n
+!> \b Rectilinear grid calling: \n
+!>    E_IO=VTK_GEO(Nx,Ny,Nz,X,Y,Z); real(I8P):: X(1:Nx),Y(1:Ny),Z(1:Nz) \n
+!> \b Unstructured grid calling: \n
+!>    E_IO=VTK_GEO(NN,X,Y,Z); real(I4P):: X(1:NN),Y(1:NN),Z(1:NN).
 interface VTK_GEO
-  module procedure VTK_GEO_UNST_R8, & ! real(R8P) UNSTRUCTURED\_GRID
-                   VTK_GEO_UNST_R4, & ! real(R4P) UNSTRUCTURED\_GRID
-                   VTK_GEO_STRP_R8, & ! real(R8P) STRUCTURED\_POINTS
-                   VTK_GEO_STRP_R4, & ! real(R4P) STRUCTURED\_POINTS
-                   VTK_GEO_STRG_R8, & ! real(R8P) STRUCTURED\_GRID
-                   VTK_GEO_STRG_R4, & ! real(R4P) STRUCTURED\_GRID
-                   VTK_GEO_RECT_R8, & ! real(R8P) RECTILINEAR\_GRID
-                   VTK_GEO_RECT_R4    ! real(R4P) RECTILINEAR\_GRID
+  module procedure VTK_GEO_UNST_R8, & ! real(R8P) UNSTRUCTURED_GRID
+                   VTK_GEO_UNST_R4, & ! real(R4P) UNSTRUCTURED_GRID
+                   VTK_GEO_STRP_R8, & ! real(R8P) STRUCTURED_POINTS
+                   VTK_GEO_STRP_R4, & ! real(R4P) STRUCTURED_POINTS
+                   VTK_GEO_STRG_R8, & ! real(R8P) STRUCTURED_GRID
+                   VTK_GEO_STRG_R4, & ! real(R4P) STRUCTURED_GRID
+                   VTK_GEO_RECT_R8, & ! real(R8P) RECTILINEAR_GRID
+                   VTK_GEO_RECT_R4    ! real(R4P) RECTILINEAR_GRID
 endinterface
-! overloading of VTK_VAR
+!> @brief Function for saving data variable(s) in VTK-legacy standard.
+!> VTK_VAR is an interface to 8 different functions; there are 3 functions for scalar variables, 3 functions for vectorial
+!> variables and 2 function texture variables.
+!> This function saves the data variables related to geometric mesh. The inputs that must be passed change depending on the data
+!> variables type.
+!> @note Examples of usage are: \n
+!> \b Scalar data calling: \n
+!>    E_IO=VTK_VAR(NN,'Sca',var); real(I4P):: var(1:NN) \n
+!> \b Vectorial data calling: \n
+!>    E_IO=VTK_VAR('vect',NN,'Vec',varX,varY,varZ); real(I4P):: varX(1:NN),varY(1:NN),varZ(1:NN).
 interface VTK_VAR
   module procedure VTK_VAR_SCAL_R8, & ! real(R8P)    scalar
                    VTK_VAR_SCAL_R4, & ! real(R4P)    scalar
@@ -87,7 +140,23 @@ interface VTK_VAR
                    VTK_VAR_TEXT_R8, & ! real(R8P)    vectorial (texture)
                    VTK_VAR_TEXT_R4    ! real(R4P)    vectorial (texture)
 endinterface
-! overloading of VTK_GEO_XML
+!> @brief Function for saving mesh with different topologies in VTK-XML standard.
+!> VTK_GEO_XML is an interface to 7 different functions; there are 2 functions for each of 3 topologies supported and a function
+!> for closing XML pieces. VTK_GEO_XML must be called after VTK_INI_XML. It saves the mesh geometry. The inputs that must be passed
+!> change depending on the topologies choiced. Not all VTK topologies have been implemented (\em polydata topologies are absent).
+!> @note The XML standard is more powerful than legacy. XML file can contain more than 1 mesh with its
+!> associated variables. Thus there is the necessity to close each \em pieces that compose the data-set saved in the
+!> XML file. The VTK_GEO_XML called in the <em>close piece</em> format is used just to close the
+!> current piece before saving another piece or closing the file. \n
+!> Examples of usage are: \n
+!> \b Structured grid calling: \n
+!>    E_IO=VTK_GEO_XML(nx1,nx2,ny1,ny2,nz1,nz2,Nn,X,Y,Z); real(I8P):: X(1:Nn),Y(1:Nn),Z(1:Nn) \n
+!> \b Rectilinear grid calling: \n
+!>    E_IO=VTK_GEO_XML(nx1,nx2,ny1,ny2,nz1,nz2,X,Y,Z); real(I8P):: X(nx1:nx2),Y(ny1:ny2),Z(nz1:nz2) \n
+!> \b Unstructured grid calling: \n
+!>    E_IO=VTK_GEO_XML(Nn,Nc,X,Y,Z); real(I4P):: X(1:Nn),Y(1:Nn),Z(1:Nn) \n
+!> \b Closing piece calling: 1n
+!>    E_IO=VTK_GEO_XML()
 interface VTK_GEO_XML
   module procedure VTK_GEO_XML_STRG_R4, & ! real(R4P) StructuredGrid
                    VTK_GEO_XML_STRG_R8, & ! real(R8P) StructuredGrid
@@ -97,7 +166,7 @@ interface VTK_GEO_XML
                    VTK_GEO_XML_UNST_R4, & ! real(R4P) UnstructuredGrid
                    VTK_GEO_XML_CLOSEP     ! closing tag "Piece" function
 endinterface
-! overloading of VTK_VAR_XML
+!> @brief Function for saving data variable(s) in VTK-XML standard.
 interface VTK_VAR_XML
   module procedure VTK_VAR_XML_SCAL_R8, & ! real(R8P)    scalar
                    VTK_VAR_XML_SCAL_R4, & ! real(R4P)    scalar
@@ -121,99 +190,80 @@ endinterface
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
-!!\LIBVTKIO uses a small set of internal variables that are private (not accessible from the outside). The following are
-!! private variables:
-!!
-integer(I4P), parameter:: maxlen       = 500         ! max number of characters of static string
-character(1), parameter:: end_rec      = char(10)    ! end-character for binary-record finalize
-integer(I4P), parameter:: f_out_ascii  = 0           ! ascii-output-format parameter identifier
-integer(I4P), parameter:: f_out_binary = 1           ! binary-output-format parameter identifier
-integer(I4P)::            f_out        = f_out_ascii ! current output-format (initialized to ascii format)
-character(len=maxlen)::   topology                   ! mesh topology
-integer(I4P)::            Unit_VTK                   ! internal logical unit
-integer(I4P)::            Unit_VTK_Append            ! internal logical unit for raw binary XML append file
-integer(I4P)::            N_Byte                     ! number of byte to be written/read
-real(R8P)::               Tipo_R8 = 1._R8P           ! prototype of R8P real
-real(R4P)::               Tipo_R4 = 1._R4P           ! prototype of R4P real
-integer(I8P)::            Tipo_I8 = 1_I8P            ! prototype of I8P integer
-integer(I4P)::            Tipo_I4 = 1_I4P            ! prototype of I4P integer
-integer(I2P)::            Tipo_I2 = 1_I2P            ! prototype of I2P integer
-integer(I1P)::            Tipo_I1 = 1_I1P            ! prototype of I1P integer
-integer(I8P)::            ioffset                    ! offset pointer
-integer(I4P)::            indent                     ! indent pointer
-! VTM specific variables
-integer(I4P)::            Unit_VTM                   ! internal logical unit
-integer(I4P)::            blk                        ! block index
-integer(I4P)::            vtm_indent                 ! indent pointer
+! @libvtk uses a small set of internal variables that are private (not accessible from the outside). The following are
+! private variables:
+integer(I4P), parameter:: maxlen       = 500         !< Max number of characters of static string.
+character(1), parameter:: end_rec      = char(10)    !< End-character for binary-record finalize.
+integer(I4P), parameter:: f_out_ascii  = 0           !< Ascii-output-format parameter identifier.
+integer(I4P), parameter:: f_out_binary = 1           !< Binary-output-format parameter identifier.
+integer(I4P)::            f_out        = f_out_ascii !< Current output-format (initialized to ascii format).
+character(len=maxlen)::   topology                   !< Mesh topology.
+integer(I4P)::            Unit_VTK                   !< Internal logical unit.
+integer(I4P)::            Unit_VTK_Append            !< Internal logical unit for raw binary XML append file.
+integer(I4P)::            N_Byte                     !< Number of byte to be written/read.
+real(R8P)::               Tipo_R8 = 1._R8P           !< Prototype of R8P real.
+real(R4P)::               Tipo_R4 = 1._R4P           !< Prototype of R4P real.
+integer(I8P)::            Tipo_I8 = 1_I8P            !< Prototype of I8P integer.
+integer(I4P)::            Tipo_I4 = 1_I4P            !< Prototype of I4P integer.
+integer(I2P)::            Tipo_I2 = 1_I2P            !< Prototype of I2P integer.
+integer(I1P)::            Tipo_I1 = 1_I1P            !< Prototype of I1P integer.
+integer(I8P)::            ioffset                    !< Offset pointer.
+integer(I4P)::            indent                     !< Indent pointer.
+integer(I4P)::            Unit_VTM                   !< Internal logical unit.
+integer(I4P)::            blk                        !< Block index.
+integer(I4P)::            vtm_indent                 !< Indent pointer.
 !-----------------------------------------------------------------------------------------------------------------------------------
-
-!!In the following chapters there is the API reference of all functions of \LIBVTKIO.
 contains
-  !!\chapter{Auxiliary functions}
-  !!\minitoc
-  !!\vspace*{8mm}
-  !!
-  !!\LIBVTKIO uses two auxiliary functions that are not connected with the VTK standard. These functions are private and so they
-  !!cannot be called outside the library.
+  ! @libvtk uses two auxiliary functions that are not connected with the VTK standard. These functions are private and so they
+  ! cannot be called outside the library.
+
+  !> @brief The GetUnit function is used for getting a free logic unit. The users of @libvtk does not know which is the logical
+  !>        unit: @libvtk uses this information without boring the users. The logical unit used is safe-free: if the program
+  !>        calling @libvtk has others logical units used @libvtk will never use these units, but will choice one that is free.
+  !>@return Free_Unit
   function GetUnit() result(Free_Unit)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The GetUnit function is used for getting a free logic unit. The users of \LIBVTKIO does not know which is
-  !!the logical unit: \LIBVTKIO handels this information without boring the users. The logical unit used is safe-free: if the
-  !!program calling \LIBVTKIO has others logical units used \LIBVTKIO will never use these units, but will choice one that is free.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P):: Free_Unit ! free logic unit
-  integer(I4P):: n1        ! counter
-  integer(I4P):: ios       ! inquiring flag
-  logical(4)::   lopen     ! inquiring flag
+  integer:: Free_Unit !< Free logic unit.
+  integer:: n1        !< Counter.
+  integer:: ios       !< Inquiring flag.
+  logical:: lopen     !< Inquiring flag.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The following is the code snippet of GetUnit function: the units 0, 5, 6, 9 and all non-free units are discarded.
-  !!
-  !(\doc)codesnippet
-  Free_Unit = -1_I4P                                      ! initializing free logic unit
-  n1=1_I4P                                                ! initializing counter
+  Free_Unit = -1
+  n1=1
   do
-    if ((n1/=5_I4P).AND.(n1/=6_I4P).AND.(n1/=9_I4P)) then
-      inquire (unit=n1,opened=lopen,iostat=ios)           ! verify logic units
-      if (ios==0_I4P) then
+    if ((n1/=stdout).AND.(n1/=stderr)) then
+      inquire (unit=n1,opened=lopen,iostat=ios)
+      if (ios==0) then
         if (.NOT.lopen) then
-          Free_Unit = n1                                  ! assignment of free logic
+          Free_Unit = n1
           return
         endif
       endif
     endif
-    n1=n1+1_I4P                                           ! updating counter
+    n1=n1+1
   enddo
   return
-  !(doc/)codesnippet
-  !!GetUnit function is private and cannot be called outside \LIBVTKIO. If you are interested to use it change its scope to public.
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction GetUnit
 
+  !> @brief The Upper_Case function converts the lower case characters of a string to upper case one. @libvtk uses this function in
+  !>        order to achieve case-insensitive: all character variables used within @libvtk functions are pre-processed by
+  !>        Uppper_Case function before these variables are used. So the users can call @libvtk functions whitout pay attention of
+  !>        the case of the kwywords passed to the functions: calling the function VTK_INI with the string
+  !>        <em>E_IO = VTK_INI('Ascii',...)</em> is quivalent to <em>E_IO = VTK_INI('ASCII',...)</em>.
+  !>@return Upper_Case
   function Upper_Case(string)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The Upper\_Case function converts the lower case characters of a string to upper case one. \LIBVTKIO uses this function in
-  !!order to achieve case-insensitive: all character variables used within \LIBVTKIO functions are pre-processed by
-  !!Uppper\_Case function before these variables are used. So the users can call \LIBVTKIO functions whitout pay attention of the
-  !!case of the kwywords passed to the functions: calling the function VTK\_INI with the string \code{E_IO = VTK_INI('Ascii',...)}
-  !!or with the string  \code{E_IO = VTK_INI('AscII',...)} is equivalent.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  character(len=*), intent(IN):: string     ! string to be converted
-  character(len=len(string))::   Upper_Case ! converted string
-  integer::                      n1         ! characters counter
+  character(len=*), intent(IN):: string     !< String to be converted.
+  character(len=len(string))::   Upper_Case !< Converted string.
+  integer::                      n1         !< Characters counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The following is the code snippet of Upper\_Case function.
-  !!
-  !(\doc)codesnippet
   Upper_Case = string
   do n1=1,len(string)
     select case(ichar(string(n1:n1)))
@@ -222,58 +272,20 @@ contains
     endselect
   enddo
   return
-  !(doc/)codesnippet
-  !!Upper\_Case function is private and cannot be called outside \LIBVTKIO. If you are interested to use it change its scope
-  !!to public.
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction Upper_Case
 
-  !!\chapter{VTK LEGACY functions}
-  !!\minitoc
-  !!\vspace*{8mm}
-  !!
+  !> @brief The VTK_INI function is used for initializing file. This function must be the first to be called.
+  !> @note An example of usage is: E_IO=VTK_INI('Binary','example.vtk','VTK legacy file','UNSTRUCTURED_GRID').
+  !> @return E_IO: integer(I4P) error flag
   function VTK_INI(output_format,filename,title,mesh_topology) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The VTK\_INI function is used for initializing file. This function must be the first to be called.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  character(*), intent(IN):: output_format ! output format: ASCII or BINARY
-  character(*), intent(IN):: filename      ! name of file
-  character(*), intent(IN):: title         ! title
-  character(*), intent(IN):: mesh_topology ! mesh topology
-  integer(I4P)::             E_IO          ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  !!The VTK\_INI variables have the following meaning:
-  !!
-  !!\begin{description}
-  !! \item[{\color{RoyalBlue}output\_format}] indicates the \virgo{format} of output file. It can assume the following values:
-  !! \begin{enumerateABlu}
-  !!  \item \emph{ascii} (it is case insensitive) $\rightarrow$ creating an ascii output file.
-  !!  \item \emph{binary} (it is case insensitive) $\rightarrow$ creating a binary (big\_endian encoding) output file.
-  !! \end{enumerateABlu}
-  !! \item[{\color{RoyalBlue}filename}] contains the name (with its path) of the output file.
-  !! \item[{\color{RoyalBlue}title}] contains the title of the VTK dataset.
-  !! \item[{\color{RoyalBlue}topology}] indicates the topology of the mesh and can assume the following values:
-  !! \begin{enumerateABlu}
-  !!  \item \emph{STRUCTURED\_POINTS}.
-  !!  \item \emph{STRUCTURED\_GRID}.
-  !!  \item \emph{UNSTRUCTURED\_GRID}.
-  !!  \item \emph{RECTILINEAR\_GRID}.
-  !! \end{enumerateABlu}
-  !! \item[{\color{RoyalBlue}E\_IO}] contains the inquiring integer flag for error handling.
-  !!\end{description}
-  !!
-  !!The following is an example of VTK\_INI calling:
-  !!
-  !!\begin{boxred}{VTK\_INI Calling}
-  !!\begin{verbatim}
-  !!...
-  !!E_IO = VTK_INI('Binary','example.vtk','VTK legacy file','UNSTRUCTURED_GRID')
-  !!...
-  !!\end{verbatim}
-  !!\end{boxred}
-  !!\noindent Note that the \virgo{.vtk} extension is necessary in the file name.
+  character(*), intent(IN):: output_format !< Output format: ASCII or BINARY.
+  character(*), intent(IN):: filename      !< Name of file.
+  character(*), intent(IN):: title         !< Title.
+  character(*), intent(IN):: mesh_topology !< Mesh topology.
+  integer(I4P)::             E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -311,26 +323,22 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_INI
 
-  !(doc)INCLUDE{/home/szaghi/VTK_IO/LIB_VTK_IO/source/DOC_VTK_GEO.doc}
-  !(\doc)skippedblock
+  !> Function for saving mesh with \b STRUCTURED_POINTS topology (R8P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_GEO_STRP_R8(Nx,Ny,Nz,X0,Y0,Z0,Dx,Dy,Dz) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving mesh; topology = STRUCTURED\_POINTS (R8P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: Nx        ! number of nodes in x direction
-  integer(I4P), intent(IN):: Ny        ! number of nodes in y direction
-  integer(I4P), intent(IN):: Nz        ! number of nodes in z direction
-  real(R8P),    intent(IN):: X0        ! x coordinate of origin
-  real(R8P),    intent(IN):: Y0        ! y coordinate of origin
-  real(R8P),    intent(IN):: Z0        ! z coordinate of origin
-  real(R8P),    intent(IN):: Dx        ! space step in x direction
-  real(R8P),    intent(IN):: Dy        ! space step in y direction
-  real(R8P),    intent(IN):: Dz        ! space step in z direction
-  integer(I4P)::             E_IO      ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  character(len=maxlen)::    s_buffer  ! buffer string
+  integer(I4P), intent(IN):: Nx        !< Number of nodes in x direction.
+  integer(I4P), intent(IN):: Ny        !< Number of nodes in y direction.
+  integer(I4P), intent(IN):: Nz        !< Number of nodes in z direction.
+  real(R8P),    intent(IN):: X0        !< X coordinate of origin.
+  real(R8P),    intent(IN):: Y0        !< Y coordinate of origin.
+  real(R8P),    intent(IN):: Z0        !< Z coordinate of origin.
+  real(R8P),    intent(IN):: Dx        !< Space step in x direction.
+  real(R8P),    intent(IN):: Dy        !< Space step in y direction.
+  real(R8P),    intent(IN):: Dz        !< Space step in z direction.
+  integer(I4P)::             E_IO      !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::    s_buffer  !< Buffer string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -351,24 +359,22 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_GEO_STRP_R8
 
+  !> Function for saving mesh with \b STRUCTURED_POINTS topology (R4P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_GEO_STRP_R4(Nx,Ny,Nz,X0,Y0,Z0,Dx,Dy,Dz) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving mesh; topology = STRUCTURED\_POINTS (R4P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: Nx        ! number of nodes in x direction
-  integer(I4P), intent(IN):: Ny        ! number of nodes in y direction
-  integer(I4P), intent(IN):: Nz        ! number of nodes in z direction
-  real(R4P),    intent(IN):: X0        ! x coordinate of origin
-  real(R4P),    intent(IN):: Y0        ! y coordinate of origin
-  real(R4P),    intent(IN):: Z0        ! z coordinate of origin
-  real(R4P),    intent(IN):: Dx        ! space step in x direction
-  real(R4P),    intent(IN):: Dy        ! space step in y direction
-  real(R4P),    intent(IN):: Dz        ! space step in z direction
-  integer(I4P)::             E_IO      ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  character(len=maxlen)::    s_buffer  ! buffer string
+  integer(I4P), intent(IN):: Nx        !< Number of nodes in x direction.
+  integer(I4P), intent(IN):: Ny        !< Number of nodes in y direction.
+  integer(I4P), intent(IN):: Nz        !< Number of nodes in z direction.
+  real(R4P),    intent(IN):: X0        !< X coordinate of origin.
+  real(R4P),    intent(IN):: Y0        !< Y coordinate of origin.
+  real(R4P),    intent(IN):: Z0        !< Z coordinate of origin.
+  real(R4P),    intent(IN):: Dx        !< Space step in x direction.
+  real(R4P),    intent(IN):: Dy        !< Space step in y direction.
+  real(R4P),    intent(IN):: Dz        !< Space step in z direction.
+  integer(I4P)::             E_IO      !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::    s_buffer  !< Buffer string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -389,23 +395,21 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_GEO_STRP_R4
 
+  !> Function for saving mesh with \b STRUCTURED_GRID topology (R8P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_GEO_STRG_R8(Nx,Ny,Nz,NN,X,Y,Z) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving mesh; topology = STRUCTURED\_GRID (R8P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: Nx       ! number of nodes in x direction
-  integer(I4P), intent(IN):: Ny       ! number of nodes in y direction
-  integer(I4P), intent(IN):: Nz       ! number of nodes in z direction
-  integer(I4P), intent(IN):: NN       ! number of all nodes
-  real(R8P),    intent(IN):: X(1:NN)  ! x coordinates
-  real(R8P),    intent(IN):: Y(1:NN)  ! y coordinates
-  real(R8P),    intent(IN):: Z(1:NN)  ! z coordinates
-  integer(I4P)::             E_IO     ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  character(len=maxlen)::    s_buffer ! buffer string
-  integer(I4P)::             n1       ! counter
+  integer(I4P), intent(IN):: Nx       !< Number of nodes in x direction.
+  integer(I4P), intent(IN):: Ny       !< Number of nodes in y direction.
+  integer(I4P), intent(IN):: Nz       !< Number of nodes in z direction.
+  integer(I4P), intent(IN):: NN       !< Number of all nodes.
+  real(R8P),    intent(IN):: X(1:NN)  !< X coordinates.
+  real(R8P),    intent(IN):: Y(1:NN)  !< Y coordinates.
+  real(R8P),    intent(IN):: Z(1:NN)  !< Z coordinates.
+  integer(I4P)::             E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::    s_buffer !< Buffer string.
+  integer(I4P)::             n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -426,23 +430,21 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_GEO_STRG_R8
 
+  !> Function for saving mesh with \b STRUCTURED_GRID topology (R4P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_GEO_STRG_R4(Nx,Ny,Nz,NN,X,Y,Z) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving mesh; topology = STRUCTURED\_GRID (R4P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: Nx       ! number of nodes in x direction
-  integer(I4P), intent(IN):: Ny       ! number of nodes in y direction
-  integer(I4P), intent(IN):: Nz       ! number of nodes in z direction
-  integer(I4P), intent(IN):: NN       ! number of all nodes
-  real(R4P),    intent(IN):: X(1:NN)  ! x coordinates
-  real(R4P),    intent(IN):: Y(1:NN)  ! y coordinates
-  real(R4P),    intent(IN):: Z(1:NN)  ! z coordinates
-  integer(I4P)::             E_IO     ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  character(len=maxlen)::    s_buffer ! buffer string
-  integer(I4P)::             n1       ! counter
+  integer(I4P), intent(IN):: Nx       !< Number of nodes in x direction.
+  integer(I4P), intent(IN):: Ny       !< Number of nodes in y direction.
+  integer(I4P), intent(IN):: Nz       !< Number of nodes in z direction.
+  integer(I4P), intent(IN):: NN       !< Number of all nodes.
+  real(R4P),    intent(IN):: X(1:NN)  !< X coordinates.
+  real(R4P),    intent(IN):: Y(1:NN)  !< Y coordinates.
+  real(R4P),    intent(IN):: Z(1:NN)  !< Z coordinates.
+  integer(I4P)::             E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::    s_buffer !< Buffer string.
+  integer(I4P)::             n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -463,22 +465,20 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_GEO_STRG_R4
 
+  !> Function for saving mesh with \b RECTILINEAR_GRID topology (R8P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_GEO_RECT_R8(Nx,Ny,Nz,X,Y,Z) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving mesh; topology = RECTILINEAR\_GRID (R8P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: Nx        ! number of nodes in x direction
-  integer(I4P), intent(IN):: Ny        ! number of nodes in y direction
-  integer(I4P), intent(IN):: Nz        ! number of nodes in z direction
-  real(R8P),    intent(IN):: X(1:Nx)   ! x coordinates
-  real(R8P),    intent(IN):: Y(1:Ny)   ! y coordinates
-  real(R8P),    intent(IN):: Z(1:Nz)   ! z coordinates
-  integer(I4P)::             E_IO      ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  character(len=maxlen)::    s_buffer  ! buffer string
-  integer(I4P)::             n1        ! counter
+  integer(I4P), intent(IN):: Nx       !< Number of nodes in x direction.
+  integer(I4P), intent(IN):: Ny       !< Number of nodes in y direction.
+  integer(I4P), intent(IN):: Nz       !< Number of nodes in z direction.
+  real(R8P),    intent(IN):: X(1:Nx)  !< X coordinates.
+  real(R8P),    intent(IN):: Y(1:Ny)  !< Y coordinates.
+  real(R8P),    intent(IN):: Z(1:Nz)  !< Z coordinates.
+  integer(I4P)::             E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::    s_buffer !< Buffer string.
+  integer(I4P)::             n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -511,22 +511,20 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_GEO_RECT_R8
 
+  !> Function for saving mesh with \b RECTILINEAR_GRID topology (R4P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_GEO_RECT_R4(Nx,Ny,Nz,X,Y,Z) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving mesh; topology = RECTILINEAR\_GRID (R4P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: Nx        ! number of nodes in x direction
-  integer(I4P), intent(IN):: Ny        ! number of nodes in y direction
-  integer(I4P), intent(IN):: Nz        ! number of nodes in z direction
-  real(R4P),    intent(IN):: X(1:Nx)   ! x coordinates
-  real(R4P),    intent(IN):: Y(1:Ny)   ! y coordinates
-  real(R4P),    intent(IN):: Z(1:Nz)   ! z coordinates
-  integer(I4P)::             E_IO      ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  character(len=maxlen)::    s_buffer  ! buffer string
-  integer(I4P)::             n1        ! counter
+  integer(I4P), intent(IN):: Nx       !< Number of nodes in x direction.
+  integer(I4P), intent(IN):: Ny       !< Number of nodes in y direction.
+  integer(I4P), intent(IN):: Nz       !< Number of nodes in z direction.
+  real(R4P),    intent(IN):: X(1:Nx)  !< X coordinates.
+  real(R4P),    intent(IN):: Y(1:Ny)  !< Y coordinates.
+  real(R4P),    intent(IN):: Z(1:Nz)  !< Z coordinates.
+  integer(I4P)::             E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::    s_buffer !< Buffer string.
+  integer(I4P)::             n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -559,20 +557,18 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_GEO_RECT_R4
 
+  !> Function for saving mesh with \b UNSTRUCTURED_GRID topology (R8P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_GEO_UNST_R8(NN,X,Y,Z) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving mesh; topology = UNSTRUCTURED\_GRID (R8P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NN        ! number of nodes
-  real(R8P),    intent(IN):: X(1:NN)   ! x coordinates of all nodes
-  real(R8P),    intent(IN):: Y(1:NN)   ! y coordinates of all nodes
-  real(R8P),    intent(IN):: Z(1:NN)   ! z coordinates of all nodes
-  integer(I4P)::             E_IO      ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  character(len=maxlen)::    s_buffer  ! buffer string
-  integer(I4P)::             n1        ! counter
+  integer(I4P), intent(IN):: NN       !< Number of nodes.
+  real(R8P),    intent(IN):: X(1:NN)  !< X coordinates of all nodes.
+  real(R8P),    intent(IN):: Y(1:NN)  !< Y coordinates of all nodes.
+  real(R8P),    intent(IN):: Z(1:NN)  !< Z coordinates of all nodes.
+  integer(I4P)::             E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::    s_buffer !< Buffer string.
+  integer(I4P)::             n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -590,20 +586,18 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_GEO_UNST_R8
 
+  !> Function for saving mesh with \b UNSTRUCTURED_GRID topology (R4P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_GEO_UNST_R4(NN,X,Y,Z) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving mesh; topology = UNSTRUCTURED\_GRID (R4P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NN        ! number of nodes
-  real(R4P),    intent(IN):: X(1:NN)   ! x coordinates of all nodes
-  real(R4P),    intent(IN):: Y(1:NN)   ! y coordinates of all nodes
-  real(R4P),    intent(IN):: Z(1:NN)   ! z coordinates of all nodes
-  integer(I4P)::             E_IO      ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  character(len=maxlen)::    s_buffer  ! buffer string
-  integer(I4P)::             n1        ! counter
+  integer(I4P), intent(IN):: NN       !< number of nodes.
+  real(R4P),    intent(IN):: X(1:NN)  !< x coordinates of all nodes.
+  real(R4P),    intent(IN):: Y(1:NN)  !< y coordinates of all nodes.
+  real(R4P),    intent(IN):: Z(1:NN)  !< z coordinates of all nodes.
+  integer(I4P)::             E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::    s_buffer !< buffer string.
+  integer(I4P)::             n1       !< counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -620,100 +614,54 @@ contains
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_GEO_UNST_R4
-  !(doc/)skippedblock
 
+  !> Function that \b must be used when unstructured grid is used; it saves the connectivity of the unstructured gird.
+  !> @note The vector \b connect must follow the VTK legacy standard. It is passed as \em assumed-shape array
+  !> because its dimensions is related to the mesh dimensions in a complex way. Its dimensions can be calculated by the following
+  !> equation: \f$dc = NC + \sum\limits_{i = 1}^{NC} {nvertex_i }\f$
+  !> where \f$dc\f$ is connectivity vector dimension and \f$nvertex_i\f$ is the number of vertices of \f$i^{th}\f$ cell. The VTK
+  !> legacy standard for the mesh connectivity is quite obscure at least at first sight. It is more simple analizing an example.
+  !> Suppose we have a mesh composed by 2 cells, one hexahedron (8 vertices) and one pyramid with square basis (5 vertices); suppose
+  !> that the basis of pyramid is constitute by a face of the hexahedron and so the two cells share 4 vertices. The above equation
+  !> gives \f$dc=2+8+5=15\f$; the connectivity vector for this mesh can be: \n
+  !> first cell \n
+  !> connect(1)  = 8  number of vertices of \f$1^\circ\f$ cell \n
+  !> connect(2)  = 0  identification flag of \f$1^\circ\f$ vertex of 1° cell \n
+  !> connect(3)  = 1  identification flag of \f$2^\circ\f$ vertex of 1° cell \n
+  !> connect(4)  = 2  identification flag of \f$3^\circ\f$ vertex of 1° cell \n
+  !> connect(5)  = 3  identification flag of \f$4^\circ\f$ vertex of 1° cell \n
+  !> connect(6)  = 4  identification flag of \f$5^\circ\f$ vertex of 1° cell \n
+  !> connect(7)  = 5  identification flag of \f$6^\circ\f$ vertex of 1° cell \n
+  !> connect(8)  = 6  identification flag of \f$7^\circ\f$ vertex of 1° cell \n
+  !> connect(9)  = 7  identification flag of \f$8^\circ\f$ vertex of 1° cell \n
+  !> second cell \n
+  !> connect(10) = 5  number of vertices of \f$2^\circ \f$cell \n
+  !> connect(11) = 0  identification flag of \f$1^\circ\f$ vertex of 2° cell \n
+  !> connect(12) = 1  identification flag of \f$2^\circ\f$ vertex of 2° cell \n
+  !> connect(13) = 2  identification flag of \f$3^\circ\f$ vertex of 2° cell \n
+  !> connect(14) = 3  identification flag of \f$4^\circ\f$ vertex of 2° cell \n
+  !> connect(15) = 8  identification flag of \f$5^\circ\f$ vertex of 2° cell \n
+  !> Note that the first 4 identification flags of pyramid vertices as the same of the first 4 identification flags of
+  !> the hexahedron because the two cells share this face. It is also important to note that the identification flags start
+  !> form $0$ value: this is impose to the VTK standard. The function VTK_CON does not calculate the connectivity vector: it
+  !> writes the connectivity vector conforming the VTK standard, but does not calculate it.
+  !> The vector variable \em cell_type must conform the VTK legacy standard (see the file VTK-Standard at the
+  !> Kitware homepage). It contains the
+  !> \em type of each cells. For the above example this vector is: \n
+  !> first cell \n
+  !> cell_type(1) = 12 hexahedron type of \f$1^\circ\f$ cell \n
+  !> second cell \n
+  !> cell_type(2) = 14 pyramid type of \f$2^\circ\f$ cell \n
+  !> @return E_IO: integer(I4P) error flag
   function VTK_CON(NC,connect,cell_type) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!This function \MaiuscolettoBS{must} be used when unstructured grid is used. It saves the connectivity of the unstructured
-  !!mesh.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC              ! number of cells
-  integer(I4P), intent(IN):: connect(:)      ! mesh connectivity
-  integer(I4P), intent(IN):: cell_type(1:NC) ! VTK cell type
-  integer(I4P)::             E_IO            ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  character(len=maxlen)::    s_buffer        ! buffer string
-  integer(I4P)::             ncon            ! dimension of connectivity vector 
-  !!The VTK\_CON variables have the following meaning:
-  !!
-  !!\begin{description}
-  !! \item[{\color{RoyalBlue}NC}] indicates the number of all cells.
-  !! \item[{\color{RoyalBlue}connect}] contains the connectivity of the mesh. It is a vector.
-  !! \item[{\color{RoyalBlue}cell\_type}] contains the type of every cells. It is a vector of $[1:NC]$.
-  !! \item[{\color{RoyalBlue}E\_IO}] contains the inquiring integer flag for error handling.
-  !!\end{description}
-  !!
-  !!The vector \MaiuscolettoBS{connect} must follow the VTK legacy standard. It is passed as \MaiuscolettoBS{assumed-shape} array
-  !!because its dimensions is related to the mesh dimensions in a complex way. Its dimensions can be calculated by the following
-  !!equation:
-  !!
-  !!\begin{equation}
-  !!dc = NC + \sum\limits_{i = 1}^{NC} {nvertex_i }
-  !!\label{eq:connectivity dimensions}
-  !!\end{equation}
-  !!
-  !!\noindent where $dc$ is connectivity vector dimension and $nvertex_i$ is the number of vertices of $i^{th}$ cell. The VTK
-  !!legacy standard for the mesh connectivity is quite obscure at least at first sight. It is more simple analizing an example.
-  !!Suppose we have a mesh composed by 2 cells, one hexahedron (8 vertices) and one pyramid with square basis (5 vertices); suppose
-  !!that the basis of pyramid is constitute by a face of the hexahedron and so the two cells share 4 vertices. The equation
-  !!\ref{eq:connectivity dimensions} gives $dc=2+8+5=15$; the connectivity vector for this mesh can be:
-  !!
-  !!\begin{boxred}{Connectivity vector example for VTK legacy standard}
-  !!\begin{verbatim}
-  !!! first cell
-  !!connect(1)  = 8  => number of vertices of 1° cell
-  !!connect(2)  = 0  => identification flag of 1° vertex of 1° cell
-  !!connect(3)  = 1  => identification flag of 2° vertex of 1° cell
-  !!connect(4)  = 2  => identification flag of 3° vertex of 1° cell
-  !!connect(5)  = 3  => identification flag of 4° vertex of 1° cell
-  !!connect(6)  = 4  => identification flag of 5° vertex of 1° cell
-  !!connect(7)  = 5  => identification flag of 6° vertex of 1° cell
-  !!connect(8)  = 6  => identification flag of 7° vertex of 1° cell
-  !!connect(9)  = 7  => identification flag of 8° vertex of 1° cell
-  !!! second cell
-  !!connect(10) = 5  => number of vertices of 2° cell
-  !!connect(11) = 0  => identification flag of 1° vertex of 2° cell
-  !!connect(12) = 1  => identification flag of 2° vertex of 2° cell
-  !!connect(13) = 2  => identification flag of 3° vertex of 2° cell
-  !!connect(14) = 3  => identification flag of 4° vertex of 2° cell
-  !!connect(15) = 8  => identification flag of 5° vertex of 2° cell
-  !!\end{verbatim}
-  !!\end{boxred}
-  !!
-  !!\noindent Note that the first 4 identification flags of pyramid vertices as the same of the first 4 identification flags of
-  !!the hexahedron because the two cells share this face. It is also important to note that the identification flags start
-  !!form $0$ value: this is impose to the VTK standard. The function VTK\_CON does not calculate the connectivity vector: it
-  !!writes the connectivity vector conforming the VTK standard, but does not calculate it. In the future release of \LIBVTKIO will
-  !!be included a function to calculate the connectivity vector.
-  !!
-  !!The vector variable \MaiuscolettoBS{tipo} must conform the VTK standard \footnote{See the file VTK-Standard at the Kitware
-  !!homepage.}. It contains the \emph{type} of each cells. For the above example this vector is:
-  !!
-  !!\begin{boxred}{Cell-Type vector example for VTK legacy standard}
-  !!\begin{verbatim}
-  !!tipo(1) = 12  => VTK hexahedron type of 1° cell
-  !!tipo(2) = 14  => VTK pyramid type of 2° cell
-  !!\end{verbatim}
-  !!\end{boxred}
-  !!
-  !!The following is an example of VTK\_CON calling:
-  !!
-  !!\begin{boxred}{VTK\_CON Calling}
-  !!\begin{verbatim}
-  !!...
-  !!integer(4), parameter:: NC=2
-  !!integer(4), parameter:: Nvertex1=8
-  !!integer(4), parameter:: Nvertex2=5
-  !!integer(4), parameter:: dc=NC+Nvertex1+Nvertex2
-  !!integer(4)::            connect(1:dc)
-  !!integer(4)::            cell_type(1:NC)
-  !!...
-  !!E_IO = VTK_CON(NC,connect,cell_type)
-  !!...
-  !!\end{verbatim}
-  !!\end{boxred}
+  integer(I4P), intent(IN):: NC              !< Number of cells.
+  integer(I4P), intent(IN):: connect(:)      !< Mesh connectivity.
+  integer(I4P), intent(IN):: cell_type(1:NC) !< VTK cell type.
+  integer(I4P)::             E_IO            !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::    s_buffer        !< Buffer string.
+  integer(I4P)::             ncon            !< Dimension of connectivity vector.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -738,44 +686,21 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_CON
 
+  !> Function  that \b must be called before saving the data related to geometric mesh; this function initializes the
+  !> saving of data variables indicating the \em type (node or cell centered) of variables that will be saved.
+  !> @note A single file can contain both cell and node centered variables; in this case the VTK_DAT function must be
+  !> called two times, before saving cell-centered variables and before saving node-centered variables.
+  !> Examples of usage are: \n
+  !> \b Node piece: E_IO=VTK_DAT(50,'node') \n
+  !> \b Cell piece: E_IO=VTK_DAT(50,'cell')
+  !> @return E_IO: integer(I4P) error flag
   function VTK_DAT(NC_NN,var_location) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!This function \MaiuscolettoBS{must} be called before saving the data related to geometric mesh. This function initializes the
-  !!saving of data variables indicating the \emph{type} of variables that will be saved.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN        ! number of cells or nodes of field
-  character(*), intent(IN):: var_location ! location of saving variables: cell for cell-centered, node for node-centered
-  integer(I4P)::             E_IO         ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  character(len=maxlen)::    s_buffer     ! buffer string
-  !!The VTK\_DAT variables have the following meaning:
-  !!
-  !!\begin{description}
-  !! \item[{\color{RoyalBlue}NC\_NN}] indicates the number of all cells or all nodes according to the value of
-  !!                                  {\color{RoyalBlue}tipo}.
-  !! \item[{\color{RoyalBlue}var\_location}] contains the location-type of variables that will be saved after VTK\_DAT. It is
-  !!                                         a scalar and cab assume the following values:
-  !! \begin{enumerateABlu}
-  !!  \item \emph{cell} (it is case insensitive) $\rightarrow$ variables will be cell-centered.
-  !!  \item \emph{node} (it is case insensitive) $\rightarrow$ variables will be node-centered.
-  !! \end{enumerateABlu}
-  !! \item[{\color{RoyalBlue}E\_IO}] contains the inquiring integer flag for error handling.
-  !!\end{description}
-  !!
-  !!Of course a single file can contain both cell and node centered variables; in this case the VTK\_DAT function must be
-  !!called two times, before saving cell-centered variables and before saving node-centered variables.
-  !!
-  !!The following is an example of VTK\_DAT calling:
-  !!
-  !!\begin{boxred}{VTK\_DAT Calling}
-  !!\begin{verbatim}
-  !!...
-  !!E_IO = VTK_DAT(50,'node')
-  !!...
-  !!\end{verbatim}
-  !!\end{boxred}
+  integer(I4P), intent(IN):: NC_NN        !< Number of cells or nodes of field.
+  character(*), intent(IN):: var_location !< Location of saving variables: cell for cell-centered, node for node-centered.
+  integer(I4P)::             E_IO         !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::    s_buffer     !< Buffer string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -801,19 +726,15 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_DAT
 
-  !(doc)INCLUDE{/home/szaghi/VTK_IO/LIB_VTK_IO/source/DOC_VTK_VAR.doc}
-  !(\doc)skippedblock
+  !> Function for saving field of scalar variable (R8P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_SCAL_R8(NC_NN,varname,var) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving field of scalar variable (R8P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN        ! number of nodes or cells
-  character(*), intent(IN):: varname      ! variable name
-  real(R8P),    intent(IN):: var(1:NC_NN) ! variable to be saved
-  integer(I4P)::             E_IO         ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
+  integer(I4P), intent(IN):: NC_NN        !< Number of nodes or cells.
+  character(*), intent(IN):: varname      !< Variable name.
+  real(R8P),    intent(IN):: var(1:NC_NN) !< Variable to be saved.
+  integer(I4P)::             E_IO         !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -832,17 +753,15 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_SCAL_R8
 
+  !> Function for saving field of scalar variable (R4P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_SCAL_R4(NC_NN,varname,var) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving field of scalar variable (R4P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN        ! number of nodes or cells
-  character(*), intent(IN):: varname      ! variable name
-  real(R4P),    intent(IN):: var(1:NC_NN) ! variable to be saved
-  integer(I4P)::             E_IO         ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
+  integer(I4P), intent(IN):: NC_NN        !< Number of nodes or cells.
+  character(*), intent(IN):: varname      !< Variable name.
+  real(R4P),    intent(IN):: var(1:NC_NN) !< Variable to be saved.
+  integer(I4P)::             E_IO         !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -861,17 +780,15 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_SCAL_R4
 
+  !> Function for saving field of scalar variable (I4P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_SCAL_I4(NC_NN,varname,var) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving field of scalar variable (I4P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN        ! number of nodes or cells
-  character(*), intent(IN):: varname      ! variable name
-  integer(I4P), intent(IN):: var(1:NC_NN) ! variable to be saved
-  integer(I4P)::             E_IO         ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
+  integer(I4P), intent(IN):: NC_NN        !< Number of nodes or cells.
+  character(*), intent(IN):: varname      !< Variable name.
+  integer(I4P), intent(IN):: var(1:NC_NN) !< Variable to be saved.
+  integer(I4P)::             E_IO         !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -890,21 +807,19 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_SCAL_I4
 
+  !> Function for saving field of vectorial variable (R8P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_VECT_R8(vec_type,NC_NN,varname,varX,varY,varZ) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving field of vectorial variable (R8P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  character(*), intent(IN):: vec_type      ! vector type: vect = generic vector , norm = normal vector
-  integer(I4P), intent(IN):: NC_NN         ! number of nodes or cells
-  character(*), intent(IN):: varname       ! variable name
-  real(R8P),    intent(IN):: varX(1:NC_NN) ! x component of vector
-  real(R8P),    intent(IN):: varY(1:NC_NN) ! y component of vector
-  real(R8P),    intent(IN):: varZ(1:NC_NN) ! z component of vector
-  integer(I4P)::             E_IO          ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I8P)::             n1            ! counter
+  character(*), intent(IN):: vec_type      !< Vector type: vect = generic vector , norm = normal vector.
+  integer(I4P), intent(IN):: NC_NN         !< Number of nodes or cells.
+  character(*), intent(IN):: varname       !< Variable name.
+  real(R8P),    intent(IN):: varX(1:NC_NN) !< X component of vector.
+  real(R8P),    intent(IN):: varY(1:NC_NN) !< Y component of vector.
+  real(R8P),    intent(IN):: varZ(1:NC_NN) !< Z component of vector.
+  integer(I4P)::             E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I8P)::             n1            !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -931,21 +846,19 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_VECT_R8
 
+  !> Function for saving field of vectorial variable (R4P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_VECT_R4(vec_type,NC_NN,varname,varX,varY,varZ) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving field of vectorial variable (R4P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  character(*), intent(IN):: vec_type      ! vector type: vect = generic vector , norm = normal vector
-  integer(I4P), intent(IN):: NC_NN         ! number of nodes or cells
-  character(*), intent(IN):: varname       ! variable name
-  real(R4P),    intent(IN):: varX(1:NC_NN) ! x component of vector
-  real(R4P),    intent(IN):: varY(1:NC_NN) ! y component of vector
-  real(R4P),    intent(IN):: varZ(1:NC_NN) ! z component of vector
-  integer(I4P)::             E_IO          ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I8P)::             n1            ! counter
+  character(*), intent(IN):: vec_type      !< Vector type: vect = generic vector , norm = normal vector.
+  integer(I4P), intent(IN):: NC_NN         !< Number of nodes or cells.
+  character(*), intent(IN):: varname       !< Variable name.
+  real(R4P),    intent(IN):: varX(1:NC_NN) !< X component of vector.
+  real(R4P),    intent(IN):: varY(1:NC_NN) !< Y component of vector.
+  real(R4P),    intent(IN):: varZ(1:NC_NN) !< Z component of vector.
+  integer(I4P)::             E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I8P)::             n1            !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -972,20 +885,18 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_VECT_R4
 
+  !> Function for saving field of vectorial variable (I4P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_VECT_I4(NC_NN,varname,varX,varY,varZ) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving field of vectorial variable (I4P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN         ! number of nodes or cells
-  character(*), intent(IN):: varname       ! variable name
-  integer(I4P), intent(IN):: varX(1:NC_NN) ! x component of vector
-  integer(I4P), intent(IN):: varY(1:NC_NN) ! y component of vector
-  integer(I4P), intent(IN):: varZ(1:NC_NN) ! z component of vector
-  integer(I4P)::             E_IO          ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I8P)::             n1            ! counter
+  integer(I4P), intent(IN):: NC_NN         !< Number of nodes or cells.
+  character(*), intent(IN):: varname       !< Variable name.
+  integer(I4P), intent(IN):: varX(1:NC_NN) !< X component of vector.
+  integer(I4P), intent(IN):: varY(1:NC_NN) !< Y component of vector.
+  integer(I4P), intent(IN):: varZ(1:NC_NN) !< Z component of vector.
+  integer(I4P)::             E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I8P)::             n1            !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1002,20 +913,18 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_VECT_I4
 
+  !> Function for saving texture variable (R8P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_TEXT_R8(NC_NN,dimm,varname,textCoo) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving texture variable (R8P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN                   ! number of nodes or cells
-  integer(I4P), intent(IN):: dimm                    ! texture dimensions
-  character(*), intent(IN):: varname                 ! variable name
-  real(R8P),    intent(IN):: textCoo(1:NC_NN,1:dimm) ! texture
-  integer(I4P)::             E_IO                    ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  character(len=maxlen)::    s_buffer                ! buffer string
-  integer(I8P)::             n1,n2                   ! counters
+  integer(I4P), intent(IN):: NC_NN                   !< Number of nodes or cells.
+  integer(I4P), intent(IN):: dimm                    !< Texture dimensions.
+  character(*), intent(IN):: varname                 !< Variable name.
+  real(R8P),    intent(IN):: textCoo(1:NC_NN,1:dimm) !< Texture.
+  integer(I4P)::             E_IO                    !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::    s_buffer                !< Buffer string.
+  integer(I8P)::             n1,n2                   !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1035,6 +944,8 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_TEXT_R8
 
+  !> Function for saving texture variable (R4P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_TEXT_R4(NC_NN,dimm,varname,textCoo) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   !! Function for saving texture variable (R4P).
@@ -1042,13 +953,13 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN                   ! number of nodes or cells
-  integer(I4P), intent(IN):: dimm                    ! texture dimensions
-  character(*), intent(IN):: varname                 ! variable name
-  real(R4P),    intent(IN):: textCoo(1:NC_NN,1:dimm) ! texture
-  integer(I4P)::             E_IO                    ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  character(len=maxlen)::    s_buffer                ! buffer string
-  integer(I8P)::             n1,n2                   ! counters
+  integer(I4P), intent(IN):: NC_NN                   !< Number of nodes or cells.
+  integer(I4P), intent(IN):: dimm                    !< Texture dimensions.
+  character(*), intent(IN):: varname                 !< Variable name.
+  real(R4P),    intent(IN):: textCoo(1:NC_NN,1:dimm) !< Texture.
+  integer(I4P)::             E_IO                    !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::    s_buffer                !< Buffer string.
+  integer(I8P)::             n1,n2                   !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1067,32 +978,15 @@ contains
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_TEXT_R4
-  !(doc/)skippedblock
 
+  !>This function is used to finalize the file opened and it has not inputs; the @libvtk manages the file unit without the
+  !>user's action.
+  !> @note An example of usage is: E_IO=VTK_END().
+  !> @return E_IO: integer(I4P) error flag
   function VTK_END() result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!This function is used to finalize the file opened and it has not inputs. The \LIBVTKIO manages the file unit without the
-  !!user's action.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P):: E_IO ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  !!The VTK\_END variables have the following meaning:
-  !!
-  !!\begin{description}
-  !! \item[{\color{RoyalBlue}E\_IO}] contains the inquiring integer flag for error handling.
-  !!\end{description}
-  !!
-  !!The following is an example of VTK\_END calling:
-  !!
-  !!\begin{boxred}{VTK\_END Calling}
-  !!\begin{verbatim}
-  !!...
-  !!E_IO = VTK_END()
-  !!...
-  !!\end{verbatim}
-  !!\end{boxred}
+  integer(I4P):: E_IO !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1101,87 +995,31 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_END
 
-  !!\chapter{VTK XML functions}
-  !!\minitoc
-  !!\vspace*{8mm}
-  !!
-  !!\lettrine[lines=2,loversize=-.1,lraise=0.2]{{\bf T}}{he} XML standard is more powerful than legacy one. It is more flexible
-  !!and free but on the other hand is more (but not so more using a library like \LIBVTKIO...) complex than legacy standard. The
-  !!output of XML functions is a well-formated XML file at least for the ascii format (in the binary format \LIBVTKIO use
-  !!raw-data format that does not produce a well formated XML file).
-  !!
-  !!The XML functions follow the same calling-convention of the legacy functions; all the \LIBVTKIO XML functions are
-  !!\MaiuscolettoBS{4-byte integer function}: the output of these functions is an integer that is $0$ if the function calling
-  !!has been done right while it is $> 0$  if some errors occur. The functions calling is the same as legacy functions:
-  !!
-  !!\begin{boxred}{Functions Calling}
-  !!\begin{verbatim}
-  !!...
-  !!integer(4):: E_IO
-  !!...
-  !!E_IO = VTK_INI_XML(....
-  !!...
-  !!\end{verbatim}
-  !!\end{boxred}
-  !!
-  !!\noindent Note that the XML functions have the same name of legacy functions with the suffix \virgo{\_XML}.
-  !!
+  !> @brief The VTK_INI_XML function is used for initializing file. This function must be the first to be called.
+  !> The XML standard is more powerful than legacy one. It is more flexible
+  !> and free but on the other hand is more (but not so more using a library like @libvtk...) complex than legacy standard. The
+  !> output of XML functions is a well-formated XML file at least for the ascii format (in the binary format @libvtk use
+  !> raw-data format that does not produce a well formated XML file).
+  !> Note that the XML functions have the same name of legacy functions with the suffix \em XML.
+  !> @note An example of usage is: E_IO = VTK_INI_XML('BINARY','XML_RECT_BINARY.vtr','RectilinearGrid',
+  !> nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2). \n
+  !> Note that the file extension is necessary in the file name. The XML standard has different extensions for each
+  !> different topologies (i.e. \em vtr for rectilinear topology). See the VTK-standard file for more information.
+  !> @return E_IO: integer(I4P) error flag
   function VTK_INI_XML(output_format,filename,mesh_topology,nx1,nx2,ny1,ny2,nz1,nz2) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The VTK\_INI\_XML function is used for initializing file. This function must be the first to be called.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  character(*), intent(IN)::           output_format ! output format: ASCII or BINARY
-  character(*), intent(IN)::           filename      ! file name
-  character(*), intent(IN)::           mesh_topology ! mesh topology
-  integer(I4P), intent(IN), optional:: nx1,nx2       ! initial and final nodes of x axis
-  integer(I4P), intent(IN), optional:: ny1,ny2       ! initial and final nodes of y axis
-  integer(I4P), intent(IN), optional:: nz1,nz2       ! initial and final nodes of z axis
-  integer(I4P)::                       E_IO          ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  character(len=maxlen)::              s_buffer      ! buffer string
-  !!The VTK\_INI\_XML variables have the following meaning:
-  !!
-  !!\begin{description}
-  !!\item[{\color{RoyalBlue}output\_format}] indicates the \virgo{format} of output file. It can assume the following values:
-  !! \begin{enumerateABlu}
-  !!  \item \emph{ascii} (it is case insensitive) $\rightarrow$ creating an ascii output file.
-  !!  \item \emph{binary} (it is case insensitive) $\rightarrow$ creating a binary (big\_endian encoding) output file.
-  !! \end{enumerateABlu}
-  !! \item[{\color{RoyalBlue}filename}] contains the name (with its path) of the output file.
-  !! \item[{\color{RoyalBlue}topology}] indicates the topology of the mesh and can assume the following values:
-  !! \begin{enumerateABlu}
-  !!  \item \emph{StructuredGrid}.
-  !!  \item \emph{RectilinearGrid}.
-  !!  \item \emph{UnstructuredGrid}.
-  !! \end{enumerateABlu}
-  !! \item[{\color{RoyalBlue}nx1,nx2}] contains the extent of X axis; $nx1$ is the initial node and $nx2$ is the final.
-  !! \item[{\color{RoyalBlue}ny1,ny2}] contains the extent of Y axis; $ny1$ is the initial node and $ny2$ is the final.
-  !! \item[{\color{RoyalBlue}nz1,nz2}] contains the extent of Z axis; $nz1$ is the initial node and $nz2$ is the final.
-  !! \item[{\color{RoyalBlue}E\_IO}] contains the inquiring integer flag for error handling.
-  !!\end{description}
-  !!
-  !!This function is quite more complex than the rispective legacy function; it needs more inputs: the XML standard needs more
-  !!informations to initialize the file.
-  !!
-  !!The following is an example of VTK\_INI\_XML calling:
-  !!
-  !!\begin{boxred}{VTK\_INI\_XML Calling}
-  !!\begin{verbatim}
-  !!...
-  !!...
-  !!E_IO = VTK_INI_XML('BINARY','XML_RECT_BINARY.vtr', &
-  !!                   'RectilinearGrid',              &
-  !!                   nx1=nx1,nx2=nx2,                &
-  !!                   ny1=ny1,ny2=ny2,                &
-  !!                   nz1=nz1,nz2=nz2)
-  !!...
-  !!\end{verbatim}
-  !!\end{boxred}
-  !!
-  !!\noindent Note that the file extension is necessary in the file name. The XML standard has different extensions for each
-  !!different topologies (i.e. \MaiuscolettoBS{.vtr} for rectilinear topology). See the VTK-standard file for more information.
+  character(*), intent(IN)::           output_format !< Output format: ASCII or BINARY.
+  character(*), intent(IN)::           filename      !< File name.
+  character(*), intent(IN)::           mesh_topology !< Mesh topology.
+  integer(I4P), intent(IN), optional:: nx1           !< Initial node of x axis.
+  integer(I4P), intent(IN), optional:: nx2           !< Final node of x axis.
+  integer(I4P), intent(IN), optional:: ny1           !< Initial node of y axis.
+  integer(I4P), intent(IN), optional:: ny2           !< Final node of y axis.
+  integer(I4P), intent(IN), optional:: nz1           !< Initial node of z axis.
+  integer(I4P), intent(IN), optional:: nz2           !< Final node of z axis.
+  integer(I4P)::                       E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer      !< Buffer string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1261,25 +1099,24 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_INI_XML
 
-  !(doc)INCLUDE{/home/szaghi/VTK_IO/LIB_VTK_IO/source/DOC_VTK_GEO_XML.doc}
-  !(\doc)skippedblock
+  !> Function for saving mesh with \b StructuredGrid topology (R8P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_GEO_XML_STRG_R8(nx1,nx2,ny1,ny2,nz1,nz2,NN,X,Y,Z) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving mesh; topology = StructuredGrid (R8P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: nx1,nx2  ! initial and final nodes of x axis
-  integer(I4P), intent(IN):: ny1,ny2  ! initial and final nodes of y axis
-  integer(I4P), intent(IN):: nz1,nz2  ! initial and final nodes of z axis
-  integer(I4P), intent(IN):: NN       ! number of all nodes
-  real(R8P),    intent(IN):: X(1:NN)  ! x coordinates
-  real(R8P),    intent(IN):: Y(1:NN)  ! y coordinates
-  real(R8P),    intent(IN):: Z(1:NN)  ! z coordinates
-  integer(I4P)::             E_IO     ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  character(len=maxlen)::    s_buffer ! buffer string
-  integer(I4P)::             n1       ! counter
+  integer(I4P), intent(IN):: nx1      !< Initial node of x axis.
+  integer(I4P), intent(IN):: nx2      !< Final node of x axis.
+  integer(I4P), intent(IN):: ny1      !< Initial node of y axis.
+  integer(I4P), intent(IN):: ny2      !< Final node of y axis.
+  integer(I4P), intent(IN):: nz1      !< Initial node of z axis.
+  integer(I4P), intent(IN):: nz2      !< Final node of z axis.
+  integer(I4P), intent(IN):: NN       !< Number of all nodes
+  real(R8P),    intent(IN):: X(1:NN)  !< X coordinates.
+  real(R8P),    intent(IN):: Y(1:NN)  !< Y coordinates.
+  real(R8P),    intent(IN):: Z(1:NN)  !< Z coordinates.
+  integer(I4P)::             E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::    s_buffer !< Buffer string.
+  integer(I4P)::             n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1318,23 +1155,24 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_GEO_XML_STRG_R8
 
+  !> Function for saving mesh with \b StructuredGrid topology (R4P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_GEO_XML_STRG_R4(nx1,nx2,ny1,ny2,nz1,nz2,NN,X,Y,Z) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving mesh; topology = StructuredGrid (R4P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: nx1,nx2  ! initial and final nodes of x axis
-  integer(I4P), intent(IN):: ny1,ny2  ! initial and final nodes of y axis
-  integer(I4P), intent(IN):: nz1,nz2  ! initial and final nodes of z axis
-  integer(I4P), intent(IN):: NN       ! number of all nodes
-  real(R4P),    intent(IN):: X(1:NN)  ! x coordinates
-  real(R4P),    intent(IN):: Y(1:NN)  ! y coordinates
-  real(R4P),    intent(IN):: Z(1:NN)  ! z coordinates
-  integer(I4P)::             E_IO     ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  character(len=maxlen)::    s_buffer ! buffer string
-  integer(I4P)::             n1       ! counter
+  integer(I4P), intent(IN):: nx1      !< Initial node of x axis.
+  integer(I4P), intent(IN):: nx2      !< Final node of x axis.
+  integer(I4P), intent(IN):: ny1      !< Initial node of y axis.
+  integer(I4P), intent(IN):: ny2      !< Final node of y axis.
+  integer(I4P), intent(IN):: nz1      !< Initial node of z axis.
+  integer(I4P), intent(IN):: nz2      !< Final node of z axis.
+  integer(I4P), intent(IN):: NN       !< Number of all nodes.
+  real(R4P),    intent(IN):: X(1:NN)  !< X coordinates.
+  real(R4P),    intent(IN):: Y(1:NN)  !< Y coordinates.
+  real(R4P),    intent(IN):: Z(1:NN)  !< Z coordinates.
+  integer(I4P)::             E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::    s_buffer !< Buffer string.
+  integer(I4P)::             n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1373,22 +1211,23 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_GEO_XML_STRG_R4
 
+  !> Function for saving mesh with \b RectilinearGrid  topology (R8P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_GEO_XML_RECT_R8(nx1,nx2,ny1,ny2,nz1,nz2,X,Y,Z) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving mesh; topology = RectilinearGrid (R8P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: nx1,nx2    ! initial and final nodes of x axis
-  integer(I4P), intent(IN):: ny1,ny2    ! initial and final nodes of y axis
-  integer(I4P), intent(IN):: nz1,nz2    ! initial and final nodes of z axis
-  real(R8P),    intent(IN):: X(nx1:nx2) ! x coordinates
-  real(R8P),    intent(IN):: Y(ny1:ny2) ! y coordinates
-  real(R8P),    intent(IN):: Z(nz1:nz2) ! z coordinates
-  integer(I4P)::             E_IO       ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  character(len=maxlen)::    s_buffer   ! buffer string
-  integer(I4P)::             n1         ! counter
+  integer(I4P), intent(IN):: nx1        !< Initial node of x axis.
+  integer(I4P), intent(IN):: nx2        !< Final node of x axis.
+  integer(I4P), intent(IN):: ny1        !< Initial node of y axis.
+  integer(I4P), intent(IN):: ny2        !< Final node of y axis.
+  integer(I4P), intent(IN):: nz1        !< Initial node of z axis.
+  integer(I4P), intent(IN):: nz2        !< Final node of z axis.
+  real(R8P),    intent(IN):: X(nx1:nx2) !< X coordinates.
+  real(R8P),    intent(IN):: Y(ny1:ny2) !< Y coordinates.
+  real(R8P),    intent(IN):: Z(nz1:nz2) !< Z coordinates.
+  integer(I4P)::             E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::    s_buffer   !< Buffer string.
+  integer(I4P)::             n1         !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1452,22 +1291,23 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_GEO_XML_RECT_R8
 
+  !> Function for saving mesh with \b RectilinearGrid  topology (R4P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_GEO_XML_RECT_R4(nx1,nx2,ny1,ny2,nz1,nz2,X,Y,Z) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving mesh; topology = RectilinearGrid (R4P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: nx1,nx2    ! initial and final nodes of x axis
-  integer(I4P), intent(IN):: ny1,ny2    ! initial and final nodes of y axis
-  integer(I4P), intent(IN):: nz1,nz2    ! initial and final nodes of z axis
-  real(R4P),    intent(IN):: X(nx1:nx2) ! x coordinates
-  real(R4P),    intent(IN):: Y(ny1:ny2) ! y coordinates
-  real(R4P),    intent(IN):: Z(nz1:nz2) ! z coordinates
-  integer(I4P)::             E_IO       ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  character(len=maxlen)::    s_buffer   ! buffer string
-  integer(I4P)::             n1         ! counter
+  integer(I4P), intent(IN):: nx1        !< Initial node of x axis.
+  integer(I4P), intent(IN):: nx2        !< Final node of x axis.
+  integer(I4P), intent(IN):: ny1        !< Initial node of y axis.
+  integer(I4P), intent(IN):: ny2        !< Final node of y axis.
+  integer(I4P), intent(IN):: nz1        !< Initial node of z axis.
+  integer(I4P), intent(IN):: nz2        !< Final node of z axis.
+  real(R4P),    intent(IN):: X(nx1:nx2) !< X coordinates.
+  real(R4P),    intent(IN):: Y(ny1:ny2) !< Y coordinates.
+  real(R4P),    intent(IN):: Z(nz1:nz2) !< Z coordinates.
+  integer(I4P)::             E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::    s_buffer   !< Buffer string.
+  integer(I4P)::             n1         !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1531,21 +1371,19 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_GEO_XML_RECT_R4
 
+  !> Function for saving mesh with \b UnstructuredGrid  topology (R8P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_GEO_XML_UNST_R8(NN,NC,X,Y,Z) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving mesh; topology = UnstructuredGrid (R8P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NN       ! number of nodes
-  integer(I4P), intent(IN):: NC       ! number of cells
-  real(R8P),    intent(IN):: X(1:NN)  ! x coordinates
-  real(R8P),    intent(IN):: Y(1:NN)  ! y coordinates
-  real(R8P),    intent(IN):: Z(1:NN)  ! z coordinates
-  integer(I4P)::             E_IO     ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  character(len=maxlen)::    s_buffer ! buffer string
-  integer(I4P)::             n1       ! counter
+  integer(I4P), intent(IN):: NN       !< Number of nodes.
+  integer(I4P), intent(IN):: NC       !< Number of cells.
+  real(R8P),    intent(IN):: X(1:NN)  !< X coordinates.
+  real(R8P),    intent(IN):: Y(1:NN)  !< Y coordinates.
+  real(R8P),    intent(IN):: Z(1:NN)  !< Z coordinates.
+  integer(I4P)::             E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::    s_buffer !< Buffer string.
+  integer(I4P)::             n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1594,21 +1432,19 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_GEO_XML_UNST_R8
 
+  !> Function for saving mesh with \b UnstructuredGrid  topology (R4P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_GEO_XML_UNST_R4(NN,NC,X,Y,Z) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving mesh; topology = UnstructuredGrid (R4P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NN       ! number of nodes
-  integer(I4P), intent(IN):: NC       ! number of cells
-  real(R4P),    intent(IN):: X(1:NN)  ! x coordinates
-  real(R4P),    intent(IN):: Y(1:NN)  ! y coordinates
-  real(R4P),    intent(IN):: Z(1:NN)  ! z coordinates
-  integer(I4P)::             E_IO     ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  character(len=maxlen)::    s_buffer ! buffer string
-  integer(I4P)::             n1       ! counter
+  integer(I4P), intent(IN):: NN       !< Number of nodes.
+  integer(I4P), intent(IN):: NC       !< Number of cells.
+  real(R4P),    intent(IN):: X(1:NN)  !< X coordinates.
+  real(R4P),    intent(IN):: Y(1:NN)  !< Y coordinates.
+  real(R4P),    intent(IN):: Z(1:NN)  !< Z coordinates.
+  integer(I4P)::             E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::    s_buffer !< Buffer string.
+  integer(I4P)::             n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1657,14 +1493,12 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_GEO_XML_UNST_R4
 
+  !> @brief Function for closing mesh block data.
+  !> @return E_IO: integer(I4P) error flag
   function VTK_GEO_XML_CLOSEP() result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for closing mesh block data.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P):: E_IO ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
+  integer(I4P):: E_IO !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1678,122 +1512,58 @@ contains
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_GEO_XML_CLOSEP
-  !(doc/)skippedblock
 
+  !> Function that \b must be used when unstructured grid is used; it saves the connectivity of the unstructured gird.
+  !> @note The vector \b connect must follow the VTK legacy standard. It is passed as \em assumed-shape array
+  !> because its dimensions is related to the mesh dimensions in a complex way. Its dimensions can be calculated by the following
+  !> equation: \f$dc = dc = \sum\limits_{i = 1}^{NC} {nvertex_i }\f$.
+  !> Note that this equation is different from the legacy one. The XML connectivity convention is quite different from the
+  !> legacy standard. As an example suppose we have a mesh composed by 2 cells, one hexahedron (8 vertices) and one pyramid with
+  !> square basis (5 vertices); suppose that the basis of pyramid is constitute by a face of the hexahedron and so the two cells
+  !> share 4 vertices. The above equation gives \f$dc=8+5=13\f$; the connectivity vector for this mesh can be: \n
+  !> first cell \n
+  !> connect(1)  = 0 identification flag of \f$1^\circ\f$ vertex of 1° cell \n
+  !> connect(2)  = 1 identification flag of \f$2^\circ\f$ vertex of 1° cell \n
+  !> connect(3)  = 2 identification flag of \f$3^\circ\f$ vertex of 1° cell \n
+  !> connect(4)  = 3 identification flag of \f$4^\circ\f$ vertex of 1° cell \n
+  !> connect(5)  = 4 identification flag of \f$5^\circ\f$ vertex of 1° cell \n
+  !> connect(6)  = 5 identification flag of \f$6^\circ\f$ vertex of 1° cell \n
+  !> connect(7)  = 6 identification flag of \f$7^\circ\f$ vertex of 1° cell \n
+  !> connect(8)  = 7 identification flag of \f$8^\circ\f$ vertex of 1° cell \n
+  !> second cell \n
+  !> connect(9 ) = 0 identification flag of \f$1^\circ\f$ vertex of 2° cell \n
+  !> connect(10) = 1 identification flag of \f$2^\circ\f$ vertex of 2° cell \n
+  !> connect(11) = 2 identification flag of \f$3^\circ\f$ vertex of 2° cell \n
+  !> connect(12) = 3 identification flag of \f$4^\circ\f$ vertex of 2° cell \n
+  !> connect(13) = 8 identification flag of \f$5^\circ\f$ vertex of 2° cell \n
+  !> Therefore this connectivity vector convention is more simple than the legacy convention, now we must create also the
+  !> \em offset vector that contains the data now missing in the \em connect vector. The offset
+  !> vector for this mesh can be: \n
+  !> first cell \n
+  !> offset(1) = 8  => summ of nodes of \f$1^\circ\f$ cell \n
+  !> second cell \n
+  !> offset(2) = 13 => summ of nodes of \f$1^\circ\f$ and \f$2^\circ\f$ cells \n
+  !> The value of every cell-offset can be calculated by the following equation: \f$offset_c=\sum\limits_{i=1}^{c}{nvertex_i}\f$
+  !> where \f$offset_c\f$ is the value of \f$c^{th}\f$ cell and \f$nvertex_i\f$ is the number of vertices of \f$i^{th}\f$ cell.
+  !> The function VTK_CON_XML does not calculate the connectivity and offset vectors: it writes the connectivity and offset
+  !> vectors conforming the VTK XML standard, but does not calculate them.
+  !> The vector variable \em cell_type must conform the VTK XML standard (see the file VTK-Standard at the
+  !> Kitware homepage) that is the same of the legacy standard. It contains the
+  !> \em type of each cells. For the above example this vector is: \n
+  !> first cell \n
+  !> cell_type(1) = 12 hexahedron type of \f$1^\circ\f$ cell \n
+  !> second cell \n
+  !> cell_type(2) = 14 pyramid type of \f$2^\circ\f$ cell \n
+  !> @return E_IO: integer(I4P) error flag
   function VTK_CON_XML(NC,connect,offset,cell_type) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!This function \MaiuscolettoBS{must} be used when unstructured grid is used. It saves the connectivity of the unstructured mesh.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC              ! number of cells
-  integer(I4P), intent(IN):: connect(:)      ! mesh connectivity
-  integer(I4P), intent(IN):: offset(1:NC)    ! cell offset
-  integer(I1P), intent(IN):: cell_type(1:NC) ! VTK cell type
-  integer(I4P)::             E_IO            ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I4P)::             n1              ! counter
-  !!The VTK\_CON\_XML variables have the following meaning:
-  !!
-  !!\begin{description}
-  !! \item[{\color{RoyalBlue}NCelle}] indicates the number of all cells.
-  !! \item[{\color{RoyalBlue}connect}] contains the connectivity of the mesh. It is a vector.
-  !! \item[{\color{RoyalBlue}offset}] contains the offset\footnote{The summ of nodes of all previous cells included the
-  !!                                  current cell.} of every cells. It is a vector of $[1:NCelle]$.
-  !! \item[{\color{RoyalBlue}tipo}] contains the type of every cells. It is a vector of $[1:NCelle]$.
-  !! \item[{\color{RoyalBlue}E\_IO}] contains the inquiring integer flag for error handling.
-  !!\end{description}
-  !!
-  !!The vector \MaiuscolettoBS{connect} must follow the VTK XML standard. It is passed as \MaiuscolettoBS{assumed-shape}
-  !!array because its dimensions is related to the mesh dimensions in a complex way. Its dimensions can be calculated by
-  !!the following equation:
-  !!
-  !!\begin{equation}
-  !!dc = \sum\limits_{i = 1}^{NCelle} {nvertex_i }
-  !!\label{eq:xml connectivity dimensions}
-  !!\end{equation}
-  !!
-  !!\noindent where $dc$ is connectivity vector dimension and $nvertex_i$ is the number of vertices of $i^{th}$ cell.
-  !!Note that this equation is different from the legacy one (eq. \ref{eq:connectivity dimensions}). The XML connectivity
-  !!convention is quite different from the legacy standard. As an example considering the same mesh of section \ref{sec:VTKCON}:
-  !!suppose we have a mesh composed by 2 cells, one hexahedron (8 vertices) and one pyramid with square basis (5 vertices);
-  !!suppose that the basis of pyramid is constitute by a face of the hexahedron and so the two cells share 4 vertices. The
-  !!equation \ref{eq:xml connectivity dimensions} gives $dc=8+5=13$; the connectivity vector for this mesh can be:
-  !!
-  !!\begin{boxred}{Connectivity vector example for VTK XML standard}
-  !!\begin{verbatim}
-  !!! first cell
-  !!connect(1)  = 0  => identification flag of 1° vertex of 1° cell
-  !!connect(2)  = 1  => identification flag of 2° vertex of 1° cell
-  !!connect(3)  = 2  => identification flag of 3° vertex of 1° cell
-  !!connect(4)  = 3  => identification flag of 4° vertex of 1° cell
-  !!connect(5)  = 4  => identification flag of 5° vertex of 1° cell
-  !!connect(6)  = 5  => identification flag of 6° vertex of 1° cell
-  !!connect(7)  = 6  => identification flag of 7° vertex of 1° cell
-  !!connect(8)  = 7  => identification flag of 8° vertex of 1° cell
-  !!! second cell
-  !!connect(9)  = 0  => identification flag of 1° vertex of 2° cell
-  !!connect(10) = 1  => identification flag of 2° vertex of 2° cell
-  !!connect(11) = 2  => identification flag of 3° vertex of 2° cell
-  !!connect(12) = 3  => identification flag of 4° vertex of 2° cell
-  !!connect(13) = 8  => identification flag of 5° vertex of 2° cell
-  !!\end{verbatim}
-  !!\end{boxred}
-  !!
-  !!Therefore this connectivity vector convention is more simple than the legacy convention, now we must create also the
-  !!\MaiuscolettoBS{offset} vector that contains the data now missing in the \MaiuscolettoBS{connect} vector. The offset
-  !!vector for this mesh can be:
-  !!
-  !!\begin{boxred}{Offset vector example for VTK XML standard}
-  !!\begin{verbatim}
-  !!! first cell
-  !!offset(1) = 8  => summ of nodes of 1° cell
-  !!! second cell
-  !!offset(2) = 13 => summ of nodes of 1° and 2° cells
-  !!\end{verbatim}
-  !!\end{boxred}
-  !!
-  !!\noindent The value of every cell-offset can be calculated by the following equation:
-  !!
-  !!\begin{equation}
-  !!offset_c = \sum\limits_{i = 1}^{c} {nvertex_i }
-  !!\label{eq:xml offset vlue}
-  !!\end{equation}
-  !!
-  !!\noindent where $offset_c$ is the value of $c^{th}$ cell and $nvertex_i$ is the number of vertices of $i^{th}$ cell.
-  !!
-  !!The function VTK\_CON\_XML does not calculate the connectivity and offset vectors: it writes the connectivity and offset
-  !!vectors conforming the VTK XML standard, but does not calculate them. In the future release of \LIBVTKIO will be included
-  !!a function to calculate the connectivity and offset vector.
-  !!
-  !!The vector variable \MaiuscolettoBS{tipo} must conform the VTK XML standard \footnote{See the file VTK-Standard at the
-  !!Kitware homepage.} that is the same of the legacy standard presented previous (sec. \ref{sec:VTKCON}). It contains the
-  !!\emph{type} of each cells. For the above example this vector is:
-  !!
-  !!\begin{boxred}{Cell-Type vector example for VTK legacy standard}
-  !!\begin{verbatim}
-  !!tipo(1) = 12  => VTK hexahedron type of 1° cell
-  !!tipo(2) = 14  => VTK pyramid type of 2° cell
-  !!\end{verbatim}
-  !!\end{boxred}
-  !!
-  !!The following is an example of VTK\_CON\_XML calling:
-  !!
-  !!\begin{boxred}{VTK\_CON\_XML Calling}
-  !!\begin{verbatim}
-  !!...
-  !!integer(4), parameter:: NCelle=2
-  !!integer(4), parameter:: Nvertex1=8
-  !!integer(4), parameter:: Nvertex2=5
-  !!integer(4), parameter:: dc=Nvertex1+Nvertex2
-  !!integer(4)::            connect(1:dc)
-  !!integer(4)::            offset(1:NCelle)
-  !!integer(4)::            tipo(1:NCelle)
-  !!...
-  !!E_IO = VTK_CON_XML(NCelle,connect,offset,tipo)
-  !!...
-  !!\end{verbatim}
-  !!\end{boxred}
+  integer(I4P), intent(IN):: NC              !< Number of cells.
+  integer(I4P), intent(IN):: connect(:)      !< Mesh connectivity.
+  integer(I4P), intent(IN):: offset(1:NC)    !< Cell offset.
+  integer(I1P), intent(IN):: cell_type(1:NC) !< VTK cell type.
+  integer(I4P)::             E_IO            !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::             n1              !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1852,52 +1622,20 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_CON_XML
 
+  !> Function  that \b must be called before saving the data related to geometric mesh; this function initializes the
+  !> saving of data variables indicating the \em type (node or cell centered) of variables that will be saved.
+  !> @note A single file can contain both cell and node centered variables; in this case the VTK_DAT_XML function must be
+  !> called two times, before saving cell-centered variables and before saving node-centered variables.
+  !> Examples of usage are: \n
+  !> \b Opening piece: E_IO=VTK_DAT_XML('node','OPEN') \n
+  !> \b Closing piece: E_IO=VTK_DAT_XML('node','CLOSE')
+  !> @return E_IO: integer(I4P) error flag
   function VTK_DAT_XML(var_location,var_block_action) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!This function \MaiuscolettoBS{must} be called before saving the data related to geometric mesh. This function initializes
-  !!the saving of data variables indicating the \emph{type} of variables that will be saved.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  character(*), intent(IN):: var_location     ! location of saving variables: CELL for cell-centered, NODE for node-centered
-  character(*), intent(IN):: var_block_action ! variables block action: OPEN or CLOSE block
-  integer(I4P)::             E_IO             ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  !!The VTK\_DAT\_XML variables have the following meaning:
-  !!
-  !!\begin{description}
-  !!\item[{\color{RoyalBlue}var\_location}] contains the location-type of variables that will be saved after VTK\_DAT.
-  !!It is a scalar and cab assume the following values:
-  !! \begin{enumerateABlu}
-  !!  \item \emph{cell} (it is case insensitive) $\rightarrow$ variables will be cell-centered.
-  !!  \item \emph{node} (it is case insensitive) $\rightarrow$ variables will be node-centered.
-  !! \end{enumerateABlu}
-  !! \item[{\color{RoyalBlue}var\_block\_action}] indicates if the block-data-variables is being opened or closed; it can
-  !!                                              assume the following values:
-  !! \begin{enumerateABlu}
-  !!  \item \emph{open}  (it is case insensitive) $\rightarrow$ block-data is being opened.
-  !!  \item \emph{close} (it is case insensitive) $\rightarrow$ block-data is being closed.
-  !! \end{enumerateABlu}
-  !! \item[{\color{RoyalBlue}E\_IO}] contains the inquiring integer flag for error handling.
-  !!\end{description}
-  !!
-  !!Of course a single file can contain both cell and node centered variables. The \MaiuscolettoBS{VTK\_DAT\_XML} must be
-  !!called two times, before saving a block-data-variables in order to open the block, and after the block-data-variables
-  !!has been saved in order to close the block. XML file can contains as many blocks as you want.
-  !!
-  !!The following is an example of VTK\_DAT\_XML calling:
-  !!
-  !!\begin{boxred}{VTK\_DAT\_XML Calling}
-  !!\begin{verbatim}
-  !!...
-  !!E_IO = VTK_DAT_XML('node','OPEN')
-  !!...
-  !!SAVE YOUR DATA WITH VTK_VAR_XML
-  !!...
-  !!E_IO = VTK_DAT_XML('node','CLOSE')
-  !!...
-  !!\end{verbatim}
-  !!\end{boxred}
+  character(*), intent(IN):: var_location     !< Location of saving variables: CELL for cell-centered, NODE for node-centered.
+  character(*), intent(IN):: var_block_action !< Variables block action: OPEN or CLOSE block.
+  integer(I4P)::             E_IO             !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1949,20 +1687,16 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_DAT_XML
 
-  !(doc)INCLUDE{/home/szaghi/VTK_IO/LIB_VTK_IO/source/DOC_VTK_VAR_XML.doc}
-  !(\doc)skippedblock
+  !> Function for saving field of scalar variable (R8P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_XML_SCAL_R8(NC_NN,varname,var) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving scalar variable (R8P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN        ! number of cells or nodes
-  character(*), intent(IN):: varname      ! variable name
-  real(R8P),    intent(IN):: var(1:NC_NN) ! variable to be saved
-  integer(I4P)::             E_IO         ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I4P)::             n1           ! counter
+  integer(I4P), intent(IN):: NC_NN        !< Number of cells or nodes.
+  character(*), intent(IN):: varname      !< Variable name.
+  real(R8P),    intent(IN):: var(1:NC_NN) !< Variable to be saved.
+  integer(I4P)::             E_IO         !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::             n1           !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1992,18 +1726,16 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_XML_SCAL_R8
 
+  !> Function for saving field of scalar variable (R4P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_XML_SCAL_R4(NC_NN,varname,var) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving scalar variable (R4P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN        ! number of cells or nodes
-  character(*), intent(IN):: varname      ! variable name
-  real(R4P),    intent(IN):: var(1:NC_NN) ! variable to be saved
-  integer(I4P)::             E_IO         ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I4P)::             n1           ! counter
+  integer(I4P), intent(IN):: NC_NN        !< Number of cells or nodes.
+  character(*), intent(IN):: varname      !< Variable name.
+  real(R4P),    intent(IN):: var(1:NC_NN) !< Variable to be saved.
+  integer(I4P)::             E_IO         !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::             n1           !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2033,18 +1765,16 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_XML_SCAL_R4
 
+  !> Function for saving field of scalar variable (I8P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_XML_SCAL_I8(NC_NN,varname,var) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving scalar variable (I8P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN        ! number of cells or nodes
-  character(*), intent(IN):: varname      ! variable name
-  integer(I8P), intent(IN):: var(1:NC_NN) ! variable to be saved
-  integer(I4P)::             E_IO         ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I4P)::             n1           ! counter
+  integer(I4P), intent(IN):: NC_NN        !< Number of cells or nodes.
+  character(*), intent(IN):: varname      !< Variable name.
+  integer(I8P), intent(IN):: var(1:NC_NN) !< Variable to be saved.
+  integer(I4P)::             E_IO         !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::             n1           !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2074,18 +1804,16 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_XML_SCAL_I8
 
+  !> Function for saving field of scalar variable (I4P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_XML_SCAL_I4(NC_NN,varname,var) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving scalar variable (I4P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN        ! number of cells or nodes
-  character(*), intent(IN):: varname      ! variable name
-  integer(I4P), intent(IN):: var(1:NC_NN) ! variable to be saved
-  integer(I4P)::             E_IO         ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I4P)::             n1           ! counter
+  integer(I4P), intent(IN):: NC_NN        !< Number of cells or nodes.
+  character(*), intent(IN):: varname      !< Variable name.
+  integer(I4P), intent(IN):: var(1:NC_NN) !< Variable to be saved.
+  integer(I4P)::             E_IO         !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::             n1           !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2115,18 +1843,16 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_XML_SCAL_I4
 
+  !> Function for saving field of scalar variable (I2P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_XML_SCAL_I2(NC_NN,varname,var) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving scalar variable (I2P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN        ! number of cells or nodes
-  character(*), intent(IN):: varname      ! variable name
-  integer(I2P), intent(IN):: var(1:NC_NN) ! variable to be saved
-  integer(I4P)::             E_IO         ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I4P)::             n1           ! counter
+  integer(I4P), intent(IN):: NC_NN        !< Number of cells or nodes.
+  character(*), intent(IN):: varname      !< Variable name.
+  integer(I2P), intent(IN):: var(1:NC_NN) !< Variable to be saved.
+  integer(I4P)::             E_IO         !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::             n1           !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2156,18 +1882,16 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_XML_SCAL_I2
 
+  !> Function for saving field of scalar variable (I1P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_XML_SCAL_I1(NC_NN,varname,var) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving scalar variable (I1P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN        ! number of cells or nodes
-  character(*), intent(IN):: varname      ! variable name
-  integer(I1P), intent(IN):: var(1:NC_NN) ! variable to be saved
-  integer(I4P)::             E_IO         ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I4P)::             n1           ! counter
+  integer(I4P), intent(IN):: NC_NN        !< Number of cells or nodes.
+  character(*), intent(IN):: varname      !< Variable name.
+  integer(I1P), intent(IN):: var(1:NC_NN) !< Variable to be saved.
+  integer(I4P)::             E_IO         !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::             n1           !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2197,20 +1921,18 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_XML_SCAL_I1
 
+  !> Function for saving field of vectorial variable (R8P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_XML_VECT_R8(NC_NN,varname,varX,varY,varZ) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving vectorial variable (R8P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN         ! number of cells or nodes
-  character(*), intent(IN):: varname       ! variable name
-  real(R8P),    intent(IN):: varX(1:NC_NN) ! x component
-  real(R8P),    intent(IN):: varY(1:NC_NN) ! y component
-  real(R8P),    intent(IN):: varZ(1:NC_NN) ! z component
-  integer(I4P)::             E_IO          ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I4P)::             n1            ! counter
+  integer(I4P), intent(IN):: NC_NN         !< Number of cells or nodes.
+  character(*), intent(IN):: varname       !< Variable name.
+  real(R8P),    intent(IN):: varX(1:NC_NN) !< X component.
+  real(R8P),    intent(IN):: varY(1:NC_NN) !< Y component.
+  real(R8P),    intent(IN):: varZ(1:NC_NN) !< Z component.
+  integer(I4P)::             E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::             n1            !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2240,20 +1962,18 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_XML_VECT_R8
 
+  !> Function for saving field of vectorial variable (R4P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_XML_VECT_R4(NC_NN,varname,varX,varY,varZ) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving vectorial variable (R4P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN         ! number of cells or nodes
-  character(*), intent(IN):: varname       ! variable name
-  real(R4P),    intent(IN):: varX(1:NC_NN) ! x component
-  real(R4P),    intent(IN):: varY(1:NC_NN) ! y component
-  real(R4P),    intent(IN):: varZ(1:NC_NN) ! z component
-  integer(I4P)::             E_IO          ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I4P)::             n1            ! counter
+  integer(I4P), intent(IN):: NC_NN         !< Number of cells or nodes.
+  character(*), intent(IN):: varname       !< Variable name.
+  real(R4P),    intent(IN):: varX(1:NC_NN) !< X component.
+  real(R4P),    intent(IN):: varY(1:NC_NN) !< Y component.
+  real(R4P),    intent(IN):: varZ(1:NC_NN) !< Z component.
+  integer(I4P)::             E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::             n1            !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2283,20 +2003,18 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_XML_VECT_R4
 
+  !> Function for saving field of vectorial variable (I8P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_XML_VECT_I8(NC_NN,varname,varX,varY,varZ) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving vectorial variable (I8P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN         ! number of cells or nodes
-  character(*), intent(IN):: varname       ! variable name
-  integer(I8P), intent(IN):: varX(1:NC_NN) ! x component
-  integer(I8P), intent(IN):: varY(1:NC_NN) ! y component
-  integer(I8P), intent(IN):: varZ(1:NC_NN) ! z component
-  integer(I4P)::             E_IO          ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I4P)::             n1            ! counter
+  integer(I4P), intent(IN):: NC_NN         !< Number of cells or nodes.
+  character(*), intent(IN):: varname       !< Variable name.
+  integer(I8P), intent(IN):: varX(1:NC_NN) !< X component.
+  integer(I8P), intent(IN):: varY(1:NC_NN) !< Y component.
+  integer(I8P), intent(IN):: varZ(1:NC_NN) !< Z component.
+  integer(I4P)::             E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::             n1            !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2326,20 +2044,18 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_XML_VECT_I8
 
+  !> Function for saving field of vectorial variable (I4P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_XML_VECT_I4(NC_NN,varname,varX,varY,varZ) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving vectorial variable (I4P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN         ! number of cells or nodes
-  character(*), intent(IN):: varname       ! variable name
-  integer(I4P), intent(IN):: varX(1:NC_NN) ! x component
-  integer(I4P), intent(IN):: varY(1:NC_NN) ! y component
-  integer(I4P), intent(IN):: varZ(1:NC_NN) ! z component
-  integer(I4P)::             E_IO          ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I4P)::             n1            ! counter
+  integer(I4P), intent(IN):: NC_NN         !< Number of cells or nodes.
+  character(*), intent(IN):: varname       !< Variable name.
+  integer(I4P), intent(IN):: varX(1:NC_NN) !< X component.
+  integer(I4P), intent(IN):: varY(1:NC_NN) !< Y component.
+  integer(I4P), intent(IN):: varZ(1:NC_NN) !< Z component.
+  integer(I4P)::             E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::             n1            !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2369,20 +2085,18 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_XML_VECT_I4
 
+  !> Function for saving field of vectorial variable (I2P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_XML_VECT_I2(NC_NN,varname,varX,varY,varZ) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving vectorial variable (I2P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN         ! number of cells or nodes
-  character(*), intent(IN):: varname       ! variable name
-  integer(I2P), intent(IN):: varX(1:NC_NN) ! x component
-  integer(I2P), intent(IN):: varY(1:NC_NN) ! y component
-  integer(I2P), intent(IN):: varZ(1:NC_NN) ! z component
-  integer(I4P)::             E_IO          ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I4P)::             n1            ! counter
+  integer(I4P), intent(IN):: NC_NN         !< Number of cells or nodes.
+  character(*), intent(IN):: varname       !< Variable name.
+  integer(I2P), intent(IN):: varX(1:NC_NN) !< X component.
+  integer(I2P), intent(IN):: varY(1:NC_NN) !< Y component.
+  integer(I2P), intent(IN):: varZ(1:NC_NN) !< Z component.
+  integer(I4P)::             E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::             n1            !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2412,20 +2126,18 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_XML_VECT_I2
 
+  !> Function for saving field of vectorial variable (I1P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_XML_VECT_I1(NC_NN,varname,varX,varY,varZ) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving vectorial variable (I1P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN         ! number of cells or nodes
-  character(*), intent(IN):: varname       ! variable name
-  integer(I1P), intent(IN):: varX(1:NC_NN) ! x component
-  integer(I1P), intent(IN):: varY(1:NC_NN) ! y component
-  integer(I1P), intent(IN):: varZ(1:NC_NN) ! z component
-  integer(I4P)::             E_IO          ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I4P)::             n1            ! counter
+  integer(I4P), intent(IN):: NC_NN         !< Number of cells or nodes.
+  character(*), intent(IN):: varname       !< Variable name.
+  integer(I1P), intent(IN):: varX(1:NC_NN) !< X component.
+  integer(I1P), intent(IN):: varY(1:NC_NN) !< Y component.
+  integer(I1P), intent(IN):: varZ(1:NC_NN) !< Z component.
+  integer(I4P)::             E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::             n1            !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2455,19 +2167,17 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_XML_VECT_I1
 
+  !> Function for saving field of list variable (R8P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_XML_LIST_R8(NC_NN,N_COL,varname,var) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving list variable (R8P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN                ! number of cells or nodes
-  integer(I4P), intent(IN):: N_COL                ! number of columns
-  character(*), intent(IN):: varname              ! variable name
-  real(R8P),    intent(IN):: var(1:NC_NN,1:N_COL) ! components
-  integer(I4P)::             E_IO                 ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I4P)::             n1,n2                ! counter
+  integer(I4P), intent(IN):: NC_NN                !< Number of cells or nodes.
+  integer(I4P), intent(IN):: N_COL                !< Number of columns.
+  character(*), intent(IN):: varname              !< Variable name.
+  real(R8P),    intent(IN):: var(1:NC_NN,1:N_COL) !< Components.
+  integer(I4P)::             E_IO                 !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::             n1,n2                !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2504,19 +2214,17 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_XML_LIST_R8
 
+  !> Function for saving field of list variable (R4P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_XML_LIST_R4(NC_NN,N_COL,varname,var) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving list variable (R4P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN                ! number of cells or nodes
-  integer(I4P), intent(IN):: N_COL                ! number of columns
-  character(*), intent(IN):: varname              ! variable name
-  real(R4P),    intent(IN):: var(1:NC_NN,1:N_COL) ! components
-  integer(I4P)::             E_IO                 ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I4P)::             n1,n2                ! counter
+  integer(I4P), intent(IN):: NC_NN                !< Number of cells or nodes.
+  integer(I4P), intent(IN):: N_COL                !< Number of columns.
+  character(*), intent(IN):: varname              !< Variable name.
+  real(R4P),    intent(IN):: var(1:NC_NN,1:N_COL) !< Components.
+  integer(I4P)::             E_IO                 !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::             n1,n2                !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2553,19 +2261,17 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_XML_LIST_R4
 
+  !> Function for saving field of list variable (I8P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_XML_LIST_I8(NC_NN,N_COL,varname,var) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving list variable (I8P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN                ! number of cells or nodes
-  integer(I4P), intent(IN):: N_COL                ! number of columns
-  character(*), intent(IN):: varname              ! variable name
-  integer(I8P), intent(IN):: var(1:NC_NN,1:N_COL) ! components
-  integer(I4P)::             E_IO                 ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I4P)::             n1,n2                ! counter
+  integer(I4P), intent(IN):: NC_NN                !< Number of cells or nodes.
+  integer(I4P), intent(IN):: N_COL                !< Number of columns.
+  character(*), intent(IN):: varname              !< Variable name.
+  integer(I8P), intent(IN):: var(1:NC_NN,1:N_COL) !< Components.
+  integer(I4P)::             E_IO                 !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::             n1,n2                !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2602,19 +2308,17 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_XML_LIST_I8
 
+  !> Function for saving field of list variable (I4P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_XML_LIST_I4(NC_NN,N_COL,varname,var) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving list variable (I4P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN):: NC_NN                ! number of cells or nodes
-  integer(I4P), intent(IN):: N_COL                ! number of columns
-  character(*), intent(IN):: varname              ! variable name
-  integer(I4P), intent(IN):: var(1:NC_NN,1:N_COL) ! components
-  integer(I4P)::             E_IO                 ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I4P)::             n1,n2                ! counter
+  integer(I4P), intent(IN):: NC_NN                !< Number of cells or nodes.
+  integer(I4P), intent(IN):: N_COL                !< Number of columns.
+  character(*), intent(IN):: varname              !< Variable name.
+  integer(I4P), intent(IN):: var(1:NC_NN,1:N_COL) !< Components.
+  integer(I4P)::             E_IO                 !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::             n1,n2                !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2651,18 +2355,17 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_XML_LIST_I4
 
+  !> Function for saving field of list variable (I2P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_XML_LIST_I2(NC_NN,N_COL,varname,var) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving list variable (I2P).
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  !---------------------------------------------------------------------------------------------------------------------------------
-  integer(I4P), intent(IN):: NC_NN                ! number of cells or nodes
-  integer(I4P), intent(IN):: N_COL                ! number of columns
-  character(*), intent(IN):: varname              ! variable name
-  integer(I2P), intent(IN):: var(1:NC_NN,1:N_COL) ! components
-  integer(I4P)::             E_IO                 ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I4P)::             n1,n2                ! counter
+  integer(I4P), intent(IN):: NC_NN                !< Number of cells or nodes.
+  integer(I4P), intent(IN):: N_COL                !< Number of columns.
+  character(*), intent(IN):: varname              !< Variable name.
+  integer(I2P), intent(IN):: var(1:NC_NN,1:N_COL) !< Components.
+  integer(I4P)::             E_IO                 !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::             n1,n2                !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2699,19 +2402,17 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction
 
+  !> Function for saving field of list variable (I1P).
+  !> @return E_IO: integer(I4P) error flag
   function VTK_VAR_XML_LIST_I1(NC_NN,N_COL,varname,var) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !! Function for saving list variable (I1P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN)::  NC_NN                ! number of cells or nodes
-  integer(I4P), intent(IN)::  N_COL                ! number of columns
-  character(*), intent(IN)::  varname              ! variable name
-  integer(I1P),  intent(IN):: var(1:NC_NN,1:N_COL) ! components
-  integer(I4P)::              E_IO                 ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  integer(I4P)::              n1,n2                ! counter
+  integer(I4P), intent(IN)::  NC_NN                !< Number of cells or nodes.
+  integer(I4P), intent(IN)::  N_COL                !< Number of columns.
+  character(*), intent(IN)::  varname              !< Variable name.
+  integer(I1P),  intent(IN):: var(1:NC_NN,1:N_COL) !< Components.
+  integer(I4P)::              E_IO                 !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::              n1,n2                !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2747,34 +2448,24 @@ contains
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_VAR_XML_LIST_I1
-!(doc/)skippedblock
 
+  !> This function is used to finalize the file opened and it has not inputs; the @libvtk manages the file unit without the
+  !> user's action.
+  !> @note An example of usage is: E_IO=VTK_END_XML().
+  !> @return E_IO: integer(I4P) error flag
   function VTK_END_XML() result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!This function is used to finalize the file opened. The \LIBVTKIO manages the file unit without the user's action.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P)::              E_IO      ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
-  character(2)::              var_type  ! var\_type = R8,R4,I8,I4,I2,I1
-  real(R8P),    allocatable:: v_R8(:)   ! R8 vector for IO in AppendData
-  real(R4P),    allocatable:: v_R4(:)   ! R4 vector for IO in AppendData
-  integer(I8P), allocatable:: v_I8(:)   ! I8 vector for IO in AppendData
-  integer(I4P), allocatable:: v_I4(:)   ! I4 vector for IO in AppendData
-  integer(I2P), allocatable:: v_I2(:)   ! I2 vector for IO in AppendData
-  integer(I1P), allocatable:: v_I1(:)   ! I1 vector for IO in AppendData
-  integer(I4P)::              N_v       ! vector dimension
-  integer(I4P)::              n1        ! counter
-  !!The following is an example of VTK\_END\_XML calling:
-  !!
-  !!\begin{boxred}{VTK\_END\_XML Calling}
-  !!\begin{verbatim}
-  !!...
-  !!E_IO = VTK_END_XML()
-  !!...
-  !!\end{verbatim}
-  !!\end{boxred}
+  integer(I4P)::              E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(2)::              var_type !< Varable type = R8,R4,I8,I4,I2,I1.
+  real(R8P),    allocatable:: v_R8(:)  !< R8 vector for IO in AppendData.
+  real(R4P),    allocatable:: v_R4(:)  !< R4 vector for IO in AppendData.
+  integer(I8P), allocatable:: v_I8(:)  !< I8 vector for IO in AppendData.
+  integer(I4P), allocatable:: v_I4(:)  !< I4 vector for IO in AppendData.
+  integer(I2P), allocatable:: v_I2(:)  !< I2 vector for IO in AppendData.
+  integer(I1P), allocatable:: v_I1(:)  !< I1 vector for IO in AppendData.
+  integer(I4P)::              N_v      !< Vector dimension
+  integer(I4P)::              n1       !< Counter
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2843,16 +2534,13 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_END_XML
 
-  ! VTM wrapper
+  !> The VTK_VTM_XML function is used for initializing a VTM (VTK Multiblocks) XML file that is a wrapper to a set of VTK XML files.
+  !> @return E_IO: integer(I4P) error flag
   function VTM_INI_XML(filename) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The VTK_VTM_XML function is used for initializing a VTM (VTK Multiblocks) XML file that is a wrapper to a set of VTK XML files.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  character(*), intent(IN):: filename ! file name
-  integer(I4P)::             E_IO     ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
+  character(*), intent(IN):: filename !< File name of output VTM file.
+  integer(I4P)::             E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2875,15 +2563,13 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTM_INI_XML
 
+  !> The VTM_BLK_XML function is used for opening or closing a block level of a VTM file.
+  !> @return E_IO: integer(I4P) error flag
   function VTM_BLK_XML(block_action) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The VTM_BLK_XML function is used for opening or closing a block level of a VTM file.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  character(*), intent(IN):: block_action ! block action: OPEN or CLOSE block
-  integer(I4P)::             E_IO         ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
+  character(*), intent(IN):: block_action !< Block action: OPEN or CLOSE block.
+  integer(I4P)::             E_IO         !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2900,17 +2586,15 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTM_BLK_XML
 
+  !> The VTM_WRF_XML function is used for saving the list of VTK XML wrapped files by the actual block of the mutliblock VTM file.
+  !> @return E_IO: integer(I4P) error flag
   function VTM_WRF_XML(wrf_dir,vtk_xml_file_list) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The VTM_WRF_XML function is used for saving the list of VTK XML wrapped files by the actual block of the mutliblock VTM file.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  character(*), intent(IN), optional:: wrf_dir              ! directory into which wrapped VTK XML are (optional)
-  character(*), intent(IN)::           vtk_xml_file_list(:) ! list of VTK XML wrapped files
-  integer(I4P)::                       E_IO                 ! Input/Output inquiring flag: 0 if IO is done, > 0 if IO is not done
-  integer(I4P)::                       f                    ! file counter
+  character(*), intent(IN), optional:: wrf_dir              !< Directory into which wrapped VTK XML are (optional).
+  character(*), intent(IN)::           vtk_xml_file_list(:) !< List of VTK XML wrapped files.
+  integer(I4P)::                       E_IO                 !< Input/Output inquiring flag: 0 if IO is done, > 0 if IO is not done.
+  integer(I4P)::                       f                    !< File counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2933,14 +2617,14 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTM_WRF_XML
 
+  !> This function is used to finalize the file opened and it has not inputs; the @libvtk manages the file unit without the
+  !> user's action.
+  !> @note An example of usage is: E_IO=VTK_END_XML().
+  !> @return E_IO: integer(I4P) error flag
   function VTM_END_XML() result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!This function is used to finalize the VTM file opened. The \LIBVTKIO manages the file unit without the user's action.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P):: E_IO      ! Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
+  integer(I4P):: E_IO !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2952,4 +2636,3 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTM_END_XML
 endmodule Lib_VTK_IO
-!(doc)INCLUDE{/home/szaghi/VTK_IO/LIB_VTK_IO/source/DOC_Footer.doc}

@@ -205,6 +205,12 @@ tar: cleanall
 	@tar czf VTK_IO.tgz VTK_IO
 	@rm -rf VTK_IO
 
+.PHONY : doc
+doc:
+	@echo -e "\033[1;31m Creating documentation\033[0m" | tee make.log
+	@mkdir -p doc
+	@doxygen doxygenconfig
+
 .PHONY : $(MKDIRS)
 $(MKDIRS):
 	@mkdir -p $@
