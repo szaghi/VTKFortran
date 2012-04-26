@@ -209,7 +209,7 @@ tar: cleanall
 doc:
 	@echo -e "\033[1;31m Creating documentation\033[0m" | tee make.log
 	@mkdir -p doc
-	@doxygen doxygenconfig
+	@doxygen .doxygenconfig
 
 .PHONY : $(MKDIRS)
 $(MKDIRS):
