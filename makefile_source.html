@@ -133,11 +133,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00050"></a>00050 VPATH = $(DSRC) $(DOBJ) $(DMOD)
 <a name="l00051"></a>00051 ifeq <span class="stringliteral">&quot;$(SHARED)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
 <a name="l00052"></a>00052   DLIB    = ./shared/
-<a name="l00053"></a>00053   MAIN    = $(DLIB)<a class="code" href="classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure fortran data in VTK format...">Lib_VTK_IO</a>.so
+<a name="l00053"></a>00053   MAIN    = $(DLIB)<a class="code" href="classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a>.so
 <a name="l00054"></a>00054   MAKELIB = $(FC) $(OPTSL) $(DOBJ)lib_vtk_io.o -o $(MAIN)
 <a name="l00055"></a>00055 <span class="keywordflow">else</span>
 <a name="l00056"></a>00056   DLIB    = ./<span class="keyword">static</span>/
-<a name="l00057"></a>00057   MAIN    = $(DLIB)<a class="code" href="classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure fortran data in VTK format...">Lib_VTK_IO</a>.a
+<a name="l00057"></a>00057   MAIN    = $(DLIB)<a class="code" href="classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a>.a
 <a name="l00058"></a>00058   MAKELIB = ar -rcs $(MAIN) $(DOBJ)lib_vtk_io.o ; ranlib $(MAIN)
 <a name="l00059"></a>00059 endif
 <a name="l00060"></a>00060 MKDIRS = $(DOBJ) $(DMOD) $(DLIB)
@@ -304,11 +304,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00221"></a>00221 <span class="preprocessor"></span>COTEXT  = -e <span class="stringliteral">&quot;\033[1;31m Compiling\033[0m\033[1m $(&lt;F)\033[0m&quot;</span>
 <a name="l00222"></a>00222 LITEXT  = -e <span class="stringliteral">&quot;\033[1;31m Linking library\033[0m\033[1m $(&lt;F)\033[0m&quot;</span>
 <a name="l00223"></a>00223 
-<a name="l00224"></a>00224 $(DOBJ)ir_precision.o : <a class="code" href="classIR__Precision.html" title="The module IR_Precision makes available some portable kind-parameters and some usefull procedures to ...">IR_Precision</a>.f90
+<a name="l00224"></a>00224 $(DOBJ)ir_precision.o : <a class="code" href="classIR__Precision.html" title="The module IR_Precision makes available some portable kind-parameters and some useful procedures to d...">IR_Precision</a>.f90
 <a name="l00225"></a>00225         @echo $(COTEXT) | tee -a make.log
 <a name="l00226"></a>00226         @$(FC) $(OPTSC) $&lt; -o $@ 1&gt;&gt; diagnostic_messages 2&gt;&gt; error_messages
 <a name="l00227"></a>00227 
-<a name="l00228"></a>00228 $(DOBJ)lib_vtk_io.o : <a class="code" href="classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure fortran data in VTK format...">Lib_VTK_IO</a>.f90 \
+<a name="l00228"></a>00228 $(DOBJ)lib_vtk_io.o : <a class="code" href="classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a>.f90 \
 <a name="l00229"></a>00229         $(DOBJ)ir_precision.o
 <a name="l00230"></a>00230         @echo $(COTEXT) | tee -a make.log
 <a name="l00231"></a>00231         @$(FC) $(OPTSC) $&lt; -o $@ 1&gt;&gt; diagnostic_messages 2&gt;&gt; error_messages
@@ -335,7 +335,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Apr 26 2012 15:00:14 for Lib_VTK_IO by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 26 2012 16:50:00 for Lib_VTK_IO by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
