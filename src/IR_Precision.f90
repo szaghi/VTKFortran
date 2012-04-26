@@ -1,9 +1,12 @@
-!> @brief     The module IR_Precision makes available some portable kind-parameters and some usefull procedures to deal with them.
+!> @brief     The module IR_Precision makes available some portable kind-parameters and some useful procedures to deal with them.
 !> @details   It also provides variables that contain the minimum and maximum representable values, smallest real values and
 !>            smallest representable differences by the running calculator.
 !>
-!>            Finally the module provides procedures to convert a string to number and viceversa, a function to check the endianism
+!>            Finally the module provides procedures to convert a string to number and vice versa, a function to check the endianism
 !>            of the running calculator and a procedure to print all the aboves values.
+!> @note The \em quadruple precision R16P could be activated defining \b r16p pre-processor flag (e.g. -Dr16p). Furthermore if
+!> compiling with Portland Group Compiler define the pre-processor flag \b pgf95 to avoid error in computing \em Zero variables:
+!> pgf compiler doesn't accept \b nearest built-in function in variables initialization.
 !> @author    Stefano Zaghi
 !> @version   1.0
 !> @date      2012-04-24
