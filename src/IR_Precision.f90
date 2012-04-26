@@ -62,10 +62,10 @@ integer, parameter:: R8P  = selected_real_kind(15,307)  !< 15  digits, range \f$
 integer, parameter:: R4P  = selected_real_kind(6,37)    !< 6   digits, range \f$[10^{-37}  , 10^{+37}   - 1]\f$.
 integer, parameter:: R_P  = R8P                         !< Default real precision.
 ! Integer precision definitions:
-integer, parameter:: I8P  = selected_int_kind(18) !< Range \f$[-2^{63},+2^{63} - 1]\f$, 19 number of digits plus sign.
-integer, parameter:: I4P  = selected_int_kind(9)  !< Range \f$[-2^{31},+2^{31} - 1]\f$, 10 number of digits plus sign.
-integer, parameter:: I2P  = selected_int_kind(4)  !< Range \f$[-2^{15},+2^{15} - 1]\f$, 5  number of digits plus sign.
-integer, parameter:: I1P  = selected_int_kind(2)  !< Range \f$[-2^{7} ,+2^{7}  - 1]\f$, 3  number of digits plus sign.
+integer, parameter:: I8P  = selected_int_kind(18) !< Range \f$[-2^{63},+2^{63} - 1]\f$, 19 digits plus sign.
+integer, parameter:: I4P  = selected_int_kind(9)  !< Range \f$[-2^{31},+2^{31} - 1]\f$, 10 digits plus sign.
+integer, parameter:: I2P  = selected_int_kind(4)  !< Range \f$[-2^{15},+2^{15} - 1]\f$, 5  digits plus sign.
+integer, parameter:: I1P  = selected_int_kind(2)  !< Range \f$[-2^{7} ,+2^{7}  - 1]\f$, 3  digits plus sign.
 integer, parameter:: I_P  = I4P                   !< Default integer precision.
 
 ! Besides the kind parameters there are also the format parameters useful for writing in a well-ascii-format numeric variables.
@@ -142,7 +142,7 @@ real(R_P),  parameter:: Zero    = ZeroR8                                        
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
-!> @brief The function str converts number (real and integer) to string;
+!> @brief Function for converting number (real and integer) to string (number to string type casting);
 !> logical, intent(\b IN), optional:: <b>\em no_sign</b> flag for do not write sign;
 !> number,  intent(\b IN)::           <b>\em n</b> input number;
 !> string,  intent(\b OUT)::          <b>\em str</b> output string.
@@ -158,7 +158,8 @@ interface str
                    str_I2P,  &
                    str_I1P
 endinterface
-!> @brief The function strz converts number (integer) to string, prefixing with the right number of zeros;
+!> @brief Function for converting number (integer) to string, prefixing with the right number of zeros (number to string type
+!>        casting with zero padding);
 !> number,  intent(\b IN), optional:: <b>\em no_zpad</b> number of padding zeros;
 !> number,  intent(\b IN)::           <b>\em n  </b> input number;
 !> string,  intent(\b OUT)::          <b>\em str</b> output string.
@@ -168,7 +169,7 @@ interface strz
                    strz_I2P,  &
                    strz_I1P
 endinterface
-!> @brief The function cton converts string to number (real or initeger);
+!> @brief Function for converting string to number (real or initeger, string to number type casting);
 !> string,  intent(\b IN)::  <b>\em str</b> input string;
 !> number,  intent(\b OUT):: <b>\em n  </b> output number.
 interface cton
@@ -185,7 +186,7 @@ interface cton
 endinterface
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
-  !>The subroutine check_endian checks the type bit ordering (big or little endian) of the running architecture; the result is
+  !>Subroutine for checking the type of bit ordering (big or little endian) of the running architecture; the result is
   !>stored into the "endian" global variable.
   !>@return endian
   subroutine check_endian()
@@ -605,7 +606,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction ctoi_I1P
 
-  !>The subroutine IR_Print print to the standard output the kind definition of reals and integers and the utility variables.
+  !>Subroutine for printing to the standard output the kind definition of reals and integers and the utility variables.
   subroutine IR_Print()
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
