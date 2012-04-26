@@ -3,7 +3,7 @@
 
 @section Introduction
 
-Lib_VTK_IO is a Fortran library to write and read data conforming the VTK_standard, useful for Paraview visualization tool. Even though there are many wrappers/porting of the VTK source code (C++ code), there is not a fortran one. This library is not a porting or a wrapper of the VTK code, but it only an exporter/importer of the VTK data format written in pure fortran language (standard Fortran 2003) that can be used by fortran coders (yes, there are still a lot of these brave coders...) without mixing fortran with C++ language. Fortran is still the best language for high performance computing for scientific purpose, like CFD computing. It is necessary a tool to deal with VTK standard directly by fortran code. The library was made to fill this empty: it is a simple fortran module able to export native fortran data into VTK data format and to import VTK data into a fortran code, both in ascii and binary file format.
+Lib_VTK_IO is a Fortran library to write and read data conforming the VTK_Standard (http://www.vtk.org/), useful for ParaView visualization tool. Even though there are many wrappers/porting of the VTK source code (C++ code), there is not a fortran one. This library is not a porting or a wrapper of the VTK code, but it only an exporter/importer of the VTK data format written in pure fortran language (standard Fortran 2003) that can be used by fortran coders (yes, there are still a lot of these brave coders...) without mixing fortran with C++ language. Fortran is still the best language for high performance computing for scientific purpose, like CFD computing. It is necessary a tool to deal with VTK standard directly by fortran code. The library was made to fill this empty: it is a simple fortran module able to export native fortran data into VTK data format and to import VTK data into a fortran code, both in ascii and binary file format.
 
 The library provides an automatic way to deal with VTK data format: all the formatting processes is nested into the library and users comunicate with it by a simple API passing only native fortran data (native fortran scalar, vector and matrix).
 
@@ -18,7 +18,7 @@ VTK, Visualization Toolkit, is an open source software that provides a powerful 
 
 Because of its good features the VTK toolkit has been used to develop a large set of open source programs. For my work the most important family of programs is the scientific visualization programs. A lot of high-quality scientific visualization tool are available on the web but for me the best is ParaView: I think that it is one of the best scintific visualization program in the world and it is open source! Paraview is based on VTK.
 
-@subsection Paraview
+@subsection ParaView
 ParaView (The ParaView homepage can be found here: http://www.paraview.org) is an open source software voted to scientific visualization and able to use the power of parallel architectures. It has an architecture client-server in order to make easy the remote visualization of very large set of data. Because it is based on VTK it inherits all VTK features. ParaView is very useful for Computational Fluid Dynamics visualizations because it provides powerful post-processing tools; it provides a very large set of importers for the most used format like Plot3D and HDF (the list is very large). It is easy to extend ParaView because it supports all the scripting language supported by VTK.
 
 */
