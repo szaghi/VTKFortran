@@ -1,0 +1,26 @@
+\form#0:$[10^{-4931}, 10^{+4931} - 1]$
+\form#1:$[10^{-307} , 10^{+307} - 1]$
+\form#2:$[10^{-37} , 10^{+37} - 1]$
+\form#3:$[-2^{63},+2^{63} - 1]$
+\form#4:$[-2^{31},+2^{31} - 1]$
+\form#5:$[-2^{15},+2^{15} - 1]$
+\form#6:$[-2^{7} ,+2^{7} - 1]$
+\form#7:$dc = NC + \sum\limits_{i = 1}^{NC} {nvertex_i }$
+\form#8:$dc$
+\form#9:$nvertex_i$
+\form#10:$i^{th}$
+\form#11:$1^\circ$
+\form#12:$2^\circ$
+\form#13:$3^\circ$
+\form#14:$4^\circ$
+\form#15:$5^\circ$
+\form#16:$6^\circ$
+\form#17:$7^\circ$
+\form#18:$8^\circ$
+\form#19:$2^\circ $
+\form#20:$dc=2+8+5=15$
+\form#21:$dc = dc = \sum\limits_{i = 1}^{NC} {nvertex_i }$
+\form#22:$dc=8+5=13$
+\form#23:$offset_c=\sum\limits_{i=1}^{c}{nvertex_i}$
+\form#24:$offset_c$
+\form#25:$c^{th}$
