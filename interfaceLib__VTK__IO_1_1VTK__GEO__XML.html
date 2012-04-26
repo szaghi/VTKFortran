@@ -128,18 +128,37 @@ Private Member Functions</h2></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Function for saving mesh with different topologies in VTK-XML standard. </p>
-<p><a class="el" href="interfaceLib__VTK__IO_1_1VTK__GEO__XML.html" title="Function for saving mesh with different topologies in VTK-XML standard.">VTK_GEO_XML</a> is an interface to 7 different functions; there are 2 functions for each of 3 topologies supported and a function for closing XML pieces. <a class="el" href="interfaceLib__VTK__IO_1_1VTK__GEO__XML.html" title="Function for saving mesh with different topologies in VTK-XML standard.">VTK_GEO_XML</a> must be called after VTK_INI_XML. It saves the mesh geometry. The inputs that must be passed change depending on the topologies choiced. Not all VTK topologies have been implemented (<em>polydata</em> topologies are absent). </p>
+<p><a class="el" href="interfaceLib__VTK__IO_1_1VTK__GEO__XML.html" title="Function for saving mesh with different topologies in VTK-XML standard.">VTK_GEO_XML</a> is an interface to 7 different functions, there are 2 functions for each of 3 topologies supported and a function for closing XML pieces: one function for mesh coordinates with R8P precision and one for mesh coordinates with R4P precision. </p>
+<dl class="remark"><dt><b>Remarks:</b></dt><dd><a class="el" href="interfaceLib__VTK__IO_1_1VTK__GEO__XML.html" title="Function for saving mesh with different topologies in VTK-XML standard.">VTK_GEO_XML</a> must be called after VTK_INI_XML. It saves the mesh geometry. The inputs that must be passed change depending on the topologies choiced. Not all VTK topologies have been implemented (<em>polydata</em> topologies are absent). </dd></dl>
 <dl class="note"><dt><b>Note:</b></dt><dd>The XML standard is more powerful than legacy. XML file can contain more than 1 mesh with its associated variables. Thus there is the necessity to close each <em>pieces</em> that compose the data-set saved in the XML file. The <a class="el" href="interfaceLib__VTK__IO_1_1VTK__GEO__XML.html" title="Function for saving mesh with different topologies in VTK-XML standard.">VTK_GEO_XML</a> called in the <em>close piece</em> format is used just to close the current piece before saving another piece or closing the file. <br/>
  Examples of usage are: <br/>
  <b>Structured</b> grid calling: <br/>
- E_IO=VTK_GEO_XML(nx1,nx2,ny1,ny2,nz1,nz2,Nn,X,Y,Z); real(I8P):: X(1:Nn),Y(1:Nn),Z(1:Nn) <br/>
- <b>Rectilinear</b> grid calling: <br/>
- E_IO=VTK_GEO_XML(nx1,nx2,ny1,ny2,nz1,nz2,X,Y,Z); real(I8P):: X(nx1:nx2),Y(ny1:ny2),Z(nz1:nz2) <br/>
- <b>Unstructured</b> grid calling: <br/>
- E_IO=VTK_GEO_XML(Nn,Nc,X,Y,Z); real(I4P):: X(1:Nn),Y(1:Nn),Z(1:Nn) <br/>
- <b>Closing</b> piece calling: 1n E_IO=VTK_GEO_XML() </dd></dl>
+ <div class="fragment"><pre class="fragment"> ...
+ <span class="keywordtype">integer(I4P)</span>:: nx1,nx2,ny1,ny2,nz1,nz2,NN
+ <span class="keywordtype">real(R8P)</span>::    X(1:NN),Y(1:NN),Z(1:NN)
+ ...
+ E_IO=<a class="code" href="interfaceLib__VTK__IO_1_1VTK__GEO__XML.html">VTK_GEO_XML</a>(nx1,nx2,ny1,ny2,nz1,nz2,Nn,X,Y,Z)
+ ... 
+</pre></div> <b>Rectilinear</b> grid calling: <br/>
+ <div class="fragment"><pre class="fragment"> ...
+ <span class="keywordtype">integer(I4P)</span>:: nx1,nx2,ny1,ny2,nz1,nz2
+ <span class="keywordtype">real(R8P)</span>::    X(nx1:nx2),Y(ny1:ny2),Z(nz1:nz2)
+ ...
+ E_IO=<a class="code" href="interfaceLib__VTK__IO_1_1VTK__GEO__XML.html">VTK_GEO_XML</a>(nx1,nx2,ny1,ny2,nz1,nz2,X,Y,Z)
+ ... 
+</pre></div> <b>Unstructured</b> grid calling: <br/>
+ <div class="fragment"><pre class="fragment"> ...
+ <span class="keywordtype">integer(I4P)</span>:: Nn,Nc
+ <span class="keywordtype">real(R8P)</span>::    X(1:Nn),Y(1:Nn),Z(1:Nn)
+ ...
+ E_IO=<a class="code" href="interfaceLib__VTK__IO_1_1VTK__GEO__XML.html">VTK_GEO_XML</a>(Nn,Nc,X,Y,Z)
+ ... 
+</pre></div> <b>Closing</b> piece calling: 1n <div class="fragment"><pre class="fragment"> ...
+ E_IO=<a class="code" href="interfaceLib__VTK__IO_1_1VTK__GEO__XML.html">VTK_GEO_XML</a>()
+ ... 
+</pre></div> </dd></dl>
 
-<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l00160">160</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l00243">243</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 </div><hr/><h2>Member Function/Subroutine Documentation</h2>
 <a class="anchor" id="a512d3746570ccb782071446721fadc54"></a><!-- doxytag: member="Lib_VTK_IO::VTK_GEO_XML::VTK_GEO_XML_CLOSEP" ref="a512d3746570ccb782071446721fadc54" args="()" -->
 <div class="memitem">
@@ -158,7 +177,7 @@ Private Member Functions</h2></td></tr>
 <p>Function for closing mesh block data. </p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 
-<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l01498">1498</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l01618">1618</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -246,7 +265,7 @@ Private Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l01296">1296</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l01416">1416</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -334,7 +353,7 @@ Private Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l01216">1216</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l01336">1336</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -429,7 +448,7 @@ Private Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l01160">1160</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l01280">1280</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -524,7 +543,7 @@ Private Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l01104">1104</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l01224">1224</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -584,7 +603,7 @@ Private Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l01437">1437</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l01557">1557</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -644,7 +663,7 @@ Private Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l01376">1376</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l01496">1496</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -669,7 +688,7 @@ Private Member Functions</h2></td></tr>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Apr 26 2012 11:52:18 for Lib_VTK_IO by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 26 2012 15:00:14 for Lib_VTK_IO by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

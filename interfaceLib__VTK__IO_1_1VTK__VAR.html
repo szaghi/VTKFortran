@@ -130,14 +130,26 @@ Private Member Functions</h2></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Function for saving data variable(s) in VTK-legacy standard. </p>
-<p><a class="el" href="interfaceLib__VTK__IO_1_1VTK__VAR.html" title="Function for saving data variable(s) in VTK-legacy standard.">VTK_VAR</a> is an interface to 8 different functions; there are 3 functions for scalar variables, 3 functions for vectorial variables and 2 function texture variables. This function saves the data variables related to geometric mesh. The inputs that must be passed change depending on the data variables type. </p>
+<p><a class="el" href="interfaceLib__VTK__IO_1_1VTK__VAR.html" title="Function for saving data variable(s) in VTK-legacy standard.">VTK_VAR</a> is an interface to 8 different functions, there are 3 functions for scalar variables, 3 functions for vectorial variables and 2 functions texture variables: scalar and vectorial data can be R8P, R4P and I4P data while texture variables can be only R8P or R4P. This function saves the data variables related to geometric mesh. </p>
+<dl class="remark"><dt><b>Remarks:</b></dt><dd>The inputs that must be passed change depending on the data variables type. </dd></dl>
 <dl class="note"><dt><b>Note:</b></dt><dd>Examples of usage are: <br/>
  <b>Scalar</b> data calling: <br/>
- E_IO=<a class="el" href="interfaceLib__VTK__IO_1_1VTK__VAR.html" title="Function for saving data variable(s) in VTK-legacy standard.">VTK_VAR</a>(NN,'Sca',var); real(I4P):: var(1:NN) <br/>
- <b>Vectorial</b> data calling: <br/>
- E_IO=<a class="el" href="interfaceLib__VTK__IO_1_1VTK__VAR.html" title="Function for saving data variable(s) in VTK-legacy standard.">VTK_VAR</a>('vect',NN,'Vec',varX,varY,varZ); real(I4P):: varX(1:NN),varY(1:NN),varZ(1:NN). </dd></dl>
+ <div class="fragment"><pre class="fragment"> ...
+ <span class="keywordtype">integer(I4P)</span>:: NN
+ <span class="keywordtype">real(R4P)</span>::    var(1:NN)
+ ...
+ E_IO=<a class="code" href="interfaceLib__VTK__IO_1_1VTK__VAR.html">VTK_VAR</a>(NN,<span class="stringliteral">&#39;Sca&#39;</span>,var)
+ ... 
+</pre></div> <b>Vectorial</b> data calling: <br/>
+ <div class="fragment"><pre class="fragment"> ...
+ <span class="keywordtype">integer(I4P)</span>:: NN
+ <span class="keywordtype">real(R4P)</span>::    varX(1:NN),varY(1:NN),varZ(1:NN)
+ ...
+ E_IO=<a class="code" href="interfaceLib__VTK__IO_1_1VTK__VAR.html">VTK_VAR</a>(<span class="stringliteral">&#39;vect&#39;</span>,NN,<span class="stringliteral">&#39;Vec&#39;</span>,varX,varY,varZ)
+ ... 
+</pre></div> </dd></dl>
 
-<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l00133">133</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l00198">198</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 </div><hr/><h2>Member Function/Subroutine Documentation</h2>
 <a class="anchor" id="adfe06b91ac1da9e50b8d6bc4c9667266"></a><!-- doxytag: member="Lib_VTK_IO::VTK_VAR::VTK_VAR_SCAL_I4" ref="adfe06b91ac1da9e50b8d6bc4c9667266" args="(NC_NN, varname, var)" -->
 <div class="memitem">
@@ -181,7 +193,7 @@ Private Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l00785">785</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l00897">897</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -227,7 +239,7 @@ Private Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l00758">758</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l00870">870</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -273,7 +285,7 @@ Private Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l00731">731</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l00843">843</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -326,7 +338,7 @@ Private Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l00949">949</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l01061">1061</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -379,7 +391,7 @@ Private Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l00918">918</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l01030">1030</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -439,7 +451,7 @@ Private Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l00890">890</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l01002">1002</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -506,7 +518,7 @@ Private Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l00851">851</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l00963">963</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -573,7 +585,7 @@ Private Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l00812">812</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="Lib__VTK__IO_8f90_source.html#l00924">924</a> of file <a class="el" href="Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -598,7 +610,7 @@ Private Member Functions</h2></td></tr>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Apr 26 2012 11:52:18 for Lib_VTK_IO by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 26 2012 15:00:14 for Lib_VTK_IO by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

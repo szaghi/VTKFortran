@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
-<title>Lib_VTK_IO: Data Fields</title>
+<title>Lib_VTK_IO: Bug List</title>
 
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
@@ -47,8 +47,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li class="current"><a href="annotated.html"><span>Data&#160;Types&#160;List</span></a></li>
+      <li class="current"><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="annotated.html"><span>Data&#160;Types&#160;List</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
       <li>
@@ -69,57 +69,26 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       </li>
     </ul>
   </div>
-  <div id="navrow2" class="tabs2">
-    <ul class="tablist">
-      <li><a href="annotated.html"><span>Data&#160;Types&#160;List</span></a></li>
-      <li class="current"><a href="functions.html"><span>Data&#160;Fields</span></a></li>
-    </ul>
-  </div>
-  <div id="navrow3" class="tabs2">
-    <ul class="tablist">
-      <li class="current"><a href="functions.html"><span>All</span></a></li>
-      <li><a href="functions_func.html"><span>Functions/Subroutines</span></a></li>
-      <li><a href="functions_vars.html"><span>Variables</span></a></li>
-    </ul>
-  </div>
-  <div id="navrow4" class="tabs3">
-    <ul class="tablist">
-      <li><a href="functions.html#index_b"><span>b</span></a></li>
-      <li><a href="functions_0x63.html#index_c"><span>c</span></a></li>
-      <li><a href="functions_0x64.html#index_d"><span>d</span></a></li>
-      <li><a href="functions_0x65.html#index_e"><span>e</span></a></li>
-      <li><a href="functions_0x66.html#index_f"><span>f</span></a></li>
-      <li><a href="functions_0x67.html#index_g"><span>g</span></a></li>
-      <li><a href="functions_0x69.html#index_i"><span>i</span></a></li>
-      <li><a href="functions_0x6d.html#index_m"><span>m</span></a></li>
-      <li><a href="functions_0x6e.html#index_n"><span>n</span></a></li>
-      <li><a href="functions_0x72.html#index_r"><span>r</span></a></li>
-      <li><a href="functions_0x73.html#index_s"><span>s</span></a></li>
-      <li><a href="functions_0x74.html#index_t"><span>t</span></a></li>
-      <li><a href="functions_0x75.html#index_u"><span>u</span></a></li>
-      <li><a href="functions_0x76.html#index_v"><span>v</span></a></li>
-      <li class="current"><a href="functions_0x7a.html#index_z"><span>z</span></a></li>
-    </ul>
-  </div>
 </div>
+<div class="header">
+  <div class="headertitle">
+<div class="title">Bug List </div>  </div>
+</div><!--header-->
 <div class="contents">
-<div class="textblock">Here is a list of all data types members with links to the data types they belong to:</div>
-
-<h3><a class="anchor" id="index_z"></a>- z -</h3><ul>
-<li>Zero
-: <a class="el" href="classIR__Precision.html#a4c713505f370a02b4c258bf3ff43f3a8">IR_Precision</a>
-</li>
-<li>ZeroR16
-: <a class="el" href="classIR__Precision.html#a3e984432371f11f97536232ea36414c3">IR_Precision</a>
-</li>
-<li>ZeroR4
-: <a class="el" href="classIR__Precision.html#a7772f2f50d73b24a09029ef057ba5d79">IR_Precision</a>
-</li>
-<li>ZeroR8
-: <a class="el" href="classIR__Precision.html#a7edd583f5d1436e94b5c3017d80e865d">IR_Precision</a>
-</li>
-</ul>
-</div><!-- contents -->
+<div class="textblock"><dl class="reflist">
+<dt><a class="anchor" id="_bug000001"></a>Type <a class="el" href="classLib__VTK__IO.html">Lib_VTK_IO</a>  </dt>
+<dd><p class="startdd"><b>Array-Reshape</b>: <br/>
+ Fortran allows automatic reshape of arrays, e.g. 2D array can be automatically (in the function calling) transformed to a 1D array with the same number of element of 2D array. The use of dynamic dispatching for <em><a class="el" href="classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure fortran data in VTK format...">Lib_VTK_IO</a></em> functions by means of generic interfaces had disable this feature: dynamic dispatching use the array-shape information to dectet, at compile-time, the correct function to be called inside the generic interface functions. Thus automatic reshaping of arrays at calling function phase is not allowed. <br/>
+ Instead an explicit reshape can be used by means of the Fortran built-in function <em>reshape</em>. As an example considering a call to the generic function <em>VTK_VAR_XML</em> an explicit array rashape could be: <br/>
+ <br/>
+ E_IO = VTK_VAR_XML(NC_NN=nn,varname='u',var=<b>reshape</b>(u(ni1:ni2,nj1:nj2,nk1:nk2),(/nn/))) <br/>
+ <br/>
+ where built in function <em>reshape</em> has explicitely being used in the calling to VTK_VAR_XML. </p>
+<p class="enddd"><b>XML-Efficiency</b>: <br/>
+ This is not properly a bug. There is an inefficiency when saving XML binary file. To write XML binary <em><a class="el" href="classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure fortran data in VTK format...">Lib_VTK_IO</a></em> uses a temporary scratch file to save binary data while saving all formatting data to the final XML file. Only when all XML formatting data have been written the scratch file is rewinded and the binary data is saved in the final tag of XML file as <b>raw</b> data. This approach is not efficient. </p>
+</dd>
+</dl>
+</div></div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
