@@ -1,4 +1,4 @@
-!> @brief     The module IR_Precision makes available some portable kind-parameters and some useful procedures to deal with them.
+!> @brief     Module IR_Precision makes available some portable kind-parameters and some useful procedures to deal with them.
 !> @details   It also provides variables that contain the minimum and maximum representable values, smallest real values and
 !>            smallest representable differences by the running calculator.
 !>
@@ -13,7 +13,9 @@
 !> @copyright GNU Public License version 3.
 !> @todo \b g95_test: Test g95 compiler
 !> @param[out] endianL,endianB,endian
+#ifdef r16p
 !> @param[out] R16P, FR16P, DR16P, MinR16P, MaxR16P, smallR16P, ZeroR16
+#endif
 !> @param[out] R8P,  FR8P,  DR8P,  MinR8P,  MaxR8P,  smallR8P,  ZeroR8
 !> @param[out] R4P,  FR4P,  DR4P,  MinR4P,  MaxR4P,  smallR4P,  ZeroR4
 !> @param[out] R_P,  FR_P,  DR_P,  MinR_P,  MaxR_P,  smallR_P,  Zero
@@ -128,24 +130,23 @@ integer(I_P), parameter:: MinI_P = MinI4P,             MaxI_P = MaxI4P      !< M
 
 ! Smallest real representable difference by the running calculator.
 #ifdef r16p
-real(R16P), parameter:: ZeroR16 = nearest(1._R16P,1._R16P) - nearest(1._R16P,-1._R16P) !< Smallest representable difference of
-                                                                                       !< kind=R16P variable.
+real(R16P), parameter:: ZeroR16 = nearest(1._R16P, 1._R16P) - &
+                                  nearest(1._R16P,-1._R16P) !< Smallest representable difference of kind=R16P variable.
 #endif
 #ifdef pgf95
 real(R8P),  parameter:: ZeroR8  = 0._R8P
 real(R4P),  parameter:: ZeroR4  = 0._R4P
 #else
-real(R8P),  parameter:: ZeroR8  = nearest(1._R8P,1._R8P) - nearest(1._R8P,-1._R8P) !< Smallest representable difference of
-                                                                                   !< kind=R8P variable.
-real(R4P),  parameter:: ZeroR4  = nearest(1._R4P,1._R4P) - nearest(1._R4P,-1._R4P) !< Smallest representable difference of
-                                                                                   !< kind=R4P variable.
+real(R8P),  parameter:: ZeroR8  = nearest(1._R8P, 1._R8P) - &
+                                  nearest(1._R8P,-1._R8P) !< Smallest representable difference of kind=R8P variable.
+real(R4P),  parameter:: ZeroR4  = nearest(1._R4P, 1._R4P) - &
+                                  nearest(1._R4P,-1._R4P) !< Smallest representable difference of kind=R4P variable.
 #endif
-real(R_P),  parameter:: Zero    = ZeroR8                                           !< Smallest representable difference of
-                                                                                   !< kind=R_P variable.
+real(R_P),  parameter:: Zero    = ZeroR8                  !< Smallest representable difference of kind=R_P variable.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
-!> @brief Function for converting number (real and integer) to string (number to string type casting);
+!> @brief Function for converting number, real and integer, to string (number to string type casting);
 !> logical, intent(\b IN), optional:: <b>\em no_sign</b> flag for do not write sign;
 !> number,  intent(\b IN)::           <b>\em n</b> input number;
 !> string,  intent(\b OUT)::          <b>\em str</b> output string.
@@ -161,7 +162,7 @@ interface str
                    str_I2P,  &
                    str_I1P
 endinterface
-!> @brief Function for converting number (integer) to string, prefixing with the right number of zeros (number to string type
+!> @brief Function for converting number, integer, to string, prefixing with the right number of zeros (number to string type
 !>        casting with zero padding);
 !> number,  intent(\b IN), optional:: <b>\em no_zpad</b> number of padding zeros;
 !> number,  intent(\b IN)::           <b>\em n  </b> input number;
@@ -172,7 +173,7 @@ interface strz
                    strz_I2P,  &
                    strz_I1P
 endinterface
-!> @brief Function for converting string to number (real or initeger, string to number type casting);
+!> @brief Function for converting string to number, real or initeger, (string to number type casting);
 !> string,  intent(\b IN)::  <b>\em str</b> input string;
 !> number,  intent(\b OUT):: <b>\em n  </b> output number.
 interface cton
@@ -212,7 +213,7 @@ contains
 #ifdef r16p
   elemental function str_R16P(no_sign,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function str_R16P converts real to string. This function achieves casting of real to string.
+  ! The function str_R16P converts real to string. This function achieves casting of real to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -233,7 +234,7 @@ contains
 
   elemental function str_R8P(no_sign,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function str_R8P converts real to string. This function achieves casting of real to string.
+  ! The function str_R8P converts real to string. This function achieves casting of real to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -253,7 +254,7 @@ contains
 
   elemental function str_R4P(no_sign,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function str_R4P converts real to string. This function achieves casting of real to string.
+  ! The function str_R4P converts real to string. This function achieves casting of real to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -273,7 +274,7 @@ contains
 
   elemental function str_I8P(no_sign,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function str_I8P converts integer to string. This function achieves casting of integer to string.
+  ! The function str_I8P converts integer to string. This function achieves casting of integer to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -294,7 +295,7 @@ contains
 
   elemental function str_I4P(no_sign,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function str_I4P converts integer to string. This function achieves casting of integer to string.
+  ! The function str_I4P converts integer to string. This function achieves casting of integer to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -315,7 +316,7 @@ contains
 
   elemental function str_I2P(no_sign,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function str_I2P converts integer to string. This function achieves casting of integer to string.
+  ! The function str_I2P converts integer to string. This function achieves casting of integer to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -336,7 +337,7 @@ contains
 
   elemental function str_I1P(no_sign,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function str_I1P converts integer to string. This function achieves casting of integer to string.
+  ! The function str_I1P converts integer to string. This function achieves casting of integer to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -357,8 +358,8 @@ contains
 
   elemental function strz_I8P(nz_pad,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function strz_I8P converts integer to string, prefixing with the right number of zeros. This function achieves casting of
-  !!integer to string.
+  ! The function strz_I8P converts integer to string, prefixing with the right number of zeros. This function achieves casting of
+  ! integer to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -378,8 +379,8 @@ contains
 
   elemental function strz_I4P(nz_pad,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function strz_I4P converts integer to string, prefixing with the right number of zeros. This function achieves casting of
-  !!integer to string.
+  ! The function strz_I4P converts integer to string, prefixing with the right number of zeros. This function achieves casting of
+  ! integer to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -399,8 +400,8 @@ contains
 
   elemental function strz_I2P(nz_pad,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function strz_I2P converts integer to string, prefixing with the right number of zeros. This function achieves casting of
-  !!integer to string.
+  ! The function strz_I2P converts integer to string, prefixing with the right number of zeros. This function achieves casting of
+  ! integer to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -420,8 +421,8 @@ contains
 
   elemental function strz_I1P(nz_pad,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function strz_I1P converts integer to string, prefixing with the right number of zeros. This function achieves casting of
-  !!integer to string.
+  ! The function strz_I1P converts integer to string, prefixing with the right number of zeros. This function achieves casting of
+  ! integer to string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -442,7 +443,7 @@ contains
 #ifdef r16p
   function ctor_R16P(str,knd) result(n)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function ctor_R16P converts string to real. This function achieves casting of string to real.
+  ! The function ctor_R16P converts string to real. This function achieves casting of string to real.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -467,7 +468,7 @@ contains
 
   function ctor_R8P(str,knd) result(n)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function ctor_R8P converts string to real. This function achieves casting of string to real.
+  ! The function ctor_R8P converts string to real. This function achieves casting of string to real.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -491,7 +492,7 @@ contains
 
   function ctor_R4P(str,knd) result(n)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function ctor_R4P converts string to real. This function achieves casting of string to real.
+  ! The function ctor_R4P converts string to real. This function achieves casting of string to real.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -515,7 +516,7 @@ contains
 
   function ctoi_I8P(str,knd) result(n)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function ctoi_I8P converts string to integer. This function achieves casting of string to integer.
+  ! The function ctoi_I8P converts string to integer. This function achieves casting of string to integer.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -539,7 +540,7 @@ contains
 
   function ctoi_I4P(str,knd) result(n)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function ctoi_I4P converts string to integer. This function achieves casting of string to integer.
+  ! The function ctoi_I4P converts string to integer. This function achieves casting of string to integer.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -563,7 +564,7 @@ contains
 
   function ctoi_I2P(str,knd) result(n)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function ctoi_I2P converts string to integer. This function achieves casting of string to integer.
+  ! The function ctoi_I2P converts string to integer. This function achieves casting of string to integer.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -587,7 +588,7 @@ contains
 
   function ctoi_I1P(str,knd) result(n)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !!The function ctoi_I1P converts string to integer. This function achieves casting of string to integer.
+  ! The function ctoi_I1P converts string to integer. This function achieves casting of string to integer.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
