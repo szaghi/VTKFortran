@@ -6,7 +6,30 @@ Lib\_VTK\_IO is a Fortran library to write and read data conforming the [VTK sta
 
 Even though there are many wrappers/porting of the VTK source code (C++ code), there is not a Fortran one. This library is not a porting or a wrapper of the VTK code, but it is only an exporter/importer of VTK data format written in pure Fortran language (standard Fortran 2003) that can be used by Fortran coders (yes, there are still a lot of these brave coders...) without mixing Fortran with C++ language.
 
-The library is still in developing and testing, this is first usable release, but there are not all the features of the stable release (the importer is totally absent and the exporter is not complete). Surely there are a lot of bugs and the programming style is not the best, but the exporter is usable for the 90\% of the VTK data format.
+
+The library is still in developing and testing, this is first usable release, but there are not all the features of the stable release (the importer is totally absent and the exporter is not complete). Surely there are a lot of bugs and the programming style is not the best, but the exporters are far-complete.
+
+The supported VTK features are:
+* Exporters:
+  * Legacy standard:
+    * Structured Points;
+    * Structured Grid;
+    * Unstructured Grid;
+    * Polydata (__missing__);
+    * Rectilinear Grid;
+    * Field (__missing__);
+  * XML standard:
+    * Image Data (__missing__);
+    * Polydata (__missing__);
+    * Rectilinear Grid;
+    * Structured Grid;
+    * Unstructured Grid;
+    * Parallel Image Data (__missing__);
+    * Parallel Polydata (__missing__);
+    * Parallel Rectilinear Grid (__missing__);
+    * Parallel Structured Grid (__missing__);
+    * Parallel Unstructured Grid (__missing__);
+* Importers are __missing__.
 
 Copyrights
 ----------
