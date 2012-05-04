@@ -14,7 +14,29 @@
 !>
 !>          The library is still in developing and testing, this is first usable release, but there are not all the features of
 !>          the stable release (the importer is totally absent and the exporter is not complete). Surely there are a lot of bugs
-!>          and the programming style is not the best, but the exporter is usable for the 90\% of the VTK data format.
+!>          and the programming style is not the best, but the exporters are far-complete.
+!>
+!>          The supported VTK features are:
+!>          - Exporters:
+!>            - Legacy standard:
+!>              - Structured Points;
+!>              - Structured Grid;
+!>              - Unstructured Grid;
+!>              - Polydata (\b missing);
+!>              - Rectilinear Grid;
+!>              - Field (\b missing);
+!>            - XML standard:
+!>              - Image Data (\b missing);
+!>              - Polydata (\b missing);
+!>              - Rectilinear Grid;
+!>              - Structured Grid;
+!>              - Unstructured Grid;
+!>              - Parallel Image Data (\b missing);
+!>              - Parallel Polydata (\b missing);
+!>              - Parallel Rectilinear Grid (\b missing);
+!>              - Parallel Structured Grid (\b missing);
+!>              - Parallel Unstructured Grid (\b missing);
+!>          - Importers are \b missing.
 !>
 !>          The library is an open source project, it is distributed under the GPL v3. Anyone is interest to use, to develop or
 !>          to contribute to Lib_VTK_IO is welcome.
