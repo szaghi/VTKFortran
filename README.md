@@ -11,24 +11,24 @@ The library is still in developing and testing, this is first usable release, bu
 
 The supported VTK features are:
 * Exporters:
-  * Legacy standard:
-    * Structured Points;
-    * Structured Grid;
-    * Unstructured Grid;
-    * Polydata (__missing__);
-    * Rectilinear Grid;
-    * Field (__missing__);
-  * XML standard:
-    * Image Data (__missing__);
-    * Polydata (__missing__);
-    * Rectilinear Grid;
-    * Structured Grid;
-    * Unstructured Grid;
-    * Parallel Image Data (__missing__);
-    * Parallel Polydata (__missing__);
-    * Parallel Rectilinear Grid (__missing__);
-    * Parallel Structured Grid (__missing__);
-    * Parallel Unstructured Grid (__missing__);
+    - Legacy standard:
+        * Structured Points;
+        * Structured Grid;
+        * Unstructured Grid;
+        * Polydata (__missing__);
+        * Rectilinear Grid;
+        * Field (__missing__);
+    - XML standard:
+        * Image Data (__missing__);
+        * Polydata (__missing__);
+        * Rectilinear Grid;
+        * Structured Grid;
+        * Unstructured Grid;
+        * Parallel Image Data (__missing__);
+        * Parallel Polydata (__missing__);
+        * Parallel Rectilinear Grid (__missing__);
+        * Parallel Structured Grid (__missing__);
+        * Parallel Unstructured Grid (__missing__);
 * Importers are __missing__.
 
 Copyrights
