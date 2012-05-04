@@ -94,11 +94,44 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title"><a class="el" href="d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a> </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h2><a class="anchor" id="Introduction"></a>
+<div class="textblock"><dl class="author"><dt><b>Author:</b></dt><dd>Stefano Zaghi </dd></dl>
+<dl class="version"><dt><b>Version:</b></dt><dd>1.0 </dd></dl>
+<dl class="date"><dt><b>Date:</b></dt><dd>2012-04-24 </dd></dl>
+<dl class="copyright"><dt><b>Copyright:</b></dt><dd>GNU Public License version 3.</dd></dl>
+<h2><a class="anchor" id="Introduction"></a>
 Introduction</h2>
 <p><a class="el" href="d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a> is a Fortran library to write and read data conforming the VTK_Standard (<a href="http://www.vtk.org/">http://www.vtk.org/</a>), useful for ParaView visualization tool. Even though there are many wrappers/porting of the VTK source code (C++ code), there is not a Fortran one. This library is not a porting or a wrapper of the VTK code, but it only an exporter/importer of the VTK data format written in pure Fortran language (standard Fortran 2003) that can be used by Fortran coders (yes, there are still a lot of these brave coders...) without mixing Fortran with C++ language. Fortran is still the best language for high performance computing for scientific purpose, like CFD computing. It is necessary a tool to deal with VTK standard directly by Fortran code. The library was made to fill this empty: it is a simple Fortran module able to export native Fortran data into VTK data format and to import VTK data into a Fortran code, both in ascii and binary file format.</p>
 <p>The library provides an automatic way to deal with VTK data format: all the formatting processes is nested into the library and users communicate with it by a simple API passing only native Fortran data (native Fortran scalar, vector and matrix).</p>
-<p>The library is still in developing and testing, this is first usable release, but there are not all the features of the stable release (the importer is totally absent and the exporter is not complete). Surely there are a lot of bugs and the programming style is not the best, but the exporter is usable for the 90% of the VTK data format.</p>
+<p>The library is still in developing and testing, this is first usable release, but there are not all the features of the stable release (the importer is totally absent and the exporter is not complete). Surely there are a lot of bugs and the programming style is not the best, but the exporters are far-complete.</p>
+<p>The supported VTK features are:</p>
+<ul>
+<li>Exporters:<ul>
+<li>Legacy standard:<ul>
+<li>Structured Points;</li>
+<li>Structured Grid;</li>
+<li>Unstructured Grid;</li>
+<li>Polydata (<b>missing</b>);</li>
+<li>Rectilinear Grid;</li>
+<li>Field (<b>missing</b>);</li>
+</ul>
+</li>
+<li>XML standard:<ul>
+<li>Image Data (<b>missing</b>);</li>
+<li>Polydata (<b>missing</b>);</li>
+<li>Rectilinear Grid;</li>
+<li>Structured Grid;</li>
+<li>Unstructured Grid;</li>
+<li>Parallel Image Data (<b>missing</b>);</li>
+<li>Parallel Polydata (<b>missing</b>);</li>
+<li>Parallel Rectilinear Grid (<b>missing</b>);</li>
+<li>Parallel Structured Grid (<b>missing</b>);</li>
+<li>Parallel Unstructured Grid (<b>missing</b>);</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Importers are <b>missing</b>.</li>
+</ul>
 <h3><a class="anchor" id="VTK_Standard"></a>
 VTK_Standard</h3>
 <p>VTK, Visualization Toolkit, is an open source software that provides a powerful framework for the computer graphic, for the images processing and for 3D rendering. It is widely used in the world and so it has a very large community of users; besides the Kitware (The Kitware homepage can be found here: <a href="http://public.kitware.com">http://public.kitware.com</a>) company provides professional support. The toolkit is written in C++ and a lot of porting/wrappers for Tcl/Tk, Java and Python are provided; unlucky there aren't wrappers for Fortran.</p>
@@ -131,7 +164,7 @@ Source-Code</h2>
   <div id="nav-path" class="navpath">
     <ul>
 
-    <li class="footer">Generated on Thu May 3 2012 18:55:04 for Lib_VTK_IO by
+    <li class="footer">Generated on Fri May 4 2012 14:01:25 for Lib_VTK_IO by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>
