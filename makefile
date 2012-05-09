@@ -207,7 +207,7 @@ tar: cleanall
 
 .PHONY : doc
 doc:
-	@echo -e "\033[1;31m Creating documentation\033[0m" | tee make.log
+	@echo -e "\033[1;31m Building documentation\033[0m" | tee make.log
 	@mkdir -p doc
 	@doxygen .doxygenconfig
 

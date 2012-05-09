@@ -1,3 +1,29 @@
+!> @addtogroup GlobalVarPar Global Variables and Parameters
+!> List of global variables and parameters.
+!> @addtogroup Interface Interfaces
+!> List of explicitly defined interface.
+!> @addtogroup Library Modules Libraries
+!> List of modules containing libraries of procedures.
+!> @addtogroup PublicProcedure Public Procedures
+!> List of public procedures.
+!> @addtogroup PrivateProcedure Private Procedures
+!> List of private procedures.
+
+!> @ingroup GlobalVarPar
+!> @{
+!> @defgroup IR_Precision IR_Precision
+!> @}
+
+!> @ingroup PublicProcedure
+!> @{
+!> @defgroup IR_PrecisionPublicProcedure IR_Precision
+!> @}
+
+!> @ingroup PrivateProcedure
+!> @{
+!> @defgroup IR_PrecisionPrivateProcedure IR_Precision
+!> @}
+
 !> @brief     Module IR_Precision makes available some portable kind-parameters and some useful procedures to deal with them.
 !> @details   It also provides variables that contain the minimum and maximum representable values, smallest real values and
 !>            smallest representable differences by the running calculator.
@@ -12,21 +38,7 @@
 !> @date      2012-04-24
 !> @copyright GNU Public License version 3.
 !> @todo \b g95_test: Test g95 compiler
-!> @param[out] endianL,endianB,endian
-#ifdef r16p
-!> @param[out] R16P, FR16P, DR16P, MinR16P, MaxR16P, smallR16P, ZeroR16
-#endif
-!> @param[out] R8P,  FR8P,  DR8P,  MinR8P,  MaxR8P,  smallR8P,  ZeroR8
-!> @param[out] R4P,  FR4P,  DR4P,  MinR4P,  MaxR4P,  smallR4P,  ZeroR4
-!> @param[out] R_P,  FR_P,  DR_P,  MinR_P,  MaxR_P,  smallR_P,  Zero
-!> @param[out] I8P,  FI8P,  DI8P,  MinI8P,  MaxI8P
-!> @param[out] I4P,  FI4P,  DI4P,  MinI4P,  MaxI4P
-!> @param[out] I2P,  FI2P,  DI2P,  MinI2P,  MaxI2P
-!> @param[out] I1P,  FI1P,  DI1P,  MinI1P,  MaxI1P
-!> @param[out] I_P,  FI_P,  DI_P,  MinI_P,  MaxI_P
-!> @param[out] check_endian
-!> @param[out] str, strz, cton
-!> @param[out] IR_Print
+!> @ingroup Library
 module IR_Precision
 !-----------------------------------------------------------------------------------------------------------------------------------
 USE, intrinsic:: ISO_FORTRAN_ENV, only: stdout => OUTPUT_UNIT, stderr => ERROR_UNIT ! Standard output/error logical units.
@@ -53,6 +65,8 @@ public:: IR_Print
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
+!> @ingroup IR_Precision
+!> @{
 ! Bit ordering of the running architecture:
 integer, parameter:: endianL = 1       !< Little endian parameter.
 integer, parameter:: endianB = 0       !< Big endian parameter.
@@ -143,6 +157,7 @@ real(R4P),  parameter:: ZeroR4  = nearest(1._R4P, 1._R4P) - &
                                   nearest(1._R4P,-1._R4P) !< Smallest representable difference of kind=R4P variable.
 #endif
 real(R_P),  parameter:: Zero    = ZeroR8                  !< Smallest representable difference of kind=R_P variable.
+!> @}
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -150,6 +165,7 @@ real(R_P),  parameter:: Zero    = ZeroR8                  !< Smallest representa
 !> logical, intent(\b IN), optional:: <b>\em no_sign</b> flag for do not write sign;
 !> number,  intent(\b IN)::           <b>\em n</b> input number;
 !> string,  intent(\b OUT)::          <b>\em str</b> output string.
+!> @ingroup Interface,IR_PrecisionPublicProcedure
 interface str
   module procedure           &
 #ifdef r16p
@@ -167,6 +183,7 @@ endinterface
 !> number,  intent(\b IN), optional:: <b>\em no_zpad</b> number of padding zeros;
 !> number,  intent(\b IN)::           <b>\em n  </b> input number;
 !> string,  intent(\b OUT)::          <b>\em str</b> output string.
+!> @ingroup Interface,IR_PrecisionPublicProcedure
 interface strz
   module procedure strz_I8P,  &
                    strz_I4P,  &
@@ -176,6 +193,7 @@ endinterface
 !> @brief Function for converting string to number, real or initeger, (string to number type casting);
 !> string,  intent(\b IN)::  <b>\em str</b> input string;
 !> number,  intent(\b OUT):: <b>\em n  </b> output number.
+!> @ingroup Interface,IR_PrecisionPublicProcedure
 interface cton
   module procedure            &
 #ifdef r16p
@@ -193,6 +211,7 @@ contains
   !>Subroutine for checking the type of bit ordering (big or little endian) of the running architecture; the result is
   !>stored into the "endian" global variable.
   !>@return endian
+  !> @ingroup IR_PrecisionPublicProcedure
   subroutine check_endian()
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
@@ -210,6 +229,8 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine check_endian
 
+  !> @ingroup IR_PrecisionPrivateProcedure
+  !> @{
 #ifdef r16p
   elemental function str_R16P(no_sign,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -451,7 +472,7 @@ contains
   character(*), intent(IN):: str   ! String containing input number.
   real(R16P),   intent(IN):: knd   ! Number kind.
   real(R16P)::               n     ! Number returned.
-  integer(I4P)::             err   ! Error traping flag: 0 no errors, >0 error occours.
+  integer(I4P)::             err   ! Error trapping flag: 0 no errors, >0 error occurs.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -476,7 +497,7 @@ contains
   character(*), intent(IN):: str   ! String containing input number.
   real(R8P),    intent(IN):: knd   ! Number kind.
   real(R8P)::                n     ! Number returned.
-  integer(I4P)::             err   ! Error traping flag: 0 no errors, >0 error occours.
+  integer(I4P)::             err   ! Error trapping flag: 0 no errors, >0 error occurs.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -500,7 +521,7 @@ contains
   character(*), intent(IN):: str   ! String containing input number.
   real(R4P),    intent(IN):: knd   ! Number kind.
   real(R4P)::                n     ! Number returned.
-  integer(I4P)::             err   ! Error traping flag: 0 no errors, >0 error occours.
+  integer(I4P)::             err   ! Error trapping flag: 0 no errors, >0 error occurs.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -524,7 +545,7 @@ contains
   character(*), intent(IN):: str   ! String containing input number.
   integer(I8P), intent(IN):: knd   ! Number kind.
   integer(I8P)::             n     ! Number returned.
-  integer(I4P)::             err   ! Error traping flag: 0 no errors, >0 error occours.
+  integer(I4P)::             err   ! Error trapping flag: 0 no errors, >0 error occurs.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -548,7 +569,7 @@ contains
   character(*), intent(IN):: str   ! String containing input number.
   integer(I4P), intent(IN):: knd   ! Number kind.
   integer(I4P)::             n     ! Number returned.
-  integer(I4P)::             err   ! Error traping flag: 0 no errors, >0 error occours.
+  integer(I4P)::             err   ! Error trapping flag: 0 no errors, >0 error occurs.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -572,7 +593,7 @@ contains
   character(*), intent(IN):: str   ! String containing input number.
   integer(I2P), intent(IN):: knd   ! Number kind.
   integer(I2P)::             n     ! Number returned.
-  integer(I4P)::             err   ! Error traping flag: 0 no errors, >0 error occours.
+  integer(I4P)::             err   ! Error trapping flag: 0 no errors, >0 error occurs.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -596,7 +617,7 @@ contains
   character(*), intent(IN):: str   ! String containing input number.
   integer(I1P), intent(IN):: knd   ! Number kind.
   integer(I1P)::             n     ! Number returned.
-  integer(I4P)::             err   ! Error traping flag: 0 no errors, >0 error occours.
+  integer(I4P)::             err   ! Error trapping flag: 0 no errors, >0 error occurs.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -609,8 +630,10 @@ contains
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction ctoi_I1P
+  !> @}
 
   !>Subroutine for printing to the standard output the kind definition of reals and integers and the utility variables.
+  !> @ingroup IR_PrecisionPublicProcedure
   subroutine IR_Print()
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
