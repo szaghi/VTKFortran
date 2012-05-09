@@ -35,7 +35,7 @@
    <div id="projectname">Lib_VTK_IO
    
    </div>
-   
+   <div id="projectbrief">alibraryoffunctionsforInputandOutputpureFortrandatainVTKformat</div>
   </td>
   
   
@@ -53,10 +53,10 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="../../index.html"><span>Main&#160;Page</span></a></li>
-      <li class="current"><a href="../../pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="../../annotated.html"><span>Data&#160;Types&#160;List</span></a></li>
-      <li><a href="../../files.html"><span>Files</span></a></li>
+      <li><a href="../../modules.html"><span>API</span></a></li>
+      <li><a href="../../files.html"><span>Source&#160;Files</span></a></li>
       <li><a href="../../dirs.html"><span>Directories</span></a></li>
+      <li class="current"><a href="../../pages.html"><span>Todos&#160;and&#160;Bugs</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -95,16 +95,16 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><dl class="reflist">
-<dt><a class="anchor" id="_bug000001"></a>Type <a class="el" href="../../d6/d5b/classLib__VTK__IO.html">Lib_VTK_IO</a>  </dt>
+<dt><a class="anchor" id="_bug000001"></a>Type <a class="el" href="../../d6/dec/group__Library.html">Lib_VTK_IO</a>  </dt>
 <dd><p class="startdd"><b>Array-Reshape</b>: <br/>
- Fortran allows automatic reshape of arrays, e.g. 2D array can be automatically (in the function calling) transformed to a 1D array with the same number of element of 2D array. The use of dynamic dispatching for <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> functions by means of generic interfaces had disable this feature: dynamic dispatching use the array-shape information to detect, at compile-time, the correct function to be called inside the generic interface functions. Thus automatic reshaping of arrays at calling function phase is not allowed. <br/>
+ Fortran allows automatic reshape of arrays, e.g. 2D array can be automatically (in the function calling) transformed to a 1D array with the same number of element of 2D array. The use of dynamic dispatching for <em><a class="el" href="../../d6/dec/group__Library.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> functions by means of generic interfaces had disable this feature: dynamic dispatching use the array-shape information to detect, at compile-time, the correct function to be called inside the generic interface functions. Thus automatic reshaping of arrays at calling function phase is not allowed. <br/>
  Instead an explicit reshape can be used by means of the Fortran built-in function <em>reshape</em>. As an example considering a call to the generic function <em>VTK_VAR_XML</em> an explicit array reshape could be: <br/>
  <br/>
  E_IO = VTK_VAR_XML(NC_NN=nn,varname='u',var=<b>reshape</b>(u(ni1:ni2,nj1:nj2,nk1:nk2),(/nn/))) <br/>
  <br/>
  where built in function <em>reshape</em> has explicitly being used in the calling to VTK_VAR_XML. </p>
 <p class="enddd"><b>XML-Efficiency</b>: <br/>
- This is not properly a bug. There is an inefficiency when saving XML binary file. To write XML binary <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> uses a temporary scratch file to save binary data while saving all formatting data to the final XML file. Only when all XML formatting data have been written the scratch file is rewind and the binary data is saved in the final tag of XML file as <b>raw</b> data. This approach is not efficient. </p>
+ This is not properly a bug. There is an inefficiency when saving XML binary file. To write XML binary <em><a class="el" href="../../d6/dec/group__Library.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> uses a temporary scratch file to save binary data while saving all formatting data to the final XML file. Only when all XML formatting data have been written the scratch file is rewind and the binary data is saved in the final tag of XML file as <b>raw</b> data. This approach is not efficient. </p>
 </dd>
 </dl>
 </div></div><!-- contents -->
@@ -126,7 +126,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   <div id="nav-path" class="navpath">
     <ul>
 
-    <li class="footer">Generated on Fri May 4 2012 14:28:52 for Lib_VTK_IO by
+    <li class="footer">Generated on Wed May 9 2012 16:02:52 for Lib_VTK_IO by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>

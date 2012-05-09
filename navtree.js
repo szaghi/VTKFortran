@@ -2,7 +2,7 @@ var NAVTREE =
 [
   [ "Lib_VTK_IO", "index.html", [
     [ "Lib_VTK_IO", "index.html", null ],
-    [ "Related Pages", "pages.html", "pages" ],
+    [ "API", "modules.html", "modules" ],
     [ "Data Types List", null, [
       [ "Data Types List", "annotated.html", "annotated" ],
       [ "Data Types", "classes.html", null ],
@@ -12,14 +12,15 @@ var NAVTREE =
         [ "Variables", "functions_vars.html", null ]
       ] ]
     ] ],
-    [ "Files", null, [
+    [ "Source Files", null, [
       [ "File List", "files.html", "files" ],
       [ "File Members", "globals.html", [
         [ "All", "globals.html", null ],
         [ "Variables", "globals_vars.html", null ]
       ] ]
     ] ],
-    [ "Directories", "dirs.html", "dirs" ]
+    [ "Directories", "dirs.html", "dirs" ],
+    [ "Todos and Bugs", "pages.html", "pages" ]
   ] ]
 ];
 

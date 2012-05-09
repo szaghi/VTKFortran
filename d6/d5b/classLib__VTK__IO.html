@@ -35,7 +35,7 @@
    <div id="projectname">Lib_VTK_IO
    
    </div>
-   
+   <div id="projectbrief">alibraryoffunctionsforInputandOutputpureFortrandatainVTKformat</div>
   </td>
   
   
@@ -53,10 +53,10 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="../../index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="../../pages.html"><span>Related&#160;Pages</span></a></li>
-      <li class="current"><a href="../../annotated.html"><span>Data&#160;Types&#160;List</span></a></li>
-      <li><a href="../../files.html"><span>Files</span></a></li>
+      <li><a href="../../modules.html"><span>API</span></a></li>
+      <li><a href="../../files.html"><span>Source&#160;Files</span></a></li>
       <li><a href="../../dirs.html"><span>Directories</span></a></li>
+      <li><a href="../../pages.html"><span>Todos&#160;and&#160;Bugs</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -106,7 +106,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <!-- doxytag: class="Lib_VTK_IO" -->
-<p><em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> is a library of functions for Input and Output pure Fortran data in VTK format.  
+<p>This is a library of functions for Input and Output pure Fortran data in VTK format.  
  <a href="../../d6/d5b/classLib__VTK__IO.html#details">More...</a></p>
 
 <p><a href="../../d2/db1/moduleLib__VTK__IO-members.html">List of all members.</a></p>
@@ -130,7 +130,7 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d5b/classLib__VTK__IO.html#aebcfe4a6294e0c3dfb33c827d66efd87">VTK_DAT</a> (NC_NN, var_location)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that <b>must</b> be called before saving the data related to geometric mesh, this function initializes the saving of data variables indicating the <em>type</em> (node or cell centered) of variables that will be saved.  <a href="#aebcfe4a6294e0c3dfb33c827d66efd87"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d5b/classLib__VTK__IO.html#a35cc958ab785716b3e5f8fa098847706">VTK_END</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for finalizing open file, it has not inputs, <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> manages the file unit without the user's action.  <a href="#a35cc958ab785716b3e5f8fa098847706"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for finalizing open file, it has not inputs, <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> manages the file unit without the user's action.  <a href="#a35cc958ab785716b3e5f8fa098847706"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d5b/classLib__VTK__IO.html#a9e65d4fb15cc496e1ef652e718c87d59">VTK_INI_XML</a> (output_format, filename, mesh_topology, nx1, nx2, ny1, ny2, nz1, nz2)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for initializing VTK-XML file.  <a href="#a9e65d4fb15cc496e1ef652e718c87d59"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d5b/classLib__VTK__IO.html#a7cee9c5902c16d7164af356ac639a7f2">VTK_CON_XML</a> (NC, connect, offset, cell_type)</td></tr>
@@ -138,7 +138,7 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d5b/classLib__VTK__IO.html#a9155bd4edcd91431621c50cffc175113">VTK_DAT_XML</a> (var_location, var_block_action)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that <b>must</b> be called before saving the data related to geometric mesh, this function initializes the saving of data variables indicating the <em>type</em> (node or cell centered) of variables that will be saved.  <a href="#a9155bd4edcd91431621c50cffc175113"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d5b/classLib__VTK__IO.html#ae736535f820094f0d705287069837f6b">VTK_END_XML</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">This function is used to finalize the file opened and it has not inputs, <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> manages the file unit without the user's action.  <a href="#ae736535f820094f0d705287069837f6b"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">This function is used to finalize the file opened and it has not inputs, <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> manages the file unit without the user's action.  <a href="#ae736535f820094f0d705287069837f6b"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d5b/classLib__VTK__IO.html#a005b3704c23e602f989205bba1041aad">VTM_INI_XML</a> (filename)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">The VTK_VTM_XML function is used for initializing a VTM (VTK Multiblocks) XML file that is a wrapper to a set of VTK-XML files.  <a href="#a005b3704c23e602f989205bba1041aad"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d5b/classLib__VTK__IO.html#a3c3e8c1d6662c1a850c82bbe8890598b">VTM_BLK_XML</a> (block_action)</td></tr>
@@ -146,7 +146,7 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d5b/classLib__VTK__IO.html#a3c31b01ac798e860f3ab9755ba5d15e1">VTM_WRF_XML</a> (wrf_dir, vtk_xml_file_list)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">The VTM_WRF_XML function is used for saving the list of VTK-XML wrapped files by the actual block of the mutliblock VTM file.  <a href="#a3c31b01ac798e860f3ab9755ba5d15e1"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d5b/classLib__VTK__IO.html#a81e47e2540738a750c57b7c15cad03e3">VTM_END_XML</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for finalizing open file, it has not inputs, <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> manages the file unit without the user's action.  <a href="#a81e47e2540738a750c57b7c15cad03e3"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for finalizing open file, it has not inputs, <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> manages the file unit without the user's action.  <a href="#a81e47e2540738a750c57b7c15cad03e3"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d5b/classLib__VTK__IO.html#aca4227c820b4ae0d8ea1d77916b78301">GetUnit</a> ()</td></tr>
@@ -279,7 +279,7 @@ Private Attributes</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Indent pointer.  <a href="#a4e1417232606635d65f6f1f5d93c436d"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
-<div class="textblock"><p><em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> is a library of functions for Input and Output pure Fortran data in VTK format. </p>
+<div class="textblock"><p>This is a library of functions for Input and Output pure Fortran data in VTK format. </p>
 <p>It is useful for Paraview visualization tool. Even though there are many wrappers/porting of the VTK source code (C++ code), there is not a Fortran one. This library is not a porting or a wrapper of the VTK code, but it only an exporter/importer of the VTK data format written in pure Fortran language (standard Fortran 2003) that can be used by Fortran coders (yes, there are still a lot of these brave coders...) without mixing Fortran with C++ language. Fortran is still the best language for high performance computing for scientific purpose, like CFD computing. It is necessary a tool to deal with VTK standard directly by Fortran code. The library was made to fill this empty: it is a simple Fortran module able to export native Fortran data into VTK data format and to import VTK data into a Fortran code, both in ascii and binary file format.</p>
 <p>The library provides an automatic way to deal with VTK data format: all the formatting processes is nested into the library and users communicate with it by a simple API passing only native Fortran data (native Fortran scalar, vector and matrix).</p>
 <p>The library is still in developing and testing, this is first usable release, but there are not all the features of the stable release (the importer is totally absent and the exporter is not complete). Surely there are a lot of bugs and the programming style is not the best, but the exporters are far-complete.</p>
@@ -312,18 +312,18 @@ Private Attributes</h2></td></tr>
 </li>
 <li>Importers are <b>missing</b>.</li>
 </ul>
-<p>The library is an open source project, it is distributed under the GPL v3. Anyone is interest to use, to develop or to contribute to <a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a> is welcome.</p>
+<p>The library is an open source project, it is distributed under the GPL v3. Anyone is interest to use, to develop or to contribute to <a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> is welcome.</p>
 <p>It can be found at: <a href="https://github.com/szaghi/Lib_VTK_IO">https://github.com/szaghi/Lib_VTK_IO</a></p>
 <dl class="user"><dt><b>VTK_Standard</b></dt><dd>VTK, Visualization Toolkit, is an open source software that provides a powerful framework for the computer graphic, for the images processing and for 3D rendering. It is widely used in the world and so it has a very large community of users, besides the Kitware (The Kitware homepage can be found here: <a href="http://public.kitware.com">http://public.kitware.com</a>) company provides professional support. The toolkit is written in C++ and a lot of porting/wrappers for Tcl/Tk, Java and Python are provided, unlucky there aren't wrappers for Fortran.</dd></dl>
 <p>Because of its good features the VTK toolkit has been used to develop a large set of open source programs. For my work the most important family of programs is the scientific visualization programs. A lot of high-quality scientific visualization tool are available on the web but for me the best is ParaView: I think that it is one of the best scientific visualization program in the world and it is open source! Paraview is based on VTK. </p>
 <dl class="user"><dt><b>Paraview</b></dt><dd>ParaView (The ParaView homepage can be found here: <a href="http://www.paraview.org">http://www.paraview.org</a>) is an open source software voted to scientific visualization and able to use the power of parallel architectures. It has an architecture client-server in order to make easy the remote visualization of very large set of data. Because it is based on VTK it inherits all VTK features. ParaView is very useful for Computational Fluid Dynamics visualizations because it provides powerful post-processing tools, it provides a very large set of importers for the most used format like Plot3D and HDF (the list is very large). It is easy to extend ParaView because it supports all the scripting language supported by VTK. </dd></dl>
-<dl class="note"><dt><b>Note:</b></dt><dd>All the <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> functions are <b>I4P integer functions</b>: the returned integer output is 0 if the function calling has been completed right while it is &gt;0 if some errors occur (the error handling is only at its embryonic phase). Therefore the functions calling must be done in the following way: <br/>
+<dl class="note"><dt><b>Note:</b></dt><dd>All the <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> functions are <b>I4P integer functions</b>: the returned integer output is 0 if the function calling has been completed right while it is &gt;0 if some errors occur (the error handling is only at its embryonic phase). Therefore the functions calling must be done in the following way: <br/>
  <div class="fragment"><pre class="fragment"> ...
  <span class="keywordtype">integer(I4P)</span>:: E_IO
  ...
  E_IO = VTK_INI(....
  ... 
-</pre></div> <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> programming style is based on two main principles: <em>portable kind-precision</em> of reals and integers variables and <em>dynamic dispatching</em>. Using <em>dynamic dispatching</em> <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> has a simple API. The user calls a generic procedure (VTK_INI, <a class="el" href="../../d1/d07/interfaceLib__VTK__IO_1_1VTK__GEO.html" title="Function for saving mesh with different topologies in VTK-legacy standard.">VTK_GEO</a>,...) and the library, depending on the type and number of the inputs passed, calls the correct internal function (i.e. <a class="el" href="../../d1/d07/interfaceLib__VTK__IO_1_1VTK__GEO.html" title="Function for saving mesh with different topologies in VTK-legacy standard.">VTK_GEO</a> for R8P real type if the input passed is R8P real type). By this interface only few functions are used without the necessity of calling a different function for every different inputs type. Dynamic dispatching is based on the internal kind-precision selecting convention: Fortran 90/95 standard has introduced some useful functions to achieve the portability of reals and integers precision and <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> uses these functions to define portable kind-precision; to this aim <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> uses <a class="el" href="../../d7/dc8/classIR__Precision.html" title="Module IR_Precision makes available some portable kind-parameters and some useful procedures to deal ...">IR_Precision</a> module. </dd></dl>
+</pre></div> <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> programming style is based on two main principles: <em>portable kind-precision</em> of reals and integers variables and <em>dynamic dispatching</em>. Using <em>dynamic dispatching</em> <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> has a simple API. The user calls a generic procedure (VTK_INI, <a class="el" href="../../d1/d07/interfaceLib__VTK__IO_1_1VTK__GEO.html" title="Function for saving mesh with different topologies in VTK-legacy standard.">VTK_GEO</a>,...) and the library, depending on the type and number of the inputs passed, calls the correct internal function (i.e. <a class="el" href="../../d1/d07/interfaceLib__VTK__IO_1_1VTK__GEO.html" title="Function for saving mesh with different topologies in VTK-legacy standard.">VTK_GEO</a> for R8P real type if the input passed is R8P real type). By this interface only few functions are used without the necessity of calling a different function for every different inputs type. Dynamic dispatching is based on the internal kind-precision selecting convention: Fortran 90/95 standard has introduced some useful functions to achieve the portability of reals and integers precision and <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> uses these functions to define portable kind-precision; to this aim <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> uses <a class="el" href="../../d7/dc8/classIR__Precision.html" title="Module IR_Precision makes available some portable kind-parameters and some useful procedures to deal ...">IR_Precision</a> module. </dd></dl>
 <dl class="author"><dt><b>Author:</b></dt><dd>Stefano Zaghi </dd></dl>
 <dl class="version"><dt><b>Version:</b></dt><dd>1.0 </dd></dl>
 <dl class="date"><dt><b>Date:</b></dt><dd>2012-04-24 </dd></dl>
@@ -335,38 +335,17 @@ Private Attributes</h2></td></tr>
 <p class="enddd"><b>g95_test:</b> Test g95 compiler </p>
 </dd></dl>
 <dl class="bug"><dt><b><a class="el" href="../../de/da5/bug.html#_bug000001">Bug:</a></b></dt><dd><p class="startdd"><b>Array-Reshape</b>: <br/>
- Fortran allows automatic reshape of arrays, e.g. 2D array can be automatically (in the function calling) transformed to a 1D array with the same number of element of 2D array. The use of dynamic dispatching for <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> functions by means of generic interfaces had disable this feature: dynamic dispatching use the array-shape information to detect, at compile-time, the correct function to be called inside the generic interface functions. Thus automatic reshaping of arrays at calling function phase is not allowed. <br/>
+ Fortran allows automatic reshape of arrays, e.g. 2D array can be automatically (in the function calling) transformed to a 1D array with the same number of element of 2D array. The use of dynamic dispatching for <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> functions by means of generic interfaces had disable this feature: dynamic dispatching use the array-shape information to detect, at compile-time, the correct function to be called inside the generic interface functions. Thus automatic reshaping of arrays at calling function phase is not allowed. <br/>
  Instead an explicit reshape can be used by means of the Fortran built-in function <em>reshape</em>. As an example considering a call to the generic function <em><a class="el" href="../../db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML.html" title="Function for saving data variable(s) in VTK-XML standard.">VTK_VAR_XML</a></em> an explicit array reshape could be: <br/>
  <br/>
  E_IO = <a class="el" href="../../db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML.html" title="Function for saving data variable(s) in VTK-XML standard.">VTK_VAR_XML</a>(NC_NN=nn,varname='u',var=<b>reshape</b>(u(ni1:ni2,nj1:nj2,nk1:nk2),(/nn/))) <br/>
  <br/>
  where built in function <em>reshape</em> has explicitly being used in the calling to <a class="el" href="../../db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML.html" title="Function for saving data variable(s) in VTK-XML standard.">VTK_VAR_XML</a>. </p>
 <p class="enddd"><b>XML-Efficiency</b>: <br/>
- This is not properly a bug. There is an inefficiency when saving XML binary file. To write XML binary <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> uses a temporary scratch file to save binary data while saving all formatting data to the final XML file. Only when all XML formatting data have been written the scratch file is rewind and the binary data is saved in the final tag of XML file as <b>raw</b> data. This approach is not efficient. </p>
+ This is not properly a bug. There is an inefficiency when saving XML binary file. To write XML binary <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> uses a temporary scratch file to save binary data while saving all formatting data to the final XML file. Only when all XML formatting data have been written the scratch file is rewind and the binary data is saved in the final tag of XML file as <b>raw</b> data. This approach is not efficient. </p>
 </dd></dl>
-<dl class="params"><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[out]</td><td class="paramname">VTK_INI</td><td></td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname"><a class="el" href="../../d1/d07/interfaceLib__VTK__IO_1_1VTK__GEO.html" title="Function for saving mesh with different topologies in VTK-legacy standard.">VTK_GEO</a></td><td></td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">VTK_CON</td><td></td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">VTK_DAT</td><td></td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname"><a class="el" href="../../d4/d41/interfaceLib__VTK__IO_1_1VTK__VAR.html" title="Function for saving data variable(s) in VTK-legacy standard.">VTK_VAR</a></td><td></td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">VTK_END</td><td></td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">VTK_INI_XML</td><td></td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname"><a class="el" href="../../db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML.html" title="Function for saving mesh with different topologies in VTK-XML standard.">VTK_GEO_XML</a></td><td></td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">VTK_CON_XML</td><td></td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">VTK_DAT_XML</td><td></td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname"><a class="el" href="../../db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML.html" title="Function for saving data variable(s) in VTK-XML standard.">VTK_VAR_XML</a></td><td></td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">VTK_END_XML</td><td></td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">VTM_INI_XML</td><td></td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">VTM_BLK_XML</td><td></td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">VTM_WRF_XML</td><td></td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">VTM_END_XML</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00126">126</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00111">111</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 </div><hr/><h2>Member Function/Subroutine Documentation</h2>
 <a class="anchor" id="aca4227c820b4ae0d8ea1d77916b78301"></a><!-- doxytag: member="Lib_VTK_IO::GetUnit" ref="aca4227c820b4ae0d8ea1d77916b78301" args="()" -->
 <div class="memitem">
@@ -383,10 +362,10 @@ Private Attributes</h2></td></tr>
 <div class="memdoc">
 
 <p>Function for getting a free logic unit. </p>
-<p>The users of <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> does not know which is the logical unit: <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> uses this information without boring the users. The logical unit used is safe-free: if the program calling <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> has others logical units used <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> will never use these units, but will choice one that is free. </p>
+<p>The users of <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> does not know which is the logical unit: <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> uses this information without boring the users. The logical unit used is safe-free: if the program calling <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> has others logical units used <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> will never use these units, but will choice one that is free. </p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>Free_Unit </dd></dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00352">352</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00341">341</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -406,7 +385,7 @@ Private Attributes</h2></td></tr>
 <div class="memdoc">
 
 <p>Function for converting lower case characters of a string to upper case ones. </p>
-<p><em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> uses this function in order to achieve case-insensitive: all character variables used within <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> functions are pre-processed by Uppper_Case function before these variables are used. So the users can call <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> functions without pay attention of the case of the keywords passed to the functions: calling the function VTK_INI with the string <em>E_IO = VTK_INI('Ascii',...)</em> is equivalent to <em>E_IO = VTK_INI('ASCII',...)</em>. </p>
+<p><em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> uses this function in order to achieve case-insensitive: all character variables used within <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> functions are pre-processed by Uppper_Case function before these variables are used. So the users can call <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> functions without pay attention of the case of the keywords passed to the functions: calling the function VTK_INI with the string <em>E_IO = VTK_INI('Ascii',...)</em> is equivalent to <em>E_IO = VTK_INI('ASCII',...)</em>. </p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>Upper_Case </dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
@@ -415,7 +394,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00386">386</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00375">375</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -474,7 +453,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00413">413</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00402">402</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -562,7 +541,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00460">460</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00449">449</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -650,7 +629,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00496">496</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00485">485</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -724,7 +703,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00532">532</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00521">521</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -798,7 +777,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00567">567</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00556">556</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -865,7 +844,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00602">602</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00591">591</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -932,7 +911,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00648">648</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00637">637</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -985,7 +964,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00694">694</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00683">683</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1038,7 +1017,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00723">723</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00712">712</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1108,7 +1087,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00788">788</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00777">777</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1157,7 +1136,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00835">835</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00824">824</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1203,7 +1182,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00869">869</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00858">858</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1249,7 +1228,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00896">896</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00885">885</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1295,7 +1274,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00923">923</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00912">912</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1362,7 +1341,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00950">950</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00939">939</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1429,7 +1408,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00989">989</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00978">978</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1489,7 +1468,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01028">1028</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01017">1017</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1542,7 +1521,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01056">1056</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01045">1045</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1595,7 +1574,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01087">1087</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01076">1076</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1613,7 +1592,7 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Function for finalizing open file, it has not inputs, <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> manages the file unit without the user's action. </p>
+<p>Function for finalizing open file, it has not inputs, <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> manages the file unit without the user's action. </p>
 <dl class="note"><dt><b>Note:</b></dt><dd>An example of usage is: <br/>
  <div class="fragment"><pre class="fragment"> ...
  E_IO=VTK_END()
@@ -1621,7 +1600,7 @@ Private Attributes</h2></td></tr>
 </pre></div> </dd></dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01127">1127</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01116">1116</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1693,7 +1672,7 @@ Private Attributes</h2></td></tr>
 <div class="memdoc">
 
 <p>Function for initializing VTK-XML file. </p>
-<p>The XML standard is more powerful than legacy one. It is more flexible and free but on the other hand is more (but not so more using a library like <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em>...) complex than legacy standard. The output of XML functions is a well-formated XML file at least for the ascii format (in the binary format <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> uses raw-data format that does not produce a well formated XML file). Note that the XML functions have the same name of legacy functions with the suffix <em>XML</em>. </p>
+<p>The XML standard is more powerful than legacy one. It is more flexible and free but on the other hand is more (but not so more using a library like <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em>...) complex than legacy standard. The output of XML functions is a well-formated XML file at least for the ascii format (in the binary format <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> uses raw-data format that does not produce a well formated XML file). Note that the XML functions have the same name of legacy functions with the suffix <em>XML</em>. </p>
 <dl class="remark"><dt><b>Remarks:</b></dt><dd>This function must be the first to be called. </dd></dl>
 <dl class="note"><dt><b>Note:</b></dt><dd>An example of usage is: <br/>
  <div class="fragment"><pre class="fragment"> ...
@@ -1718,7 +1697,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01155">1155</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01144">1144</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1813,7 +1792,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01250">1250</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01239">1239</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1908,7 +1887,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01306">1306</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01295">1295</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1996,7 +1975,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01362">1362</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01351">1351</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2084,7 +2063,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01442">1442</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01431">1431</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2144,7 +2123,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01522">1522</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01511">1511</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2204,7 +2183,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01583">1583</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01572">1572</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2225,7 +2204,7 @@ Private Attributes</h2></td></tr>
 <p>Function for closing mesh block data. </p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01644">1644</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01633">1633</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2305,7 +2284,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01704">1704</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01693">1693</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2354,7 +2333,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01785">1785</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01774">1774</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2400,7 +2379,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01844">1844</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01833">1833</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2446,7 +2425,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01883">1883</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01872">1872</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2492,7 +2471,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01922">1922</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01911">1911</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2538,7 +2517,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01961">1961</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01950">1950</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2584,7 +2563,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02000">2000</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01989">1989</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2630,7 +2609,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02039">2039</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02028">2028</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2690,7 +2669,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02078">2078</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02067">2067</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2750,7 +2729,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02119">2119</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02108">2108</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2810,7 +2789,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02160">2160</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02149">2149</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2870,7 +2849,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02201">2201</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02190">2190</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2930,7 +2909,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02242">2242</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02231">2231</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2990,7 +2969,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02283">2283</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02272">2272</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3043,7 +3022,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02324">2324</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02313">2313</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3096,7 +3075,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02371">2371</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02360">2360</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3149,7 +3128,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02418">2418</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02407">2407</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3202,7 +3181,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02465">2465</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02454">2454</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3255,7 +3234,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02512">2512</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02501">2501</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3308,7 +3287,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02559">2559</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02548">2548</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3326,7 +3305,7 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>This function is used to finalize the file opened and it has not inputs, <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> manages the file unit without the user's action. </p>
+<p>This function is used to finalize the file opened and it has not inputs, <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> manages the file unit without the user's action. </p>
 <dl class="note"><dt><b>Note:</b></dt><dd>An example of usage is: <br/>
  <div class="fragment"><pre class="fragment"> ...
  E_IO=VTK_END_XML()
@@ -3334,7 +3313,7 @@ Private Attributes</h2></td></tr>
 </pre></div> </dd></dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02611">2611</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02600">2600</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3362,7 +3341,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02694">2694</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02683">2683</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3390,7 +3369,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02723">2723</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02712">2712</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3429,7 +3408,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02746">2746</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02735">2735</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3447,10 +3426,10 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Function for finalizing open file, it has not inputs, <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="Lib_VTK_IO is a library of functions for Input and Output pure Fortran data in VTK format...">Lib_VTK_IO</a></em> manages the file unit without the user's action. </p>
+<p>Function for finalizing open file, it has not inputs, <em><a class="el" href="../../d6/d5b/classLib__VTK__IO.html" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> manages the file unit without the user's action. </p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02778">2778</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02767">2767</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3468,7 +3447,7 @@ Private Attributes</h2></td></tr>
 
 <p>Max number of characters of static string. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00323">323</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00312">312</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3485,7 +3464,7 @@ Private Attributes</h2></td></tr>
 
 <p>End-character for binary-record finalize. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00324">324</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00313">313</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3502,7 +3481,7 @@ Private Attributes</h2></td></tr>
 
 <p>Ascii-output-format parameter identifier. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00325">325</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00314">314</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3519,7 +3498,7 @@ Private Attributes</h2></td></tr>
 
 <p>Binary-output-format parameter identifier. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00326">326</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00315">315</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3536,7 +3515,7 @@ Private Attributes</h2></td></tr>
 
 <p>Current output-format (initialized to ascii format). </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00327">327</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00316">316</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3553,7 +3532,7 @@ Private Attributes</h2></td></tr>
 
 <p>Mesh topology. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00328">328</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00317">317</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3570,7 +3549,7 @@ Private Attributes</h2></td></tr>
 
 <p>Internal logical unit. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00329">329</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00318">318</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3587,7 +3566,7 @@ Private Attributes</h2></td></tr>
 
 <p>Internal logical unit for raw binary XML append file. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00330">330</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00319">319</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3604,7 +3583,7 @@ Private Attributes</h2></td></tr>
 
 <p>Number of byte to be written/read. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00331">331</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00320">320</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3621,7 +3600,7 @@ Private Attributes</h2></td></tr>
 
 <p>Prototype of R8P real. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00332">332</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00321">321</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3638,7 +3617,7 @@ Private Attributes</h2></td></tr>
 
 <p>Prototype of R4P real. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00333">333</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00322">322</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3655,7 +3634,7 @@ Private Attributes</h2></td></tr>
 
 <p>Prototype of I8P integer. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00334">334</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00323">323</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3672,7 +3651,7 @@ Private Attributes</h2></td></tr>
 
 <p>Prototype of I4P integer. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00335">335</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00324">324</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3689,7 +3668,7 @@ Private Attributes</h2></td></tr>
 
 <p>Prototype of I2P integer. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00336">336</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00325">325</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3706,7 +3685,7 @@ Private Attributes</h2></td></tr>
 
 <p>Prototype of I1P integer. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00337">337</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00326">326</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3723,7 +3702,7 @@ Private Attributes</h2></td></tr>
 
 <p>Offset pointer. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00338">338</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00327">327</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3740,7 +3719,7 @@ Private Attributes</h2></td></tr>
 
 <p>Indent pointer. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00339">339</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00328">328</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3757,7 +3736,7 @@ Private Attributes</h2></td></tr>
 
 <p>Internal logical unit. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00340">340</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00329">329</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3774,7 +3753,7 @@ Private Attributes</h2></td></tr>
 
 <p>Block index. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00341">341</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00330">330</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3791,7 +3770,7 @@ Private Attributes</h2></td></tr>
 
 <p>Indent pointer. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00342">342</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00331">331</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3818,7 +3797,7 @@ Private Attributes</h2></td></tr>
     <ul>
       <li class="navelem"><a class="el" href="../../d6/d5b/classLib__VTK__IO.html">Lib_VTK_IO</a>      </li>
 
-    <li class="footer">Generated on Fri May 4 2012 14:28:52 for Lib_VTK_IO by
+    <li class="footer">Generated on Wed May 9 2012 14:07:58 for Lib_VTK_IO by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>
