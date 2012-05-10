@@ -245,7 +245,7 @@ endinterface
 !> @brief Function for initializing VTK-XML file.
 !> VTK_INI_XML is an interface to 2 different functions, the first used for "common" mesh dimension, where the number of nodes
 !> can be represented with I4P integer, while the second used for huge mesh where the number of nodes needs I8P integer
-!> representation.
+!> representation. In order to use the huge-dimension function an auxiliary variable (logical) must be pass as argument.
 !> The XML standard is more powerful than legacy one. It is more flexible
 !> and free but on the other hand is more (but not so more using a library like @libvtk...) complex than legacy standard. The
 !> output of XML functions is a well-formated XML file at least for the ascii format (in the binary format @libvtk uses
@@ -255,8 +255,13 @@ endinterface
 !> @note An example of usage is: \n
 !> @code ...
 !> integer(I4P):: nx1,nx2,ny1,ny2,nz1,nz2
+!> integer(I8P):: Hnx1,Hnx2,Hny1,Hny2,Hnz1,Hnz2
 !> ...
+!> ! for common dimension mesh
 !> E_IO = VTK_INI_XML('BINARY','XML_RECT_BINARY.vtr','RectilinearGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+!> ! for huge dimension mesh (the first logical flag can be either .true. or .false. there is no difference but must be
+!> ! passed in order to select huge-dimension function)
+!> E_IO = VTK_INI_XML(.true.,'BINARY','XML_RECT_BINARY.vtr','RectilinearGrid',Hnx1,Hnx2,Hny1,Hny2,Hnz1,Hnz2)
 !> ... @endcode
 !> Note that the file extension is necessary in the file name. The XML standard has different extensions for each
 !> different topologies (e.g. \em vtr for rectilinear topology). See the VTK-standard file for more information.
