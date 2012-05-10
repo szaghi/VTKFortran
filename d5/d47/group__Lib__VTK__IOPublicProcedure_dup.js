@@ -4,8 +4,6 @@ var group__Lib__VTK__IOPublicProcedure_dup =
     [ "VTK_CON", "d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga53cd14315ded5f5cef11d9d5194d9adb", null ],
     [ "VTK_DAT", "d5/d47/group__Lib__VTK__IOPublicProcedure.html#gaebcfe4a6294e0c3dfb33c827d66efd87", null ],
     [ "VTK_END", "d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga35cc958ab785716b3e5f8fa098847706", null ],
-    [ "VTK_INI_XML", "d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga9e65d4fb15cc496e1ef652e718c87d59", null ],
-    [ "VTK_CON_XML", "d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga7cee9c5902c16d7164af356ac639a7f2", null ],
     [ "VTK_DAT_XML", "d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga9155bd4edcd91431621c50cffc175113", null ],
     [ "VTK_END_XML", "d5/d47/group__Lib__VTK__IOPublicProcedure.html#gae736535f820094f0d705287069837f6b", null ],
     [ "VTM_INI_XML", "d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga005b3704c23e602f989205bba1041aad", null ],
