@@ -219,7 +219,7 @@ $(MKDIRS):
 #-----------------------------------------------------------------------------------------------------------------------------------
 # rules of linking and compiling
 COTEXT  = -e "\033[1;31m Compiling\033[0m\033[1m $(<F)\033[0m"
-LITEXT  = -e "\033[1;31m Linking library\033[0m\033[1m $(<F)\033[0m"
+LITEXT  = -e "\033[1;31m Linking library\033[0m\033[1m $@\033[0m"
 
 $(DOBJ)ir_precision.o : IR_Precision.f90
 	@echo $(COTEXT) | tee -a make.log
