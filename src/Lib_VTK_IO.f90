@@ -241,18 +241,25 @@ interface VTK_VAR
                    VTK_VAR_TEXT_R4    ! real(R4P)    vectorial (texture)
 endinterface
 !> @brief Function for saving field data (global auxiliary data, eg time, step number, dataset name, etc).
-!> VTK_FLD_XML is an interface to 6 different functions, there are 2 functions for real field data and 4 for integer one.
-!> @remark VTK_FLD_XML must be called after VTK_INI_XML and befor VTK_GEO_XML.
+!> VTK_FLD_XML is an interface to 7 different functions, there are 2 functions for real field data, 4 functions for integer one
+!> and one function for open and close field data tag.
+!> @remark VTK_FLD_XML must be called after VTK_INI_XML and befor VTK_GEO_XML. It must always called three times at least: 1) for
+!> opening the FieldData tag, 2) for saving at least one FieldData entry and 3) for closing the FieldData tag.
 !> Examples of usage are: \n
-!> \b saving the time of current dataset: \n
+!> \b saving the time and step cicle counter of current dataset: \n
 !> @code ...
-!> real(R8P)::  time
+!> real(R8P)::    time
+!> integer(I4P):: step
 !> ...
+!> E_IO=VTK_FLD_XML(fld_action='open')
 !> E_IO=VTK_FLD_XML(fld=time,fname='TIME')
+!> E_IO=VTK_FLD_XML(fld=step,fname='CYCLE')
+!> E_IO=VTK_FLD_XML(fld_action='close')
 !> ... @endcode
 !> @ingroup Lib_VTK_IOInterface
 interface VTK_FLD_XML
-  module procedure VTK_FLD_XML_R8, & ! real(R8P)    scalar
+  module procedure VTK_FLD_XML_OC, & ! open/close field data tag
+                   VTK_FLD_XML_R8, & ! real(R8P)    scalar
                    VTK_FLD_XML_R4, & ! real(R4P)    scalar
                    VTK_FLD_XML_I8, & ! integer(I8P) scalar
                    VTK_FLD_XML_I4, & ! integer(I4P) scalar
@@ -1301,6 +1308,36 @@ contains
 
   !> @ingroup Lib_VTK_IOPrivateProcedure
   !> @{
+  !> Function for open/close field data tag.
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_FLD_XML_OC(fld_action) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  character(*), intent(IN):: fld_action !< Field data tag action: OPEN or CLOSE tag.
+  integer(I4P)::             E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  select case(trim(Upper_Case(fld_action)))
+  case('OPEN')
+    select case(f_out)
+    case(f_out_ascii)
+      write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)repeat(' ',indent)//'<FieldData>' ; indent = indent + 2
+    case(f_out_binary)
+      write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'<FieldData>' ; indent = indent + 2
+    endselect
+  case('CLOSE')
+    select case(f_out)
+    case(f_out_ascii)
+      indent = indent - 2 ; write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)repeat(' ',indent)//'</FieldData>'
+    case(f_out_binary)
+      indent = indent - 2 ; write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'</FieldData>'
+    endselect
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_FLD_XML_OC
+
   !> Function for saving field data (global auxiliary data, e.g. time, step number, data set name...) (R8P).
   !> @return E_IO: integer(I4P) error flag
   function VTK_FLD_XML_R8(fld,fname) result(E_IO)
@@ -1315,17 +1352,13 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   select case(f_out)
   case(f_out_ascii)
-    write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)repeat(' ',indent)//'<FieldData>' ; indent = indent + 2
-    s_buffer = repeat(' ',indent)//'<DataArray type="Float64" NumberOfComponents="1" Name="'//trim(fname)//'" format="ascii">'// &
+    s_buffer = repeat(' ',indent)//'<DataArray type="Float64" NumberOfTuples="1" Name="'//trim(fname)//'" format="ascii">'// &
                trim(str(n=fld))//'</DataArray>'
     write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)trim(s_buffer)
-    indent = indent - 2 ; write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)repeat(' ',indent)//'</FieldData>'
   case(f_out_binary)
-    write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'<FieldData>' ; indent = indent + 2
-    s_buffer = repeat(' ',indent)//'<DataArray type="Float64" NumberOfComponents="1" Name="'//trim(fname)//'" format="ascii">'// &
+    s_buffer = repeat(' ',indent)//'<DataArray type="Float64" NumberOfTuples="1" Name="'//trim(fname)//'" format="ascii">'// &
                trim(str(n=fld))//'</DataArray>'
     write(unit=Unit_VTK,iostat=E_IO)trim(s_buffer)
-    indent = indent - 2 ; write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'</FieldData>'
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1345,17 +1378,13 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   select case(f_out)
   case(f_out_ascii)
-    write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)repeat(' ',indent)//'<FieldData>' ; indent = indent + 2
-    s_buffer = repeat(' ',indent)//'<DataArray type="Float32" NumberOfComponents="1" Name="'//trim(fname)//'" format="ascii">'// &
+    s_buffer = repeat(' ',indent)//'<DataArray type="Float32" NumberOfTuples="1" Name="'//trim(fname)//'" format="ascii">'// &
                trim(str(n=fld))//'</DataArray>'
     write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)trim(s_buffer)
-    indent = indent - 2 ; write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)repeat(' ',indent)//'</FieldData>'
   case(f_out_binary)
-    write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'<FieldData>' ; indent = indent + 2
-    s_buffer = repeat(' ',indent)//'<DataArray type="Float32" NumberOfComponents="1" Name="'//trim(fname)//'" format="ascii">'// &
+    s_buffer = repeat(' ',indent)//'<DataArray type="Float32" NumberOfTuples="1" Name="'//trim(fname)//'" format="ascii">'// &
                trim(str(n=fld))//'</DataArray>'
     write(unit=Unit_VTK,iostat=E_IO)trim(s_buffer)
-    indent = indent - 2 ; write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'</FieldData>'
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1375,17 +1404,13 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   select case(f_out)
   case(f_out_ascii)
-    write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)repeat(' ',indent)//'<FieldData>' ; indent = indent + 2
-    s_buffer = repeat(' ',indent)//'<DataArray type="Int64" NumberOfComponents="1" Name="'//trim(fname)//'" format="ascii">'// &
+    s_buffer = repeat(' ',indent)//'<DataArray type="Int64" NumberOfTuples="1" Name="'//trim(fname)//'" format="ascii">'// &
                trim(str(n=fld))//'</DataArray>'
     write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)trim(s_buffer)
-    indent = indent - 2 ; write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)repeat(' ',indent)//'</FieldData>'
   case(f_out_binary)
-    write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'<FieldData>' ; indent = indent + 2
-    s_buffer = repeat(' ',indent)//'<DataArray type="Int64" NumberOfComponents="1" Name="'//trim(fname)//'" format="ascii">'// &
+    s_buffer = repeat(' ',indent)//'<DataArray type="Int64" NumberOfTuples="1" Name="'//trim(fname)//'" format="ascii">'// &
                trim(str(n=fld))//'</DataArray>'
     write(unit=Unit_VTK,iostat=E_IO)trim(s_buffer)
-    indent = indent - 2 ; write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'</FieldData>'
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1405,17 +1430,13 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   select case(f_out)
   case(f_out_ascii)
-    write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)repeat(' ',indent)//'<FieldData>' ; indent = indent + 2
-    s_buffer = repeat(' ',indent)//'<DataArray type="Int32" NumberOfComponents="1" Name="'//trim(fname)//'" format="ascii">'// &
+    s_buffer = repeat(' ',indent)//'<DataArray type="Int32" NumberOfTuples="1" Name="'//trim(fname)//'" format="ascii">'// &
                trim(str(n=fld))//'</DataArray>'
     write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)trim(s_buffer)
-    indent = indent - 2 ; write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)repeat(' ',indent)//'</FieldData>'
   case(f_out_binary)
-    write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'<FieldData>' ; indent = indent + 2
-    s_buffer = repeat(' ',indent)//'<DataArray type="Int32" NumberOfComponents="1" Name="'//trim(fname)//'" format="ascii">'// &
+    s_buffer = repeat(' ',indent)//'<DataArray type="Int32" NumberOfTuples="1" Name="'//trim(fname)//'" format="ascii">'// &
                trim(str(n=fld))//'</DataArray>'
     write(unit=Unit_VTK,iostat=E_IO)trim(s_buffer)
-    indent = indent - 2 ; write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'</FieldData>'
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1435,17 +1456,13 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   select case(f_out)
   case(f_out_ascii)
-    write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)repeat(' ',indent)//'<FieldData>' ; indent = indent + 2
-    s_buffer = repeat(' ',indent)//'<DataArray type="Int16" NumberOfComponents="1" Name="'//trim(fname)//'" format="ascii">'// &
+    s_buffer = repeat(' ',indent)//'<DataArray type="Int16" NumberOfTuples="1" Name="'//trim(fname)//'" format="ascii">'// &
                trim(str(n=fld))//'</DataArray>'
     write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)trim(s_buffer)
-    indent = indent - 2 ; write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)repeat(' ',indent)//'</FieldData>'
   case(f_out_binary)
-    write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'<FieldData>' ; indent = indent + 2
-    s_buffer = repeat(' ',indent)//'<DataArray type="Int16" NumberOfComponents="1" Name="'//trim(fname)//'" format="ascii">'// &
+    s_buffer = repeat(' ',indent)//'<DataArray type="Int16" NumberOfTuples="1" Name="'//trim(fname)//'" format="ascii">'// &
                trim(str(n=fld))//'</DataArray>'
     write(unit=Unit_VTK,iostat=E_IO)trim(s_buffer)
-    indent = indent - 2 ; write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'</FieldData>'
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1465,17 +1482,13 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   select case(f_out)
   case(f_out_ascii)
-    write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)repeat(' ',indent)//'<FieldData>' ; indent = indent + 2
-    s_buffer = repeat(' ',indent)//'<DataArray type="Int8" NumberOfComponents="1" Name="'//trim(fname)//'" format="ascii">'// &
+    s_buffer = repeat(' ',indent)//'<DataArray type="Int8" NumberOfTuples="1" Name="'//trim(fname)//'" format="ascii">'// &
                trim(str(n=fld))//'</DataArray>'
     write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)trim(s_buffer)
-    indent = indent - 2 ; write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)repeat(' ',indent)//'</FieldData>'
   case(f_out_binary)
-    write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'<FieldData>' ; indent = indent + 2
-    s_buffer = repeat(' ',indent)//'<DataArray type="Int8" NumberOfComponents="1" Name="'//trim(fname)//'" format="ascii">'// &
+    s_buffer = repeat(' ',indent)//'<DataArray type="Int8" NumberOfTuples="1" Name="'//trim(fname)//'" format="ascii">'// &
                trim(str(n=fld))//'</DataArray>'
     write(unit=Unit_VTK,iostat=E_IO)trim(s_buffer)
-    indent = indent - 2 ; write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'</FieldData>'
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
