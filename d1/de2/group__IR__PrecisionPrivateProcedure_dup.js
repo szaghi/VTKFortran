@@ -1,5 +1,7 @@
 var group__IR__PrecisionPrivateProcedure_dup =
 [
+    [ "bit_size_R8P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#gae8911682510ddc65047446faf4695b0c", null ],
+    [ "bit_size_R4P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#ga5c85f9d60bb3053125f039c33f952c26", null ],
     [ "str_R8P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#ga0c62618ca1ff6ff2d351927284f2d07b", null ],
     [ "str_R4P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#ga4e7cfdce0fd9d6d64c1ffc47e16029b5", null ],
     [ "str_I8P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#ga7f3f7e6d833196c35ad742a3cfdc8068", null ],

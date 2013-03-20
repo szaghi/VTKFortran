@@ -35,7 +35,7 @@
    <div id="projectname">Lib_VTK_IO
    
    </div>
-   <div id="projectbrief">alibraryoffunctionsforInputandOutputpureFortrandatainVTKformat</div>
+   <div id="projectbrief">a library of functions for Input and Output pure Fortran data in VTK format</div>
   </td>
   
   
@@ -91,7 +91,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div id="doc-content">
 <div class="header">
   <div class="headertitle">
-<div class="title"><a class="el" href="d6/dec/group__Library.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> </div>  </div>
+<div class="title"><a class="el" href="d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> </div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><dl class="author"><dt><b>Author:</b></dt><dd>Stefano Zaghi </dd></dl>
@@ -100,7 +100,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <dl class="copyright"><dt><b>Copyright:</b></dt><dd>GNU Public License version 3.</dd></dl>
 <h2><a class="anchor" id="Introduction"></a>
 Introduction</h2>
-<p><a class="el" href="d6/dec/group__Library.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> is a Fortran library to write and read data conforming the VTK_Standard (<a href="http://www.vtk.org/">http://www.vtk.org/</a>), useful for ParaView visualization tool. Even though there are many wrappers/porting of the VTK source code (C++ code), there is not a Fortran one. This library is not a porting or a wrapper of the VTK code, but it only an exporter/importer of the VTK data format written in pure Fortran language (standard Fortran 2003) that can be used by Fortran coders (yes, there are still a lot of these brave coders...) without mixing Fortran with C++ language. Fortran is still the best language for high performance computing for scientific purpose, like CFD computing. It is necessary a tool to deal with VTK standard directly by Fortran code. The library was made to fill this empty: it is a simple Fortran module able to export native Fortran data into VTK data format and to import VTK data into a Fortran code, both in ascii and binary file format.</p>
+<p><a class="el" href="d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> is a Fortran library to write and read data conforming the VTK_Standard (<a href="http://www.vtk.org/">http://www.vtk.org/</a>), useful for ParaView visualization tool. Even though there are many wrappers/porting of the VTK source code (C++ code), there is not a Fortran one. This library is not a porting or a wrapper of the VTK code, but it only an exporter/importer of the VTK data format written in pure Fortran language (standard Fortran 2003) that can be used by Fortran coders (yes, there are still a lot of these brave coders...) without mixing Fortran with C++ language. Fortran is still the best language for high performance computing for scientific purpose, like CFD computing. It is necessary a tool to deal with VTK standard directly by Fortran code. The library was made to fill this empty: it is a simple Fortran module able to export native Fortran data into VTK data format and to import VTK data into a Fortran code, both in ascii and binary file format.</p>
 <p>The library provides an automatic way to deal with VTK data format: all the formatting processes is nested into the library and users communicate with it by a simple API passing only native Fortran data (native Fortran scalar, vector and matrix).</p>
 <p>The library is still in developing and testing, this is first usable release, but there are not all the features of the stable release (the importer is totally absent and the exporter is not complete). Surely there are a lot of bugs and the programming style is not the best, but the exporters are far-complete.</p>
 <p>The supported VTK features are:</p>
@@ -141,7 +141,7 @@ ParaView</h3>
 <p>ParaView (The ParaView homepage can be found here: <a href="http://www.paraview.org">http://www.paraview.org</a>) is an open source software voted to scientific visualization and able to use the power of parallel architectures. It has an architecture client-server in order to make easy the remote visualization of very large set of data. Because it is based on VTK it inherits all VTK features. ParaView is very useful for Computational Fluid Dynamics visualizations because it provides powerful post-processing tools; it provides a very large set of importers for the most used format like Plot3D and HDF (the list is very large). It is easy to extend ParaView because it supports all the scripting language supported by VTK.</p>
 <h2><a class="anchor" id="Copyrights"></a>
 Copyrights</h2>
-<p>The library is an open source project, it is distributed under the GPL v3. Anyone is interest to use, to develop or contribute to <a class="el" href="d6/dec/group__Library.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> is welcome.</p>
+<p>The library is an open source project, it is distributed under the GPL v3. Anyone is interest to use, to develop or contribute to <a class="el" href="d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> is welcome.</p>
 <h2><a class="anchor" id="Source-Code"></a>
 Source-Code</h2>
 <p>It can be found at: <a href="https://github.com/szaghi/Lib_VTK_IO">https://github.com/szaghi/Lib_VTK_IO</a> </p>
@@ -164,7 +164,7 @@ Source-Code</h2>
   <div id="nav-path" class="navpath">
     <ul>
 
-    <li class="footer">Generated on Thu May 10 2012 19:04:13 for Lib_VTK_IO by
+    <li class="footer">Generated on Wed Mar 20 2013 13:25:24 for Lib_VTK_IO by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>
