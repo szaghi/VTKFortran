@@ -72,6 +72,7 @@ public:: I_P,  FI_P,  DI_P,  MinI_P,  MaxI_P,  BII_P,  BYI_P
 public:: check_endian
 public:: bit_size
 public:: str, strz, cton
+public:: IR_Init
 public:: IR_Print
 !-----------------------------------------------------------------------------------------------------------------------------------
 
@@ -675,6 +676,27 @@ contains
   endfunction ctoi_I1P
   !> @}
 
+  !> Subroutine for initilizing module's variables that are not initialized into the definition specification.
+  !> @ingroup IR_PrecisionPublicProcedure
+  subroutine IR_init()
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  ! checking the bit ordering architecture
+  call check_endian
+  ! computing the bits/bytes sizes of real variables
+#ifdef r16p
+  BIR16P = bit_size(i=MaxR16P) ; BYR16P = BIR16P/8_I1P
+#endif
+  BIR8P = bit_size(i=MaxR8P) ; BYR8P = BIR8P/8_I1P
+  BIR4P = bit_size(i=MaxR4P) ; BYR4P = BIR4P/8_I1P
+  BIR_P = bit_size(i=MaxR_P) ; BYR_P = BIR_P/8_I1P
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endsubroutine IR_init
+
   !>Subroutine for printing to the standard output the kind definition of reals and integers and the utility variables.
   !> @ingroup IR_PrecisionPublicProcedure
   subroutine IR_Print()
@@ -683,15 +705,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  ! checking the bit ordering architecture
-  call check_endian()
-  ! computing the bits/bytes sizes of real variables
-#ifdef r16p
-  BIR16P = bit_size(i=MaxR16P) ; BYR16P = BIR16P/8_I1P
-#endif
-  BIR8P = bit_size(i=MaxR8P) ; BYR8P = BIR8P/8_I1P
-  BIR4P = bit_size(i=MaxR4P) ; BYR4P = BIR4P/8_I1P
-  BIR_P = bit_size(i=MaxR_P) ; BYR_P = BIR_P/8_I1P
+  call IR_init
   ! printing informations
   if (endian==endianL) then
     write(stdout,'(A)')           ' This architecture has LITTLE Endian bit ordering'

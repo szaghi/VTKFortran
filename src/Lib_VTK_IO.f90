@@ -1324,14 +1324,14 @@ contains
     case(f_out_ascii)
       write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)repeat(' ',indent)//'<FieldData>' ; indent = indent + 2
     case(f_out_binary)
-      write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'<FieldData>' ; indent = indent + 2
+      write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'<FieldData>'//end_rec ; indent = indent + 2
     endselect
   case('CLOSE')
     select case(f_out)
     case(f_out_ascii)
       indent = indent - 2 ; write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)repeat(' ',indent)//'</FieldData>'
     case(f_out_binary)
-      indent = indent - 2 ; write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'</FieldData>'
+      indent = indent - 2 ; write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'</FieldData>'//end_rec
     endselect
   endselect
   return
@@ -1356,9 +1356,13 @@ contains
                trim(str(n=fld))//'</DataArray>'
     write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)trim(s_buffer)
   case(f_out_binary)
-    s_buffer = repeat(' ',indent)//'<DataArray type="Float64" NumberOfTuples="1" Name="'//trim(fname)//'" format="ascii">'// &
-               trim(str(n=fld))//'</DataArray>'
-    write(unit=Unit_VTK,iostat=E_IO)trim(s_buffer)
+    s_buffer = repeat(' ',indent)//'<DataArray type="Float64" NumberOfTuples="1" Name="'//trim(fname)// &
+               '" format="appended" offset="'//trim(str(.true.,ioffset))//'">'
+    write(unit=Unit_VTK,iostat=E_IO)trim(s_buffer)//end_rec
+    N_Byte  = BYR8P ; call ioffset_update(N_Byte)
+    write(unit=Unit_VTK_Append,iostat=E_IO)N_Byte,'R8',1
+    write(unit=Unit_VTK_Append,iostat=E_IO)fld
+    write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1382,9 +1386,13 @@ contains
                trim(str(n=fld))//'</DataArray>'
     write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)trim(s_buffer)
   case(f_out_binary)
-    s_buffer = repeat(' ',indent)//'<DataArray type="Float32" NumberOfTuples="1" Name="'//trim(fname)//'" format="ascii">'// &
-               trim(str(n=fld))//'</DataArray>'
-    write(unit=Unit_VTK,iostat=E_IO)trim(s_buffer)
+    s_buffer = repeat(' ',indent)//'<DataArray type="Float32" NumberOfTuples="1" Name="'//trim(fname)// &
+               '" format="appended" offset="'//trim(str(.true.,ioffset))//'">'
+    write(unit=Unit_VTK,iostat=E_IO)trim(s_buffer)//end_rec
+    N_Byte  = BYR4P ; call ioffset_update(N_Byte)
+    write(unit=Unit_VTK_Append,iostat=E_IO)N_Byte,'R4',1
+    write(unit=Unit_VTK_Append,iostat=E_IO)fld
+    write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1408,9 +1416,13 @@ contains
                trim(str(n=fld))//'</DataArray>'
     write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)trim(s_buffer)
   case(f_out_binary)
-    s_buffer = repeat(' ',indent)//'<DataArray type="Int64" NumberOfTuples="1" Name="'//trim(fname)//'" format="ascii">'// &
-               trim(str(n=fld))//'</DataArray>'
-    write(unit=Unit_VTK,iostat=E_IO)trim(s_buffer)
+    s_buffer = repeat(' ',indent)//'<DataArray type="Int64" NumberOfTuples="1" Name="'//trim(fname)// &
+               '" format="appended" offset="'//trim(str(.true.,ioffset))//'">'
+    write(unit=Unit_VTK,iostat=E_IO)trim(s_buffer)//end_rec
+    N_Byte  = BYI8P ; call ioffset_update(N_Byte)
+    write(unit=Unit_VTK_Append,iostat=E_IO)N_Byte,'I8',1
+    write(unit=Unit_VTK_Append,iostat=E_IO)fld
+    write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1434,9 +1446,13 @@ contains
                trim(str(n=fld))//'</DataArray>'
     write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)trim(s_buffer)
   case(f_out_binary)
-    s_buffer = repeat(' ',indent)//'<DataArray type="Int32" NumberOfTuples="1" Name="'//trim(fname)//'" format="ascii">'// &
-               trim(str(n=fld))//'</DataArray>'
-    write(unit=Unit_VTK,iostat=E_IO)trim(s_buffer)
+    s_buffer = repeat(' ',indent)//'<DataArray type="Int32" NumberOfTuples="1" Name="'//trim(fname)// &
+               '" format="appended" offset="'//trim(str(.true.,ioffset))//'">'
+    write(unit=Unit_VTK,iostat=E_IO)trim(s_buffer)//end_rec
+    N_Byte  = BYI4P ; call ioffset_update(N_Byte)
+    write(unit=Unit_VTK_Append,iostat=E_IO)N_Byte,'I4',1
+    write(unit=Unit_VTK_Append,iostat=E_IO)fld
+    write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1460,9 +1476,13 @@ contains
                trim(str(n=fld))//'</DataArray>'
     write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)trim(s_buffer)
   case(f_out_binary)
-    s_buffer = repeat(' ',indent)//'<DataArray type="Int16" NumberOfTuples="1" Name="'//trim(fname)//'" format="ascii">'// &
-               trim(str(n=fld))//'</DataArray>'
-    write(unit=Unit_VTK,iostat=E_IO)trim(s_buffer)
+    s_buffer = repeat(' ',indent)//'<DataArray type="Int16" NumberOfTuples="1" Name="'//trim(fname)// &
+               '" format="appended" offset="'//trim(str(.true.,ioffset))//'">'
+    write(unit=Unit_VTK,iostat=E_IO)trim(s_buffer)//end_rec
+    N_Byte  = BYI2P ; call ioffset_update(N_Byte)
+    write(unit=Unit_VTK_Append,iostat=E_IO)N_Byte,'I2',1
+    write(unit=Unit_VTK_Append,iostat=E_IO)fld
+    write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1486,9 +1506,13 @@ contains
                trim(str(n=fld))//'</DataArray>'
     write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)trim(s_buffer)
   case(f_out_binary)
-    s_buffer = repeat(' ',indent)//'<DataArray type="Int8" NumberOfTuples="1" Name="'//trim(fname)//'" format="ascii">'// &
-               trim(str(n=fld))//'</DataArray>'
-    write(unit=Unit_VTK,iostat=E_IO)trim(s_buffer)
+    s_buffer = repeat(' ',indent)//'<DataArray type="Int8" NumberOfTuples="1" Name="'//trim(fname)// &
+               '" format="appended" offset="'//trim(str(.true.,ioffset))//'">'
+    write(unit=Unit_VTK,iostat=E_IO)trim(s_buffer)//end_rec
+    N_Byte  = BYI1P ; call ioffset_update(N_Byte)
+    write(unit=Unit_VTK_Append,iostat=E_IO)N_Byte,'I1',1
+    write(unit=Unit_VTK_Append,iostat=E_IO)fld
+    write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1528,6 +1552,7 @@ contains
     write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)repeat(' ',indent)//'</DataArray>' ; indent = indent - 2
     write(unit=Unit_VTK,fmt='(A)',iostat=E_IO)repeat(' ',indent)//'</Points>'
   case(f_out_binary)
+    write(*,*)' cazzo 1',N_Byte,ioffset,NN
     s_buffer = repeat(' ',indent)//'<Piece Extent="'//trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
                                                       trim(str(n=ny1))//' '//trim(str(n=ny2))//' '// &
                                                       trim(str(n=nz1))//' '//trim(str(n=nz2))//'">'
@@ -1541,6 +1566,7 @@ contains
     write(unit=Unit_VTK_Append,iostat=E_IO)(X(n1),Y(n1),Z(n1),n1=1,NN)
     write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'</DataArray>'//end_rec ; indent = indent - 2
     write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'</Points>'//end_rec
+    write(*,*)' cazzo 2',N_Byte,ioffset,NN
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2663,8 +2689,13 @@ contains
   integer(I4P), allocatable:: v_I4(:)  !< I4 vector for IO in AppendData.
   integer(I2P), allocatable:: v_I2(:)  !< I2 vector for IO in AppendData.
   integer(I1P), allocatable:: v_I1(:)  !< I1 vector for IO in AppendData.
-  integer(I8P)::              N_v      !< Vector dimension
-  integer(I8P)::              n1       !< Counter
+#ifdef HUGE
+  integer(I8P)::              N_v      !< Vector dimension.
+  integer(I8P)::              n1       !< Counter.
+#else
+  integer(I4P)::              N_v      !< Vector dimension.
+  integer(I4P)::              n1       !< Counter.
+#endif
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
