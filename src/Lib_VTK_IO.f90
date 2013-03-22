@@ -1951,7 +1951,7 @@ contains
                trim(str(.true.,ioffset))//'">'
     write(unit=Unit_VTK,iostat=E_IO)trim(s_buffer)//end_rec
     N_Byte  = NC*BYI1P ; call ioffset_update(N_Byte)
-    write(unit=Unit_VTK_Append,iostat=E_IO)N_Byte,'I1',int(NC,I8P)
+    write(unit=Unit_VTK_Append,iostat=E_IO)N_Byte,'I1',NC
     write(unit=Unit_VTK_Append,iostat=E_IO)(cell_type(n1),n1=1,NC)
     write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'</DataArray>'//end_rec ; indent = indent - 2
     write(unit=Unit_VTK,iostat=E_IO)repeat(' ',indent)//'</Cells>'//end_rec
