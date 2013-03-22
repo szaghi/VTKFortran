@@ -8,6 +8,7 @@ var searchData=
   ['indent',['indent',['../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#gac36340194d295d5c4d4cd479709908d9',1,'Lib_VTK_IO']]],
   ['ioffset',['ioffset',['../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga407bfa832b155d62159b4d0119a8c951',1,'Lib_VTK_IO']]],
   ['ioffset_5fupdate',['ioffset_update',['../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga4bf53149a174b8d814bb13aa0bc02fb5',1,'Lib_VTK_IO']]],
+  ['ir_5finit',['IR_init',['../d7/d79/group__IR__PrecisionPublicProcedure.html#ga6a27db28d33ba193e54a61d58ced1db8',1,'IR_Precision']]],
   ['ir_5fprecision',['IR_Precision',['../d3/daa/group__IR__PrecisionLibrary.html#d7/dc8/classIR__Precision',1,'']]],
   ['ir_5fprecision_2ef90',['IR_Precision.f90',['../da/d4b/IR__Precision_8f90.html',1,'']]],
   ['ir_5fprint',['IR_Print',['../d7/d79/group__IR__PrecisionPublicProcedure.html#gaeff95d17af95d8ef3f2f5888b00af587',1,'IR_Precision']]],
