@@ -57,6 +57,7 @@ else
   MAIN    = $(DLIB)Lib_VTK_IO.a
   MAKELIB = ar -rcs $(MAIN) $(DOBJ)lib_vtk_io.o ; ranlib $(MAIN)
 endif
+DEXE  = ./
 MKDIRS = $(DOBJ) $(DMOD) $(DLIB)
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -164,12 +165,16 @@ PRINTINFO:
 	@echo | tee make.log
 	@echo -e $(PRINTCHK) | tee -a make.log
 	@echo | tee -a make.log
-	@echo -e '\033[1;31m Compiling options\033[0m' | tee -a make.log
-	@echo -e '\033[1m [$(OPTSC)]\033[0m' | tee -a make.log
+	@echo -e "\033[1;31m Compiling options\033[0m" | tee -a make.log
+	@echo -e "\033[1m [$(OPTSC)]\033[0m" | tee -a make.log
 	@echo | tee -a make.log
-	@echo -e '\033[1;31m Linking options \033[0m' | tee -a make.log
-	@echo -e '\033[1m [$(OPTSL)]\033[0m' | tee -a make.log
+	@echo -e "\033[1;31m Linking options \033[0m" | tee -a make.log
+	@echo -e "\033[1m [$(OPTSL)]\033[0m" | tee -a make.log
 	@echo | tee -a make.log
+
+.PHONY : $(MKDIRS)
+$(MKDIRS):
+	@mkdir -p $@
 
 .PHONY : cleanobj
 cleanobj:
@@ -210,10 +215,6 @@ doc:
 	@echo -e "\033[1;31m Building documentation\033[0m" | tee make.log
 	@mkdir -p doc
 	@doxygen .doxygenconfig
-
-.PHONY : $(MKDIRS)
-$(MKDIRS):
-	@mkdir -p $@
 #----------------------------------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------------------------------
@@ -230,7 +231,18 @@ $(DOBJ)lib_vtk_io.o : Lib_VTK_IO.f90 \
 	@echo $(COTEXT) | tee -a make.log
 	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
 
+$(DOBJ)Test_Driver.o : Test_Driver.f90 \
+	$(DOBJ)ir_precision.o \
+	$(DOBJ)lib_vtk_io.o
+	@echo $(COTEXT) | tee -a make.log
+	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+
 VTK_IO : PRINTINFO $(MKDIRS) $(DOBJ)ir_precision.o $(DOBJ)lib_vtk_io.o
 	@echo $(LITEXT) | tee -a make.log
 	@$(MAKELIB) 1>> diagnostic_messages 2>> error_messages
+
+$(DEXE)Test_Driver : PRINTINFO $(MKDIRS) $(DOBJ)Test_Driver.o
+	@echo | tee -a make.log
+	@echo $(LITEXT) | tee -a make.log
+	@$(FC) $(OPTSL) $(DOBJ)*.o $(LIBS) -o $@ 1>> diagnostic_messages 2>> error_messages
 #-----------------------------------------------------------------------------------------------------------------------------------

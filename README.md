@@ -15,7 +15,7 @@ The supported VTK features are:
         * Structured Points;
         * Structured Grid;
         * Unstructured Grid;
-        * Polydata (__missing__);
+        * Polydata ( __missing__ );
         * Rectilinear Grid;
         * Field (__missing__);
     - XML standard:

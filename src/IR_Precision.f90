@@ -72,13 +72,14 @@ public:: I_P,  FI_P,  DI_P,  MinI_P,  MaxI_P,  BII_P,  BYI_P
 public:: check_endian
 public:: bit_size
 public:: str, strz, cton
-public:: IR_Init
+public:: ir_initialized,IR_Init
 public:: IR_Print
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
 !> @ingroup IR_PrecisionGlobalVarPar
 !> @{
+logical:: ir_initialized = .false. !< Flag for chcecking the initialization of some variables that must be initialized by IR_Init.
 ! Bit ordering of the running architecture:
 integer, parameter:: endianL = 1       !< Little endian parameter.
 integer, parameter:: endianB = 0       !< Big endian parameter.
@@ -693,6 +694,7 @@ contains
   BIR8P = bit_size(i=MaxR8P) ; BYR8P = BIR8P/8_I1P
   BIR4P = bit_size(i=MaxR4P) ; BYR4P = BIR4P/8_I1P
   BIR_P = bit_size(i=MaxR_P) ; BYR_P = BIR_P/8_I1P
+  ir_initialized = .true.
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine IR_init
