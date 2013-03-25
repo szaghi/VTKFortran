@@ -201,6 +201,7 @@ clean: cleanobj cleanmod cleanmsg
 
 .PHONY : cleanall
 cleanall: clean cleanlib
+	@rm -f $(DEXE)Test_Driver
 
 .PHONY : tar
 tar: cleanall

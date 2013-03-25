@@ -47,8 +47,8 @@ integer(I4P), dimension(1:Nn):: var_uns_grid_X
 integer(I4P), dimension(1:Nn):: var_uns_grid_Y
 integer(I4P), dimension(1:Nn):: var_uns_grid_Z
 ! Auxiliary variables
-integer(I4P):: E_IO  ! IO error flag.
-integer(I4P):: i,j,k ! Counters.
+integer(I4P):: E_IO    ! IO error flag.
+integer(I4P):: i,j,k,f ! Counters.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ do k=nz1_sgl,nz2_sgl
  enddo
 enddo
 E_IO = VTK_INI_XML(output_format = 'binary',              &
-                   filename      = 'XML_STRG_BINARY.vts',  &
+                   filename      = 'XML_STRG_BINARY.vts', &
                    mesh_topology = 'StructuredGrid',      &
                    nx1 = nx1_sgl,nx2 = nx2_sgl, ny1 = ny1_sgl,ny2 = ny2_sgl, nz1 = nz1_sgl,nz2 = nz2_sgl)
 E_IO = VTK_GEO_XML(nx1=nx1_sgl,nx2=nx2_sgl, ny1=ny1_sgl,ny2=ny2_sgl, nz1=nz1_sgl,nz2=nz2_sgl, NN=nn_sgl, &
@@ -123,6 +123,28 @@ E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'vector', varX=var_uns_grid_X,varY=var_
 E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'CLOSE')
 E_IO = VTK_GEO_XML()
 E_IO = VTK_END_XML()
+! test concurrent (multiple) files IO
+E_IO = VTK_INI_XML(output_format = 'BINARY', filename = 'XML_UNST_BINARY-CONC.vtu', mesh_topology = 'UnstructuredGrid')
+E_IO = VTK_INI_XML(output_format = 'binary',                   &
+                   filename      = 'XML_STRG_BINARY-CONC.vts', &
+                   mesh_topology = 'StructuredGrid',           &
+                   nx1 = nx1_sgl,nx2 = nx2_sgl, ny1 = ny1_sgl,ny2 = ny2_sgl, nz1 = nz1_sgl,nz2 = nz2_sgl)
+E_IO = VTK_GEO_XML(cf=1,NN = Nn, NC = Ne, X = x_uns, Y = y_uns, Z = z_uns)
+E_IO = VTK_GEO_XML(cf=2,nx1=nx1_sgl,nx2=nx2_sgl, ny1=ny1_sgl,ny2=ny2_sgl, nz1=nz1_sgl,nz2=nz2_sgl, NN=nn_sgl, &
+                   X=reshape(x_sgl(:,:,:),(/nn_sgl/)), Y=reshape(y_sgl(:,:,:),(/nn_sgl/)), Z=reshape(z_sgl(:,:,:),(/nn_sgl/)))
+E_IO = VTK_CON_XML(cf=1,NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
+E_IO = VTK_DAT_XML(cf=1,var_location = 'node', var_block_action = 'opeN')
+E_IO = VTK_DAT_XML(cf=2,var_location = 'node', var_block_action = 'OPEN')
+E_IO = VTK_VAR_XML(cf=1,NC_NN = Nn, varname = 'scalars', var = var_uns_grid)
+E_IO = VTK_VAR_XML(cf=1,NC_NN = Nn, varname = 'vector', varX=var_uns_grid_X,varY=var_uns_grid_Y,varZ=var_uns_grid_Z)
+E_IO = VTK_VAR_XML(cf=2,NC_NN = nn_sgl, varname = 'node_value', var = reshape(var_sgl(:,:,:),(/nn_sgl/)))
+E_IO = VTK_DAT_XML(cf=1,var_location = 'node', var_block_action = 'CLOSE')
+E_IO = VTK_DAT_XML(cf=2,var_location = 'node', var_block_action = 'Close')
+E_IO = VTK_GEO_XML(cf=1)
+E_IO = VTK_GEO_XML(cf=2)
+f=1
+E_IO = VTK_END_XML(cf=f)
+E_IO = VTK_END_XML(cf=f)
 stop
 !-----------------------------------------------------------------------------------------------------------------------------------
 endprogram Test_Driver
