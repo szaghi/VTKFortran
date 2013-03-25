@@ -17,18 +17,18 @@ The supported VTK features are:
         * Unstructured Grid;
         * Polydata ( __missing__ );
         * Rectilinear Grid;
-        * Field (__missing__);
+        * Field ( __missing__ );
     - XML standard:
-        * Image Data (__missing__);
-        * Polydata (__missing__);
+        * Image Data ( __missing__ );
+        * Polydata ( __missing__ );
         * Rectilinear Grid;
         * Structured Grid;
         * Unstructured Grid;
-        * Parallel Image Data (__missing__);
-        * Parallel Polydata (__missing__);
-        * Parallel Rectilinear Grid (__missing__);
-        * Parallel Structured Grid (__missing__);
-        * Parallel Unstructured Grid (__missing__);
+        * Parallel Image Data ( __missing__ );
+        * Parallel Polydata ( __missing__ );
+        * Parallel Rectilinear Grid ( __missing__ );
+        * Parallel Structured Grid ( __missing__ );
+        * Parallel Unstructured Grid ( __missing__ );
 * Importers are __missing__.
 
 Copyrights
