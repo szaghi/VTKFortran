@@ -106,6 +106,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </ul>
 </dd></dl>
 <dl class="copyright"><dt><b>Copyright:</b></dt><dd>GNU Public License version 3.</dd></dl>
+<dl class="note"><dt><b>Note:</b></dt><dd>The supported compilers are GNU gfortran 4.7.x (or higher) and Intel Fortran 12.x (or higher). <em><a class="el" href="d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> needs a modern compiler providing support for some Fortran standard 2003 features.</dd></dl>
 <h2><a class="anchor" id="Introduction"></a>
 Introduction</h2>
 <p><a class="el" href="d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> is a Fortran library to write and read data conforming the VTK_Standard (<a href="http://www.vtk.org/">http://www.vtk.org/</a>), useful for ParaView visualization tool. Even though there are many wrappers/porting of the VTK source code (C++ code), there is not a Fortran one. This library is not a porting or a wrapper of the VTK code, but it only an exporter/importer of the VTK data format written in pure Fortran language (standard Fortran 2003) that can be used by Fortran coders (yes, there are still a lot of these brave coders...) without mixing Fortran with C++ language. Fortran is still the best language for high performance computing for scientific purpose, like CFD computing. It is necessary a tool to deal with VTK standard directly by Fortran code. The library was made to fill this empty: it is a simple Fortran module able to export native Fortran data into VTK data format and to import VTK data into a Fortran code, both in ascii and binary file format.</p>
@@ -172,7 +173,7 @@ Source-Code</h2>
   <div id="nav-path" class="navpath">
     <ul>
 
-    <li class="footer">Generated on Thu Mar 28 2013 11:56:38 for Lib_VTK_IO by
+    <li class="footer">Generated on Thu Mar 28 2013 12:09:51 for Lib_VTK_IO by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>
