@@ -6,7 +6,7 @@
 !> @defgroup Test_DriverProgram Test_Driver
 !> @}
 
-!> "Driver" program for testing Lib_VTK_IO functions.
+!> "Driver" program for testing @libvtk functions.
 !> @note
 !> For printing help message for usage run it without command line arguments
 !> @code

@@ -104,8 +104,14 @@
 !> useful functions to achieve the portability of reals and integers precision and @libvtk uses these functions to define portable
 !> kind-precision; to this aim @libvtk uses IR_Precision module.
 !> @author    Stefano Zaghi
-!> @version   1.0
-!> @date      2012-04-24
+!> @version   1.1
+!> @date      2013-03-28
+!> @par News
+!>      - Correct bug affecting binary output;
+!>      - Implement concurrent multiple files IO capability;
+!>      - Implement FieldData tag for XML files, useful for tagging dataset with global auxiliary data, e.g. time, time step, ecc;
+!>      - Implement Parallel (Partitioned) XML files support (.pvtu,.pvts,.pvtr);
+!>      - Implement Driver testing program for providing practical examples of @libvtk usage.
 !> @copyright GNU Public License version 3.
 !> @todo \b CompleteExporter: Complete the exporters
 !> @todo \b CompleteImporter: Complete the importers
