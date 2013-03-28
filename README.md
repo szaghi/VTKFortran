@@ -26,9 +26,9 @@ The supported VTK features are:
         * Unstructured Grid;
         * Parallel Image Data ( __missing__ );
         * Parallel Polydata ( __missing__ );
-        * Parallel Rectilinear Grid ( __missing__ );
-        * Parallel Structured Grid ( __missing__ );
-        * Parallel Unstructured Grid ( __missing__ );
+        * Parallel Rectilinear Grid;
+        * Parallel Structured Grid;
+        * Parallel Unstructured Grid;
 * Importers are __missing__.
 
 Copyrights
