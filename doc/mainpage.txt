@@ -12,6 +12,8 @@
      - Implement Driver testing program for providing practical examples of @libvtk usage.
 @copyright GNU Public License version 3.
 
+@note The supported compilers are GNU gfortran 4.7.x (or higher) and Intel Fortran 12.x (or higher). @libvtk needs a modern compiler providing support for some Fortran standard 2003 features.
+
 @section Introduction
 
 Lib_VTK_IO is a Fortran library to write and read data conforming the VTK_Standard (http://www.vtk.org/), useful for ParaView visualization tool. Even though there are many wrappers/porting of the VTK source code (C++ code), there is not a Fortran one. This library is not a porting or a wrapper of the VTK code, but it only an exporter/importer of the VTK data format written in pure Fortran language (standard Fortran 2003) that can be used by Fortran coders (yes, there are still a lot of these brave coders...) without mixing Fortran with C++ language. Fortran is still the best language for high performance computing for scientific purpose, like CFD computing. It is necessary a tool to deal with VTK standard directly by Fortran code. The library was made to fill this empty: it is a simple Fortran module able to export native Fortran data into VTK data format and to import VTK data into a Fortran code, both in ascii and binary file format.

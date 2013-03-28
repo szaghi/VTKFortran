@@ -113,6 +113,8 @@
 !>      - Implement Parallel (Partitioned) XML files support (.pvtu,.pvts,.pvtr);
 !>      - Implement Driver testing program for providing practical examples of @libvtk usage.
 !> @copyright GNU Public License version 3.
+!> @note The supported compilers are GNU gfortran 4.7.x (or higher) and Intel Fortran 12.x (or higher). @libvtk needs a modern
+!> compiler providing support for some Fortran standard 2003 features.
 !> @todo \b CompleteExporter: Complete the exporters
 !> @todo \b CompleteImporter: Complete the importers
 !> @todo \b DocExamples: Improve the documentation by means of examples
