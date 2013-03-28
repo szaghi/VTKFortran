@@ -4,22 +4,22 @@
 \form#3:$[-2^{31},+2^{31} - 1]$
 \form#4:$[-2^{15},+2^{15} - 1]$
 \form#5:$[-2^{7} ,+2^{7} - 1]$
-\form#6:$dc = NC + \sum\limits_{i = 1}^{NC} {nvertex_i }$
-\form#7:$dc$
-\form#8:$nvertex_i$
-\form#9:$i^{th}$
-\form#10:$dc=2+8+5=15$
-\form#11:$1^\circ$
-\form#12:$2^\circ$
-\form#13:$3^\circ$
-\form#14:$4^\circ$
-\form#15:$5^\circ$
-\form#16:$6^\circ$
-\form#17:$7^\circ$
-\form#18:$8^\circ$
-\form#19:$2^\circ $
-\form#20:$dc = dc = \sum\limits_{i = 1}^{NC} {nvertex_i }$
-\form#21:$dc=8+5=13$
-\form#22:$offset_c=\sum\limits_{i=1}^{c}{nvertex_i}$
-\form#23:$offset_c$
-\form#24:$c^{th}$
+\form#6:$dc = dc = \sum\limits_{i = 1}^{NC} {nvertex_i }$
+\form#7:$dc=8+5=13$
+\form#8:$1^\circ$
+\form#9:$2^\circ$
+\form#10:$3^\circ$
+\form#11:$4^\circ$
+\form#12:$5^\circ$
+\form#13:$6^\circ$
+\form#14:$7^\circ$
+\form#15:$8^\circ$
+\form#16:$offset_c=\sum\limits_{i=1}^{c}{nvertex_i}$
+\form#17:$offset_c$
+\form#18:$c^{th}$
+\form#19:$nvertex_i$
+\form#20:$i^{th}$
+\form#21:$dc = NC + \sum\limits_{i = 1}^{NC} {nvertex_i }$
+\form#22:$dc$
+\form#23:$dc=2+8+5=15$
+\form#24:$2^\circ $

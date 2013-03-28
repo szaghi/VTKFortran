@@ -22,6 +22,7 @@ var group__IR__PrecisionLibrary =
     [ "ctoi_I1P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#ga478d54c0153620bef6750d46fbb63b11", null ],
     [ "IR_init", "d7/d79/group__IR__PrecisionPublicProcedure.html#ga6a27db28d33ba193e54a61d58ced1db8", null ],
     [ "IR_Print", "d7/d79/group__IR__PrecisionPublicProcedure.html#gaeff95d17af95d8ef3f2f5888b00af587", null ],
+    [ "ir_initialized", "dc/d7d/group__IR__PrecisionGlobalVarPar.html#gac32092c50139ecc68e2344f8cf32ac26", null ],
     [ "endianL", "dc/d7d/group__IR__PrecisionGlobalVarPar.html#ga2a08bfd6b7a68c08a91ce96a0fe5aed0", null ],
     [ "endianB", "dc/d7d/group__IR__PrecisionGlobalVarPar.html#ga85040a4de331d8026e3aae3bbc3efeae", null ],
     [ "endian", "dc/d7d/group__IR__PrecisionGlobalVarPar.html#gac8d9284e2e03650303dcb4ab5e2e17f2", null ],

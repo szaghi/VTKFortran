@@ -5,5 +5,6 @@ var modules =
     [ "Interfaces", "dd/d55/group__Interface.html", "dd/d55/group__Interface" ],
     [ "Modules Libraries", "d6/dec/group__Library.html", "d6/dec/group__Library" ],
     [ "Public Procedures", "d0/d28/group__PublicProcedure.html", "d0/d28/group__PublicProcedure" ],
-    [ "Private Procedures", "d3/d7d/group__PrivateProcedure.html", "d3/d7d/group__PrivateProcedure" ]
+    [ "Private Procedures", "d3/d7d/group__PrivateProcedure.html", "d3/d7d/group__PrivateProcedure" ],
+    [ "Programs", "db/db0/group__Program.html", "db/db0/group__Program" ]
 ];

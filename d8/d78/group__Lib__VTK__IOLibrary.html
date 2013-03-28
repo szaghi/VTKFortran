@@ -111,6 +111,8 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 Data Types</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">module &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO">Lib_VTK_IO</a></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">This is a library of functions for Input and Output pure Fortran data in VTK format.  <a href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">type &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#da/d6c/structLib__VTK__IO_1_1Type__VTK__File">Lib_VTK_IO::Type_VTK_File</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">type &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d2/dc5/structLib__VTK__IO_1_1Type__VTM__File">Lib_VTK_IO::Type_VTM_File</a></td></tr>
 </table>
 <hr/><h2>Data Type Documentation</h2>
 <a name="d6/d5b/classLib__VTK__IO" id="d6/d5b/classLib__VTK__IO"></a>
@@ -147,9 +149,9 @@ Data Types</h2></td></tr>
 <li>Unstructured Grid;</li>
 <li>Parallel Image Data (<b>missing</b>);</li>
 <li>Parallel Polydata (<b>missing</b>);</li>
-<li>Parallel Rectilinear Grid (<b>missing</b>);</li>
-<li>Parallel Structured Grid (<b>missing</b>);</li>
-<li>Parallel Unstructured Grid (<b>missing</b>);</li>
+<li>Parallel Rectilinear Grid;</li>
+<li>Parallel Structured Grid;</li>
+<li>Parallel Unstructured Grid;</li>
 </ul>
 </li>
 </ul>
@@ -185,29 +187,32 @@ Data Types</h2></td></tr>
  E_IO = <a class="el" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML" title="Function for saving data variable(s) in VTK-XML standard.">VTK_VAR_XML</a>(NC_NN=nn,varname='u',var=<b>reshape</b>(u(ni1:ni2,nj1:nj2,nk1:nk2),(/nn/))) <br/>
  <br/>
  where built in function <em>reshape</em> has explicitly being used in the calling to <a class="el" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML" title="Function for saving data variable(s) in VTK-XML standard.">VTK_VAR_XML</a>. </p>
-<p class="enddd"><b>XML-Efficiency</b>: <br/>
+<p><b>XML-Efficiency</b>: <br/>
  This is not properly a bug. There is an inefficiency when saving XML binary file. To write XML binary <em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> uses a temporary scratch file to save binary data while saving all formatting data to the final XML file. Only when all XML formatting data have been written the scratch file is rewind and the binary data is saved in the final tag of XML file as <b>raw</b> data. This approach is not efficient. </p>
+<p class="enddd"><b>Thread-Safe</b>: <br/>
+ The <em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> is not thread-safe: if used into a parallel multi-thread framework, e.g. OpenMP threads, the IO operations are not safe and race conditions with unpredictable results happen. </p>
 </dd></dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00136">136</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
-</div><table class="memberdecls">
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00138">138</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+</div><div id="dynsection-1" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+  <img id="dynsection-1-trigger" src="../../closed.png" alt="+"/> Collaboration diagram for Lib_VTK_IO:</div>
+<div id="dynsection-1-summary" class="dynsummary" style="display:block;">
+</div>
+<div id="dynsection-1-content" class="dyncontent" style="display:none;">
+<div class="center"><img src="../../db/d59/classLib__VTK__IO__coll__graph.png" border="0" usemap="#Lib__VTK__IO_coll__map" alt="Collaboration graph"/></div>
+<map name="Lib__VTK__IO_coll__map" id="Lib__VTK__IO_coll__map">
+<area shape="rect" id="node2" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d2/dc5/structLib__VTK__IO_1_1Type__VTM__File" title="Lib_VTK_IO::Type_VTM_File" alt="" coords="5,5,197,35"/><area shape="rect" id="node4" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#da/d6c/structLib__VTK__IO_1_1Type__VTK__File" title="Lib_VTK_IO::Type_VTK_File" alt="" coords="221,5,411,35"/></map>
+<center><span class="legend">[<a target="top" href="../../graph_legend.html">legend</a>]</span></center></div>
+<table class="memberdecls">
 <tr><td colspan="2"><h3>Public Member Functions</h3></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga4fb610eb5692b11763b4b8e7688f38bd">VTK_INI</a> (output_format, filename, title, mesh_topology)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for initializing VTK-legacy file.  <a href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga4fb610eb5692b11763b4b8e7688f38bd"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga53cd14315ded5f5cef11d9d5194d9adb">VTK_CON</a> (NC, connect, cell_type)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that <b>must</b> be used when unstructured grid is used, it saves the connectivity of the unstructured gird.  <a href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga53cd14315ded5f5cef11d9d5194d9adb"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#gaebcfe4a6294e0c3dfb33c827d66efd87">VTK_DAT</a> (NC_NN, var_location)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that <b>must</b> be called before saving the data related to geometric mesh, this function initializes the saving of data variables indicating the <em>type</em> (node or cell centered) of variables that will be saved.  <a href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#gaebcfe4a6294e0c3dfb33c827d66efd87"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga35cc958ab785716b3e5f8fa098847706">VTK_END</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for finalizing open file, it has not inputs, <em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> manages the file unit without the user's action.  <a href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga35cc958ab785716b3e5f8fa098847706"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#a81b74d4230f329dedabfdf4288606676">VTK_INI_XML</a> (nx1, nx2, ny1, ny2, nz1, nz2, output_format, filename, mesh_topology)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for initializing VTK-XML file.  <a href="#a81b74d4230f329dedabfdf4288606676"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#a7cee9c5902c16d7164af356ac639a7f2">VTK_CON_XML</a> (NC, connect, offset, cell_type)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that <b>must</b> be used when unstructured grid is used, it saves the connectivity of the unstructured gird.  <a href="#a7cee9c5902c16d7164af356ac639a7f2"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga9155bd4edcd91431621c50cffc175113">VTK_DAT_XML</a> (var_location, var_block_action)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that <b>must</b> be called before saving the data related to geometric mesh, this function initializes the saving of data variables indicating the <em>type</em> (node or cell centered) of variables that will be saved.  <a href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga9155bd4edcd91431621c50cffc175113"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#gae736535f820094f0d705287069837f6b">VTK_END_XML</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for finalizing the VTK-XML file.  <a href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#gae736535f820094f0d705287069837f6b"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#a2496d2edf71c4bb296172ef18b7b7089">VTK_INI_XML</a> (cf, nx1, nx2, ny1, ny2, nz1, nz2, output_format, filename, mesh_topology)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for initializing VTK-XML file.  <a href="#a2496d2edf71c4bb296172ef18b7b7089"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#adf6a46bdced7f8be186ef62affd9b204">VTK_CON_XML</a> (cf, NC, connect, offset, cell_type)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that <b>must</b> be used when unstructured grid is used, it saves the connectivity of the unstructured gird.  <a href="#adf6a46bdced7f8be186ef62affd9b204"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga9071ea2ac1e62bac7e6dfdd1037be7b5">VTK_DAT_XML</a> (cf, var_location, var_block_action)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that <b>must</b> be called before saving the data related to geometric mesh, this function initializes the saving of data variables indicating the <em>type</em> (node or cell centered) of variables that will be saved.  <a href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga9071ea2ac1e62bac7e6dfdd1037be7b5"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga00c7430a1194a1331f9b8e9aede88a71">VTK_END_XML</a> (cf)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for finalizing the VTK-XML file.  <a href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga00c7430a1194a1331f9b8e9aede88a71"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga005b3704c23e602f989205bba1041aad">VTM_INI_XML</a> (filename)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">The VTK_VTM_XML function is used for initializing a VTM (VTK Multiblocks) XML file that is a wrapper to a set of VTK-XML files.  <a href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga005b3704c23e602f989205bba1041aad"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga3c3e8c1d6662c1a850c82bbe8890598b">VTM_BLK_XML</a> (block_action)</td></tr>
@@ -216,14 +221,100 @@ Data Types</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">The VTM_WRF_XML function is used for saving the list of VTK-XML wrapped files by the actual block of the mutliblock VTM file.  <a href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga3c31b01ac798e860f3ab9755ba5d15e1"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga81e47e2540738a750c57b7c15cad03e3">VTM_END_XML</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for finalizing open file, it has not inputs, <em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> manages the file unit without the user's action.  <a href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga81e47e2540738a750c57b7c15cad03e3"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#gaf551f235735e35f45374b1585c492494">PVTK_INI_XML</a> (cf, nx1, nx2, ny1, ny2, nz1, nz2, filename, mesh_topology, tp)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for initializing parallel (partitioned) VTK-XML file.  <a href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#gaf551f235735e35f45374b1585c492494"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga07836414ceb12232cc5e9f979c146a15">PVTK_GEO_XML</a> (cf, nx1, nx2, ny1, ny2, nz1, nz2, source)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving piece geometry source for parallel (partitioned) VTK-XML file.  <a href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga07836414ceb12232cc5e9f979c146a15"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga20d060b46120a8ccb7f23ea26fc8fc1f">PVTK_DAT_XML</a> (cf, var_location, var_block_action)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that <b>must</b> be called before saving the data related to geometric mesh, this function initializes the saving of data variables indicating the <em>type</em> (node or cell centered) of variables that will be saved.  <a href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga20d060b46120a8ccb7f23ea26fc8fc1f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga7820a95aa89144d02367fdaa7f70cf1b">PVTK_VAR_XML</a> (cf, Nc, varname, tp)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving variable associated to nodes or cells geometry.  <a href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga7820a95aa89144d02367fdaa7f70cf1b"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga64b38c40bff405783752f3d7f043f3a1">PVTK_END_XML</a> (cf)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for finalizing the parallel (partitioned) VTK-XML file.  <a href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga64b38c40bff405783752f3d7f043f3a1"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga193d5fa884e92640c94c86017a87a62e">VTK_INI</a> (cf, output_format, filename, title, mesh_topology)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for initializing VTK-legacy file.  <a href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga193d5fa884e92640c94c86017a87a62e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga53cd14315ded5f5cef11d9d5194d9adb">VTK_CON</a> (NC, connect, cell_type)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that <b>must</b> be used when unstructured grid is used, it saves the connectivity of the unstructured gird.  <a href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga53cd14315ded5f5cef11d9d5194d9adb"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#gaebcfe4a6294e0c3dfb33c827d66efd87">VTK_DAT</a> (NC_NN, var_location)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that <b>must</b> be called before saving the data related to geometric mesh, this function initializes the saving of data variables indicating the <em>type</em> (node or cell centered) of variables that will be saved.  <a href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#gaebcfe4a6294e0c3dfb33c827d66efd87"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga143f0454ed3c08653ea6f18491386ac2">VTK_END</a> (cf)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for finalizing open file, it has not inputs, <em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> manages the file unit without the user's action.  <a href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga143f0454ed3c08653ea6f18491386ac2"></a><br/></td></tr>
 <tr><td colspan="2"><h3>Private Member Functions</h3></td></tr>
 <tr><td colspan="2"><div class="groupHeader"></div></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga6b1edca36783cc281f200e6ec58c0336">Get_Unit</a> (Free_Unit)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for getting a free logic unit.  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga6b1edca36783cc281f200e6ec58c0336"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">character(len=len(string)) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga44050a1ca17c1405672185fa38ec6d90">Upper_Case</a> (string)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for converting lower case characters of a string to upper case ones.  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga44050a1ca17c1405672185fa38ec6d90"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga4bf53149a174b8d814bb13aa0bc02fb5">ioffset_update</a> (<a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga5831c9cecb0f068d44207fab5d0e75f9">N_Byte</a>)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine for updating ioffset pointer.  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga4bf53149a174b8d814bb13aa0bc02fb5"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga4bf53149a174b8d814bb13aa0bc02fb5">ioffset_update</a> (N_Byte)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine for updating vtk(f)ioffset pointer.  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga4bf53149a174b8d814bb13aa0bc02fb5"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gad45476415a2d4d0c24ef2b4a9ad6e315">vtk_update</a> (act)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine for updating (adding and removing elements into) vtk array.  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gad45476415a2d4d0c24ef2b4a9ad6e315"></a><br/></td></tr>
+<tr><td colspan="2"><div class="groupHeader"></div></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga87edd64085727265000192cb924393a3">VTK_FLD_XML_OC</a> (cf, fld_action)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for open/close field data tag.  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga87edd64085727265000192cb924393a3"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga87818187078245f7fe761a430e2fdb28">VTK_FLD_XML_R8</a> (cf, fld, fname)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field data (global auxiliary data, e.g.  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga87818187078245f7fe761a430e2fdb28"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga4ab47e218e68565e9d72ef39dbf396dd">VTK_FLD_XML_R4</a> (cf, fld, fname)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field data (global auxiliary data, e.g.  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga4ab47e218e68565e9d72ef39dbf396dd"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaa0d041ad434fb175693f9d8b78d4e358">VTK_FLD_XML_I8</a> (cf, fld, fname)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field data (global auxiliary data, e.g.  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaa0d041ad434fb175693f9d8b78d4e358"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga837eab622e0338ce8ae48da261485c01">VTK_FLD_XML_I4</a> (cf, fld, fname)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field data (global auxiliary data, e.g.  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga837eab622e0338ce8ae48da261485c01"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga7452b788653e8d8b2dcb84362b24567e">VTK_FLD_XML_I2</a> (cf, fld, fname)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field data (global auxiliary data, e.g.  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga7452b788653e8d8b2dcb84362b24567e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga020a09a39ab480467c6514f4c0fb5355">VTK_FLD_XML_I1</a> (cf, fld, fname)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field data (global auxiliary data, e.g.  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga020a09a39ab480467c6514f4c0fb5355"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga26d2e59558e8c60a91b72345fe42472e">VTK_GEO_XML_STRG_R8</a> (cf, nx1, nx2, ny1, ny2, nz1, nz2, NN, X, Y, Z)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>StructuredGrid</b> topology (R8P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga26d2e59558e8c60a91b72345fe42472e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gab9e1e51281a712b3e3fd83ee0243913f">VTK_GEO_XML_STRG_R4</a> (cf, nx1, nx2, ny1, ny2, nz1, nz2, NN, X, Y, Z)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>StructuredGrid</b> topology (R4P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gab9e1e51281a712b3e3fd83ee0243913f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga4103ae776658fa38da7e395d241bcd08">VTK_GEO_XML_RECT_R8</a> (cf, nx1, nx2, ny1, ny2, nz1, nz2, X, Y, Z)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>RectilinearGrid</b> topology (R8P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga4103ae776658fa38da7e395d241bcd08"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaac3e5aa6e116b71ce7314a398bde1fb4">VTK_GEO_XML_RECT_R4</a> (cf, nx1, nx2, ny1, ny2, nz1, nz2, X, Y, Z)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>RectilinearGrid</b> topology (R4P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaac3e5aa6e116b71ce7314a398bde1fb4"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga226cead6835604f0e9f613817fdcc67f">VTK_GEO_XML_UNST_R8</a> (cf, NN, NC, X, Y, Z)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>UnstructuredGrid</b> topology (R8P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga226cead6835604f0e9f613817fdcc67f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga0b0c782a108246bd8ef578f391f2a272">VTK_GEO_XML_UNST_R4</a> (cf, NN, NC, X, Y, Z)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>UnstructuredGrid</b> topology (R4P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga0b0c782a108246bd8ef578f391f2a272"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gad3f454e7c3ae804e64360ef48c7f5516">VTK_GEO_XML_CLOSEP</a> (cf)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for closing mesh block data.  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gad3f454e7c3ae804e64360ef48c7f5516"></a><br/></td></tr>
+<tr><td colspan="2"><div class="groupHeader"></div></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga0c9c5491c7edc347a3158d27810c63e4">VTK_VAR_XML_SCAL_R8</a> (cf, NC_NN, varname, var)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of scalar variable (R8P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga0c9c5491c7edc347a3158d27810c63e4"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga1e381ae0b557afd2eafe210e46803ea9">VTK_VAR_XML_SCAL_R4</a> (cf, NC_NN, varname, var)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of scalar variable (R4P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga1e381ae0b557afd2eafe210e46803ea9"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga0a04822f072265b344a82561d6651815">VTK_VAR_XML_SCAL_I8</a> (cf, NC_NN, varname, var)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of scalar variable (I8P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga0a04822f072265b344a82561d6651815"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga43a62318626893779397e708e6de29f8">VTK_VAR_XML_SCAL_I4</a> (cf, NC_NN, varname, var)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of scalar variable (I4P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga43a62318626893779397e708e6de29f8"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga0cb814de0399646aad6ee2b4765c3f66">VTK_VAR_XML_SCAL_I2</a> (cf, NC_NN, varname, var)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of scalar variable (I2P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga0cb814de0399646aad6ee2b4765c3f66"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gab87e3ff0224772bd7930f396211107a9">VTK_VAR_XML_SCAL_I1</a> (cf, NC_NN, varname, var)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of scalar variable (I1P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gab87e3ff0224772bd7930f396211107a9"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gafbbd9b0294d8566d88fb4bca53bd8cbd">VTK_VAR_XML_VECT_R8</a> (cf, NC_NN, varname, varX, varY, varZ)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of vectorial variable (R8P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gafbbd9b0294d8566d88fb4bca53bd8cbd"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga6512d2a81593270061a173f8ab5d2606">VTK_VAR_XML_VECT_R4</a> (cf, NC_NN, varname, varX, varY, varZ)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of vectorial variable (R4P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga6512d2a81593270061a173f8ab5d2606"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga96adcacec1f673102cab4f00221a35a3">VTK_VAR_XML_VECT_I8</a> (cf, NC_NN, varname, varX, varY, varZ)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of vectorial variable (I8P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga96adcacec1f673102cab4f00221a35a3"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gae2da654ae668155eab7eb5161b5e3490">VTK_VAR_XML_VECT_I4</a> (cf, NC_NN, varname, varX, varY, varZ)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of vectorial variable (I4P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gae2da654ae668155eab7eb5161b5e3490"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga82aae7715855c8eab54dc17c5b1934ff">VTK_VAR_XML_VECT_I2</a> (cf, NC_NN, varname, varX, varY, varZ)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of vectorial variable (I2P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga82aae7715855c8eab54dc17c5b1934ff"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga961ad2c6b47d89b95e73c98e3fee75fb">VTK_VAR_XML_VECT_I1</a> (cf, NC_NN, varname, varX, varY, varZ)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of vectorial variable (I1P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga961ad2c6b47d89b95e73c98e3fee75fb"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga35638edd9e5126dbef77139303c4ce75">VTK_VAR_XML_LIST_R8</a> (cf, NC_NN, N_COL, varname, var)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of list variable (R8P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga35638edd9e5126dbef77139303c4ce75"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga59fbac86130f6c466f598bb6c80eebb9">VTK_VAR_XML_LIST_R4</a> (cf, NC_NN, N_COL, varname, var)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of list variable (R4P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga59fbac86130f6c466f598bb6c80eebb9"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga55e9ec5c63ecbdc31489ee971fa20048">VTK_VAR_XML_LIST_I8</a> (cf, NC_NN, N_COL, varname, var)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of list variable (I8P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga55e9ec5c63ecbdc31489ee971fa20048"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga2bf3d6fc3d402c3ec2355da02fe55958">VTK_VAR_XML_LIST_I4</a> (cf, NC_NN, N_COL, varname, var)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of list variable (I4P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga2bf3d6fc3d402c3ec2355da02fe55958"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gafc9c8ac003b7df56e7df1df87ad60f6f">VTK_VAR_XML_LIST_I2</a> (cf, NC_NN, N_COL, varname, var)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of list variable (I2P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gafc9c8ac003b7df56e7df1df87ad60f6f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaa6fe4e77bd341ceb4dcf9cb58386e069">VTK_VAR_XML_LIST_I1</a> (cf, NC_NN, N_COL, varname, var)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of list variable (I1P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaa6fe4e77bd341ceb4dcf9cb58386e069"></a><br/></td></tr>
 <tr><td colspan="2"><div class="groupHeader"></div></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gabebe3ae97dbc76633dfb6dd0fee9823a">VTK_GEO_STRP_R8</a> (Nx, Ny, Nz, X0, Y0, Z0, Dx, Dy, Dz)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>STRUCTURED_POINTS</b> topology (R8P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gabebe3ae97dbc76633dfb6dd0fee9823a"></a><br/></td></tr>
@@ -258,111 +349,40 @@ Data Types</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving texture variable (R8P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga3d03ee02efa681e61866aefdb6bcfcde"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gab57939670108a7f1aca595b9a331f281">VTK_VAR_TEXT_R4</a> (NC_NN, dimm, varname, textCoo)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving texture variable (R4P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gab57939670108a7f1aca595b9a331f281"></a><br/></td></tr>
-<tr><td colspan="2"><div class="groupHeader"></div></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gad9529d91911dbfb08b85b8ea336d1644">VTK_FLD_XML_OC</a> (fld_action)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for open/close field data tag.  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gad9529d91911dbfb08b85b8ea336d1644"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga7654b53d0f2c609f7fc11cf0ece497dd">VTK_FLD_XML_R8</a> (fld, fname)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field data (global auxiliary data, e.g.  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga7654b53d0f2c609f7fc11cf0ece497dd"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga7a89be5d9dcb416aa467db566fba3b7e">VTK_FLD_XML_R4</a> (fld, fname)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field data (global auxiliary data, e.g.  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga7a89be5d9dcb416aa467db566fba3b7e"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gae20170ce1af43515d6a31f9ab4b2db01">VTK_FLD_XML_I8</a> (fld, fname)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field data (global auxiliary data, e.g.  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gae20170ce1af43515d6a31f9ab4b2db01"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga172c4fa287cade70ca06f4f2bbaf947b">VTK_FLD_XML_I4</a> (fld, fname)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field data (global auxiliary data, e.g.  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga172c4fa287cade70ca06f4f2bbaf947b"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga951f9be07c31e82a8e7a56fb41ad87eb">VTK_FLD_XML_I2</a> (fld, fname)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field data (global auxiliary data, e.g.  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga951f9be07c31e82a8e7a56fb41ad87eb"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gad9d09fd9201c5ec056a6db25e17aa142">VTK_FLD_XML_I1</a> (fld, fname)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field data (global auxiliary data, e.g.  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gad9d09fd9201c5ec056a6db25e17aa142"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga281ff3d95a5240c125c3bd704e42dfbe">VTK_GEO_XML_STRG_R8</a> (nx1, nx2, ny1, ny2, nz1, nz2, NN, X, Y, Z)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>StructuredGrid</b> topology (R8P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga281ff3d95a5240c125c3bd704e42dfbe"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga8b2f117ce8b97fbfc993d260b526c0cc">VTK_GEO_XML_STRG_R4</a> (nx1, nx2, ny1, ny2, nz1, nz2, NN, X, Y, Z)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>StructuredGrid</b> topology (R4P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga8b2f117ce8b97fbfc993d260b526c0cc"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga87412fd98608bd88de1c8e4cee26727e">VTK_GEO_XML_RECT_R8</a> (nx1, nx2, ny1, ny2, nz1, nz2, X, Y, Z)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>RectilinearGrid</b> topology (R8P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga87412fd98608bd88de1c8e4cee26727e"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaeff4ec1fd21b06dde8dad6b20f7de9ca">VTK_GEO_XML_RECT_R4</a> (nx1, nx2, ny1, ny2, nz1, nz2, X, Y, Z)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>RectilinearGrid</b> topology (R4P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaeff4ec1fd21b06dde8dad6b20f7de9ca"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga81a490495eb3f8ea007b4124a5d144c3">VTK_GEO_XML_UNST_R8</a> (NN, NC, X, Y, Z)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>UnstructuredGrid</b> topology (R8P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga81a490495eb3f8ea007b4124a5d144c3"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga372c49d4a713108fef9dfcaba0f89ade">VTK_GEO_XML_UNST_R4</a> (NN, NC, X, Y, Z)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>UnstructuredGrid</b> topology (R4P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga372c49d4a713108fef9dfcaba0f89ade"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga4bb4a74c6c069a0a2f1b638c8b5083d8">VTK_GEO_XML_CLOSEP</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for closing mesh block data.  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga4bb4a74c6c069a0a2f1b638c8b5083d8"></a><br/></td></tr>
-<tr><td colspan="2"><div class="groupHeader"></div></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga74ed4f80e09a0da3c455c713b5094b03">VTK_VAR_XML_SCAL_R8</a> (NC_NN, varname, var)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of scalar variable (R8P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga74ed4f80e09a0da3c455c713b5094b03"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gab59ab941f954efdecd0e0b65ebe67c5c">VTK_VAR_XML_SCAL_R4</a> (NC_NN, varname, var)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of scalar variable (R4P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gab59ab941f954efdecd0e0b65ebe67c5c"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga2d7ce99520e60181da5f34ec378abc56">VTK_VAR_XML_SCAL_I8</a> (NC_NN, varname, var)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of scalar variable (I8P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga2d7ce99520e60181da5f34ec378abc56"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga08a3d0e089bff353ee52db197bbdf7b6">VTK_VAR_XML_SCAL_I4</a> (NC_NN, varname, var)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of scalar variable (I4P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga08a3d0e089bff353ee52db197bbdf7b6"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga80f76e1de244c8e0d163edccbbda7ab8">VTK_VAR_XML_SCAL_I2</a> (NC_NN, varname, var)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of scalar variable (I2P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga80f76e1de244c8e0d163edccbbda7ab8"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaf01dcc7a0f2f538001d90fdb7d3cb4d2">VTK_VAR_XML_SCAL_I1</a> (NC_NN, varname, var)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of scalar variable (I1P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaf01dcc7a0f2f538001d90fdb7d3cb4d2"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga944091703f5e8119bcb2b209e54521fc">VTK_VAR_XML_VECT_R8</a> (NC_NN, varname, varX, varY, varZ)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of vectorial variable (R8P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga944091703f5e8119bcb2b209e54521fc"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gacc2dad3e7f443dc5b27bbe6a28e188da">VTK_VAR_XML_VECT_R4</a> (NC_NN, varname, varX, varY, varZ)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of vectorial variable (R4P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gacc2dad3e7f443dc5b27bbe6a28e188da"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gae6034bf384b0b3c5d7b2e32d6c5f530d">VTK_VAR_XML_VECT_I8</a> (NC_NN, varname, varX, varY, varZ)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of vectorial variable (I8P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gae6034bf384b0b3c5d7b2e32d6c5f530d"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaabb7c9313429c7e057d1d61f07dfd227">VTK_VAR_XML_VECT_I4</a> (NC_NN, varname, varX, varY, varZ)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of vectorial variable (I4P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaabb7c9313429c7e057d1d61f07dfd227"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gac1137a6d2c559ad3b817e0eda0fa42bf">VTK_VAR_XML_VECT_I2</a> (NC_NN, varname, varX, varY, varZ)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of vectorial variable (I2P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gac1137a6d2c559ad3b817e0eda0fa42bf"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga1e676ecca6664bf989680a77faeec16b">VTK_VAR_XML_VECT_I1</a> (NC_NN, varname, varX, varY, varZ)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of vectorial variable (I1P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga1e676ecca6664bf989680a77faeec16b"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga2a8dbcaae7a048241298b961ab9f527c">VTK_VAR_XML_LIST_R8</a> (NC_NN, N_COL, varname, var)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of list variable (R8P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga2a8dbcaae7a048241298b961ab9f527c"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga525632e96aa5ea10018f06a9745640ad">VTK_VAR_XML_LIST_R4</a> (NC_NN, N_COL, varname, var)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of list variable (R4P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga525632e96aa5ea10018f06a9745640ad"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaf33dfa6887fcc9c55da76d1ff2f301de">VTK_VAR_XML_LIST_I8</a> (NC_NN, N_COL, varname, var)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of list variable (I8P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaf33dfa6887fcc9c55da76d1ff2f301de"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga7a9b90637391a87c8f93763f85381e67">VTK_VAR_XML_LIST_I4</a> (NC_NN, N_COL, varname, var)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of list variable (I4P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga7a9b90637391a87c8f93763f85381e67"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga002a68de241587ef34c7739baa047b42">VTK_VAR_XML_LIST_I2</a> (NC_NN, N_COL, varname, var)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of list variable (I2P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga002a68de241587ef34c7739baa047b42"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gacdfc0cbd354be32fd15564c9fe84b0ac">VTK_VAR_XML_LIST_I1</a> (NC_NN, N_COL, varname, var)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of list variable (I1P).  <a href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gacdfc0cbd354be32fd15564c9fe84b0ac"></a><br/></td></tr>
 <tr><td colspan="2"><h3>Private Attributes</h3></td></tr>
 <tr><td colspan="2"><div class="groupHeader"></div></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P), parameter&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga355e5f6732bc49387ba820af22bf77ed">maxlen</a> = 500</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Max number of characters of static string.  <a href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga355e5f6732bc49387ba820af22bf77ed"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">character(1), parameter&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga3bf0a47618f698c6d843a764c4cc091c">end_rec</a> = char(10)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">End-character for binary-record finalize.  <a href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga3bf0a47618f698c6d843a764c4cc091c"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P), parameter&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga858b4aad20df38d398a96835d96d43f6">f_out_ascii</a> = 0</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Ascii-output-format parameter identifier.  <a href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga858b4aad20df38d398a96835d96d43f6"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P), parameter&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga769ebcdfc6ca98cc5f328f54e11ebfd2">f_out_binary</a> = 1</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Binary-output-format parameter identifier.  <a href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga769ebcdfc6ca98cc5f328f54e11ebfd2"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga7c82984420f6169f731e01e83aa0a38e">f_out</a> = <a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga858b4aad20df38d398a96835d96d43f6">f_out_ascii</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Current output-format (initialized to ascii format).  <a href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga7c82984420f6169f731e01e83aa0a38e"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">character(len=<a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga355e5f6732bc49387ba820af22bf77ed">maxlen</a>)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga8aec381ae8d1cfec3fefc990fe09d7d7">topology</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Mesh topology.  <a href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga8aec381ae8d1cfec3fefc990fe09d7d7"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga15205a5ec13526067b8ec4e80bb36677">Unit_VTK</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal logical unit.  <a href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga15205a5ec13526067b8ec4e80bb36677"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga42181a7c93120d0837af6266698ddd32">Unit_VTK_Append</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal logical unit for raw binary XML append file.  <a href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga42181a7c93120d0837af6266698ddd32"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga5831c9cecb0f068d44207fab5d0e75f9">N_Byte</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of byte to be written/read.  <a href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga5831c9cecb0f068d44207fab5d0e75f9"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I8P)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga407bfa832b155d62159b4d0119a8c951">ioffset</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Offset pointer.  <a href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga407bfa832b155d62159b4d0119a8c951"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#gac36340194d295d5c4d4cd479709908d9">indent</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Indent pointer.  <a href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#gac36340194d295d5c4d4cd479709908d9"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#gae1111d081d4d189dfc6389228174899b">Unit_VTM</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal logical unit.  <a href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#gae1111d081d4d189dfc6389228174899b"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga47c449c72a6a087497bbcd596952fd11">blk</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Block index.  <a href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga47c449c72a6a087497bbcd596952fd11"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga4e1417232606635d65f6f1f5d93c436d">vtm_indent</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Indent pointer.  <a href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga4e1417232606635d65f6f1f5d93c436d"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P), parameter&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#gafa8b242a81a568eb7ff6a698cce398ed">ascii</a> = 0</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Ascii-output-format parameter identifier.  <a href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#gafa8b242a81a568eb7ff6a698cce398ed"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P), parameter&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga7736d288a10a107f197ccd5aad5a814e">binary</a> = 1</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Binary-output-format parameter identifier.  <a href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga7736d288a10a107f197ccd5aad5a814e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">type(<a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#da/d6c/structLib__VTK__IO_1_1Type__VTK__File">Type_VTK_File</a>), dimension(:), <br class="typebreak"/>
+allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga857ed739c898b7c991ff710fc1881e93">vtk</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Global data of VTK files [1:Nvtk].  <a href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga857ed739c898b7c991ff710fc1881e93"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga13a4bec26bc5ee2a278ae68f07c36dc2">Nvtk</a> = 0_I4P</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of (concurrent) VTK files.  <a href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga13a4bec26bc5ee2a278ae68f07c36dc2"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga35388870b361848cad7b567505292d76">f</a> = 0_I4P</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Current VTK file index.  <a href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga35388870b361848cad7b567505292d76"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">type(<a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d2/dc5/structLib__VTK__IO_1_1Type__VTM__File">Type_VTM_File</a>)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga91d5989f976136e806e8c6424c588a70">vtm</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Global data of VTM files.  <a href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga91d5989f976136e806e8c6424c588a70"></a><br/></td></tr>
 </table>
 <hr/><h4>Member Function/Subroutine Documentation</h4>
-<a class="anchor" id="a81b74d4230f329dedabfdf4288606676"></a><!-- doxytag: member="Lib_VTK_IO::VTK_INI_XML" ref="a81b74d4230f329dedabfdf4288606676" args="(nx1, nx2, ny1, ny2, nz1, nz2, output_format, filename, mesh_topology)" -->
+<a class="anchor" id="a2496d2edf71c4bb296172ef18b7b7089"></a><!-- doxytag: member="Lib_VTK_IO::VTK_INI_XML" ref="a2496d2edf71c4bb296172ef18b7b7089" args="(cf, nx1, nx2, ny1, ny2, nz1, nz2, output_format, filename, mesh_topology)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">integer(I4P) function, public <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#a81b74d4230f329dedabfdf4288606676">Lib_VTK_IO::VTK_INI_XML</a> </td>
+          <td class="memname">integer(I4P) function, public <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#a2496d2edf71c4bb296172ef18b7b7089">Lib_VTK_IO::VTK_INI_XML</a> </td>
           <td>(</td>
+          <td class="paramtype">integer(I4P), intent(out), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
           <td class="paramname"><em>nx1</em>, </td>
         </tr>
@@ -436,6 +456,7 @@ Data Types</h2></td></tr>
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nx1</td><td>Initial node of x axis. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nx2</td><td>Final node of x axis. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">ny1</td><td>Initial node of y axis. </td></tr>
@@ -449,17 +470,23 @@ Data Types</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01229">1229</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00556">556</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a7cee9c5902c16d7164af356ac639a7f2"></a><!-- doxytag: member="Lib_VTK_IO::VTK_CON_XML" ref="a7cee9c5902c16d7164af356ac639a7f2" args="(NC, connect, offset, cell_type)" -->
+<a class="anchor" id="adf6a46bdced7f8be186ef62affd9b204"></a><!-- doxytag: member="Lib_VTK_IO::VTK_CON_XML" ref="adf6a46bdced7f8be186ef62affd9b204" args="(cf, NC, connect, offset, cell_type)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">integer(I4P) function, public <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#a7cee9c5902c16d7164af356ac639a7f2">Lib_VTK_IO::VTK_CON_XML</a> </td>
+          <td class="memname">integer(I4P) function, public <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#adf6a46bdced7f8be186ef62affd9b204">Lib_VTK_IO::VTK_CON_XML</a> </td>
           <td>(</td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">integer(I4P), intent(in)&#160;</td>
           <td class="paramname"><em>NC</em>, </td>
         </tr>
@@ -491,36 +518,37 @@ Data Types</h2></td></tr>
 <div class="memdoc">
 
 <p>Function that <b>must</b> be used when unstructured grid is used, it saves the connectivity of the unstructured gird. </p>
-<dl class="note"><dt><b>Note:</b></dt><dd>The vector <b>connect</b> must follow the VTK-legacy standard. It is passed as <em>assumed-shape</em> array because its dimensions is related to the mesh dimensions in a complex way. Its dimensions can be calculated by the following equation: <img class="formulaInl" alt="$dc = dc = \sum\limits_{i = 1}^{NC} {nvertex_i }$" src="../../form_20.png"/>. Note that this equation is different from the legacy one. The XML connectivity convention is quite different from the legacy standard. As an example suppose we have a mesh composed by 2 cells, one hexahedron (8 vertices) and one pyramid with square basis (5 vertices) and suppose that the basis of pyramid is constitute by a face of the hexahedron and so the two cells share 4 vertices. The above equation gives <img class="formulaInl" alt="$dc=8+5=13$" src="../../form_21.png"/>. The connectivity vector for this mesh can be: <br/>
+<dl class="note"><dt><b>Note:</b></dt><dd>The vector <b>connect</b> must follow the VTK-legacy standard. It is passed as <em>assumed-shape</em> array because its dimensions is related to the mesh dimensions in a complex way. Its dimensions can be calculated by the following equation: <img class="formulaInl" alt="$dc = dc = \sum\limits_{i = 1}^{NC} {nvertex_i }$" src="../../form_6.png"/>. Note that this equation is different from the legacy one. The XML connectivity convention is quite different from the legacy standard. As an example suppose we have a mesh composed by 2 cells, one hexahedron (8 vertices) and one pyramid with square basis (5 vertices) and suppose that the basis of pyramid is constitute by a face of the hexahedron and so the two cells share 4 vertices. The above equation gives <img class="formulaInl" alt="$dc=8+5=13$" src="../../form_7.png"/>. The connectivity vector for this mesh can be: <br/>
  first cell <br/>
- connect(1) = 0 identification flag of <img class="formulaInl" alt="$1^\circ$" src="../../form_11.png"/> vertex of 1° cell <br/>
- connect(2) = 1 identification flag of <img class="formulaInl" alt="$2^\circ$" src="../../form_12.png"/> vertex of 1° cell <br/>
- connect(3) = 2 identification flag of <img class="formulaInl" alt="$3^\circ$" src="../../form_13.png"/> vertex of 1° cell <br/>
- connect(4) = 3 identification flag of <img class="formulaInl" alt="$4^\circ$" src="../../form_14.png"/> vertex of 1° cell <br/>
- connect(5) = 4 identification flag of <img class="formulaInl" alt="$5^\circ$" src="../../form_15.png"/> vertex of 1° cell <br/>
- connect(6) = 5 identification flag of <img class="formulaInl" alt="$6^\circ$" src="../../form_16.png"/> vertex of 1° cell <br/>
- connect(7) = 6 identification flag of <img class="formulaInl" alt="$7^\circ$" src="../../form_17.png"/> vertex of 1° cell <br/>
- connect(8) = 7 identification flag of <img class="formulaInl" alt="$8^\circ$" src="../../form_18.png"/> vertex of 1° cell <br/>
+ connect(1) = 0 identification flag of <img class="formulaInl" alt="$1^\circ$" src="../../form_8.png"/> vertex of 1° cell <br/>
+ connect(2) = 1 identification flag of <img class="formulaInl" alt="$2^\circ$" src="../../form_9.png"/> vertex of 1° cell <br/>
+ connect(3) = 2 identification flag of <img class="formulaInl" alt="$3^\circ$" src="../../form_10.png"/> vertex of 1° cell <br/>
+ connect(4) = 3 identification flag of <img class="formulaInl" alt="$4^\circ$" src="../../form_11.png"/> vertex of 1° cell <br/>
+ connect(5) = 4 identification flag of <img class="formulaInl" alt="$5^\circ$" src="../../form_12.png"/> vertex of 1° cell <br/>
+ connect(6) = 5 identification flag of <img class="formulaInl" alt="$6^\circ$" src="../../form_13.png"/> vertex of 1° cell <br/>
+ connect(7) = 6 identification flag of <img class="formulaInl" alt="$7^\circ$" src="../../form_14.png"/> vertex of 1° cell <br/>
+ connect(8) = 7 identification flag of <img class="formulaInl" alt="$8^\circ$" src="../../form_15.png"/> vertex of 1° cell <br/>
  second cell <br/>
- connect(9 ) = 0 identification flag of <img class="formulaInl" alt="$1^\circ$" src="../../form_11.png"/> vertex of 2° cell <br/>
- connect(10) = 1 identification flag of <img class="formulaInl" alt="$2^\circ$" src="../../form_12.png"/> vertex of 2° cell <br/>
- connect(11) = 2 identification flag of <img class="formulaInl" alt="$3^\circ$" src="../../form_13.png"/> vertex of 2° cell <br/>
- connect(12) = 3 identification flag of <img class="formulaInl" alt="$4^\circ$" src="../../form_14.png"/> vertex of 2° cell <br/>
- connect(13) = 8 identification flag of <img class="formulaInl" alt="$5^\circ$" src="../../form_15.png"/> vertex of 2° cell <br/>
+ connect(9 ) = 0 identification flag of <img class="formulaInl" alt="$1^\circ$" src="../../form_8.png"/> vertex of 2° cell <br/>
+ connect(10) = 1 identification flag of <img class="formulaInl" alt="$2^\circ$" src="../../form_9.png"/> vertex of 2° cell <br/>
+ connect(11) = 2 identification flag of <img class="formulaInl" alt="$3^\circ$" src="../../form_10.png"/> vertex of 2° cell <br/>
+ connect(12) = 3 identification flag of <img class="formulaInl" alt="$4^\circ$" src="../../form_11.png"/> vertex of 2° cell <br/>
+ connect(13) = 8 identification flag of <img class="formulaInl" alt="$5^\circ$" src="../../form_12.png"/> vertex of 2° cell <br/>
  Therefore this connectivity vector convention is more simple than the legacy convention, now we must create also the <em>offset</em> vector that contains the data now missing in the <em>connect</em> vector. The offset vector for this mesh can be: <br/>
  first cell <br/>
- offset(1) = 8 =&gt; summ of nodes of <img class="formulaInl" alt="$1^\circ$" src="../../form_11.png"/> cell <br/>
+ offset(1) = 8 =&gt; summ of nodes of <img class="formulaInl" alt="$1^\circ$" src="../../form_8.png"/> cell <br/>
  second cell <br/>
- offset(2) = 13 =&gt; summ of nodes of <img class="formulaInl" alt="$1^\circ$" src="../../form_11.png"/> and <img class="formulaInl" alt="$2^\circ$" src="../../form_12.png"/> cells <br/>
- The value of every cell-offset can be calculated by the following equation: <img class="formulaInl" alt="$offset_c=\sum\limits_{i=1}^{c}{nvertex_i}$" src="../../form_22.png"/> where <img class="formulaInl" alt="$offset_c$" src="../../form_23.png"/> is the value of <img class="formulaInl" alt="$c^{th}$" src="../../form_24.png"/> cell and <img class="formulaInl" alt="$nvertex_i$" src="../../form_8.png"/> is the number of vertices of <img class="formulaInl" alt="$i^{th}$" src="../../form_9.png"/> cell. The function VTK_CON_XML does not calculate the connectivity and offset vectors: it writes the connectivity and offset vectors conforming the VTK-XML standard, but does not calculate them. The vector variable <em>cell_type</em> must conform the VTK-XML standard (see the file VTK-Standard at the Kitware homepage) that is the same of the legacy standard. It contains the <em>type</em> of each cells. For the above example this vector is: <br/>
+ offset(2) = 13 =&gt; summ of nodes of <img class="formulaInl" alt="$1^\circ$" src="../../form_8.png"/> and <img class="formulaInl" alt="$2^\circ$" src="../../form_9.png"/> cells <br/>
+ The value of every cell-offset can be calculated by the following equation: <img class="formulaInl" alt="$offset_c=\sum\limits_{i=1}^{c}{nvertex_i}$" src="../../form_16.png"/> where <img class="formulaInl" alt="$offset_c$" src="../../form_17.png"/> is the value of <img class="formulaInl" alt="$c^{th}$" src="../../form_18.png"/> cell and <img class="formulaInl" alt="$nvertex_i$" src="../../form_19.png"/> is the number of vertices of <img class="formulaInl" alt="$i^{th}$" src="../../form_20.png"/> cell. The function VTK_CON_XML does not calculate the connectivity and offset vectors: it writes the connectivity and offset vectors conforming the VTK-XML standard, but does not calculate them. The vector variable <em>cell_type</em> must conform the VTK-XML standard (see the file VTK-Standard at the Kitware homepage) that is the same of the legacy standard. It contains the <em>type</em> of each cells. For the above example this vector is: <br/>
  first cell <br/>
- cell_type(1) = 12 hexahedron type of <img class="formulaInl" alt="$1^\circ$" src="../../form_11.png"/> cell <br/>
+ cell_type(1) = 12 hexahedron type of <img class="formulaInl" alt="$1^\circ$" src="../../form_8.png"/> cell <br/>
  second cell <br/>
- cell_type(2) = 14 pyramid type of <img class="formulaInl" alt="$2^\circ$" src="../../form_12.png"/> cell <br/>
+ cell_type(2) = 14 pyramid type of <img class="formulaInl" alt="$2^\circ$" src="../../form_9.png"/> cell <br/>
  </dd></dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">NC</td><td>Number of cells. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">connect</td><td>Mesh connectivity. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">offset</td><td>Cell offset. </td></tr>
@@ -529,14 +557,244 @@ Data Types</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01912">1912</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01249">1249</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
 
 </div>
 </div>
-<!-- doxytag: class="Lib_VTK_IO" --></div><!-- contents -->
+<!-- doxytag: class="Lib_VTK_IO" --><a name="da/d6c/structLib__VTK__IO_1_1Type__VTK__File" id="da/d6c/structLib__VTK__IO_1_1Type__VTK__File"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">type Lib_VTK_IO::Type_VTK_File</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<div class="textblock">
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00380">380</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+</div><table class="memberdecls">
+<tr><td colspan="2"><h3>Private Attributes</h3></td></tr>
+<tr><td colspan="2"><div class="groupHeader"></div></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#a0709d597cf8d1ec1c7f23b69f75f66f0">f</a> = <a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#gafa8b242a81a568eb7ff6a698cce398ed">ascii</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Current output-format (initialized to ascii format).  <a href="#a0709d597cf8d1ec1c7f23b69f75f66f0"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">character(len=<a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga355e5f6732bc49387ba820af22bf77ed">maxlen</a>)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#ad4f74bec8b5d27fa6ef3ecbefbdc75d5">topology</a> = ''</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Mesh topology.  <a href="#ad4f74bec8b5d27fa6ef3ecbefbdc75d5"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#a691b9c2d7f77ddfdbd4f1f5302fda294">u</a> = 0_I4P</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Logical unit.  <a href="#a691b9c2d7f77ddfdbd4f1f5302fda294"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#a802346274733ed23ef60f2382718a713">ua</a> = 0_I4P</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Logical unit for raw binary XML append file.  <a href="#a802346274733ed23ef60f2382718a713"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#acee92b284f93164fad5392d627155f35">N_Byte</a> = 0_I4P</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of byte to be written/read.  <a href="#acee92b284f93164fad5392d627155f35"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I8P)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#a1c7c0cf2eedc1830ac5ce62919dbeb99">ioffset</a> = 0_I8P</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Offset pointer.  <a href="#a1c7c0cf2eedc1830ac5ce62919dbeb99"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#a276de512714ae1e096f5813ce5d2db03">indent</a> = 0_I4P</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Indent pointer.  <a href="#a276de512714ae1e096f5813ce5d2db03"></a><br/></td></tr>
+</table>
+<hr/><h4>Member Data Documentation</h4>
+<a class="anchor" id="a0709d597cf8d1ec1c7f23b69f75f66f0"></a><!-- doxytag: member="Lib_VTK_IO::Type_VTK_File::f" ref="a0709d597cf8d1ec1c7f23b69f75f66f0" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I4P) <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#a0709d597cf8d1ec1c7f23b69f75f66f0">Lib_VTK_IO::Type_VTK_File::f</a> = <a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#gafa8b242a81a568eb7ff6a698cce398ed">ascii</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Current output-format (initialized to ascii format). </p>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00381">381</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ad4f74bec8b5d27fa6ef3ecbefbdc75d5"></a><!-- doxytag: member="Lib_VTK_IO::Type_VTK_File::topology" ref="ad4f74bec8b5d27fa6ef3ecbefbdc75d5" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">character(len=<a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga355e5f6732bc49387ba820af22bf77ed">maxlen</a>) <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#ad4f74bec8b5d27fa6ef3ecbefbdc75d5">Lib_VTK_IO::Type_VTK_File::topology</a> = ''<code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Mesh topology. </p>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00382">382</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a691b9c2d7f77ddfdbd4f1f5302fda294"></a><!-- doxytag: member="Lib_VTK_IO::Type_VTK_File::u" ref="a691b9c2d7f77ddfdbd4f1f5302fda294" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I4P) <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#a691b9c2d7f77ddfdbd4f1f5302fda294">Lib_VTK_IO::Type_VTK_File::u</a> = 0_I4P<code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Logical unit. </p>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00383">383</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a802346274733ed23ef60f2382718a713"></a><!-- doxytag: member="Lib_VTK_IO::Type_VTK_File::ua" ref="a802346274733ed23ef60f2382718a713" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I4P) <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#a802346274733ed23ef60f2382718a713">Lib_VTK_IO::Type_VTK_File::ua</a> = 0_I4P<code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Logical unit for raw binary XML append file. </p>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00384">384</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="acee92b284f93164fad5392d627155f35"></a><!-- doxytag: member="Lib_VTK_IO::Type_VTK_File::N_Byte" ref="acee92b284f93164fad5392d627155f35" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I4P) <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#acee92b284f93164fad5392d627155f35">Lib_VTK_IO::Type_VTK_File::N_Byte</a> = 0_I4P<code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Number of byte to be written/read. </p>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00388">388</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a1c7c0cf2eedc1830ac5ce62919dbeb99"></a><!-- doxytag: member="Lib_VTK_IO::Type_VTK_File::ioffset" ref="a1c7c0cf2eedc1830ac5ce62919dbeb99" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I8P) <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#a1c7c0cf2eedc1830ac5ce62919dbeb99">Lib_VTK_IO::Type_VTK_File::ioffset</a> = 0_I8P<code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Offset pointer. </p>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00390">390</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a276de512714ae1e096f5813ce5d2db03"></a><!-- doxytag: member="Lib_VTK_IO::Type_VTK_File::indent" ref="a276de512714ae1e096f5813ce5d2db03" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I4P) <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#a276de512714ae1e096f5813ce5d2db03">Lib_VTK_IO::Type_VTK_File::indent</a> = 0_I4P<code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Indent pointer. </p>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00391">391</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+
+</div>
+</div>
+<!-- doxytag: class="Lib_VTK_IO::Type_VTK_File" --><a name="d2/dc5/structLib__VTK__IO_1_1Type__VTM__File" id="d2/dc5/structLib__VTK__IO_1_1Type__VTM__File"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">type Lib_VTK_IO::Type_VTM_File</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<div class="textblock">
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00397">397</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+</div><table class="memberdecls">
+<tr><td colspan="2"><h3>Private Attributes</h3></td></tr>
+<tr><td colspan="2"><div class="groupHeader"></div></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#afc5ce0b52182adf056ad95442e88412c">u</a> = 0_I4P</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Logical unit.  <a href="#afc5ce0b52182adf056ad95442e88412c"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#ac9721d88181d347cfac4413328eb663f">blk</a> = 0_I4P</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Block index.  <a href="#ac9721d88181d347cfac4413328eb663f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#a36b325371390294a5b1eecdc04bcc508">indent</a> = 0_I4P</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Indent pointer.  <a href="#a36b325371390294a5b1eecdc04bcc508"></a><br/></td></tr>
+</table>
+<hr/><h4>Member Data Documentation</h4>
+<a class="anchor" id="afc5ce0b52182adf056ad95442e88412c"></a><!-- doxytag: member="Lib_VTK_IO::Type_VTM_File::u" ref="afc5ce0b52182adf056ad95442e88412c" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I4P) <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#afc5ce0b52182adf056ad95442e88412c">Lib_VTK_IO::Type_VTM_File::u</a> = 0_I4P<code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Logical unit. </p>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00398">398</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ac9721d88181d347cfac4413328eb663f"></a><!-- doxytag: member="Lib_VTK_IO::Type_VTM_File::blk" ref="ac9721d88181d347cfac4413328eb663f" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I4P) <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#ac9721d88181d347cfac4413328eb663f">Lib_VTK_IO::Type_VTM_File::blk</a> = 0_I4P<code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Block index. </p>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00399">399</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a36b325371390294a5b1eecdc04bcc508"></a><!-- doxytag: member="Lib_VTK_IO::Type_VTM_File::indent" ref="a36b325371390294a5b1eecdc04bcc508" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I4P) <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#a36b325371390294a5b1eecdc04bcc508">Lib_VTK_IO::Type_VTM_File::indent</a> = 0_I4P<code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Indent pointer. </p>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00400">400</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+
+</div>
+</div>
+<!-- doxytag: class="Lib_VTK_IO::Type_VTM_File" --></div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -555,7 +813,7 @@ Data Types</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
 
-    <li class="footer">Generated on Fri Mar 22 2013 12:17:32 for Lib_VTK_IO by
+    <li class="footer">Generated on Thu Mar 28 2013 11:22:48 for Lib_VTK_IO by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>

@@ -158,183 +158,196 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <a name="l00057"></a>00057   MAIN    = $(DLIB)<a class="code" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a>.a
 <a name="l00058"></a>00058   MAKELIB = ar -rcs $(MAIN) $(DOBJ)lib_vtk_io.o ; ranlib $(MAIN)
 <a name="l00059"></a>00059 endif
-<a name="l00060"></a>00060 MKDIRS = $(DOBJ) $(DMOD) $(DLIB)
-<a name="l00061"></a>00061 <span class="preprocessor">#----------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00062"></a>00062 <span class="preprocessor"></span>
-<a name="l00063"></a>00063 <span class="preprocessor">#----------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00064"></a>00064 <span class="preprocessor"></span><span class="preprocessor"># compiling and linking options</span>
-<a name="l00065"></a>00065 <span class="preprocessor"></span>ifeq <span class="stringliteral">&quot;$(COMPILER)&quot;</span> <span class="stringliteral">&quot;gnu&quot;</span>
-<a name="l00066"></a>00066   FC      = gfortran
-<a name="l00067"></a>00067   OPTSC   = -cpp -c -J$(DMOD)
-<a name="l00068"></a>00068   OPTSL   =
-<a name="l00069"></a>00069   PREPROC =
-<a name="l00070"></a>00070   ifeq <span class="stringliteral">&quot;$(SHARED)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
-<a name="l00071"></a>00071     OPTSC := $(OPTSC) -fPIC
-<a name="l00072"></a>00072     OPTSL := $(OPTSL) -shared
-<a name="l00073"></a>00073   endif
-<a name="l00074"></a>00074   # debug
-<a name="l00075"></a>00075   ifeq <span class="stringliteral">&quot;$(DEBUG)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
-<a name="l00076"></a>00076     PREPROC := $(PREPROC) -DDEBUG
-<a name="l00077"></a>00077     OPTSC := $(OPTSC) -O0 -Wall -Warray-bounds -fcheck=all -fbacktrace -ffpe-trap=invalid,overflow,underflow,precision,denormal
-<a name="l00078"></a>00078     OPTSL := $(OPTSL) -O0 -Wall -Warray-bounds -fcheck=all -fbacktrace -ffpe-trap=invalid,overflow,underflow,precision,denormal
-<a name="l00079"></a>00079   endif
-<a name="l00080"></a>00080 <span class="preprocessor">  # standard</span>
-<a name="l00081"></a>00081 <span class="preprocessor"></span>  ifeq <span class="stringliteral">&quot;$(F03STD)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
-<a name="l00082"></a>00082     OPTSC := $(OPTSC) -std=f2008 -fall-intrinsics
-<a name="l00083"></a>00083     OPTSL := $(OPTSL) -std=f2008 -fall-intrinsics
-<a name="l00084"></a>00084   endif
-<a name="l00085"></a>00085 <span class="preprocessor">  # optimization</span>
-<a name="l00086"></a>00086 <span class="preprocessor"></span>  ifeq <span class="stringliteral">&quot;$(OPTIMIZE)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
-<a name="l00087"></a>00087     OPTSC := $(OPTSC) -O3
-<a name="l00088"></a>00088     OPTSL := $(OPTSL) -O3
-<a name="l00089"></a>00089   endif
-<a name="l00090"></a>00090 <span class="preprocessor">  # openmp</span>
-<a name="l00091"></a>00091 <span class="preprocessor"></span>  ifeq <span class="stringliteral">&quot;$(OPENMP)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
-<a name="l00092"></a>00092     OPTSC := $(OPTSC) -fopenmp
-<a name="l00093"></a>00093     OPTSL := $(OPTSL) -fopenmp
-<a name="l00094"></a>00094     PREPROC := $(PREPROC) -DOPENMP
-<a name="l00095"></a>00095   endif
-<a name="l00096"></a>00096 endif
-<a name="l00097"></a>00097 ifeq <span class="stringliteral">&quot;$(COMPILER)&quot;</span> <span class="stringliteral">&quot;intel&quot;</span>
-<a name="l00098"></a>00098   FC      = ifort
-<a name="l00099"></a>00099   OPTSC   = -cpp -c -module $(DMOD)
-<a name="l00100"></a>00100   OPTSL   =
-<a name="l00101"></a>00101   PREPROC =
-<a name="l00102"></a>00102 <span class="preprocessor">  # debug</span>
-<a name="l00103"></a>00103 <span class="preprocessor"></span>  ifeq <span class="stringliteral">&quot;$(SHARED)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
-<a name="l00104"></a>00104     OPTSC := $(OPTSC) -fpic
-<a name="l00105"></a>00105     OPTSL := $(OPTSL) -shared
-<a name="l00106"></a>00106   endif
-<a name="l00107"></a>00107   ifeq <span class="stringliteral">&quot;$(DEBUG)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
-<a name="l00108"></a>00108     PREPROC := $(PREPROC) -DDEBUG
-<a name="l00109"></a>00109     CHK = -check all -check noarg_temp_created
-<a name="l00110"></a>00110     DEB = -debug all
-<a name="l00111"></a>00111     WRN = -warn all
-<a name="l00112"></a>00112     OPTSC := $(OPTSC) -O0 -fpe-all=0 -fp-stack-check -traceback $(WRN) $(CHK) $(DEB)
-<a name="l00113"></a>00113     OPTSL := $(OPTSL) -O0 -fpe-all=0 -fp-stack-check -traceback $(WRN) $(CHK) $(DEB)
-<a name="l00114"></a>00114   endif
-<a name="l00115"></a>00115   # standard
-<a name="l00116"></a>00116   ifeq <span class="stringliteral">&quot;$(F03STD)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
-<a name="l00117"></a>00117     OPTSC := $(OPTSC) -std03
-<a name="l00118"></a>00118     OPTSL := $(OPTSL) -std03
-<a name="l00119"></a>00119   endif
-<a name="l00120"></a>00120   # optimization
-<a name="l00121"></a>00121   ifeq <span class="stringliteral">&quot;$(OPTIMIZE)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
-<a name="l00122"></a>00122     OPTSC := $(OPTSC) -O3 -ipo
-<a name="l00123"></a>00123     OPTSL := $(OPTSL) -O3 -ipo
-<a name="l00124"></a>00124   endif
-<a name="l00125"></a>00125   # openmp
-<a name="l00126"></a>00126   ifeq <span class="stringliteral">&quot;$(OPENMP)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
-<a name="l00127"></a>00127     OPTSC := $(OPTSC) -openmp
-<a name="l00128"></a>00128     OPTSL := $(OPTSL) -openmp
-<a name="l00129"></a>00129     PREPROC := $(PREPROC) -DOPENMP
-<a name="l00130"></a>00130   endif
-<a name="l00131"></a>00131 endif
-<a name="l00132"></a>00132 <span class="preprocessor"># pre-processing options</span>
-<a name="l00133"></a>00133 <span class="preprocessor"></span><span class="preprocessor"># R16 precision</span>
-<a name="l00134"></a>00134 <span class="preprocessor"></span>R16PCHK = (Unknown R16P <span class="keywordflow">switch</span>) Used <span class="keywordflow">default</span> R16P=no
-<a name="l00135"></a>00135 ifeq <span class="stringliteral">&quot;$(R16P)&quot;</span> <span class="stringliteral">&quot;no&quot;</span>
-<a name="l00136"></a>00136   R16PCHK = (Known R16P <span class="keywordflow">switch</span>) Used R16P=$(R16P)
-<a name="l00137"></a>00137 endif
-<a name="l00138"></a>00138 ifeq <span class="stringliteral">&quot;$(R16P)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
-<a name="l00139"></a>00139   R16PCHK = (Known R16P <span class="keywordflow">switch</span>) Used R16P=$(R16P)
-<a name="l00140"></a>00140   PREPROC := $(PREPROC) -Dr16p
-<a name="l00141"></a>00141 endif
-<a name="l00142"></a>00142 
-<a name="l00143"></a>00143 OPTSC := $(OPTSC) $(PREPROC)
-<a name="l00144"></a>00144 OPTSL := $(OPTSL) $(PREPROC)
-<a name="l00145"></a>00145 
-<a name="l00146"></a>00146 WHICHFC = $(shell which $(FC))
-<a name="l00147"></a>00147 
-<a name="l00148"></a>00148 PRINTCHK = <span class="stringliteral">&quot;\\033[1;31m Compiler used \\033[0m\\033[1m $(COMPILER) =&gt; $(WHICHFC)\\033[0m \n\</span>
-<a name="l00149"></a>00149 <span class="stringliteral">            \\033[1;31mSource dir    \\033[0m\\033[1m $(DSRC)\\033[0m \n\</span>
-<a name="l00150"></a>00150 <span class="stringliteral">            \\033[1;31m Lib dir       \\033[0m\\033[1m $(DLIB)\\033[0m \n\</span>
-<a name="l00151"></a>00151 <span class="stringliteral">            \\033[1;31m Libray        \\033[0m\\033[1m $(MAIN)\\033[0m \n\</span>
-<a name="l00152"></a>00152 <span class="stringliteral">            \\033[1;31m Shared lib    \\033[0m\\033[1m $(SHARED)\\033[0m \n\</span>
-<a name="l00153"></a>00153 <span class="stringliteral">            \\033[1;31m Debug         \\033[0m\\033[1m $(DEBUG)\\033[0m \n\</span>
-<a name="l00154"></a>00154 <span class="stringliteral">            \\033[1;31m F-standard    \\033[0m\\033[1m $(F03STD)\\033[0m \n\</span>
-<a name="l00155"></a>00155 <span class="stringliteral">            \\033[1;31m Optimize      \\033[0m\\033[1m $(OPTIMIZE)\\033[0m \n\</span>
-<a name="l00156"></a>00156 <span class="stringliteral">            \\033[1;31m OpenMP        \\033[0m\\033[1m $(OPENMP)\\033[0m \n\</span>
-<a name="l00157"></a>00157 <span class="stringliteral">            \\033[1;31m R16P          \\033[0m\\033[1m $(R16PCHK)\\033[0m&quot;</span>
-<a name="l00158"></a>00158 <span class="preprocessor">#----------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00159"></a>00159 <span class="preprocessor"></span>
-<a name="l00160"></a>00160 <span class="preprocessor">#----------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00161"></a>00161 <span class="preprocessor"></span>.PHONY : PRINTINFO
-<a name="l00162"></a>00162 .NOTPARALLEL : PRINTINFO
-<a name="l00163"></a>00163 PRINTINFO:
-<a name="l00164"></a>00164         @echo | tee make.log
-<a name="l00165"></a>00165         @echo -e $(PRINTCHK) | tee -a make.log
-<a name="l00166"></a>00166         @echo | tee -a make.log
-<a name="l00167"></a>00167         @echo -e <span class="stringliteral">&#39;\033[1;31m Compiling options\033[0m&#39;</span> | tee -a make.log
-<a name="l00168"></a>00168         @echo -e <span class="stringliteral">&#39;\033[1m [$(OPTSC)]\033[0m&#39;</span> | tee -a make.log
-<a name="l00169"></a>00169         @echo | tee -a make.log
-<a name="l00170"></a>00170         @echo -e <span class="stringliteral">&#39;\033[1;31m Linking options \033[0m&#39;</span> | tee -a make.log
-<a name="l00171"></a>00171         @echo -e <span class="stringliteral">&#39;\033[1m [$(OPTSL)]\033[0m&#39;</span> | tee -a make.log
-<a name="l00172"></a>00172         @echo | tee -a make.log
-<a name="l00173"></a>00173 
-<a name="l00174"></a>00174 .PHONY : cleanobj
-<a name="l00175"></a>00175 cleanobj:
-<a name="l00176"></a>00176         @echo -e <span class="stringliteral">&quot;\033[1;31m deleting objects \033[0m&quot;</span> | tee make.log
-<a name="l00177"></a>00177         @rm -fr $(DOBJ)
+<a name="l00060"></a>00060 DEXE  = ./
+<a name="l00061"></a>00061 MKDIRS = $(DOBJ) $(DMOD) $(DLIB)
+<a name="l00062"></a>00062 <span class="preprocessor">#----------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00063"></a>00063 <span class="preprocessor"></span>
+<a name="l00064"></a>00064 <span class="preprocessor">#----------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00065"></a>00065 <span class="preprocessor"></span><span class="preprocessor"># compiling and linking options</span>
+<a name="l00066"></a>00066 <span class="preprocessor"></span>ifeq <span class="stringliteral">&quot;$(COMPILER)&quot;</span> <span class="stringliteral">&quot;gnu&quot;</span>
+<a name="l00067"></a>00067   FC      = gfortran
+<a name="l00068"></a>00068   OPTSC   = -cpp -c -J$(DMOD)
+<a name="l00069"></a>00069   OPTSL   =
+<a name="l00070"></a>00070   PREPROC =
+<a name="l00071"></a>00071   ifeq <span class="stringliteral">&quot;$(SHARED)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
+<a name="l00072"></a>00072     OPTSC := $(OPTSC) -fPIC
+<a name="l00073"></a>00073     OPTSL := $(OPTSL) -shared
+<a name="l00074"></a>00074   endif
+<a name="l00075"></a>00075   # debug
+<a name="l00076"></a>00076   ifeq <span class="stringliteral">&quot;$(DEBUG)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
+<a name="l00077"></a>00077     PREPROC := $(PREPROC) -DDEBUG
+<a name="l00078"></a>00078     OPTSC := $(OPTSC) -O0 -Wall -Warray-bounds -fcheck=all -fbacktrace -ffpe-trap=invalid,overflow,underflow,precision,denormal
+<a name="l00079"></a>00079     OPTSL := $(OPTSL) -O0 -Wall -Warray-bounds -fcheck=all -fbacktrace -ffpe-trap=invalid,overflow,underflow,precision,denormal
+<a name="l00080"></a>00080   endif
+<a name="l00081"></a>00081 <span class="preprocessor">  # standard</span>
+<a name="l00082"></a>00082 <span class="preprocessor"></span>  ifeq <span class="stringliteral">&quot;$(F03STD)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
+<a name="l00083"></a>00083     OPTSC := $(OPTSC) -std=f2008 -fall-intrinsics
+<a name="l00084"></a>00084     OPTSL := $(OPTSL) -std=f2008 -fall-intrinsics
+<a name="l00085"></a>00085   endif
+<a name="l00086"></a>00086 <span class="preprocessor">  # optimization</span>
+<a name="l00087"></a>00087 <span class="preprocessor"></span>  ifeq <span class="stringliteral">&quot;$(OPTIMIZE)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
+<a name="l00088"></a>00088     OPTSC := $(OPTSC) -O3
+<a name="l00089"></a>00089     OPTSL := $(OPTSL) -O3
+<a name="l00090"></a>00090   endif
+<a name="l00091"></a>00091 <span class="preprocessor">  # openmp</span>
+<a name="l00092"></a>00092 <span class="preprocessor"></span>  ifeq <span class="stringliteral">&quot;$(OPENMP)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
+<a name="l00093"></a>00093     OPTSC := $(OPTSC) -fopenmp
+<a name="l00094"></a>00094     OPTSL := $(OPTSL) -fopenmp
+<a name="l00095"></a>00095     PREPROC := $(PREPROC) -DOPENMP
+<a name="l00096"></a>00096   endif
+<a name="l00097"></a>00097 endif
+<a name="l00098"></a>00098 ifeq <span class="stringliteral">&quot;$(COMPILER)&quot;</span> <span class="stringliteral">&quot;intel&quot;</span>
+<a name="l00099"></a>00099   FC      = ifort
+<a name="l00100"></a>00100   OPTSC   = -cpp -c -module $(DMOD)
+<a name="l00101"></a>00101   OPTSL   =
+<a name="l00102"></a>00102   PREPROC =
+<a name="l00103"></a>00103 <span class="preprocessor">  # debug</span>
+<a name="l00104"></a>00104 <span class="preprocessor"></span>  ifeq <span class="stringliteral">&quot;$(SHARED)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
+<a name="l00105"></a>00105     OPTSC := $(OPTSC) -fpic
+<a name="l00106"></a>00106     OPTSL := $(OPTSL) -shared
+<a name="l00107"></a>00107   endif
+<a name="l00108"></a>00108   ifeq <span class="stringliteral">&quot;$(DEBUG)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
+<a name="l00109"></a>00109     PREPROC := $(PREPROC) -DDEBUG
+<a name="l00110"></a>00110     CHK = -check all -check noarg_temp_created
+<a name="l00111"></a>00111     DEB = -debug all
+<a name="l00112"></a>00112     WRN = -warn all
+<a name="l00113"></a>00113     OPTSC := $(OPTSC) -O0 -fpe-all=0 -fp-stack-check -traceback $(WRN) $(CHK) $(DEB)
+<a name="l00114"></a>00114     OPTSL := $(OPTSL) -O0 -fpe-all=0 -fp-stack-check -traceback $(WRN) $(CHK) $(DEB)
+<a name="l00115"></a>00115   endif
+<a name="l00116"></a>00116   # standard
+<a name="l00117"></a>00117   ifeq <span class="stringliteral">&quot;$(F03STD)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
+<a name="l00118"></a>00118     OPTSC := $(OPTSC) -std03
+<a name="l00119"></a>00119     OPTSL := $(OPTSL) -std03
+<a name="l00120"></a>00120   endif
+<a name="l00121"></a>00121   # optimization
+<a name="l00122"></a>00122   ifeq <span class="stringliteral">&quot;$(OPTIMIZE)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
+<a name="l00123"></a>00123     OPTSC := $(OPTSC) -O3 -ipo
+<a name="l00124"></a>00124     OPTSL := $(OPTSL) -O3 -ipo
+<a name="l00125"></a>00125   endif
+<a name="l00126"></a>00126   # openmp
+<a name="l00127"></a>00127   ifeq <span class="stringliteral">&quot;$(OPENMP)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
+<a name="l00128"></a>00128     OPTSC := $(OPTSC) -openmp
+<a name="l00129"></a>00129     OPTSL := $(OPTSL) -openmp
+<a name="l00130"></a>00130     PREPROC := $(PREPROC) -DOPENMP
+<a name="l00131"></a>00131   endif
+<a name="l00132"></a>00132 endif
+<a name="l00133"></a>00133 <span class="preprocessor"># pre-processing options</span>
+<a name="l00134"></a>00134 <span class="preprocessor"></span><span class="preprocessor"># R16 precision</span>
+<a name="l00135"></a>00135 <span class="preprocessor"></span>R16PCHK = (Unknown R16P <span class="keywordflow">switch</span>) Used <span class="keywordflow">default</span> R16P=no
+<a name="l00136"></a>00136 ifeq <span class="stringliteral">&quot;$(R16P)&quot;</span> <span class="stringliteral">&quot;no&quot;</span>
+<a name="l00137"></a>00137   R16PCHK = (Known R16P <span class="keywordflow">switch</span>) Used R16P=$(R16P)
+<a name="l00138"></a>00138 endif
+<a name="l00139"></a>00139 ifeq <span class="stringliteral">&quot;$(R16P)&quot;</span> <span class="stringliteral">&quot;yes&quot;</span>
+<a name="l00140"></a>00140   R16PCHK = (Known R16P <span class="keywordflow">switch</span>) Used R16P=$(R16P)
+<a name="l00141"></a>00141   PREPROC := $(PREPROC) -Dr16p
+<a name="l00142"></a>00142 endif
+<a name="l00143"></a>00143 
+<a name="l00144"></a>00144 OPTSC := $(OPTSC) $(PREPROC)
+<a name="l00145"></a>00145 OPTSL := $(OPTSL) $(PREPROC)
+<a name="l00146"></a>00146 
+<a name="l00147"></a>00147 WHICHFC = $(shell which $(FC))
+<a name="l00148"></a>00148 
+<a name="l00149"></a>00149 PRINTCHK = <span class="stringliteral">&quot;\\033[1;31m Compiler used \\033[0m\\033[1m $(COMPILER) =&gt; $(WHICHFC)\\033[0m \n\</span>
+<a name="l00150"></a>00150 <span class="stringliteral">            \\033[1;31mSource dir    \\033[0m\\033[1m $(DSRC)\\033[0m \n\</span>
+<a name="l00151"></a>00151 <span class="stringliteral">            \\033[1;31m Lib dir       \\033[0m\\033[1m $(DLIB)\\033[0m \n\</span>
+<a name="l00152"></a>00152 <span class="stringliteral">            \\033[1;31m Libray        \\033[0m\\033[1m $(MAIN)\\033[0m \n\</span>
+<a name="l00153"></a>00153 <span class="stringliteral">            \\033[1;31m Shared lib    \\033[0m\\033[1m $(SHARED)\\033[0m \n\</span>
+<a name="l00154"></a>00154 <span class="stringliteral">            \\033[1;31m Debug         \\033[0m\\033[1m $(DEBUG)\\033[0m \n\</span>
+<a name="l00155"></a>00155 <span class="stringliteral">            \\033[1;31m F-standard    \\033[0m\\033[1m $(F03STD)\\033[0m \n\</span>
+<a name="l00156"></a>00156 <span class="stringliteral">            \\033[1;31m Optimize      \\033[0m\\033[1m $(OPTIMIZE)\\033[0m \n\</span>
+<a name="l00157"></a>00157 <span class="stringliteral">            \\033[1;31m OpenMP        \\033[0m\\033[1m $(OPENMP)\\033[0m \n\</span>
+<a name="l00158"></a>00158 <span class="stringliteral">            \\033[1;31m R16P          \\033[0m\\033[1m $(R16PCHK)\\033[0m&quot;</span>
+<a name="l00159"></a>00159 <span class="preprocessor">#----------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00160"></a>00160 <span class="preprocessor"></span>
+<a name="l00161"></a>00161 <span class="preprocessor">#----------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00162"></a>00162 <span class="preprocessor"></span>.PHONY : PRINTINFO
+<a name="l00163"></a>00163 .NOTPARALLEL : PRINTINFO
+<a name="l00164"></a>00164 PRINTINFO:
+<a name="l00165"></a>00165         @echo | tee make.log
+<a name="l00166"></a>00166         @echo -e $(PRINTCHK) | tee -a make.log
+<a name="l00167"></a>00167         @echo | tee -a make.log
+<a name="l00168"></a>00168         @echo -e <span class="stringliteral">&quot;\033[1;31m Compiling options\033[0m&quot;</span> | tee -a make.log
+<a name="l00169"></a>00169         @echo -e <span class="stringliteral">&quot;\033[1m [$(OPTSC)]\033[0m&quot;</span> | tee -a make.log
+<a name="l00170"></a>00170         @echo | tee -a make.log
+<a name="l00171"></a>00171         @echo -e <span class="stringliteral">&quot;\033[1;31m Linking options \033[0m&quot;</span> | tee -a make.log
+<a name="l00172"></a>00172         @echo -e <span class="stringliteral">&quot;\033[1m [$(OPTSL)]\033[0m&quot;</span> | tee -a make.log
+<a name="l00173"></a>00173         @echo | tee -a make.log
+<a name="l00174"></a>00174 
+<a name="l00175"></a>00175 .PHONY : $(MKDIRS)
+<a name="l00176"></a>00176 $(MKDIRS):
+<a name="l00177"></a>00177         @mkdir -p $@
 <a name="l00178"></a>00178 
-<a name="l00179"></a>00179 .PHONY : cleanmod
-<a name="l00180"></a>00180 cleanmod:
-<a name="l00181"></a>00181         @echo -e <span class="stringliteral">&quot;\033[1;31m deleting mods \033[0m&quot;</span> | tee -a make.log
-<a name="l00182"></a>00182         @rm -fr $(DMOD)
+<a name="l00179"></a>00179 .PHONY : cleanobj
+<a name="l00180"></a>00180 cleanobj:
+<a name="l00181"></a>00181         @echo -e <span class="stringliteral">&quot;\033[1;31m deleting objects \033[0m&quot;</span> | tee make.log
+<a name="l00182"></a>00182         @rm -fr $(DOBJ)
 <a name="l00183"></a>00183 
-<a name="l00184"></a>00184 .PHONY : cleanlib
-<a name="l00185"></a>00185 cleanlib:
-<a name="l00186"></a>00186         @echo -e <span class="stringliteral">&quot;\033[1;31m deleting exes \033[0m&quot;</span> | tee -a make.log
-<a name="l00187"></a>00187         @rm -rf $(DLIB)
+<a name="l00184"></a>00184 .PHONY : cleanmod
+<a name="l00185"></a>00185 cleanmod:
+<a name="l00186"></a>00186         @echo -e <span class="stringliteral">&quot;\033[1;31m deleting mods \033[0m&quot;</span> | tee -a make.log
+<a name="l00187"></a>00187         @rm -fr $(DMOD)
 <a name="l00188"></a>00188 
-<a name="l00189"></a>00189 .PHONY : cleanmsg
-<a name="l00190"></a>00190 cleanmsg:
-<a name="l00191"></a>00191         @rm -f diagnostic_messages
-<a name="l00192"></a>00192         @rm -f error_messages
+<a name="l00189"></a>00189 .PHONY : cleanlib
+<a name="l00190"></a>00190 cleanlib:
+<a name="l00191"></a>00191         @echo -e <span class="stringliteral">&quot;\033[1;31m deleting exes \033[0m&quot;</span> | tee -a make.log
+<a name="l00192"></a>00192         @rm -rf $(DLIB)
 <a name="l00193"></a>00193 
-<a name="l00194"></a>00194 .PHONY : clean
-<a name="l00195"></a>00195 clean: cleanobj cleanmod cleanmsg
-<a name="l00196"></a>00196 
-<a name="l00197"></a>00197 .PHONY : cleanall
-<a name="l00198"></a>00198 cleanall: clean cleanlib
-<a name="l00199"></a>00199 
-<a name="l00200"></a>00200 .PHONY : tar
-<a name="l00201"></a>00201 tar: cleanall
-<a name="l00202"></a>00202         @echo -e <span class="stringliteral">&quot;\033[1;31m Creating tar archive of the code \033[0m&quot;</span> | tee make.log
-<a name="l00203"></a>00203         @mkdir -p VTK_IO
-<a name="l00204"></a>00204         @cp -rL src makefile VTK_IO/
-<a name="l00205"></a>00205         @tar czf VTK_IO.tgz VTK_IO
-<a name="l00206"></a>00206         @rm -rf VTK_IO
-<a name="l00207"></a>00207 
-<a name="l00208"></a>00208 .PHONY : doc
-<a name="l00209"></a>00209 doc:
-<a name="l00210"></a>00210         @echo -e <span class="stringliteral">&quot;\033[1;31m Building documentation\033[0m&quot;</span> | tee make.log
-<a name="l00211"></a>00211         @mkdir -p doc
-<a name="l00212"></a>00212         @doxygen .doxygenconfig
+<a name="l00194"></a>00194 .PHONY : cleanmsg
+<a name="l00195"></a>00195 cleanmsg:
+<a name="l00196"></a>00196         @rm -f diagnostic_messages
+<a name="l00197"></a>00197         @rm -f error_messages
+<a name="l00198"></a>00198 
+<a name="l00199"></a>00199 .PHONY : clean
+<a name="l00200"></a>00200 clean: cleanobj cleanmod cleanmsg
+<a name="l00201"></a>00201 
+<a name="l00202"></a>00202 .PHONY : cleanall
+<a name="l00203"></a>00203 cleanall: clean cleanlib
+<a name="l00204"></a>00204         @rm -f $(DEXE)<a class="code" href="../../db/d79/group__Test__DriverProgram.html#gab15e80f4741760be8bdac4e319c6b65b" title="&quot;Driver&quot; program for testing Lib_VTK_IO functions.">Test_Driver</a>
+<a name="l00205"></a>00205 
+<a name="l00206"></a>00206 .PHONY : tar
+<a name="l00207"></a>00207 tar: cleanall
+<a name="l00208"></a>00208         @echo -e <span class="stringliteral">&quot;\033[1;31m Creating tar archive of the code \033[0m&quot;</span> | tee make.log
+<a name="l00209"></a>00209         @mkdir -p VTK_IO
+<a name="l00210"></a>00210         @cp -rL src makefile VTK_IO/
+<a name="l00211"></a>00211         @tar czf VTK_IO.tgz VTK_IO
+<a name="l00212"></a>00212         @rm -rf VTK_IO
 <a name="l00213"></a>00213 
-<a name="l00214"></a>00214 .PHONY : $(MKDIRS)
-<a name="l00215"></a>00215 $(MKDIRS):
-<a name="l00216"></a>00216         @mkdir -p $@
-<a name="l00217"></a>00217 <span class="preprocessor">#----------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00218"></a>00218 <span class="preprocessor"></span>
-<a name="l00219"></a>00219 <span class="preprocessor">#-----------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00220"></a>00220 <span class="preprocessor"></span><span class="preprocessor"># rules of linking and compiling</span>
-<a name="l00221"></a>00221 <span class="preprocessor"></span>COTEXT  = -e <span class="stringliteral">&quot;\033[1;31m Compiling\033[0m\033[1m $(&lt;F)\033[0m&quot;</span>
-<a name="l00222"></a>00222 LITEXT  = -e <span class="stringliteral">&quot;\033[1;31m Linking library\033[0m\033[1m $@\033[0m&quot;</span>
-<a name="l00223"></a>00223 
-<a name="l00224"></a>00224 $(DOBJ)ir_precision.o : <a class="code" href="../../d3/daa/group__IR__PrecisionLibrary.html#d7/dc8/classIR__Precision" title="Module IR_Precision makes available some portable kind-parameters and some useful procedures to deal ...">IR_Precision</a>.f90
-<a name="l00225"></a>00225         @echo $(COTEXT) | tee -a make.log
-<a name="l00226"></a>00226         @$(FC) $(OPTSC) $&lt; -o $@ 1&gt;&gt; diagnostic_messages 2&gt;&gt; error_messages
-<a name="l00227"></a>00227 
-<a name="l00228"></a>00228 $(DOBJ)lib_vtk_io.o : <a class="code" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a>.f90 \
-<a name="l00229"></a>00229         $(DOBJ)ir_precision.o
-<a name="l00230"></a>00230         @echo $(COTEXT) | tee -a make.log
-<a name="l00231"></a>00231         @$(FC) $(OPTSC) $&lt; -o $@ 1&gt;&gt; diagnostic_messages 2&gt;&gt; error_messages
-<a name="l00232"></a>00232 
-<a name="l00233"></a>00233 VTK_IO : PRINTINFO $(MKDIRS) $(DOBJ)ir_precision.o $(DOBJ)lib_vtk_io.o
-<a name="l00234"></a>00234         @echo $(LITEXT) | tee -a make.log
-<a name="l00235"></a>00235         @$(MAKELIB) 1&gt;&gt; diagnostic_messages 2&gt;&gt; error_messages
-<a name="l00236"></a>00236 <span class="preprocessor">#-----------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00214"></a>00214 .PHONY : doc
+<a name="l00215"></a>00215 doc:
+<a name="l00216"></a>00216         @echo -e <span class="stringliteral">&quot;\033[1;31m Building documentation\033[0m&quot;</span> | tee make.log
+<a name="l00217"></a>00217         @mkdir -p doc
+<a name="l00218"></a>00218         @doxygen .doxygenconfig
+<a name="l00219"></a>00219 #----------------------------------------------------------------------------------------------------------------------------------
+<a name="l00220"></a>00220 
+<a name="l00221"></a>00221 #-----------------------------------------------------------------------------------------------------------------------------------
+<a name="l00222"></a>00222 # rules of linking and compiling
+<a name="l00223"></a>00223 COTEXT  = -e <span class="stringliteral">&quot;\033[1;31m Compiling\033[0m\033[1m $(&lt;F)\033[0m&quot;</span>
+<a name="l00224"></a>00224 LITEXT  = -e <span class="stringliteral">&quot;\033[1;31m Linking library\033[0m\033[1m $@\033[0m&quot;</span>
+<a name="l00225"></a>00225 
+<a name="l00226"></a>00226 $(DOBJ)ir_precision.o : <a class="code" href="../../d3/daa/group__IR__PrecisionLibrary.html#d7/dc8/classIR__Precision" title="Module IR_Precision makes available some portable kind-parameters and some useful procedures to deal ...">IR_Precision</a>.f90
+<a name="l00227"></a>00227         @echo $(COTEXT) | tee -a make.log
+<a name="l00228"></a>00228         @$(FC) $(OPTSC) $&lt; -o $@ 1&gt;&gt; diagnostic_messages 2&gt;&gt; error_messages
+<a name="l00229"></a>00229 
+<a name="l00230"></a>00230 $(DOBJ)lib_vtk_io.o : <a class="code" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a>.f90 \
+<a name="l00231"></a>00231         $(DOBJ)ir_precision.o
+<a name="l00232"></a>00232         @echo $(COTEXT) | tee -a make.log
+<a name="l00233"></a>00233         @$(FC) $(OPTSC) $&lt; -o $@ 1&gt;&gt; diagnostic_messages 2&gt;&gt; error_messages
+<a name="l00234"></a>00234 
+<a name="l00235"></a>00235 $(DOBJ)<a class="code" href="../../db/d79/group__Test__DriverProgram.html#gab15e80f4741760be8bdac4e319c6b65b" title="&quot;Driver&quot; program for testing Lib_VTK_IO functions.">Test_Driver</a>.o : <a class="code" href="../../db/d79/group__Test__DriverProgram.html#gab15e80f4741760be8bdac4e319c6b65b" title="&quot;Driver&quot; program for testing Lib_VTK_IO functions.">Test_Driver</a>.f90 \
+<a name="l00236"></a>00236         $(DOBJ)ir_precision.o \
+<a name="l00237"></a>00237         $(DOBJ)lib_vtk_io.o
+<a name="l00238"></a>00238         @echo $(COTEXT) | tee -a make.log
+<a name="l00239"></a>00239         @$(FC) $(OPTSC) $&lt; -o $@ 1&gt;&gt; diagnostic_messages 2&gt;&gt; error_messages
+<a name="l00240"></a>00240 
+<a name="l00241"></a>00241 VTK_IO : PRINTINFO $(MKDIRS) $(DOBJ)ir_precision.o $(DOBJ)lib_vtk_io.o
+<a name="l00242"></a>00242         @echo $(LITEXT) | tee -a make.log
+<a name="l00243"></a>00243         @$(MAKELIB) 1&gt;&gt; diagnostic_messages 2&gt;&gt; error_messages
+<a name="l00244"></a>00244 
+<a name="l00245"></a>00245 $(DEXE)<a class="code" href="../../db/d79/group__Test__DriverProgram.html#gab15e80f4741760be8bdac4e319c6b65b" title="&quot;Driver&quot; program for testing Lib_VTK_IO functions.">Test_Driver</a> : PRINTINFO $(MKDIRS) $(DOBJ)<a class="code" href="../../db/d79/group__Test__DriverProgram.html#gab15e80f4741760be8bdac4e319c6b65b" title="&quot;Driver&quot; program for testing Lib_VTK_IO functions.">Test_Driver</a>.o
+<a name="l00246"></a>00246         @echo | tee -a make.log
+<a name="l00247"></a>00247         @echo $(LITEXT) | tee -a make.log
+<a name="l00248"></a>00248         @$(FC) $(OPTSL) $(DOBJ)*.o $(LIBS) -o $@ 1&gt;&gt; diagnostic_messages 2&gt;&gt; error_messages
+<a name="l00249"></a>00249 <span class="preprocessor">#-----------------------------------------------------------------------------------------------------------------------------------</span>
 </pre></div></div><!-- contents -->
 </div>
 <!-- window showing the filter options -->
@@ -355,7 +368,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
     <ul>
       <li class="navelem"><a class="el" href="../../d8/d16/makefile.html">makefile</a>      </li>
 
-    <li class="footer">Generated on Fri Mar 22 2013 12:17:32 for Lib_VTK_IO by
+    <li class="footer">Generated on Thu Mar 28 2013 11:22:48 for Lib_VTK_IO by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>

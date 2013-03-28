@@ -1,5 +1,6 @@
 var group__IR__PrecisionGlobalVarPar_dup =
 [
+    [ "ir_initialized", "dc/d7d/group__IR__PrecisionGlobalVarPar.html#gac32092c50139ecc68e2344f8cf32ac26", null ],
     [ "endianL", "dc/d7d/group__IR__PrecisionGlobalVarPar.html#ga2a08bfd6b7a68c08a91ce96a0fe5aed0", null ],
     [ "endianB", "dc/d7d/group__IR__PrecisionGlobalVarPar.html#ga85040a4de331d8026e3aae3bbc3efeae", null ],
     [ "endian", "dc/d7d/group__IR__PrecisionGlobalVarPar.html#gac8d9284e2e03650303dcb4ab5e2e17f2", null ],

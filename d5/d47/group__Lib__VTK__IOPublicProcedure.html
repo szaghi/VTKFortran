@@ -109,18 +109,10 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions/Subroutines</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga4fb610eb5692b11763b4b8e7688f38bd">Lib_VTK_IO::VTK_INI</a> (output_format, filename, title, mesh_topology)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for initializing VTK-legacy file.  <a href="#ga4fb610eb5692b11763b4b8e7688f38bd"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga53cd14315ded5f5cef11d9d5194d9adb">Lib_VTK_IO::VTK_CON</a> (NC, connect, cell_type)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that <b>must</b> be used when unstructured grid is used, it saves the connectivity of the unstructured gird.  <a href="#ga53cd14315ded5f5cef11d9d5194d9adb"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#gaebcfe4a6294e0c3dfb33c827d66efd87">Lib_VTK_IO::VTK_DAT</a> (NC_NN, var_location)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that <b>must</b> be called before saving the data related to geometric mesh, this function initializes the saving of data variables indicating the <em>type</em> (node or cell centered) of variables that will be saved.  <a href="#gaebcfe4a6294e0c3dfb33c827d66efd87"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga35cc958ab785716b3e5f8fa098847706">Lib_VTK_IO::VTK_END</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for finalizing open file, it has not inputs, <em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> manages the file unit without the user's action.  <a href="#ga35cc958ab785716b3e5f8fa098847706"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga9155bd4edcd91431621c50cffc175113">Lib_VTK_IO::VTK_DAT_XML</a> (var_location, var_block_action)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that <b>must</b> be called before saving the data related to geometric mesh, this function initializes the saving of data variables indicating the <em>type</em> (node or cell centered) of variables that will be saved.  <a href="#ga9155bd4edcd91431621c50cffc175113"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#gae736535f820094f0d705287069837f6b">Lib_VTK_IO::VTK_END_XML</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for finalizing the VTK-XML file.  <a href="#gae736535f820094f0d705287069837f6b"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga9071ea2ac1e62bac7e6dfdd1037be7b5">Lib_VTK_IO::VTK_DAT_XML</a> (cf, var_location, var_block_action)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that <b>must</b> be called before saving the data related to geometric mesh, this function initializes the saving of data variables indicating the <em>type</em> (node or cell centered) of variables that will be saved.  <a href="#ga9071ea2ac1e62bac7e6dfdd1037be7b5"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga00c7430a1194a1331f9b8e9aede88a71">Lib_VTK_IO::VTK_END_XML</a> (cf)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for finalizing the VTK-XML file.  <a href="#ga00c7430a1194a1331f9b8e9aede88a71"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga005b3704c23e602f989205bba1041aad">Lib_VTK_IO::VTM_INI_XML</a> (filename)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">The VTK_VTM_XML function is used for initializing a VTM (VTK Multiblocks) XML file that is a wrapper to a set of VTK-XML files.  <a href="#ga005b3704c23e602f989205bba1041aad"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga3c3e8c1d6662c1a850c82bbe8890598b">Lib_VTK_IO::VTM_BLK_XML</a> (block_action)</td></tr>
@@ -129,15 +121,546 @@ Functions/Subroutines</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">The VTM_WRF_XML function is used for saving the list of VTK-XML wrapped files by the actual block of the mutliblock VTM file.  <a href="#ga3c31b01ac798e860f3ab9755ba5d15e1"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga81e47e2540738a750c57b7c15cad03e3">Lib_VTK_IO::VTM_END_XML</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for finalizing open file, it has not inputs, <em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> manages the file unit without the user's action.  <a href="#ga81e47e2540738a750c57b7c15cad03e3"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#gaf551f235735e35f45374b1585c492494">Lib_VTK_IO::PVTK_INI_XML</a> (cf, nx1, nx2, ny1, ny2, nz1, nz2, filename, mesh_topology, tp)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for initializing parallel (partitioned) VTK-XML file.  <a href="#gaf551f235735e35f45374b1585c492494"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga07836414ceb12232cc5e9f979c146a15">Lib_VTK_IO::PVTK_GEO_XML</a> (cf, nx1, nx2, ny1, ny2, nz1, nz2, source)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving piece geometry source for parallel (partitioned) VTK-XML file.  <a href="#ga07836414ceb12232cc5e9f979c146a15"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga20d060b46120a8ccb7f23ea26fc8fc1f">Lib_VTK_IO::PVTK_DAT_XML</a> (cf, var_location, var_block_action)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that <b>must</b> be called before saving the data related to geometric mesh, this function initializes the saving of data variables indicating the <em>type</em> (node or cell centered) of variables that will be saved.  <a href="#ga20d060b46120a8ccb7f23ea26fc8fc1f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga7820a95aa89144d02367fdaa7f70cf1b">Lib_VTK_IO::PVTK_VAR_XML</a> (cf, Nc, varname, tp)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving variable associated to nodes or cells geometry.  <a href="#ga7820a95aa89144d02367fdaa7f70cf1b"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga64b38c40bff405783752f3d7f043f3a1">Lib_VTK_IO::PVTK_END_XML</a> (cf)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for finalizing the parallel (partitioned) VTK-XML file.  <a href="#ga64b38c40bff405783752f3d7f043f3a1"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga193d5fa884e92640c94c86017a87a62e">Lib_VTK_IO::VTK_INI</a> (cf, output_format, filename, title, mesh_topology)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for initializing VTK-legacy file.  <a href="#ga193d5fa884e92640c94c86017a87a62e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga53cd14315ded5f5cef11d9d5194d9adb">Lib_VTK_IO::VTK_CON</a> (NC, connect, cell_type)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that <b>must</b> be used when unstructured grid is used, it saves the connectivity of the unstructured gird.  <a href="#ga53cd14315ded5f5cef11d9d5194d9adb"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#gaebcfe4a6294e0c3dfb33c827d66efd87">Lib_VTK_IO::VTK_DAT</a> (NC_NN, var_location)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that <b>must</b> be called before saving the data related to geometric mesh, this function initializes the saving of data variables indicating the <em>type</em> (node or cell centered) of variables that will be saved.  <a href="#gaebcfe4a6294e0c3dfb33c827d66efd87"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga143f0454ed3c08653ea6f18491386ac2">Lib_VTK_IO::VTK_END</a> (cf)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for finalizing open file, it has not inputs, <em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> manages the file unit without the user's action.  <a href="#ga143f0454ed3c08653ea6f18491386ac2"></a><br/></td></tr>
 </table>
 <hr/><h2>Function/Subroutine Documentation</h2>
-<a class="anchor" id="ga4fb610eb5692b11763b4b8e7688f38bd"></a><!-- doxytag: member="Lib_VTK_IO::VTK_INI" ref="ga4fb610eb5692b11763b4b8e7688f38bd" args="(output_format, filename, title, mesh_topology)" -->
+<a class="anchor" id="ga9071ea2ac1e62bac7e6dfdd1037be7b5"></a><!-- doxytag: member="Lib_VTK_IO::VTK_DAT_XML" ref="ga9071ea2ac1e62bac7e6dfdd1037be7b5" args="(cf, var_location, var_block_action)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">integer(I4P) function, public <a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga4fb610eb5692b11763b4b8e7688f38bd">Lib_VTK_IO::VTK_INI</a> </td>
+          <td class="memname">integer(I4P) function, public <a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga9071ea2ac1e62bac7e6dfdd1037be7b5">Lib_VTK_IO::VTK_DAT_XML</a> </td>
           <td>(</td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character(*), intent(in)&#160;</td>
+          <td class="paramname"><em>var_location</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character(*), intent(in)&#160;</td>
+          <td class="paramname"><em>var_block_action</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Function that <b>must</b> be called before saving the data related to geometric mesh, this function initializes the saving of data variables indicating the <em>type</em> (node or cell centered) of variables that will be saved. </p>
+<dl class="note"><dt><b>Note:</b></dt><dd>A single file can contain both cell and node centered variables. In this case the VTK_DAT_XML function must be called two times, before saving cell-centered variables and before saving node-centered variables. Examples of usage are: <br/>
+ <b>Opening</b> node piece: <br/>
+ <div class="fragment"><pre class="fragment"> ...
+ E_IO=VTK_DAT_XML(<span class="stringliteral">&#39;node&#39;</span>,<span class="stringliteral">&#39;OPEN&#39;</span>)
+ ... 
+</pre></div> <b>Closing</b> node piece: <br/>
+ <div class="fragment"><pre class="fragment"> ...
+ E_IO=VTK_DAT_XML(<span class="stringliteral">&#39;node&#39;</span>,<span class="stringliteral">&#39;CLOSE&#39;</span>)
+ ... 
+</pre></div> </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag</dd></dl>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">var_location</td><td>Location of saving variables: CELL or NODE centered. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">var_block_action</td><td>Variables block action: OPEN or CLOSE block. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01319">1319</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ga00c7430a1194a1331f9b8e9aede88a71"></a><!-- doxytag: member="Lib_VTK_IO::VTK_END_XML" ref="ga00c7430a1194a1331f9b8e9aede88a71" args="(cf)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I4P) function, public <a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga00c7430a1194a1331f9b8e9aede88a71">Lib_VTK_IO::VTK_END_XML</a> </td>
+          <td>(</td>
+          <td class="paramtype">integer(I4P), intent(inout), optional&#160;</td>
+          <td class="paramname"><em>cf</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Function for finalizing the VTK-XML file. </p>
+<dl class="note"><dt><b>Note:</b></dt><dd>An example of usage is: <br/>
+ <div class="fragment"><pre class="fragment"> ...
+ E_IO = VTK_END_XML()
+ ... 
+</pre></div> </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag</dd></dl>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02052">2052</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ga005b3704c23e602f989205bba1041aad"></a><!-- doxytag: member="Lib_VTK_IO::VTM_INI_XML" ref="ga005b3704c23e602f989205bba1041aad" args="(filename)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I4P) function, public <a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga005b3704c23e602f989205bba1041aad">Lib_VTK_IO::VTM_INI_XML</a> </td>
+          <td>(</td>
+          <td class="paramtype">character(*), intent(in)&#160;</td>
+          <td class="paramname"><em>filename</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>The VTK_VTM_XML function is used for initializing a VTM (VTK Multiblocks) XML file that is a wrapper to a set of VTK-XML files. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag</dd></dl>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>File name of output VTM file. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02143">2143</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ga3c3e8c1d6662c1a850c82bbe8890598b"></a><!-- doxytag: member="Lib_VTK_IO::VTM_BLK_XML" ref="ga3c3e8c1d6662c1a850c82bbe8890598b" args="(block_action)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I4P) function, public <a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga3c3e8c1d6662c1a850c82bbe8890598b">Lib_VTK_IO::VTM_BLK_XML</a> </td>
+          <td>(</td>
+          <td class="paramtype">character(*), intent(in)&#160;</td>
+          <td class="paramname"><em>block_action</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>The VTM_BLK_XML function is used for opening or closing a block level of a VTM file. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag</dd></dl>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">block_action</td><td>Block action: OPEN or CLOSE block. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02167">2167</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ga3c31b01ac798e860f3ab9755ba5d15e1"></a><!-- doxytag: member="Lib_VTK_IO::VTM_WRF_XML" ref="ga3c31b01ac798e860f3ab9755ba5d15e1" args="(wrf_dir, vtk_xml_file_list)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I4P) function, public <a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga3c31b01ac798e860f3ab9755ba5d15e1">Lib_VTK_IO::VTM_WRF_XML</a> </td>
+          <td>(</td>
+          <td class="paramtype">character(*), intent(in), optional&#160;</td>
+          <td class="paramname"><em>wrf_dir</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character(*), dimension(:), intent(in)&#160;</td>
+          <td class="paramname"><em>vtk_xml_file_list</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>The VTM_WRF_XML function is used for saving the list of VTK-XML wrapped files by the actual block of the mutliblock VTM file. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag</dd></dl>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">wrf_dir</td><td>Directory into which wrapped VTK-XML are (optional). </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">vtk_xml_file_list</td><td>List of VTK-XML wrapped files. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02191">2191</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ga81e47e2540738a750c57b7c15cad03e3"></a><!-- doxytag: member="Lib_VTK_IO::VTM_END_XML" ref="ga81e47e2540738a750c57b7c15cad03e3" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I4P) function, public <a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga81e47e2540738a750c57b7c15cad03e3">Lib_VTK_IO::VTM_END_XML</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Function for finalizing open file, it has not inputs, <em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> manages the file unit without the user's action. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02224">2224</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="gaf551f235735e35f45374b1585c492494"></a><!-- doxytag: member="Lib_VTK_IO::PVTK_INI_XML" ref="gaf551f235735e35f45374b1585c492494" args="(cf, nx1, nx2, ny1, ny2, nz1, nz2, filename, mesh_topology, tp)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I4P) function, public <a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#gaf551f235735e35f45374b1585c492494">Lib_VTK_IO::PVTK_INI_XML</a> </td>
+          <td>(</td>
+          <td class="paramtype">integer(I4P), intent(out), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>nx1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>nx2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>ny1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>ny2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>nz1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>nz2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character(*), intent(in)&#160;</td>
+          <td class="paramname"><em>filename</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character(*), intent(in)&#160;</td>
+          <td class="paramname"><em>mesh_topology</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character(*), intent(in)&#160;</td>
+          <td class="paramname"><em>tp</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Function for initializing parallel (partitioned) VTK-XML file. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag</dd></dl>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nx1</td><td>Initial node of x axis. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nx2</td><td>Final node of x axis. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ny1</td><td>Initial node of y axis. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ny2</td><td>Final node of y axis. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nz1</td><td>Initial node of z axis. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nz2</td><td>Final node of z axis. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>File name. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mesh_topology</td><td>Mesh topology. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">tp</td><td>Type of geometry representation (Float32, Float64, ecc). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02242">2242</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ga07836414ceb12232cc5e9f979c146a15"></a><!-- doxytag: member="Lib_VTK_IO::PVTK_GEO_XML" ref="ga07836414ceb12232cc5e9f979c146a15" args="(cf, nx1, nx2, ny1, ny2, nz1, nz2, source)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I4P) function, public <a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga07836414ceb12232cc5e9f979c146a15">Lib_VTK_IO::PVTK_GEO_XML</a> </td>
+          <td>(</td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>nx1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>nx2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>ny1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>ny2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>nz1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>nz2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character(*), intent(in)&#160;</td>
+          <td class="paramname"><em>source</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Function for saving piece geometry source for parallel (partitioned) VTK-XML file. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag</dd></dl>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nx1</td><td>Initial node of x axis. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nx2</td><td>Final node of x axis. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ny1</td><td>Initial node of y axis. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ny2</td><td>Final node of y axis. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nz1</td><td>Initial node of z axis. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nz2</td><td>Final node of z axis. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">source</td><td>Source file name containing the piece data. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02309">2309</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ga20d060b46120a8ccb7f23ea26fc8fc1f"></a><!-- doxytag: member="Lib_VTK_IO::PVTK_DAT_XML" ref="ga20d060b46120a8ccb7f23ea26fc8fc1f" args="(cf, var_location, var_block_action)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I4P) function, public <a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga20d060b46120a8ccb7f23ea26fc8fc1f">Lib_VTK_IO::PVTK_DAT_XML</a> </td>
+          <td>(</td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character(*), intent(in)&#160;</td>
+          <td class="paramname"><em>var_location</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character(*), intent(in)&#160;</td>
+          <td class="paramname"><em>var_block_action</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Function that <b>must</b> be called before saving the data related to geometric mesh, this function initializes the saving of data variables indicating the <em>type</em> (node or cell centered) of variables that will be saved. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">var_location</td><td>Location of saving variables: CELL or NODE centered. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">var_block_action</td><td>Variables block action: OPEN or CLOSE block. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02343">2343</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ga7820a95aa89144d02367fdaa7f70cf1b"></a><!-- doxytag: member="Lib_VTK_IO::PVTK_VAR_XML" ref="ga7820a95aa89144d02367fdaa7f70cf1b" args="(cf, Nc, varname, tp)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I4P) function, public <a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga7820a95aa89144d02367fdaa7f70cf1b">Lib_VTK_IO::PVTK_VAR_XML</a> </td>
+          <td>(</td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>Nc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character(*), intent(in)&#160;</td>
+          <td class="paramname"><em>varname</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character(*), intent(in)&#160;</td>
+          <td class="paramname"><em>tp</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Function for saving variable associated to nodes or cells geometry. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag</dd></dl>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">Nc</td><td>Number of components of variable. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">varname</td><td>Variable name. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">tp</td><td>Type of data representation (Float32, Float64, ecc). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02377">2377</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ga64b38c40bff405783752f3d7f043f3a1"></a><!-- doxytag: member="Lib_VTK_IO::PVTK_END_XML" ref="ga64b38c40bff405783752f3d7f043f3a1" args="(cf)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I4P) function, public <a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga64b38c40bff405783752f3d7f043f3a1">Lib_VTK_IO::PVTK_END_XML</a> </td>
+          <td>(</td>
+          <td class="paramtype">integer(I4P), intent(inout), optional&#160;</td>
+          <td class="paramname"><em>cf</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Function for finalizing the parallel (partitioned) VTK-XML file. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag</dd></dl>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02404">2404</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ga193d5fa884e92640c94c86017a87a62e"></a><!-- doxytag: member="Lib_VTK_IO::VTK_INI" ref="ga193d5fa884e92640c94c86017a87a62e" args="(cf, output_format, filename, title, mesh_topology)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I4P) function, public <a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga193d5fa884e92640c94c86017a87a62e">Lib_VTK_IO::VTK_INI</a> </td>
+          <td>(</td>
+          <td class="paramtype">integer(I4P), intent(out), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">character(*), intent(in)&#160;</td>
           <td class="paramname"><em>output_format</em>, </td>
         </tr>
@@ -178,6 +701,7 @@ Functions/Subroutines</h2></td></tr>
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag</dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">output_format</td><td>Output format: ASCII or BINARY. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>Name of file. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">title</td><td>Title. </td></tr>
@@ -186,7 +710,7 @@ Functions/Subroutines</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00480">480</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02431">2431</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -222,29 +746,29 @@ Functions/Subroutines</h2></td></tr>
 <div class="memdoc">
 
 <p>Function that <b>must</b> be used when unstructured grid is used, it saves the connectivity of the unstructured gird. </p>
-<dl class="note"><dt><b>Note:</b></dt><dd>The vector <b>connect</b> must follow the VTK-legacy standard. It is passed as <em>assumed-shape</em> array because its dimensions is related to the mesh dimensions in a complex way. Its dimensions can be calculated by the following equation: <img class="formulaInl" alt="$dc = NC + \sum\limits_{i = 1}^{NC} {nvertex_i }$" src="../../form_6.png"/> where <img class="formulaInl" alt="$dc$" src="../../form_7.png"/> is connectivity vector dimension and <img class="formulaInl" alt="$nvertex_i$" src="../../form_8.png"/> is the number of vertices of <img class="formulaInl" alt="$i^{th}$" src="../../form_9.png"/> cell. The VTK- legacy standard for the mesh connectivity is quite obscure at least at first sight. It is more simple analyzing an example. Suppose we have a mesh composed by 2 cells, one hexahedron (8 vertices) and one pyramid with square basis (5 vertices) and suppose that the basis of pyramid is constitute by a face of the hexahedron and so the two cells share 4 vertices. The above equation !&gt; gives <img class="formulaInl" alt="$dc=2+8+5=15$" src="../../form_10.png"/>. The connectivity vector for this mesh can be: <br/>
+<dl class="note"><dt><b>Note:</b></dt><dd>The vector <b>connect</b> must follow the VTK-legacy standard. It is passed as <em>assumed-shape</em> array because its dimensions is related to the mesh dimensions in a complex way. Its dimensions can be calculated by the following equation: <img class="formulaInl" alt="$dc = NC + \sum\limits_{i = 1}^{NC} {nvertex_i }$" src="../../form_21.png"/> where <img class="formulaInl" alt="$dc$" src="../../form_22.png"/> is connectivity vector dimension and <img class="formulaInl" alt="$nvertex_i$" src="../../form_19.png"/> is the number of vertices of <img class="formulaInl" alt="$i^{th}$" src="../../form_20.png"/> cell. The VTK- legacy standard for the mesh connectivity is quite obscure at least at first sight. It is more simple analyzing an example. Suppose we have a mesh composed by 2 cells, one hexahedron (8 vertices) and one pyramid with square basis (5 vertices) and suppose that the basis of pyramid is constitute by a face of the hexahedron and so the two cells share 4 vertices. The above equation !&gt; gives <img class="formulaInl" alt="$dc=2+8+5=15$" src="../../form_23.png"/>. The connectivity vector for this mesh can be: <br/>
  first cell <br/>
- connect(1) = 8 number of vertices of <img class="formulaInl" alt="$1^\circ$" src="../../form_11.png"/> cell <br/>
- connect(2) = 0 identification flag of <img class="formulaInl" alt="$1^\circ$" src="../../form_11.png"/> vertex of 1° cell <br/>
- connect(3) = 1 identification flag of <img class="formulaInl" alt="$2^\circ$" src="../../form_12.png"/> vertex of 1° cell <br/>
- connect(4) = 2 identification flag of <img class="formulaInl" alt="$3^\circ$" src="../../form_13.png"/> vertex of 1° cell <br/>
- connect(5) = 3 identification flag of <img class="formulaInl" alt="$4^\circ$" src="../../form_14.png"/> vertex of 1° cell <br/>
- connect(6) = 4 identification flag of <img class="formulaInl" alt="$5^\circ$" src="../../form_15.png"/> vertex of 1° cell <br/>
- connect(7) = 5 identification flag of <img class="formulaInl" alt="$6^\circ$" src="../../form_16.png"/> vertex of 1° cell <br/>
- connect(8) = 6 identification flag of <img class="formulaInl" alt="$7^\circ$" src="../../form_17.png"/> vertex of 1° cell <br/>
- connect(9) = 7 identification flag of <img class="formulaInl" alt="$8^\circ$" src="../../form_18.png"/> vertex of 1° cell <br/>
+ connect(1) = 8 number of vertices of <img class="formulaInl" alt="$1^\circ$" src="../../form_8.png"/> cell <br/>
+ connect(2) = 0 identification flag of <img class="formulaInl" alt="$1^\circ$" src="../../form_8.png"/> vertex of 1° cell <br/>
+ connect(3) = 1 identification flag of <img class="formulaInl" alt="$2^\circ$" src="../../form_9.png"/> vertex of 1° cell <br/>
+ connect(4) = 2 identification flag of <img class="formulaInl" alt="$3^\circ$" src="../../form_10.png"/> vertex of 1° cell <br/>
+ connect(5) = 3 identification flag of <img class="formulaInl" alt="$4^\circ$" src="../../form_11.png"/> vertex of 1° cell <br/>
+ connect(6) = 4 identification flag of <img class="formulaInl" alt="$5^\circ$" src="../../form_12.png"/> vertex of 1° cell <br/>
+ connect(7) = 5 identification flag of <img class="formulaInl" alt="$6^\circ$" src="../../form_13.png"/> vertex of 1° cell <br/>
+ connect(8) = 6 identification flag of <img class="formulaInl" alt="$7^\circ$" src="../../form_14.png"/> vertex of 1° cell <br/>
+ connect(9) = 7 identification flag of <img class="formulaInl" alt="$8^\circ$" src="../../form_15.png"/> vertex of 1° cell <br/>
  second cell <br/>
- connect(10) = 5 number of vertices of <img class="formulaInl" alt="$2^\circ $" src="../../form_19.png"/>cell <br/>
- connect(11) = 0 identification flag of <img class="formulaInl" alt="$1^\circ$" src="../../form_11.png"/> vertex of 2° cell <br/>
- connect(12) = 1 identification flag of <img class="formulaInl" alt="$2^\circ$" src="../../form_12.png"/> vertex of 2° cell <br/>
- connect(13) = 2 identification flag of <img class="formulaInl" alt="$3^\circ$" src="../../form_13.png"/> vertex of 2° cell <br/>
- connect(14) = 3 identification flag of <img class="formulaInl" alt="$4^\circ$" src="../../form_14.png"/> vertex of 2° cell <br/>
- connect(15) = 8 identification flag of <img class="formulaInl" alt="$5^\circ$" src="../../form_15.png"/> vertex of 2° cell <br/>
+ connect(10) = 5 number of vertices of <img class="formulaInl" alt="$2^\circ $" src="../../form_24.png"/>cell <br/>
+ connect(11) = 0 identification flag of <img class="formulaInl" alt="$1^\circ$" src="../../form_8.png"/> vertex of 2° cell <br/>
+ connect(12) = 1 identification flag of <img class="formulaInl" alt="$2^\circ$" src="../../form_9.png"/> vertex of 2° cell <br/>
+ connect(13) = 2 identification flag of <img class="formulaInl" alt="$3^\circ$" src="../../form_10.png"/> vertex of 2° cell <br/>
+ connect(14) = 3 identification flag of <img class="formulaInl" alt="$4^\circ$" src="../../form_11.png"/> vertex of 2° cell <br/>
+ connect(15) = 8 identification flag of <img class="formulaInl" alt="$5^\circ$" src="../../form_12.png"/> vertex of 2° cell <br/>
  Note that the first 4 identification flags of pyramid vertices as the same of the first 4 identification flags of the hexahedron because the two cells share this face. It is also important to note that the identification flags start form $0$ value: this is impose to the VTK standard. The function VTK_CON does not calculate the connectivity vector: it writes the connectivity vector conforming the VTK standard, but does not calculate it. The vector variable <em>cell_type</em> must conform the VTK-legacy standard (see the file VTK-Standard at the Kitware homepage). It contains the <em>type</em> of each cells. For the above example this vector is: <br/>
  first cell <br/>
- cell_type(1) = 12 hexahedron type of <img class="formulaInl" alt="$1^\circ$" src="../../form_11.png"/> cell <br/>
+ cell_type(1) = 12 hexahedron type of <img class="formulaInl" alt="$1^\circ$" src="../../form_8.png"/> cell <br/>
  second cell <br/>
- cell_type(2) = 14 pyramid type of <img class="formulaInl" alt="$2^\circ$" src="../../form_12.png"/> cell <br/>
+ cell_type(2) = 14 pyramid type of <img class="formulaInl" alt="$2^\circ$" src="../../form_9.png"/> cell <br/>
  </dd></dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag</dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
@@ -256,7 +780,7 @@ Functions/Subroutines</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00858">858</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02804">2804</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -305,18 +829,19 @@ Functions/Subroutines</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00906">906</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02852">2852</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ga35cc958ab785716b3e5f8fa098847706"></a><!-- doxytag: member="Lib_VTK_IO::VTK_END" ref="ga35cc958ab785716b3e5f8fa098847706" args="()" -->
+<a class="anchor" id="ga143f0454ed3c08653ea6f18491386ac2"></a><!-- doxytag: member="Lib_VTK_IO::VTK_END" ref="ga143f0454ed3c08653ea6f18491386ac2" args="(cf)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">integer(I4P) function, public <a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga35cc958ab785716b3e5f8fa098847706">Lib_VTK_IO::VTK_END</a> </td>
+          <td class="memname">integer(I4P) function, public <a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga143f0454ed3c08653ea6f18491386ac2">Lib_VTK_IO::VTK_END</a> </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">integer(I4P), intent(inout), optional&#160;</td>
+          <td class="paramname"><em>cf</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -329,200 +854,15 @@ Functions/Subroutines</h2></td></tr>
  E_IO=VTK_END()
  ... 
 </pre></div> </dd></dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
-
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01202">1202</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="ga9155bd4edcd91431621c50cffc175113"></a><!-- doxytag: member="Lib_VTK_IO::VTK_DAT_XML" ref="ga9155bd4edcd91431621c50cffc175113" args="(var_location, var_block_action)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">integer(I4P) function, public <a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga9155bd4edcd91431621c50cffc175113">Lib_VTK_IO::VTK_DAT_XML</a> </td>
-          <td>(</td>
-          <td class="paramtype">character(*), intent(in)&#160;</td>
-          <td class="paramname"><em>var_location</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">character(*), intent(in)&#160;</td>
-          <td class="paramname"><em>var_block_action</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Function that <b>must</b> be called before saving the data related to geometric mesh, this function initializes the saving of data variables indicating the <em>type</em> (node or cell centered) of variables that will be saved. </p>
-<dl class="note"><dt><b>Note:</b></dt><dd>A single file can contain both cell and node centered variables. In this case the VTK_DAT_XML function must be called two times, before saving cell-centered variables and before saving node-centered variables. Examples of usage are: <br/>
- <b>Opening</b> node piece: <br/>
- <div class="fragment"><pre class="fragment"> ...
- E_IO=VTK_DAT_XML(<span class="stringliteral">&#39;node&#39;</span>,<span class="stringliteral">&#39;OPEN&#39;</span>)
- ... 
-</pre></div> <b>Closing</b> node piece: <br/>
- <div class="fragment"><pre class="fragment"> ...
- E_IO=VTK_DAT_XML(<span class="stringliteral">&#39;node&#39;</span>,<span class="stringliteral">&#39;CLOSE&#39;</span>)
- ... 
-</pre></div> </dd></dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag</dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">var_location</td><td>Location of saving variables: CELL for cell-centered, NODE for node-centered. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">var_block_action</td><td>Variables block action: OPEN or CLOSE block. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01982">1982</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="gae736535f820094f0d705287069837f6b"></a><!-- doxytag: member="Lib_VTK_IO::VTK_END_XML" ref="gae736535f820094f0d705287069837f6b" args="()" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">integer(I4P) function, public <a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#gae736535f820094f0d705287069837f6b">Lib_VTK_IO::VTK_END_XML</a> </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Function for finalizing the VTK-XML file. </p>
-<dl class="note"><dt><b>Note:</b></dt><dd>An example of usage is: <br/>
- <div class="fragment"><pre class="fragment"> ...
- E_IO = VTK_END_XML()
- ... 
-</pre></div> </dd></dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
-
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02685">2685</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="ga005b3704c23e602f989205bba1041aad"></a><!-- doxytag: member="Lib_VTK_IO::VTM_INI_XML" ref="ga005b3704c23e602f989205bba1041aad" args="(filename)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">integer(I4P) function, public <a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga005b3704c23e602f989205bba1041aad">Lib_VTK_IO::VTM_INI_XML</a> </td>
-          <td>(</td>
-          <td class="paramtype">character(*), intent(in)&#160;</td>
-          <td class="paramname"><em>filename</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>The VTK_VTM_XML function is used for initializing a VTM (VTK Multiblocks) XML file that is a wrapper to a set of VTK-XML files. </p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag</dd></dl>
-<dl class="params"><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>File name of output VTM file. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02773">2773</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="ga3c3e8c1d6662c1a850c82bbe8890598b"></a><!-- doxytag: member="Lib_VTK_IO::VTM_BLK_XML" ref="ga3c3e8c1d6662c1a850c82bbe8890598b" args="(block_action)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">integer(I4P) function, public <a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga3c3e8c1d6662c1a850c82bbe8890598b">Lib_VTK_IO::VTM_BLK_XML</a> </td>
-          <td>(</td>
-          <td class="paramtype">character(*), intent(in)&#160;</td>
-          <td class="paramname"><em>block_action</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>The VTM_BLK_XML function is used for opening or closing a block level of a VTM file. </p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag</dd></dl>
-<dl class="params"><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">block_action</td><td>Block action: OPEN or CLOSE block. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02802">2802</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="ga3c31b01ac798e860f3ab9755ba5d15e1"></a><!-- doxytag: member="Lib_VTK_IO::VTM_WRF_XML" ref="ga3c31b01ac798e860f3ab9755ba5d15e1" args="(wrf_dir, vtk_xml_file_list)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">integer(I4P) function, public <a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga3c31b01ac798e860f3ab9755ba5d15e1">Lib_VTK_IO::VTM_WRF_XML</a> </td>
-          <td>(</td>
-          <td class="paramtype">character(*), intent(in), optional&#160;</td>
-          <td class="paramname"><em>wrf_dir</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">character(*), dimension(:), intent(in)&#160;</td>
-          <td class="paramname"><em>vtk_xml_file_list</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>The VTM_WRF_XML function is used for saving the list of VTK-XML wrapped files by the actual block of the mutliblock VTM file. </p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag</dd></dl>
-<dl class="params"><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">wrf_dir</td><td>Directory into which wrapped VTK-XML are (optional). </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">vtk_xml_file_list</td><td>List of VTK-XML wrapped files. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02826">2826</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="ga81e47e2540738a750c57b7c15cad03e3"></a><!-- doxytag: member="Lib_VTK_IO::VTM_END_XML" ref="ga81e47e2540738a750c57b7c15cad03e3" args="()" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">integer(I4P) function, public <a class="el" href="../../d5/d47/group__Lib__VTK__IOPublicProcedure.html#ga81e47e2540738a750c57b7c15cad03e3">Lib_VTK_IO::VTM_END_XML</a> </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Function for finalizing open file, it has not inputs, <em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> manages the file unit without the user's action. </p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
-
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02859">2859</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l03148">3148</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -545,7 +885,7 @@ Functions/Subroutines</h2></td></tr>
   <div id="nav-path" class="navpath">
     <ul>
 
-    <li class="footer">Generated on Fri Mar 22 2013 12:17:32 for Lib_VTK_IO by
+    <li class="footer">Generated on Thu Mar 28 2013 11:22:48 for Lib_VTK_IO by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>
