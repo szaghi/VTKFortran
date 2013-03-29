@@ -60,4 +60,105 @@ The library is an open source project, it is distributed under the GPL v3. Anyon
 
 It can be found at: https://github.com/szaghi/Lib_VTK_IO
 
+@page Examples Examples of usage
+
+The described examples are implemented in Test_Driver.f90 file into directory src. There are three types of examples:
+ - \b serial XML outputs:
+   - \subpage VTR;
+   - \subpage VTS;
+   - \subpage VTU.
+ - \b parallel (partioned) XML outputs:
+   - \subpage PVTR;
+   - \subpage PVTS;
+   - \subpage PVTU.
+ - \b multi-blocks XML outputs:
+   - \subpage VTM.
+
+@page Compiling Compiling Instruction
+@libvtk has been developed on GNU/Linux architectures. Other OS are not supported (and in general there is no best alternative to GNU/Linux :-).
+
+The code provided have been successfully compiled with the following compilers:
+
+- GNU gfortran (from version 4.7.0)
+- Intel Fortran Compiler ifort (from version 12.0)
+
+Other compilers are not supported.
+
+@libvtk relies on IR_Precision module. The most easy way to compile @libvtk is to start with the provided makefile thus it is necessary that the system has "Make" program (preferably GNU make http://www.gnu.org/software/make/).
+
+@section Makefile
+
+The provided makefile has several options. It has one rule that prints all options available and the default settings. Typing in the shell prompt: @code make help @endcode the following output will be printed:
+
+@code
+ Make options of Lib_VTK_IO code
+
+ Compiler choice: COMPILER=gnu => default
+  COMPILER=gnu   => GNU gfortran
+  COMPILER=intel => Intel Fortran
+
+ Compiling options
+  SHARED=yes(no)   => on(off) shared library         (default no)
+  DEBUG=yes(no)    => on(off) debug                  (default no)
+  F03STD=yes(no)   => on(off) check standard fortran (default no)
+  OPTIMIZE=yes(no) => on(off) optimization           (default no)
+  OPENMP=yes(no)   => on(off) OpenMP directives      (default no)
+
+ Preprocessing options
+  R16P=yes(no) => on(off) definition of real with "128 bit" (default no)
+
+ Provided Rules: default=Lib_VTK_IO => compile the library
+  help         => printing this help message
+  Lib_VTK_IO   => compile the library
+  Test_Driver  => compile Test_Driver program
+  cleanobj     => cleaning compiled object
+  cleanmod     => cleaning .mod files
+  cleanmsg     => cleaning make-log massage files
+  cleanlib     => cleaning library
+  clean        => running cleanobj, cleanmod and cleanmsg
+  cleanall     => running clean and cleanexe
+  tar          => creating a tar archive of the project
+  doc          => building the documentation
+@endcode
+
+@subsection Mopts Makefile Options
+
+The makefiles provides several options. These can be divided in make options (compiler choice and compiling options) and in pre-processing options. For the pre-processing options the C pre-process paradigm has been used.
+
+The meaning of the options are:
+
+- <b>Compiler choice:</b>
+  - <b>COMPILER=gnu  </b> the codes is compiled using GNU gfortran compiler;
+  - <b>COMPILER=intel</b> the codes is compiled using Intel Fortran compiler;
+- <b>Compiling options:</b>
+  - <b>DEBUG=yes(no)   </b> compilation with (or not) debug symbols;
+  - <b>F03STD=yes(no)  </b> checking (or not) the compliance to Fortran standard 2003;
+  - <b>OPTIMIZE=yes(no)</b> performance-optimized compilation (or not);
+  - <b>OPENMP=yes(no)  </b> compilation with (or not) OpenMP directives;
+- <b>Preprocessing options:</b>
+  - <b>R16P=yes(no)</b> activation (or not) support for real with "128 bit" (quadruple precision) representation;
+
+@subsection Mrules Makefile Rules
+
+The makefiles provides several rules. Their meanings are:
+
+- <b>help       </b>: print help message in the shell prompt providing informations about the options and the rules available;
+- <b>Lib_VTK_IO </b>: build @libvtk library;
+- <b>Test_Driver</b>: build Test_Driver program used for testing the library and for providing examples of usage;
+- <b>cleanobj   </b>: clean compiled object file .o that are saved in obj directory by default;
+- <b>cleanmod   </b>: clean modules files .mod that are saved in obj directory by default;
+- <b>cleanmsg   </b>: clean log massage files of the make compilation that are "error_message" and "diagnostic_messages";
+- <b>cleanlib   </b>: clean (remove) libary directory;
+- <b>clean      </b>: execute cleanobj, cleanmod and cleanmsgr;
+- <b>cleanall   </b>: execute clean and cleanexe;
+- <b>tar        </b>: create a tar archive containing input lib util and src directories and makefile;
+- <b>doc        </b>: build the documentation (by means doxygen) in the directory doc/html.
+
+@note
+In order to build the documentation the following dependences must be satisfied:
+- .doxigenconfig file must be in project main directory;
+- doc directory with doc/fpp.sh, doc/mainpage.txt, doc/examples.txt and doc/layout.xml files must be in project main directory;
+- doxygen program must be installed (http://www.stack.nl/~dimitri/doxygen/).
+All of the above pre-requisites are satisfied if the GitHub repository (https://github.com/szaghi/Lib_VTK_IO) is cloned. \n
+
 */

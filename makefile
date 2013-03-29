@@ -19,17 +19,16 @@ OPENMP   = no
 R16P     = no
 
 .PHONY : DEFAULTRULE
-DEFAULTRULE: VTK_IO
+DEFAULTRULE: Lib_VTK_IO
 
 .PHONY : help
 help:
 	@echo
 	@echo -e '\033[1;31m Make options of Lib_VTK_IO code\033[0m'
 	@echo
-	@echo -e '\033[1;31m Compiler choice\033[0m'
+	@echo -e '\033[1;31m Compiler choice: COMPILER=$(COMPILER)\033[0m\033[1m => default\033[0m'
 	@echo -e '\033[1;31m  COMPILER=gnu  \033[0m\033[1m => GNU gfortran          \033[0m'
 	@echo -e '\033[1;31m  COMPILER=intel\033[0m\033[1m => Intel Fortran         \033[0m'
-	@echo -e '\033[1;31m  COMPILER=$(COMPILER)  \033[0m\033[1m => default         \033[0m'
 	@echo
 	@echo -e '\033[1;31m Compiling options\033[0m'
 	@echo -e '\033[1;31m  SHARED=yes(no)  \033[0m\033[1m => on(off) shared library         (default $(SHARED))\033[0m'
@@ -40,6 +39,19 @@ help:
 	@echo
 	@echo -e '\033[1;31m Preprocessing options\033[0m'
 	@echo -e '\033[1;31m  R16P=yes(no)\033[0m\033[1m => on(off) definition of real with "128 bit" (default $(R16P))\033[0m'
+	@echo
+	@echo -e '\033[1;31m Provided Rules: default=Lib_VTK_IO\033[0m\033[1m => compile the library\033[0m'
+	@echo -e '\033[1;31m  help         =>\033[0m\033[1m printing this help message\033[0m'
+	@echo -e '\033[1;31m  Lib_VRK_IO   =>\033[0m\033[1m compile the library\033[0m'
+	@echo -e '\033[1;31m  Test_Driver  =>\033[0m\033[1m compile Test_Driver program\033[0m'
+	@echo -e '\033[1;31m  cleanobj     =>\033[0m\033[1m cleaning compiled object\033[0m'
+	@echo -e '\033[1;31m  cleanmod     =>\033[0m\033[1m cleaning .mod files\033[0m'
+	@echo -e '\033[1;31m  cleanmsg     =>\033[0m\033[1m cleaning make-log massage files\033[0m'
+	@echo -e '\033[1;31m  cleanlib     =>\033[0m\033[1m cleaning library\033[0m'
+	@echo -e '\033[1;31m  clean        =>\033[0m\033[1m running cleanobj, cleanmod and cleanmsg\033[0m'
+	@echo -e '\033[1;31m  cleanall     =>\033[0m\033[1m running clean and cleanexe\033[0m'
+	@echo -e '\033[1;31m  tar          =>\033[0m\033[1m creating a tar archive of the project\033[0m'
+	@echo -e '\033[1;31m  doc          =>\033[0m\033[1m building the documentation\033[0m'
 #----------------------------------------------------------------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -47,7 +59,9 @@ help:
 DSRC  = ./src/
 DOBJ  = ./obj/
 DMOD  = ./mod/
+DEXE  = ./
 VPATH = $(DSRC) $(DOBJ) $(DMOD)
+
 ifeq "$(SHARED)" "yes"
   DLIB    = ./shared/
   MAIN    = $(DLIB)Lib_VTK_IO.so
@@ -57,7 +71,6 @@ else
   MAIN    = $(DLIB)Lib_VTK_IO.a
   MAKELIB = ar -rcs $(MAIN) $(DOBJ)lib_vtk_io.o ; ranlib $(MAIN)
 endif
-DEXE  = ./
 MKDIRS = $(DOBJ) $(DMOD) $(DLIB)
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -75,8 +88,8 @@ ifeq "$(COMPILER)" "gnu"
   # debug
   ifeq "$(DEBUG)" "yes"
     PREPROC := $(PREPROC) -DDEBUG
-    OPTSC := $(OPTSC) -O0 -Wall -Warray-bounds -fcheck=all -fbacktrace -ffpe-trap=invalid,overflow,underflow,precision,denormal
-    OPTSL := $(OPTSL) -O0 -Wall -Warray-bounds -fcheck=all -fbacktrace -ffpe-trap=invalid,overflow,underflow,precision,denormal
+    OPTSC := $(OPTSC) -O0 -Wall -Wno-array-temporaries -Warray-bounds -fcheck=all -fbacktrace -ffpe-trap=invalid,overflow,underflow
+    OPTSL := $(OPTSL) -O0 -Wall -Wno-array-temporaries -Warray-bounds -fcheck=all -fbacktrace -ffpe-trap=invalid,overflow,underflow
   endif
   # standard
   ifeq "$(F03STD)" "yes"
@@ -120,8 +133,8 @@ ifeq "$(COMPILER)" "intel"
   endif
   # optimization
   ifeq "$(OPTIMIZE)" "yes"
-    OPTSC := $(OPTSC) -O3 -ipo
-    OPTSL := $(OPTSL) -O3 -ipo
+    OPTSC := $(OPTSC) -O3 -ipo -inline all
+    OPTSL := $(OPTSL) -O3 -ipo -inline all
   endif
   # openmp
   ifeq "$(OPENMP)" "yes"
@@ -188,7 +201,7 @@ cleanmod:
 
 .PHONY : cleanlib
 cleanlib:
-	@echo -e "\033[1;31m deleting exes \033[0m" | tee -a make.log
+	@echo -e "\033[1;31m deleting library \033[0m" | tee -a make.log
 	@rm -rf $(DLIB)
 
 .PHONY : cleanmsg
@@ -238,7 +251,7 @@ $(DOBJ)Test_Driver.o : Test_Driver.f90 \
 	@echo $(COTEXT) | tee -a make.log
 	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
 
-VTK_IO : PRINTINFO $(MKDIRS) $(DOBJ)ir_precision.o $(DOBJ)lib_vtk_io.o
+Lib_VTK_IO : PRINTINFO $(MKDIRS) $(DOBJ)ir_precision.o $(DOBJ)lib_vtk_io.o
 	@echo $(LITEXT) | tee -a make.log
 	@$(MAKELIB) 1>> diagnostic_messages 2>> error_messages
 

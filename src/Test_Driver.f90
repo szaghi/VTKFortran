@@ -33,7 +33,6 @@
 !> @date      2013-03-28
 !> @copyright GNU Public License version 3.
 !> @todo \b RectilinearGrid: implement RectilinearGrid tests.
-!> @todo \b VTM: implement multi-block VTM test.
 !> @ingroup Test_DriverProgram
 program Test_Driver
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -63,6 +62,14 @@ case('-punst')
   call test_punst
 case('-pstrg')
   call test_pstrg
+case('-vtm')
+  call test_vtm
+case('-all')
+  call test_unst
+  call test_strg
+  call test_punst
+  call test_pstrg
+  call test_vtm
 case default
   write(stderr,'(A)')' Switch '//trim(cas)//' unknown'
   call print_usage
@@ -84,8 +91,11 @@ contains
   write(stdout,'(A)')'     switch = strg  => testing StructuredGrid functions'
   write(stdout,'(A)')'     switch = punst => testing parallel (partitioned) PUnstructuredGrid functions'
   write(stdout,'(A)')'     switch = pstrg => testing parallel (partitioned) StructuredGrid functions'
-  write(stdout,'(A)')' Example:'
+  write(stdout,'(A)')'     switch = vtm   => testing multi-block XML functions'
+  write(stdout,'(A)')'     switch = all   => testing all functions'
+  write(stdout,'(A)')' Examples:'
   write(stdout,'(A)')'   Test_Driver -pstrg'
+  write(stdout,'(A)')'   Test_Driver -vtm'
   write(stdout,'(A)')' If switch is not passed this help message is printed to stdout'
   stop
   return
@@ -273,7 +283,7 @@ contains
   !>            x         nx1               i=nx2_p(1)     nx2
   !> @endcode
   !> @note This subroutine also tests concurrent multiple files IO.
-  !> @bug OpenMP parallel pardigm does not work. The library Lib_VTK_IO is not yet thread safe.
+  !> @bug OpenMP parallel paradigm does not work. The library @libvtk is not yet thread safe.
   subroutine test_pstrg()
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
@@ -338,4 +348,61 @@ contains
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_pstrg
+
+  !> Subroutine for testing multi-blocks VTM functions. There are 4 subset of data organized into 2 blocks. All the subsets are
+  !> simple StructuredGrid prisms shifted along x direction.
+  subroutine test_vtm()
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), parameter::                          nx1=0_I4P,nx2=9_I4P,ny1=0_I4P,ny2=5_I4P,nz1=0_I4P,nz2=5_I4P
+  integer(I4P), parameter::                          nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
+  real(R8P),    dimension(nx1:nx2,ny1:ny2,nz1:nz2):: x,y,z
+  integer(I4P), dimension(nx1:nx2,ny1:ny2,nz1:nz2):: v
+  integer(I4P)::                                     i,j,k,b,mf(1:4),E_IO
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  write(stdout,'(A)')' Testing multi-blocks VTM functions'
+  write(stdout,'(A)')' Output files are XML_M-STRG.vtm, XML_M-STRG_part.0.vts, XML_M-STRG_part.1.vts'
+  ! arrays initialization
+  do k=nz1,nz2
+   do j=ny1,ny2
+     do i=nx1,nx2
+       x(i,j,k) = i*1._R8P
+       y(i,j,k) = j*1._R8P
+       z(i,j,k) = k*1._R8P
+       v(i,j,k) = 1_I4P
+     enddo
+   enddo
+  enddo
+  ! vts
+  do b=1,4 ! loop over blocks
+    E_IO = VTK_INI_XML(cf=mf(b),output_format='binary', filename='XML_M-STRG_part.'//trim(str(.true.,b-1))//'.vts', &
+                       mesh_topology='StructuredGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+    if (b>1) then
+      x = x + nx2*1._R8P
+      v = b
+    endif
+    E_IO = VTK_GEO_XML(cf=mf(b),nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn, &
+                       X=reshape(x(nx1:nx2,:,:),(/nn/)),                                     &
+                       Y=reshape(y(nx1:nx2,:,:),(/nn/)),                                     &
+                       Z=reshape(z(nx1:nx2,:,:),(/nn/)))
+    E_IO = VTK_DAT_XML(cf=mf(b),var_location = 'node', var_block_action = 'open')
+    E_IO = VTK_VAR_XML(cf=mf(b),NC_NN = nn, varname = 'node_value', var = reshape(v(nx1:nx2,:,:),(/nn/)))
+    E_IO = VTK_DAT_XML(cf=mf(b),var_location = 'node', var_block_action = 'close')
+    E_IO = VTK_GEO_XML(cf=mf(b))
+    E_IO = VTK_END_XML()
+  enddo
+  ! vtm
+  E_IO = VTM_INI_XML('XML_M-STRG.vtm')
+  E_IO = VTM_BLK_XML(block_action='open')
+  E_IO = VTM_WRF_XML(flist=(/('XML_M-STRG_part.'//trim(str(.true.,b-1))//'.vts',b=1,2)/))
+  E_IO = VTM_BLK_XML(block_action='close')
+  E_IO = VTM_BLK_XML(block_action='open')
+  E_IO = VTM_WRF_XML(flist=(/('XML_M-STRG_part.'//trim(str(.true.,b-1))//'.vts',b=3,4)/))
+  E_IO = VTM_BLK_XML(block_action='close')
+  E_IO = VTM_END_XML()
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endsubroutine test_vtm
 endprogram Test_Driver

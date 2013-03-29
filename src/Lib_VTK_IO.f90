@@ -117,8 +117,7 @@
 !> compiler providing support for some Fortran standard 2003 features.
 !> @todo \b CompleteExporter: Complete the exporters
 !> @todo \b CompleteImporter: Complete the importers
-!> @todo \b DocExamples: Improve the documentation by means of examples
-!> @todo \b DocMakeFile: Create the documentation of makefile
+!> @todo \b DocExamples: Complete the documentation of examples
 !> @todo \b g95_test: Test g95 compiler
 !> @bug <b>Array-Reshape</b>: \n Fortran allows automatic reshape of arrays, e.g. 2D array can be automatically (in the
 !>                            function calling) transformed  to a 1D array with the same number of element of 2D array. The use of
@@ -2149,17 +2148,20 @@ contains
   implicit none
   character(*), intent(IN):: filename !< File name of output VTM file.
   integer(I4P)::             E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::    s_buffer !< Buffer string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
+  if (.not.ir_initialized) call IR_Init
+  if (endian==endianL) then
+    s_buffer='<VTKFile type="vtkMultiBlockDataSet" version="1.0" byte_order="LittleEndian">'
+  else
+    s_buffer='<VTKFile type="vtkMultiBlockDataSet" version="1.0" byte_order="BigEndian">'
+  endif
   open(unit=Get_Unit(vtm%u),file=trim(filename),form='FORMATTED',access='SEQUENTIAL',action='WRITE',status='REPLACE',iostat=E_IO)
-
   write(unit=vtm%u,fmt='(A)',iostat=E_IO)'<?xml version="1.0"?>'
-  write(unit=vtm%u,fmt='(A)',iostat=E_IO)'<VTKFile type="vtkMultiBlockDataSet" version="1.0"'// &
-                                         ' byte_order="BigEndian" compressor="vtkZLibDataCompressor">'
-  vtm%indent = 2
-  write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<vtkMultiBlockDataSet>'
-  vtm%indent = vtm%indent + 2
+  write(unit=vtm%u,fmt='(A)',iostat=E_IO)trim(s_buffer) ; vtm%indent = 2
+  write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<vtkMultiBlockDataSet>' ; vtm%indent = vtm%indent + 2
   vtm%blk = -1
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2179,11 +2181,10 @@ contains
   select case(trim(Upper_Case(block_action)))
   case('OPEN')
     vtm%blk = vtm%blk + 1
-    write(unit=vtm%u,fmt='(A,I4.4,A)',iostat=E_IO)repeat(' ',vtm%indent)//'<Block index="',vtm%blk,'">'
+    write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<Block index="'//trim(str(.true.,vtm%blk))//'">'
     vtm%indent = vtm%indent + 2
   case('CLOSE')
-    vtm%indent = vtm%indent - 2
-    write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'</Block>'
+    vtm%indent = vtm%indent - 2 ; write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'</Block>'
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2192,31 +2193,19 @@ contains
   !> The VTM_WRF_XML function is used for saving the list of VTK-XML wrapped files by the actual block of the mutliblock VTM file.
   !> @return E_IO: integer(I4P) error flag
   !> @ingroup Lib_VTK_IOPublicProcedure
-  function VTM_WRF_XML(wrf_dir,vtk_xml_file_list) result(E_IO)
+  function VTM_WRF_XML(flist) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  character(*), intent(IN), optional:: wrf_dir              !< Directory into which wrapped VTK-XML are (optional).
-  character(*), intent(IN)::           vtk_xml_file_list(:) !< List of VTK-XML wrapped files.
-  integer(I4P)::                       E_IO                 !< Input/Output inquiring flag: 0 if IO is done, > 0 if IO is not done.
-  integer(I4P)::                       f                    !< File counter.
+  character(*), intent(IN):: flist(:) !< List of VTK-XML wrapped files.
+  integer(I4P)::             E_IO     !< Input/Output inquiring flag: 0 if IO is done, > 0 if IO is not done.
+  integer(I4P)::             f        !< File counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  if (present(wrf_dir)) then
-    do f=1,size(vtk_xml_file_list)
-      write(unit=vtm%u,fmt='(A,I3.3,A)',iostat=E_IO)repeat(' ',vtm%indent)//                                      &
-                                                    '<DataSet index="',f-1,'" file="'//                           &
-                                                    adjustl(trim(wrf_dir))//adjustl(trim(vtk_xml_file_list(f)))// &
-                                                    '"></DataSet>'
-    enddo
-  else
-    do f=1,size(vtk_xml_file_list)
-      write(unit=vtm%u,fmt='(A,I3.3,A)',iostat=E_IO)repeat(' ',vtm%indent)//              &
-                                                    '<DataSet index="',f-1,'" file="'//   &
-                                                    adjustl(trim(vtk_xml_file_list(f)))// &
-                                                    '"></DataSet>'
-    enddo
-  endif
+  do f=1,size(flist)
+    write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<DataSet index="'//trim(str(.true.,f-1))//'" file="'// &
+                                           adjustl(trim(flist(f)))//'"/>'
+  enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTM_WRF_XML
