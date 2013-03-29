@@ -133,318 +133,325 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <a name="l00064"></a>00064   call <a class="code" href="../../dc/d15/Test__Driver_8f90.html#af880519c33b60cfe7eb9e7802f236d75">test_pstrg</a>
 <a name="l00065"></a>00065 <span class="keyword">case</span>(<span class="stringliteral">&#39;-vtm&#39;</span>)
 <a name="l00066"></a>00066   call <a class="code" href="../../dc/d15/Test__Driver_8f90.html#a3efeb4d55ec67870b94a9b0faddf1454">test_vtm</a>
-<a name="l00067"></a>00067 <span class="keyword">case</span> default
-<a name="l00068"></a>00068   <span class="keyword">write</span>(stderr,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Switch &#39;</span>//trim(cas)//<span class="stringliteral">&#39; unknown&#39;</span>
-<a name="l00069"></a>00069   call <a class="code" href="../../dc/d15/Test__Driver_8f90.html#ab6cdfd6c85c51dec97c0cd08f25cda7a">print_usage</a>
-<a name="l00070"></a>00070 endselect
-<a name="l00071"></a>00071 stop
-<a name="l00072"></a>00072 <span class="comment">!-----------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00073"></a>00073 <span class="keyword">contains</span>
-<a name="l00075"></a>00075   <span class="keyword">subroutine </span><a class="code" href="../../dc/d15/Test__Driver_8f90.html#ab6cdfd6c85c51dec97c0cd08f25cda7a">print_usage</a>()
-<a name="l00076"></a>00076   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00077"></a>00077   <span class="keyword">implicit none</span>
-<a name="l00078"></a>00078   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00079"></a><a class="code" href="../../dc/d15/Test__Driver_8f90.html#ab6cdfd6c85c51dec97c0cd08f25cda7a">00079</a> 
-<a name="l00080"></a>00080   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00081"></a>00081   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Test_Driver: a &quot;driver&quot; program for testing Lib_VTK_IO functions&#39;</span>
-<a name="l00082"></a>00082   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Usage:&#39;</span>
-<a name="l00083"></a>00083   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39;   Test_Driver [-switch]&#39;</span>
-<a name="l00084"></a>00084   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39;     switch = unst  =&gt; testing UnstructuredGrid functions&#39;</span>
-<a name="l00085"></a>00085   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39;     switch = strg  =&gt; testing StructuredGrid functions&#39;</span>
-<a name="l00086"></a>00086   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39;     switch = punst =&gt; testing parallel (partitioned) PUnstructuredGrid functions&#39;</span>
-<a name="l00087"></a>00087   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39;     switch = pstrg =&gt; testing parallel (partitioned) StructuredGrid functions&#39;</span>
-<a name="l00088"></a>00088   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39;     switch = vtm   =&gt; testing multi-block XML functions&#39;</span>
-<a name="l00089"></a>00089   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Examples:&#39;</span>
-<a name="l00090"></a>00090   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39;   Test_Driver -pstrg&#39;</span>
-<a name="l00091"></a>00091   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39;   Test_Driver -vtm&#39;</span>
-<a name="l00092"></a>00092   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; If switch is not passed this help message is printed to stdout&#39;</span>
-<a name="l00093"></a>00093   stop
-<a name="l00094"></a>00094   return
-<a name="l00095"></a>00095   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00096"></a>00096 <span class="keyword">  endsubroutine print_usage</span>
-<a name="l00097"></a>00097 
-<a name="l00099"></a>00099   <span class="keyword">subroutine </span><a class="code" href="../../dc/d15/Test__Driver_8f90.html#a877423eabe78f11ecde5b60e9fca73ae">test_unst</a>()
-<a name="l00100"></a>00100   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00101"></a>00101   <span class="keyword">implicit none</span>
-<a name="l00102"></a>00102   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::       Nn = 27_I4P
-<a name="l00103"></a><a class="code" href="../../dc/d15/Test__Driver_8f90.html#a877423eabe78f11ecde5b60e9fca73ae">00103</a>   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::       Ne = 11_I4P
-<a name="l00104"></a>00104   <span class="keywordtype">real(R4P)</span>,    <span class="keywordtype">dimension(1:Nn)</span>:: x = (/0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2/)
-<a name="l00105"></a>00105   <span class="keywordtype">real(R4P)</span>,    <span class="keywordtype">dimension(1:Nn)</span>:: y = (/0,0,0,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1/)
-<a name="l00106"></a>00106   <span class="keywordtype">real(R4P)</span>,    <span class="keywordtype">dimension(1:Nn)</span>:: z = (/0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6/)
-<a name="l00107"></a>00107   <span class="keywordtype">integer(I1P)</span>, <span class="keywordtype">dimension(1:Ne)</span>:: cell_type = (/12,12,10,10,7,6,9,5,5,3,1/)
-<a name="l00108"></a>00108   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(1:Ne)</span>:: offset = (/8,16,20,24,30,36,40,43,46,48,49/)
-<a name="l00109"></a>00109   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(1:49)</span>:: connect
-<a name="l00110"></a>00110   <span class="keywordtype">real(R8P)</span>,    <span class="keywordtype">dimension(1:Nn)</span>:: v
-<a name="l00111"></a>00111   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(1:Nn)</span>:: v_X
-<a name="l00112"></a>00112   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(1:Nn)</span>:: v_Y
-<a name="l00113"></a>00113   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(1:Nn)</span>:: v_Z
-<a name="l00114"></a>00114   <span class="keywordtype">integer(I4P)</span>::                  E_IO
-<a name="l00115"></a>00115   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00116"></a>00116 
-<a name="l00117"></a>00117   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00118"></a>00118   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Testing UnstructuredGrid functions. Output file is XML_UNST.vtu&#39;</span>
-<a name="l00119"></a>00119   connect = (/0 ,1 ,4 ,3 ,6 ,7 ,10,9 , &amp;
-<a name="l00120"></a>00120               1 ,2 ,5 ,4 ,7 ,8 ,11,10, &amp;
-<a name="l00121"></a>00121               6 ,10,9 ,12,             &amp;
-<a name="l00122"></a>00122               5 ,11,10,14,             &amp;
-<a name="l00123"></a>00123               15,16,17,14,13,12,       &amp;
-<a name="l00124"></a>00124               18,15,19,16,20,17,       &amp;
-<a name="l00125"></a>00125               22,23,20,19,             &amp;
-<a name="l00126"></a>00126               21,22,18,                &amp;
-<a name="l00127"></a>00127               22,19,18,                &amp;
-<a name="l00128"></a>00128               26,25,                   &amp;
-<a name="l00129"></a>00129               24/)
-<a name="l00130"></a>00130   v=(/0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0,16.0,17.0, &amp;
-<a name="l00131"></a>00131       18.0,19.0,20.0,21.0,22.0,23.0,24.0,25.0,26.0/)
-<a name="l00132"></a>00132   v_X=(/1,1,0,1,1,0,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0/)
-<a name="l00133"></a>00133   v_Y=(/0,1,2,0,1,2,0,1,2,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0/)
-<a name="l00134"></a>00134   v_Z=(/0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1/)
-<a name="l00135"></a>00135   E_IO = VTK_INI_XML(output_format = <span class="stringliteral">&#39;Binary&#39;</span>, filename = <span class="stringliteral">&#39;XML_UNST.vtu&#39;</span>, mesh_topology = <span class="stringliteral">&#39;UnstructuredGrid&#39;</span>)
-<a name="l00136"></a>00136   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
-<a name="l00137"></a>00137   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
-<a name="l00138"></a>00138   E_IO = VTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;opeN&#39;</span>)
-<a name="l00139"></a>00139   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML">VTK_VAR_XML</a>(NC_NN = Nn, varname = <span class="stringliteral">&#39;scalars&#39;</span>, var = v)
-<a name="l00140"></a>00140   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML">VTK_VAR_XML</a>(NC_NN = Nn, varname = <span class="stringliteral">&#39;vector&#39;</span>, varX=v_X,varY=v_Y,varZ=v_Z)
-<a name="l00141"></a>00141   E_IO = VTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;CLOSE&#39;</span>)
-<a name="l00142"></a>00142   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>()
-<a name="l00143"></a>00143   E_IO = VTK_END_XML()
-<a name="l00144"></a>00144   return
-<a name="l00145"></a>00145   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00146"></a>00146 <span class="keyword">  endsubroutine test_unst</span>
-<a name="l00147"></a>00147 
-<a name="l00151"></a>00151   <span class="keyword">subroutine </span><a class="code" href="../../dc/d15/Test__Driver_8f90.html#a05d9e26145205ff5c70d4f7df1d28b3c">test_strg</a>()
+<a name="l00067"></a>00067 <span class="keyword">case</span>(<span class="stringliteral">&#39;-all&#39;</span>)
+<a name="l00068"></a>00068   call <a class="code" href="../../dc/d15/Test__Driver_8f90.html#a877423eabe78f11ecde5b60e9fca73ae">test_unst</a>
+<a name="l00069"></a>00069   call <a class="code" href="../../dc/d15/Test__Driver_8f90.html#a05d9e26145205ff5c70d4f7df1d28b3c">test_strg</a>
+<a name="l00070"></a>00070   call <a class="code" href="../../dc/d15/Test__Driver_8f90.html#a61413a5d167473f543449bc706c1fbfa">test_punst</a>
+<a name="l00071"></a>00071   call <a class="code" href="../../dc/d15/Test__Driver_8f90.html#af880519c33b60cfe7eb9e7802f236d75">test_pstrg</a>
+<a name="l00072"></a>00072   call <a class="code" href="../../dc/d15/Test__Driver_8f90.html#a3efeb4d55ec67870b94a9b0faddf1454">test_vtm</a>
+<a name="l00073"></a>00073 <span class="keyword">case</span> default
+<a name="l00074"></a>00074   <span class="keyword">write</span>(stderr,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Switch &#39;</span>//trim(cas)//<span class="stringliteral">&#39; unknown&#39;</span>
+<a name="l00075"></a>00075   call <a class="code" href="../../dc/d15/Test__Driver_8f90.html#ab6cdfd6c85c51dec97c0cd08f25cda7a">print_usage</a>
+<a name="l00076"></a>00076 endselect
+<a name="l00077"></a>00077 stop
+<a name="l00078"></a>00078 <span class="comment">!-----------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00079"></a>00079 <span class="keyword">contains</span>
+<a name="l00081"></a>00081   <span class="keyword">subroutine </span><a class="code" href="../../dc/d15/Test__Driver_8f90.html#ab6cdfd6c85c51dec97c0cd08f25cda7a">print_usage</a>()
+<a name="l00082"></a>00082   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00083"></a>00083   <span class="keyword">implicit none</span>
+<a name="l00084"></a>00084   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00085"></a><a class="code" href="../../dc/d15/Test__Driver_8f90.html#ab6cdfd6c85c51dec97c0cd08f25cda7a">00085</a> 
+<a name="l00086"></a>00086   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00087"></a>00087   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Test_Driver: a &quot;driver&quot; program for testing Lib_VTK_IO functions&#39;</span>
+<a name="l00088"></a>00088   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Usage:&#39;</span>
+<a name="l00089"></a>00089   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39;   Test_Driver [-switch]&#39;</span>
+<a name="l00090"></a>00090   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39;     switch = unst  =&gt; testing UnstructuredGrid functions&#39;</span>
+<a name="l00091"></a>00091   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39;     switch = strg  =&gt; testing StructuredGrid functions&#39;</span>
+<a name="l00092"></a>00092   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39;     switch = punst =&gt; testing parallel (partitioned) PUnstructuredGrid functions&#39;</span>
+<a name="l00093"></a>00093   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39;     switch = pstrg =&gt; testing parallel (partitioned) StructuredGrid functions&#39;</span>
+<a name="l00094"></a>00094   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39;     switch = vtm   =&gt; testing multi-block XML functions&#39;</span>
+<a name="l00095"></a>00095   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39;     switch = all   =&gt; testing all functions&#39;</span>
+<a name="l00096"></a>00096   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Examples:&#39;</span>
+<a name="l00097"></a>00097   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39;   Test_Driver -pstrg&#39;</span>
+<a name="l00098"></a>00098   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39;   Test_Driver -vtm&#39;</span>
+<a name="l00099"></a>00099   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; If switch is not passed this help message is printed to stdout&#39;</span>
+<a name="l00100"></a>00100   stop
+<a name="l00101"></a>00101   return
+<a name="l00102"></a>00102   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00103"></a>00103 <span class="keyword">  endsubroutine print_usage</span>
+<a name="l00104"></a>00104 
+<a name="l00106"></a>00106   <span class="keyword">subroutine </span><a class="code" href="../../dc/d15/Test__Driver_8f90.html#a877423eabe78f11ecde5b60e9fca73ae">test_unst</a>()
+<a name="l00107"></a>00107   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00108"></a>00108   <span class="keyword">implicit none</span>
+<a name="l00109"></a>00109   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::       Nn = 27_I4P
+<a name="l00110"></a><a class="code" href="../../dc/d15/Test__Driver_8f90.html#a877423eabe78f11ecde5b60e9fca73ae">00110</a>   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::       Ne = 11_I4P
+<a name="l00111"></a>00111   <span class="keywordtype">real(R4P)</span>,    <span class="keywordtype">dimension(1:Nn)</span>:: x = (/0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2/)
+<a name="l00112"></a>00112   <span class="keywordtype">real(R4P)</span>,    <span class="keywordtype">dimension(1:Nn)</span>:: y = (/0,0,0,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1/)
+<a name="l00113"></a>00113   <span class="keywordtype">real(R4P)</span>,    <span class="keywordtype">dimension(1:Nn)</span>:: z = (/0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6/)
+<a name="l00114"></a>00114   <span class="keywordtype">integer(I1P)</span>, <span class="keywordtype">dimension(1:Ne)</span>:: cell_type = (/12,12,10,10,7,6,9,5,5,3,1/)
+<a name="l00115"></a>00115   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(1:Ne)</span>:: offset = (/8,16,20,24,30,36,40,43,46,48,49/)
+<a name="l00116"></a>00116   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(1:49)</span>:: connect
+<a name="l00117"></a>00117   <span class="keywordtype">real(R8P)</span>,    <span class="keywordtype">dimension(1:Nn)</span>:: v
+<a name="l00118"></a>00118   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(1:Nn)</span>:: v_X
+<a name="l00119"></a>00119   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(1:Nn)</span>:: v_Y
+<a name="l00120"></a>00120   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(1:Nn)</span>:: v_Z
+<a name="l00121"></a>00121   <span class="keywordtype">integer(I4P)</span>::                  E_IO
+<a name="l00122"></a>00122   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00123"></a>00123 
+<a name="l00124"></a>00124   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00125"></a>00125   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Testing UnstructuredGrid functions. Output file is XML_UNST.vtu&#39;</span>
+<a name="l00126"></a>00126   connect = (/0 ,1 ,4 ,3 ,6 ,7 ,10,9 , &amp;
+<a name="l00127"></a>00127               1 ,2 ,5 ,4 ,7 ,8 ,11,10, &amp;
+<a name="l00128"></a>00128               6 ,10,9 ,12,             &amp;
+<a name="l00129"></a>00129               5 ,11,10,14,             &amp;
+<a name="l00130"></a>00130               15,16,17,14,13,12,       &amp;
+<a name="l00131"></a>00131               18,15,19,16,20,17,       &amp;
+<a name="l00132"></a>00132               22,23,20,19,             &amp;
+<a name="l00133"></a>00133               21,22,18,                &amp;
+<a name="l00134"></a>00134               22,19,18,                &amp;
+<a name="l00135"></a>00135               26,25,                   &amp;
+<a name="l00136"></a>00136               24/)
+<a name="l00137"></a>00137   v=(/0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0,16.0,17.0, &amp;
+<a name="l00138"></a>00138       18.0,19.0,20.0,21.0,22.0,23.0,24.0,25.0,26.0/)
+<a name="l00139"></a>00139   v_X=(/1,1,0,1,1,0,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0/)
+<a name="l00140"></a>00140   v_Y=(/0,1,2,0,1,2,0,1,2,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0/)
+<a name="l00141"></a>00141   v_Z=(/0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1/)
+<a name="l00142"></a>00142   E_IO = VTK_INI_XML(output_format = <span class="stringliteral">&#39;Binary&#39;</span>, filename = <span class="stringliteral">&#39;XML_UNST.vtu&#39;</span>, mesh_topology = <span class="stringliteral">&#39;UnstructuredGrid&#39;</span>)
+<a name="l00143"></a>00143   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
+<a name="l00144"></a>00144   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
+<a name="l00145"></a>00145   E_IO = VTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;opeN&#39;</span>)
+<a name="l00146"></a>00146   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML">VTK_VAR_XML</a>(NC_NN = Nn, varname = <span class="stringliteral">&#39;scalars&#39;</span>, var = v)
+<a name="l00147"></a>00147   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML">VTK_VAR_XML</a>(NC_NN = Nn, varname = <span class="stringliteral">&#39;vector&#39;</span>, varX=v_X,varY=v_Y,varZ=v_Z)
+<a name="l00148"></a>00148   E_IO = VTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;CLOSE&#39;</span>)
+<a name="l00149"></a>00149   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>()
+<a name="l00150"></a>00150   E_IO = VTK_END_XML()
+<a name="l00151"></a>00151   return
 <a name="l00152"></a>00152   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00153"></a>00153   <span class="keyword">implicit none</span>
-<a name="l00154"></a>00154   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::                          nx1=0_I4P,nx2=9_I4P,ny1=0_I4P,ny2=5_I4P,nz1=0_I4P,nz2=5_I4P
-<a name="l00155"></a><a class="code" href="../../dc/d15/Test__Driver_8f90.html#a05d9e26145205ff5c70d4f7df1d28b3c">00155</a>   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::                          nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
-<a name="l00156"></a>00156   <span class="keywordtype">real(R8P)</span>,    <span class="keywordtype">dimension(nx1:nx2,ny1:ny2,nz1:nz2)</span>:: x,y,z
-<a name="l00157"></a>00157   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(nx1:nx2,ny1:ny2,nz1:nz2)</span>:: v
-<a name="l00158"></a>00158   <span class="keywordtype">integer(I4P)</span>::                                     i,j,k,E_IO
+<a name="l00153"></a>00153 <span class="keyword">  endsubroutine test_unst</span>
+<a name="l00154"></a>00154 
+<a name="l00158"></a>00158   <span class="keyword">subroutine </span><a class="code" href="../../dc/d15/Test__Driver_8f90.html#a05d9e26145205ff5c70d4f7df1d28b3c">test_strg</a>()
 <a name="l00159"></a>00159   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00160"></a>00160 
-<a name="l00161"></a>00161   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00162"></a>00162   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Testing StructuredGrid functions. Output file is XML_STRG.vts&#39;</span>
-<a name="l00163"></a>00163   <span class="comment">! arrays initialization</span>
-<a name="l00164"></a>00164   <span class="keyword">do</span> k=nz1,nz2
-<a name="l00165"></a>00165    <span class="keyword">do</span> j=ny1,ny2
-<a name="l00166"></a>00166      <span class="keyword">do</span> i=nx1,nx2
-<a name="l00167"></a>00167        x(i,j,k) = i*1._R8P
-<a name="l00168"></a>00168        y(i,j,k) = j*1._R8P
-<a name="l00169"></a>00169        z(i,j,k) = k*1._R8P
-<a name="l00170"></a>00170        v(i,j,k) = i*j*k
-<a name="l00171"></a>00171      <span class="keyword">enddo</span>
-<a name="l00172"></a>00172    <span class="keyword">enddo</span>
-<a name="l00173"></a>00173   <span class="keyword">enddo</span>
-<a name="l00174"></a>00174   E_IO = VTK_INI_XML(output_format=<span class="stringliteral">&#39;binary&#39;</span>, filename=<span class="stringliteral">&#39;XML_STRG.vts&#39;</span>, &amp;
-<a name="l00175"></a>00175                      mesh_topology=<span class="stringliteral">&#39;StructuredGrid&#39;</span>, nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
-<a name="l00176"></a>00176   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#d5/d35/interfaceLib__VTK__IO_1_1VTK__FLD__XML">VTK_FLD_XML</a>(fld_action=<span class="stringliteral">&#39;open&#39;</span>)
-<a name="l00177"></a>00177   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#d5/d35/interfaceLib__VTK__IO_1_1VTK__FLD__XML">VTK_FLD_XML</a>(fld=0._R8P,fname=<span class="stringliteral">&#39;TIME&#39;</span>)
-<a name="l00178"></a>00178   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#d5/d35/interfaceLib__VTK__IO_1_1VTK__FLD__XML">VTK_FLD_XML</a>(fld=1_I8P,fname=<span class="stringliteral">&#39;CYCLE&#39;</span>)
-<a name="l00179"></a>00179   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#d5/d35/interfaceLib__VTK__IO_1_1VTK__FLD__XML">VTK_FLD_XML</a>(fld_action=<span class="stringliteral">&#39;close&#39;</span>)
-<a name="l00180"></a>00180   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn, &amp;
-<a name="l00181"></a>00181                      X=reshape(x(nx1:nx2,:,:),(/nn/)),                            &amp;
-<a name="l00182"></a>00182                      Y=reshape(y(nx1:nx2,:,:),(/nn/)),                            &amp;
-<a name="l00183"></a>00183                      Z=reshape(z(nx1:nx2,:,:),(/nn/)))
-<a name="l00184"></a>00184   E_IO = VTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;open&#39;</span>)
-<a name="l00185"></a>00185   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML">VTK_VAR_XML</a>(NC_NN = nn, varname = <span class="stringliteral">&#39;node_value&#39;</span>, var = reshape(v(nx1:nx2,:,:),(/nn/)))
-<a name="l00186"></a>00186   E_IO = VTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;close&#39;</span>)
-<a name="l00187"></a>00187   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>()
-<a name="l00188"></a>00188   E_IO = VTK_END_XML()
-<a name="l00189"></a>00189   return
-<a name="l00190"></a>00190   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00191"></a>00191 <span class="keyword">  endsubroutine</span>
-<a name="l00192"></a>00192 
-<a name="l00195"></a>00195   <span class="keyword">subroutine </span><a class="code" href="../../dc/d15/Test__Driver_8f90.html#a61413a5d167473f543449bc706c1fbfa">test_punst</a>()
-<a name="l00196"></a>00196   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00197"></a>00197   <span class="keyword">implicit none</span>
-<a name="l00198"></a>00198   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::       Nn = 27_I4P
-<a name="l00199"></a><a class="code" href="../../dc/d15/Test__Driver_8f90.html#a61413a5d167473f543449bc706c1fbfa">00199</a>   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::       Ne = 11_I4P
-<a name="l00200"></a>00200   <span class="keywordtype">real(R4P)</span>,    <span class="keywordtype">dimension(1:Nn)</span>:: x = (/0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2/)
-<a name="l00201"></a>00201   <span class="keywordtype">real(R4P)</span>,    <span class="keywordtype">dimension(1:Nn)</span>:: y = (/0,0,0,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1/)
-<a name="l00202"></a>00202   <span class="keywordtype">real(R4P)</span>,    <span class="keywordtype">dimension(1:Nn)</span>:: z = (/0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6/)
-<a name="l00203"></a>00203   <span class="keywordtype">integer(I1P)</span>, <span class="keywordtype">dimension(1:Ne)</span>:: cell_type = (/12,12,10,10,7,6,9,5,5,3,1/)
-<a name="l00204"></a>00204   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(1:Ne)</span>:: offset = (/8,16,20,24,30,36,40,43,46,48,49/)
-<a name="l00205"></a>00205   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(1:49)</span>:: connect
-<a name="l00206"></a>00206   <span class="keywordtype">real(R8P)</span>,    <span class="keywordtype">dimension(1:Nn)</span>:: v
-<a name="l00207"></a>00207   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(1:Nn)</span>:: v_X
-<a name="l00208"></a>00208   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(1:Nn)</span>:: v_Y
-<a name="l00209"></a>00209   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(1:Nn)</span>:: v_Z
-<a name="l00210"></a>00210   <span class="keywordtype">integer(I4P)</span>::                  E_IO
-<a name="l00211"></a>00211   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00212"></a>00212 
-<a name="l00213"></a>00213   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00214"></a>00214   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Testing parallel (partitioned) PUnstructuredGrid functions&#39;</span>
-<a name="l00215"></a>00215   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Output files are XML_UNST.pvtu, XML_UNST_part0.vtu, XML_UNST_part1.vtu&#39;</span>
-<a name="l00216"></a>00216   connect = (/0 ,1 ,4 ,3 ,6 ,7 ,10,9 , &amp;
-<a name="l00217"></a>00217               1 ,2 ,5 ,4 ,7 ,8 ,11,10, &amp;
-<a name="l00218"></a>00218               6 ,10,9 ,12,             &amp;
-<a name="l00219"></a>00219               5 ,11,10,14,             &amp;
-<a name="l00220"></a>00220               15,16,17,14,13,12,       &amp;
-<a name="l00221"></a>00221               18,15,19,16,20,17,       &amp;
-<a name="l00222"></a>00222               22,23,20,19,             &amp;
-<a name="l00223"></a>00223               21,22,18,                &amp;
-<a name="l00224"></a>00224               22,19,18,                &amp;
-<a name="l00225"></a>00225               26,25,                   &amp;
-<a name="l00226"></a>00226               24/)
-<a name="l00227"></a>00227   v=(/0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0,16.0,17.0, &amp;
-<a name="l00228"></a>00228       18.0,19.0,20.0,21.0,22.0,23.0,24.0,25.0,26.0/)
-<a name="l00229"></a>00229   v_X=(/1,1,0,1,1,0,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0/)
-<a name="l00230"></a>00230   v_Y=(/0,1,2,0,1,2,0,1,2,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0/)
-<a name="l00231"></a>00231   v_Z=(/0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1/)
-<a name="l00232"></a>00232   <span class="comment">! first part</span>
-<a name="l00233"></a>00233   E_IO = VTK_INI_XML(output_format = <span class="stringliteral">&#39;Binary&#39;</span>, filename = <span class="stringliteral">&#39;XML_UNST_part0.vtu&#39;</span>, mesh_topology = <span class="stringliteral">&#39;UnstructuredGrid&#39;</span>)
-<a name="l00234"></a>00234   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
-<a name="l00235"></a>00235   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
-<a name="l00236"></a>00236   E_IO = VTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;opeN&#39;</span>)
-<a name="l00237"></a>00237   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML">VTK_VAR_XML</a>(NC_NN = Nn, varname = <span class="stringliteral">&#39;scalars&#39;</span>, var = v)
-<a name="l00238"></a>00238   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML">VTK_VAR_XML</a>(NC_NN = Nn, varname = <span class="stringliteral">&#39;vector&#39;</span>, varX=v_X,varY=v_Y,varZ=v_Z)
-<a name="l00239"></a>00239   E_IO = VTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;CLOSE&#39;</span>)
-<a name="l00240"></a>00240   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>()
-<a name="l00241"></a>00241   E_IO = VTK_END_XML()
-<a name="l00242"></a>00242   <span class="comment">! second part</span>
-<a name="l00243"></a>00243   x = x + 10._R4P
-<a name="l00244"></a>00244   E_IO = VTK_INI_XML(output_format = <span class="stringliteral">&#39;Binary&#39;</span>, filename = <span class="stringliteral">&#39;XML_UNST_part1.vtu&#39;</span>, mesh_topology = <span class="stringliteral">&#39;UnstructuredGrid&#39;</span>)
-<a name="l00245"></a>00245   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
-<a name="l00246"></a>00246   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
-<a name="l00247"></a>00247   E_IO = VTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;opeN&#39;</span>)
-<a name="l00248"></a>00248   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML">VTK_VAR_XML</a>(NC_NN = Nn, varname = <span class="stringliteral">&#39;scalars&#39;</span>, var = v)
-<a name="l00249"></a>00249   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML">VTK_VAR_XML</a>(NC_NN = Nn, varname = <span class="stringliteral">&#39;vector&#39;</span>, varX=v_X,varY=v_Y,varZ=v_Z)
-<a name="l00250"></a>00250   E_IO = VTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;CLOSE&#39;</span>)
-<a name="l00251"></a>00251   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>()
-<a name="l00252"></a>00252   E_IO = VTK_END_XML()
-<a name="l00253"></a>00253   <span class="comment">! pvtu</span>
-<a name="l00254"></a>00254   E_IO = PVTK_INI_XML(filename = <span class="stringliteral">&#39;XML_UNST.pvtu&#39;</span>, mesh_topology = <span class="stringliteral">&#39;PUnstructuredGrid&#39;</span>, tp=<span class="stringliteral">&#39;Float32&#39;</span>)
-<a name="l00255"></a>00255   E_IO = PVTK_GEO_XML(source=<span class="stringliteral">&#39;XML_UNST_part0.vtu&#39;</span>)
-<a name="l00256"></a>00256   E_IO = PVTK_GEO_XML(source=<span class="stringliteral">&#39;XML_UNST_part1.vtu&#39;</span>)
-<a name="l00257"></a>00257   E_IO = PVTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;OPEN&#39;</span>)
-<a name="l00258"></a>00258   E_IO = PVTK_VAR_XML(varname = <span class="stringliteral">&#39;scalars&#39;</span>, tp=<span class="stringliteral">&#39;Float64&#39;</span>)
-<a name="l00259"></a>00259   E_IO = PVTK_VAR_XML(Nc = 3, varname = <span class="stringliteral">&#39;vector&#39;</span>, tp=<span class="stringliteral">&#39;Int32&#39;</span> )
-<a name="l00260"></a>00260   E_IO = PVTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;Close&#39;</span>)
-<a name="l00261"></a>00261   E_IO = PVTK_END_XML()
-<a name="l00262"></a>00262   return
-<a name="l00263"></a>00263   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00264"></a>00264 <span class="keyword">  endsubroutine test_punst</span>
-<a name="l00265"></a>00265 
-<a name="l00280"></a>00280   <span class="keyword">subroutine </span><a class="code" href="../../dc/d15/Test__Driver_8f90.html#af880519c33b60cfe7eb9e7802f236d75">test_pstrg</a>()
-<a name="l00281"></a>00281   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00282"></a>00282   <span class="keyword">implicit none</span>
-<a name="l00283"></a>00283   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::                          nx1=0_I4P,nx2=9_I4P,ny1=0_I4P,ny2=5_I4P,nz1=0_I4P,nz2=5_I4P
-<a name="l00284"></a><a class="code" href="../../dc/d15/Test__Driver_8f90.html#af880519c33b60cfe7eb9e7802f236d75">00284</a>   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::                          nx1_p(1:2)=[nx1,4_I4P]
-<a name="l00285"></a>00285   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::                          nx2_p(1:2)=[4_I4P,nx2]
-<a name="l00286"></a>00286   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::                          nn       = (nx2     -nx1     +1)*(ny2-ny1+1)*(nz2-nz1+1)
-<a name="l00287"></a>00287   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::                          nn_p(1:2)=[(nx2_p(1)-nx1     +1)*(ny2-ny1+1)*(nz2-nz1+1),
-<a name="l00288"></a>00288                                                                 (nx2_p(2)-nx2_p(1)+1)*(ny2-ny1+1)*(nz2-nz1+1)]
-<a name="l00289"></a>00289   <span class="keywordtype">real(R8P)</span>,    <span class="keywordtype">dimension(nx1:nx2,ny1:ny2,nz1:nz2)</span>:: x,y,z
-<a name="l00290"></a>00290   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(nx1:nx2,ny1:ny2,nz1:nz2)</span>:: v
-<a name="l00291"></a>00291   <span class="keywordtype">integer(I4P)</span>::                                     i,j,k,p,mf(1:2),E_IO
-<a name="l00292"></a>00292   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00293"></a>00293 
-<a name="l00294"></a>00294   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00295"></a>00295   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Testing parallel (partitioned) PStructuredGrid functions&#39;</span>
-<a name="l00296"></a>00296   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Output files are XML_STRG.pvts, XML_STRG_part0.vts, XML_STRG_part1.vts&#39;</span>
-<a name="l00297"></a>00297   <span class="comment">! arrays initialization</span>
-<a name="l00298"></a>00298   <span class="keyword">do</span> k=nz1,nz2
-<a name="l00299"></a>00299    <span class="keyword">do</span> j=ny1,ny2
-<a name="l00300"></a>00300      <span class="keyword">do</span> i=nx1,nx2
-<a name="l00301"></a>00301        x(i,j,k) = i*1._R8P
-<a name="l00302"></a>00302        y(i,j,k) = j*1._R8P
-<a name="l00303"></a>00303        z(i,j,k) = k*1._R8P
-<a name="l00304"></a>00304        v(i,j,k) = i*j*k
-<a name="l00305"></a>00305      <span class="keyword">enddo</span>
-<a name="l00306"></a>00306    <span class="keyword">enddo</span>
-<a name="l00307"></a>00307   <span class="keyword">enddo</span>
-<a name="l00308"></a>00308   <span class="comment">! files initialization</span>
-<a name="l00309"></a>00309   <span class="keyword">do</span> p=1,2 <span class="comment">! loop over pieces</span>
-<a name="l00310"></a>00310     E_IO = VTK_INI_XML(cf=mf(p),output_format=<span class="stringliteral">&#39;binary&#39;</span>, filename=<span class="stringliteral">&#39;XML_STRG_part&#39;</span>//trim(<a class="code" href="../../dd/d4b/group__IR__PrecisionInterface.html#d6/d7c/interfaceIR__Precision_1_1str">str</a>(.true.,p-1))//<span class="stringliteral">&#39;.vts&#39;</span>, &amp;
-<a name="l00311"></a>00311                        mesh_topology=<span class="stringliteral">&#39;StructuredGrid&#39;</span>, nx1=nx1_p(p), nx2=nx2_p(p), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
-<a name="l00312"></a>00312   <span class="keyword">enddo</span>
-<a name="l00313"></a>00313   <span class="comment">!$OMP PARALLEL DEFAULT(NONE) &amp;</span>
-<a name="l00314"></a>00314   <span class="comment">!$OMP PRIVATE(p,E_IO)        &amp;</span>
-<a name="l00315"></a>00315   <span class="comment">!$OMP SHARED(mf,x,y,z,v)</span>
-<a name="l00316"></a>00316   <span class="comment">!$OMP DO</span>
-<a name="l00317"></a>00317   <span class="keyword">do</span> p=1,2 <span class="comment">! loop over pieces</span>
-<a name="l00318"></a>00318     E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>(cf=mf(p),nx1=nx1_p(p), nx2=nx2_p(p), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn_p(p), &amp;
-<a name="l00319"></a>00319                        X=reshape(x(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)),                                     &amp;
-<a name="l00320"></a>00320                        Y=reshape(y(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)),                                     &amp;
-<a name="l00321"></a>00321                        Z=reshape(z(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)))
-<a name="l00322"></a>00322     E_IO = VTK_DAT_XML(cf=mf(p),var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;open&#39;</span>)
-<a name="l00323"></a>00323     E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML">VTK_VAR_XML</a>(cf=mf(p),NC_NN = nn_p(p), varname = <span class="stringliteral">&#39;node_value&#39;</span>, var = reshape(v(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)))
-<a name="l00324"></a>00324     E_IO = VTK_DAT_XML(cf=mf(p),var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;close&#39;</span>)
-<a name="l00325"></a>00325     E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>(cf=mf(p))
-<a name="l00326"></a>00326   <span class="keyword">enddo</span>
-<a name="l00327"></a>00327   <span class="comment">!$OMP END PARALLEL</span>
-<a name="l00328"></a>00328   <span class="comment">! files finalization</span>
-<a name="l00329"></a>00329   <span class="keyword">do</span> p=1,2 <span class="comment">! loop over pieces</span>
-<a name="l00330"></a>00330     E_IO = VTK_END_XML()
-<a name="l00331"></a>00331   <span class="keyword">enddo</span>
-<a name="l00332"></a>00332   <span class="comment">! pvts</span>
-<a name="l00333"></a>00333   E_IO = PVTK_INI_XML(filename = <span class="stringliteral">&#39;XML_STRG.pvts&#39;</span>, mesh_topology = <span class="stringliteral">&#39;PStructuredGrid&#39;</span>, &amp;
-<a name="l00334"></a>00334                       nx1=nx1,      nx2=nx2,      ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, tp=<span class="stringliteral">&#39;Float64&#39;</span>)
-<a name="l00335"></a>00335   E_IO = PVTK_GEO_XML(nx1=nx1,      nx2=nx2_p(1), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, source=<span class="stringliteral">&#39;XML_STRG_part0.vts&#39;</span>)
-<a name="l00336"></a>00336   E_IO = PVTK_GEO_XML(nx1=nx2_p(1), nx2=nx2_p(2), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, source=<span class="stringliteral">&#39;XML_STRG_part1.vts&#39;</span>)
-<a name="l00337"></a>00337   E_IO = PVTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;open&#39;</span>)
-<a name="l00338"></a>00338   E_IO = PVTK_VAR_XML(varname = <span class="stringliteral">&#39;node_value&#39;</span>, tp=<span class="stringliteral">&#39;Int32&#39;</span>)
-<a name="l00339"></a>00339   E_IO = PVTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;close&#39;</span>)
-<a name="l00340"></a>00340   E_IO = PVTK_END_XML()
-<a name="l00341"></a>00341   return
-<a name="l00342"></a>00342   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00343"></a>00343 <span class="keyword">  endsubroutine test_pstrg</span>
-<a name="l00344"></a>00344 
-<a name="l00347"></a>00347   <span class="keyword">subroutine </span><a class="code" href="../../dc/d15/Test__Driver_8f90.html#a3efeb4d55ec67870b94a9b0faddf1454">test_vtm</a>()
-<a name="l00348"></a>00348   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00349"></a>00349   <span class="keyword">implicit none</span>
-<a name="l00350"></a>00350   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::                          nx1=0_I4P,nx2=9_I4P,ny1=0_I4P,ny2=5_I4P,nz1=0_I4P,nz2=5_I4P
-<a name="l00351"></a><a class="code" href="../../dc/d15/Test__Driver_8f90.html#a3efeb4d55ec67870b94a9b0faddf1454">00351</a>   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::                          nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
-<a name="l00352"></a>00352   <span class="keywordtype">real(R8P)</span>,    <span class="keywordtype">dimension(nx1:nx2,ny1:ny2,nz1:nz2)</span>:: x,y,z
-<a name="l00353"></a>00353   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(nx1:nx2,ny1:ny2,nz1:nz2)</span>:: v
-<a name="l00354"></a>00354   <span class="keywordtype">integer(I4P)</span>::                                     i,j,k,b,mf(1:4),E_IO
+<a name="l00160"></a>00160   <span class="keyword">implicit none</span>
+<a name="l00161"></a>00161   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::                          nx1=0_I4P,nx2=9_I4P,ny1=0_I4P,ny2=5_I4P,nz1=0_I4P,nz2=5_I4P
+<a name="l00162"></a><a class="code" href="../../dc/d15/Test__Driver_8f90.html#a05d9e26145205ff5c70d4f7df1d28b3c">00162</a>   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::                          nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
+<a name="l00163"></a>00163   <span class="keywordtype">real(R8P)</span>,    <span class="keywordtype">dimension(nx1:nx2,ny1:ny2,nz1:nz2)</span>:: x,y,z
+<a name="l00164"></a>00164   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(nx1:nx2,ny1:ny2,nz1:nz2)</span>:: v
+<a name="l00165"></a>00165   <span class="keywordtype">integer(I4P)</span>::                                     i,j,k,E_IO
+<a name="l00166"></a>00166   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00167"></a>00167 
+<a name="l00168"></a>00168   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00169"></a>00169   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Testing StructuredGrid functions. Output file is XML_STRG.vts&#39;</span>
+<a name="l00170"></a>00170   <span class="comment">! arrays initialization</span>
+<a name="l00171"></a>00171   <span class="keyword">do</span> k=nz1,nz2
+<a name="l00172"></a>00172    <span class="keyword">do</span> j=ny1,ny2
+<a name="l00173"></a>00173      <span class="keyword">do</span> i=nx1,nx2
+<a name="l00174"></a>00174        x(i,j,k) = i*1._R8P
+<a name="l00175"></a>00175        y(i,j,k) = j*1._R8P
+<a name="l00176"></a>00176        z(i,j,k) = k*1._R8P
+<a name="l00177"></a>00177        v(i,j,k) = i*j*k
+<a name="l00178"></a>00178      <span class="keyword">enddo</span>
+<a name="l00179"></a>00179    <span class="keyword">enddo</span>
+<a name="l00180"></a>00180   <span class="keyword">enddo</span>
+<a name="l00181"></a>00181   E_IO = VTK_INI_XML(output_format=<span class="stringliteral">&#39;binary&#39;</span>, filename=<span class="stringliteral">&#39;XML_STRG.vts&#39;</span>, &amp;
+<a name="l00182"></a>00182                      mesh_topology=<span class="stringliteral">&#39;StructuredGrid&#39;</span>, nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+<a name="l00183"></a>00183   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#d5/d35/interfaceLib__VTK__IO_1_1VTK__FLD__XML">VTK_FLD_XML</a>(fld_action=<span class="stringliteral">&#39;open&#39;</span>)
+<a name="l00184"></a>00184   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#d5/d35/interfaceLib__VTK__IO_1_1VTK__FLD__XML">VTK_FLD_XML</a>(fld=0._R8P,fname=<span class="stringliteral">&#39;TIME&#39;</span>)
+<a name="l00185"></a>00185   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#d5/d35/interfaceLib__VTK__IO_1_1VTK__FLD__XML">VTK_FLD_XML</a>(fld=1_I8P,fname=<span class="stringliteral">&#39;CYCLE&#39;</span>)
+<a name="l00186"></a>00186   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#d5/d35/interfaceLib__VTK__IO_1_1VTK__FLD__XML">VTK_FLD_XML</a>(fld_action=<span class="stringliteral">&#39;close&#39;</span>)
+<a name="l00187"></a>00187   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn, &amp;
+<a name="l00188"></a>00188                      X=reshape(x(nx1:nx2,:,:),(/nn/)),                            &amp;
+<a name="l00189"></a>00189                      Y=reshape(y(nx1:nx2,:,:),(/nn/)),                            &amp;
+<a name="l00190"></a>00190                      Z=reshape(z(nx1:nx2,:,:),(/nn/)))
+<a name="l00191"></a>00191   E_IO = VTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;open&#39;</span>)
+<a name="l00192"></a>00192   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML">VTK_VAR_XML</a>(NC_NN = nn, varname = <span class="stringliteral">&#39;node_value&#39;</span>, var = reshape(v(nx1:nx2,:,:),(/nn/)))
+<a name="l00193"></a>00193   E_IO = VTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;close&#39;</span>)
+<a name="l00194"></a>00194   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>()
+<a name="l00195"></a>00195   E_IO = VTK_END_XML()
+<a name="l00196"></a>00196   return
+<a name="l00197"></a>00197   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00198"></a>00198 <span class="keyword">  endsubroutine</span>
+<a name="l00199"></a>00199 
+<a name="l00202"></a>00202   <span class="keyword">subroutine </span><a class="code" href="../../dc/d15/Test__Driver_8f90.html#a61413a5d167473f543449bc706c1fbfa">test_punst</a>()
+<a name="l00203"></a>00203   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00204"></a>00204   <span class="keyword">implicit none</span>
+<a name="l00205"></a>00205   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::       Nn = 27_I4P
+<a name="l00206"></a><a class="code" href="../../dc/d15/Test__Driver_8f90.html#a61413a5d167473f543449bc706c1fbfa">00206</a>   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::       Ne = 11_I4P
+<a name="l00207"></a>00207   <span class="keywordtype">real(R4P)</span>,    <span class="keywordtype">dimension(1:Nn)</span>:: x = (/0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2/)
+<a name="l00208"></a>00208   <span class="keywordtype">real(R4P)</span>,    <span class="keywordtype">dimension(1:Nn)</span>:: y = (/0,0,0,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1/)
+<a name="l00209"></a>00209   <span class="keywordtype">real(R4P)</span>,    <span class="keywordtype">dimension(1:Nn)</span>:: z = (/0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6/)
+<a name="l00210"></a>00210   <span class="keywordtype">integer(I1P)</span>, <span class="keywordtype">dimension(1:Ne)</span>:: cell_type = (/12,12,10,10,7,6,9,5,5,3,1/)
+<a name="l00211"></a>00211   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(1:Ne)</span>:: offset = (/8,16,20,24,30,36,40,43,46,48,49/)
+<a name="l00212"></a>00212   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(1:49)</span>:: connect
+<a name="l00213"></a>00213   <span class="keywordtype">real(R8P)</span>,    <span class="keywordtype">dimension(1:Nn)</span>:: v
+<a name="l00214"></a>00214   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(1:Nn)</span>:: v_X
+<a name="l00215"></a>00215   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(1:Nn)</span>:: v_Y
+<a name="l00216"></a>00216   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(1:Nn)</span>:: v_Z
+<a name="l00217"></a>00217   <span class="keywordtype">integer(I4P)</span>::                  E_IO
+<a name="l00218"></a>00218   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00219"></a>00219 
+<a name="l00220"></a>00220   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00221"></a>00221   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Testing parallel (partitioned) PUnstructuredGrid functions&#39;</span>
+<a name="l00222"></a>00222   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Output files are XML_UNST.pvtu, XML_UNST_part0.vtu, XML_UNST_part1.vtu&#39;</span>
+<a name="l00223"></a>00223   connect = (/0 ,1 ,4 ,3 ,6 ,7 ,10,9 , &amp;
+<a name="l00224"></a>00224               1 ,2 ,5 ,4 ,7 ,8 ,11,10, &amp;
+<a name="l00225"></a>00225               6 ,10,9 ,12,             &amp;
+<a name="l00226"></a>00226               5 ,11,10,14,             &amp;
+<a name="l00227"></a>00227               15,16,17,14,13,12,       &amp;
+<a name="l00228"></a>00228               18,15,19,16,20,17,       &amp;
+<a name="l00229"></a>00229               22,23,20,19,             &amp;
+<a name="l00230"></a>00230               21,22,18,                &amp;
+<a name="l00231"></a>00231               22,19,18,                &amp;
+<a name="l00232"></a>00232               26,25,                   &amp;
+<a name="l00233"></a>00233               24/)
+<a name="l00234"></a>00234   v=(/0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0,16.0,17.0, &amp;
+<a name="l00235"></a>00235       18.0,19.0,20.0,21.0,22.0,23.0,24.0,25.0,26.0/)
+<a name="l00236"></a>00236   v_X=(/1,1,0,1,1,0,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0/)
+<a name="l00237"></a>00237   v_Y=(/0,1,2,0,1,2,0,1,2,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0/)
+<a name="l00238"></a>00238   v_Z=(/0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1/)
+<a name="l00239"></a>00239   <span class="comment">! first part</span>
+<a name="l00240"></a>00240   E_IO = VTK_INI_XML(output_format = <span class="stringliteral">&#39;Binary&#39;</span>, filename = <span class="stringliteral">&#39;XML_UNST_part0.vtu&#39;</span>, mesh_topology = <span class="stringliteral">&#39;UnstructuredGrid&#39;</span>)
+<a name="l00241"></a>00241   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
+<a name="l00242"></a>00242   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
+<a name="l00243"></a>00243   E_IO = VTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;opeN&#39;</span>)
+<a name="l00244"></a>00244   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML">VTK_VAR_XML</a>(NC_NN = Nn, varname = <span class="stringliteral">&#39;scalars&#39;</span>, var = v)
+<a name="l00245"></a>00245   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML">VTK_VAR_XML</a>(NC_NN = Nn, varname = <span class="stringliteral">&#39;vector&#39;</span>, varX=v_X,varY=v_Y,varZ=v_Z)
+<a name="l00246"></a>00246   E_IO = VTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;CLOSE&#39;</span>)
+<a name="l00247"></a>00247   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>()
+<a name="l00248"></a>00248   E_IO = VTK_END_XML()
+<a name="l00249"></a>00249   <span class="comment">! second part</span>
+<a name="l00250"></a>00250   x = x + 10._R4P
+<a name="l00251"></a>00251   E_IO = VTK_INI_XML(output_format = <span class="stringliteral">&#39;Binary&#39;</span>, filename = <span class="stringliteral">&#39;XML_UNST_part1.vtu&#39;</span>, mesh_topology = <span class="stringliteral">&#39;UnstructuredGrid&#39;</span>)
+<a name="l00252"></a>00252   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
+<a name="l00253"></a>00253   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
+<a name="l00254"></a>00254   E_IO = VTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;opeN&#39;</span>)
+<a name="l00255"></a>00255   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML">VTK_VAR_XML</a>(NC_NN = Nn, varname = <span class="stringliteral">&#39;scalars&#39;</span>, var = v)
+<a name="l00256"></a>00256   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML">VTK_VAR_XML</a>(NC_NN = Nn, varname = <span class="stringliteral">&#39;vector&#39;</span>, varX=v_X,varY=v_Y,varZ=v_Z)
+<a name="l00257"></a>00257   E_IO = VTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;CLOSE&#39;</span>)
+<a name="l00258"></a>00258   E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>()
+<a name="l00259"></a>00259   E_IO = VTK_END_XML()
+<a name="l00260"></a>00260   <span class="comment">! pvtu</span>
+<a name="l00261"></a>00261   E_IO = PVTK_INI_XML(filename = <span class="stringliteral">&#39;XML_UNST.pvtu&#39;</span>, mesh_topology = <span class="stringliteral">&#39;PUnstructuredGrid&#39;</span>, tp=<span class="stringliteral">&#39;Float32&#39;</span>)
+<a name="l00262"></a>00262   E_IO = PVTK_GEO_XML(source=<span class="stringliteral">&#39;XML_UNST_part0.vtu&#39;</span>)
+<a name="l00263"></a>00263   E_IO = PVTK_GEO_XML(source=<span class="stringliteral">&#39;XML_UNST_part1.vtu&#39;</span>)
+<a name="l00264"></a>00264   E_IO = PVTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;OPEN&#39;</span>)
+<a name="l00265"></a>00265   E_IO = PVTK_VAR_XML(varname = <span class="stringliteral">&#39;scalars&#39;</span>, tp=<span class="stringliteral">&#39;Float64&#39;</span>)
+<a name="l00266"></a>00266   E_IO = PVTK_VAR_XML(Nc = 3, varname = <span class="stringliteral">&#39;vector&#39;</span>, tp=<span class="stringliteral">&#39;Int32&#39;</span> )
+<a name="l00267"></a>00267   E_IO = PVTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;Close&#39;</span>)
+<a name="l00268"></a>00268   E_IO = PVTK_END_XML()
+<a name="l00269"></a>00269   return
+<a name="l00270"></a>00270   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00271"></a>00271 <span class="keyword">  endsubroutine test_punst</span>
+<a name="l00272"></a>00272 
+<a name="l00287"></a>00287   <span class="keyword">subroutine </span><a class="code" href="../../dc/d15/Test__Driver_8f90.html#af880519c33b60cfe7eb9e7802f236d75">test_pstrg</a>()
+<a name="l00288"></a>00288   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00289"></a>00289   <span class="keyword">implicit none</span>
+<a name="l00290"></a>00290   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::                          nx1=0_I4P,nx2=9_I4P,ny1=0_I4P,ny2=5_I4P,nz1=0_I4P,nz2=5_I4P
+<a name="l00291"></a><a class="code" href="../../dc/d15/Test__Driver_8f90.html#af880519c33b60cfe7eb9e7802f236d75">00291</a>   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::                          nx1_p(1:2)=[nx1,4_I4P]
+<a name="l00292"></a>00292   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::                          nx2_p(1:2)=[4_I4P,nx2]
+<a name="l00293"></a>00293   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::                          nn       = (nx2     -nx1     +1)*(ny2-ny1+1)*(nz2-nz1+1)
+<a name="l00294"></a>00294   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::                          nn_p(1:2)=[(nx2_p(1)-nx1     +1)*(ny2-ny1+1)*(nz2-nz1+1),
+<a name="l00295"></a>00295                                                                 (nx2_p(2)-nx2_p(1)+1)*(ny2-ny1+1)*(nz2-nz1+1)]
+<a name="l00296"></a>00296   <span class="keywordtype">real(R8P)</span>,    <span class="keywordtype">dimension(nx1:nx2,ny1:ny2,nz1:nz2)</span>:: x,y,z
+<a name="l00297"></a>00297   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(nx1:nx2,ny1:ny2,nz1:nz2)</span>:: v
+<a name="l00298"></a>00298   <span class="keywordtype">integer(I4P)</span>::                                     i,j,k,p,mf(1:2),E_IO
+<a name="l00299"></a>00299   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00300"></a>00300 
+<a name="l00301"></a>00301   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00302"></a>00302   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Testing parallel (partitioned) PStructuredGrid functions&#39;</span>
+<a name="l00303"></a>00303   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Output files are XML_STRG.pvts, XML_STRG_part0.vts, XML_STRG_part1.vts&#39;</span>
+<a name="l00304"></a>00304   <span class="comment">! arrays initialization</span>
+<a name="l00305"></a>00305   <span class="keyword">do</span> k=nz1,nz2
+<a name="l00306"></a>00306    <span class="keyword">do</span> j=ny1,ny2
+<a name="l00307"></a>00307      <span class="keyword">do</span> i=nx1,nx2
+<a name="l00308"></a>00308        x(i,j,k) = i*1._R8P
+<a name="l00309"></a>00309        y(i,j,k) = j*1._R8P
+<a name="l00310"></a>00310        z(i,j,k) = k*1._R8P
+<a name="l00311"></a>00311        v(i,j,k) = i*j*k
+<a name="l00312"></a>00312      <span class="keyword">enddo</span>
+<a name="l00313"></a>00313    <span class="keyword">enddo</span>
+<a name="l00314"></a>00314   <span class="keyword">enddo</span>
+<a name="l00315"></a>00315   <span class="comment">! files initialization</span>
+<a name="l00316"></a>00316   <span class="keyword">do</span> p=1,2 <span class="comment">! loop over pieces</span>
+<a name="l00317"></a>00317     E_IO = VTK_INI_XML(cf=mf(p),output_format=<span class="stringliteral">&#39;binary&#39;</span>, filename=<span class="stringliteral">&#39;XML_STRG_part&#39;</span>//trim(<a class="code" href="../../dd/d4b/group__IR__PrecisionInterface.html#d6/d7c/interfaceIR__Precision_1_1str">str</a>(.true.,p-1))//<span class="stringliteral">&#39;.vts&#39;</span>, &amp;
+<a name="l00318"></a>00318                        mesh_topology=<span class="stringliteral">&#39;StructuredGrid&#39;</span>, nx1=nx1_p(p), nx2=nx2_p(p), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+<a name="l00319"></a>00319   <span class="keyword">enddo</span>
+<a name="l00320"></a>00320   <span class="comment">!$OMP PARALLEL DEFAULT(NONE) &amp;</span>
+<a name="l00321"></a>00321   <span class="comment">!$OMP PRIVATE(p,E_IO)        &amp;</span>
+<a name="l00322"></a>00322   <span class="comment">!$OMP SHARED(mf,x,y,z,v)</span>
+<a name="l00323"></a>00323   <span class="comment">!$OMP DO</span>
+<a name="l00324"></a>00324   <span class="keyword">do</span> p=1,2 <span class="comment">! loop over pieces</span>
+<a name="l00325"></a>00325     E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>(cf=mf(p),nx1=nx1_p(p), nx2=nx2_p(p), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn_p(p), &amp;
+<a name="l00326"></a>00326                        X=reshape(x(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)),                                     &amp;
+<a name="l00327"></a>00327                        Y=reshape(y(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)),                                     &amp;
+<a name="l00328"></a>00328                        Z=reshape(z(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)))
+<a name="l00329"></a>00329     E_IO = VTK_DAT_XML(cf=mf(p),var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;open&#39;</span>)
+<a name="l00330"></a>00330     E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML">VTK_VAR_XML</a>(cf=mf(p),NC_NN = nn_p(p), varname = <span class="stringliteral">&#39;node_value&#39;</span>, var = reshape(v(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)))
+<a name="l00331"></a>00331     E_IO = VTK_DAT_XML(cf=mf(p),var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;close&#39;</span>)
+<a name="l00332"></a>00332     E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>(cf=mf(p))
+<a name="l00333"></a>00333   <span class="keyword">enddo</span>
+<a name="l00334"></a>00334   <span class="comment">!$OMP END PARALLEL</span>
+<a name="l00335"></a>00335   <span class="comment">! files finalization</span>
+<a name="l00336"></a>00336   <span class="keyword">do</span> p=1,2 <span class="comment">! loop over pieces</span>
+<a name="l00337"></a>00337     E_IO = VTK_END_XML()
+<a name="l00338"></a>00338   <span class="keyword">enddo</span>
+<a name="l00339"></a>00339   <span class="comment">! pvts</span>
+<a name="l00340"></a>00340   E_IO = PVTK_INI_XML(filename = <span class="stringliteral">&#39;XML_STRG.pvts&#39;</span>, mesh_topology = <span class="stringliteral">&#39;PStructuredGrid&#39;</span>, &amp;
+<a name="l00341"></a>00341                       nx1=nx1,      nx2=nx2,      ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, tp=<span class="stringliteral">&#39;Float64&#39;</span>)
+<a name="l00342"></a>00342   E_IO = PVTK_GEO_XML(nx1=nx1,      nx2=nx2_p(1), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, source=<span class="stringliteral">&#39;XML_STRG_part0.vts&#39;</span>)
+<a name="l00343"></a>00343   E_IO = PVTK_GEO_XML(nx1=nx2_p(1), nx2=nx2_p(2), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, source=<span class="stringliteral">&#39;XML_STRG_part1.vts&#39;</span>)
+<a name="l00344"></a>00344   E_IO = PVTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;open&#39;</span>)
+<a name="l00345"></a>00345   E_IO = PVTK_VAR_XML(varname = <span class="stringliteral">&#39;node_value&#39;</span>, tp=<span class="stringliteral">&#39;Int32&#39;</span>)
+<a name="l00346"></a>00346   E_IO = PVTK_DAT_XML(var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;close&#39;</span>)
+<a name="l00347"></a>00347   E_IO = PVTK_END_XML()
+<a name="l00348"></a>00348   return
+<a name="l00349"></a>00349   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00350"></a>00350 <span class="keyword">  endsubroutine test_pstrg</span>
+<a name="l00351"></a>00351 
+<a name="l00354"></a>00354   <span class="keyword">subroutine </span><a class="code" href="../../dc/d15/Test__Driver_8f90.html#a3efeb4d55ec67870b94a9b0faddf1454">test_vtm</a>()
 <a name="l00355"></a>00355   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00356"></a>00356 
-<a name="l00357"></a>00357   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00358"></a>00358   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Testing multi-blocks VTM functions&#39;</span>
-<a name="l00359"></a>00359   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Output files are XML_M-STRG.vtm, XML_M-STRG_part.0.vts, XML_M-STRG_part.1.vts&#39;</span>
-<a name="l00360"></a>00360   <span class="comment">! arrays initialization</span>
-<a name="l00361"></a>00361   <span class="keyword">do</span> k=nz1,nz2
-<a name="l00362"></a>00362    <span class="keyword">do</span> j=ny1,ny2
-<a name="l00363"></a>00363      <span class="keyword">do</span> i=nx1,nx2
-<a name="l00364"></a>00364        x(i,j,k) = i*1._R8P
-<a name="l00365"></a>00365        y(i,j,k) = j*1._R8P
-<a name="l00366"></a>00366        z(i,j,k) = k*1._R8P
-<a name="l00367"></a>00367        v(i,j,k) = 1_I4P
-<a name="l00368"></a>00368      <span class="keyword">enddo</span>
-<a name="l00369"></a>00369    <span class="keyword">enddo</span>
-<a name="l00370"></a>00370   <span class="keyword">enddo</span>
-<a name="l00371"></a>00371   <span class="comment">! vts</span>
-<a name="l00372"></a>00372   <span class="keyword">do</span> b=1,4 <span class="comment">! loop over blocks</span>
-<a name="l00373"></a>00373     E_IO = VTK_INI_XML(cf=mf(b),output_format=<span class="stringliteral">&#39;binary&#39;</span>, filename=<span class="stringliteral">&#39;XML_M-STRG_part.&#39;</span>//trim(<a class="code" href="../../dd/d4b/group__IR__PrecisionInterface.html#d6/d7c/interfaceIR__Precision_1_1str">str</a>(.true.,b-1))//<span class="stringliteral">&#39;.vts&#39;</span>, &amp;
-<a name="l00374"></a>00374                        mesh_topology=<span class="stringliteral">&#39;StructuredGrid&#39;</span>, nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
-<a name="l00375"></a>00375     <span class="keyword">if</span> (b&gt;1) <span class="keyword">then</span>
-<a name="l00376"></a>00376       x = x + nx2*1._R8P
-<a name="l00377"></a>00377       v = b
-<a name="l00378"></a>00378     <span class="keyword">endif</span>
-<a name="l00379"></a>00379     E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>(cf=mf(b),nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn, &amp;
-<a name="l00380"></a>00380                        X=reshape(x(nx1:nx2,:,:),(/nn/)),                                     &amp;
-<a name="l00381"></a>00381                        Y=reshape(y(nx1:nx2,:,:),(/nn/)),                                     &amp;
-<a name="l00382"></a>00382                        Z=reshape(z(nx1:nx2,:,:),(/nn/)))
-<a name="l00383"></a>00383     E_IO = VTK_DAT_XML(cf=mf(b),var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;open&#39;</span>)
-<a name="l00384"></a>00384     E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML">VTK_VAR_XML</a>(cf=mf(b),NC_NN = nn, varname = <span class="stringliteral">&#39;node_value&#39;</span>, var = reshape(v(nx1:nx2,:,:),(/nn/)))
-<a name="l00385"></a>00385     E_IO = VTK_DAT_XML(cf=mf(b),var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;close&#39;</span>)
-<a name="l00386"></a>00386     E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>(cf=mf(b))
-<a name="l00387"></a>00387     E_IO = VTK_END_XML()
-<a name="l00388"></a>00388   <span class="keyword">enddo</span>
-<a name="l00389"></a>00389   <span class="comment">! vtm</span>
-<a name="l00390"></a>00390   E_IO = VTM_INI_XML(<span class="stringliteral">&#39;XML_M-STRG.vtm&#39;</span>)
-<a name="l00391"></a>00391   E_IO = VTM_BLK_XML(block_action=<span class="stringliteral">&#39;open&#39;</span>)
-<a name="l00392"></a>00392   E_IO = VTM_WRF_XML(flist=(/(<span class="stringliteral">&#39;XML_M-STRG_part.&#39;</span>//trim(<a class="code" href="../../dd/d4b/group__IR__PrecisionInterface.html#d6/d7c/interfaceIR__Precision_1_1str">str</a>(.true.,b-1))//<span class="stringliteral">&#39;.vts&#39;</span>,b=1,2)/))
-<a name="l00393"></a>00393   E_IO = VTM_BLK_XML(block_action=<span class="stringliteral">&#39;close&#39;</span>)
-<a name="l00394"></a>00394   E_IO = VTM_BLK_XML(block_action=<span class="stringliteral">&#39;open&#39;</span>)
-<a name="l00395"></a>00395   E_IO = VTM_WRF_XML(flist=(/(<span class="stringliteral">&#39;XML_M-STRG_part.&#39;</span>//trim(<a class="code" href="../../dd/d4b/group__IR__PrecisionInterface.html#d6/d7c/interfaceIR__Precision_1_1str">str</a>(.true.,b-1))//<span class="stringliteral">&#39;.vts&#39;</span>,b=3,4)/))
-<a name="l00396"></a>00396   E_IO = VTM_BLK_XML(block_action=<span class="stringliteral">&#39;close&#39;</span>)
-<a name="l00397"></a>00397   E_IO = VTM_END_XML()
-<a name="l00398"></a>00398   return
-<a name="l00399"></a>00399   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
-<a name="l00400"></a>00400 <span class="keyword">  endsubroutine test_vtm</span>
-<a name="l00401"></a>00401 <span class="keyword">endprogram Test_Driver</span>
+<a name="l00356"></a>00356   <span class="keyword">implicit none</span>
+<a name="l00357"></a>00357   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::                          nx1=0_I4P,nx2=9_I4P,ny1=0_I4P,ny2=5_I4P,nz1=0_I4P,nz2=5_I4P
+<a name="l00358"></a><a class="code" href="../../dc/d15/Test__Driver_8f90.html#a3efeb4d55ec67870b94a9b0faddf1454">00358</a>   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">parameter</span>::                          nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
+<a name="l00359"></a>00359   <span class="keywordtype">real(R8P)</span>,    <span class="keywordtype">dimension(nx1:nx2,ny1:ny2,nz1:nz2)</span>:: x,y,z
+<a name="l00360"></a>00360   <span class="keywordtype">integer(I4P)</span>, <span class="keywordtype">dimension(nx1:nx2,ny1:ny2,nz1:nz2)</span>:: v
+<a name="l00361"></a>00361   <span class="keywordtype">integer(I4P)</span>::                                     i,j,k,b,mf(1:4),E_IO
+<a name="l00362"></a>00362   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00363"></a>00363 
+<a name="l00364"></a>00364   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00365"></a>00365   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Testing multi-blocks VTM functions&#39;</span>
+<a name="l00366"></a>00366   <span class="keyword">write</span>(stdout,<span class="stringliteral">&#39;(A)&#39;</span>)<span class="stringliteral">&#39; Output files are XML_M-STRG.vtm, XML_M-STRG_part.0.vts, XML_M-STRG_part.1.vts&#39;</span>
+<a name="l00367"></a>00367   <span class="comment">! arrays initialization</span>
+<a name="l00368"></a>00368   <span class="keyword">do</span> k=nz1,nz2
+<a name="l00369"></a>00369    <span class="keyword">do</span> j=ny1,ny2
+<a name="l00370"></a>00370      <span class="keyword">do</span> i=nx1,nx2
+<a name="l00371"></a>00371        x(i,j,k) = i*1._R8P
+<a name="l00372"></a>00372        y(i,j,k) = j*1._R8P
+<a name="l00373"></a>00373        z(i,j,k) = k*1._R8P
+<a name="l00374"></a>00374        v(i,j,k) = 1_I4P
+<a name="l00375"></a>00375      <span class="keyword">enddo</span>
+<a name="l00376"></a>00376    <span class="keyword">enddo</span>
+<a name="l00377"></a>00377   <span class="keyword">enddo</span>
+<a name="l00378"></a>00378   <span class="comment">! vts</span>
+<a name="l00379"></a>00379   <span class="keyword">do</span> b=1,4 <span class="comment">! loop over blocks</span>
+<a name="l00380"></a>00380     E_IO = VTK_INI_XML(cf=mf(b),output_format=<span class="stringliteral">&#39;binary&#39;</span>, filename=<span class="stringliteral">&#39;XML_M-STRG_part.&#39;</span>//trim(<a class="code" href="../../dd/d4b/group__IR__PrecisionInterface.html#d6/d7c/interfaceIR__Precision_1_1str">str</a>(.true.,b-1))//<span class="stringliteral">&#39;.vts&#39;</span>, &amp;
+<a name="l00381"></a>00381                        mesh_topology=<span class="stringliteral">&#39;StructuredGrid&#39;</span>, nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+<a name="l00382"></a>00382     <span class="keyword">if</span> (b&gt;1) <span class="keyword">then</span>
+<a name="l00383"></a>00383       x = x + nx2*1._R8P
+<a name="l00384"></a>00384       v = b
+<a name="l00385"></a>00385     <span class="keyword">endif</span>
+<a name="l00386"></a>00386     E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>(cf=mf(b),nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn, &amp;
+<a name="l00387"></a>00387                        X=reshape(x(nx1:nx2,:,:),(/nn/)),                                     &amp;
+<a name="l00388"></a>00388                        Y=reshape(y(nx1:nx2,:,:),(/nn/)),                                     &amp;
+<a name="l00389"></a>00389                        Z=reshape(z(nx1:nx2,:,:),(/nn/)))
+<a name="l00390"></a>00390     E_IO = VTK_DAT_XML(cf=mf(b),var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;open&#39;</span>)
+<a name="l00391"></a>00391     E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML">VTK_VAR_XML</a>(cf=mf(b),NC_NN = nn, varname = <span class="stringliteral">&#39;node_value&#39;</span>, var = reshape(v(nx1:nx2,:,:),(/nn/)))
+<a name="l00392"></a>00392     E_IO = VTK_DAT_XML(cf=mf(b),var_location = <span class="stringliteral">&#39;node&#39;</span>, var_block_action = <span class="stringliteral">&#39;close&#39;</span>)
+<a name="l00393"></a>00393     E_IO = <a class="code" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d38/interfaceLib__VTK__IO_1_1VTK__GEO__XML">VTK_GEO_XML</a>(cf=mf(b))
+<a name="l00394"></a>00394     E_IO = VTK_END_XML()
+<a name="l00395"></a>00395   <span class="keyword">enddo</span>
+<a name="l00396"></a>00396   <span class="comment">! vtm</span>
+<a name="l00397"></a>00397   E_IO = VTM_INI_XML(<span class="stringliteral">&#39;XML_M-STRG.vtm&#39;</span>)
+<a name="l00398"></a>00398   E_IO = VTM_BLK_XML(block_action=<span class="stringliteral">&#39;open&#39;</span>)
+<a name="l00399"></a>00399   E_IO = VTM_WRF_XML(flist=(/(<span class="stringliteral">&#39;XML_M-STRG_part.&#39;</span>//trim(<a class="code" href="../../dd/d4b/group__IR__PrecisionInterface.html#d6/d7c/interfaceIR__Precision_1_1str">str</a>(.true.,b-1))//<span class="stringliteral">&#39;.vts&#39;</span>,b=1,2)/))
+<a name="l00400"></a>00400   E_IO = VTM_BLK_XML(block_action=<span class="stringliteral">&#39;close&#39;</span>)
+<a name="l00401"></a>00401   E_IO = VTM_BLK_XML(block_action=<span class="stringliteral">&#39;open&#39;</span>)
+<a name="l00402"></a>00402   E_IO = VTM_WRF_XML(flist=(/(<span class="stringliteral">&#39;XML_M-STRG_part.&#39;</span>//trim(<a class="code" href="../../dd/d4b/group__IR__PrecisionInterface.html#d6/d7c/interfaceIR__Precision_1_1str">str</a>(.true.,b-1))//<span class="stringliteral">&#39;.vts&#39;</span>,b=3,4)/))
+<a name="l00403"></a>00403   E_IO = VTM_BLK_XML(block_action=<span class="stringliteral">&#39;close&#39;</span>)
+<a name="l00404"></a>00404   E_IO = VTM_END_XML()
+<a name="l00405"></a>00405   return
+<a name="l00406"></a>00406   <span class="comment">!---------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="l00407"></a>00407 <span class="keyword">  endsubroutine test_vtm</span>
+<a name="l00408"></a>00408 <span class="keyword">endprogram Test_Driver</span>
 </pre></div></div><!-- contents -->
 </div>
 <!-- window showing the filter options -->
@@ -465,7 +472,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
     <ul>
       <li class="navelem"><a class="el" href="../../dc/d15/Test__Driver_8f90.html">Test_Driver.f90</a>      </li>
 
-    <li class="footer">Generated on Fri Mar 29 2013 14:22:03 for Lib_VTK_IO by
+    <li class="footer">Generated on Fri Mar 29 2013 15:12:10 for Lib_VTK_IO by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>

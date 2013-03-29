@@ -143,22 +143,33 @@ Data Types</h2></td></tr>
 </ul>
 </li>
 <li>XML standard:<ul>
+<li>serial dataset:<ul>
 <li>Image Data (<b>missing</b>);</li>
 <li>Polydata (<b>missing</b>);</li>
 <li>Rectilinear Grid;</li>
 <li>Structured Grid;</li>
 <li>Unstructured Grid;</li>
-<li>Parallel Image Data (<b>missing</b>);</li>
-<li>Parallel Polydata (<b>missing</b>);</li>
-<li>Parallel Rectilinear Grid;</li>
-<li>Parallel Structured Grid;</li>
-<li>Parallel Unstructured Grid;</li>
+</ul>
+</li>
+<li>parallel (partitioned) dataset:<ul>
+<li>Image Data (<b>missing</b>);</li>
+<li>Polydata (<b>missing</b>);</li>
+<li>Rectilinear Grid;</li>
+<li>Structured Grid;</li>
+<li>Unstructured Grid;</li>
+</ul>
+</li>
+<li>composite dataset:<ul>
+<li>vtkMultiBlockDataSet;</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 </li>
 <li>Importers are <b>missing</b>.</li>
 </ul>
+<p><em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> can handle multiple concurrent files, but it is not thread-safe (e.g. race conditions occur into OpenMP parallel framework).</p>
 <p>The library is an open source project, it is distributed under the GPL v3. Anyone is interest to use, to develop or to contribute to <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> is welcome.</p>
 <p>It can be found at: <a href="https://github.com/szaghi/Lib_VTK_IO">https://github.com/szaghi/Lib_VTK_IO</a></p>
 <dl class="user"><dt><b>VTK_Standard</b></dt><dd>VTK, Visualization Toolkit, is an open source software that provides a powerful framework for the computer graphic, for the images processing and for 3D rendering. It is widely used in the world and so it has a very large community of users, besides the Kitware (The Kitware homepage can be found here: <a href="http://public.kitware.com">http://public.kitware.com</a>) company provides professional support. The toolkit is written in C++ and a lot of porting/wrappers for Tcl/Tk, Java and Python are provided, unlucky there aren't wrappers for Fortran.</dd></dl>
@@ -186,8 +197,7 @@ Data Types</h2></td></tr>
 <dl class="note"><dt><b>Note:</b></dt><dd>The supported compilers are GNU gfortran 4.7.x (or higher) and Intel Fortran 12.x (or higher). <em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> needs a modern compiler providing support for some Fortran standard 2003 features. </dd></dl>
 <dl class="todo"><dt><b><a class="el" href="../../dd/da0/todo.html#_todo000002">Todo:</a></b></dt><dd><p class="startdd"><b>CompleteExporter:</b> Complete the exporters </p>
 <p><b>CompleteImporter:</b> Complete the importers </p>
-<p><b>DocExamples:</b> Improve the documentation by means of examples </p>
-<p><b>DocMakeFile:</b> Create the documentation of makefile </p>
+<p><b>DocExamples:</b> Complete the documentation of examples </p>
 <p class="enddd"><b>g95_test:</b> Test g95 compiler </p>
 </dd></dl>
 <dl class="bug"><dt><b><a class="el" href="../../de/da5/bug.html#_bug000001">Bug:</a></b></dt><dd><p class="startdd"><b>Array-Reshape</b>: <br/>
@@ -203,7 +213,7 @@ Data Types</h2></td></tr>
  The <em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> is not thread-safe: if used into a parallel multi-thread framework, e.g. OpenMP threads, the IO operations are not safe and race conditions with unpredictable results happen. </p>
 </dd></dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00146">146</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00152">152</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 </div><div id="dynsection-1" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-1-trigger" src="../../closed.png" alt="+"/> Collaboration diagram for Lib_VTK_IO:</div>
 <div id="dynsection-1-summary" class="dynsummary" style="display:block;">
@@ -480,7 +490,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00564">564</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00570">570</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -567,7 +577,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01257">1257</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01263">1263</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -585,7 +595,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </div>
 <div class="memdoc">
 <div class="textblock">
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00388">388</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00394">394</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 </div><table class="memberdecls">
 <tr><td colspan="2"><h3>Private Attributes</h3></td></tr>
 <tr><td colspan="2"><div class="groupHeader"></div></td></tr>
@@ -618,7 +628,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>Current output-format (initialized to ascii format). </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00389">389</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00395">395</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -635,7 +645,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>Mesh topology. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00390">390</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00396">396</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -652,7 +662,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>Logical unit. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00391">391</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00397">397</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -669,7 +679,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>Logical unit for raw binary XML append file. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00392">392</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00398">398</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -686,7 +696,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>Number of byte to be written/read. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00396">396</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00402">402</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -703,7 +713,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>Offset pointer. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00398">398</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00404">404</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -720,7 +730,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>Indent pointer. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00399">399</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00405">405</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -738,7 +748,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </div>
 <div class="memdoc">
 <div class="textblock">
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00405">405</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00411">411</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 </div><table class="memberdecls">
 <tr><td colspan="2"><h3>Private Attributes</h3></td></tr>
 <tr><td colspan="2"><div class="groupHeader"></div></td></tr>
@@ -763,7 +773,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>Logical unit. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00406">406</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00412">412</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -780,7 +790,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>Block index. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00407">407</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00413">413</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -797,7 +807,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>Indent pointer. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00408">408</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00414">414</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -823,7 +833,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   <div id="nav-path" class="navpath">
     <ul>
 
-    <li class="footer">Generated on Fri Mar 29 2013 14:22:04 for Lib_VTK_IO by
+    <li class="footer">Generated on Fri Mar 29 2013 15:12:10 for Lib_VTK_IO by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>
