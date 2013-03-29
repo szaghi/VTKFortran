@@ -23,3 +23,10 @@
 \form#22:$dc$
 \form#23:$dc=2+8+5=15$
 \form#24:$2^\circ $
+\form#25:$[nx1-nx2,ny1-ny2,nz1-nz2]$
+\form#26:$ nx1_p[1]=nx1 $
+\form#27:$ nx1_p[2]=nx12 $
+\form#28:$ nx2_p[1]=nx12 $
+\form#29:$ nx2_p[2]=nx2 $
+\form#30:$nx12$
+\form#31:$ nx1_p[2]=nx12 = nx2_p[1] $
