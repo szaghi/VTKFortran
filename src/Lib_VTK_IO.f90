@@ -51,17 +51,24 @@
 !>              - Rectilinear Grid;
 !>              - Field (\b missing);
 !>            - XML standard:
-!>              - Image Data (\b missing);
-!>              - Polydata (\b missing);
-!>              - Rectilinear Grid;
-!>              - Structured Grid;
-!>              - Unstructured Grid;
-!>              - Parallel Image Data (\b missing);
-!>              - Parallel Polydata (\b missing);
-!>              - Parallel Rectilinear Grid;
-!>              - Parallel Structured Grid;
-!>              - Parallel Unstructured Grid;
+!>              - serial dataset:
+!>                - Image Data (\b missing);
+!>                - Polydata (\b missing);
+!>                - Rectilinear Grid;
+!>                - Structured Grid;
+!>                - Unstructured Grid;
+!>              - parallel (partitioned) dataset:
+!>                - Image Data (\b missing);
+!>                - Polydata (\b missing);
+!>                - Rectilinear Grid;
+!>                - Structured Grid;
+!>                - Unstructured Grid;
+!>              - composite dataset:
+!>                - vtkMultiBlockDataSet;
 !>          - Importers are \b missing.
+!>
+!>          @libvtk can handle multiple concurrent files, but it is not thread-safe (e.g. race conditions occur into OpenMP
+!>          parallel framework).
 !>
 !>          The library is an open source project, it is distributed under the GPL v3. Anyone is interest to use, to develop or
 !>          to contribute to Lib_VTK_IO is welcome.
