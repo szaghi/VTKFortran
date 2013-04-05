@@ -994,13 +994,13 @@ contains
                                                       trim(str(n=nz1))//' '//trim(str(n=nz2))//'">'
     write(unit=vtk(f)%u,fmt='(A)',iostat=E_IO)trim(s_buffer) ; vtk(f)%indent = vtk(f)%indent + 2
     write(unit=vtk(f)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(f)%indent)//'<Coordinates>' ; vtk(f)%indent = vtk(f)%indent + 2
-    write(unit=vtk(f)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(f)%indent)//'<DataArray type="Float64" format="ascii">'
+    write(unit=vtk(f)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(f)%indent)//'<DataArray type="Float64" Name="X" format="ascii">'
     write(unit=vtk(f)%u,fmt=FR8P, iostat=E_IO)(X(n1),n1=nx1,nx2)
     write(unit=vtk(f)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(f)%indent)//'</DataArray>'
-    write(unit=vtk(f)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(f)%indent)//'<DataArray type="Float64" format="ascii">'
+    write(unit=vtk(f)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(f)%indent)//'<DataArray type="Float64" Name="Y" format="ascii">'
     write(unit=vtk(f)%u,fmt=FR8P, iostat=E_IO)(Y(n1),n1=ny1,ny2)
     write(unit=vtk(f)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(f)%indent)//'</DataArray>'
-    write(unit=vtk(f)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(f)%indent)//'<DataArray type="Float64" format="ascii">'
+    write(unit=vtk(f)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(f)%indent)//'<DataArray type="Float64" Name="Z" format="ascii">'
     write(unit=vtk(f)%u,fmt=FR8P, iostat=E_IO)(Z(n1),n1=nz1,nz2)
     write(unit=vtk(f)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(f)%indent)//'</DataArray>' ; vtk(f)%indent = vtk(f)%indent - 2
     write(unit=vtk(f)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(f)%indent)//'</Coordinates>'
@@ -1010,19 +1010,19 @@ contains
                                                       trim(str(n=nz1))//' '//trim(str(n=nz2))//'">'
     write(unit=vtk(f)%u,iostat=E_IO)trim(s_buffer)//end_rec ; vtk(f)%indent = vtk(f)%indent + 2
     write(unit=vtk(f)%u,iostat=E_IO)repeat(' ',vtk(f)%indent)//'<Coordinates>'//end_rec ; vtk(f)%indent = vtk(f)%indent + 2
-    s_buffer = repeat(' ',vtk(f)%indent)//'<DataArray type="Float64" format="appended" offset="'//&
+    s_buffer = repeat(' ',vtk(f)%indent)//'<DataArray type="Float64" Name="X" format="appended" offset="'//&
                trim(str(.true.,vtk(f)%ioffset))//'"/>'
     write(unit=vtk(f)%u,iostat=E_IO)trim(s_buffer)//end_rec
     vtk(f)%N_Byte = (nx2-nx1+1)*BYR8P ; call ioffset_update(vtk(f)%N_Byte)
     write(unit=vtk(f)%ua,iostat=E_IO)vtk(f)%N_Byte,'R8',(nx2-nx1+1)
-    write(unit=vtk(f)%ua,iostat=E_IO)(X(nx1),n1=nx1,nx2)
-    s_buffer = repeat(' ',vtk(f)%indent)//'<DataArray type="Float64" format="appended" offset="'//&
+    write(unit=vtk(f)%ua,iostat=E_IO)(X(n1),n1=nx1,nx2)
+    s_buffer = repeat(' ',vtk(f)%indent)//'<DataArray type="Float64" Name="Y" format="appended" offset="'//&
                trim(str(.true.,vtk(f)%ioffset))//'"/>'
     write(unit=vtk(f)%u,iostat=E_IO)trim(s_buffer)//end_rec
     vtk(f)%N_Byte = (ny2-ny1+1)*BYR8P ; call ioffset_update(vtk(f)%N_Byte)
     write(unit=vtk(f)%ua,iostat=E_IO)vtk(f)%N_Byte,'R8',(ny2-ny1+1)
-    write(unit=vtk(f)%ua,iostat=E_IO)(Y(ny1),n1=ny1,ny2)
-    s_buffer = repeat(' ',vtk(f)%indent)//'<DataArray type="Float64" format="appended" offset="'//&
+    write(unit=vtk(f)%ua,iostat=E_IO)(Y(n1),n1=ny1,ny2)
+    s_buffer = repeat(' ',vtk(f)%indent)//'<DataArray type="Float64" Name="Z" format="appended" offset="'//&
                trim(str(.true.,vtk(f)%ioffset))//'"/>'
     write(unit=vtk(f)%u,iostat=E_IO)trim(s_buffer)//end_rec
     vtk(f)%N_Byte = (nz2-nz1+1)*BYR8P ; call ioffset_update(vtk(f)%N_Byte)
@@ -1079,19 +1079,21 @@ contains
                                                       trim(str(n=nz1))//' '//trim(str(n=nz2))//'">'
     write(unit=vtk(f)%u,iostat=E_IO)trim(s_buffer)//end_rec ; vtk(f)%indent = vtk(f)%indent + 2
     write(unit=vtk(f)%u,iostat=E_IO)repeat(' ',vtk(f)%indent)//'<Coordinates>'//end_rec ; vtk(f)%indent = vtk(f)%indent + 2
-    s_buffer = repeat(' ',vtk(f)%indent)//'<DataArray type="Float32" format="appended" offset="'//&
+    s_buffer = repeat(' ',vtk(f)%indent)//'<DataArray type="Float32" Name="X" format="appended" offset="'//&
                trim(str(.true.,vtk(f)%ioffset))//'"/>'
     write(unit=vtk(f)%u,iostat=E_IO)trim(s_buffer)//end_rec
     vtk(f)%N_Byte = (nx2-nx1+1)*BYR4P ; call ioffset_update(vtk(f)%N_Byte)
     write(unit=vtk(f)%ua,iostat=E_IO)vtk(f)%N_Byte,'R4',(nx2-nx1+1)
     write(unit=vtk(f)%ua,iostat=E_IO)(X(n1),n1=nx1,nx2)
-    s_buffer = repeat(' ',vtk(f)%indent)//'<DataArray type="Float32" format="appended" offset="'//&
+    s_buffer = repeat(' ',vtk(f)%indent)//'<DataArray type="Float32" Name="Y" format="appended" offset="'//&
                trim(str(.true.,vtk(f)%ioffset))//'"/>'
+    write(unit=vtk(f)%u,iostat=E_IO)trim(s_buffer)//end_rec
     vtk(f)%N_Byte = (ny2-ny1+1)*BYR4P ; call ioffset_update(vtk(f)%N_Byte)
     write(unit=vtk(f)%ua,iostat=E_IO)vtk(f)%N_Byte,'R4',(ny2-ny1+1)
     write(unit=vtk(f)%ua,iostat=E_IO)(Y(n1),n1=ny1,ny2)
-    s_buffer = repeat(' ',vtk(f)%indent)//'<DataArray type="Float32" format="appended" offset="'//&
+    s_buffer = repeat(' ',vtk(f)%indent)//'<DataArray type="Float32" Name="Z" format="appended" offset="'//&
                trim(str(.true.,vtk(f)%ioffset))//'"/>'
+    write(unit=vtk(f)%u,iostat=E_IO)trim(s_buffer)//end_rec
     vtk(f)%N_Byte = (nz2-nz1+1)*BYR4P ; call ioffset_update(vtk(f)%N_Byte)
     write(unit=vtk(f)%ua,iostat=E_IO)vtk(f)%N_Byte,'R4',(nz2-nz1+1)
     write(unit=vtk(f)%ua,iostat=E_IO)(Z(n1),n1=nz1,nz2)

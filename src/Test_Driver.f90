@@ -58,6 +58,8 @@ case('-unst')
   call test_unst
 case('-strg')
   call test_strg
+case('-rect')
+  call test_rect
 case('-punst')
   call test_punst
 case('-pstrg')
@@ -89,6 +91,7 @@ contains
   write(stdout,'(A)')'   Test_Driver [-switch]'
   write(stdout,'(A)')'     switch = unst  => testing UnstructuredGrid functions'
   write(stdout,'(A)')'     switch = strg  => testing StructuredGrid functions'
+  write(stdout,'(A)')'     switch = rect  => testing RectilinearGrid functions'
   write(stdout,'(A)')'     switch = punst => testing parallel (partitioned) PUnstructuredGrid functions'
   write(stdout,'(A)')'     switch = pstrg => testing parallel (partitioned) StructuredGrid functions'
   write(stdout,'(A)')'     switch = vtm   => testing multi-block XML functions'
@@ -191,6 +194,56 @@ contains
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
   E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v(nx1:nx2,:,:),(/nn/)))
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endsubroutine
+
+  !> Subroutine for testing RectilinearGrid functions.
+  !> @note This subroutine also shows the usage of FieldData functions that are useful for saving global auxiliary data, e.g. time,
+  !> time step, ecc.
+  subroutine test_rect()
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), parameter:: nx1=0_I4P,nx2=30_I4P,ny1=0_I4P,ny2=20_I4P,nz1=0_I4P,nz2=10_I4P
+  integer(I4P), parameter:: nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
+  real(R8P)::               x(nx1:nx2),y(ny1:ny2),z(nz1:nz2)
+  integer(I4P)::            v(1:nn)
+  integer(I4P)::            i,j,k,n,E_IO
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  write(stdout,'(A)')' Testing RectilinearGrid functions. Output file is XML_RECT.vtr'
+  ! arrays initialization
+  n = 0
+  do k=nz1,nz2
+   do j=ny1,ny2
+     do i=nx1,nx2
+       n = n + 1
+       v(n) = i*j*k
+     enddo
+   enddo
+  enddo
+  do i=nx1,nx2
+    x(i) = i*1._R4P
+  enddo
+  do j=ny1,ny2
+    y(j) = j*1._R4P
+  enddo
+  do k=nz1,nz2
+    z(k) = k*1._R4P
+  enddo
+  E_IO = VTK_INI_XML(output_format='binary', filename='XML_RECT.vtr', &
+                     mesh_topology='RectilinearGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+  E_IO = VTK_FLD_XML(fld_action='open')
+  E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
+  E_IO = VTK_FLD_XML(fld=1_I8P,fname='CYCLE')
+  E_IO = VTK_FLD_XML(fld_action='close')
+  E_IO = VTK_GEO_XML(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, X=x, Y=y, Z=z)
+  E_IO = VTK_DAT_XML(var_location = 'cell', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'cell_value', var = v)
+  E_IO = VTK_DAT_XML(var_location = 'cell', var_block_action = 'close')
   E_IO = VTK_GEO_XML()
   E_IO = VTK_END_XML()
   return
