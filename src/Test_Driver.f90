@@ -12,27 +12,43 @@
 !> @code
 !> ./Test_Driver
 !> @endcode
-!> For testing UnstructuredGrid functions rut it as following:
+!> For testing UnstructuredGrid functions run it as following:
 !> @code
 !> ./Test_Driver -unst
 !> @endcode
-!> For testing StructuredGrid functions rut it as following:
+!> For testing StructuredGrid functions run it as following:
 !> @code
 !> ./Test_Driver -strg
 !> @endcode
-!> For testing parallel (partitioned) PUnstructuredGrid functions rut it as following:
+!> For testing RectilinearGrid functions run it as following:
+!> @code
+!> ./Test_Driver -rect
+!> @endcode
+!> For testing parallel (partitioned) PUnstructuredGrid functions run it as following:
 !> @code
 !> ./Test_Driver -punst
 !> @endcode
-!> For testing parallel (partitioned) PStructuredGrid functions rut it as following:
+!> For testing parallel (partitioned) PStructuredGrid functions run it as following:
 !> @code
 !> ./Test_Driver -pstrg
+!> @endcode
+!> For testing multi-blocks VTM functions run it as following:
+!> @code
+!> ./Test_Driver -vtm
+!> @endcode
+!> For testing thread-safe capability into an OpenMP parallel framework run it as following:
+!> @code
+!> ./Test_Driver -openmp
+!> @endcode
+!> For testing process-safe capability into a MPI parallel framework run it as following:
+!> @code
+!> ./Test_Driver -mpi
 !> @endcode
 !> @author    Stefano Zaghi
 !> @version   1.0
 !> @date      2013-03-28
 !> @copyright GNU Public License version 3.
-!> @todo \b RectilinearGrid: implement RectilinearGrid tests.
+!> @todo MPI: implement an example of usage into MPI framework.
 !> @ingroup Test_DriverProgram
 program Test_Driver
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -43,8 +59,8 @@ USE, intrinsic:: ISO_FORTRAN_ENV, only: stdout=>OUTPUT_UNIT, stderr=>ERROR_UNIT
 
 !-----------------------------------------------------------------------------------------------------------------------------------
 implicit none
-integer(I4P):: Nca = 0 !< Number of command line arguments.
-character(6):: cas     !< Command line argument switch.
+integer(I4P):: Nca = 0 !  Number of command line arguments.
+character(7):: cas     !  Command line argument switch.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -66,7 +82,12 @@ case('-pstrg')
   call test_pstrg
 case('-vtm')
   call test_vtm
+case('-openmp')
+  call test_openmp
+case('-mpi')
+  !call test_mpi
 case('-all')
+  call test_rect
   call test_unst
   call test_strg
   call test_punst
@@ -89,17 +110,20 @@ contains
   write(stdout,'(A)')' Test_Driver: a "driver" program for testing Lib_VTK_IO functions'
   write(stdout,'(A)')' Usage:'
   write(stdout,'(A)')'   Test_Driver [-switch]'
-  write(stdout,'(A)')'     switch = unst  => testing UnstructuredGrid functions'
-  write(stdout,'(A)')'     switch = strg  => testing StructuredGrid functions'
-  write(stdout,'(A)')'     switch = rect  => testing RectilinearGrid functions'
-  write(stdout,'(A)')'     switch = punst => testing parallel (partitioned) PUnstructuredGrid functions'
-  write(stdout,'(A)')'     switch = pstrg => testing parallel (partitioned) StructuredGrid functions'
-  write(stdout,'(A)')'     switch = vtm   => testing multi-block XML functions'
-  write(stdout,'(A)')'     switch = all   => testing all functions'
+  write(stdout,'(A)')'     switch = unst   => testing UnstructuredGrid functions'
+  write(stdout,'(A)')'     switch = strg   => testing StructuredGrid functions'
+  write(stdout,'(A)')'     switch = rect   => testing RectilinearGrid functions'
+  write(stdout,'(A)')'     switch = punst  => testing parallel (partitioned) PUnstructuredGrid functions'
+  write(stdout,'(A)')'     switch = pstrg  => testing parallel (partitioned) StructuredGrid functions'
+  write(stdout,'(A)')'     switch = vtm    => testing multi-block XML functions'
+  write(stdout,'(A)')'     switch = all    => testing all above functions'
+  write(stdout,'(A)')'     switch = openmp => testing functions in parallel OpenMP framework'
+  write(stdout,'(A)')'     switch = mpi    => testing functions in parallel MPI    framework'
   write(stdout,'(A)')' Examples:'
   write(stdout,'(A)')'   Test_Driver -pstrg'
   write(stdout,'(A)')'   Test_Driver -vtm'
-  write(stdout,'(A)')' If switch is not passed this help message is printed to stdout'
+  write(stdout,'(A)')'   Test_Driver -openmp'
+  write(stdout,'(A)')' If switch is not passed (or is unknown) this help message is printed to stdout'
   stop
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -335,8 +359,6 @@ contains
   !>   o-------->      ny1 +-----------------+--------------+
   !>            x         nx1               i=nx2_p(1)     nx2
   !> @endcode
-  !> @note This subroutine also tests concurrent multiple files IO.
-  !> @bug OpenMP parallel paradigm does not work. The library @libvtk is not yet thread safe.
   subroutine test_pstrg()
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
@@ -365,16 +387,9 @@ contains
      enddo
    enddo
   enddo
-  ! files initialization
   do p=1,2 ! loop over pieces
     E_IO = VTK_INI_XML(cf=mf(p),output_format='binary', filename='XML_STRG_part'//trim(str(.true.,p-1))//'.vts', &
                        mesh_topology='StructuredGrid', nx1=nx1_p(p), nx2=nx2_p(p), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
-  enddo
-  !$OMP PARALLEL DEFAULT(NONE) &
-  !$OMP PRIVATE(p,E_IO)        &
-  !$OMP SHARED(mf,x,y,z,v)
-  !$OMP DO
-  do p=1,2 ! loop over pieces
     E_IO = VTK_GEO_XML(cf=mf(p),nx1=nx1_p(p), nx2=nx2_p(p), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn_p(p), &
                        X=reshape(x(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)),                                     &
                        Y=reshape(y(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)),                                     &
@@ -383,10 +398,6 @@ contains
     E_IO = VTK_VAR_XML(cf=mf(p),NC_NN = nn_p(p), varname = 'node_value', var = reshape(v(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)))
     E_IO = VTK_DAT_XML(cf=mf(p),var_location = 'node', var_block_action = 'close')
     E_IO = VTK_GEO_XML(cf=mf(p))
-  enddo
-  !$OMP END PARALLEL
-  ! files finalization
-  do p=1,2 ! loop over pieces
     E_IO = VTK_END_XML()
   enddo
   ! pvts
@@ -458,4 +469,126 @@ contains
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_vtm
+
+  !> Subroutine for testing the libray in an OpenMP parallel framework. It is used for testing thread-safe capability. The output
+  !> is a parallel (partitioned) PStructuredGrid file. This subroutine saves the same outputs two times, the first one into a serial
+  !> framework, while the second into an OpenMP parallel framework. The two savings are timed and the resulting speedup is printed
+  !> to standard output. The dimensions of the mesh saved is small, thus the speedup is generally small.
+  !> @note It is important to note that the output files initialization and finalization must be done outside the parallel ambient.
+  !> @note The array containing the files indexes could be shared among threads, but the counter of this array ('p' in this example)
+  !> must be private.
+  subroutine test_openmp()
+  !---------------------------------------------------------------------------------------------------------------------------------
+#ifdef OPENMP
+  USE omp_lib ! OpenMP runtime library.
+#endif
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+#ifdef OPENMP
+  integer(I4P), parameter::                          nx1=1_I4P,nx2=256_I4P,ny1=1_I4P,ny2=32_I4P,nz1=1_I4P,nz2=16_I4P
+  integer(I4P), parameter::                          nx1_p(1:4)=[nx1,64_I4P,128_I4P,192_I4P]
+  integer(I4P), parameter::                          nx2_p(1:4)=[64_I4P,128_I4P,192_I4P,nx2]
+  integer(I4P), parameter::                          nn       = (nx2     -nx1     +1)*(ny2-ny1+1)*(nz2-nz1+1)
+  integer(I4P), parameter::                          nn_p(1:4)=[(nx2_p(1)-nx1_p(1)+1)*(ny2-ny1+1)*(nz2-nz1+1),&
+                                                                (nx2_p(2)-nx1_p(2)+1)*(ny2-ny1+1)*(nz2-nz1+1),&
+                                                                (nx2_p(3)-nx1_p(3)+1)*(ny2-ny1+1)*(nz2-nz1+1),&
+                                                                (nx2_p(4)-nx1_p(4)+1)*(ny2-ny1+1)*(nz2-nz1+1)]
+  real(R8P),    dimension(nx1:nx2,ny1:ny2,nz1:nz2):: x,y,z
+  integer(I4P), dimension(nx1:nx2,ny1:ny2,nz1:nz2):: v
+  integer(I4P)::                                     i,j,k,p,mf(1:4),E_IO,th
+  real(R8P)::                                        vtk_start,vtk_stop,time(1:2)
+#endif
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+#ifndef OPENMP
+  write(stderr,'(A)')' The code has not been compiled with OpenMP directives... nothing to test'
+  stop
+#else
+  write(stdout,'(A)')' Testing OpenMP parallel framework'
+  write(stdout,'(A)')' Output files are XML_OMP.pvts, XML_OMP_p0.vts, XML_OMP_p1.vts, XML_OMP_p2.vts, XML_OMP_p3.vts'
+  ! arrays initialization
+  do k=nz1,nz2
+   do j=ny1,ny2
+     do i=nx1,nx2
+       x(i,j,k) = i*1._R8P
+       y(i,j,k) = j*1._R8P
+       z(i,j,k) = k*1._R8P
+       v(i,j,k) = i*j*k
+     enddo
+   enddo
+  enddo
+  ! serial savings
+  ! files initialization
+  do p=1,4 ! loop over pieces
+    E_IO = VTK_INI_XML(cf=mf(p),output_format='binary', filename='XML_OMP_p'//trim(str(.true.,p-1))//'.vts', &
+                       mesh_topology='StructuredGrid', nx1=nx1_p(p), nx2=nx2_p(p), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+  enddo
+  write(stdout,'(A)')'   Timing the output-writing withput OpenMP threads'
+  !call cpu_time(vtk_start)
+  vtk_start = OMP_GET_WTIME()
+  do p=1,4 ! loop over pieces
+    E_IO = VTK_GEO_XML(cf=mf(p),nx1=nx1_p(p), nx2=nx2_p(p), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn_p(p), &
+                       X=reshape(x(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)),                                     &
+                       Y=reshape(y(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)),                                     &
+                       Z=reshape(z(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)))
+    E_IO = VTK_DAT_XML(cf=mf(p),var_location = 'node', var_block_action = 'open')
+    E_IO = VTK_VAR_XML(cf=mf(p),NC_NN = nn_p(p), varname = 'node_value', var = reshape(v(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)))
+    E_IO = VTK_DAT_XML(cf=mf(p),var_location = 'node', var_block_action = 'close')
+    E_IO = VTK_GEO_XML(cf=mf(p))
+  enddo
+  !call cpu_time(vtk_stop) ; time(1) = vtk_stop-vtk_start
+  vtk_stop = OMP_GET_WTIME() ; time(1) = vtk_stop-vtk_start
+  write(stdout,'(A)')'     Time used: '//trim(str('(F11.4)',time(1)))
+  ! files finalization
+  do p=1,4 ! loop over pieces
+    E_IO = VTK_END_XML()
+  enddo
+  ! OpenMP parallel savings
+  ! files initialization
+  do p=1,4 ! loop over pieces
+    E_IO = VTK_INI_XML(cf=mf(p),output_format='binary', filename='XML_OMP_p'//trim(str(.true.,p-1))//'.vts', &
+                       mesh_topology='StructuredGrid', nx1=nx1_p(p), nx2=nx2_p(p), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+  enddo
+  write(stdout,'(A)')'   Timing the output-writing with OpenMP threads'
+  vtk_start = OMP_GET_WTIME()
+  !$OMP PARALLEL        &
+  !$OMP PRIVATE(p,E_IO) &
+  !$OMP SHARED(mf,x,y,z,v,th)
+  th = OMP_GET_NUM_THREADS()
+  !$OMP DO
+  do p=1,4 ! loop over pieces
+    E_IO = VTK_GEO_XML(cf=mf(p),nx1=nx1_p(p), nx2=nx2_p(p), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn_p(p), &
+                       X=reshape(x(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)),                                     &
+                       Y=reshape(y(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)),                                     &
+                       Z=reshape(z(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)))
+    E_IO = VTK_DAT_XML(cf=mf(p),var_location = 'node', var_block_action = 'open')
+    E_IO = VTK_VAR_XML(cf=mf(p),NC_NN = nn_p(p), varname = 'node_value', var = reshape(v(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)))
+    E_IO = VTK_DAT_XML(cf=mf(p),var_location = 'node', var_block_action = 'close')
+    E_IO = VTK_GEO_XML(cf=mf(p))
+  enddo
+  !$OMP END PARALLEL
+  vtk_stop = OMP_GET_WTIME() ; time(2) = vtk_stop-vtk_start
+  write(stdout,'(A)')'     Time used: '//trim(str('(F11.4)',time(2)))
+  write(stdout,'(A)')'   Speedup: '//trim(str('(F9.2)',time(1)/time(2)/th))//' Number of threads: '//trim(str(.true.,th))
+  ! files finalization
+  do p=1,4 ! loop over pieces
+    E_IO = VTK_END_XML()
+  enddo
+  ! pvts
+  E_IO = PVTK_INI_XML(filename = 'XML_OMP.pvts', mesh_topology = 'PStructuredGrid', &
+                      nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,tp='Float64')
+  do p=1,4
+    E_IO = PVTK_GEO_XML(nx1=nx1_p(p),nx2=nx2_p(p),ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,source='XML_OMP_p'//trim(str(.true.,p-1))//'.vts')
+  enddo
+  E_IO = PVTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+  E_IO = PVTK_VAR_XML(varname = 'node_value', tp='Int32')
+  E_IO = PVTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = PVTK_END_XML()
+#endif
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endsubroutine test_openmp
 endprogram Test_Driver
