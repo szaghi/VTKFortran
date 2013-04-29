@@ -1,6 +1,4 @@
-=======
-Lib\_VTK\_IO
-==========
+# Lib\_VTK\_IO
 
 Lib\_VTK\_IO is a Fortran library to write and read data conforming the [VTK standard](http://www.vtk.org/).
 
@@ -20,29 +18,27 @@ The supported VTK features are:
     + Field ( __missing__ );
   - XML standard:
     + serial dataset:
-      * Image Data ( __missing__ );
-      * Polydata ( __missing__ );
-      * Rectilinear Grid;
-      * Structured Grid;
-      * Unstructured Grid;
+    * Image Data ( __missing__ );
+    * Polydata ( __missing__ );
+    * Rectilinear Grid;
+    * Structured Grid;
+    * Unstructured Grid;
     + parallel (partitioned) dataset:
-      * Image Data ( __missing__ );
-      * Polydata ( __missing__ );
-      * Rectilinear Grid;
-      * Structured Grid;
-      * Unstructured Grid;
+    * Image Data ( __missing__ );
+    * Polydata ( __missing__ );
+    * Rectilinear Grid;
+    * Structured Grid;
+    * Unstructured Grid;
     + composite dataset:
-      * vtkMultiBlockDataSet;
+    * vtkMultiBlockDataSet;
 * Importers are __missing__.
 
 Lib\_VTK\_IO can handle __multiple concurrent files__ and it is __thread/processor-safe__ (meaning that can be safely used into parallel frameworks as OpenMP or MPI).
 
-Copyrights
-----------
+## Copyrights
 
 The Lib\_VTK\_IO is an open source project, it is distributed under the [GPL v3](http://www.gnu.org/licenses/gpl-3.0.html). Anyone is interest to use, to develop or to contribute to Lib\_VTK\_IO is welcome.
 
-Documentation
-----------
+## Documentation
 
 Detailed documentation can be found on the [GitHub pages](http://szaghi.github.com/Lib_VTK_IO/index.html) of the project.
