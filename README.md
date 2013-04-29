@@ -8,30 +8,30 @@ Even though there are many wrappers/porting of the VTK source code (C++ code), t
 The library is still in developing and testing, this is first usable release, but there are not all the features of the stable release (the importer is totally absent and the exporter is not complete). Surely there are a lot of bugs and the programming style is not the best, but the exporters are far-complete.
 
 The supported VTK features are:
-* Exporters:
- - Legacy standard:
-   + Structured Points;
-   + Structured Grid;
-   + Unstructured Grid;
-   + Polydata (__missing__);
-   + Rectilinear Grid;
-   + Field (__missing__);
- - XML standard:
-   + serial dataset:
-    * Image Data (__missing__);
-    * Polydata (__missing__);
-    * Rectilinear Grid;
-    * Structured Grid;
-    * Unstructured Grid;
-   + parallel (partitioned) dataset:
-    * Image Data (__missing__);
-    * Polydata (__missing__);
-    * Rectilinear Grid;
-    * Structured Grid;
-    * Unstructured Grid;
-   + composite dataset:
-    * vtkMultiBlockDataSet;
-* Importers are __missing__.
+- Exporters:
+  * Legacy standard:
+    + Structured Points;
+    + Structured Grid;
+    + Unstructured Grid;
+    + Polydata (__missing__);
+    + Rectilinear Grid;
+    + Field (__missing__);
+  * XML standard:
+    + serial dataset:
+      + Image Data (__missing__);
+      + Polydata (__missing__);
+      + Rectilinear Grid;
+      + Structured Grid;
+      + Unstructured Grid;
+    + parallel (partitioned) dataset:
+      + Image Data (__missing__);
+      + Polydata (__missing__);
+      + Rectilinear Grid;
+      + Structured Grid;
+      + Unstructured Grid;
+    + composite dataset:
+      + vtkMultiBlockDataSet;
+- Importers are __missing__.
 
 Lib\_VTK\_IO can handle __multiple concurrent files__ and it is __thread/processor-safe__ (meaning that can be safely used into parallel frameworks as OpenMP or MPI).
 
