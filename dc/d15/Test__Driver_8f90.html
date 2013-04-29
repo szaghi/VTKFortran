@@ -108,7 +108,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions/Subroutines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">program&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/d79/group__Test__DriverProgram.html#gab15e80f4741760be8bdac4e319c6b65b">Test_Driver</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">"Driver" program for testing <em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> functions.  <a href="../../db/d79/group__Test__DriverProgram.html#gab15e80f4741760be8bdac4e319c6b65b"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">"Driver" program for testing <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> functions.  <a href="../../db/d79/group__Test__DriverProgram.html#gab15e80f4741760be8bdac4e319c6b65b"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d15/Test__Driver_8f90.html#ab6cdfd6c85c51dec97c0cd08f25cda7a">print_usage</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine for printing usage help message to stdout.  <a href="#ab6cdfd6c85c51dec97c0cd08f25cda7a"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d15/Test__Driver_8f90.html#a877423eabe78f11ecde5b60e9fca73ae">test_unst</a> ()</td></tr>
@@ -123,6 +123,8 @@ Functions/Subroutines</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine for testing parallel (partitioned) PStructuredGrid functions.  <a href="#af880519c33b60cfe7eb9e7802f236d75"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d15/Test__Driver_8f90.html#a3efeb4d55ec67870b94a9b0faddf1454">test_vtm</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine for testing multi-blocks VTM functions.  <a href="#a3efeb4d55ec67870b94a9b0faddf1454"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d15/Test__Driver_8f90.html#ade0b93fe9bdcb103e36f705291a70f62">test_openmp</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine for testing the libray in an OpenMP parallel framework.  <a href="#ade0b93fe9bdcb103e36f705291a70f62"></a><br/></td></tr>
 </table>
 <hr/><h2>Function/Subroutine Documentation</h2>
 <a class="anchor" id="ab6cdfd6c85c51dec97c0cd08f25cda7a"></a><!-- doxytag: member="Test_Driver.f90::print_usage" ref="ab6cdfd6c85c51dec97c0cd08f25cda7a" args="()" -->
@@ -141,9 +143,9 @@ Functions/Subroutines</h2></td></tr>
 
 <p>Subroutine for printing usage help message to stdout. </p>
 
-<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00087">87</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00108">108</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
 
-<p>Referenced by <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00041">Test_Driver()</a>.</p>
+<p>Referenced by <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00057">Test_Driver()</a>.</p>
 
 <p><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="../../closed.png" alt="+"/> Here is the caller graph for this function:</div>
@@ -174,9 +176,9 @@ Functions/Subroutines</h2></td></tr>
 
 <p>Subroutine for testing UnstructuredGrid functions. </p>
 
-<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00113">113</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00137">137</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
 
-<p>Referenced by <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00041">Test_Driver()</a>.</p>
+<p>Referenced by <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00057">Test_Driver()</a>.</p>
 
 <p><div id="dynsection-1" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-1-trigger" src="../../closed.png" alt="+"/> Here is the caller graph for this function:</div>
@@ -208,9 +210,9 @@ Functions/Subroutines</h2></td></tr>
 <p>Subroutine for testing StructuredGrid functions. </p>
 <dl class="note"><dt><b>Note:</b></dt><dd>This subroutine also shows the usage of FieldData functions that are useful for saving global auxiliary data, e.g. time, time step, ecc. </dd></dl>
 
-<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00165">165</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00189">189</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
 
-<p>Referenced by <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00041">Test_Driver()</a>.</p>
+<p>Referenced by <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00057">Test_Driver()</a>.</p>
 
 <p><div id="dynsection-2" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-2-trigger" src="../../closed.png" alt="+"/> Here is the caller graph for this function:</div>
@@ -242,9 +244,9 @@ Functions/Subroutines</h2></td></tr>
 <p>Subroutine for testing RectilinearGrid functions. </p>
 <dl class="note"><dt><b>Note:</b></dt><dd>This subroutine also shows the usage of FieldData functions that are useful for saving global auxiliary data, e.g. time, time step, ecc. </dd></dl>
 
-<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00210">210</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00234">234</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
 
-<p>Referenced by <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00041">Test_Driver()</a>.</p>
+<p>Referenced by <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00057">Test_Driver()</a>.</p>
 
 <p><div id="dynsection-3" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-3-trigger" src="../../closed.png" alt="+"/> Here is the caller graph for this function:</div>
@@ -276,9 +278,9 @@ Functions/Subroutines</h2></td></tr>
 <p>Subroutine for testing parallel (partitioned) PStructuredGrid functions. </p>
 <dl class="note"><dt><b>Note:</b></dt><dd>Note that the two parts are completely independet. </dd></dl>
 
-<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00259">259</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00283">283</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
 
-<p>Referenced by <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00041">Test_Driver()</a>.</p>
+<p>Referenced by <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00057">Test_Driver()</a>.</p>
 
 <p><div id="dynsection-4" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-4-trigger" src="../../closed.png" alt="+"/> Here is the caller graph for this function:</div>
@@ -316,14 +318,11 @@ Functions/Subroutines</h2></td></tr>
    |                   |                 |              |
    o--------&gt;      ny1 +-----------------+--------------+
             x         nx1               i=nx2_p(1)     nx2
-</pre></div> </dd>
-<dd>
-This subroutine also tests concurrent multiple files IO. </dd></dl>
-<dl class="bug"><dt><b><a class="el" href="../../de/da5/bug.html#_bug000002">Bug:</a></b></dt><dd>OpenMP parallel paradigm does not work. The library <em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> is not yet thread safe. </dd></dl>
+</pre></div> </dd></dl>
 
-<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00344">344</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00366">366</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
 
-<p>Referenced by <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00041">Test_Driver()</a>.</p>
+<p>Referenced by <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00057">Test_Driver()</a>.</p>
 
 <p><div id="dynsection-5" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-5-trigger" src="../../closed.png" alt="+"/> Here is the caller graph for this function:</div>
@@ -355,9 +354,9 @@ This subroutine also tests concurrent multiple files IO. </dd></dl>
 <p>Subroutine for testing multi-blocks VTM functions. </p>
 <p>There are 4 subset of data organized into 2 blocks. All the subsets are simple StructuredGrid prisms shifted along x direction. </p>
 
-<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00411">411</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00422">422</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
 
-<p>Referenced by <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00041">Test_Driver()</a>.</p>
+<p>Referenced by <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00057">Test_Driver()</a>.</p>
 
 <p><div id="dynsection-6" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-6-trigger" src="../../closed.png" alt="+"/> Here is the caller graph for this function:</div>
@@ -367,6 +366,43 @@ This subroutine also tests concurrent multiple files IO. </dd></dl>
 <div class="center"><img src="../../dc/d15/Test__Driver_8f90_a3efeb4d55ec67870b94a9b0faddf1454_icgraph.png" border="0" usemap="#dc/d15/Test__Driver_8f90_a3efeb4d55ec67870b94a9b0faddf1454_icgraph" alt=""/></div>
 <map name="dc/d15/Test__Driver_8f90_a3efeb4d55ec67870b94a9b0faddf1454_icgraph" id="dc/d15/Test__Driver_8f90_a3efeb4d55ec67870b94a9b0faddf1454_icgraph">
 <area shape="rect" id="node3" href="../../db/d79/group__Test__DriverProgram.html#gab15e80f4741760be8bdac4e319c6b65b" title="&quot;Driver&quot; program for testing Lib_VTK_IO functions." alt="" coords="128,5,219,35"/></map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="ade0b93fe9bdcb103e36f705291a70f62"></a><!-- doxytag: member="Test_Driver.f90::test_openmp" ref="ade0b93fe9bdcb103e36f705291a70f62" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine <a class="el" href="../../dc/d15/Test__Driver_8f90.html#ade0b93fe9bdcb103e36f705291a70f62">Test_Driver::test_openmp</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Subroutine for testing the libray in an OpenMP parallel framework. </p>
+<p>It is used for testing thread-safe capability. The output is a parallel (partitioned) PStructuredGrid file. This subroutine saves the same outputs two times, the first one into a serial framework, while the second into an OpenMP parallel framework. The two savings are timed and the resulting speedup is printed to standard output. The dimensions of the mesh saved is small, thus the speedup is generally small. </p>
+<dl class="note"><dt><b>Note:</b></dt><dd>It is important to note that the output files initialization and finalization must be done outside the parallel ambient. </dd>
+<dd>
+The array containing the files indexes could be shared among threads, but the counter of this array ('p' in this example) must be private. </dd></dl>
+
+<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00484">484</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
+
+<p>Referenced by <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00057">Test_Driver()</a>.</p>
+
+<p><div id="dynsection-7" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+  <img id="dynsection-7-trigger" src="../../closed.png" alt="+"/> Here is the caller graph for this function:</div>
+<div id="dynsection-7-summary" class="dynsummary" style="display:block;">
+</div>
+<div id="dynsection-7-content" class="dyncontent" style="display:none;">
+<div class="center"><img src="../../dc/d15/Test__Driver_8f90_ade0b93fe9bdcb103e36f705291a70f62_icgraph.png" border="0" usemap="#dc/d15/Test__Driver_8f90_ade0b93fe9bdcb103e36f705291a70f62_icgraph" alt=""/></div>
+<map name="dc/d15/Test__Driver_8f90_ade0b93fe9bdcb103e36f705291a70f62_icgraph" id="dc/d15/Test__Driver_8f90_ade0b93fe9bdcb103e36f705291a70f62_icgraph">
+<area shape="rect" id="node3" href="../../db/d79/group__Test__DriverProgram.html#gab15e80f4741760be8bdac4e319c6b65b" title="&quot;Driver&quot; program for testing Lib_VTK_IO functions." alt="" coords="152,5,243,35"/></map>
 </div>
 </p>
 
@@ -392,7 +428,7 @@ This subroutine also tests concurrent multiple files IO. </dd></dl>
     <ul>
       <li class="navelem"><a class="el" href="../../dc/d15/Test__Driver_8f90.html">Test_Driver.f90</a>      </li>
 
-    <li class="footer">Generated on Fri Apr 5 2013 15:00:40 for Lib_VTK_IO by
+    <li class="footer">Generated on Mon Apr 29 2013 12:11:17 for Lib_VTK_IO by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>

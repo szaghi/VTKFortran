@@ -7,5 +7,6 @@ var Test__Driver_8f90 =
     [ "test_rect", "dc/d15/Test__Driver_8f90.html#a15037c744d3b52e0f86adb37b8e14f41", null ],
     [ "test_punst", "dc/d15/Test__Driver_8f90.html#a61413a5d167473f543449bc706c1fbfa", null ],
     [ "test_pstrg", "dc/d15/Test__Driver_8f90.html#af880519c33b60cfe7eb9e7802f236d75", null ],
-    [ "test_vtm", "dc/d15/Test__Driver_8f90.html#a3efeb4d55ec67870b94a9b0faddf1454", null ]
+    [ "test_vtm", "dc/d15/Test__Driver_8f90.html#a3efeb4d55ec67870b94a9b0faddf1454", null ],
+    [ "test_openmp", "dc/d15/Test__Driver_8f90.html#ade0b93fe9bdcb103e36f705291a70f62", null ]
 ];

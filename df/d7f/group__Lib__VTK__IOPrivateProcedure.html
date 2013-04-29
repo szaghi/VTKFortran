@@ -108,12 +108,13 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <table class="memberdecls">
 <tr><td class="memItemLeft" align="right" valign="top">integer function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga6b1edca36783cc281f200e6ec58c0336">Lib_VTK_IO::Get_Unit</a> (Free_Unit)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for getting a free logic unit.  <a href="#ga6b1edca36783cc281f200e6ec58c0336"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">character(len=len(string)) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga44050a1ca17c1405672185fa38ec6d90">Lib_VTK_IO::Upper_Case</a> (string)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for converting lower case characters of a string to upper case ones.  <a href="#ga44050a1ca17c1405672185fa38ec6d90"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga4bf53149a174b8d814bb13aa0bc02fb5">Lib_VTK_IO::ioffset_update</a> (N_Byte)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine for updating vtk(f)ioffset pointer.  <a href="#ga4bf53149a174b8d814bb13aa0bc02fb5"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gad45476415a2d4d0c24ef2b4a9ad6e315">Lib_VTK_IO::vtk_update</a> (act)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine for updating (adding and removing elements into) vtk array.  <a href="#gad45476415a2d4d0c24ef2b4a9ad6e315"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">elemental character(len=len(string)) <br class="typebreak"/>
+function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gae3c3cb153c612391ab40898b8c39cc6d">Lib_VTK_IO::Upper_Case</a> (string)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for converting lower case characters of a string to upper case ones.  <a href="#gae3c3cb153c612391ab40898b8c39cc6d"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">elemental subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga287df878b4013f0318366d64f144d274">Lib_VTK_IO::byte_update</a> (vtk, N_Byte)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine for updating N_Byte and ioffset pointer.  <a href="#ga287df878b4013f0318366d64f144d274"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">pure subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga8caaaea51cc6d49e58f754f4b98bab02">Lib_VTK_IO::vtk_update</a> (act, cf, Nvtk, vtk)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine for updating (adding and removing elements into) vtk array.  <a href="#ga8caaaea51cc6d49e58f754f4b98bab02"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga87edd64085727265000192cb924393a3">Lib_VTK_IO::VTK_FLD_XML_OC</a> (cf, fld_action)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for open/close field data tag.  <a href="#ga87edd64085727265000192cb924393a3"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga87818187078245f7fe761a430e2fdb28">Lib_VTK_IO::VTK_FLD_XML_R8</a> (cf, fld, fname)</td></tr>
@@ -178,38 +179,38 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of list variable (I2P).  <a href="#gafc9c8ac003b7df56e7df1df87ad60f6f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaa6fe4e77bd341ceb4dcf9cb58386e069">Lib_VTK_IO::VTK_VAR_XML_LIST_I1</a> (cf, NC_NN, N_COL, varname, var)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of list variable (I1P).  <a href="#gaa6fe4e77bd341ceb4dcf9cb58386e069"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gabebe3ae97dbc76633dfb6dd0fee9823a">Lib_VTK_IO::VTK_GEO_STRP_R8</a> (Nx, Ny, Nz, X0, Y0, Z0, Dx, Dy, Dz)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>STRUCTURED_POINTS</b> topology (R8P).  <a href="#gabebe3ae97dbc76633dfb6dd0fee9823a"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga93418a0797d05b8f4e2d7d0dd21725fa">Lib_VTK_IO::VTK_GEO_STRP_R4</a> (Nx, Ny, Nz, X0, Y0, Z0, Dx, Dy, Dz)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>STRUCTURED_POINTS</b> topology (R4P).  <a href="#ga93418a0797d05b8f4e2d7d0dd21725fa"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gae99ece2cd0539b6781c5b3126676940e">Lib_VTK_IO::VTK_GEO_STRG_R8</a> (Nx, Ny, Nz, NN, X, Y, Z)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>STRUCTURED_GRID</b> topology (R8P).  <a href="#gae99ece2cd0539b6781c5b3126676940e"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gae4d4651beeb072872c990dbf0612dd82">Lib_VTK_IO::VTK_GEO_STRG_R4</a> (Nx, Ny, Nz, NN, X, Y, Z)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>STRUCTURED_GRID</b> topology (R4P).  <a href="#gae4d4651beeb072872c990dbf0612dd82"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga994d1a48c7001eeeca0f16dc4e69b7ee">Lib_VTK_IO::VTK_GEO_RECT_R8</a> (Nx, Ny, Nz, X, Y, Z)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>RECTILINEAR_GRID</b> topology (R8P).  <a href="#ga994d1a48c7001eeeca0f16dc4e69b7ee"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga34f6f31f2ffcc527d4fc676b430beb22">Lib_VTK_IO::VTK_GEO_RECT_R4</a> (Nx, Ny, Nz, X, Y, Z)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>RECTILINEAR_GRID</b> topology (R4P).  <a href="#ga34f6f31f2ffcc527d4fc676b430beb22"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga36308c9d86fff87c4e5e84b79663b175">Lib_VTK_IO::VTK_GEO_UNST_R8</a> (NN, X, Y, Z)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>UNSTRUCTURED_GRID</b> topology (R8P).  <a href="#ga36308c9d86fff87c4e5e84b79663b175"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga7c7fcb336fae9748a38c64b5eacd6768">Lib_VTK_IO::VTK_GEO_UNST_R4</a> (NN, X, Y, Z)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>UNSTRUCTURED_GRID</b> topology (R4P).  <a href="#ga7c7fcb336fae9748a38c64b5eacd6768"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaeb8c29535482da01ebc678d7d513f189">Lib_VTK_IO::VTK_VAR_SCAL_R8</a> (NC_NN, varname, var)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of scalar variable (R8P).  <a href="#gaeb8c29535482da01ebc678d7d513f189"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga9d770fc44b32b986a148ecdabaf9782f">Lib_VTK_IO::VTK_VAR_SCAL_R4</a> (NC_NN, varname, var)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of scalar variable (R4P).  <a href="#ga9d770fc44b32b986a148ecdabaf9782f"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga1d4b275a143ab1251d0cffec73be4222">Lib_VTK_IO::VTK_VAR_SCAL_I4</a> (NC_NN, varname, var)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of scalar variable (I4P).  <a href="#ga1d4b275a143ab1251d0cffec73be4222"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gacacddbd295dc08432bd260758ede001e">Lib_VTK_IO::VTK_VAR_VECT_R8</a> (vec_type, NC_NN, varname, varX, varY, varZ)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of vectorial variable (R8P).  <a href="#gacacddbd295dc08432bd260758ede001e"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gac92b6a677cebbea3bf7e30d66eb8e2e6">Lib_VTK_IO::VTK_VAR_VECT_R4</a> (vec_type, NC_NN, varname, varX, varY, varZ)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of vectorial variable (R4P).  <a href="#gac92b6a677cebbea3bf7e30d66eb8e2e6"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gab0df5c710bde443f484fcccc93ef8176">Lib_VTK_IO::VTK_VAR_VECT_I4</a> (NC_NN, varname, varX, varY, varZ)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of vectorial variable (I4P).  <a href="#gab0df5c710bde443f484fcccc93ef8176"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga3d03ee02efa681e61866aefdb6bcfcde">Lib_VTK_IO::VTK_VAR_TEXT_R8</a> (NC_NN, dimm, varname, textCoo)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving texture variable (R8P).  <a href="#ga3d03ee02efa681e61866aefdb6bcfcde"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gab57939670108a7f1aca595b9a331f281">Lib_VTK_IO::VTK_VAR_TEXT_R4</a> (NC_NN, dimm, varname, textCoo)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving texture variable (R4P).  <a href="#gab57939670108a7f1aca595b9a331f281"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gac24a6bc90b3dc920c7ceb0a6ce3bd62b">Lib_VTK_IO::VTK_GEO_STRP_R8</a> (cf, Nx, Ny, Nz, X0, Y0, Z0, Dx, Dy, Dz)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>STRUCTURED_POINTS</b> topology (R8P).  <a href="#gac24a6bc90b3dc920c7ceb0a6ce3bd62b"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaa947f89fed7dcd9f320c6e9cbccf34b6">Lib_VTK_IO::VTK_GEO_STRP_R4</a> (cf, Nx, Ny, Nz, X0, Y0, Z0, Dx, Dy, Dz)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>STRUCTURED_POINTS</b> topology (R4P).  <a href="#gaa947f89fed7dcd9f320c6e9cbccf34b6"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gab05c01d475b4f437cc4075bb06c5ffd6">Lib_VTK_IO::VTK_GEO_STRG_R8</a> (cf, Nx, Ny, Nz, NN, X, Y, Z)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>STRUCTURED_GRID</b> topology (R8P).  <a href="#gab05c01d475b4f437cc4075bb06c5ffd6"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga4b8af8c39c9bc177e7da1a774aa601d5">Lib_VTK_IO::VTK_GEO_STRG_R4</a> (cf, Nx, Ny, Nz, NN, X, Y, Z)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>STRUCTURED_GRID</b> topology (R4P).  <a href="#ga4b8af8c39c9bc177e7da1a774aa601d5"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaa6dddb3eca8f51a6a67052fc47823c58">Lib_VTK_IO::VTK_GEO_RECT_R8</a> (cf, Nx, Ny, Nz, X, Y, Z)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>RECTILINEAR_GRID</b> topology (R8P).  <a href="#gaa6dddb3eca8f51a6a67052fc47823c58"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga6ddfa086dafd72fd96fe8720dda0315c">Lib_VTK_IO::VTK_GEO_RECT_R4</a> (cf, Nx, Ny, Nz, X, Y, Z)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>RECTILINEAR_GRID</b> topology (R4P).  <a href="#ga6ddfa086dafd72fd96fe8720dda0315c"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gadd698ec3ca3753102abd31d0fcbed448">Lib_VTK_IO::VTK_GEO_UNST_R8</a> (cf, NN, X, Y, Z)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>UNSTRUCTURED_GRID</b> topology (R8P).  <a href="#gadd698ec3ca3753102abd31d0fcbed448"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gafd1bee29d49e0ca7e09f995eff396fd0">Lib_VTK_IO::VTK_GEO_UNST_R4</a> (cf, NN, X, Y, Z)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving mesh with <b>UNSTRUCTURED_GRID</b> topology (R4P).  <a href="#gafd1bee29d49e0ca7e09f995eff396fd0"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga6ed87d13726e837035787ddeffe42834">Lib_VTK_IO::VTK_VAR_SCAL_R8</a> (cf, NC_NN, varname, var)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of scalar variable (R8P).  <a href="#ga6ed87d13726e837035787ddeffe42834"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga46f6b5e742a3fc56d7809bf68aefc650">Lib_VTK_IO::VTK_VAR_SCAL_R4</a> (cf, NC_NN, varname, var)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of scalar variable (R4P).  <a href="#ga46f6b5e742a3fc56d7809bf68aefc650"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaf2892de5d5217c6378028fc273640f93">Lib_VTK_IO::VTK_VAR_SCAL_I4</a> (cf, NC_NN, varname, var)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of scalar variable (I4P).  <a href="#gaf2892de5d5217c6378028fc273640f93"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga1ee7a8d85f6b661bd0d9dc59775d2946">Lib_VTK_IO::VTK_VAR_VECT_R8</a> (cf, vec_type, NC_NN, varname, varX, varY, varZ)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of vectorial variable (R8P).  <a href="#ga1ee7a8d85f6b661bd0d9dc59775d2946"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga5b3aef8db82f6ce875e4aeda73975f51">Lib_VTK_IO::VTK_VAR_VECT_R4</a> (cf, vec_type, NC_NN, varname, varX, varY, varZ)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of vectorial variable (R4P).  <a href="#ga5b3aef8db82f6ce875e4aeda73975f51"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga6d4c570b13618fca00ab22c3f88aaf41">Lib_VTK_IO::VTK_VAR_VECT_I4</a> (cf, NC_NN, varname, varX, varY, varZ)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving field of vectorial variable (I4P).  <a href="#ga6d4c570b13618fca00ab22c3f88aaf41"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga70e9cee2983b070739f4531096f07e6c">Lib_VTK_IO::VTK_VAR_TEXT_R8</a> (cf, NC_NN, dimm, varname, textCoo)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving texture variable (R8P).  <a href="#ga70e9cee2983b070739f4531096f07e6c"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga36c5ac8c0dcef7f8a5074748997eaca2">Lib_VTK_IO::VTK_VAR_TEXT_R4</a> (cf, NC_NN, dimm, varname, textCoo)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for saving texture variable (R4P).  <a href="#ga36c5ac8c0dcef7f8a5074748997eaca2"></a><br/></td></tr>
 </table>
 <hr/><h2>Function/Subroutine Documentation</h2>
 <a class="anchor" id="ga6b1edca36783cc281f200e6ec58c0336"></a><!-- doxytag: member="Lib_VTK_IO::Get_Unit" ref="ga6b1edca36783cc281f200e6ec58c0336" args="(Free_Unit)" -->
@@ -228,7 +229,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <div class="memdoc">
 
 <p>Function for getting a free logic unit. </p>
-<p>The users of <em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> does not know which is the logical unit: <em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> uses this information without boring the users. The logical unit used is safe-free: if the program calling <em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> has others logical units used <em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> will never use these units, but will choice one that is free. </p>
+<p>The users of <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> does not know which is the logical unit: <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> uses this information without boring the users. The logical unit used is safe-free: if the program calling <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> has others logical units used <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> will never use these units, but will choice one that is free. </p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>Free_Unit </dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
@@ -237,7 +238,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00429">429</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00428">428</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -276,7 +277,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00648">648</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00655">655</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -329,17 +330,23 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01391">1391</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01462">1462</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="gabebe3ae97dbc76633dfb6dd0fee9823a"></a><!-- doxytag: member="Lib_VTK_IO::VTK_GEO_STRP_R8" ref="gabebe3ae97dbc76633dfb6dd0fee9823a" args="(Nx, Ny, Nz, X0, Y0, Z0, Dx, Dy, Dz)" -->
+<a class="anchor" id="gac24a6bc90b3dc920c7ceb0a6ce3bd62b"></a><!-- doxytag: member="Lib_VTK_IO::VTK_GEO_STRP_R8" ref="gac24a6bc90b3dc920c7ceb0a6ce3bd62b" args="(cf, Nx, Ny, Nz, X0, Y0, Z0, Dx, Dy, Dz)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gabebe3ae97dbc76633dfb6dd0fee9823a">Lib_VTK_IO::VTK_GEO_STRP_R8</a> </td>
+          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gac24a6bc90b3dc920c7ceb0a6ce3bd62b">Lib_VTK_IO::VTK_GEO_STRP_R8</a> </td>
           <td>(</td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">integer(I4P), intent(in)&#160;</td>
           <td class="paramname"><em>Nx</em>, </td>
         </tr>
@@ -404,6 +411,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Nx</td><td>Number of nodes in x direction. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Ny</td><td>Number of nodes in y direction. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Nz</td><td>Number of nodes in z direction. </td></tr>
@@ -417,17 +425,23 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02480">2480</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02651">2651</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="gaeb8c29535482da01ebc678d7d513f189"></a><!-- doxytag: member="Lib_VTK_IO::VTK_VAR_SCAL_R8" ref="gaeb8c29535482da01ebc678d7d513f189" args="(NC_NN, varname, var)" -->
+<a class="anchor" id="ga6ed87d13726e837035787ddeffe42834"></a><!-- doxytag: member="Lib_VTK_IO::VTK_VAR_SCAL_R8" ref="ga6ed87d13726e837035787ddeffe42834" args="(cf, NC_NN, varname, var)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaeb8c29535482da01ebc678d7d513f189">Lib_VTK_IO::VTK_VAR_SCAL_R8</a> </td>
+          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga6ed87d13726e837035787ddeffe42834">Lib_VTK_IO::VTK_VAR_SCAL_R8</a> </td>
           <td>(</td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">integer(I4P), intent(in)&#160;</td>
           <td class="paramname"><em>NC_NN</em>, </td>
         </tr>
@@ -456,6 +470,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">NC_NN</td><td>Number of nodes or cells. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">varname</td><td>Variable name. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">var</td><td>Variable to be saved. </td></tr>
@@ -463,16 +478,16 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02894">2894</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l03125">3125</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ga44050a1ca17c1405672185fa38ec6d90"></a><!-- doxytag: member="Lib_VTK_IO::Upper_Case" ref="ga44050a1ca17c1405672185fa38ec6d90" args="(string)" -->
+<a class="anchor" id="gae3c3cb153c612391ab40898b8c39cc6d"></a><!-- doxytag: member="Lib_VTK_IO::Upper_Case" ref="gae3c3cb153c612391ab40898b8c39cc6d" args="(string)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">character(len=len(string)) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga44050a1ca17c1405672185fa38ec6d90">Lib_VTK_IO::Upper_Case</a> </td>
+          <td class="memname">elemental character(len=len(string)) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gae3c3cb153c612391ab40898b8c39cc6d">Lib_VTK_IO::Upper_Case</a> </td>
           <td>(</td>
           <td class="paramtype">character(len=len(string)), intent(in)&#160;</td>
           <td class="paramname"><em>string</em></td><td>)</td>
@@ -483,7 +498,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <div class="memdoc">
 
 <p>Function for converting lower case characters of a string to upper case ones. </p>
-<p><em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> uses this function in order to achieve case-insensitive: all character variables used within <em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> functions are pre-processed by Uppper_Case function before these variables are used. So the users can call <em><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a></em> functions without pay attention of the case of the keywords passed to the functions: calling the function VTK_INI with the string <em>E_IO = VTK_INI('Ascii',...)</em> is equivalent to <em>E_IO = VTK_INI('ASCII',...)</em>. </p>
+<p><a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> uses this function in order to achieve case-insensitive: all character variables used within <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> functions are pre-processed by Uppper_Case function before these variables are used. So the users can call <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> functions without pay attention of the case of the keywords passed to the functions: calling the function VTK_INI with the string <em>E_IO = VTK_INI('Ascii',...)</em> is equivalent to <em>E_IO = VTK_INI('ASCII',...)</em>. </p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>Upper_Case </dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
@@ -492,47 +507,80 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00463">463</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00462">462</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ga4bf53149a174b8d814bb13aa0bc02fb5"></a><!-- doxytag: member="Lib_VTK_IO::ioffset_update" ref="ga4bf53149a174b8d814bb13aa0bc02fb5" args="(N_Byte)" -->
+<a class="anchor" id="ga287df878b4013f0318366d64f144d274"></a><!-- doxytag: member="Lib_VTK_IO::byte_update" ref="ga287df878b4013f0318366d64f144d274" args="(vtk, N_Byte)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">subroutine <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga4bf53149a174b8d814bb13aa0bc02fb5">Lib_VTK_IO::ioffset_update</a> </td>
+          <td class="memname">elemental subroutine <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga287df878b4013f0318366d64f144d274">Lib_VTK_IO::byte_update</a> </td>
           <td>(</td>
+          <td class="paramtype">class(<a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#da/d6c/structLib__VTK__IO_1_1Type__VTK__File">Type_VTK_File</a>), intent(inout)&#160;</td>
+          <td class="paramname"><em>vtk</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">integer(I4P), intent(in)&#160;</td>
-          <td class="paramname"><em>N_Byte</em></td><td>)</td>
-          <td><code> [private]</code></td>
+          <td class="paramname"><em>N_Byte</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [private]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Subroutine for updating vtk(f)ioffset pointer. </p>
+<p>Subroutine for updating N_Byte and ioffset pointer. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">vtk</td><td>Global data of VTK file. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">N_Byte</td><td>Number of bytes saved. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00484">484</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00483">483</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="gad45476415a2d4d0c24ef2b4a9ad6e315"></a><!-- doxytag: member="Lib_VTK_IO::vtk_update" ref="gad45476415a2d4d0c24ef2b4a9ad6e315" args="(act)" -->
+<a class="anchor" id="ga8caaaea51cc6d49e58f754f4b98bab02"></a><!-- doxytag: member="Lib_VTK_IO::vtk_update" ref="ga8caaaea51cc6d49e58f754f4b98bab02" args="(act, cf, Nvtk, vtk)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">subroutine <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gad45476415a2d4d0c24ef2b4a9ad6e315">Lib_VTK_IO::vtk_update</a> </td>
+          <td class="memname">pure subroutine <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga8caaaea51cc6d49e58f754f4b98bab02">Lib_VTK_IO::vtk_update</a> </td>
           <td>(</td>
           <td class="paramtype">character(*), intent(in)&#160;</td>
-          <td class="paramname"><em>act</em></td><td>)</td>
-          <td><code> [private]</code></td>
+          <td class="paramname"><em>act</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer(I4P), intent(inout)&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer(I4P), intent(inout)&#160;</td>
+          <td class="paramname"><em>Nvtk</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">type(<a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#da/d6c/structLib__VTK__IO_1_1Type__VTK__File">Type_VTK_File</a>), dimension(:), intent(inout), allocatable&#160;</td>
+          <td class="paramname"><em>vtk</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [private]</code></td>
         </tr>
       </table>
 </div>
@@ -541,12 +589,15 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <p>Subroutine for updating (adding and removing elements into) vtk array. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">act</td><td>Action on vtk array: 'ADD' one more element, 'REMOVE' current element file. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">act</td><td>Action: 'ADD' one more element, 'REMOVE' current element file. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">Nvtk</td><td>Number of (concurrent) VTK files. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">vtk</td><td>VTK files data. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00505">505</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00506">506</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -593,7 +644,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00680">680</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00691">691</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -640,7 +691,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00711">711</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00726">726</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -687,7 +738,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00742">742</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00761">761</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -734,7 +785,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00773">773</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00796">796</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -781,7 +832,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00804">804</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00831">831</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -828,7 +879,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00835">835</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00866">866</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -930,7 +981,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00866">866</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00901">901</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1032,7 +1083,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00920">920</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00959">959</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1127,7 +1178,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00974">974</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01017">1017</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1222,7 +1273,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01043">1043</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01090">1090</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1289,7 +1340,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01112">1112</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01163">1163</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1356,7 +1407,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01157">1157</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01212">1212</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1384,7 +1435,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01202">1202</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01261">1261</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1437,7 +1488,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01426">1426</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01501">1501</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1490,7 +1541,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01461">1461</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01540">1540</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1543,7 +1594,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01496">1496</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01579">1579</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1596,7 +1647,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01531">1531</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01618">1618</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1649,7 +1700,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01566">1566</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01657">1657</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1716,7 +1767,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01600">1600</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01695">1695</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1783,7 +1834,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01637">1637</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01736">1736</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1850,7 +1901,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01674">1674</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01777">1777</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1917,7 +1968,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01711">1711</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01818">1818</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -1984,7 +2035,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01748">1748</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01859">1859</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2051,7 +2102,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01785">1785</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01900">1900</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2111,7 +2162,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01822">1822</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01941">1941</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2171,7 +2222,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01862">1862</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01985">1985</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2231,7 +2282,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01902">1902</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02029">2029</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2291,7 +2342,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01942">1942</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02073">2073</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2351,7 +2402,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l01982">1982</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02117">2117</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -2411,17 +2462,23 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02022">2022</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02161">2161</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ga93418a0797d05b8f4e2d7d0dd21725fa"></a><!-- doxytag: member="Lib_VTK_IO::VTK_GEO_STRP_R4" ref="ga93418a0797d05b8f4e2d7d0dd21725fa" args="(Nx, Ny, Nz, X0, Y0, Z0, Dx, Dy, Dz)" -->
+<a class="anchor" id="gaa947f89fed7dcd9f320c6e9cbccf34b6"></a><!-- doxytag: member="Lib_VTK_IO::VTK_GEO_STRP_R4" ref="gaa947f89fed7dcd9f320c6e9cbccf34b6" args="(cf, Nx, Ny, Nz, X0, Y0, Z0, Dx, Dy, Dz)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga93418a0797d05b8f4e2d7d0dd21725fa">Lib_VTK_IO::VTK_GEO_STRP_R4</a> </td>
+          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaa947f89fed7dcd9f320c6e9cbccf34b6">Lib_VTK_IO::VTK_GEO_STRP_R4</a> </td>
           <td>(</td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">integer(I4P), intent(in)&#160;</td>
           <td class="paramname"><em>Nx</em>, </td>
         </tr>
@@ -2486,6 +2543,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Nx</td><td>Number of nodes in x direction. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Ny</td><td>Number of nodes in y direction. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Nz</td><td>Number of nodes in z direction. </td></tr>
@@ -2499,17 +2557,23 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02516">2516</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02693">2693</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="gae99ece2cd0539b6781c5b3126676940e"></a><!-- doxytag: member="Lib_VTK_IO::VTK_GEO_STRG_R8" ref="gae99ece2cd0539b6781c5b3126676940e" args="(Nx, Ny, Nz, NN, X, Y, Z)" -->
+<a class="anchor" id="gab05c01d475b4f437cc4075bb06c5ffd6"></a><!-- doxytag: member="Lib_VTK_IO::VTK_GEO_STRG_R8" ref="gab05c01d475b4f437cc4075bb06c5ffd6" args="(cf, Nx, Ny, Nz, NN, X, Y, Z)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gae99ece2cd0539b6781c5b3126676940e">Lib_VTK_IO::VTK_GEO_STRG_R8</a> </td>
+          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gab05c01d475b4f437cc4075bb06c5ffd6">Lib_VTK_IO::VTK_GEO_STRG_R8</a> </td>
           <td>(</td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">integer(I4P), intent(in)&#160;</td>
           <td class="paramname"><em>Nx</em>, </td>
         </tr>
@@ -2562,6 +2626,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Nx</td><td>Number of nodes in x direction. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Ny</td><td>Number of nodes in y direction. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Nz</td><td>Number of nodes in z direction. </td></tr>
@@ -2573,17 +2638,23 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02552">2552</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02735">2735</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="gae4d4651beeb072872c990dbf0612dd82"></a><!-- doxytag: member="Lib_VTK_IO::VTK_GEO_STRG_R4" ref="gae4d4651beeb072872c990dbf0612dd82" args="(Nx, Ny, Nz, NN, X, Y, Z)" -->
+<a class="anchor" id="ga4b8af8c39c9bc177e7da1a774aa601d5"></a><!-- doxytag: member="Lib_VTK_IO::VTK_GEO_STRG_R4" ref="ga4b8af8c39c9bc177e7da1a774aa601d5" args="(cf, Nx, Ny, Nz, NN, X, Y, Z)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gae4d4651beeb072872c990dbf0612dd82">Lib_VTK_IO::VTK_GEO_STRG_R4</a> </td>
+          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga4b8af8c39c9bc177e7da1a774aa601d5">Lib_VTK_IO::VTK_GEO_STRG_R4</a> </td>
           <td>(</td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">integer(I4P), intent(in)&#160;</td>
           <td class="paramname"><em>Nx</em>, </td>
         </tr>
@@ -2636,6 +2707,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Nx</td><td>Number of nodes in x direction. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Ny</td><td>Number of nodes in y direction. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Nz</td><td>Number of nodes in z direction. </td></tr>
@@ -2647,17 +2719,23 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02587">2587</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02776">2776</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ga994d1a48c7001eeeca0f16dc4e69b7ee"></a><!-- doxytag: member="Lib_VTK_IO::VTK_GEO_RECT_R8" ref="ga994d1a48c7001eeeca0f16dc4e69b7ee" args="(Nx, Ny, Nz, X, Y, Z)" -->
+<a class="anchor" id="gaa6dddb3eca8f51a6a67052fc47823c58"></a><!-- doxytag: member="Lib_VTK_IO::VTK_GEO_RECT_R8" ref="gaa6dddb3eca8f51a6a67052fc47823c58" args="(cf, Nx, Ny, Nz, X, Y, Z)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga994d1a48c7001eeeca0f16dc4e69b7ee">Lib_VTK_IO::VTK_GEO_RECT_R8</a> </td>
+          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaa6dddb3eca8f51a6a67052fc47823c58">Lib_VTK_IO::VTK_GEO_RECT_R8</a> </td>
           <td>(</td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">integer(I4P), intent(in)&#160;</td>
           <td class="paramname"><em>Nx</em>, </td>
         </tr>
@@ -2704,6 +2782,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Nx</td><td>Number of nodes in x direction. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Ny</td><td>Number of nodes in y direction. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Nz</td><td>Number of nodes in z direction. </td></tr>
@@ -2714,17 +2793,23 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02622">2622</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02817">2817</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ga34f6f31f2ffcc527d4fc676b430beb22"></a><!-- doxytag: member="Lib_VTK_IO::VTK_GEO_RECT_R4" ref="ga34f6f31f2ffcc527d4fc676b430beb22" args="(Nx, Ny, Nz, X, Y, Z)" -->
+<a class="anchor" id="ga6ddfa086dafd72fd96fe8720dda0315c"></a><!-- doxytag: member="Lib_VTK_IO::VTK_GEO_RECT_R4" ref="ga6ddfa086dafd72fd96fe8720dda0315c" args="(cf, Nx, Ny, Nz, X, Y, Z)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga34f6f31f2ffcc527d4fc676b430beb22">Lib_VTK_IO::VTK_GEO_RECT_R4</a> </td>
+          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga6ddfa086dafd72fd96fe8720dda0315c">Lib_VTK_IO::VTK_GEO_RECT_R4</a> </td>
           <td>(</td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">integer(I4P), intent(in)&#160;</td>
           <td class="paramname"><em>Nx</em>, </td>
         </tr>
@@ -2771,6 +2856,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Nx</td><td>Number of nodes in x direction. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Ny</td><td>Number of nodes in y direction. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Nz</td><td>Number of nodes in z direction. </td></tr>
@@ -2781,17 +2867,23 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02668">2668</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02869">2869</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ga36308c9d86fff87c4e5e84b79663b175"></a><!-- doxytag: member="Lib_VTK_IO::VTK_GEO_UNST_R8" ref="ga36308c9d86fff87c4e5e84b79663b175" args="(NN, X, Y, Z)" -->
+<a class="anchor" id="gadd698ec3ca3753102abd31d0fcbed448"></a><!-- doxytag: member="Lib_VTK_IO::VTK_GEO_UNST_R8" ref="gadd698ec3ca3753102abd31d0fcbed448" args="(cf, NN, X, Y, Z)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga36308c9d86fff87c4e5e84b79663b175">Lib_VTK_IO::VTK_GEO_UNST_R8</a> </td>
+          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gadd698ec3ca3753102abd31d0fcbed448">Lib_VTK_IO::VTK_GEO_UNST_R8</a> </td>
           <td>(</td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">integer(I4P), intent(in)&#160;</td>
           <td class="paramname"><em>NN</em>, </td>
         </tr>
@@ -2826,6 +2918,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">NN</td><td>Number of nodes. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">X</td><td>X coordinates of all nodes. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Y</td><td>Y coordinates of all nodes. </td></tr>
@@ -2834,17 +2927,23 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02714">2714</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02921">2921</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ga7c7fcb336fae9748a38c64b5eacd6768"></a><!-- doxytag: member="Lib_VTK_IO::VTK_GEO_UNST_R4" ref="ga7c7fcb336fae9748a38c64b5eacd6768" args="(NN, X, Y, Z)" -->
+<a class="anchor" id="gafd1bee29d49e0ca7e09f995eff396fd0"></a><!-- doxytag: member="Lib_VTK_IO::VTK_GEO_UNST_R4" ref="gafd1bee29d49e0ca7e09f995eff396fd0" args="(cf, NN, X, Y, Z)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga7c7fcb336fae9748a38c64b5eacd6768">Lib_VTK_IO::VTK_GEO_UNST_R4</a> </td>
+          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gafd1bee29d49e0ca7e09f995eff396fd0">Lib_VTK_IO::VTK_GEO_UNST_R4</a> </td>
           <td>(</td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">integer(I4P), intent(in)&#160;</td>
           <td class="paramname"><em>NN</em>, </td>
         </tr>
@@ -2879,6 +2978,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">NN</td><td>number of nodes. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">X</td><td>x coordinates of all nodes. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Y</td><td>y coordinates of all nodes. </td></tr>
@@ -2887,17 +2987,23 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02743">2743</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02956">2956</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ga9d770fc44b32b986a148ecdabaf9782f"></a><!-- doxytag: member="Lib_VTK_IO::VTK_VAR_SCAL_R4" ref="ga9d770fc44b32b986a148ecdabaf9782f" args="(NC_NN, varname, var)" -->
+<a class="anchor" id="ga46f6b5e742a3fc56d7809bf68aefc650"></a><!-- doxytag: member="Lib_VTK_IO::VTK_VAR_SCAL_R4" ref="ga46f6b5e742a3fc56d7809bf68aefc650" args="(cf, NC_NN, varname, var)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga9d770fc44b32b986a148ecdabaf9782f">Lib_VTK_IO::VTK_VAR_SCAL_R4</a> </td>
+          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga46f6b5e742a3fc56d7809bf68aefc650">Lib_VTK_IO::VTK_VAR_SCAL_R4</a> </td>
           <td>(</td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">integer(I4P), intent(in)&#160;</td>
           <td class="paramname"><em>NC_NN</em>, </td>
         </tr>
@@ -2926,6 +3032,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">NC_NN</td><td>Number of nodes or cells. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">varname</td><td>Variable name. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">var</td><td>Variable to be saved. </td></tr>
@@ -2933,17 +3040,23 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02921">2921</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l03158">3158</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ga1d4b275a143ab1251d0cffec73be4222"></a><!-- doxytag: member="Lib_VTK_IO::VTK_VAR_SCAL_I4" ref="ga1d4b275a143ab1251d0cffec73be4222" args="(NC_NN, varname, var)" -->
+<a class="anchor" id="gaf2892de5d5217c6378028fc273640f93"></a><!-- doxytag: member="Lib_VTK_IO::VTK_VAR_SCAL_I4" ref="gaf2892de5d5217c6378028fc273640f93" args="(cf, NC_NN, varname, var)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga1d4b275a143ab1251d0cffec73be4222">Lib_VTK_IO::VTK_VAR_SCAL_I4</a> </td>
+          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaf2892de5d5217c6378028fc273640f93">Lib_VTK_IO::VTK_VAR_SCAL_I4</a> </td>
           <td>(</td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">integer(I4P), intent(in)&#160;</td>
           <td class="paramname"><em>NC_NN</em>, </td>
         </tr>
@@ -2972,6 +3085,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">NC_NN</td><td>Number of nodes or cells. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">varname</td><td>Variable name. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">var</td><td>Variable to be saved. </td></tr>
@@ -2979,17 +3093,23 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02948">2948</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l03191">3191</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="gacacddbd295dc08432bd260758ede001e"></a><!-- doxytag: member="Lib_VTK_IO::VTK_VAR_VECT_R8" ref="gacacddbd295dc08432bd260758ede001e" args="(vec_type, NC_NN, varname, varX, varY, varZ)" -->
+<a class="anchor" id="ga1ee7a8d85f6b661bd0d9dc59775d2946"></a><!-- doxytag: member="Lib_VTK_IO::VTK_VAR_VECT_R8" ref="ga1ee7a8d85f6b661bd0d9dc59775d2946" args="(cf, vec_type, NC_NN, varname, varX, varY, varZ)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gacacddbd295dc08432bd260758ede001e">Lib_VTK_IO::VTK_VAR_VECT_R8</a> </td>
+          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga1ee7a8d85f6b661bd0d9dc59775d2946">Lib_VTK_IO::VTK_VAR_VECT_R8</a> </td>
           <td>(</td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">character(*), intent(in)&#160;</td>
           <td class="paramname"><em>vec_type</em>, </td>
         </tr>
@@ -3036,6 +3156,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">vec_type</td><td>Vector type: vect = generic vector , norm = normal vector. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">NC_NN</td><td>Number of nodes or cells. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">varname</td><td>Variable name. </td></tr>
@@ -3046,17 +3167,23 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l02975">2975</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l03224">3224</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="gac92b6a677cebbea3bf7e30d66eb8e2e6"></a><!-- doxytag: member="Lib_VTK_IO::VTK_VAR_VECT_R4" ref="gac92b6a677cebbea3bf7e30d66eb8e2e6" args="(vec_type, NC_NN, varname, varX, varY, varZ)" -->
+<a class="anchor" id="ga5b3aef8db82f6ce875e4aeda73975f51"></a><!-- doxytag: member="Lib_VTK_IO::VTK_VAR_VECT_R4" ref="ga5b3aef8db82f6ce875e4aeda73975f51" args="(cf, vec_type, NC_NN, varname, varX, varY, varZ)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gac92b6a677cebbea3bf7e30d66eb8e2e6">Lib_VTK_IO::VTK_VAR_VECT_R4</a> </td>
+          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga5b3aef8db82f6ce875e4aeda73975f51">Lib_VTK_IO::VTK_VAR_VECT_R4</a> </td>
           <td>(</td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">character(*), intent(in)&#160;</td>
           <td class="paramname"><em>vec_type</em>, </td>
         </tr>
@@ -3103,6 +3230,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">vec_type</td><td>Vector type: vect = generic vector , norm = normal vector. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">NC_NN</td><td>Number of nodes or cells. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">varname</td><td>Variable name. </td></tr>
@@ -3113,17 +3241,23 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l03014">3014</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l03269">3269</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="gab0df5c710bde443f484fcccc93ef8176"></a><!-- doxytag: member="Lib_VTK_IO::VTK_VAR_VECT_I4" ref="gab0df5c710bde443f484fcccc93ef8176" args="(NC_NN, varname, varX, varY, varZ)" -->
+<a class="anchor" id="ga6d4c570b13618fca00ab22c3f88aaf41"></a><!-- doxytag: member="Lib_VTK_IO::VTK_VAR_VECT_I4" ref="ga6d4c570b13618fca00ab22c3f88aaf41" args="(cf, NC_NN, varname, varX, varY, varZ)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gab0df5c710bde443f484fcccc93ef8176">Lib_VTK_IO::VTK_VAR_VECT_I4</a> </td>
+          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga6d4c570b13618fca00ab22c3f88aaf41">Lib_VTK_IO::VTK_VAR_VECT_I4</a> </td>
           <td>(</td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">integer(I4P), intent(in)&#160;</td>
           <td class="paramname"><em>NC_NN</em>, </td>
         </tr>
@@ -3164,6 +3298,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">NC_NN</td><td>Number of nodes or cells. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">varname</td><td>Variable name. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">varX</td><td>X component of vector. </td></tr>
@@ -3173,17 +3308,23 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l03053">3053</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l03314">3314</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ga3d03ee02efa681e61866aefdb6bcfcde"></a><!-- doxytag: member="Lib_VTK_IO::VTK_VAR_TEXT_R8" ref="ga3d03ee02efa681e61866aefdb6bcfcde" args="(NC_NN, dimm, varname, textCoo)" -->
+<a class="anchor" id="ga70e9cee2983b070739f4531096f07e6c"></a><!-- doxytag: member="Lib_VTK_IO::VTK_VAR_TEXT_R8" ref="ga70e9cee2983b070739f4531096f07e6c" args="(cf, NC_NN, dimm, varname, textCoo)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga3d03ee02efa681e61866aefdb6bcfcde">Lib_VTK_IO::VTK_VAR_TEXT_R8</a> </td>
+          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga70e9cee2983b070739f4531096f07e6c">Lib_VTK_IO::VTK_VAR_TEXT_R8</a> </td>
           <td>(</td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">integer(I4P), intent(in)&#160;</td>
           <td class="paramname"><em>NC_NN</em>, </td>
         </tr>
@@ -3218,6 +3359,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">NC_NN</td><td>Number of nodes or cells. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dimm</td><td>Texture dimensions. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">varname</td><td>Variable name. </td></tr>
@@ -3226,17 +3368,23 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l03081">3081</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l03348">3348</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="gab57939670108a7f1aca595b9a331f281"></a><!-- doxytag: member="Lib_VTK_IO::VTK_VAR_TEXT_R4" ref="gab57939670108a7f1aca595b9a331f281" args="(NC_NN, dimm, varname, textCoo)" -->
+<a class="anchor" id="ga36c5ac8c0dcef7f8a5074748997eaca2"></a><!-- doxytag: member="Lib_VTK_IO::VTK_VAR_TEXT_R4" ref="ga36c5ac8c0dcef7f8a5074748997eaca2" args="(cf, NC_NN, dimm, varname, textCoo)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gab57939670108a7f1aca595b9a331f281">Lib_VTK_IO::VTK_VAR_TEXT_R4</a> </td>
+          <td class="memname">integer(I4P) function <a class="el" href="../../df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga36c5ac8c0dcef7f8a5074748997eaca2">Lib_VTK_IO::VTK_VAR_TEXT_R4</a> </td>
           <td>(</td>
+          <td class="paramtype">integer(I4P), intent(in), optional&#160;</td>
+          <td class="paramname"><em>cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">integer(I4P), intent(in)&#160;</td>
           <td class="paramname"><em>NC_NN</em>, </td>
         </tr>
@@ -3271,6 +3419,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <dl class="return"><dt><b>Returns:</b></dt><dd>E_IO: integer(I4P) error flag </dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cf</td><td>Current file index (for concurrent files IO). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">NC_NN</td><td>Number of nodes or cells. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dimm</td><td>Texture dimensions. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">varname</td><td>Variable name. </td></tr>
@@ -3279,7 +3428,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l03112">3112</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l03385">3385</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -3302,7 +3451,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   <div id="nav-path" class="navpath">
     <ul>
 
-    <li class="footer">Generated on Fri Apr 5 2013 15:00:40 for Lib_VTK_IO by
+    <li class="footer">Generated on Mon Apr 29 2013 12:11:17 for Lib_VTK_IO by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>
