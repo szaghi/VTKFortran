@@ -19,7 +19,7 @@ The supported VTK features are:
 * XML standard:
   + serial dataset:
     + Image Data ( __missing__ );
-    + Polydata (__missing__);
+    + Polydata ( __missing__ );
     + Rectilinear Grid;
     + Structured Grid;
     + Unstructured Grid;
