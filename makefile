@@ -122,14 +122,14 @@ ifeq "$(COMPILER)" "intel"
     PREPROC := $(PREPROC) -DDEBUG
     CHK = -check all -check noarg_temp_created
     DEB = -debug all
-    WRN = -warn all
-    OPTSC := $(OPTSC) -O0 -fpe-all=0 -fp-stack-check -traceback $(WRN) $(CHK) $(DEB)
-    OPTSL := $(OPTSL) -O0 -fpe-all=0 -fp-stack-check -traceback $(WRN) $(CHK) $(DEB)
+    WRN = -warn all -warn errors -warn stderrors
+    OPTSC := $(OPTSC) -O0 -fpe-all=0 -fp-stack-check -traceback $(WRN) $(CHK) $(DEB)#-diag-enable sc3
+    OPTSL := $(OPTSL) -O0 -fpe-all=0 -fp-stack-check -traceback $(WRN) $(CHK) $(DEB)#-diag-enable sc3
   endif
   # standard
   ifeq "$(F03STD)" "yes"
-    OPTSC := $(OPTSC) -std03
-    OPTSL := $(OPTSL) -std03
+    OPTSC := $(OPTSC) -std03 -standard-semantics
+    OPTSL := $(OPTSL) -std03 -standard-semantics
   endif
   # optimization
   ifeq "$(OPTIMIZE)" "yes"
@@ -240,13 +240,20 @@ $(DOBJ)ir_precision.o : IR_Precision.f90
 	@echo $(COTEXT) | tee -a make.log
 	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
 
-$(DOBJ)lib_vtk_io.o : Lib_VTK_IO.f90 \
+$(DOBJ)lib_base64.o : Lib_Base64.f90 \
 	$(DOBJ)ir_precision.o
+	@echo $(COTEXT) | tee -a make.log
+	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+
+$(DOBJ)lib_vtk_io.o : Lib_VTK_IO.f90 \
+	$(DOBJ)ir_precision.o \
+	$(DOBJ)lib_base64.o
 	@echo $(COTEXT) | tee -a make.log
 	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
 
 $(DOBJ)Test_Driver.o : Test_Driver.f90 \
 	$(DOBJ)ir_precision.o \
+	$(DOBJ)lib_base64.o \
 	$(DOBJ)lib_vtk_io.o
 	@echo $(COTEXT) | tee -a make.log
 	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages

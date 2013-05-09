@@ -53,6 +53,7 @@
 program Test_Driver
 !-----------------------------------------------------------------------------------------------------------------------------------
 USE IR_Precision
+USE Lib_Base64
 USE Lib_VTK_IO
 USE, intrinsic:: ISO_FORTRAN_ENV, only: stdout=>OUTPUT_UNIT, stderr=>ERROR_UNIT
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -149,7 +150,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  write(stdout,'(A)')' Testing UnstructuredGrid functions. Output file is XML_UNST.vtu'
+  write(stdout,'(A)')' Testing UnstructuredGrid functions. Output file is XML_UNST#.vtu'
   connect = (/0 ,1 ,4 ,3 ,6 ,7 ,10,9 , &
               1 ,2 ,5 ,4 ,7 ,8 ,11,10, &
               6 ,10,9 ,12,             &
@@ -166,7 +167,28 @@ contains
   v_X=(/1,1,0,1,1,0,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0/)
   v_Y=(/0,1,2,0,1,2,0,1,2,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0/)
   v_Z=(/0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1/)
-  E_IO = VTK_INI_XML(output_format = 'Binary', filename = 'XML_UNST.vtu', mesh_topology = 'UnstructuredGrid')
+  ! ascii
+  E_IO = VTK_INI_XML(output_format = 'ascii', filename = 'XML_UNST-ascii.vtu', mesh_topology = 'UnstructuredGrid')
+  E_IO = VTK_GEO_XML(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
+  E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'opeN')
+  E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'scalars', var = v)
+  E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'vector', varX=v_X,varY=v_Y,varZ=v_Z)
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'CLOSE')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! raw
+  E_IO = VTK_INI_XML(output_format = 'raw', filename = 'XML_UNST-raw.vtu', mesh_topology = 'UnstructuredGrid')
+  E_IO = VTK_GEO_XML(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
+  E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'opeN')
+  E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'scalars', var = v)
+  E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'vector', varX=v_X,varY=v_Y,varZ=v_Z)
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'CLOSE')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! binary
+  E_IO = VTK_INI_XML(output_format = 'binary', filename = 'XML_UNST-binary.vtu', mesh_topology = 'UnstructuredGrid')
   E_IO = VTK_GEO_XML(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'opeN')
@@ -188,12 +210,12 @@ contains
   integer(I4P), parameter::                          nx1=0_I4P,nx2=9_I4P,ny1=0_I4P,ny2=5_I4P,nz1=0_I4P,nz2=5_I4P
   integer(I4P), parameter::                          nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
   real(R8P),    dimension(nx1:nx2,ny1:ny2,nz1:nz2):: x,y,z
-  integer(I4P), dimension(nx1:nx2,ny1:ny2,nz1:nz2):: v
+  integer(I2P), dimension(nx1:nx2,ny1:ny2,nz1:nz2):: v
   integer(I4P)::                                     i,j,k,E_IO
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  write(stdout,'(A)')' Testing StructuredGrid functions. Output file is XML_STRG.vts'
+  write(stdout,'(A)')' Testing StructuredGrid functions. Output file is XML_STRG#.vts'
   ! arrays initialization
   do k=nz1,nz2
    do j=ny1,ny2
@@ -201,11 +223,44 @@ contains
        x(i,j,k) = i*1._R8P
        y(i,j,k) = j*1._R8P
        z(i,j,k) = k*1._R8P
-       v(i,j,k) = i*j*k
+       v(i,j,k) = int(i*j*k,I2P)
      enddo
    enddo
   enddo
-  E_IO = VTK_INI_XML(output_format='binary', filename='XML_STRG.vts', &
+  ! ascii
+  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-ascii.vts', &
+                     mesh_topology='StructuredGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+  E_IO = VTK_FLD_XML(fld_action='open')
+  E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
+  E_IO = VTK_FLD_XML(fld=1_I8P,fname='CYCLE')
+  E_IO = VTK_FLD_XML(fld_action='close')
+  E_IO = VTK_GEO_XML(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn, &
+                     X=reshape(x(nx1:nx2,:,:),(/nn/)),                            &
+                     Y=reshape(y(nx1:nx2,:,:),(/nn/)),                            &
+                     Z=reshape(z(nx1:nx2,:,:),(/nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v(nx1:nx2,:,:),(/nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! raw
+  E_IO = VTK_INI_XML(output_format='raw', filename='XML_STRG-raw.vts', &
+                     mesh_topology='StructuredGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+  E_IO = VTK_FLD_XML(fld_action='open')
+  E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
+  E_IO = VTK_FLD_XML(fld=1_I8P,fname='CYCLE')
+  E_IO = VTK_FLD_XML(fld_action='close')
+  E_IO = VTK_GEO_XML(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn, &
+                     X=reshape(x(nx1:nx2,:,:),(/nn/)),                            &
+                     Y=reshape(y(nx1:nx2,:,:),(/nn/)),                            &
+                     Z=reshape(z(nx1:nx2,:,:),(/nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v(nx1:nx2,:,:),(/nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! binary
+  E_IO = VTK_INI_XML(output_format='binary', filename='XML_STRG-binary.vts', &
                      mesh_topology='StructuredGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
   E_IO = VTK_FLD_XML(fld_action='open')
   E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
@@ -222,7 +277,7 @@ contains
   E_IO = VTK_END_XML()
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endsubroutine
+  endsubroutine test_strg
 
   !> Subroutine for testing RectilinearGrid functions.
   !> @note This subroutine also shows the usage of FieldData functions that are useful for saving global auxiliary data, e.g. time,
@@ -238,7 +293,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  write(stdout,'(A)')' Testing RectilinearGrid functions. Output file is XML_RECT.vtr'
+  write(stdout,'(A)')' Testing RectilinearGrid functions. Output file is XML_RECT#.vtr'
   ! arrays initialization
   n = 0
   do k=nz1,nz2
@@ -258,7 +313,34 @@ contains
   do k=nz1,nz2
     z(k) = k*1._R4P
   enddo
-  E_IO = VTK_INI_XML(output_format='binary', filename='XML_RECT.vtr', &
+  ! ascii
+  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_RECT-ascii.vtr', &
+                     mesh_topology='RectilinearGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+  E_IO = VTK_FLD_XML(fld_action='open')
+  E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
+  E_IO = VTK_FLD_XML(fld=1_I8P,fname='CYCLE')
+  E_IO = VTK_FLD_XML(fld_action='close')
+  E_IO = VTK_GEO_XML(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, X=x, Y=y, Z=z)
+  E_IO = VTK_DAT_XML(var_location = 'cell', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'cell_value', var = v)
+  E_IO = VTK_DAT_XML(var_location = 'cell', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! raw
+  E_IO = VTK_INI_XML(output_format='raw', filename='XML_RECT-raw.vtr', &
+                     mesh_topology='RectilinearGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+  E_IO = VTK_FLD_XML(fld_action='open')
+  E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
+  E_IO = VTK_FLD_XML(fld=1_I8P,fname='CYCLE')
+  E_IO = VTK_FLD_XML(fld_action='close')
+  E_IO = VTK_GEO_XML(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, X=x, Y=y, Z=z)
+  E_IO = VTK_DAT_XML(var_location = 'cell', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'cell_value', var = v)
+  E_IO = VTK_DAT_XML(var_location = 'cell', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! binary
+  E_IO = VTK_INI_XML(output_format='binary', filename='XML_RECT-binary.vtr', &
                      mesh_topology='RectilinearGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
   E_IO = VTK_FLD_XML(fld_action='open')
   E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
@@ -272,7 +354,7 @@ contains
   E_IO = VTK_END_XML()
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endsubroutine
+  endsubroutine test_rect
 
   !> Subroutine for testing parallel (partitioned) PStructuredGrid functions.
   !> @note Note that the two parts are completely independet.
@@ -314,7 +396,7 @@ contains
   v_Y=(/0,1,2,0,1,2,0,1,2,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0/)
   v_Z=(/0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1/)
   ! first part
-  E_IO = VTK_INI_XML(output_format = 'Binary', filename = 'XML_UNST_part0.vtu', mesh_topology = 'UnstructuredGrid')
+  E_IO = VTK_INI_XML(output_format = 'raw', filename = 'XML_UNST_part0.vtu', mesh_topology = 'UnstructuredGrid')
   E_IO = VTK_GEO_XML(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'opeN')
@@ -325,7 +407,7 @@ contains
   E_IO = VTK_END_XML()
   ! second part
   x = x + 10._R4P
-  E_IO = VTK_INI_XML(output_format = 'Binary', filename = 'XML_UNST_part1.vtu', mesh_topology = 'UnstructuredGrid')
+  E_IO = VTK_INI_XML(output_format = 'raw', filename = 'XML_UNST_part1.vtu', mesh_topology = 'UnstructuredGrid')
   E_IO = VTK_GEO_XML(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'opeN')
@@ -388,7 +470,7 @@ contains
    enddo
   enddo
   do p=1,2 ! loop over pieces
-    E_IO = VTK_INI_XML(cf=mf(p),output_format='binary', filename='XML_STRG_part'//trim(str(.true.,p-1))//'.vts', &
+    E_IO = VTK_INI_XML(cf=mf(p),output_format='raw', filename='XML_STRG_part'//trim(str(.true.,p-1))//'.vts', &
                        mesh_topology='StructuredGrid', nx1=nx1_p(p), nx2=nx2_p(p), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
     E_IO = VTK_GEO_XML(cf=mf(p),nx1=nx1_p(p), nx2=nx2_p(p), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn_p(p), &
                        X=reshape(x(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)),                                     &
