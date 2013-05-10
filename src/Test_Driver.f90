@@ -207,11 +207,12 @@ contains
   subroutine test_strg()
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), parameter::                          nx1=0_I4P,nx2=9_I4P,ny1=0_I4P,ny2=5_I4P,nz1=0_I4P,nz2=5_I4P
-  integer(I4P), parameter::                          nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
-  real(R8P),    dimension(nx1:nx2,ny1:ny2,nz1:nz2):: x,y,z
-  integer(I2P), dimension(nx1:nx2,ny1:ny2,nz1:nz2):: v
-  integer(I4P)::                                     i,j,k,E_IO
+  integer(I4P), parameter::                              nx1=0_I4P,nx2=9_I4P,ny1=0_I4P,ny2=5_I4P,nz1=0_I4P,nz2=5_I4P
+  integer(I4P), parameter::                              nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
+  real(R8P),    dimension(nx1:nx2,ny1:ny2,nz1:nz2)::     x,y,z
+  integer(I2P), dimension(nx1:nx2,ny1:ny2,nz1:nz2)::     v
+  real(R8P),    dimension(nx1:nx2,ny1:ny2,nz1:nz2,1:4):: l
+  integer(I4P)::                                         i,j,k,E_IO
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -220,10 +221,11 @@ contains
   do k=nz1,nz2
    do j=ny1,ny2
      do i=nx1,nx2
-       x(i,j,k) = i*1._R8P
-       y(i,j,k) = j*1._R8P
-       z(i,j,k) = k*1._R8P
-       v(i,j,k) = int(i*j*k,I2P)
+       x(i,j,k)   = i*1._R8P
+       y(i,j,k)   = j*1._R8P
+       z(i,j,k)   = k*1._R8P
+       v(i,j,k)   = int(i*j*k,I2P)
+       l(i,j,k,:) = [(i*j*1._R8P,k=1,4)]
      enddo
    enddo
   enddo
@@ -239,7 +241,8 @@ contains
                      Y=reshape(y(nx1:nx2,:,:),(/nn/)),                            &
                      Z=reshape(z(nx1:nx2,:,:),(/nn/)))
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v(nx1:nx2,:,:),(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/nn,4/)))
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
   E_IO = VTK_GEO_XML()
   E_IO = VTK_END_XML()
@@ -255,7 +258,8 @@ contains
                      Y=reshape(y(nx1:nx2,:,:),(/nn/)),                            &
                      Z=reshape(z(nx1:nx2,:,:),(/nn/)))
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v(nx1:nx2,:,:),(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/nn,4/)))
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
   E_IO = VTK_GEO_XML()
   E_IO = VTK_END_XML()
@@ -271,7 +275,8 @@ contains
                      Y=reshape(y(nx1:nx2,:,:),(/nn/)),                            &
                      Z=reshape(z(nx1:nx2,:,:),(/nn/)))
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v(nx1:nx2,:,:),(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/nn,4/)))
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
   E_IO = VTK_GEO_XML()
   E_IO = VTK_END_XML()
