@@ -209,9 +209,10 @@ contains
   implicit none
   integer(I4P), parameter::                              nx1=0_I4P,nx2=9_I4P,ny1=0_I4P,ny2=5_I4P,nz1=0_I4P,nz2=5_I4P
   integer(I4P), parameter::                              nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
-  real(R8P),    dimension(nx1:nx2,ny1:ny2,nz1:nz2)::     x,y,z
-  integer(I2P), dimension(nx1:nx2,ny1:ny2,nz1:nz2)::     v
-  real(R8P),    dimension(nx1:nx2,ny1:ny2,nz1:nz2,1:4):: l
+  real(R8P),    dimension(    nx1:nx2,ny1:ny2,nz1:nz2):: x,y,z
+  real(R8P),    dimension(1:3,nx1:nx2,ny1:ny2,nz1:nz2):: xyz
+  integer(I2P), dimension(    nx1:nx2,ny1:ny2,nz1:nz2):: v
+  real(R8P),    dimension(1:4,nx1:nx2,ny1:ny2,nz1:nz2):: l
   integer(I4P)::                                         i,j,k,E_IO
   !---------------------------------------------------------------------------------------------------------------------------------
 
@@ -221,65 +222,88 @@ contains
   do k=nz1,nz2
    do j=ny1,ny2
      do i=nx1,nx2
-       x(i,j,k)   = i*1._R8P
-       y(i,j,k)   = j*1._R8P
-       z(i,j,k)   = k*1._R8P
-       v(i,j,k)   = int(i*j*k,I2P)
-       l(i,j,k,:) = [(i*j*1._R8P,k=1,4)]
+       x(  i,j,k) = i*1._R8P ; xyz(1,i,j,k) = x(i,j,k)
+       y(  i,j,k) = j*1._R8P ; xyz(2,i,j,k) = y(i,j,k)
+       z(  i,j,k) = k*1._R8P ; xyz(3,i,j,k) = z(i,j,k)
+       v(  i,j,k) = int(i*j*k,I2P)
+       l(:,i,j,k) = [(i*j*1._R8P,k=1,4)]
      enddo
    enddo
   enddo
   ! ascii
-  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-ascii.vts', &
-                     mesh_topology='StructuredGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-ascii.vts',&
+                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
   E_IO = VTK_FLD_XML(fld_action='open')
   E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
   E_IO = VTK_FLD_XML(fld=1_I8P,fname='CYCLE')
   E_IO = VTK_FLD_XML(fld_action='close')
-  E_IO = VTK_GEO_XML(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn, &
-                     X=reshape(x(nx1:nx2,:,:),(/nn/)),                            &
-                     Y=reshape(y(nx1:nx2,:,:),(/nn/)),                            &
-                     Z=reshape(z(nx1:nx2,:,:),(/nn/)))
+  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
+                     X=reshape(x,(/nn/)),Y=reshape(y,(/nn/)),Z=reshape(z,(/nn/)))
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
   E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/nn,4/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! ascii packed API
+  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-ascii-packed.vts',&
+                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+  E_IO = VTK_FLD_XML(fld_action='open')
+  E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
+  E_IO = VTK_FLD_XML(fld=1_I8P,fname='CYCLE')
+  E_IO = VTK_FLD_XML(fld_action='close')
+  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=reshape(xyz,(/3,nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
   E_IO = VTK_GEO_XML()
   E_IO = VTK_END_XML()
   ! raw
-  E_IO = VTK_INI_XML(output_format='raw', filename='XML_STRG-raw.vts', &
-                     mesh_topology='StructuredGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+  E_IO = VTK_INI_XML(output_format='raw', filename='XML_STRG-raw.vts',&
+                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
   E_IO = VTK_FLD_XML(fld_action='open')
   E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
   E_IO = VTK_FLD_XML(fld=1_I8P,fname='CYCLE')
   E_IO = VTK_FLD_XML(fld_action='close')
-  E_IO = VTK_GEO_XML(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn, &
-                     X=reshape(x(nx1:nx2,:,:),(/nn/)),                            &
-                     Y=reshape(y(nx1:nx2,:,:),(/nn/)),                            &
-                     Z=reshape(z(nx1:nx2,:,:),(/nn/)))
+  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
+                     X=reshape(x,(/nn/)),Y=reshape(y,(/nn/)),Z=reshape(z,(/nn/)))
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
   E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/nn,4/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
   E_IO = VTK_GEO_XML()
   E_IO = VTK_END_XML()
   ! binary
-  E_IO = VTK_INI_XML(output_format='binary', filename='XML_STRG-binary.vts', &
-                     mesh_topology='StructuredGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+  E_IO = VTK_INI_XML(output_format='binary', filename='XML_STRG-binary.vts',&
+                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
   E_IO = VTK_FLD_XML(fld_action='open')
   E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
   E_IO = VTK_FLD_XML(fld=1_I8P,fname='CYCLE')
   E_IO = VTK_FLD_XML(fld_action='close')
-  E_IO = VTK_GEO_XML(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn, &
-                     X=reshape(x(nx1:nx2,:,:),(/nn/)),                            &
-                     Y=reshape(y(nx1:nx2,:,:),(/nn/)),                            &
-                     Z=reshape(z(nx1:nx2,:,:),(/nn/)))
+  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
+                     X=reshape(x,(/nn/)),Y=reshape(y,(/nn/)),Z=reshape(z,(/nn/)))
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
   E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/nn,4/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
   E_IO = VTK_GEO_XML()
   E_IO = VTK_END_XML()
+  ! binary appended
+  !E_IO = VTK_INI_XML(output_format='binary-appended', filename='XML_STRG-binary-appended.vts',&
+  !                   mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+  !E_IO = VTK_FLD_XML(fld_action='open')
+  !E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
+  !E_IO = VTK_FLD_XML(fld=1_I8P,fname='CYCLE')
+  !E_IO = VTK_FLD_XML(fld_action='close')
+  !E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
+  !                   X=reshape(x,(/nn/)),Y=reshape(y,(/nn/)),Z=reshape(z,(/nn/)))
+  !E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+  !E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
+  !E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
+  !E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  !E_IO = VTK_GEO_XML()
+  !E_IO = VTK_END_XML()
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_strg
