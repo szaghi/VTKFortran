@@ -136,11 +136,11 @@ contains
   implicit none
   integer(I4P), parameter::       Nn = 27_I4P
   integer(I4P), parameter::       Ne = 11_I4P
-  real(R4P),    dimension(1:Nn):: x = (/0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2/)
-  real(R4P),    dimension(1:Nn):: y = (/0,0,0,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1/)
-  real(R4P),    dimension(1:Nn):: z = (/0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6/)
-  integer(I1P), dimension(1:Ne):: cell_type = (/12,12,10,10,7,6,9,5,5,3,1/)
-  integer(I4P), dimension(1:Ne):: offset = (/8,16,20,24,30,36,40,43,46,48,49/)
+  real(R4P),    dimension(1:Nn):: x = [0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2]
+  real(R4P),    dimension(1:Nn):: y = [0,0,0,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+  real(R4P),    dimension(1:Nn):: z = [0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6]
+  integer(I1P), dimension(1:Ne):: cell_type = [12_I1P,12_I1P,10_I1P,10_I1P,7_I1P,6_I1P,9_I1P,5_I1P,5_I1P,3_I1P,1_I1P]
+  integer(I4P), dimension(1:Ne):: offset = [8_I4P,16_I4P,20_I4P,24_I4P,30_I4P,36_I4P,40_I4P,43_I4P,46_I4P,48_I4P,49_I4P]
   integer(I4P), dimension(1:49):: connect
   real(R8P),    dimension(1:Nn):: v
   integer(I4P), dimension(1:Nn):: v_X
@@ -392,11 +392,11 @@ contains
   implicit none
   integer(I4P), parameter::       Nn = 27_I4P
   integer(I4P), parameter::       Ne = 11_I4P
-  real(R4P),    dimension(1:Nn):: x = (/0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2/)
-  real(R4P),    dimension(1:Nn):: y = (/0,0,0,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1/)
-  real(R4P),    dimension(1:Nn):: z = (/0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6/)
-  integer(I1P), dimension(1:Ne):: cell_type = (/12,12,10,10,7,6,9,5,5,3,1/)
-  integer(I4P), dimension(1:Ne):: offset = (/8,16,20,24,30,36,40,43,46,48,49/)
+  real(R4P),    dimension(1:Nn):: x = [0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2]
+  real(R4P),    dimension(1:Nn):: y = [0,0,0,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+  real(R4P),    dimension(1:Nn):: z = [0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6]
+  integer(I1P), dimension(1:Ne):: cell_type = [12_I1P,12_I1P,10_I1P,10_I1P,7_I1P,6_I1P,9_I1P,5_I1P,5_I1P,3_I1P,1_I1P]
+  integer(I4P), dimension(1:Ne):: offset = [8_I4P,16_I4P,20_I4P,24_I4P,30_I4P,36_I4P,40_I4P,43_I4P,46_I4P,48_I4P,49_I4P]
   integer(I4P), dimension(1:49):: connect
   real(R8P),    dimension(1:Nn):: v
   integer(I4P), dimension(1:Nn):: v_X
