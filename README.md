@@ -9,27 +9,27 @@ The library is still in developing and testing, this is first usable release, bu
 
 The supported VTK features are:
 #### Exporters
-* Legacy standard:
+### Legacy standard
   + Structured Points;
   + Structured Grid;
   + Unstructured Grid;
   + Polydata ( __missing__ );
   + Rectilinear Grid;
   + Field ( __missing__ );
-* XML standard:
-  + serial dataset:
+### XML standard
++ serial dataset:
     + Image Data ( __missing__ );
     + Polydata ( __missing__ );
     + Rectilinear Grid;
     + Structured Grid;
     + Unstructured Grid;
-  + parallel (partitioned) dataset:
++ parallel (partitioned) dataset:
     + Image Data ( __missing__ );
     + Polydata ( __missing__ );
     + Rectilinear Grid;
     + Structured Grid;
     + Unstructured Grid;
-  + composite dataset:
++ composite dataset:
     + vtkMultiBlockDataSet.
 
 #### Importers
