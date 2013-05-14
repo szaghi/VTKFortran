@@ -9,9 +9,9 @@ The library is still in developing and testing, this is first usable release, bu
 
 The supported VTK features are:
 
-#### Exporters
+### Exporters
 
-### Legacy standard
+#### Legacy standard
   + Structured Points;
   + Structured Grid;
   + Unstructured Grid;
@@ -19,7 +19,7 @@ The supported VTK features are:
   + Rectilinear Grid;
   + Field ( __missing__ );
 
-### XML standard
+#### XML standard
 + serial dataset:
     + Image Data ( __missing__ );
     + Polydata ( __missing__ );
@@ -35,7 +35,7 @@ The supported VTK features are:
 + composite dataset:
     + vtkMultiBlockDataSet.
 
-#### Importers
+### Importers
 The importers are __missing__.
 
 Lib\_VTK\_IO can handle __multiple concurrent files__ and it is __thread/processor-safe__ (meaning that can be safely used into parallel frameworks as OpenMP or MPI).
