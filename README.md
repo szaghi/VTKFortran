@@ -38,6 +38,7 @@ The supported VTK features are:
 ### Importers
 The importers are __missing__.
 
+## Other Features
 Lib\_VTK\_IO can handle __multiple concurrent files__ and it is __thread/processor-safe__ (meaning that can be safely used into parallel frameworks as OpenMP or MPI).
 
 Lib\_VTK\_IO supports three output formats: __ascii__, __appended-raw-binary__ and __base64__ encoded binary data.
