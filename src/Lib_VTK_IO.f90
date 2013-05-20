@@ -113,6 +113,16 @@
 !> @version   1.1
 !> @date      2013-04-26
 !> @par News
+!>      - Added packed API and 3D arrays for VTK_GEO and VTK_GEO_XML function: this avoids the necessity of explicit reshape of
+!>        multi-dimensional arrays containing X, Y and Z coordinates in GEO callings; the following inputs are now available:
+!>           - StructuredGrid (NN is the number of grid points, n#1-n#2, #x,y,z are the domain extents):
+!>                - 1D arrays of size NN: X[1:NN],Y[1:NN],Z[1:NN];
+!>                - 3D arrays of size NN: X[nx1:nx2,ny1:ny2,nz1:nz2],Y[nx1:nx2,ny1:ny2,nz1:nz2],Z[nx1:nx2,ny1:ny2,nz1:nz2];
+!>                - 1D array of size 3*NN (packed API): XYZ[1:3,1:NN];
+!>                - 3D array of size 3*NN (packed API): XYZ[1:3,nx1:nx2,ny1:ny2,nz1:nz2].
+!>           - UnStructuredGrid (NN is the number of grid points):
+!>                - 1D arrays of size NN: X[1:NN],Y[1:NN],Z[1:NN];
+!>                - 1D array of size 3*NN (packed API): XYZ[1:3,1:NN].
 !>      - Added base64 encoding format: the output format specifier of VTK_INI_XML has been changed:
 !>           - output_format = 'ascii' means \b ascii data, the same as the previous version;
 !>           - output_format = 'binary' means \b base64 encoded data, different from the previous version where it meant appended
@@ -190,7 +200,7 @@ public:: VTK_END
 
 !-----------------------------------------------------------------------------------------------------------------------------------
 !> @brief Function for saving mesh with different topologies in VTK-legacy standard.
-!> VTK_GEO is an interface to 8 different functions, there are 2 functions for each of 4 different topologies actually supported:
+!> VTK_GEO is an interface to 16 different functions, there are 2 functions for each of 4 different topologies actually supported:
 !> one function for mesh coordinates with R8P precision and one for mesh coordinates with R4P precision.
 !> @remark This function must be called after VTK_INI. It saves the mesh geometry. The inputs that must be passed change depending
 !> on the topologies chosen. Not all VTK topologies have been implemented (\em polydata topologies are absent).
@@ -225,14 +235,16 @@ public:: VTK_END
 !> ... @endcode
 !> @ingroup Lib_VTK_IOInterface
 interface VTK_GEO
-  module procedure VTK_GEO_UNST_R8, & ! real(R8P) UNSTRUCTURED_GRID
-                   VTK_GEO_UNST_R4, & ! real(R4P) UNSTRUCTURED_GRID
-                   VTK_GEO_STRP_R8, & ! real(R8P) STRUCTURED_POINTS
-                   VTK_GEO_STRP_R4, & ! real(R4P) STRUCTURED_POINTS
-                   VTK_GEO_STRG_R8, & ! real(R8P) STRUCTURED_GRID
-                   VTK_GEO_STRG_R4, & ! real(R4P) STRUCTURED_GRID
-                   VTK_GEO_RECT_R8, & ! real(R8P) RECTILINEAR_GRID
-                   VTK_GEO_RECT_R4    ! real(R4P) RECTILINEAR_GRID
+  module procedure VTK_GEO_UNST_R8,VTK_GEO_UNST_P_R8,         & ! real(R8P) UNSTRUCTURED_GRID, standard and packed API
+                   VTK_GEO_UNST_R4,VTK_GEO_UNST_P_R4,         & ! real(R4P) UNSTRUCTURED_GRID, standard and packed API
+                   VTK_GEO_STRP_R8,                           & ! real(R8P) STRUCTURED_POINTS
+                   VTK_GEO_STRP_R4,                           & ! real(R4P) STRUCTURED_POINTS
+                   VTK_GEO_STRG_1DA_R8, VTK_GEO_STRG_3DA_R8,  & ! real(R8P) STRUCTURED_GRID 1D/3D arrays
+                   VTK_GEO_STRG_1DAP_R8,VTK_GEO_STRG_3DAP_R8, & ! real(R8P) STRUCTURED_GRID 1D/3D arrays, packed API
+                   VTK_GEO_STRG_1DA_R4, VTK_GEO_STRG_3DA_R4,  & ! real(R4P) STRUCTURED_GRID 1D/3D arrays
+                   VTK_GEO_STRG_1DAP_R4,VTK_GEO_STRG_3DAP_R4, & ! real(R4P) STRUCTURED_GRID 1D/3D arrays, packed API
+                   VTK_GEO_RECT_R8,                           & ! real(R8P) RECTILINEAR_GRID
+                   VTK_GEO_RECT_R4                              ! real(R4P) RECTILINEAR_GRID
 endinterface
 !> @brief Function for saving data variable(s) in VTK-legacy standard.
 !> VTK_VAR is an interface to 8 different functions, there are 3 functions for scalar variables, 3 functions for vectorial
@@ -294,8 +306,18 @@ interface VTK_FLD_XML
                    VTK_FLD_XML_I1    ! integer(I1P) scalar
 endinterface
 !> @brief Function for saving mesh with different topologies in VTK-XML standard.
-!> VTK_GEO_XML is an interface to 7 different functions, there are 2 functions for each of 3 topologies supported and a function
+!> VTK_GEO_XML is an interface to 15 different functions; there are 2 functions for each of 3 topologies supported and a function
 !> for closing XML pieces: one function for mesh coordinates with R8P precision and one for mesh coordinates with R4P precision.
+!> @remark StructuredGrid API
+!> For StructuredGrid there are 4 functions for each real kinds:
+!> - inputs are 1D arrays of size NN: X[1:NN],Y[1:NN],Z[1:NN];
+!> - inputs are 3D arrays of size NN: X[nx1:nx2,ny1:ny2,nz1:nz2],Y[nx1:nx2,ny1:ny2,nz1:nz2],Z[nx1:nx2,ny1:ny2,nz1:nz2];
+!> - input is 1D array of size 3*NN (packed API): XYZ[1:3,1:NN];
+!> - input is 3D array of size 3*NN (packed API): XYZ[1:3,nx1:nx2,ny1:ny2,nz1:nz2].
+!> @remark UnStructuredGrid API
+!> For UnStructuredGrid there are 2 functions for each real kinds:
+!> - inputs are 1D arrays of size NN: X[1:NN],Y[1:NN],Z[1:NN];
+!> - input is 1D array of size 3*NN (packed API): XYZ[1:3,1:NN].
 !> @remark VTK_GEO_XML must be called after VTK_INI_XML. It saves the mesh geometry. The inputs that must be passed
 !> change depending on the topologies chosen. Not all VTK topologies have been implemented (\em polydata topologies are absent).
 !> @note The XML standard is more powerful than legacy. XML file can contain more than 1 mesh with its
@@ -330,13 +352,15 @@ endinterface
 !> ... @endcode
 !> @ingroup Lib_VTK_IOInterface
 interface VTK_GEO_XML
-  module procedure VTK_GEO_XML_STRG_R4,VTK_GEO_XML_STRG_PACK_R4, & ! real(R4P) StructuredGrid, standard and packed API
-                   VTK_GEO_XML_STRG_R8,VTK_GEO_XML_STRG_PACK_R8, & ! real(R8P) StructuredGrid, standard and packed API
-                   VTK_GEO_XML_RECT_R8,                          & ! real(R8P) RectilinearGrid
-                   VTK_GEO_XML_RECT_R4,                          & ! real(R4P) RectilinearGrid
-                   VTK_GEO_XML_UNST_R8,VTK_GEO_XML_UNST_PACK_R4, & ! real(R8P) UnstructuredGrid, standard and packed API
-                   VTK_GEO_XML_UNST_R4,VTK_GEO_XML_UNST_PACK_R8, & ! real(R4P) UnstructuredGrid, standard and packed API
-                   VTK_GEO_XML_CLOSEP                              ! closing tag "Piece" function
+  module procedure VTK_GEO_XML_STRG_1DA_R8, VTK_GEO_XML_STRG_3DA_R8,  & ! real(R8P) StructuredGrid, 1D/3D Arrays
+                   VTK_GEO_XML_STRG_1DAP_R8,VTK_GEO_XML_STRG_3DAP_R8, & ! real(R8P) StructuredGrid, 1D/3D Arrays packed API
+                   VTK_GEO_XML_STRG_1DA_R4, VTK_GEO_XML_STRG_3DA_R4,  & ! real(R4P) StructuredGrid, 1D/3D Arrays
+                   VTK_GEO_XML_STRG_1DAP_R4,VTK_GEO_XML_STRG_3DAP_R4, & ! real(R4P) StructuredGrid, 1D/3D Arrays packed API
+                   VTK_GEO_XML_RECT_R8,                               & ! real(R8P) RectilinearGrid
+                   VTK_GEO_XML_RECT_R4,                               & ! real(R4P) RectilinearGrid
+                   VTK_GEO_XML_UNST_R8,VTK_GEO_XML_UNST_PACK_R4,      & ! real(R8P) UnstructuredGrid, standard and packed API
+                   VTK_GEO_XML_UNST_R4,VTK_GEO_XML_UNST_PACK_R8,      & ! real(R4P) UnstructuredGrid, standard and packed API
+                   VTK_GEO_XML_CLOSEP                                 ! closing tag "Piece" function
 endinterface
 !> @brief Function for saving data variable(s) in VTK-XML standard.
 !> VTK_VAR_XML is an interface to 18 different functions, there are 6 functions for scalar variables, 6 functions for vectorial
@@ -1021,9 +1045,9 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_FLD_XML_I1
 
-  !> Function for saving mesh with \b StructuredGrid topology (R8P).
+  !> Function for saving mesh with \b StructuredGrid topology (R8P, 1D Arrays).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_GEO_XML_STRG_R8(nx1,nx2,ny1,ny2,nz1,nz2,NN,X,Y,Z,cf) result(E_IO)
+  function VTK_GEO_XML_STRG_1DA_R8(nx1,nx2,ny1,ny2,nz1,nz2,NN,X,Y,Z,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), intent(IN)::           nx1      !< Initial node of x axis.
@@ -1033,12 +1057,11 @@ contains
   integer(I4P), intent(IN)::           nz1      !< Initial node of z axis.
   integer(I4P), intent(IN)::           nz2      !< Final node of z axis.
   integer(I4P), intent(IN)::           NN       !< Number of all nodes.
-  real(R8P),    intent(IN)::           X(1:NN)  !< X coordinates.
-  real(R8P),    intent(IN)::           Y(1:NN)  !< Y coordinates.
-  real(R8P),    intent(IN)::           Z(1:NN)  !< Z coordinates.
+  real(R8P),    intent(IN)::           X(1:)    !< X coordinates [1:NN].
+  real(R8P),    intent(IN)::           Y(1:)    !< Y coordinates [1:NN].
+  real(R8P),    intent(IN)::           Z(1:)    !< Z coordinates [1:NN].
   integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  real(R8P), allocatable::             XYZa(:)  !< X, Y, Z coordinates.
   integer(I1P), allocatable::          XYZp(:)  !< Packed coordinates data.
   character(1), allocatable::          XYZ64(:) !< X, Y, Z coordinates encoded in base64.
   character(len=maxlen)::              s_buffer !< Buffer string.
@@ -1088,11 +1111,7 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" NumberOfComponents="3" Name="Points" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
-    allocate(XYZa(1:3*NN))
-    do n1 = 1,NN
-      XYZa(1+(n1-1)*3:1+(n1-1)*3+2)=[X(n1),Y(n1),Z(n1)]
-    enddo
-    call pack_data(a1=[int(3*NN*BYR8P,I4P)],a2=XYZa,packed=XYZp) ; deallocate(XYZa)
+    call pack_data(a1=[int(3*NN*BYR8P,I4P)],a2=[(X(n1),Y(n1),Z(n1),n1=1,NN)],packed=XYZp)
     call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
@@ -1100,29 +1119,110 @@ contains
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_GEO_XML_STRG_R8
+  endfunction VTK_GEO_XML_STRG_1DA_R8
 
-  !> Function for saving mesh with \b StructuredGrid topology (R8P, packed API).
+  !> Function for saving mesh with \b StructuredGrid topology (R8P, 3D Arrays).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_GEO_XML_STRG_PACK_R8(nx1,nx2,ny1,ny2,nz1,nz2,NN,XYZ,cf) result(E_IO)
+  function VTK_GEO_XML_STRG_3DA_R8(nx1,nx2,ny1,ny2,nz1,nz2,NN,X,Y,Z,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN)::           nx1           !< Initial node of x axis.
-  integer(I4P), intent(IN)::           nx2           !< Final node of x axis.
-  integer(I4P), intent(IN)::           ny1           !< Initial node of y axis.
-  integer(I4P), intent(IN)::           ny2           !< Final node of y axis.
-  integer(I4P), intent(IN)::           nz1           !< Initial node of z axis.
-  integer(I4P), intent(IN)::           nz2           !< Final node of z axis.
-  integer(I4P), intent(IN)::           NN            !< Number of all nodes.
-  real(R8P),    intent(IN)::           XYZ(1:3,1:NN) !< X, Y, Z coordinates (packed API).
-  integer(I4P), intent(IN), optional:: cf            !< Current file index (for concurrent files IO).
-  integer(I4P)::                       E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  real(R8P), allocatable::             XYZa(:)       !< X, Y, Z coordinates.
-  integer(I1P), allocatable::          XYZp(:)       !< Packed coordinates data.
-  character(1), allocatable::          XYZ64(:)      !< X, Y, Z coordinates encoded in base64.
-  character(len=maxlen)::              s_buffer      !< Buffer string.
-  integer(I4P)::                       rf            !< Real file index.
-  integer(I4P)::                       n1            !< Counter.
+  integer(I4P), intent(IN)::           nx1               !< Initial node of x axis.
+  integer(I4P), intent(IN)::           nx2               !< Final node of x axis.
+  integer(I4P), intent(IN)::           ny1               !< Initial node of y axis.
+  integer(I4P), intent(IN)::           ny2               !< Final node of y axis.
+  integer(I4P), intent(IN)::           nz1               !< Initial node of z axis.
+  integer(I4P), intent(IN)::           nz2               !< Final node of z axis.
+  integer(I4P), intent(IN)::           NN                !< Number of all nodes.
+  real(R8P),    intent(IN)::           X(nx1:,ny1:,nz1:) !< X coordinates [nx1:nx2,ny1:ny2,nz1:nz2].
+  real(R8P),    intent(IN)::           Y(nx1:,ny1:,nz1:) !< Y coordinates [nx1:nx2,ny1:ny2,nz1:nz2].
+  real(R8P),    intent(IN)::           Z(nx1:,ny1:,nz1:) !< Z coordinates [nx1:nx2,ny1:ny2,nz1:nz2].
+  integer(I4P), intent(IN), optional:: cf                !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO              !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I1P), allocatable::          XYZp(:)           !< Packed coordinates data.
+  character(1), allocatable::          XYZ64(:)          !< X, Y, Z coordinates encoded in base64.
+  character(len=maxlen)::              s_buffer          !< Buffer string.
+  integer(I4P)::                       rf                !< Real file index.
+  integer(I4P)::                       nx,ny,nz          !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<Piece Extent="'//trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
+                                                              trim(str(n=ny1))//' '//trim(str(n=ny2))//' '// &
+                                                              trim(str(n=nz1))//' '//trim(str(n=nz2))//'">'
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer) ; vtk(rf)%indent = vtk(rf)%indent + 2
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>' ; vtk(rf)%indent = vtk(rf)%indent + 2
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" NumberOfComponents="3" Name="Points" format="ascii">'
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
+    do nz=nz1,nz2
+      do ny=ny1,ny2
+        do nx=nx1,nx2
+          write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//&
+                                                     str(n=X(nx,ny,nz))//' '//str(n=Y(nx,ny,nz))//' '//str(n=Z(nx,ny,nz))
+        enddo
+      enddo
+    enddo
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>' ; vtk(rf)%indent = vtk(rf)%indent - 2
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'
+  case(raw,bin_app)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<Piece Extent="'//trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
+                                                              trim(str(n=ny1))//' '//trim(str(n=ny2))//' '// &
+                                                              trim(str(n=nz1))//' '//trim(str(n=nz2))//'">'
+    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
+    s_buffer = repeat(' ',vtk(rf)%indent)//                                                                  &
+               '<DataArray type="Float64" NumberOfComponents="3" Name="Points" format="appended" offset="'// &
+               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call vtk(rf)%byte_update(N_Byte = 3*NN*BYR8P)
+    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',3*NN
+    write(unit=vtk(rf)%ua,iostat=E_IO)(((X(nx,ny,nz),Y(nx,ny,nz),Z(nx,ny,nz),nx=nx1,nx2),ny=ny1,ny2),nz=nz1,nz2)
+    vtk(rf)%indent = vtk(rf)%indent - 2 ; write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'//end_rec
+  case(binary)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<Piece Extent="'//trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
+                                                              trim(str(n=ny1))//' '//trim(str(n=ny2))//' '// &
+                                                              trim(str(n=nz1))//' '//trim(str(n=nz2))//'">'
+    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" NumberOfComponents="3" Name="Points" format="binary">'
+    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call pack_data(a1=[int(3*NN*BYR8P,I4P)],a2=[(((X(nx,ny,nz),Y(nx,ny,nz),Z(nx,ny,nz),nx=nx1,nx2),ny=ny1,ny2),nz=nz1,nz2)],&
+                   packed=XYZp)
+    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    vtk(rf)%indent = vtk(rf)%indent - 2 ; write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_GEO_XML_STRG_3DA_R8
+
+  !> Function for saving mesh with \b StructuredGrid topology (R8P, 1D Arrays, packed API).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_GEO_XML_STRG_1DAP_R8(nx1,nx2,ny1,ny2,nz1,nz2,NN,XYZ,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           nx1        !< Initial node of x axis.
+  integer(I4P), intent(IN)::           nx2        !< Final node of x axis.
+  integer(I4P), intent(IN)::           ny1        !< Initial node of y axis.
+  integer(I4P), intent(IN)::           ny2        !< Final node of y axis.
+  integer(I4P), intent(IN)::           nz1        !< Initial node of z axis.
+  integer(I4P), intent(IN)::           nz2        !< Final node of z axis.
+  integer(I4P), intent(IN)::           NN         !< Number of all nodes.
+  real(R8P),    intent(IN)::           XYZ(1:,1:) !< X, Y, Z coordinates (packed API) [1:3,1:NN].
+  integer(I4P), intent(IN), optional:: cf         !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I1P), allocatable::          XYZp(:)    !< Packed coordinates data.
+  character(1), allocatable::          XYZ64(:)   !< X, Y, Z coordinates encoded in base64.
+  character(len=maxlen)::              s_buffer   !< Buffer string.
+  integer(I4P)::                       rf         !< Real file index.
+  integer(I4P)::                       n1         !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1168,11 +1268,7 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" NumberOfComponents="3" Name="Points" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
-    allocate(XYZa(1:3*NN))
-    do n1 = 1,NN
-      XYZa(1+(n1-1)*3:1+(n1-1)*3+2)=XYZ(1:3,n1)
-    enddo
-    call pack_data(a1=[int(3*NN*BYR8P,I4P)],a2=XYZa,packed=XYZp) ; deallocate(XYZa)
+    call pack_data(a1=[int(3*NN*BYR8P,I4P)],a2=reshape(XYZ,[3*NN]),packed=XYZp)
     call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
@@ -1180,11 +1276,90 @@ contains
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_GEO_XML_STRG_PACK_R8
+  endfunction VTK_GEO_XML_STRG_1DAP_R8
 
-  !> Function for saving mesh with \b StructuredGrid topology (R4P).
+  !> Function for saving mesh with \b StructuredGrid topology (R8P, 3D Arrays, packed API).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_GEO_XML_STRG_R4(nx1,nx2,ny1,ny2,nz1,nz2,NN,X,Y,Z,cf) result(E_IO)
+  function VTK_GEO_XML_STRG_3DAP_R8(nx1,nx2,ny1,ny2,nz1,nz2,NN,XYZ,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           nx1                    !< Initial node of x axis.
+  integer(I4P), intent(IN)::           nx2                    !< Final node of x axis.
+  integer(I4P), intent(IN)::           ny1                    !< Initial node of y axis.
+  integer(I4P), intent(IN)::           ny2                    !< Final node of y axis.
+  integer(I4P), intent(IN)::           nz1                    !< Initial node of z axis.
+  integer(I4P), intent(IN)::           nz2                    !< Final node of z axis.
+  integer(I4P), intent(IN)::           NN                     !< Number of all nodes.
+  real(R8P),    intent(IN)::           XYZ(1:,nx1:,ny1:,nz1:) !< X, Y, Z coordinates (packed API).
+  integer(I4P), intent(IN), optional:: cf                     !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO              !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I1P), allocatable::          XYZp(:)                !< Packed coordinates data.
+  character(1), allocatable::          XYZ64(:)               !< X, Y, Z coordinates encoded in base64.
+  character(len=maxlen)::              s_buffer               !< Buffer string.
+  integer(I4P)::                       rf                     !< Real file index.
+  integer(I4P)::                       nx,ny,nz               !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<Piece Extent="'//trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
+                                                              trim(str(n=ny1))//' '//trim(str(n=ny2))//' '// &
+                                                              trim(str(n=nz1))//' '//trim(str(n=nz2))//'">'
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer) ; vtk(rf)%indent = vtk(rf)%indent + 2
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>' ; vtk(rf)%indent = vtk(rf)%indent + 2
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" NumberOfComponents="3" Name="Points" format="ascii">'
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
+    do nz=nz1,nz2
+      do ny=ny1,ny2
+        do nx=nx1,nx2
+          write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//&
+                                                    str(n=XYZ(1,nx,ny,nz))//' '//str(n=XYZ(2,nx,ny,nz))//' '//str(n=XYZ(3,nx,ny,nz))
+        enddo
+      enddo
+    enddo
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>' ; vtk(rf)%indent = vtk(rf)%indent - 2
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'
+  case(raw,bin_app)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<Piece Extent="'//trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
+                                                              trim(str(n=ny1))//' '//trim(str(n=ny2))//' '// &
+                                                              trim(str(n=nz1))//' '//trim(str(n=nz2))//'">'
+    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
+    s_buffer = repeat(' ',vtk(rf)%indent)//                                                                  &
+               '<DataArray type="Float64" NumberOfComponents="3" Name="Points" format="appended" offset="'// &
+               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call vtk(rf)%byte_update(N_Byte = 3*NN*BYR8P)
+    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',3*NN
+    write(unit=vtk(rf)%ua,iostat=E_IO)XYZ
+    vtk(rf)%indent = vtk(rf)%indent - 2 ; write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'//end_rec
+  case(binary)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<Piece Extent="'//trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
+                                                              trim(str(n=ny1))//' '//trim(str(n=ny2))//' '// &
+                                                              trim(str(n=nz1))//' '//trim(str(n=nz2))//'">'
+    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" NumberOfComponents="3" Name="Points" format="binary">'
+    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call pack_data(a1=[int(3*NN*BYR8P,I4P)],a2=reshape(XYZ,[3*NN]),packed=XYZp)
+    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    vtk(rf)%indent = vtk(rf)%indent - 2 ; write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_GEO_XML_STRG_3DAP_R8
+
+  !> Function for saving mesh with \b StructuredGrid topology (R4P, 1D Arrays).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_GEO_XML_STRG_1DA_R4(nx1,nx2,ny1,ny2,nz1,nz2,NN,X,Y,Z,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), intent(IN)::           nx1      !< Initial node of x axis.
@@ -1194,13 +1369,12 @@ contains
   integer(I4P), intent(IN)::           nz1      !< Initial node of z axis.
   integer(I4P), intent(IN)::           nz2      !< Final node of z axis.
   integer(I4P), intent(IN)::           NN       !< Number of all nodes.
-  real(R4P),    intent(IN)::           X(1:NN)  !< X coordinates.
-  real(R4P),    intent(IN)::           Y(1:NN)  !< Y coordinates.
-  real(R4P),    intent(IN)::           Z(1:NN)  !< Z coordinates.
+  real(R4P),    intent(IN)::           X(1:)    !< X coordinates [1:NN].
+  real(R4P),    intent(IN)::           Y(1:)    !< Y coordinates [1:NN].
+  real(R4P),    intent(IN)::           Z(1:)    !< Z coordinates [1:NN].
   integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer !< Buffer string.
-  real(R4P), allocatable::             XYZa(:)  !< X, Y, Z coordinates.
   integer(I1P), allocatable::          XYZp(:)  !< Packed data.
   character(1), allocatable::          XYZ64(:) !< X, Y, Z coordinates encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
@@ -1249,11 +1423,7 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" NumberOfComponents="3" Name="Points" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
-    allocate(XYZa(1:3*NN))
-    do n1 = 1,NN
-      XYZa(1+(n1-1)*3:1+(n1-1)*3+2)=[X(n1),Y(n1),Z(n1)]
-    enddo
-    call pack_data(a1=[int(3*NN*BYR4P,I4P)],a2=XYZa,packed=XYZp) ; deallocate(XYZa)
+    call pack_data(a1=[int(3*NN*BYR4P,I4P)],a2=[(X(n1),Y(n1),Z(n1),n1=1,NN)],packed=XYZp)
     call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
@@ -1261,29 +1431,110 @@ contains
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_GEO_XML_STRG_R4
+  endfunction VTK_GEO_XML_STRG_1DA_R4
 
-  !> Function for saving mesh with \b StructuredGrid topology (R4P, packed API).
+  !> Function for saving mesh with \b StructuredGrid topology (R4P, 3D Arrays).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_GEO_XML_STRG_PACK_R4(nx1,nx2,ny1,ny2,nz1,nz2,NN,XYZ,cf) result(E_IO)
+  function VTK_GEO_XML_STRG_3DA_R4(nx1,nx2,ny1,ny2,nz1,nz2,NN,X,Y,Z,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN)::           nx1           !< Initial node of x axis.
-  integer(I4P), intent(IN)::           nx2           !< Final node of x axis.
-  integer(I4P), intent(IN)::           ny1           !< Initial node of y axis.
-  integer(I4P), intent(IN)::           ny2           !< Final node of y axis.
-  integer(I4P), intent(IN)::           nz1           !< Initial node of z axis.
-  integer(I4P), intent(IN)::           nz2           !< Final node of z axis.
-  integer(I4P), intent(IN)::           NN            !< Number of all nodes.
-  real(R4P),    intent(IN)::           XYZ(1:3,1:NN) !< X, Y, Z coordinates (packed API).
-  integer(I4P), intent(IN), optional:: cf            !< Current file index (for concurrent files IO).
-  integer(I4P)::                       E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::              s_buffer      !< Buffer string.
-  real(R4P), allocatable::             XYZa(:)       !< X, Y, Z coordinates.
-  integer(I1P), allocatable::          XYZp(:)       !< Packed data.
-  character(1), allocatable::          XYZ64(:)      !< X, Y, Z coordinates encoded in base64.
-  integer(I4P)::                       rf            !< Real file index.
-  integer(I4P)::                       n1            !< Counter.
+  integer(I4P), intent(IN)::           nx1               !< Initial node of x axis.
+  integer(I4P), intent(IN)::           nx2               !< Final node of x axis.
+  integer(I4P), intent(IN)::           ny1               !< Initial node of y axis.
+  integer(I4P), intent(IN)::           ny2               !< Final node of y axis.
+  integer(I4P), intent(IN)::           nz1               !< Initial node of z axis.
+  integer(I4P), intent(IN)::           nz2               !< Final node of z axis.
+  integer(I4P), intent(IN)::           NN                !< Number of all nodes.
+  real(R4P),    intent(IN)::           X(nx1:,ny1:,nz1:) !< X coordinates [nx1:nx2,ny1:ny2,nz1:nz2].
+  real(R4P),    intent(IN)::           Y(nx1:,ny1:,nz1:) !< Y coordinates [nx1:nx2,ny1:ny2,nz1:nz2].
+  real(R4P),    intent(IN)::           Z(nx1:,ny1:,nz1:) !< Z coordinates [nx1:nx2,ny1:ny2,nz1:nz2].
+  integer(I4P), intent(IN), optional:: cf                !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO              !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer          !< Buffer string.
+  integer(I1P), allocatable::          XYZp(:)           !< Packed data.
+  character(1), allocatable::          XYZ64(:)          !< X, Y, Z coordinates encoded in base64.
+  integer(I4P)::                       rf                !< Real file index.
+  integer(I4P)::                       nx,ny,nz          !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<Piece Extent="'//trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
+                                                              trim(str(n=ny1))//' '//trim(str(n=ny2))//' '// &
+                                                              trim(str(n=nz1))//' '//trim(str(n=nz2))//'">'
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer) ; vtk(rf)%indent = vtk(rf)%indent + 2
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>' ; vtk(rf)%indent = vtk(rf)%indent + 2
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" NumberOfComponents="3" Name="Points" format="ascii">'
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
+    do nz=nz1,nz2
+      do ny=ny1,ny2
+        do nx=nx1,nx2
+          write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//&
+                                                     str(n=X(nx,ny,nz))//' '//str(n=Y(nx,ny,nz))//' '//str(n=Z(nx,ny,nz))
+        enddo
+      enddo
+    enddo
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>' ; vtk(rf)%indent = vtk(rf)%indent - 2
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'
+  case(raw,bin_app)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<Piece Extent="'//trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
+                                                              trim(str(n=ny1))//' '//trim(str(n=ny2))//' '// &
+                                                              trim(str(n=nz1))//' '//trim(str(n=nz2))//'">'
+    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
+    s_buffer = repeat(' ',vtk(rf)%indent)//                                                                  &
+               '<DataArray type="Float32" NumberOfComponents="3" Name="Points" format="appended" offset="'// &
+               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call vtk(rf)%byte_update(N_Byte = 3*NN*BYR4P)
+    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',3*NN
+    write(unit=vtk(rf)%ua,iostat=E_IO)(((X(nx,ny,nz),Y(nx,ny,nz),Z(nx,ny,nz),nx=nx1,nx2),ny=ny1,ny2),nz=nz1,nz2)
+    vtk(rf)%indent = vtk(rf)%indent - 2 ; write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'//end_rec
+  case(binary)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<Piece Extent="'//trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
+                                                              trim(str(n=ny1))//' '//trim(str(n=ny2))//' '// &
+                                                              trim(str(n=nz1))//' '//trim(str(n=nz2))//'">'
+    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" NumberOfComponents="3" Name="Points" format="binary">'
+    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call pack_data(a1=[int(3*NN*BYR4P,I4P)],a2=[(((X(nx,ny,nz),Y(nx,ny,nz),Z(nx,ny,nz),nx=nx1,nx2),ny=ny1,ny2),nz=nz1,nz2)], &
+                   packed=XYZp)
+    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    vtk(rf)%indent = vtk(rf)%indent - 2 ; write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_GEO_XML_STRG_3DA_R4
+
+  !> Function for saving mesh with \b StructuredGrid topology (R4P, 1D Arrays, packed API).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_GEO_XML_STRG_1DAP_R4(nx1,nx2,ny1,ny2,nz1,nz2,NN,XYZ,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           nx1        !< Initial node of x axis.
+  integer(I4P), intent(IN)::           nx2        !< Final node of x axis.
+  integer(I4P), intent(IN)::           ny1        !< Initial node of y axis.
+  integer(I4P), intent(IN)::           ny2        !< Final node of y axis.
+  integer(I4P), intent(IN)::           nz1        !< Initial node of z axis.
+  integer(I4P), intent(IN)::           nz2        !< Final node of z axis.
+  integer(I4P), intent(IN)::           NN         !< Number of all nodes.
+  real(R4P),    intent(IN)::           XYZ(1:,1:) !< X, Y, Z coordinates (packed API) [1:3,1:NN].
+  integer(I4P), intent(IN), optional:: cf         !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer   !< Buffer string.
+  integer(I1P), allocatable::          XYZp(:)    !< Packed data.
+  character(1), allocatable::          XYZ64(:)   !< X, Y, Z coordinates encoded in base64.
+  integer(I4P)::                       rf         !< Real file index.
+  integer(I4P)::                       n1         !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1329,11 +1580,7 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" NumberOfComponents="3" Name="Points" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
-    allocate(XYZa(1:3*NN))
-    do n1 = 1,NN
-      XYZa(1+(n1-1)*3:1+(n1-1)*3+2)=XYZ(1:3,n1)
-    enddo
-    call pack_data(a1=[int(3*NN*BYR4P,I4P)],a2=XYZa,packed=XYZp) ; deallocate(XYZa)
+    call pack_data(a1=[int(3*NN*BYR4P,I4P)],a2=reshape(XYZ,[3*NN]),packed=XYZp)
     call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
@@ -1341,7 +1588,86 @@ contains
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_GEO_XML_STRG_PACK_R4
+  endfunction VTK_GEO_XML_STRG_1DAP_R4
+
+  !> Function for saving mesh with \b StructuredGrid topology (R4P, 3D Arrays, packed API).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_GEO_XML_STRG_3DAP_R4(nx1,nx2,ny1,ny2,nz1,nz2,NN,XYZ,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           nx1                    !< Initial node of x axis.
+  integer(I4P), intent(IN)::           nx2                    !< Final node of x axis.
+  integer(I4P), intent(IN)::           ny1                    !< Initial node of y axis.
+  integer(I4P), intent(IN)::           ny2                    !< Final node of y axis.
+  integer(I4P), intent(IN)::           nz1                    !< Initial node of z axis.
+  integer(I4P), intent(IN)::           nz2                    !< Final node of z axis.
+  integer(I4P), intent(IN)::           NN                     !< Number of all nodes.
+  real(R4P),    intent(IN)::           XYZ(1:,nx1:,ny1:,nz1:) !< X, Y, Z coordinates (packed API) [1:3,nx1:nx2,ny1:ny2,nz1:nz2].
+  integer(I4P), intent(IN), optional:: cf                     !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO             !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer               !< Buffer string.
+  integer(I1P), allocatable::          XYZp(:)                !< Packed data.
+  character(1), allocatable::          XYZ64(:)               !< X, Y, Z coordinates encoded in base64.
+  integer(I4P)::                       rf                     !< Real file index.
+  integer(I4P)::                       nx,ny,nz               !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<Piece Extent="'//trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
+                                                              trim(str(n=ny1))//' '//trim(str(n=ny2))//' '// &
+                                                              trim(str(n=nz1))//' '//trim(str(n=nz2))//'">'
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer) ; vtk(rf)%indent = vtk(rf)%indent + 2
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>' ; vtk(rf)%indent = vtk(rf)%indent + 2
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" NumberOfComponents="3" Name="Points" format="ascii">'
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
+    do nz=nz1,nz2
+      do ny=ny1,ny2
+        do nx=nx1,nx2
+          write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//&
+                                                    str(n=XYZ(1,nx,ny,nz))//' '//str(n=XYZ(2,nx,ny,nz))//' '//str(n=XYZ(3,nx,ny,nz))
+        enddo
+      enddo
+    enddo
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>' ; vtk(rf)%indent = vtk(rf)%indent - 2
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'
+  case(raw,bin_app)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<Piece Extent="'//trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
+                                                              trim(str(n=ny1))//' '//trim(str(n=ny2))//' '// &
+                                                              trim(str(n=nz1))//' '//trim(str(n=nz2))//'">'
+    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
+    s_buffer = repeat(' ',vtk(rf)%indent)//                                                                  &
+               '<DataArray type="Float32" NumberOfComponents="3" Name="Points" format="appended" offset="'// &
+               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call vtk(rf)%byte_update(N_Byte = 3*NN*BYR4P)
+    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',3*NN
+    write(unit=vtk(rf)%ua,iostat=E_IO)XYZ
+    vtk(rf)%indent = vtk(rf)%indent - 2 ; write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'//end_rec
+  case(binary)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<Piece Extent="'//trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
+                                                              trim(str(n=ny1))//' '//trim(str(n=ny2))//' '// &
+                                                              trim(str(n=nz1))//' '//trim(str(n=nz2))//'">'
+    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" NumberOfComponents="3" Name="Points" format="binary">'
+    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call pack_data(a1=[int(3*NN*BYR4P,I4P)],a2=reshape(XYZ,[3*NN]),packed=XYZp)
+    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    vtk(rf)%indent = vtk(rf)%indent - 2 ; write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_GEO_XML_STRG_3DAP_R4
 
   !> Function for saving mesh with \b RectilinearGrid topology (R8P).
   !> @return E_IO: integer(I4P) error flag
@@ -3597,19 +3923,18 @@ contains
   function VTK_GEO_STRP_R8(Nx,Ny,Nz,X0,Y0,Z0,Dx,Dy,Dz,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN)::           Nx       !< Number of nodes in x direction.
-  integer(I4P), intent(IN)::           Ny       !< Number of nodes in y direction.
-  integer(I4P), intent(IN)::           Nz       !< Number of nodes in z direction.
-  real(R8P),    intent(IN)::           X0       !< X coordinate of origin.
-  real(R8P),    intent(IN)::           Y0       !< Y coordinate of origin.
-  real(R8P),    intent(IN)::           Z0       !< Z coordinate of origin.
-  real(R8P),    intent(IN)::           Dx       !< Space step in x direction.
-  real(R8P),    intent(IN)::           Dy       !< Space step in y direction.
-  real(R8P),    intent(IN)::           Dz       !< Space step in z direction.
-  integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
-  integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::              s_buffer !< Buffer string.
-  integer(I4P)::                       rf       !< Real file index.
+  integer(I4P), intent(IN)::           Nx   !< Number of nodes in x direction.
+  integer(I4P), intent(IN)::           Ny   !< Number of nodes in y direction.
+  integer(I4P), intent(IN)::           Nz   !< Number of nodes in z direction.
+  real(R8P),    intent(IN)::           X0   !< X coordinate of origin.
+  real(R8P),    intent(IN)::           Y0   !< Y coordinate of origin.
+  real(R8P),    intent(IN)::           Z0   !< Z coordinate of origin.
+  real(R8P),    intent(IN)::           Dx   !< Space step in x direction.
+  real(R8P),    intent(IN)::           Dy   !< Space step in y direction.
+  real(R8P),    intent(IN)::           Dz   !< Space step in z direction.
+  integer(I4P), intent(IN), optional:: cf   !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::                       rf   !< Real file index.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3620,16 +3945,13 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(unit=vtk(rf)%u,fmt='(A,3'//FI4P//')',iostat=E_IO)'DIMENSIONS ',Nx,Ny,Nz
-    write(unit=vtk(rf)%u,fmt='(A,3'//FR8P//')',iostat=E_IO)'ORIGIN ',X0,Y0,Z0
-    write(unit=vtk(rf)%u,fmt='(A,3'//FR8P//')',iostat=E_IO)'SPACING ',Dx,Dy,Dz
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'ORIGIN '//trim(str(n=X0))//' '//trim(str(n=Y0))//' '//trim(str(n=Z0))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'SPACING '//trim(str(n=Dx))//' '//trim(str(n=Dy))//' '//trim(str(n=Dz))
   case(raw)
-    write(s_buffer,      fmt='(A,3'//FI4P//')',iostat=E_IO)'DIMENSIONS ',Nx,Ny,Nz
-    write(unit=vtk(rf)%u,                      iostat=E_IO)trim(s_buffer)//end_rec
-    write(s_buffer,      fmt='(A,3'//FR8P//')',iostat=E_IO)'ORIGIN ',X0,Y0,Z0
-    write(unit=vtk(rf)%u,                      iostat=E_IO)trim(s_buffer)//end_rec
-    write(s_buffer,      fmt='(A,3'//FR8P//')',iostat=E_IO)'SPACING ',Dx,Dy,Dz
-    write(unit=vtk(rf)%u,                      iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'ORIGIN '//trim(str(n=X0))//' '//trim(str(n=Y0))//' '//trim(str(n=Z0))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'SPACING '//trim(str(n=Dx))//' '//trim(str(n=Dy))//' '//trim(str(n=Dz))//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3640,19 +3962,18 @@ contains
   function VTK_GEO_STRP_R4(Nx,Ny,Nz,X0,Y0,Z0,Dx,Dy,Dz,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN)::           Nx       !< Number of nodes in x direction.
-  integer(I4P), intent(IN)::           Ny       !< Number of nodes in y direction.
-  integer(I4P), intent(IN)::           Nz       !< Number of nodes in z direction.
-  real(R4P),    intent(IN)::           X0       !< X coordinate of origin.
-  real(R4P),    intent(IN)::           Y0       !< Y coordinate of origin.
-  real(R4P),    intent(IN)::           Z0       !< Z coordinate of origin.
-  real(R4P),    intent(IN)::           Dx       !< Space step in x direction.
-  real(R4P),    intent(IN)::           Dy       !< Space step in y direction.
-  real(R4P),    intent(IN)::           Dz       !< Space step in z direction.
-  integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
-  integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::              s_buffer !< Buffer string.
-  integer(I4P)::                       rf       !< Real file index.
+  integer(I4P), intent(IN)::           Nx   !< Number of nodes in x direction.
+  integer(I4P), intent(IN)::           Ny   !< Number of nodes in y direction.
+  integer(I4P), intent(IN)::           Nz   !< Number of nodes in z direction.
+  real(R4P),    intent(IN)::           X0   !< X coordinate of origin.
+  real(R4P),    intent(IN)::           Y0   !< Y coordinate of origin.
+  real(R4P),    intent(IN)::           Z0   !< Z coordinate of origin.
+  real(R4P),    intent(IN)::           Dx   !< Space step in x direction.
+  real(R4P),    intent(IN)::           Dy   !< Space step in y direction.
+  real(R4P),    intent(IN)::           Dz   !< Space step in z direction.
+  integer(I4P), intent(IN), optional:: cf   !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::                       rf   !< Real file index.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3663,36 +3984,32 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(unit=vtk(rf)%u,fmt='(A,3'//FI4P//')',iostat=E_IO)'DIMENSIONS ',Nx,Ny,Nz
-    write(unit=vtk(rf)%u,fmt='(A,3'//FR4P//')',iostat=E_IO)'ORIGIN ',X0,Y0,Z0
-    write(unit=vtk(rf)%u,fmt='(A,3'//FR4P//')',iostat=E_IO)'SPACING ',Dx,Dy,Dz
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'ORIGIN '//trim(str(n=X0))//' '//trim(str(n=Y0))//' '//trim(str(n=Z0))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'SPACING '//trim(str(n=Dx))//' '//trim(str(n=Dy))//' '//trim(str(n=Dz))
   case(raw)
-    write(s_buffer,      fmt='(A,3'//FI4P//')',iostat=E_IO)'DIMENSIONS ',Nx,Ny,Nz
-    write(unit=vtk(rf)%u,                      iostat=E_IO)trim(s_buffer)//end_rec
-    write(s_buffer,      fmt='(A,3'//FR4P//')',iostat=E_IO)'ORIGIN ',X0,Y0,Z0
-    write(unit=vtk(rf)%u,                      iostat=E_IO)trim(s_buffer)//end_rec
-    write(s_buffer,      fmt='(A,3'//FR4P//')',iostat=E_IO)'SPACING ',Dx,Dy,Dz
-    write(unit=vtk(rf)%u,                      iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'ORIGIN '//trim(str(n=X0))//' '//trim(str(n=Y0))//' '//trim(str(n=Z0))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'SPACING '//trim(str(n=Dx))//' '//trim(str(n=Dy))//' '//trim(str(n=Dz))//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_GEO_STRP_R4
 
-  !> Function for saving mesh with \b STRUCTURED_GRID topology (R8P).
+  !> Function for saving mesh with \b STRUCTURED_GRID topology (R8P, 1D arrays).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_GEO_STRG_R8(Nx,Ny,Nz,NN,X,Y,Z,cf) result(E_IO)
+  function VTK_GEO_STRG_1DA_R8(Nx,Ny,Nz,NN,X,Y,Z,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), intent(IN)::           Nx       !< Number of nodes in x direction.
   integer(I4P), intent(IN)::           Ny       !< Number of nodes in y direction.
   integer(I4P), intent(IN)::           Nz       !< Number of nodes in z direction.
   integer(I4P), intent(IN)::           NN       !< Number of all nodes.
-  real(R8P),    intent(IN)::           X(1:NN)  !< X coordinates.
-  real(R8P),    intent(IN)::           Y(1:NN)  !< Y coordinates.
-  real(R8P),    intent(IN)::           Z(1:NN)  !< Z coordinates.
+  real(R8P),    intent(IN)::           X(1:)    !< X coordinates [1:NN].
+  real(R8P),    intent(IN)::           Y(1:)    !< Y coordinates [1:NN].
+  real(R8P),    intent(IN)::           Z(1:)    !< Z coordinates [1:NN].
   integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3705,36 +4022,162 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(unit=vtk(rf)%u,fmt='(A,3'//FI4P//')', iostat=E_IO)'DIMENSIONS ',Nx,Ny,Nz
-    write(unit=vtk(rf)%u,fmt='(A,'//FI4P//',A)',iostat=E_IO)'POINTS ',NN,' double'
-    write(unit=vtk(rf)%u,fmt='(3'//FR8P//')',   iostat=E_IO)(X(n1),Y(n1),Z(n1),n1=1,NN)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' double'
+    do n1=1,NN
+      write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=X(n1))//' '//str(n=Y(n1))//' '//str(n=Z(n1))
+    enddo
   case(raw)
-    write(s_buffer,      fmt='(A,3'//FI4P//')', iostat=E_IO)'DIMENSIONS ',Nx,Ny,Nz
-    write(unit=vtk(rf)%u,                       iostat=E_IO)trim(s_buffer)//end_rec
-    write(s_buffer,      fmt='(A,'//FI4P//',A)',iostat=E_IO)'POINTS ',NN,' double'
-    write(unit=vtk(rf)%u,                       iostat=E_IO)trim(s_buffer)//end_rec
-    write(unit=vtk(rf)%u,                       iostat=E_IO)(X(n1),Y(n1),Z(n1),n1=1,NN)
-    write(unit=vtk(rf)%u,                       iostat=E_IO)end_rec
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' double'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)(X(n1),Y(n1),Z(n1),n1=1,NN)
+    write(vtk(rf)%u,iostat=E_IO)end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_GEO_STRG_R8
+  endfunction VTK_GEO_STRG_1DA_R8
 
-  !> Function for saving mesh with \b STRUCTURED_GRID topology (R4P).
+  !> Function for saving mesh with \b STRUCTURED_GRID topology (R8P, 1D arrays, packed API).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_GEO_STRG_R4(Nx,Ny,Nz,NN,X,Y,Z,cf) result(E_IO)
+  function VTK_GEO_STRG_1DAP_R8(Nx,Ny,Nz,NN,XYZ,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           Nx         !< Number of nodes in x direction.
+  integer(I4P), intent(IN)::           Ny         !< Number of nodes in y direction.
+  integer(I4P), intent(IN)::           Nz         !< Number of nodes in z direction.
+  integer(I4P), intent(IN)::           NN         !< Number of all nodes.
+  real(R8P),    intent(IN)::           XYZ(1:,1:) !< X, Y and Z coordinates [1:3,1:NN].
+  integer(I4P), intent(IN), optional:: cf         !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::                       rf         !< Real file index.
+  integer(I4P)::                       n1         !< Counter.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' double'
+    do n1=1,NN
+      write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=XYZ(1,n1))//' '//str(n=XYZ(2,n1))//' '//str(n=XYZ(3,n1))
+    enddo
+  case(raw)
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' double'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)XYZ
+    write(vtk(rf)%u,iostat=E_IO)end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_GEO_STRG_1DAP_R8
+
+  !> Function for saving mesh with \b STRUCTURED_GRID topology (R8P, 3D arrays).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_GEO_STRG_3DA_R8(Nx,Ny,Nz,NN,X,Y,Z,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           Nx          !< Number of nodes in x direction.
+  integer(I4P), intent(IN)::           Ny          !< Number of nodes in y direction.
+  integer(I4P), intent(IN)::           Nz          !< Number of nodes in z direction.
+  integer(I4P), intent(IN)::           NN          !< Number of all nodes.
+  real(R8P),    intent(IN)::           X(1:,1:,1:) !< X coordinates [1:Nx,1:Ny,1:Nz].
+  real(R8P),    intent(IN)::           Y(1:,1:,1:) !< Y coordinates [1:Nx,1:Ny,1:Nz].
+  real(R8P),    intent(IN)::           Z(1:,1:,1:) !< Z coordinates [1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN), optional:: cf          !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO        !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::                       rf          !< Real file index.
+  integer(I4P)::                       n1,n2,n3    !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' double'
+    do n3=1,Nz
+      do n2=1,Ny
+        do n1=1,Nx
+          write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=X(n1,n2,n3))//' '//str(n=Y(n1,n2,n3))//' '//str(n=Z(n1,n2,n3))
+        enddo
+      enddo
+    enddo
+  case(raw)
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' double'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)(((X(n1,n2,n3),Y(n1,n2,n3),Z(n1,n2,n3),n1=1,Nx),n2=1,Ny),n3=1,Nz)
+    write(vtk(rf)%u,iostat=E_IO)end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_GEO_STRG_3DA_R8
+
+  !> Function for saving mesh with \b STRUCTURED_GRID topology (R8P, 3D arrays, packed API).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_GEO_STRG_3DAP_R8(Nx,Ny,Nz,NN,XYZ,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           Nx               !< Number of nodes in x direction.
+  integer(I4P), intent(IN)::           Ny               !< Number of nodes in y direction.
+  integer(I4P), intent(IN)::           Nz               !< Number of nodes in z direction.
+  integer(I4P), intent(IN)::           NN               !< Number of all nodes.
+  real(R8P),    intent(IN)::           XYZ(1:,1:,1:,1:) !< X, Y and Z coordinates [1:3,1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN), optional:: cf               !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO             !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::                       rf               !< Real file index.
+  integer(I4P)::                       n1,n2,n3         !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' double'
+    do n3=1,Nz
+      do n2=1,Ny
+        do n1=1,Nx
+         write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=XYZ(1,n1,n2,n3))//' '//str(n=XYZ(2,n1,n2,n3))//' '//str(n=XYZ(3,n1,n2,n3))
+        enddo
+      enddo
+    enddo
+  case(raw)
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' double'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)XYZ
+    write(vtk(rf)%u,iostat=E_IO)end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_GEO_STRG_3DAP_R8
+
+  !> Function for saving mesh with \b STRUCTURED_GRID topology (R4P, 1D arrays).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_GEO_STRG_1DA_R4(Nx,Ny,Nz,NN,X,Y,Z,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), intent(IN)::           Nx       !< Number of nodes in x direction.
   integer(I4P), intent(IN)::           Ny       !< Number of nodes in y direction.
   integer(I4P), intent(IN)::           Nz       !< Number of nodes in z direction.
   integer(I4P), intent(IN)::           NN       !< Number of all nodes.
-  real(R4P),    intent(IN)::           X(1:NN)  !< X coordinates.
-  real(R4P),    intent(IN)::           Y(1:NN)  !< Y coordinates.
-  real(R4P),    intent(IN)::           Z(1:NN)  !< Z coordinates.
+  real(R4P),    intent(IN)::           X(1:)    !< X coordinates [1:NN].
+  real(R4P),    intent(IN)::           Y(1:)    !< Y coordinates [1:NN].
+  real(R4P),    intent(IN)::           Z(1:)    !< Z coordinates [1:NN].
   integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3747,20 +4190,147 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(unit=vtk(rf)%u,fmt='(A,3'//FI4P//')', iostat=E_IO)'DIMENSIONS ',Nx,Ny,Nz
-    write(unit=vtk(rf)%u,fmt='(A,'//FI4P//',A)',iostat=E_IO)'POINTS ',NN,' float'
-    write(unit=vtk(rf)%u,fmt='(3'//FR4P//')',   iostat=E_IO)(X(n1),Y(n1),Z(n1),n1=1,NN)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' float'
+    do n1=1,NN
+      write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=X(n1))//' '//str(n=Y(n1))//' '//str(n=Z(n1))
+    enddo
   case(raw)
-    write(s_buffer,      fmt='(A,3'//FI4P//')', iostat=E_IO)'DIMENSIONS ',Nx,Ny,Nz
-    write(unit=vtk(rf)%u,                       iostat=E_IO)trim(s_buffer)//end_rec
-    write(s_buffer,      fmt='(A,'//FI4P//',A)',iostat=E_IO)'POINTS ',NN,' float'
-    write(unit=vtk(rf)%u,                       iostat=E_IO)trim(s_buffer)//end_rec
-    write(unit=vtk(rf)%u,                       iostat=E_IO)(X(n1),Y(n1),Z(n1),n1=1,NN)
-    write(unit=vtk(rf)%u,                       iostat=E_IO)end_rec
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' float'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)(X(n1),Y(n1),Z(n1),n1=1,NN)
+    write(vtk(rf)%u,iostat=E_IO)end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_GEO_STRG_R4
+  endfunction VTK_GEO_STRG_1DA_R4
+
+  !> Function for saving mesh with \b STRUCTURED_GRID topology (R4P, 1D arrays, packed API).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_GEO_STRG_1DAP_R4(Nx,Ny,Nz,NN,XYZ,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           Nx         !< Number of nodes in x direction.
+  integer(I4P), intent(IN)::           Ny         !< Number of nodes in y direction.
+  integer(I4P), intent(IN)::           Nz         !< Number of nodes in z direction.
+  integer(I4P), intent(IN)::           NN         !< Number of all nodes.
+  real(R4P),    intent(IN)::           XYZ(1:,1:) !< X, Y and Z coordinates [1:3,1:NN].
+  integer(I4P), intent(IN), optional:: cf         !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::                       rf         !< Real file index.
+  integer(I4P)::                       n1         !< Counter.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' float'
+    do n1=1,NN
+      write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=XYZ(1,n1))//' '//str(n=XYZ(2,n1))//' '//str(n=XYZ(3,n1))
+    enddo
+  case(raw)
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' float'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)XYZ
+    write(vtk(rf)%u,iostat=E_IO)end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_GEO_STRG_1DAP_R4
+
+  !> Function for saving mesh with \b STRUCTURED_GRID topology (R4P, 3D arrays).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_GEO_STRG_3DA_R4(Nx,Ny,Nz,NN,X,Y,Z,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           Nx          !< Number of nodes in x direction.
+  integer(I4P), intent(IN)::           Ny          !< Number of nodes in y direction.
+  integer(I4P), intent(IN)::           Nz          !< Number of nodes in z direction.
+  integer(I4P), intent(IN)::           NN          !< Number of all nodes.
+  real(R4P),    intent(IN)::           X(1:,1:,1:) !< X coordinates [1:Nx,1:Ny,1:Nz].
+  real(R4P),    intent(IN)::           Y(1:,1:,1:) !< Y coordinates [1:Nx,1:Ny,1:Nz].
+  real(R4P),    intent(IN)::           Z(1:,1:,1:) !< Z coordinates [1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN), optional:: cf          !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO        !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::                       rf          !< Real file index.
+  integer(I4P)::                       n1,n2,n3    !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' float'
+    do n3=1,Nz
+      do n2=1,Ny
+        do n1=1,Nx
+          write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=X(n1,n2,n3))//' '//str(n=Y(n1,n2,n3))//' '//str(n=Z(n1,n2,n3))
+        enddo
+      enddo
+    enddo
+  case(raw)
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' float'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)(((X(n1,n2,n3),Y(n1,n2,n3),Z(n1,n2,n3),n1=1,Nx),n2=1,Ny),n3=1,Nz)
+    write(vtk(rf)%u,iostat=E_IO)end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_GEO_STRG_3DA_R4
+
+  !> Function for saving mesh with \b STRUCTURED_GRID topology (R4P, 3D arrays, packed API).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_GEO_STRG_3DAP_R4(Nx,Ny,Nz,NN,XYZ,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           Nx               !< Number of nodes in x direction.
+  integer(I4P), intent(IN)::           Ny               !< Number of nodes in y direction.
+  integer(I4P), intent(IN)::           Nz               !< Number of nodes in z direction.
+  integer(I4P), intent(IN)::           NN               !< Number of all nodes.
+  real(R4P),    intent(IN)::           XYZ(1:,1:,1:,1:) !< X, Y and Z coordinates [1:3,1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN), optional:: cf               !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO             !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::                       rf               !< Real file index.
+  integer(I4P)::                       n1,n2,n3         !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' float'
+    do n3=1,Nz
+      do n2=1,Ny
+        do n1=1,Nx
+         write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=XYZ(1,n1,n2,n3))//' '//str(n=XYZ(2,n1,n2,n3))//' '//str(n=XYZ(3,n1,n2,n3))
+        enddo
+      enddo
+    enddo
+  case(raw)
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' float'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)XYZ
+    write(vtk(rf)%u,iostat=E_IO)end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_GEO_STRG_3DAP_R4
 
   !> Function for saving mesh with \b RECTILINEAR_GRID topology (R8P).
   !> @return E_IO: integer(I4P) error flag
@@ -3775,7 +4345,6 @@ contains
   real(R8P),    intent(IN)::           Z(1:Nz)  !< Z coordinates.
   integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3788,28 +4357,30 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(unit=vtk(rf)%u,fmt='(A,3'//FI4P//')', iostat=E_IO)'DIMENSIONS ',Nx,Ny,Nz
-    write(unit=vtk(rf)%u,fmt='(A,'//FI4P//',A)',iostat=E_IO)'X_COORDINATES ',Nx,' double'
-    write(unit=vtk(rf)%u,fmt=FR8P,              iostat=E_IO)(X(n1),n1=1,Nx)
-    write(unit=vtk(rf)%u,fmt='(A,'//FI4P//',A)',iostat=E_IO)'Y_COORDINATES ',Ny,' double'
-    write(unit=vtk(rf)%u,fmt=FR8P,              iostat=E_IO)(Y(n1),n1=1,Ny)
-    write(unit=vtk(rf)%u,fmt='(A,'//FI4P//',A)',iostat=E_IO)'Z_COORDINATES ',Nz,' double'
-    write(unit=vtk(rf)%u,fmt=FR8P,              iostat=E_IO)(Z(n1),n1=1,Nz)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'X_COORDINATES '//trim(str(.true.,Nx))//' double'
+    do n1=1,Nx
+      write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=X(n1))
+    enddo
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'Y_COORDINATES '//trim(str(.true.,Ny))//' double'
+    do n1=1,Ny
+      write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=Y(n1))
+    enddo
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'Z_COORDINATES '//trim(str(.true.,Nz))//' double'
+    do n1=1,Nz
+      write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=Z(n1))
+    enddo
   case(raw)
-    write(s_buffer,      fmt='(A,3'//FI4P//')', iostat=E_IO)'DIMENSIONS ',Nx,Ny,Nz
-    write(unit=vtk(rf)%u,                       iostat=E_IO)trim(s_buffer)//end_rec
-    write(s_buffer,      fmt='(A,'//FI4P//',A)',iostat=E_IO)'X_COORDINATES ',Nx,' double'
-    write(unit=vtk(rf)%u,                       iostat=E_IO)trim(s_buffer)//end_rec
-    write(unit=vtk(rf)%u,                       iostat=E_IO)(X(n1),n1=1,Nx)
-    write(unit=vtk(rf)%u,                       iostat=E_IO)end_rec
-    write(s_buffer,      fmt='(A,'//FI4P//',A)',iostat=E_IO)'Y_COORDINATES ',Ny,' double'
-    write(unit=vtk(rf)%u,                       iostat=E_IO)trim(s_buffer)//end_rec
-    write(unit=vtk(rf)%u,                       iostat=E_IO)(Y(n1),n1=1,Ny)
-    write(unit=vtk(rf)%u,                       iostat=E_IO)end_rec
-    write(s_buffer,      fmt='(A,'//FI4P//',A)',iostat=E_IO)'Z_COORDINATES ',Nz,' double'
-    write(unit=vtk(rf)%u,                       iostat=E_IO)trim(s_buffer)//end_rec
-    write(unit=vtk(rf)%u,                       iostat=E_IO)(Z(n1),n1=1,Nz)
-    write(unit=vtk(rf)%u,                       iostat=E_IO)end_rec
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'X_COORDINATES '//trim(str(.true.,Nx))//' double'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)X
+    write(vtk(rf)%u,iostat=E_IO)end_rec
+    write(vtk(rf)%u,iostat=E_IO)'Y_COORDINATES '//trim(str(.true.,Ny))//' double'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)Y
+    write(vtk(rf)%u,iostat=E_IO)end_rec
+    write(vtk(rf)%u,iostat=E_IO)'Z_COORDINATES '//trim(str(.true.,Nz))//' double'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)Z
+    write(vtk(rf)%u,iostat=E_IO)end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3828,7 +4399,6 @@ contains
   real(R4P),    intent(IN)::           Z(1:Nz)  !< Z coordinates.
   integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3841,28 +4411,30 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(unit=vtk(rf)%u,fmt='(A,3'//FI4P//')', iostat=E_IO)'DIMENSIONS ',Nx,Ny,Nz
-    write(unit=vtk(rf)%u,fmt='(A,'//FI4P//',A)',iostat=E_IO)'X_COORDINATES ',Nx,' float'
-    write(unit=vtk(rf)%u,fmt=FR4P,              iostat=E_IO)(X(n1),n1=1,Nx)
-    write(unit=vtk(rf)%u,fmt='(A,'//FI4P//',A)',iostat=E_IO)'Y_COORDINATES ',Ny,' float'
-    write(unit=vtk(rf)%u,fmt=FR4P,              iostat=E_IO)(Y(n1),n1=1,Ny)
-    write(unit=vtk(rf)%u,fmt='(A,'//FI4P//',A)',iostat=E_IO)'Z_COORDINATES ',Nz,' float'
-    write(unit=vtk(rf)%u,fmt=FR4P,              iostat=E_IO)(Z(n1),n1=1,Nz)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'X_COORDINATES '//trim(str(.true.,Nx))//' float'
+    do n1=1,Nx
+      write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=X(n1))
+    enddo
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'Y_COORDINATES '//trim(str(.true.,Ny))//' float'
+    do n1=1,Ny
+      write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=Y(n1))
+    enddo
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'Z_COORDINATES '//trim(str(.true.,Nz))//' float'
+    do n1=1,Nz
+      write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=Z(n1))
+    enddo
   case(raw)
-    write(s_buffer,      fmt='(A,3'//FI4P//')', iostat=E_IO)'DIMENSIONS ',Nx,Ny,Nz
-    write(unit=vtk(rf)%u,                       iostat=E_IO)trim(s_buffer)//end_rec
-    write(s_buffer,      fmt='(A,'//FI4P//',A)',iostat=E_IO)'X_COORDINATES ',Nx,' float'
-    write(unit=vtk(rf)%u,                       iostat=E_IO)trim(s_buffer)//end_rec
-    write(unit=vtk(rf)%u,                       iostat=E_IO)(X(n1),n1=1,Nx)
-    write(unit=vtk(rf)%u,                       iostat=E_IO)end_rec
-    write(s_buffer,      fmt='(A,'//FI4P//',A)',iostat=E_IO)'Y_COORDINATES ',Ny,' float'
-    write(unit=vtk(rf)%u,                       iostat=E_IO)trim(s_buffer)//end_rec
-    write(unit=vtk(rf)%u,                       iostat=E_IO)(Y(n1),n1=1,Ny)
-    write(unit=vtk(rf)%u,                       iostat=E_IO)end_rec
-    write(s_buffer,      fmt='(A,'//FI4P//',A)',iostat=E_IO)'Z_COORDINATES ',Nz,' float'
-    write(unit=vtk(rf)%u,                       iostat=E_IO)trim(s_buffer)//end_rec
-    write(unit=vtk(rf)%u,                       iostat=E_IO)(Z(n1),n1=1,Nz)
-    write(unit=vtk(rf)%u,                       iostat=E_IO)end_rec
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'X_COORDINATES '//trim(str(.true.,Nx))//' float'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)X
+    write(vtk(rf)%u,iostat=E_IO)end_rec
+    write(vtk(rf)%u,iostat=E_IO)'Y_COORDINATES '//trim(str(.true.,Ny))//' float'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)Y
+    write(vtk(rf)%u,iostat=E_IO)end_rec
+    write(vtk(rf)%u,iostat=E_IO)'Z_COORDINATES '//trim(str(.true.,Nz))//' float'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)Z
+    write(vtk(rf)%u,iostat=E_IO)end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3874,12 +4446,11 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), intent(IN)::           NN       !< Number of nodes.
-  real(R8P),    intent(IN)::           X(1:NN)  !< X coordinates of all nodes.
-  real(R8P),    intent(IN)::           Y(1:NN)  !< Y coordinates of all nodes.
-  real(R8P),    intent(IN)::           Z(1:NN)  !< Z coordinates of all nodes.
+  real(R8P),    intent(IN)::           X(1:)    !< X coordinates of all nodes [1:NN].
+  real(R8P),    intent(IN)::           Y(1:)    !< Y coordinates of all nodes [1:NN].
+  real(R8P),    intent(IN)::           Z(1:)    !< Z coordinates of all nodes [1:NN].
   integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3892,17 +4463,52 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(unit=vtk(rf)%u,fmt='(A,'//FI4P//',A)',iostat=E_IO)'POINTS ',NN,' double'
-    write(unit=vtk(rf)%u,fmt='(3'//FR8P//')',   iostat=E_IO)(X(n1),Y(n1),Z(n1),n1=1,NN)
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)'POINTS '//str(.true.,NN)//' double'
+    do n1=1,NN
+      write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)str(n=X(n1))//' '//str(n=Y(n1))//' '//str(n=Z(n1))
+    enddo
   case(raw)
-    write(s_buffer,      fmt='(A,'//FI4P//',A)',iostat=E_IO)'POINTS ',NN,' double'
-    write(unit=vtk(rf)%u,                       iostat=E_IO)trim(s_buffer)//end_rec
-    write(unit=vtk(rf)%u,                       iostat=E_IO)(X(n1),Y(n1),Z(n1),n1=1,NN)
-    write(unit=vtk(rf)%u,                       iostat=E_IO)end_rec
+    write(unit=vtk(rf)%u,iostat=E_IO)'POINTS '//str(.true.,NN)//' double'//end_rec
+    write(unit=vtk(rf)%u,iostat=E_IO)(X(n1),Y(n1),Z(n1),n1=1,NN)
+    write(unit=vtk(rf)%u,iostat=E_IO)end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_GEO_UNST_R8
+
+  !> Function for saving mesh with \b UNSTRUCTURED_GRID topology (R8P, packed API).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_GEO_UNST_P_R8(NN,XYZ,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           NN         !< Number of nodes.
+  real(R8P),    intent(IN)::           XYZ(1:,1:) !< X, Y and Z coordinates of all nodes [1:3,1:NN].
+  integer(I4P), intent(IN), optional:: cf         !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::                       rf         !< Real file index.
+  integer(I4P)::                       n1         !< Counter.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)'POINTS '//str(.true.,NN)//' double'
+    do n1=1,NN
+      write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)str(n=XYZ(1,n1))//' '//str(n=XYZ(2,n1))//' '//str(n=XYZ(3,n1))
+    enddo
+  case(raw)
+    write(unit=vtk(rf)%u,iostat=E_IO)'POINTS '//str(.true.,NN)//' double'//end_rec
+    write(unit=vtk(rf)%u,iostat=E_IO)XYZ
+    write(unit=vtk(rf)%u,iostat=E_IO)end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_GEO_UNST_P_R8
 
   !> Function for saving mesh with \b UNSTRUCTURED_GRID topology (R4P).
   !> @return E_IO: integer(I4P) error flag
@@ -3910,12 +4516,11 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), intent(IN)::           NN       !< number of nodes.
-  real(R4P),    intent(IN)::           X(1:NN)  !< x coordinates of all nodes.
-  real(R4P),    intent(IN)::           Y(1:NN)  !< y coordinates of all nodes.
-  real(R4P),    intent(IN)::           Z(1:NN)  !< z coordinates of all nodes.
+  real(R4P),    intent(IN)::           X(1:)    !< X coordinates of all nodes [1:NN].
+  real(R4P),    intent(IN)::           Y(1:)    !< Y coordinates of all nodes [1:NN].
+  real(R4P),    intent(IN)::           Z(1:)    !< Z coordinates of all nodes [1:NN].
   integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::              s_buffer !< buffer string.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3928,17 +4533,52 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(unit=vtk(rf)%u,fmt='(A,'//FI4P//',A)',iostat=E_IO)'POINTS ',NN,' float'
-    write(unit=vtk(rf)%u,fmt='(3'//FR4P//')',   iostat=E_IO)(X(n1),Y(n1),Z(n1),n1=1,NN)
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)'POINTS '//str(.true.,NN)//' float'
+    do n1=1,NN
+      write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)str(n=X(n1))//' '//str(n=Y(n1))//' '//str(n=Z(n1))
+    enddo
   case(raw)
-    write(s_buffer,      fmt='(A,'//FI4P//',A)',iostat=E_IO)'POINTS ',NN,' float'
-    write(unit=vtk(rf)%u,                       iostat=E_IO)trim(s_buffer)//end_rec
-    write(unit=vtk(rf)%u,                       iostat=E_IO)(X(n1),Y(n1),Z(n1),n1=1,NN)
-    write(unit=vtk(rf)%u,                       iostat=E_IO)end_rec
+    write(unit=vtk(rf)%u,iostat=E_IO)'POINTS '//str(.true.,NN)//' float'//end_rec
+    write(unit=vtk(rf)%u,iostat=E_IO)(X(n1),Y(n1),Z(n1),n1=1,NN)
+    write(unit=vtk(rf)%u,iostat=E_IO)end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTK_GEO_UNST_R4
+
+  !> Function for saving mesh with \b UNSTRUCTURED_GRID topology (R4P, packed API).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_GEO_UNST_P_R4(NN,XYZ,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           NN         !< number of nodes.
+  real(R4P),    intent(IN)::           XYZ(1:,1:) !< X, Y and Z coordinates of all nodes [1:3,1:NN].
+  integer(I4P), intent(IN), optional:: cf         !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)::                       rf         !< Real file index.
+  integer(I4P)::                       n1         !< counter.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)'POINTS '//str(.true.,NN)//' float'
+    do n1=1,NN
+      write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)str(n=XYZ(1,n1))//' '//str(n=XYZ(2,n1))//' '//str(n=XYZ(3,n1))
+    enddo
+  case(raw)
+    write(unit=vtk(rf)%u,iostat=E_IO)'POINTS '//str(.true.,NN)//' float'//end_rec
+    write(unit=vtk(rf)%u,iostat=E_IO)XYZ
+    write(unit=vtk(rf)%u,iostat=E_IO)end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_GEO_UNST_P_R4
   !> @}
 
   !> Function that \b must be used when unstructured grid is used, it saves the connectivity of the unstructured gird.

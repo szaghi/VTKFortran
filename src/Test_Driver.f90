@@ -48,6 +48,7 @@
 !> @version   1.0
 !> @date      2013-03-28
 !> @copyright GNU Public License version 3.
+!> @todo Legacy: implement an example of legacy output.
 !> @todo MPI: implement an example of usage into MPI framework.
 !> @ingroup Test_DriverProgram
 program Test_Driver
@@ -201,9 +202,8 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_unst
 
-  !> Subroutine for testing StructuredGrid functions.
-  !> @note This subroutine also shows the usage of FieldData functions that are useful for saving global auxiliary data, e.g. time,
-  !> time step, ecc.
+  !> Subroutine for testing StructuredGrid functions. This subroutine tests all functions: R4P and R8P mesh data, 1D and 3D arrays
+  !> inputs, standard (X,Y,Z separated arrays) and packed API (X,Y,Z packed into a single array). All available formats are used.
   subroutine test_strg()
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
@@ -211,32 +211,31 @@ contains
   integer(I4P), parameter::                              nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
   real(R8P),    dimension(    nx1:nx2,ny1:ny2,nz1:nz2):: x,y,z
   real(R8P),    dimension(1:3,nx1:nx2,ny1:ny2,nz1:nz2):: xyz
+  real(R4P),    dimension(    nx1:nx2,ny1:ny2,nz1:nz2):: x32,y32,z32
+  real(R4P),    dimension(1:3,nx1:nx2,ny1:ny2,nz1:nz2):: xyz32
   integer(I2P), dimension(    nx1:nx2,ny1:ny2,nz1:nz2):: v
   real(R8P),    dimension(1:4,nx1:nx2,ny1:ny2,nz1:nz2):: l
   integer(I4P)::                                         i,j,k,E_IO
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  write(stdout,'(A)')' Testing StructuredGrid functions. Output file is XML_STRG#.vts'
+  write(stdout,'(A)')' Testing StructuredGrid functions. Output files are XML_STRG#.vts'
   ! arrays initialization
   do k=nz1,nz2
    do j=ny1,ny2
      do i=nx1,nx2
-       x(  i,j,k) = i*1._R8P ; xyz(1,i,j,k) = x(i,j,k)
-       y(  i,j,k) = j*1._R8P ; xyz(2,i,j,k) = y(i,j,k)
-       z(  i,j,k) = k*1._R8P ; xyz(3,i,j,k) = z(i,j,k)
+       x(  i,j,k) = i*1._R8P ; xyz(1,i,j,k) = x(i,j,k) ; x32(i,j,k) = i*1._R4P ; xyz32(1,i,j,k) = x32(i,j,k)
+       y(  i,j,k) = j*1._R8P ; xyz(2,i,j,k) = y(i,j,k) ; y32(i,j,k) = j*1._R4P ; xyz32(2,i,j,k) = y32(i,j,k)
+       z(  i,j,k) = k*1._R8P ; xyz(3,i,j,k) = z(i,j,k) ; z32(i,j,k) = k*1._R4P ; xyz32(3,i,j,k) = z32(i,j,k)
        v(  i,j,k) = int(i*j*k,I2P)
        l(:,i,j,k) = [(i*j*1._R8P,k=1,4)]
      enddo
    enddo
   enddo
-  ! ascii
-  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-ascii.vts',&
+  ! Testing 64 bits mesh data functions
+  ! 1DA-ascii
+  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-1DA-ascii-64.vts',&
                      mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_FLD_XML(fld_action='open')
-  E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
-  E_IO = VTK_FLD_XML(fld=1_I8P,fname='CYCLE')
-  E_IO = VTK_FLD_XML(fld_action='close')
   E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
                      X=reshape(x,(/nn/)),Y=reshape(y,(/nn/)),Z=reshape(z,(/nn/)))
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
@@ -245,13 +244,19 @@ contains
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
   E_IO = VTK_GEO_XML()
   E_IO = VTK_END_XML()
-  ! ascii packed API
-  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-ascii-packed.vts',&
+  ! 3DA-ascii
+  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-3DA-ascii-64.vts',&
                      mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_FLD_XML(fld_action='open')
-  E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
-  E_IO = VTK_FLD_XML(fld=1_I8P,fname='CYCLE')
-  E_IO = VTK_FLD_XML(fld_action='close')
+  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x,Y=y,Z=z)
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! 1DA-ascii packed API
+  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-1DA-ascii-packed-64.vts',&
+                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
   E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=reshape(xyz,(/3,nn/)))
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
   E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
@@ -259,13 +264,19 @@ contains
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
   E_IO = VTK_GEO_XML()
   E_IO = VTK_END_XML()
-  ! raw
-  E_IO = VTK_INI_XML(output_format='raw', filename='XML_STRG-raw.vts',&
+  ! 3DA-ascii packed API
+  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-3DA-ascii-packed-64.vts',&
                      mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_FLD_XML(fld_action='open')
-  E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
-  E_IO = VTK_FLD_XML(fld=1_I8P,fname='CYCLE')
-  E_IO = VTK_FLD_XML(fld_action='close')
+  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=xyz)
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! 1DA-raw
+  E_IO = VTK_INI_XML(output_format='raw', filename='XML_STRG-1DA-raw-64.vts',&
+                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
   E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
                      X=reshape(x,(/nn/)),Y=reshape(y,(/nn/)),Z=reshape(z,(/nn/)))
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
@@ -274,13 +285,29 @@ contains
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
   E_IO = VTK_GEO_XML()
   E_IO = VTK_END_XML()
-  ! binary
-  E_IO = VTK_INI_XML(output_format='binary', filename='XML_STRG-binary.vts',&
+  ! 3DA-raw
+  E_IO = VTK_INI_XML(output_format='raw', filename='XML_STRG-3DA-raw-64.vts',&
                      mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_FLD_XML(fld_action='open')
-  E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
-  E_IO = VTK_FLD_XML(fld=1_I8P,fname='CYCLE')
-  E_IO = VTK_FLD_XML(fld_action='close')
+  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x,Y=y,Z=z)
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! 3DA-raw packed API
+  E_IO = VTK_INI_XML(output_format='raw', filename='XML_STRG-3DA-raw-packed-64.vts',&
+                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=xyz)
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! 1DA-binary
+  E_IO = VTK_INI_XML(output_format='binary', filename='XML_STRG-1DA-binary-64.vts',&
+                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
   E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
                      X=reshape(x,(/nn/)),Y=reshape(y,(/nn/)),Z=reshape(z,(/nn/)))
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
@@ -289,21 +316,130 @@ contains
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
   E_IO = VTK_GEO_XML()
   E_IO = VTK_END_XML()
-  ! binary appended
-  !E_IO = VTK_INI_XML(output_format='binary-appended', filename='XML_STRG-binary-appended.vts',&
-  !                   mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  !E_IO = VTK_FLD_XML(fld_action='open')
-  !E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
-  !E_IO = VTK_FLD_XML(fld=1_I8P,fname='CYCLE')
-  !E_IO = VTK_FLD_XML(fld_action='close')
-  !E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
-  !                   X=reshape(x,(/nn/)),Y=reshape(y,(/nn/)),Z=reshape(z,(/nn/)))
-  !E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  !E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  !E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
-  !E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
-  !E_IO = VTK_GEO_XML()
-  !E_IO = VTK_END_XML()
+  ! 3DA-binary
+  E_IO = VTK_INI_XML(output_format='binary', filename='XML_STRG-3DA-binary-64.vts',&
+                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x,Y=y,Z=z)
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! 3DA-binary packed API
+  E_IO = VTK_INI_XML(output_format='binary', filename='XML_STRG-3DA-binary-packed-64.vts',&
+                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=xyz)
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! Testing 32 bits mesh data functions
+  ! 1DA-ascii
+  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-1DA-ascii-32.vts',&
+                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
+                     X=reshape(x32,(/nn/)),Y=reshape(y32,(/nn/)),Z=reshape(z32,(/nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! 3DA-ascii
+  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-3DA-ascii-32.vts',&
+                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x32,Y=y32,Z=z32)
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! 1DA-ascii packed API
+  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-1DA-ascii-packed-32.vts',&
+                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=reshape(xyz32,(/3,nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! 3DA-ascii packed API
+  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-3DA-ascii-packed-32.vts',&
+                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=xyz32)
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! 1DA-raw
+  E_IO = VTK_INI_XML(output_format='raw', filename='XML_STRG-1DA-raw-32.vts',&
+                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
+                     X=reshape(x32,(/nn/)),Y=reshape(y32,(/nn/)),Z=reshape(z32,(/nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! 3DA-raw
+  E_IO = VTK_INI_XML(output_format='raw', filename='XML_STRG-3DA-raw-32.vts',&
+                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x32,Y=y32,Z=z32)
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! 3DA-raw packed API
+  E_IO = VTK_INI_XML(output_format='raw', filename='XML_STRG-3DA-raw-packed-32.vts',&
+                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=xyz32)
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! 1DA-binary
+  E_IO = VTK_INI_XML(output_format='binary', filename='XML_STRG-1DA-binary-32.vts',&
+                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
+                     X=reshape(x32,(/nn/)),Y=reshape(y32,(/nn/)),Z=reshape(z32,(/nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! 3DA-binary
+  E_IO = VTK_INI_XML(output_format='binary', filename='XML_STRG-3DA-binary-32.vts',&
+                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x32,Y=y32,Z=z32)
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
+  ! 3DA-binary packed API
+  E_IO = VTK_INI_XML(output_format='binary', filename='XML_STRG-3DA-binary-packed-32.vts',&
+                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=xyz32)
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
+  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
+  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = VTK_GEO_XML()
+  E_IO = VTK_END_XML()
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_strg
