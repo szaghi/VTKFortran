@@ -1,10 +1,15 @@
 var annotated =
 [
     [ "IR_Precision", "d3/daa/group__IR__PrecisionLibrary.html#d7/dc8/classIR__Precision", "d3/daa/group__IR__PrecisionLibrary" ],
+    [ "IR_Precision::bcton", "dd/d4b/group__IR__PrecisionInterface.html#dd/d9a/interfaceIR__Precision_1_1bcton", null ],
     [ "IR_Precision::bit_size", "dd/d4b/group__IR__PrecisionInterface.html#dc/dd5/interfaceIR__Precision_1_1bit__size", null ],
+    [ "IR_Precision::bstr", "dd/d4b/group__IR__PrecisionInterface.html#d4/d40/interfaceIR__Precision_1_1bstr", null ],
     [ "IR_Precision::cton", "dd/d4b/group__IR__PrecisionInterface.html#d6/da2/interfaceIR__Precision_1_1cton", null ],
     [ "IR_Precision::str", "dd/d4b/group__IR__PrecisionInterface.html#d6/d7c/interfaceIR__Precision_1_1str", null ],
     [ "IR_Precision::strz", "dd/d4b/group__IR__PrecisionInterface.html#d0/d4a/interfaceIR__Precision_1_1strz", "dd/d4b/group__IR__PrecisionInterface" ],
+    [ "Lib_Base64", "db/d09/group__Lib__Base64Library.html#da/db3/classLib__Base64", "db/d09/group__Lib__Base64Library" ],
+    [ "Lib_Base64::b64_encode", "db/d07/group__Lib__Base64Interface.html#d9/d90/interfaceLib__Base64_1_1b64__encode", "db/d07/group__Lib__Base64Interface" ],
+    [ "Lib_Base64::pack_data", "db/d07/group__Lib__Base64Interface.html#de/d74/interfaceLib__Base64_1_1pack__data", "db/d07/group__Lib__Base64Interface" ],
     [ "Lib_VTK_IO", "d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO", "d8/d78/group__Lib__VTK__IOLibrary" ],
     [ "Lib_VTK_IO::Type_VTK_File", "d8/d78/group__Lib__VTK__IOLibrary.html#da/d6c/structLib__VTK__IO_1_1Type__VTK__File", "d8/d78/group__Lib__VTK__IOLibrary" ],
     [ "Lib_VTK_IO::Type_VTM_File", "d8/d78/group__Lib__VTK__IOLibrary.html#d2/dc5/structLib__VTK__IO_1_1Type__VTM__File", "d8/d78/group__Lib__VTK__IOLibrary" ],

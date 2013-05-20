@@ -99,6 +99,28 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <dl class="version"><dt><b>Version:</b></dt><dd>1.1 </dd></dl>
 <dl class="date"><dt><b>Date:</b></dt><dd>2013-03-28 </dd></dl>
 <dl class="user"><dt><b>News</b></dt><dd><ul>
+<li>Added packed API and 3D arrays for VTK_GEO and VTK_GEO_XML function: this avoids the necessity of explicit reshape of multi-dimensional arrays containing X, Y and Z coordinates in GEO callings; the following inputs are now available:<ul>
+<li>StructuredGrid (NN is the number of grid points, n#1-n#2, #x,y,z are the domain extents):<ul>
+<li>1D arrays of size NN: X[1:NN],Y[1:NN],Z[1:NN];</li>
+<li>3D arrays of size NN: X[nx1:nx2,ny1:ny2,nz1:nz2],Y[nx1:nx2,ny1:ny2,nz1:nz2],Z[nx1:nx2,ny1:ny2,nz1:nz2];</li>
+<li>1D array of size 3*NN (packed API): XYZ[1:3,1:NN];</li>
+<li>3D array of size 3*NN (packed API): XYZ[1:3,nx1:nx2,ny1:ny2,nz1:nz2].</li>
+</ul>
+</li>
+<li>UnStructuredGrid (NN is the number of grid points):<ul>
+<li>1D arrays of size NN: X[1:NN],Y[1:NN],Z[1:NN];</li>
+<li>1D array of size 3*NN (packed API): XYZ[1:3,1:NN].</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Added base64 encoding format: the output format specifier of VTK_INI_XML has been changed:<ul>
+<li>output_format = 'ascii' means <b>ascii</b> data, the same as the previous version;</li>
+<li>output_format = 'binary' means <b>base64</b> encoded data, different from the previous version where it meant appended raw-binary data; base64 encoding was missing in the previous version;</li>
+<li>output_format = 'raw' means <b>appended</b> <b>raw-binary</b> data, as 'binary' of the previous version;</li>
+</ul>
+</li>
+<li>Added support for OpenMP multi-threads framework;</li>
 <li>Correct bug affecting binary output;</li>
 <li>implement concurrent multiple files IO capability;</li>
 <li>implement FieldData tag for XML files, useful for tagging dataset with global auxiliary data, e.g. time, time step, ecc;</li>
@@ -186,7 +208,7 @@ Source-Code</h2>
   <div id="nav-path" class="navpath">
     <ul>
 
-    <li class="footer">Generated on Mon Apr 29 2013 12:11:17 for Lib_VTK_IO by
+    <li class="footer">Generated on Mon May 20 2013 16:56:08 for Lib_VTK_IO by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>

@@ -9,7 +9,7 @@ var NAVTREE =
       [ "Data Types", "classes.html", null ],
       [ "Data Fields", "functions.html", [
         [ "All", "functions.html", "functions_dup" ],
-        [ "Functions/Subroutines", "functions_func.html", null ],
+        [ "Functions/Subroutines", "functions_func.html", "functions_func" ],
         [ "Variables", "functions_vars.html", null ]
       ] ]
     ] ],

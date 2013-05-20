@@ -105,7 +105,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
  <br/>
  where built in function <em>reshape</em> has explicitly being used in the calling to VTK_VAR_XML. </p>
 <p class="enddd"><b>XML-Efficiency</b>: <br/>
- This is not properly a bug. There is an inefficiency when saving XML binary file. To write XML binary <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> uses a temporary scratch file to save binary data while saving all formatting data to the final XML file. Only when all XML formatting data have been written the scratch file is rewind and the binary data is saved in the final tag of XML file as <b>raw</b> data. This approach is not efficient. </p>
+ This is not properly a bug. There is an inefficiency when saving XML raw (binary) file. To write raw data into XML file <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> uses a temporary scratch file to save binary data while saving all formatting data to the final XML file. Only when all XML formatting data have been written the scratch file is rewind and the binary data is saved in the final tag of XML file as <b>raw</b> <b>appended</b> data. This approach is not efficient. </p>
 </dd>
 </dl>
 </div></div><!-- contents -->
@@ -127,7 +127,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   <div id="nav-path" class="navpath">
     <ul>
 
-    <li class="footer">Generated on Mon Apr 29 2013 12:11:17 for Lib_VTK_IO by
+    <li class="footer">Generated on Mon May 20 2013 16:56:07 for Lib_VTK_IO by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>

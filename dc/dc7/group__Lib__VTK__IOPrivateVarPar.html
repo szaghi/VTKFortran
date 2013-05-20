@@ -103,7 +103,11 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P), parameter&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#gafa8b242a81a568eb7ff6a698cce398ed">Lib_VTK_IO::ascii</a> = 0</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Ascii-output-format parameter identifier.  <a href="#gafa8b242a81a568eb7ff6a698cce398ed"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">integer(I4P), parameter&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga7736d288a10a107f197ccd5aad5a814e">Lib_VTK_IO::binary</a> = 1</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Binary-output-format parameter identifier.  <a href="#ga7736d288a10a107f197ccd5aad5a814e"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Base64-output-format parameter identifier.  <a href="#ga7736d288a10a107f197ccd5aad5a814e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P), parameter&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#gac5a2dc05c7b175e46be2c2132458dfdc">Lib_VTK_IO::raw</a> = 2</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Raw-appended-binary-output-format parameter identifier.  <a href="#gac5a2dc05c7b175e46be2c2132458dfdc"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">integer(I4P), parameter&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#gac9a777a08df43c8644a1f1ac7ef7a677">Lib_VTK_IO::bin_app</a> = 3</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Base64-appended-output-format parameter identifier.  <a href="#gac9a777a08df43c8644a1f1ac7ef7a677"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">type(Type_VTK_File), dimension(:), <br class="typebreak"/>
 allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga857ed739c898b7c991ff710fc1881e93">Lib_VTK_IO::vtk</a></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Global data of VTK files [1:Nvtk].  <a href="#ga857ed739c898b7c991ff710fc1881e93"></a><br/></td></tr>
@@ -128,7 +132,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>Max number of characters of static string. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00388">388</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00418">418</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -145,7 +149,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>End-character for binary-record finalize. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00389">389</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00419">419</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -162,7 +166,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>Ascii-output-format parameter identifier. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00390">390</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00420">420</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -177,9 +181,43 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </div>
 <div class="memdoc">
 
-<p>Binary-output-format parameter identifier. </p>
+<p>Base64-output-format parameter identifier. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00391">391</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00421">421</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="gac5a2dc05c7b175e46be2c2132458dfdc"></a><!-- doxytag: member="Lib_VTK_IO::raw" ref="gac5a2dc05c7b175e46be2c2132458dfdc" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I4P), parameter <a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#gac5a2dc05c7b175e46be2c2132458dfdc">Lib_VTK_IO::raw</a> = 2<code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Raw-appended-binary-output-format parameter identifier. </p>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00422">422</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="gac9a777a08df43c8644a1f1ac7ef7a677"></a><!-- doxytag: member="Lib_VTK_IO::bin_app" ref="gac9a777a08df43c8644a1f1ac7ef7a677" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(I4P), parameter <a class="el" href="../../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#gac9a777a08df43c8644a1f1ac7ef7a677">Lib_VTK_IO::bin_app</a> = 3<code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Base64-appended-output-format parameter identifier. </p>
+
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00423">423</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -196,7 +234,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>Global data of VTK files [1:Nvtk]. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00408">408</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00440">440</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -213,7 +251,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>Number of (concurrent) VTK files. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00409">409</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00441">441</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -230,7 +268,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>Current VTK file index. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00410">410</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00442">442</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -247,7 +285,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>Global data of VTM files. </p>
 
-<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00417">417</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html#l00449">449</a> of file <a class="el" href="../../dd/d83/Lib__VTK__IO_8f90_source.html">Lib_VTK_IO.f90</a>.</p>
 
 </div>
 </div>
@@ -270,7 +308,7 @@ allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   <div id="nav-path" class="navpath">
     <ul>
 
-    <li class="footer">Generated on Mon Apr 29 2013 12:11:17 for Lib_VTK_IO by
+    <li class="footer">Generated on Mon May 20 2013 16:56:08 for Lib_VTK_IO by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>

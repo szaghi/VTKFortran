@@ -23,5 +23,17 @@ var group__IR__PrecisionPrivateProcedure_dup =
     [ "ctoi_I8P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#ga2fa3329b223fe2c2c88f1b710d6e23b5", null ],
     [ "ctoi_I4P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#ga981b39a1d6d54b38d26d6315e3d64ecc", null ],
     [ "ctoi_I2P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#gacd627c35b8d315f860582a05dfb49995", null ],
-    [ "ctoi_I1P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#ga478d54c0153620bef6750d46fbb63b11", null ]
+    [ "ctoi_I1P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#ga478d54c0153620bef6750d46fbb63b11", null ],
+    [ "bstr_R8P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#ga8020c68c6318b59e55aed3cb173584b1", null ],
+    [ "bstr_R4P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#ga8146758ee0e3f9d21d475cbcc05e0105", null ],
+    [ "bstr_I8P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#ga0e4ff8bfa96bee49fc0ed82152348e8e", null ],
+    [ "bstr_I4P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#ga5791d79f6c21bf2614414cf2f9fd8045", null ],
+    [ "bstr_I2P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#ga04a063c7769db1ac45a2c6f91bf0a59a", null ],
+    [ "bstr_I1P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#gae49a3dd6c28a644a5c9bd112fe1288ed", null ],
+    [ "bctor_R8P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#ga306aa00fa87202664dbf47de10722b77", null ],
+    [ "bctor_R4P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#ga201affdb0d04e0b6eb55be0551d20af3", null ],
+    [ "bctoi_I8P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#ga5c8d1d926e5248b2778e0f8ae42f495a", null ],
+    [ "bctoi_I4P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#gaee9aa83da1850161586eb1438e925ee9", null ],
+    [ "bctoi_I2P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#ga987c4e2d9ca75a0868490a8a4d9712aa", null ],
+    [ "bctoi_I1P", "d1/de2/group__IR__PrecisionPrivateProcedure.html#ga4dd7a02df33c40815ec2f6dded7232a0", null ]
 ];

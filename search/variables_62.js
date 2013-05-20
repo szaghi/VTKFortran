@@ -1,10 +1,12 @@
 var searchData=
 [
+  ['base64',['base64',['../dc/d24/group__Lib__Base64PrivateVarPar.html#gab63f1e0c29078960d90e7256bc711ea7',1,'Lib_Base64']]],
   ['bii1p',['BII1P',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#ga6094bd648b7b686d7904ea74aba3b521',1,'IR_Precision']]],
   ['bii2p',['BII2P',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#gaf8fe0e5d91321ddf1dc9cde05b1e2734',1,'IR_Precision']]],
   ['bii4p',['BII4P',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#gabf6467af319af919f71cc4e7a10e60ff',1,'IR_Precision']]],
   ['bii8p',['BII8P',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#gaa2fd6e44147583265dfde77d55a91324',1,'IR_Precision']]],
   ['bii_5fp',['BII_P',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#gada30a837b437a2026b40ac26b1ece956',1,'IR_Precision']]],
+  ['bin_5fapp',['bin_app',['../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#gac9a777a08df43c8644a1f1ac7ef7a677',1,'Lib_VTK_IO']]],
   ['binary',['binary',['../dc/dc7/group__Lib__VTK__IOPrivateVarPar.html#ga7736d288a10a107f197ccd5aad5a814e',1,'Lib_VTK_IO']]],
   ['bir4p',['BIR4P',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#ga546707bbf591f987714595b8e34ca670',1,'IR_Precision']]],
   ['bir8p',['BIR8P',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#ga33c88ee852342d58e3e218253e355b1d',1,'IR_Precision']]],
