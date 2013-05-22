@@ -97,16 +97,8 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <div class="contents">
 <div class="textblock"><dl class="reflist">
 <dt><a class="anchor" id="_bug000001"></a>Type <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html">Lib_VTK_IO</a>  </dt>
-<dd><p class="startdd"><b>Array-Reshape</b>: <br/>
- Fortran allows automatic reshape of arrays, e.g. 2D array can be automatically (in the function calling) transformed to a 1D array with the same number of element of 2D array. The use of dynamic dispatching for <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> functions by means of generic interfaces had disable this feature: dynamic dispatching use the array-shape information to detect, at compile-time, the correct function to be called inside the generic interface functions. Thus automatic reshaping of arrays at calling function phase is not allowed. <br/>
- Instead an explicit reshape can be used by means of the Fortran built-in function <em>reshape</em>. As an example considering a call to the generic function <em>VTK_VAR_XML</em> an explicit array reshape could be: <br/>
- <br/>
- E_IO = VTK_VAR_XML(NC_NN=nn,varname='u',var=<b>reshape</b>(u(ni1:ni2,nj1:nj2,nk1:nk2),(/nn/))) <br/>
- <br/>
- where built in function <em>reshape</em> has explicitly being used in the calling to VTK_VAR_XML. </p>
-<p class="enddd"><b>XML-Efficiency</b>: <br/>
- This is not properly a bug. There is an inefficiency when saving XML raw (binary) file. To write raw data into XML file <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> uses a temporary scratch file to save binary data while saving all formatting data to the final XML file. Only when all XML formatting data have been written the scratch file is rewind and the binary data is saved in the final tag of XML file as <b>raw</b> <b>appended</b> data. This approach is not efficient. </p>
-</dd>
+<dd><b>XML-Efficiency</b>: <br/>
+ This is not properly a bug. There is an inefficiency when saving XML raw (binary) file. To write raw data into XML file <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> uses a temporary scratch file to save binary data while saving all formatting data to the final XML file. Only when all XML formatting data have been written the scratch file is rewind and the binary data is saved in the final tag of XML file as <b>raw</b> <b>appended</b> data. This approach is not efficient. </dd>
 </dl>
 </div></div><!-- contents -->
 <!-- window showing the filter options -->
@@ -127,7 +119,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
   <div id="nav-path" class="navpath">
     <ul>
 
-    <li class="footer">Generated on Mon May 20 2013 16:56:07 for Lib_VTK_IO by
+    <li class="footer">Generated on Wed May 22 2013 16:06:42 for Lib_VTK_IO by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>

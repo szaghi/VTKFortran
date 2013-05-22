@@ -1,5 +1,7 @@
 var searchData=
 [
+  ['save_5fnode_5fvariables',['save_node_variables',['../dc/d15/Test__Driver_8f90.html#a2824cc6c5aaae61624cf5c4de92f0bd3',1,'Test_Driver.f90']]],
+  ['save_5fstrg',['save_strg',['../dc/d15/Test__Driver_8f90.html#ab2c3fa455d41c90269d02c2413d9bd4e',1,'Test_Driver.f90']]],
   ['str_5fi1p',['str_I1P',['../d1/de2/group__IR__PrecisionPrivateProcedure.html#gab912b296c16749bd3a6f2ef851004ffa',1,'IR_Precision']]],
   ['str_5fi2p',['str_I2P',['../d1/de2/group__IR__PrecisionPrivateProcedure.html#gae7cc03aeec0afd12e2af708a938d538c',1,'IR_Precision']]],
   ['str_5fi4p',['str_I4P',['../d1/de2/group__IR__PrecisionPrivateProcedure.html#ga4fcdc654557ae853f7a6d6bb3c45673c',1,'IR_Precision']]],
