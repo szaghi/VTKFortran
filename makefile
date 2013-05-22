@@ -227,7 +227,6 @@ tar: cleanall
 .PHONY : doc
 doc:
 	@echo -e "\033[1;31m Building documentation\033[0m" | tee make.log
-	@mkdir -p doc
 	@doxygen .doxygenconfig
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -253,7 +252,6 @@ $(DOBJ)lib_vtk_io.o : Lib_VTK_IO.f90 \
 
 $(DOBJ)Test_Driver.o : Test_Driver.f90 \
 	$(DOBJ)ir_precision.o \
-	$(DOBJ)lib_base64.o \
 	$(DOBJ)lib_vtk_io.o
 	@echo $(COTEXT) | tee -a make.log
 	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages

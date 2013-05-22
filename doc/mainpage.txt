@@ -7,7 +7,7 @@
 @par News
      - Added packed API and 3D arrays for VTK_GEO and VTK_GEO_XML function: this avoids the necessity of explicit reshape of
        multi-dimensional arrays containing X, Y and Z coordinates in GEO callings; the following inputs are now available:
-          - StructuredGrid (NN is the number of grid points, n#1-n#2, #x,y,z are the domain extents):
+          - StructuredGrid (NN is the number of grid points, n\#1-n\#2, \#x,y,z are the domain extents):
                - 1D arrays of size NN: X[1:NN],Y[1:NN],Z[1:NN];
                - 3D arrays of size NN: X[nx1:nx2,ny1:ny2,nz1:nz2],Y[nx1:nx2,ny1:ny2,nz1:nz2],Z[nx1:nx2,ny1:ny2,nz1:nz2];
                - 1D array of size 3*NN (packed API): XYZ[1:3,1:NN];

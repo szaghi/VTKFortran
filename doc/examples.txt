@@ -48,7 +48,7 @@ showing how to create XML file:
       E_IO = VTK_END_XML()
     @endcode
 
-This example is contained into Test_Driver.f90, in particular the subroutine \ref Test_Driver::test_strg "test_strg" contains all the data and code to run this
+This example is contained into Test_Driver.f90, in particular the subroutine \ref Lib_Testers::test_strg "test_strg" contains all the data and code to run this
 example.
 
 @page VTU UnstructuredGrid Topology Example
@@ -93,7 +93,7 @@ showing how to create XML file:
       E_IO = VTK_END_XML()
     @endcode
 
-This example is contained into Test_Driver.f90, in particular the subroutine \ref Test_Driver::test_strg "test_unst" contains all the data and code to run this
+This example is contained into Test_Driver.f90, in particular the subroutine \ref Lib_Testers::test_strg "test_unst" contains all the data and code to run this
 example.
 
 @page PVTR PRectilinearGrid Topology Example
@@ -166,7 +166,7 @@ showing how to create partitioned files:
       E_IO = PVTK_END_XML()
     @endcode
 
-This example is contained into Test_Driver.f90, in particular the subroutine \ref Test_Driver::test_pstrg "test_pstrg" contains all the data and code to run this
+This example is contained into Test_Driver.f90, in particular the subroutine \ref Lib_Testers::test_pstrg "test_pstrg" contains all the data and code to run this
 example.
 
 @note \b Pieces \b Extents \n
@@ -219,7 +219,7 @@ showing how to create partitioned files:
       E_IO = PVTK_END_XML()
     @endcode
 
-This example is contained into Test_Driver.f90, in particular the subroutine \ref Test_Driver::test_punst "test_punst" contains all the data and code to run this
+This example is contained into Test_Driver.f90, in particular the subroutine \ref Lib_Testers::test_punst "test_punst" contains all the data and code to run this
 example.
 
 @note \b GhostLevel \n
@@ -274,7 +274,7 @@ showing how to create multi-block file:
       E_IO = VTM_END_XML()
     @endcode
 
-This example is contained into Test_Driver.f90, in particular the subroutine \ref Test_Driver::test_vtm "test_vtm" contains all the data and code to run this
+This example is contained into Test_Driver.f90, in particular the subroutine \ref Lib_Testers::test_vtm "test_vtm" contains all the data and code to run this
 example.
 
 */

@@ -1,135 +1,274 @@
-!> @addtogroup Program Programs
-!> List of excutable programs.
-
-!> @ingroup Program
+!> @ingroup Library
 !> @{
-!> @defgroup Test_DriverProgram Test_Driver
+!> @defgroup Lib_TestersLibrary Lib_Testers
 !> @}
 
-!> "Driver" program for testing @libvtk functions.
-!> @note
-!> For printing help message for usage run it without command line arguments
-!> @code
-!> ./Test_Driver
-!> @endcode
-!> For testing UnstructuredGrid functions run it as following:
-!> @code
-!> ./Test_Driver -unst
-!> @endcode
-!> For testing StructuredGrid functions run it as following:
-!> @code
-!> ./Test_Driver -strg
-!> @endcode
-!> For testing RectilinearGrid functions run it as following:
-!> @code
-!> ./Test_Driver -rect
-!> @endcode
-!> For testing parallel (partitioned) PUnstructuredGrid functions run it as following:
-!> @code
-!> ./Test_Driver -punst
-!> @endcode
-!> For testing parallel (partitioned) PStructuredGrid functions run it as following:
-!> @code
-!> ./Test_Driver -pstrg
-!> @endcode
-!> For testing multi-blocks VTM functions run it as following:
-!> @code
-!> ./Test_Driver -vtm
-!> @endcode
-!> For testing thread-safe capability into an OpenMP parallel framework run it as following:
-!> @code
-!> ./Test_Driver -openmp
-!> @endcode
-!> For testing process-safe capability into a MPI parallel framework run it as following:
-!> @code
-!> ./Test_Driver -mpi
-!> @endcode
-!> @author    Stefano Zaghi
-!> @version   1.0
-!> @date      2013-03-28
-!> @copyright GNU Public License version 3.
-!> @todo Legacy: implement an example of legacy output.
-!> @todo MPI: implement an example of usage into MPI framework.
-!> @ingroup Test_DriverProgram
-program Test_Driver
+!> @ingroup PublicProcedure
+!> @{
+!> @defgroup Lib_TestersPublicProcedure Lib_Testers
+!> @}
+
+!> @brief This is a library of procedures for testing Lib_VTK_IO and for providing practical examples.
+module Lib_Testers
 !-----------------------------------------------------------------------------------------------------------------------------------
 USE IR_Precision
-USE Lib_Base64
 USE Lib_VTK_IO
 USE, intrinsic:: ISO_FORTRAN_ENV, only: stdout=>OUTPUT_UNIT, stderr=>ERROR_UNIT
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
 implicit none
-integer(I4P):: Nca = 0 !  Number of command line arguments.
-character(7):: cas     !  Command line argument switch.
-!-----------------------------------------------------------------------------------------------------------------------------------
-
-!-----------------------------------------------------------------------------------------------------------------------------------
-Nca = command_argument_count()
-if (Nca==0) then
-  call print_usage
-endif
-call get_command_argument(1,cas)
-select case(trim(cas))
-case('-unst')
-  call test_unst
-case('-strg')
-  call test_strg
-case('-rect')
-  call test_rect
-case('-punst')
-  call test_punst
-case('-pstrg')
-  call test_pstrg
-case('-vtm')
-  call test_vtm
-case('-openmp')
-  call test_openmp
-case('-mpi')
-  !call test_mpi
-case('-all')
-  call test_rect
-  call test_unst
-  call test_strg
-  call test_punst
-  call test_pstrg
-  call test_vtm
-case default
-  write(stderr,'(A)')' Switch '//trim(cas)//' unknown'
-  call print_usage
-endselect
-stop
+private
+public:: test_stress
+public:: test_rect
+public:: test_unst
+public:: test_strg
+public:: test_punst
+public:: test_pstrg
+public:: test_vtm
+public:: test_openmp
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
-  !> Subroutine for printing usage help message to stdout.
-  subroutine print_usage()
+  !> Subroutine for testing all functions: R4P and R8P mesh data, 1D and 3D arrays inputs, standard (X,Y,Z,... separated arrays) and
+  !> packed API (X,Y,Z,... packed into a single array). All available formats are used. The StructuredGrid topology is used.
+  !> @note This subroutine is designed not as an example rather than a comprehensive stress-tester for function of any kind/rank.
+  subroutine test_stress()
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
+  ! dataset dimensions
+  integer(I4P), parameter:: nx1=0_I4P,nx2=9_I4P,ny1=0_I4P,ny2=5_I4P,nz1=0_I4P,nz2=5_I4P
+  integer(I4P), parameter:: nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
+  ! grid coordinates
+  real(R8P),    dimension(    nx1:nx2,ny1:ny2,nz1:nz2):: x,y,z ! coordinates components
+  real(R8P),    dimension(1:3,nx1:nx2,ny1:ny2,nz1:nz2):: xyz   ! packed coordinates components
+  ! variables associated at grid nodes
+  real(R8P),    dimension(    nx1:nx2,ny1:ny2,nz1:nz2):: v_R            ! scalar (real)
+  integer(I8P), dimension(    nx1:nx2,ny1:ny2,nz1:nz2):: v_I            ! scalar (integer)
+  real(R8P),    dimension(    nx1:nx2,ny1:ny2,nz1:nz2):: vX_R,vY_R,Vz_R ! 3 dimensional vector components (real)
+  integer(I8P), dimension(    nx1:nx2,ny1:ny2,nz1:nz2):: vX_I,vY_I,Vz_I ! 3 dimensional vector components (integer)
+  real(R8P),    dimension(1:4,nx1:nx2,ny1:ny2,nz1:nz2):: vP_R           ! packed 4 dimensional vector (real)
+  integer(I8P), dimension(1:4,nx1:nx2,ny1:ny2,nz1:nz2):: vP_I           ! packed 4 dimensional vector (integer)
+  ! auxiliary variables
+  integer(I4P):: E_IO
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  write(stdout,'(A)')' Test_Driver: a "driver" program for testing Lib_VTK_IO functions'
-  write(stdout,'(A)')' Usage:'
-  write(stdout,'(A)')'   Test_Driver [-switch]'
-  write(stdout,'(A)')'     switch = unst   => testing UnstructuredGrid functions'
-  write(stdout,'(A)')'     switch = strg   => testing StructuredGrid functions'
-  write(stdout,'(A)')'     switch = rect   => testing RectilinearGrid functions'
-  write(stdout,'(A)')'     switch = punst  => testing parallel (partitioned) PUnstructuredGrid functions'
-  write(stdout,'(A)')'     switch = pstrg  => testing parallel (partitioned) StructuredGrid functions'
-  write(stdout,'(A)')'     switch = vtm    => testing multi-block XML functions'
-  write(stdout,'(A)')'     switch = all    => testing all above functions'
-  write(stdout,'(A)')'     switch = openmp => testing functions in parallel OpenMP framework'
-  write(stdout,'(A)')'     switch = mpi    => testing functions in parallel MPI    framework'
-  write(stdout,'(A)')' Examples:'
-  write(stdout,'(A)')'   Test_Driver -pstrg'
-  write(stdout,'(A)')'   Test_Driver -vtm'
-  write(stdout,'(A)')'   Test_Driver -openmp'
-  write(stdout,'(A)')' If switch is not passed (or is unknown) this help message is printed to stdout'
-  stop
+  write(stdout,'(A)')' Testing StructuredGrid functions. Output files are XML_STRG#.vts'
+  ! arrays initialization
+  call initialize
+  ! testing 64 bits grid coordinates data, 1D rank arrays non packed, ASCII format
+  E_IO = save_strg(x64=x,y64=y,z64=z,threeD=.false.,out_f='ASCII')
+  ! testing 64 bits grid coordinates data, 1D rank arrays packed, ASCII format
+  E_IO = save_strg(xyz64=xyz,threeD=.false.,out_f='ASCII')
+  ! testing 64 bits grid coordinates data, 3D rank arrays non packed, ASCII format
+  E_IO = save_strg(x64=x,y64=y,z64=z,threeD=.true.,out_f='ASCII')
+  ! testing 64 bits grid coordinates data, 3D rank arrays packed, ASCII format
+  E_IO = save_strg(xyz64=xyz,threeD=.true.,out_f='ASCII')
+  ! testing 64 bits grid coordinates data, 1D rank arrays non packed, BINARY format
+  E_IO = save_strg(x64=x,y64=y,z64=z,threeD=.false.,out_f='BINARY')
+  ! testing 64 bits grid coordinates data, 1D rank arrays packed, BINARY format
+  E_IO = save_strg(xyz64=xyz,threeD=.false.,out_f='BINARY')
+  ! testing 64 bits grid coordinates data, 3D rank arrays non packed, ABINARYformat
+  E_IO = save_strg(x64=x,y64=y,z64=z,threeD=.true.,out_f='BINARY')
+  ! testing 64 bits grid coordinates data, 3D rank arrays packed, BINARY format
+  E_IO = save_strg(xyz64=xyz,threeD=.true.,out_f='BINARY')
+  ! testing 64 bits grid coordinates data, 1D rank arrays non packed, RAW format
+  E_IO = save_strg(x64=x,y64=y,z64=z,threeD=.false.,out_f='RAW')
+  ! testing 64 bits grid coordinates data, 1D rank arrays packed, RAW format
+  E_IO = save_strg(xyz64=xyz,threeD=.false.,out_f='RAW')
+  ! testing 64 bits grid coordinates data, 3D rank arrays non packed, RAW format
+  E_IO = save_strg(x64=x,y64=y,z64=z,threeD=.true.,out_f='RAW')
+  ! testing 64 bits grid coordinates data, 3D rank arrays packed, RAW format
+  E_IO = save_strg(xyz64=xyz,threeD=.true.,out_f='RAW')
+  ! testing 32 bits grid coordinates data, 1D rank arrays non packed, ASCII format
+  E_IO = save_strg(x32=real(x,R4P),y32=real(y,R4P),z32=real(z,R4P),threeD=.false.,out_f='ASCII')
+  ! testing 32 bits grid coordinates data, 1D rank arrays packed, ASCII format
+  E_IO = save_strg(xyz32=real(xyz,R4P),threeD=.false.,out_f='ASCII')
+  ! testing 32 bits grid coordinates data, 3D rank arrays non packed, ASCII format
+  E_IO = save_strg(x32=real(x,R4P),y32=real(y,R4P),z32=real(z,R4P),threeD=.true.,out_f='ASCII')
+  ! testing 32 bits grid coordinates data, 3D rank arrays packed, ASCII format
+  E_IO = save_strg(xyz32=real(xyz,R4P),threeD=.true.,out_f='ASCII')
+  ! testing 32 bits grid coordinates data, 1D rank arrays non packed, BINARY format
+  E_IO = save_strg(x32=real(x,R4P),y32=real(y,R4P),z32=real(z,R4P),threeD=.false.,out_f='BINARY')
+  ! testing 32 bits grid coordinates data, 1D rank arrays packed, BINARY format
+  E_IO = save_strg(xyz32=real(xyz,R4P),threeD=.false.,out_f='BINARY')
+  ! testing 32 bits grid coordinates data, 3D rank arrays non packed, ABINARYformat
+  E_IO = save_strg(x32=real(x,R4P),y32=real(y,R4P),z32=real(z,R4P),threeD=.true.,out_f='BINARY')
+  ! testing 32 bits grid coordinates data, 3D rank arrays packed, BINARY format
+  E_IO = save_strg(xyz32=real(xyz,R4P),threeD=.true.,out_f='BINARY')
+  ! testing 32 bits grid coordinates data, 1D rank arrays non packed, RAW format
+  E_IO = save_strg(x32=real(x,R4P),y32=real(y,R4P),z32=real(z,R4P),threeD=.false.,out_f='RAW')
+  ! testing 32 bits grid coordinates data, 1D rank arrays packed, RAW format
+  E_IO = save_strg(xyz32=real(xyz,R4P),threeD=.false.,out_f='RAW')
+  ! testing 32 bits grid coordinates data, 3D rank arrays non packed, RAW format
+  E_IO = save_strg(x32=real(x,R4P),y32=real(y,R4P),z32=real(z,R4P),threeD=.true.,out_f='RAW')
+  ! testing 32 bits grid coordinates data, 3D rank arrays packed, RAW format
+  E_IO = save_strg(xyz32=real(xyz,R4P),threeD=.true.,out_f='RAW')
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endsubroutine print_usage
+  contains
+    !> @brief Subroutine for initializing data.
+    subroutine initialize()
+    !-------------------------------------------------------------------------------------------------------------------------------
+    implicit none
+    integer(I4P):: i,j,k,p
+    !-------------------------------------------------------------------------------------------------------------------------------
+
+    !-------------------------------------------------------------------------------------------------------------------------------
+    do k=nz1,nz2
+      do j=ny1,ny2
+        do i=nx1,nx2
+          x(     i,j,k) = i*1._R8P ; xyz(1,i,j,k) = x(i,j,k)
+          y(     i,j,k) = j*1._R8P ; xyz(2,i,j,k) = y(i,j,k)
+          z(     i,j,k) = k*1._R8P ; xyz(3,i,j,k) = z(i,j,k)
+          v_R(   i,j,k) = real(i*j*k,R8P)
+          v_I(   i,j,k) = int( i*j*k,I8P)
+          vX_R(  i,j,k) = x(i,j,k) ; vX_I(i,j,k) = int(x(i,j,k),I8P)
+          vY_R(  i,j,k) = y(i,j,k) ; vY_I(i,j,k) = int(y(i,j,k),I8P)
+          vZ_R(  i,j,k) = z(i,j,k) ; vZ_I(i,j,k) = int(z(i,j,k),I8P)
+          vP_R(:,i,j,k) = [(x(i,j,k)*p,p=1,4)]
+          vP_I(:,i,j,k) = int(vP_R(:,i,j,k),I8P)
+        enddo
+      enddo
+    enddo
+    return
+    !-------------------------------------------------------------------------------------------------------------------------------
+    endsubroutine initialize
+
+    !> @brief Subroutine for saving StructuredGrid files.
+    function save_node_variables(threeD) result(E_IO)
+    !-------------------------------------------------------------------------------------------------------------------------------
+    implicit none
+    logical, intent(IN):: threeD !< Flag for checking the rank-dimensions of outputs.
+    integer(I4P)::        E_IO   !< Error traping flag.
+    !-------------------------------------------------------------------------------------------------------------------------------
+
+    !-------------------------------------------------------------------------------------------------------------------------------
+    E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
+    if (threeD) then ! 3D rank arrays
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_R8',var=     v_R     ) ! scalar, R8P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_R4',var=real(v_R,R4P)) ! scalar, R4P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I8',var=     v_I     ) ! scalar, I8P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I4',var= int(v_I,I4P)) ! scalar, I4P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I2',var= int(v_I,I2P)) ! scalar, I2P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I1',var= int(v_I,I1P)) ! scalar, I1P
+
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_R8',varX=     vX_R,     varY=     vY_R,     varZ=     vZ_R     ) ! vector, R8P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_R4',varX=real(vX_R,R4P),varY=real(vY_R,R4P),varZ=real(vZ_R,R4P)) ! vector, R4P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_I8',varX=     vX_I,     varY=     vY_I,     varZ=     vZ_I     ) ! vector, I8P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_I4',varX= int(vX_I,I4P),varY= int(vY_I,I4P),varZ= int(vZ_I,I4P)) ! vector, I4P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_I2',varX= int(vX_I,I2P),varY= int(vY_I,I2P),varZ= int(vZ_I,I2P)) ! vector, I2P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_I1',varX= int(vX_I,I1P),varY= int(vY_I,I1P),varZ= int(vZ_I,I1P)) ! vector, I1P
+
+      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_R8',var=     vP_R     ) ! packed 4D vector, R8P
+      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_R4',var=real(vP_R,R4P)) ! packed 4D vector, R4P
+      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_I8',var=     vP_I     ) ! packed 4D vector, I8P
+      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_I4',var= int(vP_I,I4P)) ! packed 4D vector, I4P
+      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_I2',var= int(vP_I,I2P)) ! packed 4D vector, I2P
+      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_I1',var= int(vP_I,I1P)) ! packed 4D vector, I1P
+    else ! 1D rank arrays
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_R8',var=     reshape(v_R,[nn])     ) ! scalar, R8P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_R4',var=real(reshape(v_R,[nn]),R4P)) ! scalar, R4P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I8',var=     reshape(v_I,[nn])     ) ! scalar, I8P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I4',var= int(reshape(v_I,[nn]),I4P)) ! scalar, I4P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I2',var= int(reshape(v_I,[nn]),I2P)) ! scalar, I2P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I1',var= int(reshape(v_I,[nn]),I1P)) ! scalar, I1P
+
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_R8',varX=     reshape(vX_R,[nn]),     &
+                                                    varY=     reshape(vY_R,[nn]),     &
+                                                    varZ=     reshape(vZ_R,[nn])     ) ! vector, R8P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_R4',varX=real(reshape(vX_R,[nn]),R4P),&
+                                                    varY=real(reshape(vY_R,[nn]),R4P),&
+                                                    varZ=real(reshape(vZ_R,[nn]),R4P)) ! vector, R4P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_I8',varX=     reshape(vX_I,[nn]),     &
+                                                    varY=     reshape(vY_I,[nn]),     &
+                                                    varZ=     reshape(vZ_I,[nn])     ) ! vector, I8P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_I4',varX= int(reshape(vX_I,[nn]),I4P),&
+                                                    varY= int(reshape(vY_I,[nn]),I4P),&
+                                                    varZ= int(reshape(vZ_I,[nn]),I4P)) ! vector, I4P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_I2',varX= int(reshape(vX_I,[nn]),I2P),&
+                                                    varY= int(reshape(vY_I,[nn]),I2P),&
+                                                    varZ= int(reshape(vZ_I,[nn]),I2P)) ! vector, I2P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_I1',varX= int(reshape(vX_I,[nn]),I1P),&
+                                                    varY= int(reshape(vY_I,[nn]),I1P),&
+                                                    varZ= int(reshape(vZ_I,[nn]),I1P)) ! vector, I1P
+
+      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_R8',var=     reshape(vP_R,[4,nn])     ) ! packed 4D vector, R8P
+      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_R4',var=real(reshape(vP_R,[4,nn]),R4P)) ! packed 4D vector, R4P
+      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_I8',var=     reshape(vP_I,[4,nn])     ) ! packed 4D vector, I8P
+      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_I4',var= int(reshape(vP_I,[4,nn]),I4P)) ! packed 4D vector, I4P
+      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_I2',var= int(reshape(vP_I,[4,nn]),I2P)) ! packed 4D vector, I2P
+      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_I1',var= int(reshape(vP_I,[4,nn]),I1P)) ! packed 4D vector, I1P
+    endif
+    E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+    return
+    !-------------------------------------------------------------------------------------------------------------------------------
+    endfunction save_node_variables
+
+    !> @brief Subroutine for saving node-located variables.
+    function save_strg(x64,y64,z64,xyz64,x32,y32,z32,xyz32,threeD,out_f) result(E_IO)
+    !-------------------------------------------------------------------------------------------------------------------------------
+    implicit none
+    real(R8P), optional, intent(IN):: x64(:,:,:)     !< X Coordinates components (64 bits).
+    real(R8P), optional, intent(IN):: y64(:,:,:)     !< Y Coordinates components (64 bits).
+    real(R8P), optional, intent(IN):: z64(:,:,:)     !< Z Coordinates components (64 bits).
+    real(R8P), optional, intent(IN):: xyz64(:,:,:,:) !< Packed coordinates components (64 bits).
+    real(R4P), optional, intent(IN):: x32(:,:,:)     !< X Coordinates components (32 bits).
+    real(R4P), optional, intent(IN):: y32(:,:,:)     !< Y Coordinates components (32 bits).
+    real(R4P), optional, intent(IN):: z32(:,:,:)     !< Z Coordinates components (32 bits).
+    real(R4P), optional, intent(IN):: xyz32(:,:,:,:) !< Packed coordinates components (32 bits).
+    logical,             intent(IN):: threeD         !< Flag for checking the rank-dimensions of outputs.
+    character(*),        intent(IN):: out_f          !< Output format.
+    integer(I4P)::                    E_IO           !< Error traping flag.
+    !-------------------------------------------------------------------------------------------------------------------------------
+
+    !-------------------------------------------------------------------------------------------------------------------------------
+    if (threeD) then
+      if (present(x64)) then ! non packed, 3D rank array, 64 bits data
+        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-3DA-'//trim(out_f)//'-64.vts',&
+                           mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+        E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x64,Y=y64,Z=z64)
+      elseif (present(x32)) then ! non packed, 3D rank array, 32 bits data
+        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-3DA-'//trim(out_f)//'-32.vts',&
+                           mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+        E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x32,Y=y32,Z=z32)
+      elseif (present(xyz64)) then ! packed, 3D rank array, 64 bits data
+        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-3DAP-'//trim(out_f)//'-64.vts',&
+                           mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+        E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=xyz64)
+      elseif (present(xyz32)) then ! packed, 3D rank array, 32 bits data
+        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-3DAP-'//trim(out_f)//'-32.vts',&
+                           mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+        E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=xyz32)
+      endif
+    else
+      if (present(x64)) then ! non packed, 1D rank array, 64 bits data
+        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-1DA-'//trim(out_f)//'-64.vts',&
+                           mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+        E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
+                           X=reshape(x64,[nn]),Y=reshape(y64,[nn]),Z=reshape(z64,[nn]))
+      elseif (present(x32)) then ! non packed, 1D rank array, 32 bits data
+        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-1DA-'//trim(out_f)//'-32.vts',&
+                           mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+        E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
+                           X=reshape(x32,[nn]),Y=reshape(y32,[nn]),Z=reshape(z32,[nn]))
+      elseif (present(xyz64)) then ! packed, 1D rank array, 64 bits data
+        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-1DAP-'//trim(out_f)//'-64.vts',&
+                           mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+        E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=reshape(xyz64,[3,nn]))
+      elseif (present(xyz32)) then ! packed, 1D rank array, 32 bits data
+        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-1DAP-'//trim(out_f)//'-32.vts',&
+                           mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+        E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=reshape(xyz32,[3,nn]))
+      endif
+    endif
+    E_IO = save_node_variables(threeD=threeD)
+    E_IO = VTK_GEO_XML()
+    E_IO = VTK_END_XML()
+    return
+    !-------------------------------------------------------------------------------------------------------------------------------
+    endfunction save_strg
+  endsubroutine test_stress
 
   !> Subroutine for testing UnstructuredGrid functions.
   subroutine test_unst()
@@ -202,242 +341,37 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_unst
 
-  !> Subroutine for testing StructuredGrid functions. This subroutine tests all functions: R4P and R8P mesh data, 1D and 3D arrays
-  !> inputs, standard (X,Y,Z separated arrays) and packed API (X,Y,Z packed into a single array). All available formats are used.
+  !> Subroutine for testing StructuredGrid functions.
   subroutine test_strg()
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), parameter::                              nx1=0_I4P,nx2=9_I4P,ny1=0_I4P,ny2=5_I4P,nz1=0_I4P,nz2=5_I4P
-  integer(I4P), parameter::                              nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
-  real(R8P),    dimension(    nx1:nx2,ny1:ny2,nz1:nz2):: x,y,z
-  real(R8P),    dimension(1:3,nx1:nx2,ny1:ny2,nz1:nz2):: xyz
-  real(R4P),    dimension(    nx1:nx2,ny1:ny2,nz1:nz2):: x32,y32,z32
-  real(R4P),    dimension(1:3,nx1:nx2,ny1:ny2,nz1:nz2):: xyz32
-  integer(I2P), dimension(    nx1:nx2,ny1:ny2,nz1:nz2):: v
-  real(R8P),    dimension(1:4,nx1:nx2,ny1:ny2,nz1:nz2):: l
-  integer(I4P)::                                         i,j,k,E_IO
+  integer(I4P), parameter::                       nx1=0_I4P,nx2=9_I4P,ny1=0_I4P,ny2=5_I4P,nz1=0_I4P,nz2=5_I4P
+  integer(I4P), parameter::                       nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
+  real(R8P), dimension(nx1:nx2,ny1:ny2,nz1:nz2):: x,y,z
+  real(R8P), dimension(nx1:nx2,ny1:ny2,nz1:nz2):: v_R
+  integer(I4P)::                                  E_IO
+  integer(I4P)::                                  i,j,k
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  write(stdout,'(A)')' Testing StructuredGrid functions. Output files are XML_STRG#.vts'
-  ! arrays initialization
+  write(stdout,'(A)')' Testing StructuredGrid functions. Output files is XML_STRG.vts'
+  ! initializing data
   do k=nz1,nz2
-   do j=ny1,ny2
-     do i=nx1,nx2
-       x(  i,j,k) = i*1._R8P ; xyz(1,i,j,k) = x(i,j,k) ; x32(i,j,k) = i*1._R4P ; xyz32(1,i,j,k) = x32(i,j,k)
-       y(  i,j,k) = j*1._R8P ; xyz(2,i,j,k) = y(i,j,k) ; y32(i,j,k) = j*1._R4P ; xyz32(2,i,j,k) = y32(i,j,k)
-       z(  i,j,k) = k*1._R8P ; xyz(3,i,j,k) = z(i,j,k) ; z32(i,j,k) = k*1._R4P ; xyz32(3,i,j,k) = z32(i,j,k)
-       v(  i,j,k) = int(i*j*k,I2P)
-       l(:,i,j,k) = [(i*j*1._R8P,k=1,4)]
-     enddo
-   enddo
+    do j=ny1,ny2
+      do i=nx1,nx2
+        x(  i,j,k) = i*1._R8P
+        y(  i,j,k) = j*1._R8P
+        z(  i,j,k) = k*1._R8P
+        v_R(i,j,k) = real(i*j*k,R8P)
+      enddo
+    enddo
   enddo
-  ! Testing 64 bits mesh data functions
-  ! 1DA-ascii
-  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-1DA-ascii-64.vts',&
-                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
-                     X=reshape(x,(/nn/)),Y=reshape(y,(/nn/)),Z=reshape(z,(/nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
-  E_IO = VTK_END_XML()
-  ! 3DA-ascii
-  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-3DA-ascii-64.vts',&
-                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+  E_IO = VTK_INI_XML(output_format='binary',filename='XML_STRG.vts',mesh_topology='StructuredGrid',&
+                     nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
   E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x,Y=y,Z=z)
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
-  E_IO = VTK_END_XML()
-  ! 1DA-ascii packed API
-  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-1DA-ascii-packed-64.vts',&
-                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=reshape(xyz,(/3,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
-  E_IO = VTK_END_XML()
-  ! 3DA-ascii packed API
-  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-3DA-ascii-packed-64.vts',&
-                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=xyz)
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
-  E_IO = VTK_END_XML()
-  ! 1DA-raw
-  E_IO = VTK_INI_XML(output_format='raw', filename='XML_STRG-1DA-raw-64.vts',&
-                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
-                     X=reshape(x,(/nn/)),Y=reshape(y,(/nn/)),Z=reshape(z,(/nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
-  E_IO = VTK_END_XML()
-  ! 3DA-raw
-  E_IO = VTK_INI_XML(output_format='raw', filename='XML_STRG-3DA-raw-64.vts',&
-                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x,Y=y,Z=z)
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
-  E_IO = VTK_END_XML()
-  ! 3DA-raw packed API
-  E_IO = VTK_INI_XML(output_format='raw', filename='XML_STRG-3DA-raw-packed-64.vts',&
-                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=xyz)
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
-  E_IO = VTK_END_XML()
-  ! 1DA-binary
-  E_IO = VTK_INI_XML(output_format='binary', filename='XML_STRG-1DA-binary-64.vts',&
-                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
-                     X=reshape(x,(/nn/)),Y=reshape(y,(/nn/)),Z=reshape(z,(/nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
-  E_IO = VTK_END_XML()
-  ! 3DA-binary
-  E_IO = VTK_INI_XML(output_format='binary', filename='XML_STRG-3DA-binary-64.vts',&
-                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x,Y=y,Z=z)
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
-  E_IO = VTK_END_XML()
-  ! 3DA-binary packed API
-  E_IO = VTK_INI_XML(output_format='binary', filename='XML_STRG-3DA-binary-packed-64.vts',&
-                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=xyz)
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
-  E_IO = VTK_END_XML()
-  ! Testing 32 bits mesh data functions
-  ! 1DA-ascii
-  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-1DA-ascii-32.vts',&
-                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
-                     X=reshape(x32,(/nn/)),Y=reshape(y32,(/nn/)),Z=reshape(z32,(/nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
-  E_IO = VTK_END_XML()
-  ! 3DA-ascii
-  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-3DA-ascii-32.vts',&
-                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x32,Y=y32,Z=z32)
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
-  E_IO = VTK_END_XML()
-  ! 1DA-ascii packed API
-  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-1DA-ascii-packed-32.vts',&
-                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=reshape(xyz32,(/3,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
-  E_IO = VTK_END_XML()
-  ! 3DA-ascii packed API
-  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_STRG-3DA-ascii-packed-32.vts',&
-                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=xyz32)
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
-  E_IO = VTK_END_XML()
-  ! 1DA-raw
-  E_IO = VTK_INI_XML(output_format='raw', filename='XML_STRG-1DA-raw-32.vts',&
-                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
-                     X=reshape(x32,(/nn/)),Y=reshape(y32,(/nn/)),Z=reshape(z32,(/nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
-  E_IO = VTK_END_XML()
-  ! 3DA-raw
-  E_IO = VTK_INI_XML(output_format='raw', filename='XML_STRG-3DA-raw-32.vts',&
-                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x32,Y=y32,Z=z32)
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
-  E_IO = VTK_END_XML()
-  ! 3DA-raw packed API
-  E_IO = VTK_INI_XML(output_format='raw', filename='XML_STRG-3DA-raw-packed-32.vts',&
-                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=xyz32)
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
-  E_IO = VTK_END_XML()
-  ! 1DA-binary
-  E_IO = VTK_INI_XML(output_format='binary', filename='XML_STRG-1DA-binary-32.vts',&
-                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
-                     X=reshape(x32,(/nn/)),Y=reshape(y32,(/nn/)),Z=reshape(z32,(/nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
-  E_IO = VTK_END_XML()
-  ! 3DA-binary
-  E_IO = VTK_INI_XML(output_format='binary', filename='XML_STRG-3DA-binary-32.vts',&
-                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x32,Y=y32,Z=z32)
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
-  E_IO = VTK_END_XML()
-  ! 3DA-binary packed API
-  E_IO = VTK_INI_XML(output_format='binary', filename='XML_STRG-3DA-binary-packed-32.vts',&
-                     mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=xyz32)
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'node_value', var = reshape(v,(/nn/)))
-  E_IO = VTK_VAR_XML(NC_NN = nn, N_COL = 4_I4P, varname = 'node_list', var = reshape(l,(/4,nn/)))
-  E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
+  E_IO = VTK_DAT_XML(var_location='node',var_block_action='open')
+  E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_R8',var=v_R)
+  E_IO = VTK_DAT_XML(var_location='node',var_block_action='close')
   E_IO = VTK_GEO_XML()
   E_IO = VTK_END_XML()
   return
@@ -838,4 +772,139 @@ contains
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_openmp
+endmodule Lib_Testers
+!> @addtogroup Program Programs
+!> List of excutable programs.
+
+!> @ingroup Program
+!> @{
+!> @defgroup Test_DriverProgram Test_Driver
+!> @}
+
+!> "Driver" program for testing @libvtk functions.
+!> @note
+!> For printing help message for usage run it without command line arguments
+!> @code
+!> ./Test_Driver
+!> @endcode
+!> For testing UnstructuredGrid functions run it as following:
+!> @code
+!> ./Test_Driver -unst
+!> @endcode
+!> For testing StructuredGrid functions run it as following:
+!> @code
+!> ./Test_Driver -strg
+!> @endcode
+!> For testing RectilinearGrid functions run it as following:
+!> @code
+!> ./Test_Driver -rect
+!> @endcode
+!> For testing parallel (partitioned) PUnstructuredGrid functions run it as following:
+!> @code
+!> ./Test_Driver -punst
+!> @endcode
+!> For testing parallel (partitioned) PStructuredGrid functions run it as following:
+!> @code
+!> ./Test_Driver -pstrg
+!> @endcode
+!> For testing multi-blocks VTM functions run it as following:
+!> @code
+!> ./Test_Driver -vtm
+!> @endcode
+!> For testing thread-safe capability into an OpenMP parallel framework run it as following:
+!> @code
+!> ./Test_Driver -openmp
+!> @endcode
+!> For testing process-safe capability into a MPI parallel framework run it as following:
+!> @code
+!> ./Test_Driver -mpi
+!> @endcode
+!> @author    Stefano Zaghi
+!> @version   1.0
+!> @date      2013-03-28
+!> @copyright GNU Public License version 3.
+!> @todo Legacy: implement an example of legacy output.
+!> @todo MPI: implement an example of usage into MPI framework.
+!> @ingroup Test_DriverProgram
+program Test_Driver
+!-----------------------------------------------------------------------------------------------------------------------------------
+USE IR_Precision
+USE Lib_Testers
+USE, intrinsic:: ISO_FORTRAN_ENV, only: stdout=>OUTPUT_UNIT, stderr=>ERROR_UNIT
+!-----------------------------------------------------------------------------------------------------------------------------------
+
+!-----------------------------------------------------------------------------------------------------------------------------------
+implicit none
+integer(I4P):: Nca = 0 !  Number of command line arguments.
+character(7):: cas     !  Command line argument switch.
+!-----------------------------------------------------------------------------------------------------------------------------------
+
+!-----------------------------------------------------------------------------------------------------------------------------------
+Nca = command_argument_count()
+if (Nca==0) then
+  call print_usage
+endif
+call get_command_argument(1,cas)
+select case(trim(cas))
+case('-unst')
+  call test_unst
+case('-strg')
+  call test_strg
+case('-rect')
+  call test_rect
+case('-punst')
+  call test_punst
+case('-pstrg')
+  call test_pstrg
+case('-vtm')
+  call test_vtm
+case('-openmp')
+  call test_openmp
+case('-mpi')
+  !call test_mpi
+case('-all')
+  call test_rect
+  call test_unst
+  call test_strg
+  call test_punst
+  call test_pstrg
+  call test_vtm
+case('-stress')
+  call test_stress
+case default
+  write(stderr,'(A)')' Switch '//trim(cas)//' unknown'
+  call print_usage
+endselect
+stop
+!-----------------------------------------------------------------------------------------------------------------------------------
+contains
+  !> Subroutine for printing usage help message to stdout.
+  subroutine print_usage()
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  write(stdout,'(A)')' Test_Driver: a "driver" program for testing Lib_VTK_IO functions'
+  write(stdout,'(A)')' Usage:'
+  write(stdout,'(A)')'   Test_Driver [-switch]'
+  write(stdout,'(A)')'     switch = unst   => testing UnstructuredGrid functions'
+  write(stdout,'(A)')'     switch = strg   => testing StructuredGrid functions'
+  write(stdout,'(A)')'     switch = rect   => testing RectilinearGrid functions'
+  write(stdout,'(A)')'     switch = punst  => testing parallel (partitioned) PUnstructuredGrid functions'
+  write(stdout,'(A)')'     switch = pstrg  => testing parallel (partitioned) StructuredGrid functions'
+  write(stdout,'(A)')'     switch = vtm    => testing multi-block XML functions'
+  write(stdout,'(A)')'     switch = all    => testing all above functions'
+  write(stdout,'(A)')'     switch = openmp => testing functions in parallel OpenMP framework'
+  write(stdout,'(A)')'     switch = mpi    => testing functions in parallel MPI    framework'
+  write(stdout,'(A)')'     switch = stress => testing functions of any kind/rank producing many files'
+  write(stdout,'(A)')' Examples:'
+  write(stdout,'(A)')'   Test_Driver -pstrg'
+  write(stdout,'(A)')'   Test_Driver -vtm'
+  write(stdout,'(A)')'   Test_Driver -openmp'
+  write(stdout,'(A)')' If switch is not passed (or is unknown) this help message is printed to stdout'
+  stop
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endsubroutine print_usage
 endprogram Test_Driver

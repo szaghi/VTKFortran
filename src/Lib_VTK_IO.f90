@@ -111,30 +111,41 @@
 !> kind-precision; to this aim @libvtk uses IR_Precision module.
 !> @author    Stefano Zaghi
 !> @version   1.1
-!> @date      2013-04-26
+!> @date      2013-05-22
 !> @par News
-!>      - Added packed API and 3D arrays for VTK_GEO and VTK_GEO_XML function: this avoids the necessity of explicit reshape of
-!>        multi-dimensional arrays containing X, Y and Z coordinates in GEO callings; the following inputs are now available:
-!>           - StructuredGrid (NN is the number of grid points, n#1-n#2, #x,y,z are the domain extents):
-!>                - 1D arrays of size NN: X[1:NN],Y[1:NN],Z[1:NN];
-!>                - 3D arrays of size NN: X[nx1:nx2,ny1:ny2,nz1:nz2],Y[nx1:nx2,ny1:ny2,nz1:nz2],Z[nx1:nx2,ny1:ny2,nz1:nz2];
-!>                - 1D array of size 3*NN (packed API): XYZ[1:3,1:NN];
-!>                - 3D array of size 3*NN (packed API): XYZ[1:3,nx1:nx2,ny1:ny2,nz1:nz2].
-!>           - UnStructuredGrid (NN is the number of grid points):
-!>                - 1D arrays of size NN: X[1:NN],Y[1:NN],Z[1:NN];
-!>                - 1D array of size 3*NN (packed API): XYZ[1:3,1:NN].
-!>      - Added base64 encoding format: the output format specifier of VTK_INI_XML has been changed:
-!>           - output_format = 'ascii' means \b ascii data, the same as the previous version;
-!>           - output_format = 'binary' means \b base64 encoded data, different from the previous version where it meant appended
-!>             raw-binary data; base64 encoding was missing in the previous version;
-!>           - output_format = 'raw' means \b appended \b raw-binary data, as 'binary' of the previous version;
-!>      - Added support for OpenMP multi-threads framework;
-!>      - Correct bug affecting binary output;
-!>      - implement concurrent multiple files IO capability;
-!>      - implement FieldData tag for XML files, useful for tagging dataset with global auxiliary data, e.g. time, time step, ecc;
-!>      - implement Parallel (Partitioned) XML files support (.pvtu,.pvts,.pvtr);
-!>      - implement Driver testing program for providing practical examples of @libvtk usage;
-!>      - added support for parallel framework, namely OpenMP (thread-safe) and MPI (process-safe).
+!> - Added packed API and 3D(or higher) arrays for VTK_VAR_XML function: this avoids the necessity of explicit reshape of
+!>   multi-dimensional arrays containing saved variables in VAR callings; the following inputs are now available:
+!>   - scalar input:
+!>     - input is 1D-rank array: var[1:NC_NN];
+!>     - input is 3D-rank array: var[nx1:nx2,ny1:ny2,nz1:nz2];
+!>   - vectorial inputs:
+!>     - inputs are 1D-rank arrays: varX[1:NC_NN],varY[1:NC_NN],varZ[1:NC_NN];
+!>     - inputs are 3D-rank arrays: varX[nx1:nx2,ny1:ny2,nz1:nz2],varY[nx1:nx2,ny1:ny2,nz1:nz2],varX[nx1:nx2,ny1:ny2,nz1:nz2];
+!>   - 3D(or higher) vectorial inputs:
+!>     - input is 1D-rank (packed API): var[1:N_COL,1:NC_NN];
+!>     - input is 3D-rank (packed API): var[1:N_COL,nx1:nx2,ny1:ny2,nz1:nz2].
+!> - Added packed API and 3D arrays for VTK_GEO and VTK_GEO_XML function: this avoids the necessity of explicit reshape of
+!>   multi-dimensional arrays containing X, Y and Z coordinates in GEO callings; the following inputs are now available:
+!>   - StructuredGrid (NN is the number of grid points, n\#1-n\#2, \#x,y,z are the domain extents):
+!>     - 1D arrays of size NN: X[1:NN],Y[1:NN],Z[1:NN];
+!>     - 3D arrays of size NN: X[nx1:nx2,ny1:ny2,nz1:nz2],Y[nx1:nx2,ny1:ny2,nz1:nz2],Z[nx1:nx2,ny1:ny2,nz1:nz2];
+!>     - 1D array of size 3*NN (packed API): XYZ[1:3,1:NN];
+!>     - 3D array of size 3*NN (packed API): XYZ[1:3,nx1:nx2,ny1:ny2,nz1:nz2].
+!>   - UnStructuredGrid (NN is the number of grid points):
+!>     - 1D arrays of size NN: X[1:NN],Y[1:NN],Z[1:NN];
+!>     - 1D array of size 3*NN (packed API): XYZ[1:3,1:NN].
+!> - Added base64 encoding format: the output format specifier of VTK_INI_XML has been changed:
+!>   - output_format = 'ascii' means \b ascii data, the same as the previous version;
+!>   - output_format = 'binary' means \b base64 encoded data, different from the previous version where it meant appended
+!>     raw-binary data; base64 encoding was missing in the previous version;
+!>   - output_format = 'raw' means \b appended \b raw-binary data, as 'binary' of the previous version;
+!> - Added support for OpenMP multi-threads framework;
+!> - Correct bug affecting binary output;
+!> - implement concurrent multiple files IO capability;
+!> - implement FieldData tag for XML files, useful for tagging dataset with global auxiliary data, e.g. time, time step, ecc;
+!> - implement Parallel (Partitioned) XML files support (.pvtu,.pvts,.pvtr);
+!> - implement Driver testing program for providing practical examples of @libvtk usage;
+!> - added support for parallel framework, namely OpenMP (thread-safe) and MPI (process-safe).
 !> @copyright GNU Public License version 3.
 !> @note The supported compilers are GNU gfortran 4.7.x (or higher) and Intel Fortran 12.x (or higher). @libvtk needs a modern
 !> compiler providing support for some Fortran standard 2003 features.
@@ -142,17 +153,6 @@
 !> @todo \b CompleteImporter: Complete the importers
 !> @todo \b DocExamples: Complete the documentation of examples
 !> @todo \b g95_test: Test g95 compiler
-!> @bug <b>Array-Reshape</b>: \n Fortran allows automatic reshape of arrays, e.g. 2D array can be automatically (in the
-!>                            function calling) transformed  to a 1D array with the same number of element of 2D array. The use of
-!>                            dynamic dispatching for @libvtk functions by means of generic interfaces had disable this feature:
-!>                            dynamic dispatching use the array-shape information to detect, at compile-time,
-!>                            the correct function to be called inside the generic interface functions. Thus automatic reshaping
-!>                            of arrays at calling function phase is not allowed. \n
-!>                            Instead an explicit reshape can be used by means of the Fortran built-in function \em reshape.
-!>                            As an example considering a call to the generic function \em VTK_VAR_XML an explicit array reshape
-!>                            could be: \n \n
-!>                            E_IO = VTK_VAR_XML(NC_NN=nn,varname='u',var=\b reshape(u(ni1:ni2,nj1:nj2,nk1:nk2),(/nn/))) \n \n
-!>                            where built in function \em reshape has explicitly being used in the calling to VTK_VAR_XML.
 !> @bug <b>XML-Efficiency</b>: \n This is not properly a bug. There is an inefficiency when saving XML raw (binary) file. To write
 !>                             raw data into XML file @libvtk uses a temporary scratch file to save binary data while saving all
 !>                             formatting data to the final XML file. Only when all XML formatting data have been written the
@@ -199,6 +199,144 @@ public:: VTK_END
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
+!> @brief Function for saving field data (global auxiliary data, eg time, step number, dataset name, etc).
+!> VTK_FLD_XML is an interface to 7 different functions, there are 2 functions for real field data, 4 functions for integer one
+!> and one function for open and close field data tag.
+!> @remark VTK_FLD_XML must be called after VTK_INI_XML and befor VTK_GEO_XML. It must always called three times at least: 1) for
+!> opening the FieldData tag, 2) for saving at least one FieldData entry and 3) for closing the FieldData tag.
+!> Examples of usage are: \n
+!> \b saving the time and step cicle counter of current dataset: \n
+!> @code ...
+!> real(R8P)::    time
+!> integer(I4P):: step
+!> ...
+!> E_IO=VTK_FLD_XML(fld_action='open')
+!> E_IO=VTK_FLD_XML(fld=time,fname='TIME')
+!> E_IO=VTK_FLD_XML(fld=step,fname='CYCLE')
+!> E_IO=VTK_FLD_XML(fld_action='close')
+!> ... @endcode
+!> @ingroup Lib_VTK_IOInterface
+interface VTK_FLD_XML
+  module procedure VTK_FLD_XML_OC, & ! open/close field data tag
+                   VTK_FLD_XML_R8, & ! real(R8P)    scalar
+                   VTK_FLD_XML_R4, & ! real(R4P)    scalar
+                   VTK_FLD_XML_I8, & ! integer(I8P) scalar
+                   VTK_FLD_XML_I4, & ! integer(I4P) scalar
+                   VTK_FLD_XML_I2, & ! integer(I2P) scalar
+                   VTK_FLD_XML_I1    ! integer(I1P) scalar
+endinterface
+!> @brief Function for saving mesh with different topologies in VTK-XML standard.
+!> VTK_GEO_XML is an interface to 15 different functions; there are 2 functions for each of 3 topologies supported and a function
+!> for closing XML pieces: one function for mesh coordinates with R8P precision and one for mesh coordinates with R4P precision.
+!> @remark 1D/3D-rank arrays and packed API for any kinds \n
+!> - For StructuredGrid there are 4 functions for each real kinds:
+!>   - inputs are 1D-rank arrays: X[1:NN],Y[1:NN],Z[1:NN];
+!>   - inputs are 3D-rank arrays: X[nx1:nx2,ny1:ny2,nz1:nz2],Y[nx1:nx2,ny1:ny2,nz1:nz2],Z[nx1:nx2,ny1:ny2,nz1:nz2];
+!>   - input is 1D-rank array (packed API): XYZ[1:3,1:NN];
+!>   - input is 3D-rank array (packed API): XYZ[1:3,nx1:nx2,ny1:ny2,nz1:nz2].
+!> - For UnStructuredGrid there are 2 functions for each real kinds:
+!>   - inputs are 1D arrays: X[1:NN],Y[1:NN],Z[1:NN];
+!>   - input is 1D array (packed API): XYZ[1:3,1:NN].
+!>
+!> @remark VTK_GEO_XML must be called after VTK_INI_XML. It saves the mesh geometry. The inputs that must be passed
+!> change depending on the topologies chosen. Not all VTK topologies have been implemented (\em polydata topologies are absent).
+!> @note The XML standard is more powerful than legacy. XML file can contain more than 1 mesh with its
+!> associated variables. Thus there is the necessity to close each \em pieces that compose the data-set saved in the
+!> XML file. The VTK_GEO_XML called in the <em>close piece</em> format is used just to close the
+!> current piece before saving another piece or closing the file. \n
+!> Examples of usage are: \n
+!> \b Structured grid calling: \n
+!> @code ...
+!> integer(I4P):: nx1,nx2,ny1,ny2,nz1,nz2,NN
+!> real(R8P)::    X(1:NN),Y(1:NN),Z(1:NN)
+!> ...
+!> E_IO=VTK_GEO_XML(nx1,nx2,ny1,ny2,nz1,nz2,Nn,X,Y,Z)
+!> ... @endcode
+!> \b Rectilinear grid calling: \n
+!> @code ...
+!> integer(I4P):: nx1,nx2,ny1,ny2,nz1,nz2
+!> real(R8P)::    X(nx1:nx2),Y(ny1:ny2),Z(nz1:nz2)
+!> ...
+!> E_IO=VTK_GEO_XML(nx1,nx2,ny1,ny2,nz1,nz2,X,Y,Z)
+!> ... @endcode
+!> \b Unstructured grid calling: \n
+!> @code ...
+!> integer(I4P):: Nn,Nc
+!> real(R8P)::    X(1:Nn),Y(1:Nn),Z(1:Nn)
+!> ...
+!> E_IO=VTK_GEO_XML(Nn,Nc,X,Y,Z)
+!> ... @endcode
+!> \b Closing piece calling: 1n
+!> @code ...
+!> E_IO=VTK_GEO_XML()
+!> ... @endcode
+!> @ingroup Lib_VTK_IOInterface
+interface VTK_GEO_XML
+  module procedure VTK_GEO_XML_STRG_1DA_R8, VTK_GEO_XML_STRG_3DA_R8,  & ! real(R8P) StructuredGrid, 1D/3D Arrays
+                   VTK_GEO_XML_STRG_1DAP_R8,VTK_GEO_XML_STRG_3DAP_R8, & ! real(R8P) StructuredGrid, 1D/3D Arrays packed API
+                   VTK_GEO_XML_STRG_1DA_R4, VTK_GEO_XML_STRG_3DA_R4,  & ! real(R4P) StructuredGrid, 1D/3D Arrays
+                   VTK_GEO_XML_STRG_1DAP_R4,VTK_GEO_XML_STRG_3DAP_R4, & ! real(R4P) StructuredGrid, 1D/3D Arrays packed API
+                   VTK_GEO_XML_RECT_R8,                               & ! real(R8P) RectilinearGrid
+                   VTK_GEO_XML_RECT_R4,                               & ! real(R4P) RectilinearGrid
+                   VTK_GEO_XML_UNST_R8,VTK_GEO_XML_UNST_PACK_R4,      & ! real(R8P) UnstructuredGrid, standard and packed API
+                   VTK_GEO_XML_UNST_R4,VTK_GEO_XML_UNST_PACK_R8,      & ! real(R4P) UnstructuredGrid, standard and packed API
+                   VTK_GEO_XML_CLOSEP                                   ! closing tag "Piece" function
+endinterface
+!> @brief Function for saving data variable(s) in VTK-XML standard.
+!> VTK_VAR_XML is an interface to 36 different functions, there are 6 functions for scalar variables, 6 functions for vectorial
+!> variables and 6 functions for 3D(or higher) vectorial variables: for all of types the precision can be R8P, R4P, I8P, I4P, I2P
+!> and I1P. This function saves the data variables related (cell-centered or node-centered) to geometric mesh.
+!> @remark 1D/3D-rank arrays and packed API for any kinds \n
+!> The inputs arrays can be passed as 1D-rank or 3D-rank and the vectorial variables can be component-separated (one for each of
+!> the 3 components) or packed into one multidimensional array:
+!> - scalar input:
+!>   - input is 1D-rank array: var[1:NC_NN];
+!>   - input is 3D-rank array: var[nx1:nx2,ny1:ny2,nz1:nz2];
+!> - vectorial inputs:
+!>   - inputs are 1D-rank arrays: varX[1:NC_NN],varY[1:NC_NN],varZ[1:NC_NN];
+!>   - inputs are 3D-rank arrays: varX[nx1:nx2,ny1:ny2,nz1:nz2],varY[nx1:nx2,ny1:ny2,nz1:nz2],varX[nx1:nx2,ny1:ny2,nz1:nz2];
+!> - 3D(or higher) vectorial inputs:
+!>   - input is 1D-rank (packed API): var[1:N_COL,1:NC_NN];
+!>   - input is 3D-rank (packed API): var[1:N_COL,nx1:nx2,ny1:ny2,nz1:nz2].
+!>
+!> @remark Note that the inputs that must be passed change depending on the data variables type.
+!>
+!> @note Examples of usage are: \n
+!> \b Scalar data calling: \n
+!> @code ...
+!> integer(I4P):: NN
+!> real(R8P)::    var(1:NN)
+!> ...
+!> E_IO=VTK_VAR_XML(NN,'Sca',var)
+!> ... @endcode
+!> \b Vectorial data calling: \n
+!> @code ...
+!> integer(I4P):: NN
+!> real(R8P)::    varX(1:NN),varY(1:NN),varZ(1:NN),
+!> ...
+!> E_IO=VTK_VAR_XML(NN,'Vec',varX,varY,varZ)
+!> ... @endcode
+!> @ingroup Lib_VTK_IOInterface
+interface VTK_VAR_XML
+  module procedure VTK_VAR_XML_SCAL_1DA_R8,VTK_VAR_XML_SCAL_3DA_R8, & ! real(R8P)    scalar    1D/3D array
+                   VTK_VAR_XML_SCAL_1DA_R4,VTK_VAR_XML_SCAL_3DA_R4, & ! real(R4P)    scalar    1D/3D array
+                   VTK_VAR_XML_SCAL_1DA_I8,VTK_VAR_XML_SCAL_3DA_I8, & ! integer(I8P) scalar    1D/3D array
+                   VTK_VAR_XML_SCAL_1DA_I4,VTK_VAR_XML_SCAL_3DA_I4, & ! integer(I4P) scalar    1D/3D array
+                   VTK_VAR_XML_SCAL_1DA_I2,VTK_VAR_XML_SCAL_3DA_I2, & ! integer(I2P) scalar    1D/3D array
+                   VTK_VAR_XML_SCAL_1DA_I1,VTK_VAR_XML_SCAL_3DA_I1, & ! integer(I1P) scalar    1D/3D array
+                   VTK_VAR_XML_VECT_1DA_R8,VTK_VAR_XML_VECT_3DA_R8, & ! real(R8P)    vectorial 1D/3D arrays
+                   VTK_VAR_XML_VECT_1DA_R4,VTK_VAR_XML_VECT_3DA_R4, & ! real(R4P)    vectorial 1D/3D arrays
+                   VTK_VAR_XML_VECT_1DA_I8,VTK_VAR_XML_VECT_3DA_I8, & ! integer(I8P) vectorial 1D/3D arrays
+                   VTK_VAR_XML_VECT_1DA_I4,VTK_VAR_XML_VECT_3DA_I4, & ! integer(I4P) vectorial 1D/3D arrays
+                   VTK_VAR_XML_VECT_1DA_I2,VTK_VAR_XML_VECT_3DA_I2, & ! integer(I2P) vectorial 1D/3D arrays
+                   VTK_VAR_XML_VECT_1DA_I1,VTK_VAR_XML_VECT_3DA_I1, & ! integer(I1P) vectorial 1D/3D arrays
+                   VTK_VAR_XML_LIST_1DA_R8,VTK_VAR_XML_LIST_3DA_R8, & ! real(R8P)    list      1D/3D array
+                   VTK_VAR_XML_LIST_1DA_R4,VTK_VAR_XML_LIST_3DA_R4, & ! real(R4P)    list      1D/3D array
+                   VTK_VAR_XML_LIST_1DA_I8,VTK_VAR_XML_LIST_3DA_I8, & ! integer(I4P) list      1D/3D array
+                   VTK_VAR_XML_LIST_1DA_I4,VTK_VAR_XML_LIST_3DA_I4, & ! integer(I4P) list      1D/3D array
+                   VTK_VAR_XML_LIST_1DA_I2,VTK_VAR_XML_LIST_3DA_I2, & ! integer(I2P) list      1D/3D array
+                   VTK_VAR_XML_LIST_1DA_I1,VTK_VAR_XML_LIST_3DA_I1    ! integer(I1P) list      1D/3D array
+endinterface
 !> @brief Function for saving mesh with different topologies in VTK-legacy standard.
 !> VTK_GEO is an interface to 16 different functions, there are 2 functions for each of 4 different topologies actually supported:
 !> one function for mesh coordinates with R8P precision and one for mesh coordinates with R4P precision.
@@ -278,130 +416,6 @@ interface VTK_VAR
                    VTK_VAR_VECT_I4, & ! integer(I4P) vectorial
                    VTK_VAR_TEXT_R8, & ! real(R8P)    vectorial (texture)
                    VTK_VAR_TEXT_R4    ! real(R4P)    vectorial (texture)
-endinterface
-!> @brief Function for saving field data (global auxiliary data, eg time, step number, dataset name, etc).
-!> VTK_FLD_XML is an interface to 7 different functions, there are 2 functions for real field data, 4 functions for integer one
-!> and one function for open and close field data tag.
-!> @remark VTK_FLD_XML must be called after VTK_INI_XML and befor VTK_GEO_XML. It must always called three times at least: 1) for
-!> opening the FieldData tag, 2) for saving at least one FieldData entry and 3) for closing the FieldData tag.
-!> Examples of usage are: \n
-!> \b saving the time and step cicle counter of current dataset: \n
-!> @code ...
-!> real(R8P)::    time
-!> integer(I4P):: step
-!> ...
-!> E_IO=VTK_FLD_XML(fld_action='open')
-!> E_IO=VTK_FLD_XML(fld=time,fname='TIME')
-!> E_IO=VTK_FLD_XML(fld=step,fname='CYCLE')
-!> E_IO=VTK_FLD_XML(fld_action='close')
-!> ... @endcode
-!> @ingroup Lib_VTK_IOInterface
-interface VTK_FLD_XML
-  module procedure VTK_FLD_XML_OC, & ! open/close field data tag
-                   VTK_FLD_XML_R8, & ! real(R8P)    scalar
-                   VTK_FLD_XML_R4, & ! real(R4P)    scalar
-                   VTK_FLD_XML_I8, & ! integer(I8P) scalar
-                   VTK_FLD_XML_I4, & ! integer(I4P) scalar
-                   VTK_FLD_XML_I2, & ! integer(I2P) scalar
-                   VTK_FLD_XML_I1    ! integer(I1P) scalar
-endinterface
-!> @brief Function for saving mesh with different topologies in VTK-XML standard.
-!> VTK_GEO_XML is an interface to 15 different functions; there are 2 functions for each of 3 topologies supported and a function
-!> for closing XML pieces: one function for mesh coordinates with R8P precision and one for mesh coordinates with R4P precision.
-!> @remark StructuredGrid API
-!> For StructuredGrid there are 4 functions for each real kinds:
-!> - inputs are 1D arrays of size NN: X[1:NN],Y[1:NN],Z[1:NN];
-!> - inputs are 3D arrays of size NN: X[nx1:nx2,ny1:ny2,nz1:nz2],Y[nx1:nx2,ny1:ny2,nz1:nz2],Z[nx1:nx2,ny1:ny2,nz1:nz2];
-!> - input is 1D array of size 3*NN (packed API): XYZ[1:3,1:NN];
-!> - input is 3D array of size 3*NN (packed API): XYZ[1:3,nx1:nx2,ny1:ny2,nz1:nz2].
-!> @remark UnStructuredGrid API
-!> For UnStructuredGrid there are 2 functions for each real kinds:
-!> - inputs are 1D arrays of size NN: X[1:NN],Y[1:NN],Z[1:NN];
-!> - input is 1D array of size 3*NN (packed API): XYZ[1:3,1:NN].
-!> @remark VTK_GEO_XML must be called after VTK_INI_XML. It saves the mesh geometry. The inputs that must be passed
-!> change depending on the topologies chosen. Not all VTK topologies have been implemented (\em polydata topologies are absent).
-!> @note The XML standard is more powerful than legacy. XML file can contain more than 1 mesh with its
-!> associated variables. Thus there is the necessity to close each \em pieces that compose the data-set saved in the
-!> XML file. The VTK_GEO_XML called in the <em>close piece</em> format is used just to close the
-!> current piece before saving another piece or closing the file. \n
-!> Examples of usage are: \n
-!> \b Structured grid calling: \n
-!> @code ...
-!> integer(I4P):: nx1,nx2,ny1,ny2,nz1,nz2,NN
-!> real(R8P)::    X(1:NN),Y(1:NN),Z(1:NN)
-!> ...
-!> E_IO=VTK_GEO_XML(nx1,nx2,ny1,ny2,nz1,nz2,Nn,X,Y,Z)
-!> ... @endcode
-!> \b Rectilinear grid calling: \n
-!> @code ...
-!> integer(I4P):: nx1,nx2,ny1,ny2,nz1,nz2
-!> real(R8P)::    X(nx1:nx2),Y(ny1:ny2),Z(nz1:nz2)
-!> ...
-!> E_IO=VTK_GEO_XML(nx1,nx2,ny1,ny2,nz1,nz2,X,Y,Z)
-!> ... @endcode
-!> \b Unstructured grid calling: \n
-!> @code ...
-!> integer(I4P):: Nn,Nc
-!> real(R8P)::    X(1:Nn),Y(1:Nn),Z(1:Nn)
-!> ...
-!> E_IO=VTK_GEO_XML(Nn,Nc,X,Y,Z)
-!> ... @endcode
-!> \b Closing piece calling: 1n
-!> @code ...
-!> E_IO=VTK_GEO_XML()
-!> ... @endcode
-!> @ingroup Lib_VTK_IOInterface
-interface VTK_GEO_XML
-  module procedure VTK_GEO_XML_STRG_1DA_R8, VTK_GEO_XML_STRG_3DA_R8,  & ! real(R8P) StructuredGrid, 1D/3D Arrays
-                   VTK_GEO_XML_STRG_1DAP_R8,VTK_GEO_XML_STRG_3DAP_R8, & ! real(R8P) StructuredGrid, 1D/3D Arrays packed API
-                   VTK_GEO_XML_STRG_1DA_R4, VTK_GEO_XML_STRG_3DA_R4,  & ! real(R4P) StructuredGrid, 1D/3D Arrays
-                   VTK_GEO_XML_STRG_1DAP_R4,VTK_GEO_XML_STRG_3DAP_R4, & ! real(R4P) StructuredGrid, 1D/3D Arrays packed API
-                   VTK_GEO_XML_RECT_R8,                               & ! real(R8P) RectilinearGrid
-                   VTK_GEO_XML_RECT_R4,                               & ! real(R4P) RectilinearGrid
-                   VTK_GEO_XML_UNST_R8,VTK_GEO_XML_UNST_PACK_R4,      & ! real(R8P) UnstructuredGrid, standard and packed API
-                   VTK_GEO_XML_UNST_R4,VTK_GEO_XML_UNST_PACK_R8,      & ! real(R4P) UnstructuredGrid, standard and packed API
-                   VTK_GEO_XML_CLOSEP                                 ! closing tag "Piece" function
-endinterface
-!> @brief Function for saving data variable(s) in VTK-XML standard.
-!> VTK_VAR_XML is an interface to 18 different functions, there are 6 functions for scalar variables, 6 functions for vectorial
-!> variables and 6 functions for list variables: for all of 3 types of data the precision can be R8P, R4P, I8P, I4P, I2P and I1P.
-!> This function saves the data variables related to geometric mesh.
-!> @remark The inputs that must be passed change depending on the data variables type.
-!> @note Examples of usage are: \n
-!> \b Scalar data calling: \n
-!> @code ...
-!> integer(I4P):: NN
-!> real(R8P)::    var(1:NN)
-!> ...
-!> E_IO=VTK_VAR_XML(NN,'Sca',var)
-!> ... @endcode
-!> \b Vectorial data calling: \n
-!> @code ...
-!> integer(I4P):: NN
-!> real(R8P)::    varX(1:NN),varY(1:NN),varZ(1:NN),
-!> ...
-!> E_IO=VTK_VAR_XML(NN,'Vec',varX,varY,varZ)
-!> ... @endcode
-!> @ingroup Lib_VTK_IOInterface
-interface VTK_VAR_XML
-  module procedure VTK_VAR_XML_SCAL_R8, & ! real(R8P)    scalar
-                   VTK_VAR_XML_SCAL_R4, & ! real(R4P)    scalar
-                   VTK_VAR_XML_SCAL_I8, & ! integer(I8P) scalar
-                   VTK_VAR_XML_SCAL_I4, & ! integer(I4P) scalar
-                   VTK_VAR_XML_SCAL_I2, & ! integer(I2P) scalar
-                   VTK_VAR_XML_SCAL_I1, & ! integer(I1P) scalar
-                   VTK_VAR_XML_VECT_R8, & ! real(R8P)    vectorial
-                   VTK_VAR_XML_VECT_R4, & ! real(R4P)    vectorial
-                   VTK_VAR_XML_VECT_I8, & ! integer(I4P) vectorial
-                   VTK_VAR_XML_VECT_I4, & ! integer(I4P) vectorial
-                   VTK_VAR_XML_VECT_I2, & ! integer(I4P) vectorial
-                   VTK_VAR_XML_VECT_I1, & ! integer(I4P) vectorial
-                   VTK_VAR_XML_LIST_R8, & ! real(R8P)    list
-                   VTK_VAR_XML_LIST_R4, & ! real(R4P)    list
-                   VTK_VAR_XML_LIST_I8, & ! integer(I4P) list
-                   VTK_VAR_XML_LIST_I4, & ! integer(I4P) list
-                   VTK_VAR_XML_LIST_I2, & ! integer(I2P) list
-                   VTK_VAR_XML_LIST_I1    ! integer(I1P) list
 endinterface
 !-----------------------------------------------------------------------------------------------------------------------------------
 
@@ -2396,21 +2410,21 @@ contains
   !> @ingroup Lib_VTK_IOPrivateProcedure
   !> @{
 
-  !> Function for saving field of scalar variable (R8P).
+  !> Function for saving field of scalar variable (R8P, 1D array).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_VAR_XML_SCAL_R8(NC_NN,varname,var,cf) result(E_IO)
+  function VTK_VAR_XML_SCAL_1DA_R8(NC_NN,varname,var,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN)::           NC_NN        !< Number of cells or nodes.
-  character(*), intent(IN)::           varname      !< Variable name.
-  real(R8P),    intent(IN)::           var(1:NC_NN) !< Variable to be saved.
-  integer(I4P), intent(IN), optional:: cf           !< Current file index (for concurrent files IO).
-  integer(I4P)::                       E_IO         !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::              s_buffer     !< Buffer string.
-  integer(I1P), allocatable::          varp(:)      !< Packed data.
-  character(1), allocatable::          var64(:)     !< Variable encoded in base64.
-  integer(I4P)::                       rf           !< Real file index.
-  integer(I4P)::                       n1           !< Counter.
+  integer(I4P), intent(IN)::           NC_NN    !< Number of cells or nodes.
+  character(*), intent(IN)::           varname  !< Variable name.
+  real(R8P),    intent(IN)::           var(1:)  !< Variable to be saved [1:NC_NN].
+  integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer !< Buffer string.
+  integer(I1P), allocatable::          varp(:)  !< Packed data.
+  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  integer(I4P)::                       rf       !< Real file index.
+  integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2423,45 +2437,95 @@ contains
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//&
                '" NumberOfComponents="1" format="ascii">'
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
-    write(unit=vtk(rf)%u,fmt='(A,'//trim(str(.true.,NC_NN))//'(1X,'//FR8P//'))',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
-                                                                                            (var(n1),n1=1,NC_NN)
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),(' '//str(n=var(n1)),n1=1,NC_NN)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//&
                '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = NC_NN*BYR8P)
-    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',NC_NN
-    write(unit=vtk(rf)%ua,iostat=E_IO)var
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//&
              '" NumberOfComponents="1" format="binary">'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(NC_NN*BYR8P,I4P)],a2=var,packed=varp)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_VAR_XML_SCAL_R8
+  endfunction VTK_VAR_XML_SCAL_1DA_R8
 
-  !> Function for saving field of scalar variable (R4P).
+  !> Function for saving field of scalar variable (R8P, 3D array).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_VAR_XML_SCAL_R4(NC_NN,varname,var,cf) result(E_IO)
+  function VTK_VAR_XML_SCAL_3DA_R8(NC_NN,varname,var,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN)::           NC_NN        !< Number of cells or nodes.
-  character(*), intent(IN)::           varname      !< Variable name.
-  real(R4P),    intent(IN)::           var(1:NC_NN) !< Variable to be saved.
-  integer(I4P), intent(IN), optional:: cf           !< Current file index (for concurrent files IO).
-  integer(I4P)::                       E_IO         !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::              s_buffer     !< Buffer string.
-  integer(I1P), allocatable::          varp(:)      !< Packed data.
-  character(1), allocatable::          var64(:)     !< Variable encoded in base64.
-  integer(I4P)::                       rf           !< Real file index.
-  integer(I4P)::                       n1           !< Counter.
+  integer(I4P), intent(IN)::           NC_NN         !< Number of cells or nodes.
+  character(*), intent(IN)::           varname       !< Variable name.
+  real(R8P),    intent(IN)::           var(1:,1:,1:) !< Variable to be saved [1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN), optional:: cf            !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer      !< Buffer string.
+  integer(I1P), allocatable::          varp(:)       !< Packed data.
+  character(1), allocatable::          var64(:)      !< Variable encoded in base64.
+  integer(I4P)::                       rf            !< Real file index.
+  integer(I4P)::                       nx,ny,nz      !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//&
+               '" NumberOfComponents="1" format="ascii">'
+    write(vtk(rf)%u,'(A)', iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+                                      (((' '//str(n=var(nx,ny,nz)),nx=1,size(var,dim=1)),ny=1,size(var,dim=2)),nz=1,size(var,dim=3))
+    write(vtk(rf)%u,'(A)', iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+  case(raw,bin_app)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//&
+               '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call vtk(rf)%byte_update(N_Byte = NC_NN*BYR8P)
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
+  case(binary)
+    s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//&
+             '" NumberOfComponents="1" format="binary">'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call pack_data(a1=[int(NC_NN*BYR8P,I4P)],a2=reshape(var,[NC_NN]),packed=varp)
+    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_VAR_XML_SCAL_3DA_R8
+
+  !> Function for saving field of scalar variable (R4P, 1D array).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_VAR_XML_SCAL_1DA_R4(NC_NN,varname,var,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           NC_NN    !< Number of cells or nodes.
+  character(*), intent(IN)::           varname  !< Variable name.
+  real(R4P),    intent(IN)::           var(1:)  !< Variable to be saved [1:NC_NN].
+  integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer !< Buffer string.
+  integer(I1P), allocatable::          varp(:)  !< Packed data.
+  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  integer(I4P)::                       rf       !< Real file index.
+  integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2474,45 +2538,95 @@ contains
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//&
                '" NumberOfComponents="1" format="ascii">'
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
-    write(unit=vtk(rf)%u,fmt='(A,'//trim(str(.true.,NC_NN))//'(1X,'//FR4P//'))',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
-                                                                                            (var(n1),n1=1,NC_NN)
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+    write(vtk(rf)%u,'(A)', iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),(' '//str(n=var(n1)),n1=1,NC_NN)
+    write(vtk(rf)%u,'(A)', iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//&
                '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = NC_NN*BYR4P)
-    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',NC_NN
-    write(unit=vtk(rf)%ua,iostat=E_IO)var
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//&
              '" NumberOfComponents="1" format="binary">'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(NC_NN*BYR4P,I4P)],a2=var,packed=varp)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_VAR_XML_SCAL_R4
+  endfunction VTK_VAR_XML_SCAL_1DA_R4
 
-  !> Function for saving field of scalar variable (I8P).
+  !> Function for saving field of scalar variable (R4P, 3D array).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_VAR_XML_SCAL_I8(NC_NN,varname,var,cf) result(E_IO)
+  function VTK_VAR_XML_SCAL_3DA_R4(NC_NN,varname,var,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN)::           NC_NN        !< Number of cells or nodes.
-  character(*), intent(IN)::           varname      !< Variable name.
-  integer(I8P), intent(IN)::           var(1:NC_NN) !< Variable to be saved.
-  integer(I4P), intent(IN), optional:: cf           !< Current file index (for concurrent files IO).
-  integer(I4P)::                       E_IO         !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::              s_buffer     !< Buffer string.
-  integer(I1P), allocatable::          varp(:)      !< Packed data.
-  character(1), allocatable::          var64(:)     !< Variable encoded in base64.
-  integer(I4P)::                       rf           !< Real file index.
-  integer(I4P)::                       n1           !< Counter.
+  integer(I4P), intent(IN)::           NC_NN         !< Number of cells or nodes.
+  character(*), intent(IN)::           varname       !< Variable name.
+  real(R4P),    intent(IN)::           var(1:,1:,1:) !< Variable to be saved [1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN), optional:: cf            !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer      !< Buffer string.
+  integer(I1P), allocatable::          varp(:)       !< Packed data.
+  character(1), allocatable::          var64(:)      !< Variable encoded in base64.
+  integer(I4P)::                       rf            !< Real file index.
+  integer(I4P)::                       nx,ny,nz      !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//&
+               '" NumberOfComponents="1" format="ascii">'
+    write(vtk(rf)%u,'(A)', iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+                                      (((' '//str(n=var(nx,ny,nz)),nx=1,size(var,dim=1)),ny=1,size(var,dim=2)),nz=1,size(var,dim=3))
+    write(vtk(rf)%u,'(A)', iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+  case(raw,bin_app)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//&
+               '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call vtk(rf)%byte_update(N_Byte = NC_NN*BYR4P)
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
+  case(binary)
+    s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//&
+             '" NumberOfComponents="1" format="binary">'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call pack_data(a1=[int(NC_NN*BYR4P,I4P)],a2=reshape(var,[NC_NN]),packed=varp)
+    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_VAR_XML_SCAL_3DA_R4
+
+  !> Function for saving field of scalar variable (I8P, 1D array).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_VAR_XML_SCAL_1DA_I8(NC_NN,varname,var,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           NC_NN    !< Number of cells or nodes.
+  character(*), intent(IN)::           varname  !< Variable name.
+  integer(I8P), intent(IN)::           var(1:)  !< Variable to be saved [1:NC_NN].
+  integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer !< Buffer string.
+  integer(I1P), allocatable::          varp(:)  !< Packed data.
+  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  integer(I4P)::                       rf       !< Real file index.
+  integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2525,45 +2639,95 @@ contains
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//&
                '" NumberOfComponents="1" format="ascii">'
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
-    write(unit=vtk(rf)%u,fmt='(A,'//trim(str(.true.,NC_NN))//'(1X,'//FI8P//'))',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
-                                                                                            (var(n1),n1=1,NC_NN)
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)'</DataArray>'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),(' '//str(n=var(n1)),n1=1,NC_NN)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//&
                '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = int(NC_NN*BYI8P,I4P))
-    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I8',NC_NN
-    write(unit=vtk(rf)%ua,iostat=E_IO)var
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I8',NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//&
              '" NumberOfComponents="1" format="binary">'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(NC_NN*BYI8P,I4P)],a2=var,packed=varp)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_VAR_XML_SCAL_I8
+  endfunction VTK_VAR_XML_SCAL_1DA_I8
 
-  !> Function for saving field of scalar variable (I4P).
+  !> Function for saving field of scalar variable (I8P, 3D array).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_VAR_XML_SCAL_I4(NC_NN,varname,var,cf) result(E_IO)
+  function VTK_VAR_XML_SCAL_3DA_I8(NC_NN,varname,var,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN)::           NC_NN        !< Number of cells or nodes.
-  character(*), intent(IN)::           varname      !< Variable name.
-  integer(I4P), intent(IN)::           var(1:NC_NN) !< Variable to be saved.
-  integer(I4P), intent(IN), optional:: cf           !< Current file index (for concurrent files IO).
-  integer(I4P)::                       E_IO         !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::              s_buffer     !< Buffer string.
-  integer(I1P), allocatable::          varp(:)      !< Packed data.
-  character(1), allocatable::          var64(:)     !< Variable encoded in base64.
-  integer(I4P)::                       rf           !< Real file index.
-  integer(I4P)::                       n1           !< Counter.
+  integer(I4P), intent(IN)::           NC_NN         !< Number of cells or nodes.
+  character(*), intent(IN)::           varname       !< Variable name.
+  integer(I8P), intent(IN)::           var(1:,1:,1:) !< Variable to be saved [1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN), optional:: cf            !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer      !< Buffer string.
+  integer(I1P), allocatable::          varp(:)       !< Packed data.
+  character(1), allocatable::          var64(:)      !< Variable encoded in base64.
+  integer(I4P)::                       rf            !< Real file index.
+  integer(I4P)::                       nx,ny,nz      !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//&
+               '" NumberOfComponents="1" format="ascii">'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+                                      (((' '//str(n=var(nx,ny,nz)),nx=1,size(var,dim=1)),ny=1,size(var,dim=2)),nz=1,size(var,dim=3))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'</DataArray>'
+  case(raw,bin_app)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//&
+               '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call vtk(rf)%byte_update(N_Byte = int(NC_NN*BYI8P,I4P))
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I8',NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
+  case(binary)
+    s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//&
+             '" NumberOfComponents="1" format="binary">'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call pack_data(a1=[int(NC_NN*BYI8P,I4P)],a2=reshape(var,[NC_NN]),packed=varp)
+    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_VAR_XML_SCAL_3DA_I8
+
+  !> Function for saving field of scalar variable (I4P, 1D array).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_VAR_XML_SCAL_1DA_I4(NC_NN,varname,var,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           NC_NN    !< Number of cells or nodes.
+  character(*), intent(IN)::           varname  !< Variable name.
+  integer(I4P), intent(IN)::           var(1:)  !< Variable to be saved [1:NC_NN].
+  integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer !< Buffer string.
+  integer(I1P), allocatable::          varp(:)  !< Packed data.
+  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  integer(I4P)::                       rf       !< Real file index.
+  integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2576,45 +2740,95 @@ contains
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//&
                '" NumberOfComponents="1" format="ascii">'
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
-    write(unit=vtk(rf)%u,fmt='(A,'//trim(str(.true.,NC_NN))//'(1X,'//FI4P//'))',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
-                                                                                            (var(n1),n1=1,NC_NN)
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),(' '//str(n=var(n1)),n1=1,NC_NN)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)// &
                '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = NC_NN*BYI4P)
-    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I4',NC_NN
-    write(unit=vtk(rf)%ua,iostat=E_IO)var
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I4',NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)// &
              '" NumberOfComponents="1" format="binary">'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     varp = transfer([int(NC_NN*BYI4P,I4P),var],varp)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_VAR_XML_SCAL_I4
+  endfunction VTK_VAR_XML_SCAL_1DA_I4
 
-  !> Function for saving field of scalar variable (I2P).
+  !> Function for saving field of scalar variable (I4P, 3D array).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_VAR_XML_SCAL_I2(NC_NN,varname,var,cf) result(E_IO)
+  function VTK_VAR_XML_SCAL_3DA_I4(NC_NN,varname,var,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN)::           NC_NN        !< Number of cells or nodes.
-  character(*), intent(IN)::           varname      !< Variable name.
-  integer(I2P), intent(IN)::           var(1:NC_NN) !< Variable to be saved.
-  integer(I4P), intent(IN), optional:: cf           !< Current file index (for concurrent files IO).
-  integer(I4P)::                       E_IO         !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::              s_buffer     !< Buffer string.
-  integer(I1P), allocatable::          varp(:)      !< Packed data.
-  character(1), allocatable::          var64(:)     !< Variable encoded in base64.
-  integer(I4P)::                       rf           !< Real file index.
-  integer(I4P)::                       n1           !< Counter.
+  integer(I4P), intent(IN)::           NC_NN         !< Number of cells or nodes.
+  character(*), intent(IN)::           varname       !< Variable name.
+  integer(I4P), intent(IN)::           var(1:,1:,1:) !< Variable to be saved [1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN), optional:: cf            !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer      !< Buffer string.
+  integer(I1P), allocatable::          varp(:)       !< Packed data.
+  character(1), allocatable::          var64(:)      !< Variable encoded in base64.
+  integer(I4P)::                       rf            !< Real file index.
+  integer(I4P)::                       nx,ny,nz      !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//&
+               '" NumberOfComponents="1" format="ascii">'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+                                      (((' '//str(n=var(nx,ny,nz)),nx=1,size(var,dim=1)),ny=1,size(var,dim=2)),nz=1,size(var,dim=3))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+  case(raw,bin_app)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)// &
+               '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call vtk(rf)%byte_update(N_Byte = NC_NN*BYI4P)
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I4',NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
+  case(binary)
+    s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)// &
+             '" NumberOfComponents="1" format="binary">'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    varp = transfer([int(NC_NN*BYI4P,I4P),reshape(var,[NC_NN])],varp)
+    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_VAR_XML_SCAL_3DA_I4
+
+  !> Function for saving field of scalar variable (I2P, 1D array).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_VAR_XML_SCAL_1DA_I2(NC_NN,varname,var,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           NC_NN    !< Number of cells or nodes.
+  character(*), intent(IN)::           varname  !< Variable name.
+  integer(I2P), intent(IN)::           var(1:)  !< Variable to be saved [1:NC_NN].
+  integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer !< Buffer string.
+  integer(I1P), allocatable::          varp(:)  !< Packed data.
+  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  integer(I4P)::                       rf       !< Real file index.
+  integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2627,45 +2841,95 @@ contains
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//&
                '" NumberOfComponents="1" format="ascii">'
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
-    write(unit=vtk(rf)%u,fmt='(A,'//trim(str(.true.,NC_NN))//'(1X,'//FI2P//'))',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
-                                                                                            (var(n1),n1=1,NC_NN)
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),(' '//str(n=var(n1)),n1=1,NC_NN)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//&
                '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = NC_NN*BYI2P)
-    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I2',NC_NN
-    write(unit=vtk(rf)%ua,iostat=E_IO)var
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I2',NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//&
              '" NumberOfComponents="1" format="binary">'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(NC_NN*BYI2P,I4P)],a2=var,packed=varp)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_VAR_XML_SCAL_I2
+  endfunction VTK_VAR_XML_SCAL_1DA_I2
 
-  !> Function for saving field of scalar variable (I1P).
+  !> Function for saving field of scalar variable (I2P, 3D array).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_VAR_XML_SCAL_I1(NC_NN,varname,var,cf) result(E_IO)
+  function VTK_VAR_XML_SCAL_3DA_I2(NC_NN,varname,var,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN)::           NC_NN        !< Number of cells or nodes.
-  character(*), intent(IN)::           varname      !< Variable name.
-  integer(I1P), intent(IN)::           var(1:NC_NN) !< Variable to be saved.
-  integer(I4P), intent(IN), optional:: cf           !< Current file index (for concurrent files IO).
-  integer(I4P)::                       E_IO         !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::              s_buffer     !< Buffer string.
-  integer(I1P), allocatable::          varp(:)      !< Packed data.
-  character(1), allocatable::          var64(:)     !< Variable encoded in base64.
-  integer(I4P)::                       rf           !< Real file index.
-  integer(I4P)::                       n1           !< Counter.
+  integer(I4P), intent(IN)::           NC_NN         !< Number of cells or nodes.
+  character(*), intent(IN)::           varname       !< Variable name.
+  integer(I2P), intent(IN)::           var(1:,1:,1:) !< Variable to be saved [1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN), optional:: cf            !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer      !< Buffer string.
+  integer(I1P), allocatable::          varp(:)       !< Packed data.
+  character(1), allocatable::          var64(:)      !< Variable encoded in base64.
+  integer(I4P)::                       rf            !< Real file index.
+  integer(I4P)::                       nx,ny,nz      !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//&
+               '" NumberOfComponents="1" format="ascii">'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+                                      (((' '//str(n=var(nx,ny,nz)),nx=1,size(var,dim=1)),ny=1,size(var,dim=2)),nz=1,size(var,dim=3))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+  case(raw,bin_app)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//&
+               '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call vtk(rf)%byte_update(N_Byte = NC_NN*BYI2P)
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I2',NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
+  case(binary)
+    s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//&
+             '" NumberOfComponents="1" format="binary">'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call pack_data(a1=[int(NC_NN*BYI2P,I4P)],a2=reshape(var,[NC_NN]),packed=varp)
+    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_VAR_XML_SCAL_3DA_I2
+
+  !> Function for saving field of scalar variable (I1P, 1D array).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_VAR_XML_SCAL_1DA_I1(NC_NN,varname,var,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           NC_NN    !< Number of cells or nodes.
+  character(*), intent(IN)::           varname  !< Variable name.
+  integer(I1P), intent(IN)::           var(1:)  !< Variable to be saved [1:NC_NN].
+  integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer !< Buffer string.
+  integer(I1P), allocatable::          varp(:)  !< Packed data.
+  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  integer(I4P)::                       rf       !< Real file index.
+  integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2677,48 +2941,97 @@ contains
   select case(vtk(rf)%f)
   case(ascii)
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//'" NumberOfComponents="1" format="ascii">'
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
-    write(unit=vtk(rf)%u,fmt='(A,'//trim(str(.true.,NC_NN))//'(1X,'//FI1P//'))',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
-                                                                                            (var(n1),n1=1,NC_NN)
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),(' '//str(n=var(n1)),n1=1,NC_NN)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//&
              '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = NC_NN*BYI1P)
-    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I1',NC_NN
-    write(unit=vtk(rf)%ua,iostat=E_IO)var
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I1',NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//&
              '" NumberOfComponents="1" format="binary">'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(NC_NN*BYI1P,I4P)],a2=var,packed=varp)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_VAR_XML_SCAL_I1
+  endfunction VTK_VAR_XML_SCAL_1DA_I1
 
-  !> Function for saving field of vectorial variable (R8P).
+  !> Function for saving field of scalar variable (I1P, 3D array).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_VAR_XML_VECT_R8(NC_NN,varname,varX,varY,varZ,cf) result(E_IO)
+  function VTK_VAR_XML_SCAL_3DA_I1(NC_NN,varname,var,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), intent(IN)::           NC_NN         !< Number of cells or nodes.
   character(*), intent(IN)::           varname       !< Variable name.
-  real(R8P),    intent(IN)::           varX(1:NC_NN) !< X component.
-  real(R8P),    intent(IN)::           varY(1:NC_NN) !< Y component.
-  real(R8P),    intent(IN)::           varZ(1:NC_NN) !< Z component.
+  integer(I1P), intent(IN)::           var(1:,1:,1:) !< Variable to be saved [1:Nx,1:ny,1:Nz].
   integer(I4P), intent(IN), optional:: cf            !< Current file index (for concurrent files IO).
   integer(I4P)::                       E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer      !< Buffer string.
-  real(R8P),    allocatable::          var(:)        !< X, Y, Z component.
   integer(I1P), allocatable::          varp(:)       !< Packed data.
   character(1), allocatable::          var64(:)      !< Variable encoded in base64.
   integer(I4P)::                       rf            !< Real file index.
-  integer(I4P)::                       n1            !< Counter.
+  integer(I4P)::                       nx,ny,nz      !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//'" NumberOfComponents="1" format="ascii">'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+                                      (((' '//str(n=var(nx,ny,nz)),nx=1,size(var,dim=1)),ny=1,size(var,dim=2)),nz=1,size(var,dim=3))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+  case(raw,bin_app)
+    s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//&
+             '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call vtk(rf)%byte_update(N_Byte = NC_NN*BYI1P)
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I1',NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
+  case(binary)
+    s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//&
+             '" NumberOfComponents="1" format="binary">'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call pack_data(a1=[int(NC_NN*BYI1P,I4P)],a2=reshape(var,[NC_NN]),packed=varp)
+    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_VAR_XML_SCAL_3DA_I1
+
+  !> Function for saving field of vectorial variable (R8P, 1D arrays).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_VAR_XML_VECT_1DA_R8(NC_NN,varname,varX,varY,varZ,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           NC_NN    !< Number of cells or nodes.
+  character(*), intent(IN)::           varname  !< Variable name.
+  real(R8P),    intent(IN)::           varX(1:) !< X component [1:NC_NN].
+  real(R8P),    intent(IN)::           varY(1:) !< Y component [1:NC_NN].
+  real(R8P),    intent(IN)::           varZ(1:) !< Z component [1:NC_NN].
+  integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer !< Buffer string.
+  real(R8P),    allocatable::          var(:)   !< X, Y, Z component.
+  integer(I1P), allocatable::          varp(:)  !< Packed data.
+  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  integer(I4P)::                       rf       !< Real file index.
+  integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2731,54 +3044,115 @@ contains
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//&
                '" NumberOfComponents="3" format="ascii">'
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do n1=1,NC_NN
-      write(unit=vtk(rf)%u,fmt='(A,3(1X,'//FR8P//'))',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
-                                                                  varX(n1),varY(n1),varZ(n1)
+      write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//str(n=varX(n1))//' '//str(n=varY(n1))//' '//str(n=varZ(n1))
     enddo
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//&
                '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NC_NN*BYR8P)
-    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',3*NC_NN
-    write(unit=vtk(rf)%ua,iostat=E_IO)(varX(n1),varY(n1),varZ(n1),n1=1,NC_NN)
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',3*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)(varX(n1),varY(n1),varZ(n1),n1=1,NC_NN)
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//&
                '" NumberOfComponents="3" format="binary">'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     allocate(var(1:3*NC_NN))
     do n1=1,NC_NN
       var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(n1),varY(n1),varZ(n1)]
     enddo
     call pack_data(a1=[int(3*NC_NN*BYR8P,I4P)],a2=var,packed=varp) ; deallocate(var)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_VAR_XML_VECT_R8
+  endfunction VTK_VAR_XML_VECT_1DA_R8
 
-  !> Function for saving field of vectorial variable (R4P).
+  !> Function for saving field of vectorial variable (R8P, 3D arrays).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_VAR_XML_VECT_R4(NC_NN,varname,varX,varY,varZ,cf) result(E_IO)
+  function VTK_VAR_XML_VECT_3DA_R8(NC_NN,varname,varX,varY,varZ,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN)::           NC_NN         !< Number of cells or nodes.
-  character(*), intent(IN)::           varname       !< Variable name.
-  real(R4P),    intent(IN)::           varX(1:NC_NN) !< X component.
-  real(R4P),    intent(IN)::           varY(1:NC_NN) !< Y component.
-  real(R4P),    intent(IN)::           varZ(1:NC_NN) !< Z component.
-  integer(I4P), intent(IN), optional:: cf            !< Current file index (for concurrent files IO).
-  integer(I4P)::                       E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::              s_buffer      !< Buffer string.
-  real(R4P),    allocatable::          var(:)        !< X, Y, Z component.
-  integer(I1P), allocatable::          varp(:)       !< Packed data.
-  character(1), allocatable::          var64(:)      !< Variable encoded in base64.
-  integer(I4P)::                       rf            !< Real file index.
-  integer(I4P)::                       n1            !< Counter.
+  integer(I4P), intent(IN)::           NC_NN          !< Number of cells or nodes.
+  character(*), intent(IN)::           varname        !< Variable name.
+  real(R8P),    intent(IN)::           varX(1:,1:,1:) !< X component [1:Nx,1:Ny,1:Nz].
+  real(R8P),    intent(IN)::           varY(1:,1:,1:) !< Y component [1:Nx,1:Ny,1:Nz].
+  real(R8P),    intent(IN)::           varZ(1:,1:,1:) !< Z component [1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN), optional:: cf             !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO           !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer       !< Buffer string.
+  real(R8P),    allocatable::          var(:)         !< X, Y, Z component.
+  integer(I1P), allocatable::          varp(:)        !< Packed data.
+  character(1), allocatable::          var64(:)       !< Variable encoded in base64.
+  integer(I4P)::                       rf             !< Real file index.
+  integer(I4P)::                       nx,ny,nz,n1    !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//&
+               '" NumberOfComponents="3" format="ascii">'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
+    do nz=1,size(varX,dim=3) ; do ny=1,size(varX,dim=2) ; do nx=1,size(varX,dim=1)
+      write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//&
+                                        str(n=varX(nx,ny,nz))//' '//str(n=varY(nx,ny,nz))//' '//str(n=varZ(nx,ny,nz))
+    enddo ; enddo ; enddo
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+  case(raw,bin_app)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//&
+               '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call vtk(rf)%byte_update(N_Byte = 3*NC_NN*BYR8P)
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',3*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)(((varX(nx,ny,nz),varY(nx,ny,nz),varZ(nx,ny,nz),&
+                                 nx=1,size(varX,dim=1)),ny=1,size(varX,dim=2)),nz=1,size(varX,dim=3))
+  case(binary)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//&
+               '" NumberOfComponents="3" format="binary">'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    allocate(var(1:3*NC_NN))
+    n1 = 0_I4P
+    do nz=1,size(varX,dim=3) ; do ny=1,size(varX,dim=2) ; do nx=1,size(varX,dim=1)
+      n1 = n1 + 1_I4P ; var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(nx,ny,nz),varY(nx,ny,nz),varZ(nx,ny,nz)]
+    enddo ; enddo ; enddo
+    call pack_data(a1=[int(3*NC_NN*BYR8P,I4P)],a2=var,packed=varp) ; deallocate(var)
+    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_VAR_XML_VECT_3DA_R8
+
+  !> Function for saving field of vectorial variable (R4P, 1D arrays).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_VAR_XML_VECT_1DA_R4(NC_NN,varname,varX,varY,varZ,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           NC_NN    !< Number of cells or nodes.
+  character(*), intent(IN)::           varname  !< Variable name.
+  real(R4P),    intent(IN)::           varX(1:) !< X component [1:NC_NN].
+  real(R4P),    intent(IN)::           varY(1:) !< Y component [1:NC_NN].
+  real(R4P),    intent(IN)::           varZ(1:) !< Z component [1:NC_NN].
+  integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer !< Buffer string.
+  real(R4P),    allocatable::          var(:)   !< X, Y, Z component.
+  integer(I1P), allocatable::          varp(:)  !< Packed data.
+  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  integer(I4P)::                       rf       !< Real file index.
+  integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2791,54 +3165,115 @@ contains
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//&
                '" NumberOfComponents="3" format="ascii">'
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do n1=1,NC_NN
-      write(unit=vtk(rf)%u,fmt='(A,3(1X,'//FR4P//'))',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
-                                                                  varX(n1),varY(n1),varZ(n1)
+      write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//str(n=varX(n1))//' '//str(n=varY(n1))//' '//str(n=varZ(n1))
     enddo
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//&
                '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NC_NN*BYR4P)
-    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',3*NC_NN
-    write(unit=vtk(rf)%ua,iostat=E_IO)(varX(n1),varY(n1),varZ(n1),n1=1,NC_NN)
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',3*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)(varX(n1),varY(n1),varZ(n1),n1=1,NC_NN)
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//&
                '" NumberOfComponents="3" format="binary">'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     allocate(var(1:3*NC_NN))
     do n1=1,NC_NN
       var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(n1),varY(n1),varZ(n1)]
     enddo
     call pack_data(a1=[int(3*NC_NN*BYR4P,I4P)],a2=var,packed=varp) ; deallocate(var)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_VAR_XML_VECT_R4
+  endfunction VTK_VAR_XML_VECT_1DA_R4
 
-  !> Function for saving field of vectorial variable (I8P).
+  !> Function for saving field of vectorial variable (R4P, 3D arrays).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_VAR_XML_VECT_I8(NC_NN,varname,varX,varY,varZ,cf) result(E_IO)
+  function VTK_VAR_XML_VECT_3DA_R4(NC_NN,varname,varX,varY,varZ,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN)::           NC_NN         !< Number of cells or nodes.
-  character(*), intent(IN)::           varname       !< Variable name.
-  integer(I8P), intent(IN)::           varX(1:NC_NN) !< X component.
-  integer(I8P), intent(IN)::           varY(1:NC_NN) !< Y component.
-  integer(I8P), intent(IN)::           varZ(1:NC_NN) !< Z component.
-  integer(I4P), intent(IN), optional:: cf            !< Current file index (for concurrent files IO).
-  integer(I4P)::                       E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::              s_buffer      !< Buffer string.
-  integer(I8P), allocatable::          var(:)        !< X, Y, Z component.
-  integer(I1P), allocatable::          varp(:)       !< Packed data.
-  character(1), allocatable::          var64(:)      !< Variable encoded in base64.
-  integer(I4P)::                       rf            !< Real file index.
-  integer(I4P)::                       n1            !< Counter.
+  integer(I4P), intent(IN)::           NC_NN          !< Number of cells or nodes.
+  character(*), intent(IN)::           varname        !< Variable name.
+  real(R4P),    intent(IN)::           varX(1:,1:,1:) !< X component [1:Nx,1:Ny,1:Nz].
+  real(R4P),    intent(IN)::           varY(1:,1:,1:) !< Y component [1:Nx,1:Ny,1:Nz].
+  real(R4P),    intent(IN)::           varZ(1:,1:,1:) !< Z component [1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN), optional:: cf             !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO           !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer       !< Buffer string.
+  real(R4P),    allocatable::          var(:)         !< X, Y, Z component.
+  integer(I1P), allocatable::          varp(:)        !< Packed data.
+  character(1), allocatable::          var64(:)       !< Variable encoded in base64.
+  integer(I4P)::                       rf             !< Real file index.
+  integer(I4P)::                       nx,ny,nz,n1    !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//&
+               '" NumberOfComponents="3" format="ascii">'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
+    do nz=1,size(varX,dim=3) ; do ny=1,size(varX,dim=2) ; do nx=1,size(varX,dim=1)
+      write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//&
+                                        str(n=varX(nx,ny,nz))//' '//str(n=varY(nx,ny,nz))//' '//str(n=varZ(nx,ny,nz))
+    enddo ; enddo ; enddo
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+  case(raw,bin_app)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//&
+               '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call vtk(rf)%byte_update(N_Byte = 3*NC_NN*BYR4P)
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',3*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)(((varX(nx,ny,nz),varY(nx,ny,nz),varZ(nx,ny,nz),&
+                                 nx=1,size(varX,dim=1)),ny=1,size(varX,dim=2)),nz=1,size(varX,dim=3))
+  case(binary)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//&
+               '" NumberOfComponents="3" format="binary">'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    allocate(var(1:3*NC_NN))
+    n1 = 0_I4P
+    do nz=1,size(varX,dim=3) ; do ny=1,size(varX,dim=2) ; do nx=1,size(varX,dim=1)
+      n1 = n1 + 1_I4P ; var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(nx,ny,nz),varY(nx,ny,nz),varZ(nx,ny,nz)]
+    enddo ; enddo ; enddo
+    call pack_data(a1=[int(3*NC_NN*BYR4P,I4P)],a2=var,packed=varp) ; deallocate(var)
+    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_VAR_XML_VECT_3DA_R4
+
+  !> Function for saving field of vectorial variable (I8P, 1D arrays).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_VAR_XML_VECT_1DA_I8(NC_NN,varname,varX,varY,varZ,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           NC_NN    !< Number of cells or nodes.
+  character(*), intent(IN)::           varname  !< Variable name.
+  integer(I8P), intent(IN)::           varX(1:) !< X component [1:NC_NN].
+  integer(I8P), intent(IN)::           varY(1:) !< Y component [1:NC_NN].
+  integer(I8P), intent(IN)::           varZ(1:) !< Z component [1:NC_NN].
+  integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer !< Buffer string.
+  integer(I8P), allocatable::          var(:)   !< X, Y, Z component.
+  integer(I1P), allocatable::          varp(:)  !< Packed data.
+  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  integer(I4P)::                       rf       !< Real file index.
+  integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2851,54 +3286,115 @@ contains
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//&
                '" NumberOfComponents="3" format="ascii">'
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do n1=1,NC_NN
-      write(unit=vtk(rf)%u,fmt='(A,3(1X,'//FI8P//'))',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
-                                                                  varX(n1),varY(n1),varZ(n1)
+      write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//str(n=varX(n1))//' '//str(n=varY(n1))//' '//str(n=varZ(n1))
     enddo
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//&
                '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = int(3*NC_NN*BYI8P,I4P))
-    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I8',3*NC_NN
-    write(unit=vtk(rf)%ua,iostat=E_IO)(varX(n1),varY(n1),varZ(n1),n1=1,NC_NN)
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I8',3*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)(varX(n1),varY(n1),varZ(n1),n1=1,NC_NN)
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//&
                '" NumberOfComponents="3" format="binary">'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     allocate(var(1:3*NC_NN))
     do n1=1,NC_NN
       var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(n1),varY(n1),varZ(n1)]
     enddo
     call pack_data(a1=[int(3*NC_NN*BYI8P,I4P)],a2=var,packed=varp) ; deallocate(var)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_VAR_XML_VECT_I8
+  endfunction VTK_VAR_XML_VECT_1DA_I8
 
-  !> Function for saving field of vectorial variable (I4P).
+  !> Function for saving field of vectorial variable (I8P, 3D arrays).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_VAR_XML_VECT_I4(NC_NN,varname,varX,varY,varZ,cf) result(E_IO)
+  function VTK_VAR_XML_VECT_3DA_I8(NC_NN,varname,varX,varY,varZ,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN)::           NC_NN         !< Number of cells or nodes.
-  character(*), intent(IN)::           varname       !< Variable name.
-  integer(I4P), intent(IN)::           varX(1:NC_NN) !< X component.
-  integer(I4P), intent(IN)::           varY(1:NC_NN) !< Y component.
-  integer(I4P), intent(IN)::           varZ(1:NC_NN) !< Z component.
-  integer(I4P), intent(IN), optional:: cf            !< Current file index (for concurrent files IO).
-  integer(I4P)::                       E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::              s_buffer      !< Buffer string.
-  integer(I4P), allocatable::          var(:)        !< X, Y, Z component.
-  integer(I1P), allocatable::          varp(:)       !< Packed data.
-  character(1), allocatable::          var64(:)      !< Variable encoded in base64.
-  integer(I4P)::                       rf            !< Real file index.
-  integer(I4P)::                       n1            !< Counter.
+  integer(I4P), intent(IN)::           NC_NN          !< Number of cells or nodes.
+  character(*), intent(IN)::           varname        !< Variable name.
+  integer(I8P), intent(IN)::           varX(1:,1:,1:) !< X component [1:Nx,1:Ny,1:Nz].
+  integer(I8P), intent(IN)::           varY(1:,1:,1:) !< Y component [1:Nx,1:Ny,1:Nz].
+  integer(I8P), intent(IN)::           varZ(1:,1:,1:) !< Z component [1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN), optional:: cf             !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO           !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer       !< Buffer string.
+  integer(I8P), allocatable::          var(:)         !< X, Y, Z component.
+  integer(I1P), allocatable::          varp(:)        !< Packed data.
+  character(1), allocatable::          var64(:)       !< Variable encoded in base64.
+  integer(I4P)::                       rf             !< Real file index.
+  integer(I4P)::                       nx,ny,nz,n1    !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//&
+               '" NumberOfComponents="3" format="ascii">'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
+    do nz=1,size(varX,dim=3) ; do ny=1,size(varX,dim=2) ; do nx=1,size(varX,dim=1)
+      write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//&
+                                        str(n=varX(nx,ny,nz))//' '//str(n=varY(nx,ny,nz))//' '//str(n=varZ(nx,ny,nz))
+    enddo ; enddo ; enddo
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+  case(raw,bin_app)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//&
+               '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call vtk(rf)%byte_update(N_Byte = int(3*NC_NN*BYI8P,I4P))
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I8',3*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)(((varX(nx,ny,nz),varY(nx,ny,nz),varZ(nx,ny,nz),&
+                                 nx=1,size(varX,dim=1)),ny=1,size(varX,dim=2)),nz=1,size(varX,dim=3))
+  case(binary)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//&
+               '" NumberOfComponents="3" format="binary">'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    allocate(var(1:3*NC_NN))
+    n1 = 0_I4P
+    do nz=1,size(varX,dim=3) ; do ny=1,size(varX,dim=2) ; do nx=1,size(varX,dim=1)
+      n1 = n1 + 1_I4P ; var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(nx,ny,nz),varY(nx,ny,nz),varZ(nx,ny,nz)]
+    enddo ; enddo ; enddo
+    call pack_data(a1=[int(3*NC_NN*BYI8P,I4P)],a2=var,packed=varp) ; deallocate(var)
+    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_VAR_XML_VECT_3DA_I8
+
+  !> Function for saving field of vectorial variable (I4P, 1D arrays).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_VAR_XML_VECT_1DA_I4(NC_NN,varname,varX,varY,varZ,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           NC_NN    !< Number of cells or nodes.
+  character(*), intent(IN)::           varname  !< Variable name.
+  integer(I4P), intent(IN)::           varX(1:) !< X component [1:NC_NN].
+  integer(I4P), intent(IN)::           varY(1:) !< Y component [1:NC_NN].
+  integer(I4P), intent(IN)::           varZ(1:) !< Z component [1:NC_NN].
+  integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer !< Buffer string.
+  integer(I4P), allocatable::          var(:)   !< X, Y, Z component.
+  integer(I1P), allocatable::          varp(:)  !< Packed data.
+  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  integer(I4P)::                       rf       !< Real file index.
+  integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2911,54 +3407,115 @@ contains
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//&
                '" NumberOfComponents="3" format="ascii">'
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do n1=1,NC_NN
-      write(unit=vtk(rf)%u,fmt='(A,3(1X,'//FI4P//'))',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
-                                                                  varX(n1),varY(n1),varZ(n1)
+      write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//str(n=varX(n1))//' '//str(n=varY(n1))//' '//str(n=varZ(n1))
     enddo
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//&
                '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NC_NN*BYI4P)
-    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I4',3*NC_NN
-    write(unit=vtk(rf)%ua,iostat=E_IO)(varX(n1),varY(n1),varZ(n1),n1=1,NC_NN)
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I4',3*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)(varX(n1),varY(n1),varZ(n1),n1=1,NC_NN)
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//&
                '" NumberOfComponents="3" format="binary">'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     allocate(var(1:3*NC_NN))
     do n1=1,NC_NN
       var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(n1),varY(n1),varZ(n1)]
     enddo
     varp = transfer([int(3*NC_NN*BYI4P,I4P),var],varp) ; deallocate(var)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_VAR_XML_VECT_I4
+  endfunction VTK_VAR_XML_VECT_1DA_I4
 
-  !> Function for saving field of vectorial variable (I2P).
+  !> Function for saving field of vectorial variable (I4P, 3D arrays).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_VAR_XML_VECT_I2(NC_NN,varname,varX,varY,varZ,cf) result(E_IO)
+  function VTK_VAR_XML_VECT_3DA_I4(NC_NN,varname,varX,varY,varZ,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN)::           NC_NN         !< Number of cells or nodes.
-  character(*), intent(IN)::           varname       !< Variable name.
-  integer(I2P), intent(IN)::           varX(1:NC_NN) !< X component.
-  integer(I2P), intent(IN)::           varY(1:NC_NN) !< Y component.
-  integer(I2P), intent(IN)::           varZ(1:NC_NN) !< Z component.
-  integer(I4P), intent(IN), optional:: cf            !< Current file index (for concurrent files IO).
-  integer(I4P)::                       E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::              s_buffer      !< Buffer string.
-  integer(I2P), allocatable::          var(:)        !< X, Y, Z component.
-  integer(I1P), allocatable::          varp(:)       !< Packed data.
-  character(1), allocatable::          var64(:)      !< Variable encoded in base64.
-  integer(I4P)::                       rf            !< Real file index.
-  integer(I4P)::                       n1            !< Counter.
+  integer(I4P), intent(IN)::           NC_NN          !< Number of cells or nodes.
+  character(*), intent(IN)::           varname        !< Variable name.
+  integer(I4P), intent(IN)::           varX(1:,1:,1:) !< X component [1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN)::           varY(1:,1:,1:) !< Y component [1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN)::           varZ(1:,1:,1:) !< Z component [1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN), optional:: cf             !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO           !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer       !< Buffer string.
+  integer(I4P), allocatable::          var(:)         !< X, Y, Z component.
+  integer(I1P), allocatable::          varp(:)        !< Packed data.
+  character(1), allocatable::          var64(:)       !< Variable encoded in base64.
+  integer(I4P)::                       rf             !< Real file index.
+  integer(I4P)::                       nx,ny,nz,n1    !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//&
+               '" NumberOfComponents="3" format="ascii">'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
+    do nz=1,size(varX,dim=3) ; do ny=1,size(varX,dim=2) ; do nx=1,size(varX,dim=1)
+      write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//&
+                                        str(n=varX(nx,ny,nz))//' '//str(n=varY(nx,ny,nz))//' '//str(n=varZ(nx,ny,nz))
+    enddo ; enddo ; enddo
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+  case(raw,bin_app)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//&
+               '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call vtk(rf)%byte_update(N_Byte = 3*NC_NN*BYI4P)
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I4',3*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)(((varX(nx,ny,nz),varY(nx,ny,nz),varZ(nx,ny,nz),&
+                                 nx=1,size(varX,dim=1)),ny=1,size(varX,dim=2)),nz=1,size(varX,dim=3))
+  case(binary)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//&
+               '" NumberOfComponents="3" format="binary">'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    allocate(var(1:3*NC_NN))
+    n1 = 0_I4P
+    do nz=1,size(varX,dim=3) ; do ny=1,size(varX,dim=2) ; do nx=1,size(varX,dim=1)
+      n1 = n1 + 1_I4P ; var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(nx,ny,nz),varY(nx,ny,nz),varZ(nx,ny,nz)]
+    enddo ; enddo ; enddo
+    varp = transfer([int(3*NC_NN*BYI4P,I4P),var],varp) ; deallocate(var)
+    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_VAR_XML_VECT_3DA_I4
+
+  !> Function for saving field of vectorial variable (I2P, 1D arrays).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_VAR_XML_VECT_1DA_I2(NC_NN,varname,varX,varY,varZ,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           NC_NN    !< Number of cells or nodes.
+  character(*), intent(IN)::           varname  !< Variable name.
+  integer(I2P), intent(IN)::           varX(1:) !< X component [1:NC_NN].
+  integer(I2P), intent(IN)::           varY(1:) !< Y component [1:NC_NN].
+  integer(I2P), intent(IN)::           varZ(1:) !< Z component [1:NC_NN].
+  integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer !< Buffer string.
+  integer(I2P), allocatable::          var(:)   !< X, Y, Z component.
+  integer(I1P), allocatable::          varp(:)  !< Packed data.
+  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  integer(I4P)::                       rf       !< Real file index.
+  integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2971,54 +3528,115 @@ contains
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//&
                '" NumberOfComponents="3" format="ascii">'
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do n1=1,NC_NN
-      write(unit=vtk(rf)%u,fmt='(A,3(1X,'//FI2P//'))',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
-                                                                  varX(n1),varY(n1),varZ(n1)
+      write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//str(n=varX(n1))//' '//str(n=varY(n1))//' '//str(n=varZ(n1))
     enddo
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//&
                '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NC_NN*BYI2P)
-    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I2',3*NC_NN
-    write(unit=vtk(rf)%ua,iostat=E_IO)(varX(n1),varY(n1),varZ(n1),n1=1,NC_NN)
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I2',3*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)(varX(n1),varY(n1),varZ(n1),n1=1,NC_NN)
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//&
                '" NumberOfComponents="3" format="binary">'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     allocate(var(1:3*NC_NN))
     do n1=1,NC_NN
       var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(n1),varY(n1),varZ(n1)]
     enddo
     call pack_data(a1=[int(3*NC_NN*BYI2P,I4P)],a2=var,packed=varp) ; deallocate(var)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_VAR_XML_VECT_I2
+  endfunction VTK_VAR_XML_VECT_1DA_I2
 
-  !> Function for saving field of vectorial variable (I1P).
+  !> Function for saving field of vectorial variable (I2P, 3D arrays).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_VAR_XML_VECT_I1(NC_NN,varname,varX,varY,varZ,cf) result(E_IO)
+  function VTK_VAR_XML_VECT_3DA_I2(NC_NN,varname,varX,varY,varZ,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN)::           NC_NN         !< Number of cells or nodes.
-  character(*), intent(IN)::           varname       !< Variable name.
-  integer(I1P), intent(IN)::           varX(1:NC_NN) !< X component.
-  integer(I1P), intent(IN)::           varY(1:NC_NN) !< Y component.
-  integer(I1P), intent(IN)::           varZ(1:NC_NN) !< Z component.
-  integer(I4P), intent(IN), optional:: cf            !< Current file index (for concurrent files IO).
-  integer(I4P)::                       E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::              s_buffer      !< Buffer string.
-  integer(I1P), allocatable::          var(:)        !< X, Y, Z component.
-  integer(I1P), allocatable::          varp(:)       !< Packed data.
-  character(1), allocatable::          var64(:)      !< Variable encoded in base64.
-  integer(I4P)::                       rf            !< Real file index.
-  integer(I4P)::                       n1            !< Counter.
+  integer(I4P), intent(IN)::           NC_NN          !< Number of cells or nodes.
+  character(*), intent(IN)::           varname        !< Variable name.
+  integer(I2P), intent(IN)::           varX(1:,1:,1:) !< X component [1:Nx,1:Ny,1:Nz].
+  integer(I2P), intent(IN)::           varY(1:,1:,1:) !< Y component [1:Nx,1:Ny,1:Nz].
+  integer(I2P), intent(IN)::           varZ(1:,1:,1:) !< Z component [1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN), optional:: cf             !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO           !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer       !< Buffer string.
+  integer(I2P), allocatable::          var(:)         !< X, Y, Z component.
+  integer(I1P), allocatable::          varp(:)        !< Packed data.
+  character(1), allocatable::          var64(:)       !< Variable encoded in base64.
+  integer(I4P)::                       rf             !< Real file index.
+  integer(I4P)::                       nx,ny,nz,n1    !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//&
+               '" NumberOfComponents="3" format="ascii">'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
+    do nz=1,size(varX,dim=3) ; do ny=1,size(varX,dim=2) ; do nx=1,size(varX,dim=1)
+      write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//&
+                                        str(n=varX(nx,ny,nz))//' '//str(n=varY(nx,ny,nz))//' '//str(n=varZ(nx,ny,nz))
+    enddo ; enddo ; enddo
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+  case(raw,bin_app)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//&
+               '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call vtk(rf)%byte_update(N_Byte = 3*NC_NN*BYI2P)
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I2',3*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)(((varX(nx,ny,nz),varY(nx,ny,nz),varZ(nx,ny,nz),&
+                                 nx=1,size(varX,dim=1)),ny=1,size(varX,dim=2)),nz=1,size(varX,dim=3))
+  case(binary)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//&
+               '" NumberOfComponents="3" format="binary">'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    allocate(var(1:3*NC_NN))
+    n1 = 0_I4P
+    do nz=1,size(varX,dim=3) ; do ny=1,size(varX,dim=2) ; do nx=1,size(varX,dim=1)
+      n1 = n1 + 1_I4P ; var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(nx,ny,nz),varY(nx,ny,nz),varZ(nx,ny,nz)]
+    enddo ; enddo ; enddo
+    call pack_data(a1=[int(3*NC_NN*BYI2P,I4P)],a2=var,packed=varp) ; deallocate(var)
+    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_VAR_XML_VECT_3DA_I2
+
+  !> Function for saving field of vectorial variable (I1P, 1D arrays).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_VAR_XML_VECT_1DA_I1(NC_NN,varname,varX,varY,varZ,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           NC_NN    !< Number of cells or nodes.
+  character(*), intent(IN)::           varname  !< Variable name.
+  integer(I1P), intent(IN)::           varX(1:) !< X component [1:NC_NN].
+  integer(I1P), intent(IN)::           varY(1:) !< Y component [1:NC_NN].
+  integer(I1P), intent(IN)::           varZ(1:) !< Z component [1:NC_NN].
+  integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer !< Buffer string.
+  integer(I1P), allocatable::          var(:)   !< X, Y, Z component.
+  integer(I1P), allocatable::          varp(:)  !< Packed data.
+  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  integer(I4P)::                       rf       !< Real file index.
+  integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3030,40 +3648,101 @@ contains
   select case(vtk(rf)%f)
   case(ascii)
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//'" NumberOfComponents="3" format="ascii">'
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do n1=1,NC_NN
-      write(unit=vtk(rf)%u,fmt='(A,3(1X,'//FI1P//'))',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
-                                                                  varX(n1),varY(n1),varZ(n1)
+      write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//str(n=varX(n1))//' '//str(n=varY(n1))//' '//str(n=varZ(n1))
     enddo
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//&
              '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     vtk(rf)%N_Byte = 3*NC_NN*BYI1P
     call vtk(rf)%byte_update(N_Byte = 3*NC_NN*BYI1P)
-    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I1',3*NC_NN
-    write(unit=vtk(rf)%ua,iostat=E_IO)(varX(n1),varY(n1),varZ(n1),n1=1,NC_NN)
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I1',3*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)(varX(n1),varY(n1),varZ(n1),n1=1,NC_NN)
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//&
                '" NumberOfComponents="3" format="binary">'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     allocate(var(1:3*NC_NN))
     do n1=1,NC_NN
       var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(n1),varY(n1),varZ(n1)]
     enddo
     call pack_data(a1=[int(3*NC_NN*BYI1P,I4P)],a2=var,packed=varp) ; deallocate(var)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_VAR_XML_VECT_I1
+  endfunction VTK_VAR_XML_VECT_1DA_I1
 
-  !> Function for saving field of list variable (R8P).
+  !> Function for saving field of vectorial variable (I1P, 3D arrays).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_VAR_XML_LIST_R8(NC_NN,N_COL,varname,var,cf) result(E_IO)
+  function VTK_VAR_XML_VECT_3DA_I1(NC_NN,varname,varX,varY,varZ,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           NC_NN          !< Number of cells or nodes.
+  character(*), intent(IN)::           varname        !< Variable name.
+  integer(I1P), intent(IN)::           varX(1:,1:,1:) !< X component [1:Nx,1:Ny,1:Nz].
+  integer(I1P), intent(IN)::           varY(1:,1:,1:) !< Y component [1:Nx,1:Ny,1:Nz].
+  integer(I1P), intent(IN)::           varZ(1:,1:,1:) !< Z component [1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN), optional:: cf             !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO           !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer       !< Buffer string.
+  integer(I1P), allocatable::          var(:)         !< X, Y, Z component.
+  integer(I1P), allocatable::          varp(:)        !< Packed data.
+  character(1), allocatable::          var64(:)       !< Variable encoded in base64.
+  integer(I4P)::                       rf             !< Real file index.
+  integer(I4P)::                       nx,ny,nz,n1    !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//'" NumberOfComponents="3" format="ascii">'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
+    do nz=1,size(varX,dim=3) ; do ny=1,size(varX,dim=2) ; do nx=1,size(varX,dim=1)
+      write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//&
+                                        str(n=varX(nx,ny,nz))//' '//str(n=varY(nx,ny,nz))//' '//str(n=varZ(nx,ny,nz))
+    enddo ; enddo ; enddo
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+  case(raw,bin_app)
+    s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//&
+             '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    vtk(rf)%N_Byte = 3*NC_NN*BYI1P
+    call vtk(rf)%byte_update(N_Byte = 3*NC_NN*BYI1P)
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I1',3*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)(((varX(nx,ny,nz),varY(nx,ny,nz),varZ(nx,ny,nz),&
+                                 nx=1,size(varX,dim=1)),ny=1,size(varX,dim=2)),nz=1,size(varX,dim=3))
+  case(binary)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//&
+               '" NumberOfComponents="3" format="binary">'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    allocate(var(1:3*NC_NN))
+    n1 = 0_I4P
+    do nz=1,size(varX,dim=3) ; do ny=1,size(varX,dim=2) ; do nx=1,size(varX,dim=1)
+      n1 = n1 + 1_I4P ; var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(nx,ny,nz),varY(nx,ny,nz),varZ(nx,ny,nz)]
+    enddo ; enddo ; enddo
+    call pack_data(a1=[int(3*NC_NN*BYI1P,I4P)],a2=var,packed=varp) ; deallocate(var)
+    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_VAR_XML_VECT_3DA_I1
+
+  !> Function for saving field of list variable (R8P, 1D array).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_VAR_XML_LIST_1DA_R8(NC_NN,N_COL,varname,var,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), intent(IN)::           NC_NN      !< Number of cells or nodes.
@@ -3073,7 +3752,6 @@ contains
   integer(I4P), intent(IN), optional:: cf         !< Current file index (for concurrent files IO).
   integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer   !< Buffer string.
-  real(R8P),    allocatable::          var1(:)    !< One-dimensionalized data.
   integer(I1P), allocatable::          varp(:)    !< Packed data.
   character(1), allocatable::          var64(:)   !< Variable encoded in base64.
   integer(I4P)::                       rf         !< Real file index.
@@ -3090,39 +3768,89 @@ contains
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="ascii">'
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do n2=1,NC_NN
-      write(unit=vtk(rf)%u,fmt='(A,'//trim(str(.true.,N_COL))//'(1X,'//FR8P//'))',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
-                                                                                              (var(n1,n2),n1=1,N_COL)
+      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+                                                                       (' '//str(n=var(n1,n2)),n1=1,N_COL)
     enddo
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = N_COL*NC_NN*BYR8P)
-    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',N_COL*NC_NN
-    write(unit=vtk(rf)%ua,iostat=E_IO)var
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',N_COL*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="binary">'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
-    allocate(var1(1:NC_NN*N_COL))
-    do n2=1,NC_NN
-      var1(1+(n2-1)*N_COL:1+(n2-1)*N_COL+N_COL-1)=var(:,n2)
-    enddo
-    call pack_data(a1=[int(N_COL*NC_NN*BYR8P,I4P)],a2=var1,packed=varp) ; deallocate(var1)
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call pack_data(a1=[int(N_COL*NC_NN*BYR8P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_VAR_XML_LIST_R8
+  endfunction VTK_VAR_XML_LIST_1DA_R8
 
-  !> Function for saving field of list variable (R4P).
+  !> Function for saving field of list variable (R8P, 3D array).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_VAR_XML_LIST_R4(NC_NN,N_COL,varname,var,cf) result(E_IO)
+  function VTK_VAR_XML_LIST_3DA_R8(NC_NN,N_COL,varname,var,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           NC_NN            !< Number of cells or nodes.
+  integer(I4P), intent(IN)::           N_COL            !< Number of columns.
+  character(*), intent(IN)::           varname          !< Variable name.
+  real(R8P),    intent(IN)::           var(1:,1:,1:,1:) !< Components [1:N_COL,1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN), optional:: cf               !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO             !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer         !< Buffer string.
+  integer(I1P), allocatable::          varp(:)          !< Packed data.
+  character(1), allocatable::          var64(:)         !< Variable encoded in base64.
+  integer(I4P)::                       rf               !< Real file index.
+  integer(I4P)::                       nx,ny,nz,n1      !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//'" NumberOfComponents="'// &
+               trim(str(.true.,N_COL))//'" format="ascii">'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
+    do nz=1,size(var,dim=4) ; do ny=1,size(var,dim=3) ; do nx=1,size(var,dim=2)
+      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+                                                                       (' '//str(n=var(n1,nx,ny,nz)),n1=1,N_COL)
+    enddo ; enddo ; enddo
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+  case(raw,bin_app)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//'" NumberOfComponents="'// &
+               trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call vtk(rf)%byte_update(N_Byte = N_COL*NC_NN*BYR8P)
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',N_COL*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
+  case(binary)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//'" NumberOfComponents="'// &
+               trim(str(.true.,N_COL))//'" format="binary">'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call pack_data(a1=[int(N_COL*NC_NN*BYR8P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
+    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_VAR_XML_LIST_3DA_R8
+
+  !> Function for saving field of list variable (R4P, 1D array).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_VAR_XML_LIST_1DA_R4(NC_NN,N_COL,varname,var,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), intent(IN)::           NC_NN      !< Number of cells or nodes.
@@ -3132,7 +3860,6 @@ contains
   integer(I4P), intent(IN), optional:: cf         !< Current file index (for concurrent files IO).
   integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer   !< Buffer string.
-  real(R4P),    allocatable::          var1(:)    !< One-dimensionalized data.
   integer(I1P), allocatable::          varp(:)    !< Packed data.
   character(1), allocatable::          var64(:)   !< Variable encoded in base64.
   integer(I4P)::                       rf         !< Real file index.
@@ -3149,39 +3876,89 @@ contains
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="ascii">'
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do n2=1,NC_NN
-      write(unit=vtk(rf)%u,fmt='(A,'//trim(str(.true.,N_COL))//'(1X,'//FR4P//'))',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
-                                                                                              (var(n1,n2),n1=1,N_COL)
+      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+                                                                       (' '//str(n=var(n1,n2)),n1=1,N_COL)
     enddo
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = N_COL*NC_NN*BYR4P)
-    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',N_COL*NC_NN
-    write(unit=vtk(rf)%ua,iostat=E_IO)var
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',N_COL*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="binary">'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
-    allocate(var1(1:NC_NN*N_COL))
-    do n2=1,NC_NN
-      var1(1+(n2-1)*N_COL:1+(n2-1)*N_COL+N_COL-1)=var(:,n2)
-    enddo
-    call pack_data(a1=[int(N_COL*NC_NN*BYR4P,I4P)],a2=var1,packed=varp) ; deallocate(var1)
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call pack_data(a1=[int(N_COL*NC_NN*BYR4P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_VAR_XML_LIST_R4
+  endfunction VTK_VAR_XML_LIST_1DA_R4
 
-  !> Function for saving field of list variable (I8P).
+  !> Function for saving field of list variable (R4P, 3D array).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_VAR_XML_LIST_I8(NC_NN,N_COL,varname,var,cf) result(E_IO)
+  function VTK_VAR_XML_LIST_3DA_R4(NC_NN,N_COL,varname,var,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           NC_NN            !< Number of cells or nodes.
+  integer(I4P), intent(IN)::           N_COL            !< Number of columns.
+  character(*), intent(IN)::           varname          !< Variable name.
+  real(R4P),    intent(IN)::           var(1:,1:,1:,1:) !< Components [1:N_COL,1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN), optional:: cf               !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO             !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer         !< Buffer string.
+  integer(I1P), allocatable::          varp(:)          !< Packed data.
+  character(1), allocatable::          var64(:)         !< Variable encoded in base64.
+  integer(I4P)::                       rf               !< Real file index.
+  integer(I4P)::                       nx,ny,nz,n1      !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//'" NumberOfComponents="'// &
+               trim(str(.true.,N_COL))//'" format="ascii">'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
+    do nz=1,size(var,dim=4) ; do ny=1,size(var,dim=3) ; do nx=1,size(var,dim=2)
+      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+                                                                       (' '//str(n=var(n1,nx,ny,nz)),n1=1,N_COL)
+    enddo ; enddo ; enddo
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+  case(raw,bin_app)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//'" NumberOfComponents="'// &
+               trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call vtk(rf)%byte_update(N_Byte = N_COL*NC_NN*BYR4P)
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',N_COL*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
+  case(binary)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//'" NumberOfComponents="'// &
+               trim(str(.true.,N_COL))//'" format="binary">'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call pack_data(a1=[int(N_COL*NC_NN*BYR4P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
+    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_VAR_XML_LIST_3DA_R4
+
+  !> Function for saving field of list variable (I8P, 1D array).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_VAR_XML_LIST_1DA_I8(NC_NN,N_COL,varname,var,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), intent(IN)::           NC_NN      !< Number of cells or nodes.
@@ -3191,7 +3968,6 @@ contains
   integer(I4P), intent(IN), optional:: cf         !< Current file index (for concurrent files IO).
   integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer   !< Buffer string.
-  integer(I8P), allocatable::          var1(:)    !< One-dimensionalized data.
   integer(I1P), allocatable::          varp(:)    !< Packed data.
   character(1), allocatable::          var64(:)   !< Variable encoded in base64.
   integer(I4P)::                       rf         !< Real file index.
@@ -3208,39 +3984,89 @@ contains
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="ascii">'
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do n2=1,NC_NN
-      write(unit=vtk(rf)%u,fmt='(A,'//trim(str(.true.,N_COL))//'(1X,'//FI8P//'))',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
-                                                                                              (var(n1,n2),n1=1,N_COL)
+      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+                                                                       (' '//str(n=var(n1,n2)),n1=1,N_COL)
     enddo
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = int(N_COL*NC_NN*BYI8P,I4P))
-    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I8',N_COL*NC_NN
-    write(unit=vtk(rf)%ua,iostat=E_IO)var
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I8',N_COL*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="binary">'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
-    allocate(var1(1:NC_NN*N_COL))
-    do n2=1,NC_NN
-      var1(1+(n2-1)*N_COL:1+(n2-1)*N_COL+N_COL-1)=var(:,n2)
-    enddo
-    call pack_data(a1=[int(N_COL*NC_NN*BYI8P,I4P)],a2=var1,packed=varp) ; deallocate(var1)
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call pack_data(a1=[int(N_COL*NC_NN*BYI8P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_VAR_XML_LIST_I8
+  endfunction VTK_VAR_XML_LIST_1DA_I8
 
-  !> Function for saving field of list variable (I4P).
+  !> Function for saving field of list variable (I8P, 3D array).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_VAR_XML_LIST_I4(NC_NN,N_COL,varname,var,cf) result(E_IO)
+  function VTK_VAR_XML_LIST_3DA_I8(NC_NN,N_COL,varname,var,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           NC_NN            !< Number of cells or nodes.
+  integer(I4P), intent(IN)::           N_COL            !< Number of columns.
+  character(*), intent(IN)::           varname          !< Variable name.
+  integer(I8P), intent(IN)::           var(1:,1:,1:,1:) !< Components [1:N_COL,1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN), optional:: cf               !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO             !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer         !< Buffer string.
+  integer(I1P), allocatable::          varp(:)          !< Packed data.
+  character(1), allocatable::          var64(:)         !< Variable encoded in base64.
+  integer(I4P)::                       rf               !< Real file index.
+  integer(I4P)::                       nx,ny,nz,n1      !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//'" NumberOfComponents="'// &
+               trim(str(.true.,N_COL))//'" format="ascii">'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
+    do nz=1,size(var,dim=4) ; do ny=1,size(var,dim=3) ; do nx=1,size(var,dim=2)
+      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+                                                                       (' '//str(n=var(n1,nx,ny,nz)),n1=1,N_COL)
+    enddo ; enddo ; enddo
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+  case(raw,bin_app)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//'" NumberOfComponents="'// &
+               trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call vtk(rf)%byte_update(N_Byte = int(N_COL*NC_NN*BYI8P,I4P))
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I8',N_COL*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
+  case(binary)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//'" NumberOfComponents="'// &
+               trim(str(.true.,N_COL))//'" format="binary">'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call pack_data(a1=[int(N_COL*NC_NN*BYI8P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
+    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_VAR_XML_LIST_3DA_I8
+
+  !> Function for saving field of list variable (I4P, 1D array).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_VAR_XML_LIST_1DA_I4(NC_NN,N_COL,varname,var,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), intent(IN)::           NC_NN      !< Number of cells or nodes.
@@ -3250,7 +4076,6 @@ contains
   integer(I4P), intent(IN), optional:: cf         !< Current file index (for concurrent files IO).
   integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer   !< Buffer string.
-  integer(I4P), allocatable::          var1(:)    !< One-dimensionalized data.
   integer(I1P), allocatable::          varp(:)    !< Packed data.
   character(1), allocatable::          var64(:)   !< Variable encoded in base64.
   integer(I4P)::                       rf         !< Real file index.
@@ -3267,39 +4092,89 @@ contains
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="ascii">'
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do n2=1,NC_NN
-      write(unit=vtk(rf)%u,fmt='(A,'//trim(str(.true.,N_COL))//'(1X,'//FI4P//'))',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
-                                                                                              (var(n1,n2),n1=1,N_COL)
+      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+                                                                       (' '//str(n=var(n1,n2)),n1=1,N_COL)
     enddo
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = N_COL*NC_NN*BYI4P)
-    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I4',N_COL*NC_NN
-    write(unit=vtk(rf)%ua,iostat=E_IO)var
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I4',N_COL*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="binary">'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
-    allocate(var1(1:NC_NN*N_COL))
-    do n2=1,NC_NN
-      var1(1+(n2-1)*N_COL:1+(n2-1)*N_COL+N_COL-1)=var(:,n2)
-    enddo
-    varp = transfer([int(N_COL*NC_NN*BYI4P,I4P),var1],varp)
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    varp = transfer([int(N_COL*NC_NN*BYI4P,I4P),reshape(var,[N_COL*NC_NN])],varp)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_VAR_XML_LIST_I4
+  endfunction VTK_VAR_XML_LIST_1DA_I4
 
-  !> Function for saving field of list variable (I2P).
+  !> Function for saving field of list variable (I4P, 3D array).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_VAR_XML_LIST_I2(NC_NN,N_COL,varname,var,cf) result(E_IO)
+  function VTK_VAR_XML_LIST_3DA_I4(NC_NN,N_COL,varname,var,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           NC_NN            !< Number of cells or nodes.
+  integer(I4P), intent(IN)::           N_COL            !< Number of columns.
+  character(*), intent(IN)::           varname          !< Variable name.
+  integer(I4P), intent(IN)::           var(1:,1:,1:,1:) !< Components [1:N_COL,1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN), optional:: cf               !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO             !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer         !< Buffer string.
+  integer(I1P), allocatable::          varp(:)          !< Packed data.
+  character(1), allocatable::          var64(:)         !< Variable encoded in base64.
+  integer(I4P)::                       rf               !< Real file index.
+  integer(I4P)::                       nx,ny,nz,n1      !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//'" NumberOfComponents="'// &
+               trim(str(.true.,N_COL))//'" format="ascii">'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
+    do nz=1,size(var,dim=4) ; do ny=1,size(var,dim=3) ; do nx=1,size(var,dim=2)
+      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+                                                                       (' '//str(n=var(n1,nx,ny,nz)),n1=1,N_COL)
+    enddo ; enddo ; enddo
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+  case(raw,bin_app)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//'" NumberOfComponents="'// &
+               trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call vtk(rf)%byte_update(N_Byte = N_COL*NC_NN*BYI4P)
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I4',N_COL*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
+  case(binary)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//'" NumberOfComponents="'// &
+               trim(str(.true.,N_COL))//'" format="binary">'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    varp = transfer([int(N_COL*NC_NN*BYI4P,I4P),reshape(var,[N_COL*NC_NN])],varp)
+    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_VAR_XML_LIST_3DA_I4
+
+  !> Function for saving field of list variable (I2P, 1D array).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_VAR_XML_LIST_1DA_I2(NC_NN,N_COL,varname,var,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), intent(IN)::           NC_NN      !< Number of cells or nodes.
@@ -3309,7 +4184,6 @@ contains
   integer(I4P), intent(IN), optional:: cf         !< Current file index (for concurrent files IO).
   integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer   !< Buffer string.
-  integer(I2P), allocatable::          var1(:)    !< One-dimensionalized data.
   integer(I1P), allocatable::          varp(:)    !< Packed data.
   character(1), allocatable::          var64(:)   !< Variable encoded in base64.
   integer(I4P)::                       rf         !< Real file index.
@@ -3326,39 +4200,89 @@ contains
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="ascii">'
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do n2=1,NC_NN
-      write(unit=vtk(rf)%u,fmt='(A,'//trim(str(.true.,N_COL))//'(1X,'//FI2P//'))',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
-                                                                                              (var(n1,n2),n1=1,N_COL)
+      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+                                                                       (' '//str(n=var(n1,n2)),n1=1,N_COL)
     enddo
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = N_COL*NC_NN*BYI2P)
-    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I2',N_COL*NC_NN
-    write(unit=vtk(rf)%ua,iostat=E_IO)var
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I2',N_COL*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="binary">'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
-    allocate(var1(1:NC_NN*N_COL))
-    do n2=1,NC_NN
-      var1(1+(n2-1)*N_COL:1+(n2-1)*N_COL+N_COL-1)=var(:,n2)
-    enddo
-    call pack_data(a1=[int(N_COL*NC_NN*BYI2P,I4P)],a2=var1,packed=varp) ; deallocate(var1)
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call pack_data(a1=[int(N_COL*NC_NN*BYI2P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_VAR_XML_LIST_I2
+  endfunction VTK_VAR_XML_LIST_1DA_I2
 
-  !> Function for saving field of list variable (I1P).
+  !> Function for saving field of list variable (I2P, 3D array).
   !> @return E_IO: integer(I4P) error flag
-  function VTK_VAR_XML_LIST_I1(NC_NN,N_COL,varname,var,cf) result(E_IO)
+  function VTK_VAR_XML_LIST_3DA_I2(NC_NN,N_COL,varname,var,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           NC_NN            !< Number of cells or nodes.
+  integer(I4P), intent(IN)::           N_COL            !< Number of columns.
+  character(*), intent(IN)::           varname          !< Variable name.
+  integer(I2P), intent(IN)::           var(1:,1:,1:,1:) !< Components [1:N_COL,1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN), optional:: cf               !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO             !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer         !< Buffer string.
+  integer(I1P), allocatable::          varp(:)          !< Packed data.
+  character(1), allocatable::          var64(:)         !< Variable encoded in base64.
+  integer(I4P)::                       rf               !< Real file index.
+  integer(I4P)::                       nx,ny,nz,n1      !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//'" NumberOfComponents="'// &
+               trim(str(.true.,N_COL))//'" format="ascii">'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
+    do nz=1,size(var,dim=4) ; do ny=1,size(var,dim=3) ; do nx=1,size(var,dim=2)
+      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+                                                                       (' '//str(n=var(n1,nx,ny,nz)),n1=1,N_COL)
+    enddo ; enddo ; enddo
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+  case(raw,bin_app)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//'" NumberOfComponents="'// &
+               trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call vtk(rf)%byte_update(N_Byte = N_COL*NC_NN*BYI2P)
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I2',N_COL*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
+  case(binary)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//'" NumberOfComponents="'// &
+               trim(str(.true.,N_COL))//'" format="binary">'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call pack_data(a1=[int(N_COL*NC_NN*BYI2P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
+    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_VAR_XML_LIST_3DA_I2
+
+  !> Function for saving field of list variable (I1P, 1D array).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_VAR_XML_LIST_1DA_I1(NC_NN,N_COL,varname,var,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), intent(IN)::           NC_NN      !< Number of cells or nodes.
@@ -3368,7 +4292,6 @@ contains
   integer(I4P), intent(IN), optional:: cf         !< Current file index (for concurrent files IO).
   integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer   !< Buffer string.
-  integer(I1P), allocatable::          var1(:)    !< One-dimensionalized data.
   integer(I1P), allocatable::          varp(:)    !< Packed data.
   character(1), allocatable::          var64(:)   !< Variable encoded in base64.
   integer(I4P)::                       rf         !< Real file index.
@@ -3385,35 +4308,85 @@ contains
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="ascii">'
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do n2=1,NC_NN
-      write(unit=vtk(rf)%u,fmt='(A,'//trim(str(.true.,N_COL))//'(1X,'//FI1P//'))',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
-                                                                                              (var(n1,n2),n1=1,N_COL)
+      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+                                                                       (' '//str(n=var(n1,n2)),n1=1,N_COL)
     enddo
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = N_COL*NC_NN*BYI1P)
-    write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I1',N_COL*NC_NN
-    write(unit=vtk(rf)%ua,iostat=E_IO)var
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I1',N_COL*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="binary">'
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
-    allocate(var1(1:NC_NN*N_COL))
-    do n2=1,NC_NN
-      var1(1+(n2-1)*N_COL:1+(n2-1)*N_COL+N_COL-1)=var(:,n2)
-    enddo
-    call pack_data(a1=[int(N_COL*NC_NN*BYI1P,I4P)],a2=var1,packed=varp) ; deallocate(var1)
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call pack_data(a1=[int(N_COL*NC_NN*BYI1P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTK_VAR_XML_LIST_I1
+  endfunction VTK_VAR_XML_LIST_1DA_I1
+
+  !> Function for saving field of list variable (I1P, 3D array).
+  !> @return E_IO: integer(I4P) error flag
+  function VTK_VAR_XML_LIST_3DA_I1(NC_NN,N_COL,varname,var,cf) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::           NC_NN            !< Number of cells or nodes.
+  integer(I4P), intent(IN)::           N_COL            !< Number of columns.
+  character(*), intent(IN)::           varname          !< Variable name.
+  integer(I1P), intent(IN)::           var(1:,1:,1:,1:) !< Components [1:N_COL,1:Nx,1:Ny,1:Nz].
+  integer(I4P), intent(IN), optional:: cf               !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO             !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer         !< Buffer string.
+  integer(I1P), allocatable::          varp(:)          !< Packed data.
+  character(1), allocatable::          var64(:)         !< Variable encoded in base64.
+  integer(I4P)::                       rf               !< Real file index.
+  integer(I4P)::                       nx,ny,nz,n1      !< Counters.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  rf = f
+  if (present(cf)) then
+    rf = cf ; f = cf
+  endif
+  select case(vtk(rf)%f)
+  case(ascii)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//'" NumberOfComponents="'// &
+               trim(str(.true.,N_COL))//'" format="ascii">'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
+    do nz=1,size(var,dim=4) ; do ny=1,size(var,dim=3) ; do nx=1,size(var,dim=2)
+      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+                                                                       (' '//str(n=var(n1,nx,ny,nz)),n1=1,N_COL)
+    enddo ; enddo ; enddo
+    write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
+  case(raw,bin_app)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//'" NumberOfComponents="'// &
+               trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call vtk(rf)%byte_update(N_Byte = N_COL*NC_NN*BYI1P)
+    write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I1',N_COL*NC_NN
+    write(vtk(rf)%ua,iostat=E_IO)var
+  case(binary)
+    s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//'" NumberOfComponents="'// &
+               trim(str(.true.,N_COL))//'" format="binary">'
+    write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    call pack_data(a1=[int(N_COL*NC_NN*BYI1P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
+    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
+  endselect
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTK_VAR_XML_LIST_3DA_I1
   !> @}
 
   !> @brief Function for finalizing the VTK-XML file.
