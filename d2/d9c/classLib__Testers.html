@@ -125,8 +125,6 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine for testing parallel (partitioned) PStructuredGrid functions.  <a href="#a7978c56a1c8ca219fdc34e1ec911fd8f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">subroutine, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d9c/classLib__Testers.html#ab8ddf20a83dea0f6d63baf9ffbf8fc04">test_vtm</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine for testing multi-blocks VTM functions.  <a href="#ab8ddf20a83dea0f6d63baf9ffbf8fc04"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">subroutine, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d9c/classLib__Testers.html#a70d1c798bbfbaf4b92f2c0d4065397df">test_openmp</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine for testing the libray in an OpenMP parallel framework.  <a href="#a70d1c798bbfbaf4b92f2c0d4065397df"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>This is a library of procedures for testing <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> and for providing practical examples. </p>
@@ -151,9 +149,9 @@ Public Member Functions</h2></td></tr>
 <p>separated arrays) and packed API (X,Y,Z,... packed into a single array). All available formats are used. The StructuredGrid topology is used. </p>
 <dl class="note"><dt><b>Note:</b></dt><dd>This subroutine is designed not as an example rather than a comprehensive stress-tester for function of any kind/rank. </dd></dl>
 
-<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00039">39</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00044">44</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
 
-<p>References <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00115">initialize()</a>, and <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00213">save_strg()</a>.</p>
+<p>References <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00120">initialize()</a>, and <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00218">save_strg()</a>.</p>
 
 <p><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="../../closed.png" alt="+"/> Here is the call graph for this function:</div>
@@ -184,7 +182,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Subroutine for testing UnstructuredGrid functions. </p>
 
-<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00278">278</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00283">283</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
 
 </div>
 </div>
@@ -204,7 +202,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Subroutine for testing StructuredGrid functions. </p>
 
-<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00349">349</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00354">354</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
 
 </div>
 </div>
@@ -225,7 +223,7 @@ Public Member Functions</h2></td></tr>
 <p>Subroutine for testing RectilinearGrid functions. </p>
 <dl class="note"><dt><b>Note:</b></dt><dd>This subroutine also shows the usage of FieldData functions that are useful for saving global auxiliary data, e.g. time, time step, ecc. </dd></dl>
 
-<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00388">388</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00393">393</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
 
 </div>
 </div>
@@ -246,7 +244,7 @@ Public Member Functions</h2></td></tr>
 <p>Subroutine for testing parallel (partitioned) PStructuredGrid functions. </p>
 <dl class="note"><dt><b>Note:</b></dt><dd>Note that the two parts are completely independet. </dd></dl>
 
-<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00464">464</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00469">469</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
 
 </div>
 </div>
@@ -275,7 +273,7 @@ Public Member Functions</h2></td></tr>
             x         nx1               i=nx2_p(1)     nx2
 </pre></div> </dd></dl>
 
-<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00547">547</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00552">552</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
 
 </div>
 </div>
@@ -296,31 +294,7 @@ Public Member Functions</h2></td></tr>
 <p>Subroutine for testing multi-blocks VTM functions. </p>
 <p>There are 4 subset of data organized into 2 blocks. All the subsets are simple StructuredGrid prisms shifted along x direction. </p>
 
-<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00603">603</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a70d1c798bbfbaf4b92f2c0d4065397df"></a><!-- doxytag: member="Lib_Testers::test_openmp" ref="a70d1c798bbfbaf4b92f2c0d4065397df" args="()" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">subroutine, public <a class="el" href="../../d2/d9c/classLib__Testers.html#a70d1c798bbfbaf4b92f2c0d4065397df">Lib_Testers::test_openmp</a> </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Subroutine for testing the libray in an OpenMP parallel framework. </p>
-<p>It is used for testing thread-safe capability. The output is a parallel (partitioned) PStructuredGrid file. This subroutine saves the same outputs two times, the first one into a serial framework, while the second into an OpenMP parallel framework. The two savings are timed and the resulting speedup is printed to standard output. The dimensions of the mesh saved is small, thus the speedup is generally small. </p>
-<dl class="note"><dt><b>Note:</b></dt><dd>It is important to note that the output files initialization and finalization must be done outside the parallel ambient. </dd>
-<dd>
-The array containing the files indexes could be shared among threads, but the counter of this array ('p' in this example) must be private. </dd></dl>
-
-<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00665">665</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
+<p>Definition at line <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html#l00608">608</a> of file <a class="el" href="../../dc/d15/Test__Driver_8f90_source.html">Test_Driver.f90</a>.</p>
 
 </div>
 </div>
@@ -347,7 +321,7 @@ The array containing the files indexes could be shared among threads, but the co
     <ul>
       <li class="navelem"><a class="el" href="../../d2/d9c/classLib__Testers.html">Lib_Testers</a>      </li>
 
-    <li class="footer">Generated on Wed May 22 2013 16:06:42 for Lib_VTK_IO by
+    <li class="footer">Generated on Thu May 23 2013 12:59:49 for Lib_VTK_IO by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>

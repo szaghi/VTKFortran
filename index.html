@@ -97,8 +97,26 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="contents">
 <div class="textblock"><dl class="author"><dt><b>Author:</b></dt><dd>Stefano Zaghi </dd></dl>
 <dl class="version"><dt><b>Version:</b></dt><dd>1.1 </dd></dl>
-<dl class="date"><dt><b>Date:</b></dt><dd>2013-03-28 </dd></dl>
+<dl class="date"><dt><b>Date:</b></dt><dd>2013-05-23 </dd></dl>
 <dl class="user"><dt><b>News</b></dt><dd><ul>
+<li>Added packed API and 3D(or higher) arrays for VTK_VAR_XML function: this avoids the necessity of explicit reshape of multi-dimensional arrays containing saved variables in VAR callings; the following inputs are now available:<ul>
+<li>scalar input:<ul>
+<li>input is 1D-rank array: var[1:NC_NN];</li>
+<li>input is 3D-rank array: var[nx1:nx2,ny1:ny2,nz1:nz2];</li>
+</ul>
+</li>
+<li>vectorial inputs:<ul>
+<li>inputs are 1D-rank arrays: varX[1:NC_NN],varY[1:NC_NN],varZ[1:NC_NN];</li>
+<li>inputs are 3D-rank arrays: varX[nx1:nx2,ny1:ny2,nz1:nz2],varY[nx1:nx2,ny1:ny2,nz1:nz2],varX[nx1:nx2,ny1:ny2,nz1:nz2];</li>
+</ul>
+</li>
+<li>3D(or higher) vectorial inputs:<ul>
+<li>input is 1D-rank (packed API): var[1:N_COL,1:NC_NN];</li>
+<li>input is 3D-rank (packed API): var[1:N_COL,nx1:nx2,ny1:ny2,nz1:nz2].</li>
+</ul>
+</li>
+</ul>
+</li>
 <li>Added packed API and 3D arrays for VTK_GEO and VTK_GEO_XML function: this avoids the necessity of explicit reshape of multi-dimensional arrays containing X, Y and Z coordinates in GEO callings; the following inputs are now available:<ul>
 <li>StructuredGrid (NN is the number of grid points, n#1-n#2, #x,y,z are the domain extents):<ul>
 <li>1D arrays of size NN: X[1:NN],Y[1:NN],Z[1:NN];</li>
@@ -208,7 +226,7 @@ Source-Code</h2>
   <div id="nav-path" class="navpath">
     <ul>
 
-    <li class="footer">Generated on Wed May 22 2013 16:06:42 for Lib_VTK_IO by
+    <li class="footer">Generated on Thu May 23 2013 14:57:59 for Lib_VTK_IO by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>

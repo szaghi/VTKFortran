@@ -184,7 +184,7 @@ Data Types</h2></td></tr>
 </pre></div> <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> programming style is based on two main principles: <em>portable kind-precision</em> of reals and integers variables and <em>dynamic dispatching</em>. Using <em>dynamic dispatching</em> <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> has a simple API. The user calls a generic procedure (VTK_INI, <a class="el" href="../../d9/d26/group__Lib__VTK__IOInterface.html#d1/d07/interfaceLib__VTK__IO_1_1VTK__GEO" title="Function for saving mesh with different topologies in VTK-legacy standard.">VTK_GEO</a>,...) and the library, depending on the type and number of the inputs passed, calls the correct internal function (i.e. <a class="el" href="../../d9/d26/group__Lib__VTK__IOInterface.html#d1/d07/interfaceLib__VTK__IO_1_1VTK__GEO" title="Function for saving mesh with different topologies in VTK-legacy standard.">VTK_GEO</a> for R8P real type if the input passed is R8P real type). By this interface only few functions are used without the necessity of calling a different function for each different input type. Dynamic dispatching is based on the internal kind-precision/rank selecting convention: Fortran 90/95 standard has introduced some useful functions to achieve the portability of reals and integers precision and <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> uses these functions to define portable kind-precision; to this aim <a class="el" href="../../d8/d78/group__Lib__VTK__IOLibrary.html#d6/d5b/classLib__VTK__IO" title="This is a library of functions for Input and Output pure Fortran data in VTK format.">Lib_VTK_IO</a> uses <a class="el" href="../../d3/daa/group__IR__PrecisionLibrary.html#d7/dc8/classIR__Precision" title="Module IR_Precision makes available some portable kind-parameters and some useful procedures to deal ...">IR_Precision</a> module. </dd></dl>
 <dl class="author"><dt><b>Author:</b></dt><dd>Stefano Zaghi </dd></dl>
 <dl class="version"><dt><b>Version:</b></dt><dd>1.1 </dd></dl>
-<dl class="date"><dt><b>Date:</b></dt><dd>2013-05-22 </dd></dl>
+<dl class="date"><dt><b>Date:</b></dt><dd>2013-05-23 </dd></dl>
 <dl class="user"><dt><b>News</b></dt><dd><ul>
 <li>Added packed API and 3D(or higher) arrays for <a class="el" href="../../d9/d26/group__Lib__VTK__IOInterface.html#db/d5b/interfaceLib__VTK__IO_1_1VTK__VAR__XML" title="Function for saving data variable(s) in VTK-XML standard.">VTK_VAR_XML</a> function: this avoids the necessity of explicit reshape of multi-dimensional arrays containing saved variables in VAR callings; the following inputs are now available:<ul>
 <li>scalar input:<ul>
@@ -979,7 +979,7 @@ An example of usage is: <br/>
   <div id="nav-path" class="navpath">
     <ul>
 
-    <li class="footer">Generated on Wed May 22 2013 16:06:42 for Lib_VTK_IO by
+    <li class="footer">Generated on Thu May 23 2013 14:57:59 for Lib_VTK_IO by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>
