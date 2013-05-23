@@ -9,6 +9,7 @@
 !> @}
 
 !> @brief This is a library of procedures for testing Lib_VTK_IO and for providing practical examples.
+!> @ingroup Lib_TestersLibrary
 module Lib_Testers
 !-----------------------------------------------------------------------------------------------------------------------------------
 USE IR_Precision
@@ -26,7 +27,12 @@ public:: test_strg
 public:: test_punst
 public:: test_pstrg
 public:: test_vtm
+#ifdef OPENMP
 public:: test_openmp
+#endif
+#ifdef MPI2
+public:: test_mpi
+#endif
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
   !> Subroutine for testing all functions: R4P and R8P mesh data, 1D and 3D arrays inputs, standard (X,Y,Z,... separated arrays) and
@@ -651,8 +657,10 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_vtm
 
-  !> Subroutine for testing the libray in an OpenMP parallel framework. It is used for testing thread-safe capability. The output
-  !> is a parallel (partitioned) PStructuredGrid file. This subroutine saves the same outputs two times, the first one into a serial
+#ifdef OPENMP
+  !> Subroutine for testing the libray in an OpenMP parallel framework. It is used for testing thread-safe capability and the
+  !> library speedup into OpenMP parallel framework. The output is a parallel (partitioned) PStructuredGrid file.
+  !> This subroutine saves the same outputs two times, the first one into a serial
   !> framework, while the second into an OpenMP parallel framework. The two savings are timed and the resulting speedup is printed
   !> to standard output. The dimensions of the mesh saved is small, thus the speedup is generally small.
   !> @note It is important to note that the output files initialization and finalization must be done outside the parallel ambient.
@@ -660,14 +668,11 @@ contains
   !> must be private.
   subroutine test_openmp()
   !---------------------------------------------------------------------------------------------------------------------------------
-#ifdef OPENMP
   USE omp_lib ! OpenMP runtime library.
-#endif
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-#ifdef OPENMP
   integer(I4P), parameter::                          nx1=1_I4P,nx2=256_I4P,ny1=1_I4P,ny2=32_I4P,nz1=1_I4P,nz2=16_I4P
   integer(I4P), parameter::                          nx1_p(1:4)=[nx1,64_I4P,128_I4P,192_I4P]
   integer(I4P), parameter::                          nx2_p(1:4)=[64_I4P,128_I4P,192_I4P,nx2]
@@ -680,14 +685,9 @@ contains
   integer(I4P), dimension(nx1:nx2,ny1:ny2,nz1:nz2):: v
   integer(I4P)::                                     i,j,k,p,mf(1:4),E_IO,th
   real(R8P)::                                        vtk_start,vtk_stop,time(1:2)
-#endif
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-#ifndef OPENMP
-  write(stderr,'(A)')' The code has not been compiled with OpenMP directives... nothing to test'
-  stop
-#else
   write(stdout,'(A)')' Testing OpenMP parallel framework'
   write(stdout,'(A)')' Output files are XML_OMP.pvts, XML_OMP_p0.vts, XML_OMP_p1.vts, XML_OMP_p2.vts, XML_OMP_p3.vts'
   ! arrays initialization
@@ -768,10 +768,142 @@ contains
   E_IO = PVTK_VAR_XML(varname = 'node_value', tp='Int32')
   E_IO = PVTK_DAT_XML(var_location = 'node', var_block_action = 'close')
   E_IO = PVTK_END_XML()
-#endif
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_openmp
+#endif
+
+#ifdef MPI2
+  !> Subroutine for testing the library in an MPI parallel framework. It is used for testing the process-safe capability and the
+  !> library speedup into MPI parallel framework.  The output is a parallel (partitioned) PStructuredGrid file.
+  !> @note The whole grid is composed of blocks of 32x32x32 structured mesh. The total number of blocks/files, Nf_tot, is passed as
+  !> argument. The whole grid is built up composing the blocks along the X axis with a regular shift as following:
+  !> @code
+  !> y ^
+  !>   |               ny2 +------------+------------+------------+------///////////-----+
+  !>   |                   |            |            |            |                      |
+  !>   |                   |            |            |            |                      |
+  !>   |                   |            |            |            |                      |
+  !>   |                   |            |            |            |                      |
+  !>   o-------->      ny1 +------------+------------+------------+------///////////-----+
+  !>            x         nx1          nx2    2*(nx2-nx+1)  3*(nx2-nx+1)          Nf_tot*(nx2-nx+1)
+  !> @endcode
+  !> @note When the total number of blocks/files, Nf_tot, is not an integral of the number of processes used, nproc, the last
+  !> process saves its own files (Nf_tot/nproc) plus the remainder blocks/files (mod(Nf_tot,nproc)). As a consequence the last
+  !> process could has different elapsed time and it could degrade the speedup. Therefore the subroutine prints to stdout the
+  !> maximum and minimum elapsed time among the processes as well the average elapsed time in order to facilitate the assessing
+  !> of the parallel scalability.
+  subroutine test_mpi(Nf_tot)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  USE MPI ! MPI runtime library.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  integer(I4P), intent(IN)::Nf_tot                                             !< Total number of files saved.
+  integer(I4P), parameter:: nx1=1_I4P                                          !< First node in x direction.
+  integer(I4P), parameter:: nx2=32_I4P                                         !< Last node in x direction.
+  integer(I4P), parameter:: ny1=1_I4P                                          !< First node in y direction.
+  integer(I4P), parameter:: ny2=32_I4P                                         !< Last node in y direction.
+  integer(I4P), parameter:: nz1=1_I4P                                          !< First node in z direction.
+  integer(I4P), parameter:: nz2=32_I4P                                         !< Last node in z direction.
+  integer(I4P), parameter:: nn=(nx2-nx1+1_I4P)*(ny2-ny1+1_I4P)*(nz2-nz1+1_I4P) !< Whole grid extents.
+  real(R8P)::               x(nx1:nx2,ny1:ny2,nz1:nz2)                         !< Coordinates in x direction.
+  real(R8P)::               y(nx1:nx2,ny1:ny2,nz1:nz2)                         !< Coordinates in y direction.
+  real(R8P)::               z(nx1:nx2,ny1:ny2,nz1:nz2)                         !< Coordinates in z direction.
+  integer(I4P)::            v(nx1:nx2,ny1:ny2,nz1:nz2)                         !< Variable associated to nodes.
+  real(R8P)::               xf(nx1:nx2,ny1:ny2,nz1:nz2)                        !< Coordinates in x shifted by file offset direction.
+  integer(I4P)::            i,j,k,f,foffset,nxf                                !< Counters.
+  integer(I4P)::            myrank                                             !< Rank of current process.
+  integer(I4P)::            Nf                                                 !< Number of files saved by the current process.
+  integer(I4P)::            nproc                                              !< Number of concurrent processes.
+  integer(I4P)::            E_IO                                               !< Error trapping flag.
+  real(R8P)::               vtk_start,vtk_stop,t,tmax,tmin,tmean               !< Timing variables.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  ! initializing parallel environments
+  call MPI_INIT(E_IO)
+  call MPI_COMM_RANK(MPI_COMM_WORLD,myrank,E_IO)
+  call MPI_COMM_SIZE(MPI_COMM_WORLD,nproc,E_IO)
+  ! computing the number of files to be saved
+  if (myrank==nproc-1) then
+    ! the last process must save also the rest of the files if Nf_tot is not an integral of nproc
+    Nf = Nf_tot/nproc + mod(Nf_tot,nproc)
+  else
+    Nf = Nf_tot/nproc
+  endif
+  if (myrank==0) then
+    write(stdout,'(A)')' Testing MPI parallel framework'
+    write(stdout,'(A)')' The test uses '//trim(str(.true.,Nf_tot))//' vts files of '//trim(str(.true.,nn))//' grid nodes as'//&
+                       ' benchmark'
+    write(stdout,'(A)')' Number of files saved by processes other than the last is '//trim(str(.true.,Nf))
+  elseif (myrank==nproc-1) then
+    write(stdout,'(A)')' Number of files saved by last process is '//trim(str(.true.,Nf))
+  endif
+  ! arrays initialization
+  do k=nz1,nz2
+    do j=ny1,ny2
+      do i=nx1,nx2
+        x(i,j,k) = real(i-nx1,R8P)/real(nx2-nx1,R8P)
+        y(i,j,k) = real(j-ny1,R8P)/real(ny2-ny1,R8P)
+        z(i,j,k) = real(k-nz1,R8P)/real(nz2-nz1,R8P)
+      enddo
+    enddo
+  enddo
+  v = myrank
+  ! saving files
+  t= 0._R8P
+  do f=1,Nf ! loop over files of current process
+    if (myrank<nproc-1) then
+      foffset = f+myrank*Nf
+    else
+      foffset = f+myrank*(Nf-mod(Nf_tot,nproc))
+    endif
+    nxf = (nx2-nx1+1)*foffset-(foffset-1)
+    vtk_start = MPI_Wtime()
+    E_IO = VTK_INI_XML(output_format='binary',filename='XML_MPI_f'//trim(strz(3,foffset))//'.vts', &
+                       mesh_topology='StructuredGrid',nx1=nxf-(nx2-nx1+1)+1,nx2=nxf,&
+                       ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+    ! updating x coordinates of current process/file
+    xf = x + real(foffset-1_I4P,R8P)
+    E_IO = VTK_GEO_XML(nx1=nxf-(nx2-nx1+1)+1,nx2=nxf,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=xf,Y=y,Z=z)
+    E_IO = VTK_DAT_XML(var_location='node',var_block_action='open')
+    E_IO = VTK_VAR_XML(NC_NN=nn,varname='node_value',var=v)
+    E_IO = VTK_DAT_XML(var_location='node',var_block_action='close')
+    E_IO = VTK_GEO_XML()
+    E_IO = VTK_END_XML()
+    vtk_stop = MPI_Wtime()
+    t = t + vtk_stop-vtk_start
+  enddo
+  call MPI_REDUCE(t,tmax,1,MPI_REAL8,MPI_MAX,0,MPI_COMM_WORLD,E_IO)
+  call MPI_REDUCE(t,tmin,1,MPI_REAL8,MPI_MIN,0,MPI_COMM_WORLD,E_IO)
+  call MPI_REDUCE(t,tmean,1,MPI_REAL8,MPI_SUM,0,MPI_COMM_WORLD,E_IO)
+  if (myrank==0) then
+    tmean = tmean/nproc
+    ! first process prints the elapsed time to stdout
+    write(stdout,'(A)')' Maximum elapsed time of single process '//trim(adjustl(str('(F9.4)',tmax)))
+    write(stdout,'(A)')' Minimum elapsed time of single process '//trim(adjustl(str('(F9.4)',tmin)))
+    write(stdout,'(A)')' Average elapsed time '//trim(adjustl(str('(F9.4)',tmean)))
+    ! first process saves also the composite .pvts file
+    E_IO = PVTK_INI_XML(filename = 'XML_MPI.pvts', mesh_topology = 'PStructuredGrid',&
+                        nx1=nx1,nx2=(nx2-nx1+1)*Nf_tot-(Nf_tot-1),ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,tp='Float64')
+    do f=1,Nf_tot
+      nxf = (nx2-nx1+1)*f-(f-1)
+      E_IO = PVTK_GEO_XML(nx1=nxf-(nx2-nx1+1)+1,nx2=nxf,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,&
+                          source='XML_MPI_f'//trim(strz(3,f))//'.vts')
+    enddo
+    E_IO = PVTK_DAT_XML(var_location='node',var_block_action='open')
+    E_IO = PVTK_VAR_XML(varname='node_value',tp='Int32')
+    E_IO = PVTK_DAT_XML(var_location='node',var_block_action='close')
+    E_IO = PVTK_END_XML()
+  endif
+  ! finalizing parallel environments
+  call MPI_FINALIZE(E_IO)
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endsubroutine test_mpi
+#endif
 endmodule Lib_Testers
 !> @addtogroup Program Programs
 !> List of excutable programs.
@@ -824,7 +956,6 @@ endmodule Lib_Testers
 !> @date      2013-03-28
 !> @copyright GNU Public License version 3.
 !> @todo Legacy: implement an example of legacy output.
-!> @todo MPI: implement an example of usage into MPI framework.
 !> @ingroup Test_DriverProgram
 program Test_Driver
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -835,8 +966,9 @@ USE, intrinsic:: ISO_FORTRAN_ENV, only: stdout=>OUTPUT_UNIT, stderr=>ERROR_UNIT
 
 !-----------------------------------------------------------------------------------------------------------------------------------
 implicit none
-integer(I4P):: Nca = 0 !  Number of command line arguments.
-character(7):: cas     !  Command line argument switch.
+integer(I4P):: Nca = 0 !<  Number of command line arguments.
+character(7):: cas     !<  Command line argument switch.
+character(10):: mpiF   !<  Number of files for MPI benchmark.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -859,9 +991,20 @@ case('-pstrg')
 case('-vtm')
   call test_vtm
 case('-openmp')
+#ifndef OPENMP
+  write(stderr,'(A)')' The code has not been compiled with OpenMP directives... nothing to test'
+  stop
+#else
   call test_openmp
+#endif
 case('-mpi')
-  !call test_mpi
+#ifndef MPI2
+  write(stderr,'(A)')' The code has not been compiled with MPI library... nothing to test'
+  stop
+#else
+  call get_command_argument(2,mpiF)
+  call test_mpi(Nf_tot=cton(trim(mpiF),I4P))
+#endif
 case('-all')
   call test_rect
   call test_unst

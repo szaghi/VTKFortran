@@ -111,7 +111,7 @@
 !> kind-precision; to this aim @libvtk uses IR_Precision module.
 !> @author    Stefano Zaghi
 !> @version   1.1
-!> @date      2013-05-22
+!> @date      2013-05-23
 !> @par News
 !> - Added packed API and 3D(or higher) arrays for VTK_VAR_XML function: this avoids the necessity of explicit reshape of
 !>   multi-dimensional arrays containing saved variables in VAR callings; the following inputs are now available:

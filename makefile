@@ -16,6 +16,7 @@ DEBUG    = no
 F03STD   = no
 OPTIMIZE = no
 OPENMP   = no
+MPI      = no
 R16P     = no
 
 .PHONY : DEFAULTRULE
@@ -36,6 +37,7 @@ help:
 	@echo -e '\033[1;31m  F03STD=yes(no)  \033[0m\033[1m => on(off) check standard fortran (default $(F03STD))\033[0m'
 	@echo -e '\033[1;31m  OPTIMIZE=yes(no)\033[0m\033[1m => on(off) optimization           (default $(OPTIMIZE))\033[0m'
 	@echo -e '\033[1;31m  OPENMP=yes(no)  \033[0m\033[1m => on(off) OpenMP directives      (default $(OPENMP))\033[0m'
+	@echo -e '\033[1;31m  MPI=yes(no)     \033[0m\033[1m => on(off) MPI library            (default $(MPI))\033[0m'
 	@echo
 	@echo -e '\033[1;31m Preprocessing options\033[0m'
 	@echo -e '\033[1;31m  R16P=yes(no)\033[0m\033[1m => on(off) definition of real with "128 bit" (default $(R16P))\033[0m'
@@ -107,6 +109,11 @@ ifeq "$(COMPILER)" "gnu"
     OPTSL := $(OPTSL) -fopenmp
     PREPROC := $(PREPROC) -DOPENMP
   endif
+  # mpi
+  ifeq "$(MPI)" "yes"
+    PREPROC := $(PREPROC) -DMPI2
+    FC = mpif90
+  endif
 endif
 ifeq "$(COMPILER)" "intel"
   FC      = ifort
@@ -142,6 +149,11 @@ ifeq "$(COMPILER)" "intel"
     OPTSL := $(OPTSL) -openmp
     PREPROC := $(PREPROC) -DOPENMP
   endif
+  # mpi
+  ifeq "$(MPI)" "yes"
+    PREPROC := $(PREPROC) -DMPI2
+    FC = mpif90
+  endif
 endif
 # pre-processing options
 # R16 precision
@@ -168,6 +180,7 @@ PRINTCHK = "\\033[1;31m Compiler used \\033[0m\\033[1m $(COMPILER) => $(WHICHFC)
             \\033[1;31m F-standard    \\033[0m\\033[1m $(F03STD)\\033[0m \n\
             \\033[1;31m Optimize      \\033[0m\\033[1m $(OPTIMIZE)\\033[0m \n\
             \\033[1;31m OpenMP        \\033[0m\\033[1m $(OPENMP)\\033[0m \n\
+            \\033[1;31m MPI           \\033[0m\\033[1m $(MPI)\\033[0m \n\
             \\033[1;31m R16P          \\033[0m\\033[1m $(R16PCHK)\\033[0m"
 #----------------------------------------------------------------------------------------------------------------------------------
 
