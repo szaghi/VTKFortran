@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['type_5fvtk_5ffile',['Type_VTK_File',['../d8/d78/group__Lib__VTK__IOLibrary.html#da/d6c/structLib__VTK__IO_1_1Type__VTK__File',1,'Lib_VTK_IO']]],
-  ['type_5fvtm_5ffile',['Type_VTM_File',['../d8/d78/group__Lib__VTK__IOLibrary.html#d2/dc5/structLib__VTK__IO_1_1Type__VTM__File',1,'Lib_VTK_IO']]]
+  ['type_5fvtk_5ffile',['type_vtk_file',['../d3/d6a/structlib__vtk__io_1_1type__vtk__file.html',1,'lib_vtk_io']]],
+  ['type_5fvtm_5ffile',['type_vtm_file',['../de/de8/structlib__vtk__io_1_1type__vtm__file.html',1,'lib_vtk_io']]]
 ];

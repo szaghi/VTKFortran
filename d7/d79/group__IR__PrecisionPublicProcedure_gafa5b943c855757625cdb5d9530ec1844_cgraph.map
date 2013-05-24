@@ -1,0 +1,4 @@
+<map id="ir_precision::ir_init" name="ir_precision::ir_init">
+<area shape="rect" id="node3" href="$d7/d79/group__IR__PrecisionPublicProcedure.html#gaf78144df1ed4b537f9608a7d16804684" title="Subroutine for checking the type of bit ordering (big or little endian) of the running architecture; ..." alt="" coords="181,5,312,51"/>
+<area shape="rect" id="node5" href="$d7/d79/group__IR__PrecisionPublicProcedure.html#ga8242dfafd2d8d64423aa70230aa2c6fa" title="Function for checking if the type of the bit ordering of the running architecture is little endian..." alt="" coords="361,5,497,51"/>
+</map>

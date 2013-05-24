@@ -1,0 +1,8 @@
+<map id="lib_vtk_io::vtk_ini" name="lib_vtk_io::vtk_ini">
+<area shape="rect" id="node3" href="$df/d7f/group__Lib__VTK__IOPrivateProcedure.html#ga8dbfc308784c3c8bd9df19c109aea379" title="Function for getting a free logic unit. " alt="" coords="185,5,316,35"/>
+<area shape="rect" id="node5" href="$d7/d79/group__IR__PrecisionPublicProcedure.html#gafa5b943c855757625cdb5d9530ec1844" title="Subroutine for initilizing module&#39;s variables that are not initialized into the definition specificat..." alt="" coords="188,59,313,88"/>
+<area shape="rect" id="node11" href="$df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gafa9f16e8ec35260f9674f445f4875700" title="Function for converting lower case characters of a string to upper case ones. " alt="" coords="373,141,525,171"/>
+<area shape="rect" id="node13" href="$df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gaa434e582ff875ec599b74dcfd19115c0" title="Subroutine for updating (adding and removing elements into) vtk array. " alt="" coords="176,163,325,192"/>
+<area shape="rect" id="node7" href="$d7/d79/group__IR__PrecisionPublicProcedure.html#gaf78144df1ed4b537f9608a7d16804684" title="Subroutine for checking the type of bit ordering (big or little endian) of the running architecture; ..." alt="" coords="384,50,515,97"/>
+<area shape="rect" id="node9" href="$d7/d79/group__IR__PrecisionPublicProcedure.html#ga8242dfafd2d8d64423aa70230aa2c6fa" title="Function for checking if the type of the bit ordering of the running architecture is little endian..." alt="" coords="575,50,711,97"/>
+</map>

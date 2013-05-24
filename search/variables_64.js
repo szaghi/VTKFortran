@@ -1,11 +1,12 @@
 var searchData=
 [
-  ['di1p',['DI1P',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#ga5d0d5b0181ef2f17c73a1a0b068944dc',1,'IR_Precision']]],
-  ['di2p',['DI2P',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#gaa239925e89a9525b041c105153eec77c',1,'IR_Precision']]],
-  ['di4p',['DI4P',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#ga61bddae1e8a2f335790a680f703b8731',1,'IR_Precision']]],
-  ['di8p',['DI8P',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#ga56266a23ab0429602b581bb44916c575',1,'IR_Precision']]],
-  ['di_5fp',['DI_P',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#ga1f4ab4855aac6f7128db3f012224b670',1,'IR_Precision']]],
-  ['dr4p',['DR4P',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#gad94596d4db4590f036a9f8dcec2169b8',1,'IR_Precision']]],
-  ['dr8p',['DR8P',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#gae87422d7f403e6fad4887d0f3d7c84f0',1,'IR_Precision']]],
-  ['dr_5fp',['DR_P',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#gadd4afb826e043512c74ac5c6f62c1eba',1,'IR_Precision']]]
+  ['di1p',['di1p',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#ga51334a3f7e46d896998aab9497e16d59',1,'ir_precision']]],
+  ['di2p',['di2p',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#ga0025f21f0202412e0062a7e3359e440d',1,'ir_precision']]],
+  ['di4p',['di4p',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#gaf765e0360d72a2453cdb6fce00bd745f',1,'ir_precision']]],
+  ['di8p',['di8p',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#ga1713f1a64d356e37e1708a15285c4f17',1,'ir_precision']]],
+  ['di_5fp',['di_p',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#ga32d6312ba9a15036aae069810ed0a043',1,'ir_precision']]],
+  ['dr16p',['dr16p',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#gace733332d3010e4104ec65b5f150d25f',1,'ir_precision']]],
+  ['dr4p',['dr4p',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#gab9c53f01df81a0157000c47b06d1115e',1,'ir_precision']]],
+  ['dr8p',['dr8p',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#gadb319b727b88d434bcbdac83a04e3b24',1,'ir_precision']]],
+  ['dr_5fp',['dr_p',['../dc/d7d/group__IR__PrecisionGlobalVarPar.html#gabbece23e62e4298cd73c991b65a06d7d',1,'ir_precision']]]
 ];

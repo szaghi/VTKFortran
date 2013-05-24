@@ -1,0 +1,8 @@
+<map id="lib_base64::encode_bits" name="lib_base64::encode_bits">
+<area shape="rect" id="node3" href="$db/d1c/group__Lib__Base64PrivateProcedure.html#ga3fc154c892c9f2215394d5ca90500d68" title="Subroutine for encoding array numbers to base64 (I1P). " alt="" coords="217,5,409,35"/>
+<area shape="rect" id="node5" href="$db/d1c/group__Lib__Base64PrivateProcedure.html#ga7f22d2fd84d77789fc1fcf0ed0238dfe" title="Subroutine for encoding array numbers to base64 (I2P). " alt="" coords="217,59,409,88"/>
+<area shape="rect" id="node7" href="$db/d1c/group__Lib__Base64PrivateProcedure.html#gabeb284a99f5987746cbf65c9de3acd65" title="Subroutine for encoding array numbers to base64 (I4P). " alt="" coords="217,112,409,141"/>
+<area shape="rect" id="node9" href="$db/d1c/group__Lib__Base64PrivateProcedure.html#ga0a66bf743eae6905507dc5fac553f5fc" title="Subroutine for encoding array numbers to base64 (I8P). " alt="" coords="217,165,409,195"/>
+<area shape="rect" id="node11" href="$db/d1c/group__Lib__Base64PrivateProcedure.html#gae5cee9de9a4a79d05353bc5941ac8ccc" title="Subroutine for encoding array numbers to base64 (R4P). " alt="" coords="216,219,411,248"/>
+<area shape="rect" id="node13" href="$db/d1c/group__Lib__Base64PrivateProcedure.html#ga0ffc50dec632b6555d969dffed32d862" title="Subroutine for encoding array numbers to base64 (R8P). " alt="" coords="216,272,411,301"/>
+</map>
