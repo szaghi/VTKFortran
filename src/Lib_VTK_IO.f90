@@ -1,3 +1,14 @@
+!> @addtogroup PrivateVarPar Private Variables and Parameters
+!> List of private variables and parameters.
+!> @addtogroup Interface Interfaces
+!> List of explicitly defined interface.
+!> @addtogroup Library Modules Libraries
+!> List of modules containing libraries of procedures.
+!> @addtogroup PublicProcedure Public Procedures
+!> List of public procedures.
+!> @addtogroup PrivateProcedure Private Procedures
+!> List of private procedures.
+
 !> @ingroup Library
 !> @{
 !> @defgroup Lib_VTK_IOLibrary Lib_VTK_IO

@@ -1,3 +1,20 @@
+!> @addtogroup Program Programs
+!> List of excutable programs.
+!  @addtogroup DerivedType Derived Types
+!  List of derived data types.
+!  @addtogroup GlobalVarPar Global Variables and Parameters
+!  List of global variables and parameters.
+!  @addtogroup PrivateVarPar Private Variables and Parameters
+!  List of private variables and parameters.
+!  @addtogroup Interface Interfaces
+!  List of explicitly defined interface.
+!> @addtogroup Library Modules Libraries
+!> List of modules containing libraries of procedures.
+!> @addtogroup PublicProcedure Public Procedures
+!> List of public procedures.
+!  @addtogroup PrivateProcedure Private Procedures
+!  List of private procedures.
+
 !> @ingroup Library
 !> @{
 !> @defgroup Lib_TestersLibrary Lib_Testers
@@ -35,6 +52,8 @@ public:: test_mpi
 #endif
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
+  !> @ingroup Lib_TestersPublicProcedure
+  !> @{
   !> Subroutine for testing all functions: R4P and R8P mesh data, 1D and 3D arrays inputs, standard (X,Y,Z,... separated arrays) and
   !> packed API (X,Y,Z,... packed into a single array). All available formats are used. The StructuredGrid topology is used.
   !> @note This subroutine is designed not as an example rather than a comprehensive stress-tester for function of any kind/rank.
@@ -904,6 +923,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_mpi
 #endif
+  !> @}
 endmodule Lib_Testers
 !> @addtogroup Program Programs
 !> List of excutable programs.
@@ -998,6 +1018,7 @@ case('-openmp')
   call test_openmp
 #endif
 case('-mpi')
+  mpiF = ''
 #ifndef MPI2
   write(stderr,'(A)')' The code has not been compiled with MPI library... nothing to test'
   stop

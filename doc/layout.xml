@@ -18,9 +18,10 @@
       <tab type="filelist" visible="yes" title="" intro=""/>
       <tab type="globals" visible="no" title="" intro=""/>
     </tab>
-    <tab type="dirs" visible="yes" title="" intro=""/>
+    <!--<tab type="dirs" visible="yes" title="" intro=""/>-->
     <tab type="examples" visible="yes" title="" intro=""/>
-    <tab type="pages" visible="yes" title="Todos and Bugs" intro="List of todos and bugs."/>
+    <!--<tab type="user" visible="yes" title="Compiling" url="@ref Compiling"/>-->
+    <!--<tab type="pages" visible="yes" title="Todos and Bugs" intro="List of todos and bugs."/>-->
   </navindex>
 
   <!-- Layout definition for a class page -->
@@ -137,7 +138,7 @@
     <memberdecl>
       <classes visible="yes" title=""/>
       <namespaces visible="yes" title=""/>
-      <dirs visible="yes" title=""/>
+      <!--<dirs visible="yes" title=""/>-->
       <nestedgroups visible="yes" title=""/>
       <files visible="yes" title=""/>
       <defines title=""/>
@@ -181,7 +182,7 @@
     <briefdescription visible="yes"/>
     <directorygraph visible="yes"/>
     <memberdecl>
-      <dirs visible="yes"/>
+      <!--<dirs visible="yes"/>-->
       <files visible="yes"/>
     </memberdecl>
     <detaileddescription title=""/>
