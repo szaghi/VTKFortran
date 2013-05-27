@@ -8,6 +8,12 @@ var NAVTREE =
         [ "Makefile Rules", "d9/d26/Compiling.html#Mrules", null ]
       ] ]
     ] ],
+    [ "Parallel Frameworks Benchmarks", "db/d68/SpeedUP.html", [
+      [ "Parallel Frameworks Benchmarks", "db/d68/SpeedUP.html#Parallel", [
+        [ "MPI Framework Benchmark", "db/d68/SpeedUP.html#MPI", null ],
+        [ "OpenMP Framework Benchmark", "db/d68/SpeedUP.html#OpenMP", null ]
+      ] ]
+    ] ],
     [ "Todo List", "dd/da0/todo.html", null ],
     [ "Bug List", "de/da5/bug.html", null ],
     [ "API", "modules.html", "modules" ],
@@ -27,8 +33,8 @@ var NAVTREEINDEX =
 [
 "annotated.html",
 "d9/d26/group__Lib__VTK__IOInterface.html#af94121d9805d7b0f6c66f7a7c746cbcf",
-"dc/d7d/group__IR__PrecisionGlobalVarPar.html#gaabc14fe4c8311c14cb5a78192f8d4a27",
-"df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gac702e6cf07a8a6acbe9bd489b73aefb6"
+"dc/d7d/group__IR__PrecisionGlobalVarPar.html#gaa31f1a77c11c169a419f0fdf7c5652a6",
+"df/d7f/group__Lib__VTK__IOPrivateProcedure.html#gac27a5b5fdccb908e87a32417b6be7f1e"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
