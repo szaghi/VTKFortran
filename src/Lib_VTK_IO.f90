@@ -78,7 +78,7 @@
 !>          - Importers are \b missing.
 !>
 !>          @libvtk can handle multiple concurrent files and it is \b thread/processor-safe (meaning that can be safely used into
-!>          parallel frameworks as OpenMP or MPI).
+!>          parallel frameworks as OpenMP or MPI, see \ref SpeedUP "Parallel Frameworks Benchmarks").
 !>
 !>          The library is an open source project, it is distributed under the GPL v3. Anyone is interest to use, to develop or
 !>          to contribute to @libvtk is welcome.

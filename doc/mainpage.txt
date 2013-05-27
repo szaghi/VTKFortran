@@ -76,7 +76,7 @@ The supported VTK features are:
       - vtkMultiBlockDataSet;
 - Importers are \b missing.
 
-@libvtk can handle multiple concurrent files and it is \b thread/processor-safe (meaning that can be safely used into parallel frameworks as OpenMP or MPI).
+@libvtk can handle multiple concurrent files and it is \b thread/processor-safe (meaning that can be safely used into parallel frameworks as OpenMP or MPI, see \ref SpeedUP "Parallel Frameworks Benchmarks").
 
 @subsection VTK_Standard
 VTK, Visualization Toolkit, is an open source software that provides a powerful framework for the computer graphic, for the images processing and for 3D rendering. It is widely used in the world and so it has a very large community of users; besides the Kitware (The Kitware homepage can be found here: http://public.kitware.com) company provides professional support. The toolkit is written in C++ and a lot of porting/wrappers for Tcl/Tk, Java and Python are provided; unlucky there aren't wrappers for Fortran.
@@ -195,4 +195,33 @@ In order to build the documentation the following dependences must be satisfied:
 - doxygen program must be installed (http://www.stack.nl/~dimitri/doxygen/).
 All of the above pre-requisites are satisfied if the GitHub repository (https://github.com/szaghi/Lib_VTK_IO) is cloned. \n
 
+@page SpeedUP Parallel Frameworks Benchmarks
+
+@section Parallel Parallel Frameworks Benchmarks
+
+@libvtk can handle multiple concurrent files and it is \b thread/processor-safe (meaning that can be safely used into parallel frameworks as OpenMP or MPI). In order to assess its scalability two procedures have implemented into Test_Driver program, 1) \ref lib_testers::test_mpi "test_mpi" and \ref lib_testers::test_openmp "test_openmp" for testing MPI and OpenMP parallel frameworks, respectively.
+
+@subsection MPI MPI Framework Benchmark
+The Test_Driver program contains a procedure, \ref lib_testers::test_mpi "test_mpi", for assessing the scalability of @libvtk into MPI parallel framework. The bash script mpi_benchmark.sh can be used to repeat the benchmark many times with varying number of MPI processes in order to asses the speedup of the library (the Test_Driver program must be compiled with MPI=yes option):
+@code
+./mpi_benchmark.sh -ni 10 -nf 32 -np 32
+@endcode
+This will test the saving of a PStructuredGrid file partitioned into (-nf) 32 blocks/files, varying the number of MPI processes from 1 to 32 with a step of 2 and each benchmark is repeated 10 times and the averaged results are saved. The results are echoed to stdout and also into mpi_speedup.dat file, where also the normalized (with respect the serial performance) results are saved. Figure \ref mpi-speedup reports the normalized elapsed time as the number of MPI processes varies. Both x and y are log scaled in order to emphasizes the linearity of the speedup up to 12 MPI processes.
+
+\anchor mpi-speedup \image html mpi_speedup.png "Figure 1: MPI parallel framework, Speedup (normalized) on 12 Cores Intel(R) Xeon(R) CPU X5650 @ 2.67GHz, 32 concurrent VTS files"
+
+The library scales linearly as expected. As a matter of facts, each MPI process saves its own file(s) thus the speedup is maximum. The linearity is lost when then number of MPI processes becomes higher than 12 being the number of cores available for this benchmark (12 Cores Intel(R) Xeon(R) CPU X5650 @ 2.67GHz). The compiling options are not relevant, these results have been obtained in DEBUG mode with OpenMPI 1.6 + Intel Fortran 13.0.0.
+
+This result is interesting for all the applications where "1 file for 1 MPI process" is reasonable because it optimizes the IO performance. Obviously, for high number of MPI processes (order of thousands) this is not a good strategy (it produces thousands of files) whereas a MPI2 IO strategy should be preferable.
+
+@subsection OpenMP OpenMP Framework Benchmark
+The Test_Driver program contains a procedure, \ref lib_testers::test_openmp "test_openmp", for assessing the scalability of @libvtk into OpenMP parallel framework.  The bash script openmp_benchmark.sh can be used to repeat the benchmark many times with varying number of OpenMP threads in order to asses the speedup of the library (the Test_Driver program must be compiled with OPENMP=yes option):
+@code
+./mpi_benchmark.sh -ni 10 -nf 32 -nt 32
+@endcode
+This will test the saving of a PStructuredGrid file partitioned into (-nf) 32 blocks/files, varying the number of OpenMP threads from 1 to 32 with a step of 2 and each benchmark is repeated 10 times and the averaged results are saved. The results are echoed to stdout and also into openmp_speedup.dat file, where also the normalized (with respect the serial performance) results are saved. Figure \ref openmp-speedup reports the normalized elapsed time as the number of OpenMP threads varies. Both x and y are log scaled in order to emphasizes the linearity of the speedup up to 12 OpenMP threads.
+
+\anchor openmp-speedup \image html openmp_speedup.png "Figure 2: OpenMP parallel framework, Speedup (normalized) on 12 Cores Intel(R) Xeon(R) CPU X5650 @ 2.67GHz, 32 concurrent VTS files"
+
+The library scales linearly as expected. As a matter of facts, each OpenMP threads saves its own file(s) thus the speedup is maximum. The linearity is lost when then number of OpenMP threads becomes higher than 12 being the number of cores available for this benchmark (12 Cores Intel(R) Xeon(R) CPU X5650 @ 2.67GHz). The compiling options are not relevant, these results have been obtained in DEBUG mode with Intel Fortran 13.0.0.
 */
