@@ -971,7 +971,7 @@ contains
   case(binary)
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" NumberOfTuples="1" Name="'//trim(fname)//'" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
-    fldp = transfer([int(BYI4P,I4P),fld],fldp)
+    allocate(fldp(1:size(transfer([int(BYI4P,I4P),fld],fldp)))) ; fldp = transfer([int(BYI4P,I4P),fld],fldp)
     call b64_encode(nB=int(BYI1P,I4P),n=fldp,code=fld64) ; deallocate(fldp)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(fld64)//end_rec ; deallocate(fld64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
@@ -2323,13 +2323,17 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Cells>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//&
                                      '<DataArray type="Int32" Name="connectivity" format="binary">'//end_rec
+    allocate(cocp(1:size(transfer([int(offset(NC)*BYI4P,I4P),connect],cocp))))
     cocp = transfer([int(offset(NC)*BYI4P,I4P),connect],cocp)
     call b64_encode(nB=int(BYI1P,I4P),n=cocp,code=coc64)
+    deallocate(cocp)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(coc64)//end_rec
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="offsets" format="binary">'//end_rec
+    allocate(cocp(1:size(transfer([int(NC*BYI4P,I4P),offset],cocp))))
     cocp = transfer([int(NC*BYI4P,I4P),offset],cocp)
     call b64_encode(nB=int(BYI1P,I4P),n=cocp,code=coc64)
+    deallocate(cocp)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(coc64)//end_rec
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="types" format="binary">'//end_rec
@@ -2765,6 +2769,7 @@ contains
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)// &
              '" NumberOfComponents="1" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    allocate(varp(1:size(transfer([int(NC_NN*BYI4P,I4P),var],varp))))
     varp = transfer([int(NC_NN*BYI4P,I4P),var],varp)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
@@ -2816,6 +2821,7 @@ contains
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)// &
              '" NumberOfComponents="1" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    allocate(varp(1:size(transfer([int(NC_NN*BYI4P,I4P),reshape(var,[NC_NN])],varp))))
     varp = transfer([int(NC_NN*BYI4P,I4P),reshape(var,[NC_NN])],varp)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
@@ -3438,6 +3444,7 @@ contains
     do n1=1,NC_NN
       var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(n1),varY(n1),varZ(n1)]
     enddo
+    allocate(varp(1:size(transfer([int(3*NC_NN*BYI4P,I4P),var],varp))))
     varp = transfer([int(3*NC_NN*BYI4P,I4P),var],varp) ; deallocate(var)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
@@ -3500,6 +3507,7 @@ contains
     do nz=1,size(varX,dim=3) ; do ny=1,size(varX,dim=2) ; do nx=1,size(varX,dim=1)
       n1 = n1 + 1_I4P ; var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(nx,ny,nz),varY(nx,ny,nz),varZ(nx,ny,nz)]
     enddo ; enddo ; enddo
+    allocate(varp(1:size(transfer([int(3*NC_NN*BYI4P,I4P),var],varp))))
     varp = transfer([int(3*NC_NN*BYI4P,I4P),var],varp) ; deallocate(var)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
@@ -4120,6 +4128,7 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    allocate(varp(1:size(transfer([int(N_COL*NC_NN*BYI4P,I4P),reshape(var,[N_COL*NC_NN])],varp))))
     varp = transfer([int(N_COL*NC_NN*BYI4P,I4P),reshape(var,[N_COL*NC_NN])],varp)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
@@ -4174,6 +4183,7 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
+    allocate(varp(1:size(transfer([int(N_COL*NC_NN*BYI4P,I4P),reshape(var,[N_COL*NC_NN])],varp))))
     varp = transfer([int(N_COL*NC_NN*BYI4P,I4P),reshape(var,[N_COL*NC_NN])],varp)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
@@ -4495,6 +4505,7 @@ contains
         if (vtk(rf)%f==raw) then
           write(unit=vtk(rf)%u,iostat=E_IO)int(vtk(rf)%N_Byte,I4P),(v_I4(n1),n1=1,N_v)
         else
+          allocate(varp(1:size(transfer([int(vtk(rf)%N_Byte,I4P),v_I4],varp))))
           varp = transfer([int(vtk(rf)%N_Byte,I4P),v_I4],varp)
           call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
           write(unit=vtk(rf)%u,iostat=E_IO)tochar(var64) ; deallocate(var64)
