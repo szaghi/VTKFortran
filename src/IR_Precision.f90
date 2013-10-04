@@ -12,26 +12,31 @@
 !> @ingroup Library
 !> @{
 !> @defgroup IR_PrecisionLibrary IR_Precision
+!> Portable kind-parameters module
 !> @}
 
 !> @ingroup Interface
 !> @{
 !> @defgroup IR_PrecisionInterface IR_Precision
+!> Portable kind-parameters module
 !> @}
 
 !> @ingroup GlobalVarPar
 !> @{
 !> @defgroup IR_PrecisionGlobalVarPar IR_Precision
+!> Portable kind-parameters module
 !> @}
 
 !> @ingroup PublicProcedure
 !> @{
 !> @defgroup IR_PrecisionPublicProcedure IR_Precision
+!> Portable kind-parameters module
 !> @}
 
 !> @ingroup PrivateProcedure
 !> @{
 !> @defgroup IR_PrecisionPrivateProcedure IR_Precision
+!> Portable kind-parameters module
 !> @}
 
 !> @brief     Module IR_Precision makes available some portable kind-parameters and some useful procedures to deal with them.
@@ -163,7 +168,7 @@ integer(I_P), parameter:: MinI_P = MinI4P,       MaxI_P = MaxI4P      !< Min and
 ! Integer number of bits/bytes:
 integer(I8P), parameter:: BII8P = bit_size(MaxI8P), BYI8P = bit_size(MaxI8P)/8_I8P !< Number of bits/bytes of kind=I8P variable.
 integer(I4P), parameter:: BII4P = bit_size(MaxI4P), BYI4P = bit_size(MaxI4P)/8_I4P !< Number of bits/bytes of kind=I4P variable.
-integer(I2P), parameter:: BII2P = bit_size(MaxI4P), BYI2P = bit_size(MaxI2P)/8_I2P !< Number of bits/bytes of kind=I2P variable.
+integer(I2P), parameter:: BII2P = bit_size(MaxI2P), BYI2P = bit_size(MaxI2P)/8_I2P !< Number of bits/bytes of kind=I2P variable.
 integer(I1P), parameter:: BII1P = bit_size(MaxI1P), BYI1P = bit_size(MaxI1P)/8_I1P !< Number of bits/bytes of kind=I1P variable.
 integer(I_P), parameter:: BII_P = bit_size(MaxI_P), BYI_P = bit_size(MaxI_P)/8_I_P !< Number of bits/bytes of kind=I_P variable.
 ! Smallest real representable difference by the running calculator.
@@ -323,7 +328,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  bits = int(size(transfer(i,mold)),I2P)*8_I2P
+  bits = size(transfer(i,mold),dim=1,kind=I2P)*8_I2P
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction bit_size_R16P
@@ -338,7 +343,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  bits = int(size(transfer(i,mold)),I1P)*8_I1P
+  bits = size(transfer(i,mold),dim=1,kind=I1P)*8_I1P
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction bit_size_R8P
@@ -353,7 +358,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  bits = int(size(transfer(i,mold)),I1P)*8_I1P
+  bits = size(transfer(i,mold),dim=1,kind=I1P)*8_I1P
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction bit_size_R4P
@@ -1012,7 +1017,7 @@ contains
   ! checking the bit ordering architecture
   call check_endian
   ! computing the bits/bytes sizes of real variables
-  BIR16P = bit_size(i=MaxR16P) ; BYR16P = BIR16P/8_I1P
+  BIR16P = int(bit_size(i=MaxR16P),I2P) ; BYR16P = BIR16P/8_I2P
   BIR8P  = bit_size(i=MaxR8P)  ; BYR8P  = BIR8P/8_I1P
   BIR4P  = bit_size(i=MaxR4P)  ; BYR4P  = BIR4P/8_I1P
   BIR_P  = bit_size(i=MaxR_P)  ; BYR_P  = BIR_P/8_I1P
