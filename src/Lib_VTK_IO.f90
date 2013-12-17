@@ -456,7 +456,7 @@ type:: Type_VTK_File
   integer(I8P)::          ioffset  = 0_I8P !< Offset pointer.
   integer(I4P)::          indent   = 0_I4P !< Indent pointer.
   contains
-    procedure, non_overridable:: byte_update ! Procedure for updating N_Byte and ioffset pointer.
+    procedure:: byte_update ! Procedure for updating N_Byte and ioffset pointer.
 endtype Type_VTK_File
 type(Type_VTK_File), allocatable:: vtk(:)       !< Global data of VTK files [1:Nvtk].
 integer(I4P)::                     Nvtk = 0_I4P !< Number of (concurrent) VTK files.
@@ -948,6 +948,7 @@ contains
   integer(I1P), allocatable::          fldp(:)  !< Packed field data.
   character(1), allocatable::          fld64(:) !< Field data encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
+  integer(I8P)::                       Nfldp    !< Dimension of fldp, packed data.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -971,7 +972,8 @@ contains
   case(binary)
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" NumberOfTuples="1" Name="'//trim(fname)//'" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
-    allocate(fldp(1:size(transfer([int(BYI4P,I4P),fld],fldp)))) ; fldp = transfer([int(BYI4P,I4P),fld],fldp)
+    Nfldp=size(transfer([int(BYI4P,I4P),fld],fldp)) ; if (allocated(fldp)) deallocate(fldp) ; allocate(fldp(1:Nfldp))
+    fldp = transfer([int(BYI4P,I4P),fld],fldp)
     call b64_encode(nB=int(BYI1P,I4P),n=fldp,code=fld64) ; deallocate(fldp)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(fld64)//end_rec ; deallocate(fld64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
@@ -2264,6 +2266,7 @@ contains
   integer(I1P)::                       incr          !< Actual id offset increment.
   integer(I4P)::                       rf            !< Real file index.
   integer(I4P)::                       n1            !< Counter.
+  integer(I8P)::                       Ncocp         !< Dimension of cocp, packed data.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2323,14 +2326,14 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Cells>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//&
                                      '<DataArray type="Int32" Name="connectivity" format="binary">'//end_rec
-    allocate(cocp(1:size(transfer([int(offset(NC)*BYI4P,I4P),connect],cocp))))
+    Ncocp=size(transfer([int(offset(NC)*BYI4P,I4P),connect],cocp)) ; if (allocated(cocp)) deallocate(cocp) ; allocate(cocp(1:Ncocp))
     cocp = transfer([int(offset(NC)*BYI4P,I4P),connect],cocp)
     call b64_encode(nB=int(BYI1P,I4P),n=cocp,code=coc64)
     deallocate(cocp)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(coc64)//end_rec
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="offsets" format="binary">'//end_rec
-    allocate(cocp(1:size(transfer([int(NC*BYI4P,I4P),offset],cocp))))
+    Ncocp=size(transfer([int(NC*BYI4P,I4P),offset],cocp)) ; if (allocated(cocp)) deallocate(cocp) ; allocate(cocp(1:Ncocp))
     cocp = transfer([int(NC*BYI4P,I4P),offset],cocp)
     call b64_encode(nB=int(BYI1P,I4P),n=cocp,code=coc64)
     deallocate(cocp)
@@ -2743,6 +2746,7 @@ contains
   character(1), allocatable::          var64(:) !< Variable encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
+  integer(I8P)::                       Nvarp    !< Dimension of varp, packed data.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2769,7 +2773,7 @@ contains
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)// &
              '" NumberOfComponents="1" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
-    allocate(varp(1:size(transfer([int(NC_NN*BYI4P,I4P),var],varp))))
+    Nvarp=size(transfer([int(NC_NN*BYI4P,I4P),var],varp)) ; if (allocated(varp)) deallocate(varp) ; allocate(varp(1:Nvarp))
     varp = transfer([int(NC_NN*BYI4P,I4P),var],varp)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
@@ -2794,6 +2798,7 @@ contains
   character(1), allocatable::          var64(:)      !< Variable encoded in base64.
   integer(I4P)::                       rf            !< Real file index.
   integer(I4P)::                       nx,ny,nz      !< Counters.
+  integer(I8P)::                       Nvarp         !< Dimension of varp, packed data.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2821,7 +2826,8 @@ contains
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)// &
              '" NumberOfComponents="1" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
-    allocate(varp(1:size(transfer([int(NC_NN*BYI4P,I4P),reshape(var,[NC_NN])],varp))))
+    Nvarp=size(transfer([int(NC_NN*BYI4P,I4P),reshape(var,[NC_NN])],varp))
+    if (allocated(varp)) deallocate(varp); allocate(varp(1:Nvarp))
     varp = transfer([int(NC_NN*BYI4P,I4P),reshape(var,[NC_NN])],varp)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
@@ -3412,6 +3418,7 @@ contains
   character(1), allocatable::          var64(:) !< Variable encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
+  integer(I8P)::                       Nvarp    !< Dimension of varp, packed data.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3444,7 +3451,7 @@ contains
     do n1=1,NC_NN
       var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(n1),varY(n1),varZ(n1)]
     enddo
-    allocate(varp(1:size(transfer([int(3*NC_NN*BYI4P,I4P),var],varp))))
+    Nvarp=size(transfer([int(3*NC_NN*BYI4P,I4P),var],varp)) ; if (allocated(varp)) deallocate(varp); allocate(varp(1:Nvarp))
     varp = transfer([int(3*NC_NN*BYI4P,I4P),var],varp) ; deallocate(var)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
@@ -3472,6 +3479,7 @@ contains
   character(1), allocatable::          var64(:)       !< Variable encoded in base64.
   integer(I4P)::                       rf             !< Real file index.
   integer(I4P)::                       nx,ny,nz,n1    !< Counters.
+  integer(I8P)::                       Nvarp          !< Dimension of varp, packed data.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3507,7 +3515,7 @@ contains
     do nz=1,size(varX,dim=3) ; do ny=1,size(varX,dim=2) ; do nx=1,size(varX,dim=1)
       n1 = n1 + 1_I4P ; var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(nx,ny,nz),varY(nx,ny,nz),varZ(nx,ny,nz)]
     enddo ; enddo ; enddo
-    allocate(varp(1:size(transfer([int(3*NC_NN*BYI4P,I4P),var],varp))))
+    Nvarp=size(transfer([int(3*NC_NN*BYI4P,I4P),var],varp)) ; if (allocated(varp)) deallocate(varp); allocate(varp(1:Nvarp))
     varp = transfer([int(3*NC_NN*BYI4P,I4P),var],varp) ; deallocate(var)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
@@ -4099,6 +4107,7 @@ contains
   character(1), allocatable::          var64(:)   !< Variable encoded in base64.
   integer(I4P)::                       rf         !< Real file index.
   integer(I4P)::                       n1,n2      !< Counters.
+  integer(I8P)::                       Nvarp      !< Dimension of varp, packed data.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -4128,7 +4137,8 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
-    allocate(varp(1:size(transfer([int(N_COL*NC_NN*BYI4P,I4P),reshape(var,[N_COL*NC_NN])],varp))))
+    Nvarp=size(transfer([int(N_COL*NC_NN*BYI4P,I4P),reshape(var,[N_COL*NC_NN])],varp))
+    if (allocated(varp)) deallocate(varp); allocate(varp(1:Nvarp))
     varp = transfer([int(N_COL*NC_NN*BYI4P,I4P),reshape(var,[N_COL*NC_NN])],varp)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
@@ -4154,6 +4164,7 @@ contains
   character(1), allocatable::          var64(:)         !< Variable encoded in base64.
   integer(I4P)::                       rf               !< Real file index.
   integer(I4P)::                       nx,ny,nz,n1      !< Counters.
+  integer(I8P)::                       Nvarp            !< Dimension of varp, packed data.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -4183,7 +4194,8 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//'" NumberOfComponents="'// &
                trim(str(.true.,N_COL))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
-    allocate(varp(1:size(transfer([int(N_COL*NC_NN*BYI4P,I4P),reshape(var,[N_COL*NC_NN])],varp))))
+    Nvarp=size(transfer([int(N_COL*NC_NN*BYI4P,I4P),reshape(var,[N_COL*NC_NN])],varp))
+    if (allocated(varp)) deallocate(varp); allocate(varp(1:Nvarp))
     varp = transfer([int(N_COL*NC_NN*BYI4P,I4P),reshape(var,[N_COL*NC_NN])],varp)
     call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
@@ -4432,6 +4444,7 @@ contains
   integer(I1P), allocatable::             varp(:)  !< Packed data.
   character(1), allocatable::             var64(:) !< Variable encoded in base64.
   integer(I4P)::                          rf       !< Real file index.
+  integer(I8P)::                          Nvarp    !< Dimension of varp, packed data.
 #ifdef HUGE
   integer(I8P)::                          N_v      !< Vector dimension.
   integer(I8P)::                          n1       !< Counter.
@@ -4505,7 +4518,7 @@ contains
         if (vtk(rf)%f==raw) then
           write(unit=vtk(rf)%u,iostat=E_IO)int(vtk(rf)%N_Byte,I4P),(v_I4(n1),n1=1,N_v)
         else
-          allocate(varp(1:size(transfer([int(vtk(rf)%N_Byte,I4P),v_I4],varp))))
+          Nvarp=size(transfer([int(vtk(rf)%N_Byte,I4P),v_I4],varp)) ; if (allocated(varp)) deallocate(varp); allocate(varp(1:Nvarp))
           varp = transfer([int(vtk(rf)%N_Byte,I4P),v_I4],varp)
           call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
           write(unit=vtk(rf)%u,iostat=E_IO)tochar(var64) ; deallocate(var64)
