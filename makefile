@@ -18,7 +18,29 @@ OPTIMIZE = no
 OPENMP   = no
 MPI      = no
 R16P     = no
+#----------------------------------------------------------------------------------------------------------------------------------
 
+#----------------------------------------------------------------------------------------------------------------------------------
+# compiler specific rules
+# GNU
+WRN_GNU = -fmax-errors=0 -Wall -Wno-array-temporaries -Warray-bounds -Wcharacter-truncation -Wline-truncation -Wconversion-extra -Wimplicit-interface -Wimplicit-procedure -Wunderflow -Wextra -Wuninitialized
+CHK_GNU = -fcheck=all
+DEB_GNU = -fmodule-private -ffree-line-length-132 -fimplicit-none -ffpe-trap=invalid,overflow -fbacktrace -fdump-core -finit-real=nan #-fno-range-check  ,precision,denormal,underflow
+STD_GNU = -std=f2003 -fall-intrinsics
+OMP_GNU = -fopenmp
+OPT_GNU = -O3
+PRF_GNU =
+# Intel
+WRN_INT = -warn all
+CHK_INT = -check all
+DEB_INT = -debug all -extend-source 132 -fpe-all=0 -fp-stack-check -fstack-protector-all -ftrapuv -no-ftz -traceback -gen-interfaces
+STD_INT = -std03
+OMP_INT = -openmp
+OPT_INT = -O3 -ipo -inline all -ipo-jobs4 -vec-report1
+PRF_INT = #-p
+#----------------------------------------------------------------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------------------------------------------------------------
 .PHONY : DEFAULTRULE
 DEFAULTRULE: Lib_VTK_IO
 
@@ -43,6 +65,7 @@ help:
 	@echo -e '\033[1;31m  R16P=yes(no)\033[0m\033[1m => on(off) definition of real with "128 bit" (default $(R16P))\033[0m'
 	@echo
 	@echo -e '\033[1;31m Provided Rules: default=Lib_VTK_IO\033[0m\033[1m => compile the library\033[0m'
+	@echo -e '\033[1;31m  Defualt rule =>\033[0m\033[1m Lib_VRK_IO \033[0m'
 	@echo -e '\033[1;31m  help         =>\033[0m\033[1m printing this help message\033[0m'
 	@echo -e '\033[1;31m  Lib_VRK_IO   =>\033[0m\033[1m compile the library\033[0m'
 	@echo -e '\033[1;31m  Test_Driver  =>\033[0m\033[1m compile Test_Driver program\033[0m'
@@ -54,6 +77,7 @@ help:
 	@echo -e '\033[1;31m  cleanall     =>\033[0m\033[1m running clean and cleanexe\033[0m'
 	@echo -e '\033[1;31m  tar          =>\033[0m\033[1m creating a tar archive of the project\033[0m'
 	@echo -e '\033[1;31m  doc          =>\033[0m\033[1m building the documentation\033[0m'
+	@echo
 #----------------------------------------------------------------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -82,78 +106,57 @@ ifeq "$(COMPILER)" "gnu"
   FC      = gfortran
   OPTSC   = -cpp -c -J$(DMOD)
   OPTSL   =
+  WRN = $(WRN_GNU)
+  CHK = $(CHK_GNU)
+  DEB = $(DEB_GNU)
+  STD = $(STD_GNU)
+  OMP = $(OMP_GNU)
+  OPT = $(OPT_GNU)
+  PRF = $(PRF_GNU)
   PREPROC =
   ifeq "$(SHARED)" "yes"
     OPTSC := $(OPTSC) -fPIC
     OPTSL := $(OPTSL) -shared
-  endif
-  # debug
-  ifeq "$(DEBUG)" "yes"
-    PREPROC := $(PREPROC) -DDEBUG
-    OPTSC := $(OPTSC) -O0 -Wall -Wno-array-temporaries -Warray-bounds -fcheck=all -fbacktrace -ffpe-trap=invalid,overflow,underflow
-    OPTSL := $(OPTSL) -O0 -Wall -Wno-array-temporaries -Warray-bounds -fcheck=all -fbacktrace -ffpe-trap=invalid,overflow,underflow
-  endif
-  # standard
-  ifeq "$(F03STD)" "yes"
-    OPTSC := $(OPTSC) -std=f2008 -fall-intrinsics
-    OPTSL := $(OPTSL) -std=f2008 -fall-intrinsics
-  endif
-  # optimization
-  ifeq "$(OPTIMIZE)" "yes"
-    OPTSC := $(OPTSC) -O3
-    OPTSL := $(OPTSL) -O3
-  endif
-  # openmp
-  ifeq "$(OPENMP)" "yes"
-    OPTSC := $(OPTSC) -fopenmp
-    OPTSL := $(OPTSL) -fopenmp
-    PREPROC := $(PREPROC) -DOPENMP
-  endif
-  # mpi
-  ifeq "$(MPI)" "yes"
-    PREPROC := $(PREPROC) -DMPI2
-    FC = mpif90
   endif
 endif
 ifeq "$(COMPILER)" "intel"
   FC      = ifort
   OPTSC   = -cpp -c -module $(DMOD)
   OPTSL   =
+  WRN = $(WRN_INT)
+  CHK = $(CHK_INT)
+  DEB = $(DEB_INT)
+  STD = $(STD_INT)
+  OMP = $(OMP_INT)
+  OPT = $(OPT_INT)
+  PRF = $(PRF_INT)
   PREPROC =
-  # debug
   ifeq "$(SHARED)" "yes"
     OPTSC := $(OPTSC) -fpic
     OPTSL := $(OPTSL) -shared
   endif
-  ifeq "$(DEBUG)" "yes"
-    PREPROC := $(PREPROC) -DDEBUG
-    CHK = -check all -check noarg_temp_created
-    DEB = -debug all
-    WRN = -warn all -warn errors -warn stderrors
-    OPTSC := $(OPTSC) -O0 -fpe-all=0 -fp-stack-check -traceback $(WRN) $(CHK) $(DEB)#-diag-enable sc3
-    OPTSL := $(OPTSL) -O0 -fpe-all=0 -fp-stack-check -traceback $(WRN) $(CHK) $(DEB)#-diag-enable sc3
-  endif
-  # standard
-  ifeq "$(F03STD)" "yes"
-    OPTSC := $(OPTSC) -std03 -standard-semantics
-    OPTSL := $(OPTSL) -std03 -standard-semantics
-  endif
-  # optimization
-  ifeq "$(OPTIMIZE)" "yes"
-    OPTSC := $(OPTSC) -O3 -ipo -inline all
-    OPTSL := $(OPTSL) -O3 -ipo -inline all
-  endif
-  # openmp
-  ifeq "$(OPENMP)" "yes"
-    OPTSC := $(OPTSC) -openmp
-    OPTSL := $(OPTSL) -openmp
-    PREPROC := $(PREPROC) -DOPENMP
-  endif
-  # mpi
-  ifeq "$(MPI)" "yes"
-    PREPROC := $(PREPROC) -DMPI2
-    FC = mpif90
-  endif
+endif
+ifeq "$(DEBUG)" "yes"
+  PREPROC := $(PREPROC) -DDEBUG
+  OPTSC := $(OPTSC) -O0 -C -g $(WRN) $(CHK) $(DEB)
+  OPTSL := $(OPTSL) -O0 -C -g $(WRN) $(CHK) $(DEB)
+endif
+ifeq "$(F03STD)" "yes"
+  OPTSC := $(OPTSC) $(STD)
+  OPTSL := $(OPTSL) $(STD)
+endif
+ifeq "$(OPTIMIZE)" "yes"
+  OPTSC := $(OPTSC) $(OPT)
+  OPTSL := $(OPTSL) $(OPT)
+endif
+ifeq "$(OPENMP)" "yes"
+  PREPROC := $(PREPROC) -DOPENMP
+  OPTSC := $(OPTSC) $(OMP)
+  OPTSL := $(OPTSL) $(OMP)
+endif
+ifeq "$(MPI)" "yes"
+  PREPROC := $(PREPROC) -DMPI2
+  FC = mpif90
 endif
 # pre-processing options
 # R16 precision
