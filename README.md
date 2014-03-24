@@ -44,7 +44,7 @@ Lib\_VTK\_IO supports three output formats: __ascii__, __appended-raw-binary__ a
 
 ## Copyrights
 
-The Lib\_VTK\_IO is an open source project, it is distributed under the [GPL v3](http://www.gnu.org/licenses/gpl-3.0.html). Anyone is interest to use, to develop or to contribute to Lib\_VTK\_IO is welcome.
+The Lib\_VTK\_IO is an open source project, it is distributed under the [GPL v3](http://www.gnu.org/licenses/gpl-3.0.html). Anyone is interest to use, to develop or to contribute to Lib\_VTK\_IO is welcome. Take a look at the [contributing guidelines](CONTRIBUTING.md) for starting to contribute to the project.
 
 ## Documentation
 
