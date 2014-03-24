@@ -1,0 +1,15 @@
+[builder]
+compiler=intel
+cflags=-c -cpp -O3
+lflags=-O3
+dmod=./mod/
+dobj=./obj/
+dexe=./static/
+src=./src/
+colors=False
+quiet=False
+[files]
+target=src/Lib_VTK_IO.f90
+output=Lib_VTK_IO
+mklib=static
+log=False

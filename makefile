@@ -67,7 +67,7 @@ help:
 	@echo -e '\033[1;31m Provided Rules: default=Lib_VTK_IO\033[0m\033[1m => compile the library\033[0m'
 	@echo -e '\033[1;31m  Defualt rule =>\033[0m\033[1m Lib_VRK_IO \033[0m'
 	@echo -e '\033[1;31m  help         =>\033[0m\033[1m printing this help message\033[0m'
-	@echo -e '\033[1;31m  Lib_VRK_IO   =>\033[0m\033[1m compile the library\033[0m'
+	@echo -e '\033[1;31m  Lib_VTK_IO   =>\033[0m\033[1m compile the library\033[0m'
 	@echo -e '\033[1;31m  Test_Driver  =>\033[0m\033[1m compile Test_Driver program\033[0m'
 	@echo -e '\033[1;31m  cleanobj     =>\033[0m\033[1m cleaning compiled object\033[0m'
 	@echo -e '\033[1;31m  cleanmod     =>\033[0m\033[1m cleaning .mod files\033[0m'

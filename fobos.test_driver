@@ -1,0 +1,14 @@
+[builder]
+compiler=intel
+cflags=-c -cpp -O3
+lflags=-O3
+dmod=./mod/
+dobj=./obj/
+dexe=./
+src=./src/
+colors=False
+quiet=False
+[files]
+target=src/Test_Driver.f90
+output=Test_Driver.f90
+log=False
