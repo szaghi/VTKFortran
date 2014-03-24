@@ -10,5 +10,5 @@ colors=False
 quiet=False
 [files]
 target=src/Test_Driver.f90
-output=Test_Driver.f90
+output=Test_Driver
 log=False
