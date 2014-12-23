@@ -1,51 +1,37 @@
+<a name="top"></a>
+[![Ready in backlog](https://badge.waffle.io/szaghi/Lib_VTK_IO.png?label=ready&title=Ready)](https://waffle.io/szaghi/Lib_VTK_IO)
+[![In Progress](https://badge.waffle.io/szaghi/Lib_VTK_IO.png?label=in%20progress&title=In%20Progress)](https://waffle.io/szaghi/Lib_VTK_IO)
+[![Open bugs](https://badge.waffle.io/szaghi/Lib_VTK_IO.png?label=bug&title=Open%20Bugs)](https://waffle.io/szaghi/Lib_VTK_IO)
+
 # Lib\_VTK\_IO
+### Lib\_VTK\_IO, VTK IO in pure Fortran (2003)
 
-Lib\_VTK\_IO is a Fortran library to write and read data conforming the [VTK standard](http://www.vtk.org/).
+Lib\_VTK\_IO is a pure Fortran (2003) library to write and read data conforming the [VTK standard](http://www.vtk.org/).
 
-Even though there are many wrappers/porting of the VTK source code (C++ code), there is not a Fortran one. This library is not a porting or a wrapper of the VTK code, but it is only an exporter/importer of VTK data format written in pure Fortran language (standard Fortran 2003) that can be used by Fortran coders (yes, there are still a lot of these brave coders...) without mixing Fortran with C++ language.
++ Lib\_VTK\_IO is a pure Fortran library to write and read data conforming the [VTK standard](http://www.vtk.org/);
++ Lib\_VTK\_IO is Fortran 2003 standard compliant;
++ Lib\_VTK\_IO supports parallel architectures by means OpenMP and MPI paradigms;
++ Lib\_VTK\_IO supports _ascii_, _binary_ and _base64_ file formats;
++ Lib\_VTK\_IO is a Free, Open Source Project.
 
-The library is still in developing and testing, this is first usable release, but there are not all the features of the stable release (the importer is totally absent and the exporter is not complete). Surely there are a lot of bugs and the programming style is not the best, but the exporters are far-complete.
+#### Documentation
 
-The supported VTK features are:
+Lib\_VTK\_IO has a comprehensive [wiki](https://github.com/szaghi/Lib_VTK_IO/wiki). Moreover, the API is well documented, on the [GitHub pages](http://szaghi.github.com/Lib_VTK_IO/index.html) of the project.
 
-### Exporters
+Go to [Top](#top)
 
-#### Legacy standard
-  + Structured Points;
-  + Structured Grid;
-  + Unstructured Grid;
-  + Polydata ( __missing__ );
-  + Rectilinear Grid;
-  + Field ( __missing__ );
+## Team Members
+* Stefano Zaghi, aka _szaghi_ <https://github.com/szaghi>
 
-#### XML standard
-+ serial dataset:
-    + Image Data ( __missing__ );
-    + Polydata ( __missing__ );
-    + Rectilinear Grid;
-    + Structured Grid;
-    + Unstructured Grid;
-+ parallel (partitioned) dataset:
-    + Image Data ( __missing__ );
-    + Polydata ( __missing__ );
-    + Rectilinear Grid;
-    + Structured Grid;
-    + Unstructured Grid;
-+ composite dataset:
-    + vtkMultiBlockDataSet.
+### Contributors
+* not yet... be the first! More details can be found in [[CONTRIBUTING]].
 
-### Importers
-The importers are __missing__.
+The author would like to thank all the users having indirectly contributed to the library development.
 
-## Other Features
-Lib\_VTK\_IO can handle __multiple concurrent files__ and it is __thread/processor-safe__ (meaning that can be safely used into parallel frameworks as OpenMP or MPI).
-
-Lib\_VTK\_IO supports three output formats: __ascii__, __appended-raw-binary__ and __base64__ encoded binary data.
+Go to [Top](#top)
 
 ## Copyrights
 
 The Lib\_VTK\_IO is an open source project, it is distributed under the [GPL v3](http://www.gnu.org/licenses/gpl-3.0.html). Anyone is interest to use, to develop or to contribute to Lib\_VTK\_IO is welcome. Take a look at the [contributing guidelines](CONTRIBUTING.md) for starting to contribute to the project.
 
-## Documentation
-
-Detailed documentation can be found on the [GitHub pages](http://szaghi.github.com/Lib_VTK_IO/index.html) of the project.
+Go to [Top](#top)

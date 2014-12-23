@@ -1,0 +1,142 @@
+[modes]
+modes = shared static test-driver
+        shared-debug static-debug test-driver-debug
+
+[common-variables]
+$CFLAGS_SHARED = -cpp -c -fpic
+$CFLAGS_STATIC = -cpp -c
+$LFLAGS_SHARED = -shared
+$DEBUG         = -O0 -debug all -check all -warn all -traceback
+$OPTIMIZE      = -O3
+
+# main modes
+[shared]
+template = template-shared
+target   = src/Lib_VTK_IO.f90
+output   = Lib_VTK_IO.so
+mklib    = shared
+
+[static]
+template = template-static
+target   = src/Lib_VTK_IO.f90
+output   = Lib_VTK_IO.a
+mklib    = static
+
+[test-driver]
+template = template-test-driver
+target   = src/Test_Driver.f90
+output   = Test_Driver
+
+[shared-debug]
+template = template-shared-debug
+target   = src/Lib_VTK_IO.f90
+output   = Lib_VTK_IO.so
+mklib    = shared
+
+[static-debug]
+template = template-static-debug
+target   = src/Lib_VTK_IO.f90
+output   = Lib_VTK_IO.a
+mklib    = static
+
+[test-driver-debug]
+template = template-test-driver-debug
+target   = src/Test_Driver.f90
+output   = Test_Driver
+
+#templates
+[template-shared]
+help      = Shared Library
+compiler  = intel
+cflags    = $CFLAGS_SHARED $OPTIMIZE
+lflags    = $LFLAGS_SHARED $OPTIMIZE
+mod_dir   = ./mod/
+obj_dir   = ./obj/
+build_dir = ./shared/
+src       = ./src/
+colors    = True
+quiet     = False
+log       = True
+jobs      = 2
+
+[template-static]
+help      = Static Library
+compiler  = intel
+cflags    = $CFLAGS_STATIC $OPTIMIZE
+lflags    =                $OPTIMIZE
+mod_dir   = ./mod/
+obj_dir   = ./obj/
+build_dir = ./static/
+src       = ./src/
+colors    = True
+quiet     = False
+log       = True
+jobs      = 2
+
+[template-test-driver]
+help      = Test Driver Program
+compiler  = intel
+cflags    = $CFLAGS_STATIC $OPTIMIZE
+lflags    =                $OPTIMIZE
+mod_dir   = ./mod/
+obj_dir   = ./obj/
+build_dir = ./Test_Driver/
+src       = ./src/
+colors    = True
+quiet     = False
+log       = True
+jobs      = 2
+
+[template-shared-debug]
+help      = Shared Library in debug mode
+compiler  = intel
+cflags    = $CFLAGS_SHARED $DEBUG
+lflags    = $LFLAGS_SHARED $DEBUG
+mod_dir   = ./mod/
+obj_dir   = ./obj/
+build_dir = ./shared/
+src       = ./src/
+colors    = True
+quiet     = False
+log       = True
+jobs      = 2
+
+[template-static-debug]
+help      = Static Library in debug mode
+compiler  = intel
+cflags    = $CFLAGS_STATIC $DEBUG
+lflags    =                $DEBUG
+mod_dir   = ./mod/
+obj_dir   = ./obj/
+build_dir = ./static/
+src       = ./src/
+colors    = True
+quiet     = False
+log       = True
+jobs      = 2
+
+[template-test-driver-debug]
+help      = Test Driver Program in debug mode
+compiler  = intel
+cflags    = $CFLAGS_STATIC $DEBUG
+lflags    =                $DEBUG
+mod_dir   = ./mod/
+obj_dir   = ./obj/
+build_dir = ./Test_Driver/
+src       = ./src/
+colors    = True
+quiet     = False
+log       = True
+jobs      = 2
+
+[rule-makedoc]
+help = Rule for building documentation from source files
+rule = doxygen .doxygenconfig
+
+[rule-deldoc]
+help = Rule for deleting documentation
+rule = rm -rf doc/html/*
+
+[rule-maketar]
+help = Rule for making tar archive of the project
+rule = rm -rf Lib_VTK_IO ; mkdir -p Lib_VTK_IO ; cp -r fobos makefile README.md .doxygenconfig .gitignore Lib_VTK_IO/ ; cp -rL src Lib_VTK_IO/ ; tar czf Lib_VTK_IO.tgz Lib_VTK_IO ; rm -rf Lib_VTK_IO
