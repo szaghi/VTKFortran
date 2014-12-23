@@ -24,7 +24,7 @@ Go to [Top](#top)
 * Stefano Zaghi, aka _szaghi_ <https://github.com/szaghi>
 
 ### Contributors
-* not yet... be the first! More details can be found in [[CONTRIBUTING]].
+* not yet... be the first! More details can be found in [CONTRIBUTING](https://github.com/szaghi/Lib_VTK_IO/blob/master/CONTRIBUTING.md).
 
 The author would like to thank all the users having indirectly contributed to the library development.
 
