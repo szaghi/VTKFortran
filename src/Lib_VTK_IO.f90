@@ -1,40 +1,3 @@
-!> @addtogroup PrivateVarPar Private Variables and Parameters
-!> List of private variables and parameters.
-!> @addtogroup Interface Interfaces
-!> List of explicitly defined interface.
-!> @addtogroup Library Modules Libraries
-!> List of modules containing libraries of procedures.
-!> @addtogroup PublicProcedure Public Procedures
-!> List of public procedures.
-!> @addtogroup PrivateProcedure Private Procedures
-!> List of private procedures.
-
-!> @ingroup Library
-!> @{
-!> @defgroup Lib_VTK_IOLibrary Lib_VTK_IO
-!> @}
-
-!> @ingroup Interface
-!> @{
-!> @defgroup Lib_VTK_IOInterface Lib_VTK_IO
-!> @}
-
-!> @ingroup PrivateVarPar
-!> @{
-!> @defgroup Lib_VTK_IOPrivateVarPar Lib_VTK_IO
-!> @}
-
-!> @ingroup PublicProcedure
-!> @{
-!> @defgroup Lib_VTK_IOPublicProcedure Lib_VTK_IO
-!> @}
-
-!> @ingroup PrivateProcedure
-!> @{
-!> @defgroup Lib_VTK_IOPrivateProcedure Lib_VTK_IO
-!> @}
-
-!> @brief   This is a library of functions for Input and Output pure Fortran data in VTK format.
 !> @details It is useful for Paraview visualization tool. Even though there are many wrappers/porting of the VTK source
 !>          code (C++ code), there is not a Fortran one. This library is not a porting or a wrapper of the VTK code,
 !>          but it only an exporter/importer of the VTK data format written in pure Fortran language (standard Fortran 2003 or
@@ -171,6 +134,7 @@
 !>                             \b appended data. This approach is not efficient.
 !> @ingroup Lib_VTK_IOLibrary
 module Lib_VTK_IO
+!< {{../README.md}}
 !-----------------------------------------------------------------------------------------------------------------------------------
 USE IR_Precision                                                                ! Integers and reals precision definition.
 USE Lib_Base64                                                                  ! Base64 encoding/decoding procedures.

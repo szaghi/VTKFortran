@@ -154,44 +154,7 @@
     <div class="col-lg-9" id='text'>
     
     
-    <div class="highlight"><pre><span class="c">!&gt; @addtogroup PrivateVarPar Private Variables and Parameters</span>
-<span class="c">!&gt; List of private variables and parameters.</span>
-<span class="c">!&gt; @addtogroup Interface Interfaces</span>
-<span class="c">!&gt; List of explicitly defined interface.</span>
-<span class="c">!&gt; @addtogroup Library Modules Libraries</span>
-<span class="c">!&gt; List of modules containing libraries of procedures.</span>
-<span class="c">!&gt; @addtogroup PublicProcedure Public Procedures</span>
-<span class="c">!&gt; List of public procedures.</span>
-<span class="c">!&gt; @addtogroup PrivateProcedure Private Procedures</span>
-<span class="c">!&gt; List of private procedures.</span>
-
-<span class="c">!&gt; @ingroup Library</span>
-<span class="c">!&gt; @{</span>
-<span class="c">!&gt; @defgroup Lib_VTK_IOLibrary Lib_VTK_IO</span>
-<span class="c">!&gt; @}</span>
-
-<span class="c">!&gt; @ingroup Interface</span>
-<span class="c">!&gt; @{</span>
-<span class="c">!&gt; @defgroup Lib_VTK_IOInterface Lib_VTK_IO</span>
-<span class="c">!&gt; @}</span>
-
-<span class="c">!&gt; @ingroup PrivateVarPar</span>
-<span class="c">!&gt; @{</span>
-<span class="c">!&gt; @defgroup Lib_VTK_IOPrivateVarPar Lib_VTK_IO</span>
-<span class="c">!&gt; @}</span>
-
-<span class="c">!&gt; @ingroup PublicProcedure</span>
-<span class="c">!&gt; @{</span>
-<span class="c">!&gt; @defgroup Lib_VTK_IOPublicProcedure Lib_VTK_IO</span>
-<span class="c">!&gt; @}</span>
-
-<span class="c">!&gt; @ingroup PrivateProcedure</span>
-<span class="c">!&gt; @{</span>
-<span class="c">!&gt; @defgroup Lib_VTK_IOPrivateProcedure Lib_VTK_IO</span>
-<span class="c">!&gt; @}</span>
-
-<span class="c">!&gt; @brief   This is a library of functions for Input and Output pure Fortran data in VTK format.</span>
-<span class="c">!&gt; @details It is useful for Paraview visualization tool. Even though there are many wrappers/porting of the VTK source</span>
+    <div class="highlight"><pre><span class="c">!&gt; @details It is useful for Paraview visualization tool. Even though there are many wrappers/porting of the VTK source</span>
 <span class="c">!&gt;          code (C++ code), there is not a Fortran one. This library is not a porting or a wrapper of the VTK code,</span>
 <span class="c">!&gt;          but it only an exporter/importer of the VTK data format written in pure Fortran language (standard Fortran 2003 or</span>
 <span class="c">!&gt;          higher) that can be used by Fortran coders (yes, there are still a lot of these brave coders...) without mixing Fortran</span>
@@ -327,6 +290,7 @@
 <span class="c">!&gt;                             \b appended data. This approach is not efficient.</span>
 <span class="c">!&gt; @ingroup Lib_VTK_IOLibrary</span>
 <span class="k">module </span><span class="n">Lib_VTK_IO</span>
+<span class="c">!&lt; {{../README.md}}</span>
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
 <span class="k">USE </span><span class="n">IR_Precision</span>                                                                <span class="c">! Integers and reals precision definition.</span>
 <span class="k">USE </span><span class="n">Lib_Base64</span>                                                                  <span class="c">! Base64 encoding/decoding procedures.</span>
