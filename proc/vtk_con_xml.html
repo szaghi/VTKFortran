@@ -725,6 +725,63 @@ public  function VTK_CON_XML(NC, connect, offset, cell_type, idx, cf)
     <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
     
+    <h3>Description</h3>
+    <p>Function for saving mesh connectivity.</p>
+<p>Function that <strong>must</strong> be used when unstructured grid is used, it saves the connectivity of the unstructured gird.
+ <div class="alert alert-info" role="alert"><h4>Note</h4>The vector <strong>connect</strong> must follow the VTK-XML standard. It is passed as <em>assumed-shape array</em>
+ because its dimensions is related to the mesh dimensions in a complex way. Its dimensions can be calculated by the following
+ equation: \(dc = \sum\limits_{i = 1}^{NC} {nvertex_i }\).
+ Note that this equation is different from the legacy one. The XML connectivity convention is quite different from the
+ legacy standard.
+ As an example suppose we have a mesh composed by 2 cells, one hexahedron (8 vertices) and one pyramid with
+ square basis (5 vertices) and suppose that the basis of pyramid is constitute by a face of the hexahedron and so the two cells
+ share 4 vertices. The above equation gives \(dc=8+5=13\). The connectivity vector for this mesh can be:</div></p>
+<h5>first cell</h5>
+<ul>
+<li>connect(1)  = 0 identification flag of \(1^\circ\) vertex of first cell</li>
+<li>connect(2)  = 1 identification flag of \(2^\circ\) vertex of first cell</li>
+<li>connect(3)  = 2 identification flag of \(3^\circ\) vertex of first cell</li>
+<li>connect(4)  = 3 identification flag of \(4^\circ\) vertex of first cell</li>
+<li>connect(5)  = 4 identification flag of \(5^\circ\) vertex of first cell</li>
+<li>connect(6)  = 5 identification flag of \(6^\circ\) vertex of first cell</li>
+<li>connect(7)  = 6 identification flag of \(7^\circ\) vertex of first cell</li>
+<li>connect(8)  = 7 identification flag of \(8^\circ\) vertex of first cell</li>
+</ul>
+<h5>second cell</h5>
+<ul>
+<li>connect(9 ) = 0 identification flag of \(1^\circ\) vertex of second cell</li>
+<li>connect(10) = 1 identification flag of \(2^\circ\) vertex of second cell</li>
+<li>connect(11) = 2 identification flag of \(3^\circ\) vertex of second cell</li>
+<li>connect(12) = 3 identification flag of \(4^\circ\) vertex of second cell</li>
+<li>connect(13) = 8 identification flag of \(5^\circ\) vertex of second cell</li>
+</ul>
+<p>Therefore this connectivity vector convention is more simple than the legacy convention, now we must create also the
+ <em>offset</em> vector that contains the data now missing in the <em>connect</em> vector. The offset
+ vector for this mesh can be:</p>
+<h5>first cell</h5>
+<ul>
+<li>offset(1) = 8  =&gt; summ of nodes of \(1^\circ\) cell</li>
+</ul>
+<h5>second cell</h5>
+<ul>
+<li>offset(2) = 13 =&gt; summ of nodes of \(1^\circ\) and \(2^\circ\) cells</li>
+</ul>
+<p>The value of every cell-offset can be calculated by the following equation: \(offset_c=\sum\limits_{i=1}^{c}{nvertex_i}\)
+ where \(offset_c\) is the value of \(c^{th}\) cell and \(nvertex_i\) is the number of vertices of \(i^{th}\) cell.
+ The function VTK_CON_XML does not calculate the connectivity and offset vectors: it writes the connectivity and offset
+ vectors conforming the VTK-XML standard, but does not calculate them.
+ The vector variable <em>cell_type</em> must conform the VTK-XML standard (see the file VTK-Standard at the
+ Kitware homepage) that is the same of the legacy standard. It contains the
+ <em>type</em> of each cells. For the above example this vector is:</p>
+<h5>first cell</h5>
+<ul>
+<li>cell_type(1) = 12 hexahedron type of first cell</li>
+</ul>
+<h5>second cell</h5>
+<ul>
+<li>cell_type(2) = 14 pyramid type of second cell</li>
+</ul>
+    
     <br>
     
     <section>

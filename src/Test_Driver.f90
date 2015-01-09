@@ -1,33 +1,6 @@
-!> @addtogroup Program Programs
-!> List of excutable programs.
-!  @addtogroup DerivedType Derived Types
-!  List of derived data types.
-!  @addtogroup GlobalVarPar Global Variables and Parameters
-!  List of global variables and parameters.
-!  @addtogroup PrivateVarPar Private Variables and Parameters
-!  List of private variables and parameters.
-!  @addtogroup Interface Interfaces
-!  List of explicitly defined interface.
-!> @addtogroup Library Modules Libraries
-!> List of modules containing libraries of procedures.
-!> @addtogroup PublicProcedure Public Procedures
-!> List of public procedures.
-!  @addtogroup PrivateProcedure Private Procedures
-!  List of private procedures.
-
-!> @ingroup Library
-!> @{
-!> @defgroup Lib_TestersLibrary Lib_Testers
-!> @}
-
-!> @ingroup PublicProcedure
-!> @{
-!> @defgroup Lib_TestersPublicProcedure Lib_Testers
-!> @}
-
-!> @brief This is a library of procedures for testing Lib_VTK_IO and for providing practical examples.
-!> @ingroup Lib_TestersLibrary
+!< summary: Testing program for Lib_VTK_IO
 module Lib_Testers
+!< summary: Library of procedures for testing Lib_VTK_IO and for providing practical examples.
 !-----------------------------------------------------------------------------------------------------------------------------------
 USE IR_Precision
 USE Lib_VTK_IO
@@ -935,59 +908,56 @@ contains
 #endif
   !> @}
 endmodule Lib_Testers
-!> @addtogroup Program Programs
-!> List of excutable programs.
 
-!> @ingroup Program
-!> @{
-!> @defgroup Test_DriverProgram Test_Driver
-!> @}
-
-!> "Driver" program for testing @libvtk functions.
-!> @note
-!> For printing help message for usage run it without command line arguments
-!> @code
-!> ./Test_Driver
-!> @endcode
-!> For testing UnstructuredGrid functions run it as following:
-!> @code
-!> ./Test_Driver -unst
-!> @endcode
-!> For testing StructuredGrid functions run it as following:
-!> @code
-!> ./Test_Driver -strg
-!> @endcode
-!> For testing RectilinearGrid functions run it as following:
-!> @code
-!> ./Test_Driver -rect
-!> @endcode
-!> For testing parallel (partitioned) PUnstructuredGrid functions run it as following:
-!> @code
-!> ./Test_Driver -punst
-!> @endcode
-!> For testing parallel (partitioned) PStructuredGrid functions run it as following:
-!> @code
-!> ./Test_Driver -pstrg
-!> @endcode
-!> For testing multi-blocks VTM functions run it as following:
-!> @code
-!> ./Test_Driver -vtm
-!> @endcode
-!> For testing thread-safe capability into an OpenMP parallel framework run it as following:
-!> @code
-!> ./Test_Driver -openmp
-!> @endcode
-!> For testing process-safe capability into a MPI parallel framework run it as following:
-!> @code
-!> ./Test_Driver -mpi
-!> @endcode
-!> @author    Stefano Zaghi
-!> @version   1.0
-!> @date      2013-03-28
-!> @copyright GNU Public License version 3.
-!> @todo Legacy: implement an example of legacy output.
-!> @ingroup Test_DriverProgram
 program Test_Driver
+!-----------------------------------------------------------------------------------------------------------------------------------
+!< Testing program for Lib_VTK_IO
+!<
+!<### Usage
+!< For printing help message for usage run it without command line arguments
+!<```bash
+!< ./Test_Driver
+!<```
+!<
+!<#### Testing UnstructuredGrid functions
+!<```bash
+!< ./Test_Driver -unst
+!<```
+!<
+!<#### Testing StructuredGrid functions
+!<```bash
+!< ./Test_Driver -strg
+!<```
+!<
+!<#### Testing RectilinearGrid functions
+!<```bash
+!< ./Test_Driver -rect
+!<```
+!<
+!<#### Testing parallel (partitioned) PUnstructuredGrid functions
+!<```bash
+!< ./Test_Driver -punst
+!<```
+!<
+!<#### Testing parallel (partitioned) PStructuredGrid functions
+!<```bash
+!< ./Test_Driver -pstrg
+!<```
+!<
+!<#### Testing multi-blocks VTM functions
+!<```bash
+!< ./Test_Driver -vtm
+!<```
+!<
+!<#### Testing thread-safe capability into an OpenMP parallel framework
+!<```bash
+!< ./Test_Driver -openmp
+!<```
+!<
+!<#### Testing process-safe capability into a MPI parallel framework
+!<```bash
+!< ./Test_Driver -mpi
+!<```
 !-----------------------------------------------------------------------------------------------------------------------------------
 USE IR_Precision
 USE Lib_Testers

@@ -1,44 +1,6 @@
-!> @ingroup Library
-!> @{
-!> @defgroup Lib_Base64Library Lib_Base64
-!> base64 encoding/decoding library
-!> @}
-
-!> @ingroup Interface
-!> @{
-!> @defgroup Lib_Base64Interface Lib_Base64
-!> base64 encoding/decoding library
-!> @}
-
-!> @ingroup PublicProcedure
-!> @{
-!> @defgroup Lib_Base64PublicProcedure Lib_Base64
-!> base64 encoding/decoding library
-!> @}
-
-!> @ingroup PrivateProcedure
-!> @{
-!> @defgroup Lib_Base64PrivateProcedure Lib_Base64
-!> base64 encoding/decoding library
-!> @}
-
-!> @ingroup GlobalVarPar
-!> @{
-!> @defgroup Lib_Base64GlobalVarPar Lib_Base64
-!> base64 encoding/decoding library
-!> @}
-
-!> @ingroup PrivateVarPar
-!> @{
-!> @defgroup Lib_Base64PrivateVarPar Lib_Base64
-!> base64 encoding/decoding library
-!> @}
-
-!> This module contains base64 encoding/decoding procedures.
-!> @todo \b Decoding: Implement decoding functions.
-!> @todo \b DocComplete: Complete the documentation.
-!> @ingroup Lib_Base64Library
+!< summary: Pure Fortran (2003+) library to encode/decode data in base64
 module Lib_Base64
+!< summary: Pure Fortran (2003+) library to encode/decode data in base64
 !-----------------------------------------------------------------------------------------------------------------------------------
 USE IR_Precision ! Integers and reals precision definition.
 !-----------------------------------------------------------------------------------------------------------------------------------

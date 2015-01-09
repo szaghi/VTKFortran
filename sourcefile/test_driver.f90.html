@@ -163,36 +163,9 @@
     <div class="col-lg-9" id='text'>
     
     
-    <div class="highlight"><pre><span class="c">!&gt; @addtogroup Program Programs</span>
-<span class="c">!&gt; List of excutable programs.</span>
-<span class="c">!  @addtogroup DerivedType Derived Types</span>
-<span class="c">!  List of derived data types.</span>
-<span class="c">!  @addtogroup GlobalVarPar Global Variables and Parameters</span>
-<span class="c">!  List of global variables and parameters.</span>
-<span class="c">!  @addtogroup PrivateVarPar Private Variables and Parameters</span>
-<span class="c">!  List of private variables and parameters.</span>
-<span class="c">!  @addtogroup Interface Interfaces</span>
-<span class="c">!  List of explicitly defined interface.</span>
-<span class="c">!&gt; @addtogroup Library Modules Libraries</span>
-<span class="c">!&gt; List of modules containing libraries of procedures.</span>
-<span class="c">!&gt; @addtogroup PublicProcedure Public Procedures</span>
-<span class="c">!&gt; List of public procedures.</span>
-<span class="c">!  @addtogroup PrivateProcedure Private Procedures</span>
-<span class="c">!  List of private procedures.</span>
-
-<span class="c">!&gt; @ingroup Library</span>
-<span class="c">!&gt; @{</span>
-<span class="c">!&gt; @defgroup Lib_TestersLibrary Lib_Testers</span>
-<span class="c">!&gt; @}</span>
-
-<span class="c">!&gt; @ingroup PublicProcedure</span>
-<span class="c">!&gt; @{</span>
-<span class="c">!&gt; @defgroup Lib_TestersPublicProcedure Lib_Testers</span>
-<span class="c">!&gt; @}</span>
-
-<span class="c">!&gt; @brief This is a library of procedures for testing Lib_VTK_IO and for providing practical examples.</span>
-<span class="c">!&gt; @ingroup Lib_TestersLibrary</span>
+    <div class="highlight"><pre><span class="c">!&lt; summary: Testing program for Lib_VTK_IO</span>
 <span class="k">module </span><span class="n">Lib_Testers</span>
+<span class="c">!&lt; summary: Library of procedures for testing Lib_VTK_IO and for providing practical examples.</span>
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
 <span class="k">USE </span><span class="n">IR_Precision</span>
 <span class="k">USE </span><span class="n">Lib_VTK_IO</span>
@@ -1100,59 +1073,56 @@
 <span class="cp">#endif</span>
   <span class="c">!&gt; @}</span>
 <span class="n">endmodule</span> <span class="n">Lib_Testers</span>
-<span class="c">!&gt; @addtogroup Program Programs</span>
-<span class="c">!&gt; List of excutable programs.</span>
 
-<span class="c">!&gt; @ingroup Program</span>
-<span class="c">!&gt; @{</span>
-<span class="c">!&gt; @defgroup Test_DriverProgram Test_Driver</span>
-<span class="c">!&gt; @}</span>
-
-<span class="c">!&gt; &quot;Driver&quot; program for testing @libvtk functions.</span>
-<span class="c">!&gt; @note</span>
-<span class="c">!&gt; For printing help message for usage run it without command line arguments</span>
-<span class="c">!&gt; @code</span>
-<span class="c">!&gt; ./Test_Driver</span>
-<span class="c">!&gt; @endcode</span>
-<span class="c">!&gt; For testing UnstructuredGrid functions run it as following:</span>
-<span class="c">!&gt; @code</span>
-<span class="c">!&gt; ./Test_Driver -unst</span>
-<span class="c">!&gt; @endcode</span>
-<span class="c">!&gt; For testing StructuredGrid functions run it as following:</span>
-<span class="c">!&gt; @code</span>
-<span class="c">!&gt; ./Test_Driver -strg</span>
-<span class="c">!&gt; @endcode</span>
-<span class="c">!&gt; For testing RectilinearGrid functions run it as following:</span>
-<span class="c">!&gt; @code</span>
-<span class="c">!&gt; ./Test_Driver -rect</span>
-<span class="c">!&gt; @endcode</span>
-<span class="c">!&gt; For testing parallel (partitioned) PUnstructuredGrid functions run it as following:</span>
-<span class="c">!&gt; @code</span>
-<span class="c">!&gt; ./Test_Driver -punst</span>
-<span class="c">!&gt; @endcode</span>
-<span class="c">!&gt; For testing parallel (partitioned) PStructuredGrid functions run it as following:</span>
-<span class="c">!&gt; @code</span>
-<span class="c">!&gt; ./Test_Driver -pstrg</span>
-<span class="c">!&gt; @endcode</span>
-<span class="c">!&gt; For testing multi-blocks VTM functions run it as following:</span>
-<span class="c">!&gt; @code</span>
-<span class="c">!&gt; ./Test_Driver -vtm</span>
-<span class="c">!&gt; @endcode</span>
-<span class="c">!&gt; For testing thread-safe capability into an OpenMP parallel framework run it as following:</span>
-<span class="c">!&gt; @code</span>
-<span class="c">!&gt; ./Test_Driver -openmp</span>
-<span class="c">!&gt; @endcode</span>
-<span class="c">!&gt; For testing process-safe capability into a MPI parallel framework run it as following:</span>
-<span class="c">!&gt; @code</span>
-<span class="c">!&gt; ./Test_Driver -mpi</span>
-<span class="c">!&gt; @endcode</span>
-<span class="c">!&gt; @author    Stefano Zaghi</span>
-<span class="c">!&gt; @version   1.0</span>
-<span class="c">!&gt; @date      2013-03-28</span>
-<span class="c">!&gt; @copyright GNU Public License version 3.</span>
-<span class="c">!&gt; @todo Legacy: implement an example of legacy output.</span>
-<span class="c">!&gt; @ingroup Test_DriverProgram</span>
 <span class="k">program </span><span class="n">Test_Driver</span>
+<span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
+<span class="c">!&lt; Testing program for Lib_VTK_IO</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;### Usage</span>
+<span class="c">!&lt; For printing help message for usage run it without command line arguments</span>
+<span class="c">!&lt;```bash</span>
+<span class="c">!&lt; ./Test_Driver</span>
+<span class="c">!&lt;```</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;#### Testing UnstructuredGrid functions</span>
+<span class="c">!&lt;```bash</span>
+<span class="c">!&lt; ./Test_Driver -unst</span>
+<span class="c">!&lt;```</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;#### Testing StructuredGrid functions</span>
+<span class="c">!&lt;```bash</span>
+<span class="c">!&lt; ./Test_Driver -strg</span>
+<span class="c">!&lt;```</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;#### Testing RectilinearGrid functions</span>
+<span class="c">!&lt;```bash</span>
+<span class="c">!&lt; ./Test_Driver -rect</span>
+<span class="c">!&lt;```</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;#### Testing parallel (partitioned) PUnstructuredGrid functions</span>
+<span class="c">!&lt;```bash</span>
+<span class="c">!&lt; ./Test_Driver -punst</span>
+<span class="c">!&lt;```</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;#### Testing parallel (partitioned) PStructuredGrid functions</span>
+<span class="c">!&lt;```bash</span>
+<span class="c">!&lt; ./Test_Driver -pstrg</span>
+<span class="c">!&lt;```</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;#### Testing multi-blocks VTM functions</span>
+<span class="c">!&lt;```bash</span>
+<span class="c">!&lt; ./Test_Driver -vtm</span>
+<span class="c">!&lt;```</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;#### Testing thread-safe capability into an OpenMP parallel framework</span>
+<span class="c">!&lt;```bash</span>
+<span class="c">!&lt; ./Test_Driver -openmp</span>
+<span class="c">!&lt;```</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;#### Testing process-safe capability into a MPI parallel framework</span>
+<span class="c">!&lt;```bash</span>
+<span class="c">!&lt; ./Test_Driver -mpi</span>
+<span class="c">!&lt;```</span>
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
 <span class="k">USE </span><span class="n">IR_Precision</span>
 <span class="k">USE </span><span class="n">Lib_Testers</span>

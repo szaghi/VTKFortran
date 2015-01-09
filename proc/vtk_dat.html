@@ -670,6 +670,22 @@ public  function VTK_DAT(NC_NN, var_location, cf)
     <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
     
+    <h3>Description</h3>
+    <p>Function for initializing/finalizing the saving of data associated to the mesh.</p>
+<p>Function that <strong>must</strong> be called before saving the data related to geometric mesh, this function initializes the
+ saving of data variables indicating the <em>type</em> (node or cell centered) of variables that will be saved.
+ <div class="alert alert-info" role="alert"><h4>Note</h4>A single file can contain both cell and node centered variables. In this case the VTK_DAT function must be
+ called two times, before saving cell-centered variables and before saving node-centered variables.</div></p>
+<h3>Examples of usage</h3>
+<h4>Saving node data</h4>
+<div class="codehilite"><pre> <span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_DAT_XML</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="s1">&#39;node&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h4>Saving cell data</h4>
+<div class="codehilite"><pre> <span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_DAT_XML</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="s1">&#39;cell&#39;</span><span class="p">)</span>
+</pre></div>
+    
     <br>
     
     <section>

@@ -603,8 +603,30 @@
     
     <div class="col-lg-9" id='text'>
     <h2>public  interface VTK_VAR</h2>
-	 
-    
+	 <p>Procedure for saving data variable(s) in VTK-legacy standard.</p>
+<p>VTK_VAR is an interface to 8 different functions, there are 3 functions for scalar variables, 3 functions for vectorial
+ variables and 2 functions texture variables: scalar and vectorial data can be R8P, R4P and I4P data while texture variables can
+ be only R8P or R4P. This function saves the data variables related to geometric mesh.
+ <div class="alert alert-info" role="alert"><h4>Note</h4>The inputs that must be passed change depending on the data
+ variables type.</div></p>
+<h3>Examples of usage</h3>
+<h4>Scalar data calling</h4>
+<div class="codehilite"><pre> <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span> <span class="n">NN</span>
+ <span class="kt">real</span><span class="p">(</span><span class="n">R4P</span><span class="p">)</span><span class="kd">::</span>    <span class="n">var</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">NN</span><span class="p">)</span>
+ <span class="p">...</span>
+ <span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_VAR</span><span class="p">(</span><span class="n">NN</span><span class="p">,</span><span class="s1">&#39;Sca&#39;</span><span class="p">,</span><span class="n">var</span><span class="p">)</span>
+ <span class="p">...</span>
+</pre></div>
+
+
+<h4>Vectorial data calling</h4>
+<div class="codehilite"><pre> <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span> <span class="n">NN</span>
+ <span class="kt">real</span><span class="p">(</span><span class="n">R4P</span><span class="p">)</span><span class="kd">::</span>    <span class="n">varX</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">NN</span><span class="p">),</span><span class="n">varY</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">NN</span><span class="p">),</span><span class="n">varZ</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">NN</span><span class="p">)</span>
+ <span class="p">...</span>
+ <span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_VAR</span><span class="p">(</span><span class="s1">&#39;vect&#39;</span><span class="p">,</span><span class="n">NN</span><span class="p">,</span><span class="s1">&#39;Vec&#39;</span><span class="p">,</span><span class="n">varX</span><span class="p">,</span><span class="n">varY</span><span class="p">,</span><span class="n">varZ</span><span class="p">)</span>
+ <span class="p">...</span>
+</pre></div>
+    <br>
 	
 	
 
@@ -709,6 +731,12 @@ private  function <a href='../proc/vtk_var_scal_r8.html'>VTK_VAR_SCAL_R8</a>(NC_
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving field of scalar variable (R8P).</p>
         
 
   </div>
@@ -811,6 +839,12 @@ private  function <a href='../proc/vtk_var_scal_r4.html'>VTK_VAR_SCAL_R4</a>(NC_
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving field of scalar variable (R4P).</p>
         
 
   </div>
@@ -913,6 +947,12 @@ private  function <a href='../proc/vtk_var_scal_i4.html'>VTK_VAR_SCAL_I4</a>(NC_
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving field of scalar variable (I4P).</p>
         
 
   </div>
@@ -1060,6 +1100,12 @@ private  function <a href='../proc/vtk_var_vect_r8.html'>VTK_VAR_VECT_R8</a>(vec
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving field of vectorial variable (R8P).</p>
         
 
   </div>
@@ -1207,6 +1253,12 @@ private  function <a href='../proc/vtk_var_vect_r4.html'>VTK_VAR_VECT_R4</a>(vec
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving field of vectorial variable (R4P).</p>
         
 
   </div>
@@ -1339,6 +1391,12 @@ private  function <a href='../proc/vtk_var_vect_i4.html'>VTK_VAR_VECT_I4</a>(NC_
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving field of vectorial variable (I4P).</p>
         
 
   </div>
@@ -1456,6 +1514,12 @@ private  function <a href='../proc/vtk_var_text_r8.html'>VTK_VAR_TEXT_R8</a>(NC_
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving texture variable (R8P).</p>
         
 
   </div>
@@ -1573,6 +1637,12 @@ private  function <a href='../proc/vtk_var_text_r4.html'>VTK_VAR_TEXT_R4</a>(NC_
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving texture variable (R4P).</p>
         
 
   </div>

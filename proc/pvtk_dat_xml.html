@@ -668,6 +668,11 @@ public  function PVTK_DAT_XML(var_location, var_block_action, cf)
     <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
     
+    <h3>Description</h3>
+    <p>Function for initializing/finalizing the saving of data associated to the mesh.</p>
+<p>Function that <strong>must</strong> be called before saving the data related to geometric mesh, this function initializes the
+ saving of data variables indicating the <em>type</em> (node or cell centered) of variables that will be saved.</p>
+    
     <br>
     
     <section>

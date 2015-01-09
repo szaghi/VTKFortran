@@ -668,6 +668,32 @@ public  function VTK_DAT_XML(var_location, var_block_action, cf)
     <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
     
+    <h3>Description</h3>
+    <p>Function for initializing/finalizing the saving of data associated to the mesh.</p>
+<p>Function that <strong>must</strong> be called before saving the data related to geometric mesh, this function initializes the
+ saving of data variables indicating the <em>type</em> (node or cell centered) of variables that will be saved.
+ <div class="alert alert-info" role="alert"><h4>Note</h4>A single file can contain both cell and node centered variables. In this case the VTK_DAT_XML function must be
+ called two times, before saving cell-centered variables and before saving node-centered variables.</div></p>
+<h3>Examples of usage</h3>
+<h4>Opening node piece</h4>
+<div class="codehilite"><pre> <span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_DAT_XML</span><span class="p">(</span><span class="s1">&#39;node&#39;</span><span class="p">,</span><span class="s1">&#39;OPeN&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h4>Closing node piece</h4>
+<div class="codehilite"><pre> <span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_DAT_XML</span><span class="p">(</span><span class="s1">&#39;node&#39;</span><span class="p">,</span><span class="s1">&#39;CLosE&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h4>Opening cell piece</h4>
+<div class="codehilite"><pre> <span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_DAT_XML</span><span class="p">(</span><span class="s1">&#39;cell&#39;</span><span class="p">,</span><span class="s1">&#39;OPEN&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h4>Closing cell piece</h4>
+<div class="codehilite"><pre> <span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_DAT_XML</span><span class="p">(</span><span class="s1">&#39;cell&#39;</span><span class="p">,</span><span class="s1">&#39;close&#39;</span><span class="p">)</span>
+</pre></div>
+    
     <br>
     
     <section>

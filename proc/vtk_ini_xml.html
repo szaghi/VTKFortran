@@ -775,6 +775,34 @@ public  function VTK_INI_XML(output_format, filename, mesh_topology, cf, nx1, nx
     <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
     
+    <h3>Description</h3>
+    <p>Procedure for initializing VTK-XML file.</p>
+<p>The XML standard is more powerful than legacy one. It is flexible but on the other hand is (but not so more using this library
+ ...) complex than legacy standard. The output of XML functions is a well-formated valid XML file, at least for the
+ ascii, binary and binary appended formats (in the raw-binary format the library uses raw-binary-appended format that is not a
+ valid XML file).
+ Note that the XML functions have the same name of legacy functions with the suffix <em>XML</em>.
+ <div class="alert alert-info" role="alert"><h4>Note</h4>This function must be the first to be called.</div></p>
+<p>Supported output formats are (the passed specifier value is case insensitive):
+- ASCII: data are saved in ASCII format;
+- BINARY: data are saved in base64 encoded format;
+- RAW: data are saved in raw-binary format in the appended tag of the XML file;
+- BINARY-APPENDED: data are saved in base64 encoded format in the appended tag of the XML file.
+ Supported topologies are:
+- RectilinearGrid;
+- StructuredGrid;
+- UnstructuredGrid.</p>
+<h3>Example of usage</h3>
+<div class="codehilite"><pre> <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span> <span class="n">nx1</span><span class="p">,</span><span class="n">nx2</span><span class="p">,</span><span class="n">ny1</span><span class="p">,</span><span class="n">ny2</span><span class="p">,</span><span class="n">nz1</span><span class="p">,</span><span class="n">nz2</span>
+ <span class="p">...</span>
+ <span class="n">E_IO</span> <span class="o">=</span> <span class="n">VTK_INI_XML</span><span class="p">(</span><span class="s1">&#39;BINARY&#39;</span><span class="p">,</span><span class="s1">&#39;XML_RECT_BINARY.vtr&#39;</span><span class="p">,</span><span class="s1">&#39;RectilinearGrid&#39;</span><span class="p">,</span><span class="n">nx1</span><span class="o">=</span><span class="n">nx1</span><span class="p">,</span><span class="n">nx2</span><span class="o">=</span><span class="n">nx2</span><span class="p">,</span><span class="n">ny1</span><span class="o">=</span><span class="n">ny1</span><span class="p">,</span><span class="n">ny2</span><span class="o">=</span><span class="n">ny2</span><span class="p">,</span><span class="n">nz1</span><span class="o">=</span><span class="n">nz1</span><span class="p">,</span><span class="n">nz2</span><span class="o">=</span><span class="n">nz2</span><span class="p">)</span>
+ <span class="p">...</span>
+</pre></div>
+
+
+<p>Note that the file extension is necessary in the file name. The XML standard has different extensions for each
+ different topologies (e.g. <em>vtr</em> for rectilinear topology). See the VTK-standard file for more information.</p>
+    
     <br>
     
     <section>

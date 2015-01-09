@@ -638,6 +638,13 @@ private  function Upper_Case(string)
     <p>Converted string.</p>
     
     
+    <h3>Description</h3>
+    <p>Function for converting lower case characters of a string to upper case ones.</p>
+<p>The library uses this function in order to achieve case-insensitivty: all character variables used within the libary functions
+ are pre-processed by Uppper_Case function before these variables are used. So the users can call the library functions without
+ pay attention of the case of the keywords passed to the functions: calling the function VTK_INI with the string
+ <code>E_IO = VTK_INI('Ascii',...)</code> is equivalent to <code>E_IO = VTK_INI('ASCII',...)</code>.</p>
+    
     <br>
     
     <section>

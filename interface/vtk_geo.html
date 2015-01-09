@@ -619,7 +619,8 @@
     
     <div class="col-lg-9" id='text'>
     <h2>public  interface VTK_GEO</h2>
-	 <p>VTK_GEO is an interface to 16 different functions, there are 2 functions for each of 4 different topologies actually supported:
+	 <p>Procedure for saving mesh with different topologies in VTK-legacy standard.</p>
+<p>VTK_GEO is an interface to 16 different functions, there are 2 functions for each of 4 different topologies actually supported:
  one function for mesh coordinates with R8P precision and one for mesh coordinates with R4P precision.</p>
 <p><div class="alert alert-info" role="alert"><h4>Note</h4>This function must be called after VTK_INI. It saves the mesh geometry. The inputs that must be passed change depending
  on the topologies chosen. Not all VTK topologies have been implemented (<em>polydata</em> topologies are absent).</div></p>
@@ -778,6 +779,12 @@ private  function <a href='../proc/vtk_geo_unst_r8.html'>VTK_GEO_UNST_R8</a>(NN,
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving mesh with UNSTRUCTURED_GRID topology (R8P).</p>
         
 
   </div>
@@ -865,6 +872,12 @@ private  function <a href='../proc/vtk_geo_unst_p_r8.html'>VTK_GEO_UNST_P_R8</a>
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving mesh with UNSTRUCTURED_GRID topology (R8P, packed API).</p>
         
 
   </div>
@@ -982,6 +995,12 @@ private  function <a href='../proc/vtk_geo_unst_r4.html'>VTK_GEO_UNST_R4</a>(NN,
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving mesh with UNSTRUCTURED_GRID topology (R4P).</p>
         
 
   </div>
@@ -1069,6 +1088,12 @@ private  function <a href='../proc/vtk_geo_unst_p_r4.html'>VTK_GEO_UNST_P_R4</a>
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving mesh with UNSTRUCTURED_GRID topology (R4P, packed API).</p>
         
 
   </div>
@@ -1261,6 +1286,12 @@ private  function <a href='../proc/vtk_geo_strp_r8.html'>VTK_GEO_STRP_R8</a>(Nx,
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving mesh with STRUCTURED_POINTS topology (R8P).</p>
         
 
   </div>
@@ -1453,6 +1484,12 @@ private  function <a href='../proc/vtk_geo_strp_r4.html'>VTK_GEO_STRP_R4</a>(Nx,
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving mesh with STRUCTURED_POINTS topology (R4P).</p>
         
 
   </div>
@@ -1615,6 +1652,12 @@ private  function <a href='../proc/vtk_geo_strg_1da_r8.html'>VTK_GEO_STRG_1DA_R8
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving mesh with STRUCTURED_GRID topology (R8P, 1D arrays).</p>
         
 
   </div>
@@ -1777,6 +1820,12 @@ private  function <a href='../proc/vtk_geo_strg_3da_r8.html'>VTK_GEO_STRG_3DA_R8
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving mesh with STRUCTURED_GRID topology (R8P, 3D arrays).</p>
         
 
   </div>
@@ -1909,6 +1958,12 @@ private  function <a href='../proc/vtk_geo_strg_1dap_r8.html'>VTK_GEO_STRG_1DAP_
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving mesh with STRUCTURED_GRID topology (R8P, 1D arrays, packed API).</p>
         
 
   </div>
@@ -2041,6 +2096,12 @@ private  function <a href='../proc/vtk_geo_strg_3dap_r8.html'>VTK_GEO_STRG_3DAP_
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving mesh with STRUCTURED_GRID topology (R8P, 3D arrays, packed API).</p>
         
 
   </div>
@@ -2203,6 +2264,12 @@ private  function <a href='../proc/vtk_geo_strg_1da_r4.html'>VTK_GEO_STRG_1DA_R4
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving mesh with STRUCTURED_GRID topology (R4P, 1D arrays).</p>
         
 
   </div>
@@ -2365,6 +2432,12 @@ private  function <a href='../proc/vtk_geo_strg_3da_r4.html'>VTK_GEO_STRG_3DA_R4
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving mesh with STRUCTURED_GRID topology (R4P, 3D arrays).</p>
         
 
   </div>
@@ -2497,6 +2570,12 @@ private  function <a href='../proc/vtk_geo_strg_1dap_r4.html'>VTK_GEO_STRG_1DAP_
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving mesh with STRUCTURED_GRID topology (R4P, 1D arrays, packed API).</p>
         
 
   </div>
@@ -2629,6 +2708,12 @@ private  function <a href='../proc/vtk_geo_strg_3dap_r4.html'>VTK_GEO_STRG_3DAP_
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving mesh with STRUCTURED_GRID topology (R4P, 3D arrays, packed API).</p>
         
 
   </div>
@@ -2776,6 +2861,12 @@ private  function <a href='../proc/vtk_geo_rect_r8.html'>VTK_GEO_RECT_R8</a>(Nx,
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving mesh with RECTILINEAR_GRID topology (R8P).</p>
         
 
   </div>
@@ -2923,6 +3014,12 @@ private  function <a href='../proc/vtk_geo_rect_r4.html'>VTK_GEO_RECT_R4</a>(Nx,
   </small></h4>
   <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Function for saving mesh with RECTILINEAR_GRID topology (R4P).</p>
         
 
   </div>
