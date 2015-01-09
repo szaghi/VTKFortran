@@ -33,3 +33,12 @@ Go to [Top](#top)
 The Lib\_VTK\_IO is an open source project, it is distributed under the [GPL v3](http://www.gnu.org/licenses/gpl-3.0.html). Anyone is interest to use, to develop or to contribute to Lib\_VTK\_IO is welcome. Take a look at the [contributing guidelines](CONTRIBUTING.md) for starting to contribute to the project.
 
 Go to [Top](#top)
+
+### Version History
+
+In the following the changelog of most important releases is reported.
+### v1.1.0
+##### Download [ZIP](https://github.com/szaghi/Lib_VTK_IO/archive/v1.1.0.zip) ball or [TAR](https://github.com/szaghi/Lib_VTK_IO/archive/v1.1.0.tar.gz) one
+Stable Release.
+
+Go to [Top](#top)
