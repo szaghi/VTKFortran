@@ -470,6 +470,50 @@
 <h5>Download <a href="https://github.com/szaghi/Lib_VTK_IO/archive/v1.1.0.zip">ZIP</a> ball or <a href="https://github.com/szaghi/Lib_VTK_IO/archive/v1.1.0.tar.gz">TAR</a> one</h5>
 <p>Stable Release.</p>
 <p>Go to <a href="#top">Top</a></p>
+<h3>ChangeLog</h3>
+<h3>Version v1.1.0</h3>
+<ul>
+<li>Added packed API and 3D(or higher) arrays for VTK_VAR_XML function: this avoids the necessity of explicit reshape of multi-dimensional arrays containing saved variables in VAR callings; the following inputs are now available:</li>
+<li>scalar input:<ul>
+<li>input is 1D-rank array: var[1:NC_NN];</li>
+<li>input is 3D-rank array: var[nx1:nx2,ny1:ny2,nz1:nz2];</li>
+</ul>
+</li>
+<li>vectorial inputs:<ul>
+<li>inputs are 1D-rank arrays: varX[1:NC_NN],varY[1:NC_NN],varZ[1:NC_NN];</li>
+<li>inputs are 3D-rank arrays: varX[nx1:nx2,ny1:ny2,nz1:nz2],varY[nx1:nx2,ny1:ny2,nz1:nz2],varX[nx1:nx2,ny1:ny2,nz1:nz2];</li>
+</ul>
+</li>
+<li>3D(or higher) vectorial inputs:<ul>
+<li>input is 1D-rank (packed API): var[1:N_COL,1:NC_NN];</li>
+<li>input is 3D-rank (packed API): var[1:N_COL,nx1:nx2,ny1:ny2,nz1:nz2].</li>
+</ul>
+</li>
+<li>Added packed API and 3D arrays for VTK_GEO and VTK_GEO_XML function: this avoids the necessity of explicit reshape of multi-dimensional arrays containing X, Y and Z coordinates in GEO callings; the following inputs are now available:</li>
+<li>StructuredGrid (NN is the number of grid points, n#1-n#2, #x,y,z are the domain extents):<ul>
+<li>1D arrays of size NN: X[1:NN],Y[1:NN],Z[1:NN];</li>
+<li>3D arrays of size NN: X[nx1:nx2,ny1:ny2,nz1:nz2],Y[nx1:nx2,ny1:ny2,nz1:nz2],Z[nx1:nx2,ny1:ny2,nz1:nz2];</li>
+<li>1D array of size 3*NN (packed API): XYZ[1:3,1:NN];</li>
+<li>3D array of size 3*NN (packed API): XYZ[1:3,nx1:nx2,ny1:ny2,nz1:nz2].</li>
+</ul>
+</li>
+<li>UnStructuredGrid (NN is the number of grid points):<ul>
+<li>1D arrays of size NN: X[1:NN],Y[1:NN],Z[1:NN];</li>
+<li>1D array of size 3*NN (packed API): XYZ[1:3,1:NN].</li>
+</ul>
+</li>
+<li>Added base64 encoding format: the output format specifier of VTK_INI_XML has been changed:</li>
+<li>output_format = 'ascii' means \b ascii data, the same as the previous version;</li>
+<li>output_format = 'binary' means \b base64 encoded data, different from the previous version where it meant appended raw-binary data; base64 encoding was missing in the previous version;</li>
+<li>output_format = 'raw' means \b appended \b raw-binary data, as 'binary' of the previous version;</li>
+<li>Added support for OpenMP multi-threads framework;</li>
+<li>Correct bug affecting binary output;</li>
+<li>implement concurrent multiple files IO capability;</li>
+<li>implement FieldData tag for XML files, useful for tagging dataset with global auxiliary data, e.g. time, time step, ecc;</li>
+<li>implement Parallel (Partitioned) XML files support (.pvtu,.pvts,.pvtr);</li>
+<li>implement Driver testing program for providing practical examples of @libvtk usage;</li>
+<li>added support for parallel framework, namely OpenMP (thread-safe) and MPI (process-safe).</li>
+</ul>
     <br>
 
     
@@ -640,6 +684,13 @@
   <div class="panel-heading codesum"><a class="anchor" name="intr-VTK_FLD_XML"></a><h3>public  interface <a href='../interface/vtk_fld_xml.html'>VTK_FLD_XML</a>
     
   </h3></div>
+  
+  <div class="panel-body">
+    
+
+
+    <p>Procedure for saving field data (global auxiliary data, eg time, step number, dataset name, etc).</p>
+  </div>
   
   <ul class="list-group">
   
@@ -1226,6 +1277,13 @@ private  function <a href='../proc/vtk_fld_xml_i1.html'>VTK_FLD_XML_I1</a>(fld, 
   <div class="panel-heading codesum"><a class="anchor" name="intr-VTK_GEO_XML"></a><h3>public  interface <a href='../interface/vtk_geo_xml.html'>VTK_GEO_XML</a>
     
   </h3></div>
+  
+  <div class="panel-body">
+    
+
+
+    <p>Procedure for saving mesh with different topologies in VTK-XML standard.</p>
+  </div>
   
   <ul class="list-group">
   
@@ -3639,6 +3697,13 @@ private  function <a href='../proc/vtk_geo_xml_closep.html'>VTK_GEO_XML_CLOSEP</
   <div class="panel-heading codesum"><a class="anchor" name="intr-VTK_VAR_XML"></a><h3>public  interface <a href='../interface/vtk_var_xml.html'>VTK_VAR_XML</a>
     
   </h3></div>
+  
+  <div class="panel-body">
+    
+
+
+    <p>Function for saving data variable(s) in VTK-XML standard.</p>
+  </div>
   
   <ul class="list-group">
   
@@ -7756,6 +7821,13 @@ private  function <a href='../proc/vtk_var_xml_list_3da_i1.html'>VTK_VAR_XML_LIS
   <div class="panel-heading codesum"><a class="anchor" name="intr-VTK_GEO"></a><h3>public  interface <a href='../interface/vtk_geo.html'>VTK_GEO</a>
     
   </h3></div>
+  
+  <div class="panel-body">
+    
+
+
+    <p>Function for saving mesh with different topologies in VTK-legacy standard.</p>
+  </div>
   
   <ul class="list-group">
   

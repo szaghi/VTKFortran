@@ -659,8 +659,48 @@
     
     <div class="col-lg-9" id='text'>
     <h2>public  interface VTK_VAR_XML</h2>
-	 
-    
+	 <p>VTK_VAR_XML is an interface to 36 different functions, there are 6 functions for scalar variables, 6 functions for vectorial
+ variables and 6 functions for 3D(or higher) vectorial variables: for all of types the precision can be R8P, R4P, I8P, I4P, I2P
+ and I1P. This function saves the data variables related (cell-centered or node-centered) to geometric mesh.
+ 1D/3D-rank arrays and packed API for any kinds
+ The inputs arrays can be passed as 1D-rank or 3D-rank and the vectorial variables can be component-separated (one for each of
+ the 3 components) or packed into one multidimensional array:</p>
+<ul>
+<li>scalar input:<ul>
+<li>input is 1D-rank array: var[1:NC_NN];</li>
+<li>input is 3D-rank array: var[nx1:nx2,ny1:ny2,nz1:nz2];</li>
+</ul>
+</li>
+<li>vectorial inputs:<ul>
+<li>inputs are 1D-rank arrays: varX[1:NC_NN],varY[1:NC_NN],varZ[1:NC_NN];</li>
+<li>inputs are 3D-rank arrays: varX[nx1:nx2,ny1:ny2,nz1:nz2],varY[nx1:nx2,ny1:ny2,nz1:nz2],varX[nx1:nx2,ny1:ny2,nz1:nz2];</li>
+</ul>
+</li>
+<li>3D(or higher) vectorial inputs:<ul>
+<li>input is 1D-rank (packed API): var[1:N_COL,1:NC_NN];</li>
+<li>input is 3D-rank (packed API): var[1:N_COL,nx1:nx2,ny1:ny2,nz1:nz2].</li>
+</ul>
+</li>
+</ul>
+<p><div class="alert alert-info" role="alert"><h4>Note</h4>Note that the inputs that must be passed change depending on the data variables type.</div></p>
+<h3>Examples of usage</h3>
+<h4>Scalar data calling</h4>
+<div class="codehilite"><pre> <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span> <span class="n">NN</span>
+ <span class="kt">real</span><span class="p">(</span><span class="n">R8P</span><span class="p">)</span><span class="kd">::</span>    <span class="n">var</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">NN</span><span class="p">)</span>
+ <span class="p">...</span>
+ <span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_VAR_XML</span><span class="p">(</span><span class="n">NN</span><span class="p">,</span><span class="s1">&#39;Sca&#39;</span><span class="p">,</span><span class="n">var</span><span class="p">)</span>
+ <span class="p">...</span>
+</pre></div>
+
+
+<h4>Vectorial data calling</h4>
+<div class="codehilite"><pre> <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span> <span class="n">NN</span>
+ <span class="kt">real</span><span class="p">(</span><span class="n">R8P</span><span class="p">)</span><span class="kd">::</span>    <span class="n">varX</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">NN</span><span class="p">),</span><span class="n">varY</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">NN</span><span class="p">),</span><span class="n">varZ</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">NN</span><span class="p">),</span>
+ <span class="p">...</span>
+ <span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_VAR_XML</span><span class="p">(</span><span class="n">NN</span><span class="p">,</span><span class="s1">&#39;Vec&#39;</span><span class="p">,</span><span class="n">varX</span><span class="p">,</span><span class="n">varY</span><span class="p">,</span><span class="n">varZ</span><span class="p">)</span>
+ <span class="p">...</span>
+</pre></div>
+    <br>
 	
 	
 

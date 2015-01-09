@@ -601,8 +601,26 @@
     
     <div class="col-lg-9" id='text'>
     <h2>public  interface VTK_FLD_XML</h2>
-	 
-    
+	 <p>VTK_FLD_XML is an interface to 7 different functions, there are 2 functions for real field data, 4 functions for integer one
+ and one function for open and close field data tag.
+ VTK_FLD_XML must be called after VTK_INI_XML and before VTK_GEO_XML. It must always called three times at least:</p>
+<ol>
+<li>for opening the FieldData tag;</li>
+<li>for saving at least one FieldData entry;</li>
+<li>for closing the FieldData tag.</li>
+</ol>
+<p>Example of usage:</p>
+<div class="codehilite"><pre><span class="p">...</span>
+<span class="kt">real</span><span class="p">(</span><span class="n">R8P</span><span class="p">)</span><span class="kd">::</span>    <span class="nb">time</span>
+<span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span> <span class="n">step</span>
+<span class="p">...</span>
+<span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_FLD_XML</span><span class="p">(</span><span class="n">fld_action</span><span class="o">=</span><span class="s1">&#39;open&#39;</span><span class="p">)</span>
+<span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_FLD_XML</span><span class="p">(</span><span class="n">fld</span><span class="o">=</span><span class="nb">time</span><span class="p">,</span><span class="n">fname</span><span class="o">=</span><span class="s1">&#39;TIME&#39;</span><span class="p">)</span>
+<span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_FLD_XML</span><span class="p">(</span><span class="n">fld</span><span class="o">=</span><span class="n">step</span><span class="p">,</span><span class="n">fname</span><span class="o">=</span><span class="s1">&#39;CYCLE&#39;</span><span class="p">)</span>
+<span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_FLD_XML</span><span class="p">(</span><span class="n">fld_action</span><span class="o">=</span><span class="s1">&#39;close&#39;</span><span class="p">)</span>
+<span class="p">...</span>
+</pre></div>
+    <br>
 	
 	
 

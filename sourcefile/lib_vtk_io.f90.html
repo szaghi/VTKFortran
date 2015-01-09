@@ -154,143 +154,13 @@
     <div class="col-lg-9" id='text'>
     
     
-    <div class="highlight"><pre><span class="c">!&gt; @details It is useful for Paraview visualization tool. Even though there are many wrappers/porting of the VTK source</span>
-<span class="c">!&gt;          code (C++ code), there is not a Fortran one. This library is not a porting or a wrapper of the VTK code,</span>
-<span class="c">!&gt;          but it only an exporter/importer of the VTK data format written in pure Fortran language (standard Fortran 2003 or</span>
-<span class="c">!&gt;          higher) that can be used by Fortran coders (yes, there are still a lot of these brave coders...) without mixing Fortran</span>
-<span class="c">!&gt;          with C++ language. Fortran is still the best language for high performance computing for scientific purpose, like CFD</span>
-<span class="c">!&gt;          computing. It is necessary a tool to deal with VTK standard directly by Fortran code. The library was made to fill</span>
-<span class="c">!&gt;          this empty: it is a simple Fortran module able to export native Fortran data into VTK data format and to import VTK</span>
-<span class="c">!&gt;          data into a Fortran code, both in ascii and binary file format.</span>
-<span class="c">!&gt;</span>
-<span class="c">!&gt;          The library provides an automatic way to deal with VTK data format: all the formatting processes is nested into the</span>
-<span class="c">!&gt;          library and users communicate with it by a simple API passing only native Fortran data (Fortran scalars and arrays).</span>
-<span class="c">!&gt;</span>
-<span class="c">!&gt;          The library is still in developing and testing, this is first usable release, but there are not all the features of</span>
-<span class="c">!&gt;          the stable release (the importer is totally absent and the exporter is not complete). Surely there are a lot of bugs</span>
-<span class="c">!&gt;          and the programming style is not the best, but the exporters are far-complete.</span>
-<span class="c">!&gt;</span>
-<span class="c">!&gt;          The supported VTK features are:</span>
-<span class="c">!&gt;          - Exporters:</span>
-<span class="c">!&gt;            - Legacy standard:</span>
-<span class="c">!&gt;              - Structured Points;</span>
-<span class="c">!&gt;              - Structured Grid;</span>
-<span class="c">!&gt;              - Unstructured Grid;</span>
-<span class="c">!&gt;              - Polydata (\b missing);</span>
-<span class="c">!&gt;              - Rectilinear Grid;</span>
-<span class="c">!&gt;              - Field (\b missing);</span>
-<span class="c">!&gt;            - XML standard:</span>
-<span class="c">!&gt;              - serial dataset:</span>
-<span class="c">!&gt;                - Image Data (\b missing);</span>
-<span class="c">!&gt;                - Polydata (\b missing);</span>
-<span class="c">!&gt;                - Rectilinear Grid;</span>
-<span class="c">!&gt;                - Structured Grid;</span>
-<span class="c">!&gt;                - Unstructured Grid;</span>
-<span class="c">!&gt;              - parallel (partitioned) dataset:</span>
-<span class="c">!&gt;                - Image Data (\b missing);</span>
-<span class="c">!&gt;                - Polydata (\b missing);</span>
-<span class="c">!&gt;                - Rectilinear Grid;</span>
-<span class="c">!&gt;                - Structured Grid;</span>
-<span class="c">!&gt;                - Unstructured Grid;</span>
-<span class="c">!&gt;              - composite dataset:</span>
-<span class="c">!&gt;                - vtkMultiBlockDataSet;</span>
-<span class="c">!&gt;          - Importers are \b missing.</span>
-<span class="c">!&gt;</span>
-<span class="c">!&gt;          @libvtk can handle multiple concurrent files and it is \b thread/processor-safe (meaning that can be safely used into</span>
-<span class="c">!&gt;          parallel frameworks as OpenMP or MPI, see \ref SpeedUP &quot;Parallel Frameworks Benchmarks&quot;).</span>
-<span class="c">!&gt;</span>
-<span class="c">!&gt;          The library is an open source project, it is distributed under the GPL v3. Anyone is interest to use, to develop or</span>
-<span class="c">!&gt;          to contribute to @libvtk is welcome.</span>
-<span class="c">!&gt;</span>
-<span class="c">!&gt;          It can be found at: https://github.com/szaghi/Lib_VTK_IO</span>
-<span class="c">!&gt;</span>
-<span class="c">!&gt; @par VTK_Standard</span>
-<span class="c">!&gt;      VTK, Visualization Toolkit, is an open source software that provides a powerful framework for the computer graphic, for</span>
-<span class="c">!&gt;      the images processing and for 3D rendering. It is widely used in the world and so it has a very large community of users,</span>
-<span class="c">!&gt;      besides the Kitware (The Kitware homepage can be found here: http://public.kitware.com) company provides professional</span>
-<span class="c">!&gt;      support. The toolkit is written in C++ and a lot of porting/wrappers for Tcl/Tk, Java and Python are provided, unlucky</span>
-<span class="c">!&gt;      there aren&#39;t wrappers for Fortran.</span>
-<span class="c">!&gt;</span>
-<span class="c">!&gt;      Because of its good features the VTK toolkit has been used to develop a large set of open source programs. For my work</span>
-<span class="c">!&gt;      the most important family of programs is the scientific visualization programs. A lot of high-quality scientific</span>
-<span class="c">!&gt;      visualization tool are available on the web but for me the best is ParaView: I think that it is one of the best</span>
-<span class="c">!&gt;      scientific visualization program in the world and it is open source! Paraview is based on VTK.</span>
-<span class="c">!&gt; @par Paraview</span>
-<span class="c">!&gt;      ParaView (The ParaView homepage can be found here: http://www.paraview.org) is an open source software voted to scientific</span>
-<span class="c">!&gt;      visualization and able to use the power of parallel architectures. It has an architecture client-server in order to make</span>
-<span class="c">!&gt;      easy the remote visualization of very large set of data. Because it is based on VTK it inherits all VTK features. ParaView</span>
-<span class="c">!&gt;      is very useful for Computational Fluid Dynamics visualizations because it provides powerful post-processing tools, it</span>
-<span class="c">!&gt;      provides a very large set of importers for the most used format like Plot3D and HDF (the list is very large). It is easy to</span>
-<span class="c">!&gt;      extend ParaView because it supports all the scripting language supported by VTK.</span>
-<span class="c">!&gt; @note All the @libvtk functions are &lt;b&gt;I4P integer functions&lt;/b&gt;: the returned integer output is 0 if the function calling has</span>
-<span class="c">!&gt; been completed right while it is &gt;0  if some errors occur (the error handling is only at its embryonic phase). Therefore the</span>
-<span class="c">!&gt; functions calling must be done in the following way: \n</span>
-<span class="c">!&gt; @code</span>
-<span class="c">!&gt; ...</span>
-<span class="c">!&gt; integer(I4P):: E_IO</span>
-<span class="c">!&gt; ...</span>
-<span class="c">!&gt; E_IO = VTK_INI(....</span>
-<span class="c">!&gt; ... @endcode</span>
-<span class="c">!&gt; @libvtk programming style is based on two main principles: &lt;em&gt;portable kind-precision&lt;/em&gt; of reals and integers</span>
-<span class="c">!&gt; variables and &lt;em&gt;dynamic dispatching&lt;/em&gt;. Using &lt;em&gt;dynamic dispatching&lt;/em&gt; @libvtk has a simple API. The user calls</span>
-<span class="c">!&gt; a generic procedure (VTK_INI, VTK_GEO,...) and the library, depending on the type and number of the inputs passed, calls the</span>
-<span class="c">!&gt; correct internal function (i.e. VTK_GEO for R8P real type if the input passed is R8P real type). By this interface only few</span>
-<span class="c">!&gt; functions are used without the necessity of calling a different function for each different input type.</span>
-<span class="c">!&gt; Dynamic dispatching is based on the internal kind-precision/rank selecting convention: Fortran 90/95 standard has introduced some</span>
-<span class="c">!&gt; useful functions to achieve the portability of reals and integers precision and @libvtk uses these functions to define portable</span>
-<span class="c">!&gt; kind-precision; to this aim @libvtk uses IR_Precision module.</span>
-<span class="c">!&gt; @author    Stefano Zaghi</span>
-<span class="c">!&gt; @version   1.1</span>
-<span class="c">!&gt; @date      2013-05-23</span>
-<span class="c">!&gt; @par News</span>
-<span class="c">!&gt; - Added packed API and 3D(or higher) arrays for VTK_VAR_XML function: this avoids the necessity of explicit reshape of</span>
-<span class="c">!&gt;   multi-dimensional arrays containing saved variables in VAR callings; the following inputs are now available:</span>
-<span class="c">!&gt;   - scalar input:</span>
-<span class="c">!&gt;     - input is 1D-rank array: var[1:NC_NN];</span>
-<span class="c">!&gt;     - input is 3D-rank array: var[nx1:nx2,ny1:ny2,nz1:nz2];</span>
-<span class="c">!&gt;   - vectorial inputs:</span>
-<span class="c">!&gt;     - inputs are 1D-rank arrays: varX[1:NC_NN],varY[1:NC_NN],varZ[1:NC_NN];</span>
-<span class="c">!&gt;     - inputs are 3D-rank arrays: varX[nx1:nx2,ny1:ny2,nz1:nz2],varY[nx1:nx2,ny1:ny2,nz1:nz2],varX[nx1:nx2,ny1:ny2,nz1:nz2];</span>
-<span class="c">!&gt;   - 3D(or higher) vectorial inputs:</span>
-<span class="c">!&gt;     - input is 1D-rank (packed API): var[1:N_COL,1:NC_NN];</span>
-<span class="c">!&gt;     - input is 3D-rank (packed API): var[1:N_COL,nx1:nx2,ny1:ny2,nz1:nz2].</span>
-<span class="c">!&gt; - Added packed API and 3D arrays for VTK_GEO and VTK_GEO_XML function: this avoids the necessity of explicit reshape of</span>
-<span class="c">!&gt;   multi-dimensional arrays containing X, Y and Z coordinates in GEO callings; the following inputs are now available:</span>
-<span class="c">!&gt;   - StructuredGrid (NN is the number of grid points, n\#1-n\#2, \#x,y,z are the domain extents):</span>
-<span class="c">!&gt;     - 1D arrays of size NN: X[1:NN],Y[1:NN],Z[1:NN];</span>
-<span class="c">!&gt;     - 3D arrays of size NN: X[nx1:nx2,ny1:ny2,nz1:nz2],Y[nx1:nx2,ny1:ny2,nz1:nz2],Z[nx1:nx2,ny1:ny2,nz1:nz2];</span>
-<span class="c">!&gt;     - 1D array of size 3*NN (packed API): XYZ[1:3,1:NN];</span>
-<span class="c">!&gt;     - 3D array of size 3*NN (packed API): XYZ[1:3,nx1:nx2,ny1:ny2,nz1:nz2].</span>
-<span class="c">!&gt;   - UnStructuredGrid (NN is the number of grid points):</span>
-<span class="c">!&gt;     - 1D arrays of size NN: X[1:NN],Y[1:NN],Z[1:NN];</span>
-<span class="c">!&gt;     - 1D array of size 3*NN (packed API): XYZ[1:3,1:NN].</span>
-<span class="c">!&gt; - Added base64 encoding format: the output format specifier of VTK_INI_XML has been changed:</span>
-<span class="c">!&gt;   - output_format = &#39;ascii&#39; means \b ascii data, the same as the previous version;</span>
-<span class="c">!&gt;   - output_format = &#39;binary&#39; means \b base64 encoded data, different from the previous version where it meant appended</span>
-<span class="c">!&gt;     raw-binary data; base64 encoding was missing in the previous version;</span>
-<span class="c">!&gt;   - output_format = &#39;raw&#39; means \b appended \b raw-binary data, as &#39;binary&#39; of the previous version;</span>
-<span class="c">!&gt; - Added support for OpenMP multi-threads framework;</span>
-<span class="c">!&gt; - Correct bug affecting binary output;</span>
-<span class="c">!&gt; - implement concurrent multiple files IO capability;</span>
-<span class="c">!&gt; - implement FieldData tag for XML files, useful for tagging dataset with global auxiliary data, e.g. time, time step, ecc;</span>
-<span class="c">!&gt; - implement Parallel (Partitioned) XML files support (.pvtu,.pvts,.pvtr);</span>
-<span class="c">!&gt; - implement Driver testing program for providing practical examples of @libvtk usage;</span>
-<span class="c">!&gt; - added support for parallel framework, namely OpenMP (thread-safe) and MPI (process-safe).</span>
-<span class="c">!&gt; @copyright GNU Public License version 3.</span>
-<span class="c">!&gt; @note The supported compilers are GNU gfortran 4.7.x (or higher) and Intel Fortran 12.x (or higher). @libvtk needs a modern</span>
-<span class="c">!&gt; compiler providing support for some Fortran standard 2003 features.</span>
-<span class="c">!&gt; @todo \b CompleteExporter: Complete the exporters</span>
-<span class="c">!&gt; @todo \b CompleteImporter: Complete the importers</span>
-<span class="c">!&gt; @todo \b DocExamples: Complete the documentation of examples</span>
-<span class="c">!&gt; @todo \b g95_test: Test g95 compiler</span>
-<span class="c">!&gt; @bug &lt;b&gt;XML-Efficiency&lt;/b&gt;: \n This is not properly a bug. There is an inefficiency when saving XML raw (binary) file. To write</span>
-<span class="c">!&gt;                             raw data into XML file @libvtk uses a temporary scratch file to save binary data while saving all</span>
-<span class="c">!&gt;                             formatting data to the final XML file. Only when all XML formatting data have been written the</span>
-<span class="c">!&gt;                             scratch file is rewind and the binary data is saved in the final tag of XML file as \b raw</span>
-<span class="c">!&gt;                             \b appended data. This approach is not efficient.</span>
-<span class="c">!&gt; @ingroup Lib_VTK_IOLibrary</span>
-<span class="k">module </span><span class="n">Lib_VTK_IO</span>
-<span class="c">!&lt; {{../README.md}}</span>
+    <div class="highlight"><pre><span class="k">module </span><span class="n">Lib_VTK_IO</span>
+<span class="c">!&lt; summary: Pure Fortran (2003+) library to write and read data conforming the VTK standard</span>
+<span class="c">!&lt;{{../README.md}}</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;### ChangeLog</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;{{../wiki/ChangeLog.md}}</span>
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
 <span class="k">USE </span><span class="n">IR_Precision</span>                                                                <span class="c">! Integers and reals precision definition.</span>
 <span class="k">USE </span><span class="n">Lib_Base64</span>                                                                  <span class="c">! Base64 encoding/decoding procedures.</span>
@@ -330,24 +200,29 @@
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
 
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
-<span class="c">!&gt; @brief Function for saving field data (global auxiliary data, eg time, step number, dataset name, etc).</span>
-<span class="c">!&gt; VTK_FLD_XML is an interface to 7 different functions, there are 2 functions for real field data, 4 functions for integer one</span>
-<span class="c">!&gt; and one function for open and close field data tag.</span>
-<span class="c">!&gt; @remark VTK_FLD_XML must be called after VTK_INI_XML and before VTK_GEO_XML. It must always called three times at least: 1) for</span>
-<span class="c">!&gt; opening the FieldData tag, 2) for saving at least one FieldData entry and 3) for closing the FieldData tag.</span>
-<span class="c">!&gt; Examples of usage are: \n</span>
-<span class="c">!&gt; \b saving the time and step cicle counter of current dataset: \n</span>
-<span class="c">!&gt; @code ...</span>
-<span class="c">!&gt; real(R8P)::    time</span>
-<span class="c">!&gt; integer(I4P):: step</span>
-<span class="c">!&gt; ...</span>
-<span class="c">!&gt; E_IO=VTK_FLD_XML(fld_action=&#39;open&#39;)</span>
-<span class="c">!&gt; E_IO=VTK_FLD_XML(fld=time,fname=&#39;TIME&#39;)</span>
-<span class="c">!&gt; E_IO=VTK_FLD_XML(fld=step,fname=&#39;CYCLE&#39;)</span>
-<span class="c">!&gt; E_IO=VTK_FLD_XML(fld_action=&#39;close&#39;)</span>
-<span class="c">!&gt; ... @endcode</span>
-<span class="c">!&gt; @ingroup Lib_VTK_IOInterface</span>
 <span class="k">interface </span><span class="n">VTK_FLD_XML</span>
+<span class="c">!&lt; summary: Procedure for saving field data (global auxiliary data, eg time, step number, dataset name, etc).</span>
+<span class="c">!&lt; VTK_FLD_XML is an interface to 7 different functions, there are 2 functions for real field data, 4 functions for integer one</span>
+<span class="c">!&lt; and one function for open and close field data tag.</span>
+<span class="c">!&lt; VTK_FLD_XML must be called after VTK_INI_XML and before VTK_GEO_XML. It must always called three times at least:</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt; 1. for opening the FieldData tag;</span>
+<span class="c">!&lt; 2. for saving at least one FieldData entry;</span>
+<span class="c">!&lt; 3. for closing the FieldData tag.</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt; Example of usage:</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;```fortran</span>
+<span class="c">!&lt;...</span>
+<span class="c">!&lt;real(R8P)::    time</span>
+<span class="c">!&lt;integer(I4P):: step</span>
+<span class="c">!&lt;...</span>
+<span class="c">!&lt;E_IO=VTK_FLD_XML(fld_action=&#39;open&#39;)</span>
+<span class="c">!&lt;E_IO=VTK_FLD_XML(fld=time,fname=&#39;TIME&#39;)</span>
+<span class="c">!&lt;E_IO=VTK_FLD_XML(fld=step,fname=&#39;CYCLE&#39;)</span>
+<span class="c">!&lt;E_IO=VTK_FLD_XML(fld_action=&#39;close&#39;)</span>
+<span class="c">!&lt;...</span>
+<span class="c">!&lt;```</span>
   <span class="k">module procedure </span><span class="n">VTK_FLD_XML_OC</span><span class="p">,</span> <span class="p">&amp;</span> <span class="c">! open/close field data tag</span>
                    <span class="n">VTK_FLD_XML_R8</span><span class="p">,</span> <span class="p">&amp;</span> <span class="c">! real(R8P)    scalar</span>
                    <span class="n">VTK_FLD_XML_R4</span><span class="p">,</span> <span class="p">&amp;</span> <span class="c">! real(R4P)    scalar</span>
@@ -356,53 +231,59 @@
                    <span class="n">VTK_FLD_XML_I2</span><span class="p">,</span> <span class="p">&amp;</span> <span class="c">! integer(I2P) scalar</span>
                    <span class="n">VTK_FLD_XML_I1</span>    <span class="c">! integer(I1P) scalar</span>
 <span class="n">endinterface</span>
-<span class="c">!&gt; @brief Function for saving mesh with different topologies in VTK-XML standard.</span>
-<span class="c">!&gt; VTK_GEO_XML is an interface to 15 different functions; there are 2 functions for each of 3 topologies supported and a function</span>
-<span class="c">!&gt; for closing XML pieces: one function for mesh coordinates with R8P precision and one for mesh coordinates with R4P precision.</span>
-<span class="c">!&gt; @remark 1D/3D-rank arrays and packed API for any kinds \n</span>
-<span class="c">!&gt; - For StructuredGrid there are 4 functions for each real kinds:</span>
-<span class="c">!&gt;   - inputs are 1D-rank arrays: X[1:NN],Y[1:NN],Z[1:NN];</span>
-<span class="c">!&gt;   - inputs are 3D-rank arrays: X[nx1:nx2,ny1:ny2,nz1:nz2],Y[nx1:nx2,ny1:ny2,nz1:nz2],Z[nx1:nx2,ny1:ny2,nz1:nz2];</span>
-<span class="c">!&gt;   - input is 1D-rank array (packed API): XYZ[1:3,1:NN];</span>
-<span class="c">!&gt;   - input is 3D-rank array (packed API): XYZ[1:3,nx1:nx2,ny1:ny2,nz1:nz2].</span>
-<span class="c">!&gt; - For UnStructuredGrid there are 2 functions for each real kinds:</span>
-<span class="c">!&gt;   - inputs are 1D arrays: X[1:NN],Y[1:NN],Z[1:NN];</span>
-<span class="c">!&gt;   - input is 1D array (packed API): XYZ[1:3,1:NN].</span>
-<span class="c">!&gt;</span>
-<span class="c">!&gt; @remark VTK_GEO_XML must be called after VTK_INI_XML. It saves the mesh geometry. The inputs that must be passed</span>
-<span class="c">!&gt; change depending on the topologies chosen. Not all VTK topologies have been implemented (\em polydata topologies are absent).</span>
-<span class="c">!&gt; @note The XML standard is more powerful than legacy. XML file can contain more than 1 mesh with its</span>
-<span class="c">!&gt; associated variables. Thus there is the necessity to close each \em pieces that compose the data-set saved in the</span>
-<span class="c">!&gt; XML file. The VTK_GEO_XML called in the &lt;em&gt;close piece&lt;/em&gt; format is used just to close the</span>
-<span class="c">!&gt; current piece before saving another piece or closing the file. \n</span>
-<span class="c">!&gt; Examples of usage are: \n</span>
-<span class="c">!&gt; \b Structured grid calling: \n</span>
-<span class="c">!&gt; @code ...</span>
-<span class="c">!&gt; integer(I4P):: nx1,nx2,ny1,ny2,nz1,nz2,NN</span>
-<span class="c">!&gt; real(R8P)::    X(1:NN),Y(1:NN),Z(1:NN)</span>
-<span class="c">!&gt; ...</span>
-<span class="c">!&gt; E_IO=VTK_GEO_XML(nx1,nx2,ny1,ny2,nz1,nz2,Nn,X,Y,Z)</span>
-<span class="c">!&gt; ... @endcode</span>
-<span class="c">!&gt; \b Rectilinear grid calling: \n</span>
-<span class="c">!&gt; @code ...</span>
-<span class="c">!&gt; integer(I4P):: nx1,nx2,ny1,ny2,nz1,nz2</span>
-<span class="c">!&gt; real(R8P)::    X(nx1:nx2),Y(ny1:ny2),Z(nz1:nz2)</span>
-<span class="c">!&gt; ...</span>
-<span class="c">!&gt; E_IO=VTK_GEO_XML(nx1,nx2,ny1,ny2,nz1,nz2,X,Y,Z)</span>
-<span class="c">!&gt; ... @endcode</span>
-<span class="c">!&gt; \b Unstructured grid calling: \n</span>
-<span class="c">!&gt; @code ...</span>
-<span class="c">!&gt; integer(I4P):: Nn,Nc</span>
-<span class="c">!&gt; real(R8P)::    X(1:Nn),Y(1:Nn),Z(1:Nn)</span>
-<span class="c">!&gt; ...</span>
-<span class="c">!&gt; E_IO=VTK_GEO_XML(Nn,Nc,X,Y,Z)</span>
-<span class="c">!&gt; ... @endcode</span>
-<span class="c">!&gt; \b Closing piece calling: 1n</span>
-<span class="c">!&gt; @code ...</span>
-<span class="c">!&gt; E_IO=VTK_GEO_XML()</span>
-<span class="c">!&gt; ... @endcode</span>
-<span class="c">!&gt; @ingroup Lib_VTK_IOInterface</span>
 <span class="k">interface </span><span class="n">VTK_GEO_XML</span>
+<span class="c">!&lt; summary: Procedure for saving mesh with different topologies in VTK-XML standard.</span>
+<span class="c">!&lt; VTK_GEO_XML is an interface to 15 different functions; there are 2 functions for each of 3 topologies supported and a function</span>
+<span class="c">!&lt; for closing XML pieces: one function for mesh coordinates with R8P precision and one for mesh coordinates with R4P precision.</span>
+<span class="c">!&lt; 1D/3D-rank arrays and packed API for any kinds</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;- For StructuredGrid there are 4 functions for each real kinds:</span>
+<span class="c">!&lt;    - inputs are 1D-rank arrays: X[1:NN],Y[1:NN],Z[1:NN];</span>
+<span class="c">!&lt;    - inputs are 3D-rank arrays: X[nx1:nx2,ny1:ny2,nz1:nz2],Y[nx1:nx2,ny1:ny2,nz1:nz2],Z[nx1:nx2,ny1:ny2,nz1:nz2];</span>
+<span class="c">!&lt;    - input is 1D-rank array (packed API): XYZ[1:3,1:NN];</span>
+<span class="c">!&lt;    - input is 3D-rank array (packed API): XYZ[1:3,nx1:nx2,ny1:ny2,nz1:nz2].</span>
+<span class="c">!&lt;- For UnStructuredGrid there are 2 functions for each real kinds:</span>
+<span class="c">!&lt;    - inputs are 1D arrays: X[1:NN],Y[1:NN],Z[1:NN];</span>
+<span class="c">!&lt;    - input is 1D array (packed API): XYZ[1:3,1:NN].</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt; VTK_GEO_XML must be called after VTK_INI_XML. It saves the mesh geometry. The inputs that must be passed</span>
+<span class="c">!&lt; change depending on the topologies chosen. Not all VTK topologies have been implemented (*polydata* topologies are absent).</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt; @note The XML standard is more powerful than legacy. XML file can contain more than 1 mesh with its</span>
+<span class="c">!&lt; associated variables. Thus there is the necessity to close each *pieces* that compose the data-set saved in the</span>
+<span class="c">!&lt; XML file. The VTK_GEO_XML called in the *close piece* format is used just to close the</span>
+<span class="c">!&lt; current piece before saving another piece or closing the file.</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;### Examples of usage</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;#### Structured grid calling</span>
+<span class="c">!&lt;```fortran</span>
+<span class="c">!&lt; integer(I4P):: nx1,nx2,ny1,ny2,nz1,nz2,NN</span>
+<span class="c">!&lt; real(R8P)::    X(1:NN),Y(1:NN),Z(1:NN)</span>
+<span class="c">!&lt; ...</span>
+<span class="c">!&lt; E_IO=VTK_GEO_XML(nx1,nx2,ny1,ny2,nz1,nz2,Nn,X,Y,Z)</span>
+<span class="c">!&lt;```</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;#### Rectilinear grid calling</span>
+<span class="c">!&lt;```fortran</span>
+<span class="c">!&lt; integer(I4P):: nx1,nx2,ny1,ny2,nz1,nz2</span>
+<span class="c">!&lt; real(R8P)::    X(nx1:nx2),Y(ny1:ny2),Z(nz1:nz2)</span>
+<span class="c">!&lt; ...</span>
+<span class="c">!&lt; E_IO=VTK_GEO_XML(nx1,nx2,ny1,ny2,nz1,nz2,X,Y,Z)</span>
+<span class="c">!&lt;```</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;#### Unstructured grid calling</span>
+<span class="c">!&lt;```fortran</span>
+<span class="c">!&lt; integer(I4P):: Nn,Nc</span>
+<span class="c">!&lt; real(R8P)::    X(1:Nn),Y(1:Nn),Z(1:Nn)</span>
+<span class="c">!&lt; ...</span>
+<span class="c">!&lt; E_IO=VTK_GEO_XML(Nn,Nc,X,Y,Z)</span>
+<span class="c">!&lt;```</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;#### Closing piece calling</span>
+<span class="c">!&lt;```fortran</span>
+<span class="c">!&lt; E_IO=VTK_GEO_XML()</span>
+<span class="c">!&lt;```</span>
   <span class="k">module procedure </span><span class="n">VTK_GEO_XML_STRG_1DA_R8</span><span class="p">,</span> <span class="n">VTK_GEO_XML_STRG_3DA_R8</span><span class="p">,</span>  <span class="p">&amp;</span> <span class="c">! real(R8P) StructuredGrid, 1D/3D Arrays</span>
                    <span class="n">VTK_GEO_XML_STRG_1DAP_R8</span><span class="p">,</span><span class="n">VTK_GEO_XML_STRG_3DAP_R8</span><span class="p">,</span> <span class="p">&amp;</span> <span class="c">! real(R8P) StructuredGrid, 1D/3D Arrays packed API</span>
                    <span class="n">VTK_GEO_XML_STRG_1DA_R4</span><span class="p">,</span> <span class="n">VTK_GEO_XML_STRG_3DA_R4</span><span class="p">,</span>  <span class="p">&amp;</span> <span class="c">! real(R4P) StructuredGrid, 1D/3D Arrays</span>
@@ -413,42 +294,46 @@
                    <span class="n">VTK_GEO_XML_UNST_R4</span><span class="p">,</span><span class="n">VTK_GEO_XML_UNST_PACK_R8</span><span class="p">,</span>      <span class="p">&amp;</span> <span class="c">! real(R4P) UnstructuredGrid, standard and packed API</span>
                    <span class="n">VTK_GEO_XML_CLOSEP</span>                                   <span class="c">! closing tag &quot;Piece&quot; function</span>
 <span class="n">endinterface</span>
-<span class="c">!&gt; @brief Function for saving data variable(s) in VTK-XML standard.</span>
-<span class="c">!&gt; VTK_VAR_XML is an interface to 36 different functions, there are 6 functions for scalar variables, 6 functions for vectorial</span>
-<span class="c">!&gt; variables and 6 functions for 3D(or higher) vectorial variables: for all of types the precision can be R8P, R4P, I8P, I4P, I2P</span>
-<span class="c">!&gt; and I1P. This function saves the data variables related (cell-centered or node-centered) to geometric mesh.</span>
-<span class="c">!&gt; @remark 1D/3D-rank arrays and packed API for any kinds \n</span>
-<span class="c">!&gt; The inputs arrays can be passed as 1D-rank or 3D-rank and the vectorial variables can be component-separated (one for each of</span>
-<span class="c">!&gt; the 3 components) or packed into one multidimensional array:</span>
-<span class="c">!&gt; - scalar input:</span>
-<span class="c">!&gt;   - input is 1D-rank array: var[1:NC_NN];</span>
-<span class="c">!&gt;   - input is 3D-rank array: var[nx1:nx2,ny1:ny2,nz1:nz2];</span>
-<span class="c">!&gt; - vectorial inputs:</span>
-<span class="c">!&gt;   - inputs are 1D-rank arrays: varX[1:NC_NN],varY[1:NC_NN],varZ[1:NC_NN];</span>
-<span class="c">!&gt;   - inputs are 3D-rank arrays: varX[nx1:nx2,ny1:ny2,nz1:nz2],varY[nx1:nx2,ny1:ny2,nz1:nz2],varX[nx1:nx2,ny1:ny2,nz1:nz2];</span>
-<span class="c">!&gt; - 3D(or higher) vectorial inputs:</span>
-<span class="c">!&gt;   - input is 1D-rank (packed API): var[1:N_COL,1:NC_NN];</span>
-<span class="c">!&gt;   - input is 3D-rank (packed API): var[1:N_COL,nx1:nx2,ny1:ny2,nz1:nz2].</span>
-<span class="c">!&gt;</span>
-<span class="c">!&gt; @remark Note that the inputs that must be passed change depending on the data variables type.</span>
-<span class="c">!&gt;</span>
-<span class="c">!&gt; @note Examples of usage are: \n</span>
-<span class="c">!&gt; \b Scalar data calling: \n</span>
-<span class="c">!&gt; @code ...</span>
-<span class="c">!&gt; integer(I4P):: NN</span>
-<span class="c">!&gt; real(R8P)::    var(1:NN)</span>
-<span class="c">!&gt; ...</span>
-<span class="c">!&gt; E_IO=VTK_VAR_XML(NN,&#39;Sca&#39;,var)</span>
-<span class="c">!&gt; ... @endcode</span>
-<span class="c">!&gt; \b Vectorial data calling: \n</span>
-<span class="c">!&gt; @code ...</span>
-<span class="c">!&gt; integer(I4P):: NN</span>
-<span class="c">!&gt; real(R8P)::    varX(1:NN),varY(1:NN),varZ(1:NN),</span>
-<span class="c">!&gt; ...</span>
-<span class="c">!&gt; E_IO=VTK_VAR_XML(NN,&#39;Vec&#39;,varX,varY,varZ)</span>
-<span class="c">!&gt; ... @endcode</span>
-<span class="c">!&gt; @ingroup Lib_VTK_IOInterface</span>
 <span class="k">interface </span><span class="n">VTK_VAR_XML</span>
+<span class="c">!&lt; summary: Function for saving data variable(s) in VTK-XML standard.</span>
+<span class="c">!&lt; VTK_VAR_XML is an interface to 36 different functions, there are 6 functions for scalar variables, 6 functions for vectorial</span>
+<span class="c">!&lt; variables and 6 functions for 3D(or higher) vectorial variables: for all of types the precision can be R8P, R4P, I8P, I4P, I2P</span>
+<span class="c">!&lt; and I1P. This function saves the data variables related (cell-centered or node-centered) to geometric mesh.</span>
+<span class="c">!&lt; 1D/3D-rank arrays and packed API for any kinds</span>
+<span class="c">!&lt; The inputs arrays can be passed as 1D-rank or 3D-rank and the vectorial variables can be component-separated (one for each of</span>
+<span class="c">!&lt; the 3 components) or packed into one multidimensional array:</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;- scalar input:</span>
+<span class="c">!&lt;    - input is 1D-rank array: var[1:NC_NN];</span>
+<span class="c">!&lt;    - input is 3D-rank array: var[nx1:nx2,ny1:ny2,nz1:nz2];</span>
+<span class="c">!&lt;- vectorial inputs:</span>
+<span class="c">!&lt;    - inputs are 1D-rank arrays: varX[1:NC_NN],varY[1:NC_NN],varZ[1:NC_NN];</span>
+<span class="c">!&lt;    - inputs are 3D-rank arrays: varX[nx1:nx2,ny1:ny2,nz1:nz2],varY[nx1:nx2,ny1:ny2,nz1:nz2],varX[nx1:nx2,ny1:ny2,nz1:nz2];</span>
+<span class="c">!&lt;- 3D(or higher) vectorial inputs:</span>
+<span class="c">!&lt;    - input is 1D-rank (packed API): var[1:N_COL,1:NC_NN];</span>
+<span class="c">!&lt;    - input is 3D-rank (packed API): var[1:N_COL,nx1:nx2,ny1:ny2,nz1:nz2].</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt; @note Note that the inputs that must be passed change depending on the data variables type.</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;### Examples of usage</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;#### Scalar data calling</span>
+<span class="c">!&lt;```fortran</span>
+<span class="c">!&lt; integer(I4P):: NN</span>
+<span class="c">!&lt; real(R8P)::    var(1:NN)</span>
+<span class="c">!&lt; ...</span>
+<span class="c">!&lt; E_IO=VTK_VAR_XML(NN,&#39;Sca&#39;,var)</span>
+<span class="c">!&lt; ...</span>
+<span class="c">!&lt;```</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;#### Vectorial data calling</span>
+<span class="c">!&lt;```fortran</span>
+<span class="c">!&lt; integer(I4P):: NN</span>
+<span class="c">!&lt; real(R8P)::    varX(1:NN),varY(1:NN),varZ(1:NN),</span>
+<span class="c">!&lt; ...</span>
+<span class="c">!&lt; E_IO=VTK_VAR_XML(NN,&#39;Vec&#39;,varX,varY,varZ)</span>
+<span class="c">!&lt; ...</span>
+<span class="c">!&lt;```</span>
   <span class="k">module procedure </span><span class="n">VTK_VAR_XML_SCAL_1DA_R8</span><span class="p">,</span><span class="n">VTK_VAR_XML_SCAL_3DA_R8</span><span class="p">,</span> <span class="p">&amp;</span> <span class="c">! real(R8P)    scalar    1D/3D array</span>
                    <span class="n">VTK_VAR_XML_SCAL_1DA_R4</span><span class="p">,</span><span class="n">VTK_VAR_XML_SCAL_3DA_R4</span><span class="p">,</span> <span class="p">&amp;</span> <span class="c">! real(R4P)    scalar    1D/3D array</span>
                    <span class="n">VTK_VAR_XML_SCAL_1DA_I8</span><span class="p">,</span><span class="n">VTK_VAR_XML_SCAL_3DA_I8</span><span class="p">,</span> <span class="p">&amp;</span> <span class="c">! integer(I8P) scalar    1D/3D array</span>
@@ -468,42 +353,51 @@
                    <span class="n">VTK_VAR_XML_LIST_1DA_I2</span><span class="p">,</span><span class="n">VTK_VAR_XML_LIST_3DA_I2</span><span class="p">,</span> <span class="p">&amp;</span> <span class="c">! integer(I2P) list      1D/3D array</span>
                    <span class="n">VTK_VAR_XML_LIST_1DA_I1</span><span class="p">,</span><span class="n">VTK_VAR_XML_LIST_3DA_I1</span>    <span class="c">! integer(I1P) list      1D/3D array</span>
 <span class="n">endinterface</span>
-<span class="c">!&gt; @brief Function for saving mesh with different topologies in VTK-legacy standard.</span>
-<span class="c">!&gt; VTK_GEO is an interface to 16 different functions, there are 2 functions for each of 4 different topologies actually supported:</span>
-<span class="c">!&gt; one function for mesh coordinates with R8P precision and one for mesh coordinates with R4P precision.</span>
-<span class="c">!&gt; @remark This function must be called after VTK_INI. It saves the mesh geometry. The inputs that must be passed change depending</span>
-<span class="c">!&gt; on the topologies chosen. Not all VTK topologies have been implemented (\em polydata topologies are absent).</span>
-<span class="c">!&gt; @note Examples of usage are: \n</span>
-<span class="c">!&gt; \b Structured points calling: \n</span>
-<span class="c">!&gt; @code ...</span>
-<span class="c">!&gt; integer(I4P):: Nx,Ny,Nz</span>
-<span class="c">!&gt; real(I8P)::    X0,Y0,Z0,Dx,Dy,Dz</span>
-<span class="c">!&gt; ...</span>
-<span class="c">!&gt; E_IO=VTK_GEO(Nx,Ny,Nz,X0,Y0,Z0,Dx,Dy,Dz)</span>
-<span class="c">!&gt; ... @endcode</span>
-<span class="c">!&gt; \b Structured grid calling: \n</span>
-<span class="c">!&gt; @code ...</span>
-<span class="c">!&gt; integer(I4P):: Nx,Ny,Nz,Nnodes</span>
-<span class="c">!&gt; real(R8P)::    X(1:Nnodes),Y(1:Nnodes),Z(1:Nnodes)</span>
-<span class="c">!&gt; ...</span>
-<span class="c">!&gt; E_IO=VTK_GEO(Nx,Ny,Nz,Nnodes,X,Y,Z)</span>
-<span class="c">!&gt; ... @endcode</span>
-<span class="c">!&gt; \b Rectilinear grid calling: \n</span>
-<span class="c">!&gt; @code ...</span>
-<span class="c">!&gt; integer(I4P):: Nx,Ny,Nz</span>
-<span class="c">!&gt; real(R8P)::    X(1:Nx),Y(1:Ny),Z(1:Nz)</span>
-<span class="c">!&gt; ...</span>
-<span class="c">!&gt; E_IO=VTK_GEO(Nx,Ny,Nz,X,Y,Z)</span>
-<span class="c">!&gt; ... @endcode</span>
-<span class="c">!&gt; \b Unstructured grid calling: \n</span>
-<span class="c">!&gt; @code ...</span>
-<span class="c">!&gt; integer(I4P):: NN</span>
-<span class="c">!&gt; real(R4P)::    X(1:NN),Y(1:NN),Z(1:NN)</span>
-<span class="c">!&gt; ...</span>
-<span class="c">!&gt; E_IO=VTK_GEO(NN,X,Y,Z)</span>
-<span class="c">!&gt; ... @endcode</span>
-<span class="c">!&gt; @ingroup Lib_VTK_IOInterface</span>
 <span class="k">interface </span><span class="n">VTK_GEO</span>
+<span class="c">!&lt; summary: Function for saving mesh with different topologies in VTK-legacy standard.</span>
+<span class="c">!&lt; VTK_GEO is an interface to 16 different functions, there are 2 functions for each of 4 different topologies actually supported:</span>
+<span class="c">!&lt; one function for mesh coordinates with R8P precision and one for mesh coordinates with R4P precision.</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt; @note This function must be called after VTK_INI. It saves the mesh geometry. The inputs that must be passed change depending</span>
+<span class="c">!&lt; on the topologies chosen. Not all VTK topologies have been implemented (*polydata* topologies are absent).</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;### Examples of usage</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;#### Structured points calling</span>
+<span class="c">!&lt;```fortran</span>
+<span class="c">!&lt; integer(I4P):: Nx,Ny,Nz</span>
+<span class="c">!&lt; real(I8P)::    X0,Y0,Z0,Dx,Dy,Dz</span>
+<span class="c">!&lt; ...</span>
+<span class="c">!&lt; E_IO=VTK_GEO(Nx,Ny,Nz,X0,Y0,Z0,Dx,Dy,Dz)</span>
+<span class="c">!&lt; ...</span>
+<span class="c">!&lt;```</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;#### Structured grid calling</span>
+<span class="c">!&lt;```fortran</span>
+<span class="c">!&lt; integer(I4P):: Nx,Ny,Nz,Nnodes</span>
+<span class="c">!&lt; real(R8P)::    X(1:Nnodes),Y(1:Nnodes),Z(1:Nnodes)</span>
+<span class="c">!&lt; ...</span>
+<span class="c">!&lt; E_IO=VTK_GEO(Nx,Ny,Nz,Nnodes,X,Y,Z)</span>
+<span class="c">!&lt; ...</span>
+<span class="c">!&lt;```</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;#### Rectilinear grid calling</span>
+<span class="c">!&lt;```fortran</span>
+<span class="c">!&lt; integer(I4P):: Nx,Ny,Nz</span>
+<span class="c">!&lt; real(R8P)::    X(1:Nx),Y(1:Ny),Z(1:Nz)</span>
+<span class="c">!&lt; ...</span>
+<span class="c">!&lt; E_IO=VTK_GEO(Nx,Ny,Nz,X,Y,Z)</span>
+<span class="c">!&lt; ...</span>
+<span class="c">!&lt;```</span>
+<span class="c">!&lt;</span>
+<span class="c">!&lt;#### Unstructured grid calling</span>
+<span class="c">!&lt;```fortran</span>
+<span class="c">!&lt; integer(I4P):: NN</span>
+<span class="c">!&lt; real(R4P)::    X(1:NN),Y(1:NN),Z(1:NN)</span>
+<span class="c">!&lt; ...</span>
+<span class="c">!&lt; E_IO=VTK_GEO(NN,X,Y,Z)</span>
+<span class="c">!&lt; ...</span>
+<span class="c">!&lt;```</span>
   <span class="k">module procedure </span><span class="n">VTK_GEO_UNST_R8</span><span class="p">,</span><span class="n">VTK_GEO_UNST_P_R8</span><span class="p">,</span>         <span class="p">&amp;</span> <span class="c">! real(R8P) UNSTRUCTURED_GRID, standard and packed API</span>
                    <span class="n">VTK_GEO_UNST_R4</span><span class="p">,</span><span class="n">VTK_GEO_UNST_P_R4</span><span class="p">,</span>         <span class="p">&amp;</span> <span class="c">! real(R4P) UNSTRUCTURED_GRID, standard and packed API</span>
                    <span class="n">VTK_GEO_STRP_R8</span><span class="p">,</span>                           <span class="p">&amp;</span> <span class="c">! real(R8P) STRUCTURED_POINTS</span>
@@ -522,15 +416,15 @@
 <span class="c">!&gt; This function saves the data variables related to geometric mesh.</span>
 <span class="c">!&gt; @remark The inputs that must be passed change depending on the data</span>
 <span class="c">!&gt; variables type.</span>
-<span class="c">!&gt; @note Examples of usage are: \n</span>
-<span class="c">!&gt; \b Scalar data calling: \n</span>
+<span class="c">!&gt; @note Examples of usage are:</span>
+<span class="c">!&gt; \b Scalar data calling:</span>
 <span class="c">!&gt; @code ...</span>
 <span class="c">!&gt; integer(I4P):: NN</span>
 <span class="c">!&gt; real(R4P)::    var(1:NN)</span>
 <span class="c">!&gt; ...</span>
 <span class="c">!&gt; E_IO=VTK_VAR(NN,&#39;Sca&#39;,var)</span>
 <span class="c">!&gt; ... @endcode</span>
-<span class="c">!&gt; \b Vectorial data calling: \n</span>
+<span class="c">!&gt; \b Vectorial data calling:</span>
 <span class="c">!&gt; @code ...</span>
 <span class="c">!&gt; integer(I4P):: NN</span>
 <span class="c">!&gt; real(R4P)::    varX(1:NN),varY(1:NN),varZ(1:NN)</span>
@@ -771,7 +665,7 @@
   <span class="c">!&gt; - RectilinearGrid;</span>
   <span class="c">!&gt; - StructuredGrid;</span>
   <span class="c">!&gt; - UnstructuredGrid.</span>
-  <span class="c">!&gt; @note An example of usage is: \n</span>
+  <span class="c">!&gt; @note An example of usage is:</span>
   <span class="c">!&gt; @code ...</span>
   <span class="c">!&gt; integer(I4P):: nx1,nx2,ny1,ny2,nz1,nz2</span>
   <span class="c">!&gt; ...</span>
@@ -2335,40 +2229,40 @@
   <span class="c">!&gt; Note that this equation is different from the legacy one. The XML connectivity convention is quite different from the</span>
   <span class="c">!&gt; legacy standard. As an example suppose we have a mesh composed by 2 cells, one hexahedron (8 vertices) and one pyramid with</span>
   <span class="c">!&gt; square basis (5 vertices) and suppose that the basis of pyramid is constitute by a face of the hexahedron and so the two cells</span>
-  <span class="c">!&gt; share 4 vertices. The above equation gives \f$dc=8+5=13\f$. The connectivity vector for this mesh can be: \n</span>
-  <span class="c">!&gt; first cell \n</span>
-  <span class="c">!&gt; connect(1)  = 0 identification flag of \f$1^\circ\f$ vertex of 1° cell \n</span>
-  <span class="c">!&gt; connect(2)  = 1 identification flag of \f$2^\circ\f$ vertex of 1° cell \n</span>
-  <span class="c">!&gt; connect(3)  = 2 identification flag of \f$3^\circ\f$ vertex of 1° cell \n</span>
-  <span class="c">!&gt; connect(4)  = 3 identification flag of \f$4^\circ\f$ vertex of 1° cell \n</span>
-  <span class="c">!&gt; connect(5)  = 4 identification flag of \f$5^\circ\f$ vertex of 1° cell \n</span>
-  <span class="c">!&gt; connect(6)  = 5 identification flag of \f$6^\circ\f$ vertex of 1° cell \n</span>
-  <span class="c">!&gt; connect(7)  = 6 identification flag of \f$7^\circ\f$ vertex of 1° cell \n</span>
-  <span class="c">!&gt; connect(8)  = 7 identification flag of \f$8^\circ\f$ vertex of 1° cell \n</span>
-  <span class="c">!&gt; second cell \n</span>
-  <span class="c">!&gt; connect(9 ) = 0 identification flag of \f$1^\circ\f$ vertex of 2° cell \n</span>
-  <span class="c">!&gt; connect(10) = 1 identification flag of \f$2^\circ\f$ vertex of 2° cell \n</span>
-  <span class="c">!&gt; connect(11) = 2 identification flag of \f$3^\circ\f$ vertex of 2° cell \n</span>
-  <span class="c">!&gt; connect(12) = 3 identification flag of \f$4^\circ\f$ vertex of 2° cell \n</span>
-  <span class="c">!&gt; connect(13) = 8 identification flag of \f$5^\circ\f$ vertex of 2° cell \n</span>
+  <span class="c">!&gt; share 4 vertices. The above equation gives \f$dc=8+5=13\f$. The connectivity vector for this mesh can be:</span>
+  <span class="c">!&gt; first cell</span>
+  <span class="c">!&gt; connect(1)  = 0 identification flag of \f$1^\circ\f$ vertex of 1° cell</span>
+  <span class="c">!&gt; connect(2)  = 1 identification flag of \f$2^\circ\f$ vertex of 1° cell</span>
+  <span class="c">!&gt; connect(3)  = 2 identification flag of \f$3^\circ\f$ vertex of 1° cell</span>
+  <span class="c">!&gt; connect(4)  = 3 identification flag of \f$4^\circ\f$ vertex of 1° cell</span>
+  <span class="c">!&gt; connect(5)  = 4 identification flag of \f$5^\circ\f$ vertex of 1° cell</span>
+  <span class="c">!&gt; connect(6)  = 5 identification flag of \f$6^\circ\f$ vertex of 1° cell</span>
+  <span class="c">!&gt; connect(7)  = 6 identification flag of \f$7^\circ\f$ vertex of 1° cell</span>
+  <span class="c">!&gt; connect(8)  = 7 identification flag of \f$8^\circ\f$ vertex of 1° cell</span>
+  <span class="c">!&gt; second cell</span>
+  <span class="c">!&gt; connect(9 ) = 0 identification flag of \f$1^\circ\f$ vertex of 2° cell</span>
+  <span class="c">!&gt; connect(10) = 1 identification flag of \f$2^\circ\f$ vertex of 2° cell</span>
+  <span class="c">!&gt; connect(11) = 2 identification flag of \f$3^\circ\f$ vertex of 2° cell</span>
+  <span class="c">!&gt; connect(12) = 3 identification flag of \f$4^\circ\f$ vertex of 2° cell</span>
+  <span class="c">!&gt; connect(13) = 8 identification flag of \f$5^\circ\f$ vertex of 2° cell</span>
   <span class="c">!&gt; Therefore this connectivity vector convention is more simple than the legacy convention, now we must create also the</span>
   <span class="c">!&gt; \em offset vector that contains the data now missing in the \em connect vector. The offset</span>
-  <span class="c">!&gt; vector for this mesh can be: \n</span>
-  <span class="c">!&gt; first cell \n</span>
-  <span class="c">!&gt; offset(1) = 8  =&gt; summ of nodes of \f$1^\circ\f$ cell \n</span>
-  <span class="c">!&gt; second cell \n</span>
-  <span class="c">!&gt; offset(2) = 13 =&gt; summ of nodes of \f$1^\circ\f$ and \f$2^\circ\f$ cells \n</span>
+  <span class="c">!&gt; vector for this mesh can be:</span>
+  <span class="c">!&gt; first cell</span>
+  <span class="c">!&gt; offset(1) = 8  =&gt; summ of nodes of \f$1^\circ\f$ cell</span>
+  <span class="c">!&gt; second cell</span>
+  <span class="c">!&gt; offset(2) = 13 =&gt; summ of nodes of \f$1^\circ\f$ and \f$2^\circ\f$ cells</span>
   <span class="c">!&gt; The value of every cell-offset can be calculated by the following equation: \f$offset_c=\sum\limits_{i=1}^{c}{nvertex_i}\f$</span>
   <span class="c">!&gt; where \f$offset_c\f$ is the value of \f$c^{th}\f$ cell and \f$nvertex_i\f$ is the number of vertices of \f$i^{th}\f$ cell.</span>
   <span class="c">!&gt; The function VTK_CON_XML does not calculate the connectivity and offset vectors: it writes the connectivity and offset</span>
   <span class="c">!&gt; vectors conforming the VTK-XML standard, but does not calculate them.</span>
   <span class="c">!&gt; The vector variable \em cell_type must conform the VTK-XML standard (see the file VTK-Standard at the</span>
   <span class="c">!&gt; Kitware homepage) that is the same of the legacy standard. It contains the</span>
-  <span class="c">!&gt; \em type of each cells. For the above example this vector is: \n</span>
-  <span class="c">!&gt; first cell \n</span>
-  <span class="c">!&gt; cell_type(1) = 12 hexahedron type of \f$1^\circ\f$ cell \n</span>
-  <span class="c">!&gt; second cell \n</span>
-  <span class="c">!&gt; cell_type(2) = 14 pyramid type of \f$2^\circ\f$ cell \n</span>
+  <span class="c">!&gt; \em type of each cells. For the above example this vector is:</span>
+  <span class="c">!&gt; first cell</span>
+  <span class="c">!&gt; cell_type(1) = 12 hexahedron type of \f$1^\circ\f$ cell</span>
+  <span class="c">!&gt; second cell</span>
+  <span class="c">!&gt; cell_type(2) = 14 pyramid type of \f$2^\circ\f$ cell</span>
   <span class="c">!&gt; @return E_IO: integer(I4P) error flag</span>
   <span class="k">function </span><span class="n">VTK_CON_XML</span><span class="p">(</span><span class="n">NC</span><span class="p">,</span><span class="n">connect</span><span class="p">,</span><span class="n">offset</span><span class="p">,</span><span class="n">cell_type</span><span class="p">,</span><span class="n">idx</span><span class="p">,</span><span class="n">cf</span><span class="p">)</span> <span class="k">result</span><span class="p">(</span><span class="n">E_IO</span><span class="p">)</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
@@ -2479,12 +2373,12 @@
   <span class="c">!&gt; saving of data variables indicating the \em type (node or cell centered) of variables that will be saved.</span>
   <span class="c">!&gt; @note A single file can contain both cell and node centered variables. In this case the VTK_DAT_XML function must be</span>
   <span class="c">!&gt; called two times, before saving cell-centered variables and before saving node-centered variables.</span>
-  <span class="c">!&gt; Examples of usage are: \n</span>
-  <span class="c">!&gt; \b Opening node piece: \n</span>
+  <span class="c">!&gt; Examples of usage are:</span>
+  <span class="c">!&gt; \b Opening node piece:</span>
   <span class="c">!&gt; @code ...</span>
   <span class="c">!&gt; E_IO=VTK_DAT_XML(&#39;node&#39;,&#39;OPEN&#39;)</span>
   <span class="c">!&gt; ... @endcode</span>
-  <span class="c">!&gt; \b Closing node piece: \n</span>
+  <span class="c">!&gt; \b Closing node piece:</span>
   <span class="c">!&gt; @code ...</span>
   <span class="c">!&gt; E_IO=VTK_DAT_XML(&#39;node&#39;,&#39;CLOSE&#39;)</span>
   <span class="c">!&gt; ... @endcode</span>
@@ -4546,7 +4440,7 @@
   <span class="c">!&gt; @}</span>
 
   <span class="c">!&gt; @brief Function for finalizing the VTK-XML file.</span>
-  <span class="c">!&gt; @note An example of usage is: \n</span>
+  <span class="c">!&gt; @note An example of usage is:</span>
   <span class="c">!&gt; @code ...</span>
   <span class="c">!&gt; E_IO = VTK_END_XML()</span>
   <span class="c">!&gt; ... @endcode</span>
@@ -4999,7 +4893,7 @@
 
   <span class="c">!&gt; @brief Function for initializing VTK-legacy file.</span>
   <span class="c">!&gt; @remark This function must be the first to be called.</span>
-  <span class="c">!&gt; @note An example of usage is: \n</span>
+  <span class="c">!&gt; @note An example of usage is:</span>
   <span class="c">!&gt; @code ...</span>
   <span class="c">!&gt; E_IO=VTK_INI(&#39;Binary&#39;,&#39;example.vtk&#39;,&#39;VTK legacy file&#39;,&#39;UNSTRUCTURED_GRID&#39;)</span>
   <span class="c">!&gt; ... @endcode</span>
@@ -5721,35 +5615,35 @@
   <span class="c">!&gt; legacy standard for the mesh connectivity is quite obscure at least at first sight. It is more simple analyzing an example.</span>
   <span class="c">!&gt; Suppose we have a mesh composed by 2 cells, one hexahedron (8 vertices) and one pyramid with square basis (5 vertices) and</span>
   <span class="c">!&gt; suppose that the basis of pyramid is constitute by a face of the hexahedron and so the two cells share 4 vertices.</span>
-  <span class="c">!&gt; The above equation !&gt; gives \f$dc=2+8+5=15\f$. The connectivity vector for this mesh can be: \n</span>
-  <span class="c">!&gt; first cell \n</span>
-  <span class="c">!&gt; connect(1)  = 8  number of vertices of \f$1^\circ\f$ cell \n</span>
-  <span class="c">!&gt; connect(2)  = 0  identification flag of \f$1^\circ\f$ vertex of 1° cell \n</span>
-  <span class="c">!&gt; connect(3)  = 1  identification flag of \f$2^\circ\f$ vertex of 1° cell \n</span>
-  <span class="c">!&gt; connect(4)  = 2  identification flag of \f$3^\circ\f$ vertex of 1° cell \n</span>
-  <span class="c">!&gt; connect(5)  = 3  identification flag of \f$4^\circ\f$ vertex of 1° cell \n</span>
-  <span class="c">!&gt; connect(6)  = 4  identification flag of \f$5^\circ\f$ vertex of 1° cell \n</span>
-  <span class="c">!&gt; connect(7)  = 5  identification flag of \f$6^\circ\f$ vertex of 1° cell \n</span>
-  <span class="c">!&gt; connect(8)  = 6  identification flag of \f$7^\circ\f$ vertex of 1° cell \n</span>
-  <span class="c">!&gt; connect(9)  = 7  identification flag of \f$8^\circ\f$ vertex of 1° cell \n</span>
-  <span class="c">!&gt; second cell \n</span>
-  <span class="c">!&gt; connect(10) = 5  number of vertices of \f$2^\circ \f$cell \n</span>
-  <span class="c">!&gt; connect(11) = 0  identification flag of \f$1^\circ\f$ vertex of 2° cell \n</span>
-  <span class="c">!&gt; connect(12) = 1  identification flag of \f$2^\circ\f$ vertex of 2° cell \n</span>
-  <span class="c">!&gt; connect(13) = 2  identification flag of \f$3^\circ\f$ vertex of 2° cell \n</span>
-  <span class="c">!&gt; connect(14) = 3  identification flag of \f$4^\circ\f$ vertex of 2° cell \n</span>
-  <span class="c">!&gt; connect(15) = 8  identification flag of \f$5^\circ\f$ vertex of 2° cell \n</span>
+  <span class="c">!&gt; The above equation !&gt; gives \f$dc=2+8+5=15\f$. The connectivity vector for this mesh can be:</span>
+  <span class="c">!&gt; first cell</span>
+  <span class="c">!&gt; connect(1)  = 8  number of vertices of \f$1^\circ\f$ cell</span>
+  <span class="c">!&gt; connect(2)  = 0  identification flag of \f$1^\circ\f$ vertex of 1° cell</span>
+  <span class="c">!&gt; connect(3)  = 1  identification flag of \f$2^\circ\f$ vertex of 1° cell</span>
+  <span class="c">!&gt; connect(4)  = 2  identification flag of \f$3^\circ\f$ vertex of 1° cell</span>
+  <span class="c">!&gt; connect(5)  = 3  identification flag of \f$4^\circ\f$ vertex of 1° cell</span>
+  <span class="c">!&gt; connect(6)  = 4  identification flag of \f$5^\circ\f$ vertex of 1° cell</span>
+  <span class="c">!&gt; connect(7)  = 5  identification flag of \f$6^\circ\f$ vertex of 1° cell</span>
+  <span class="c">!&gt; connect(8)  = 6  identification flag of \f$7^\circ\f$ vertex of 1° cell</span>
+  <span class="c">!&gt; connect(9)  = 7  identification flag of \f$8^\circ\f$ vertex of 1° cell</span>
+  <span class="c">!&gt; second cell</span>
+  <span class="c">!&gt; connect(10) = 5  number of vertices of \f$2^\circ \f$cell</span>
+  <span class="c">!&gt; connect(11) = 0  identification flag of \f$1^\circ\f$ vertex of 2° cell</span>
+  <span class="c">!&gt; connect(12) = 1  identification flag of \f$2^\circ\f$ vertex of 2° cell</span>
+  <span class="c">!&gt; connect(13) = 2  identification flag of \f$3^\circ\f$ vertex of 2° cell</span>
+  <span class="c">!&gt; connect(14) = 3  identification flag of \f$4^\circ\f$ vertex of 2° cell</span>
+  <span class="c">!&gt; connect(15) = 8  identification flag of \f$5^\circ\f$ vertex of 2° cell</span>
   <span class="c">!&gt; Note that the first 4 identification flags of pyramid vertices as the same of the first 4 identification flags of</span>
   <span class="c">!&gt; the hexahedron because the two cells share this face. It is also important to note that the identification flags start</span>
   <span class="c">!&gt; form $0$ value: this is impose to the VTK standard. The function VTK_CON does not calculate the connectivity vector: it</span>
   <span class="c">!&gt; writes the connectivity vector conforming the VTK standard, but does not calculate it.</span>
   <span class="c">!&gt; The vector variable \em cell_type must conform the VTK-legacy standard (see the file VTK-Standard at the</span>
   <span class="c">!&gt; Kitware homepage). It contains the</span>
-  <span class="c">!&gt; \em type of each cells. For the above example this vector is: \n</span>
-  <span class="c">!&gt; first cell \n</span>
-  <span class="c">!&gt; cell_type(1) = 12 hexahedron type of \f$1^\circ\f$ cell \n</span>
-  <span class="c">!&gt; second cell \n</span>
-  <span class="c">!&gt; cell_type(2) = 14 pyramid type of \f$2^\circ\f$ cell \n</span>
+  <span class="c">!&gt; \em type of each cells. For the above example this vector is:</span>
+  <span class="c">!&gt; first cell</span>
+  <span class="c">!&gt; cell_type(1) = 12 hexahedron type of \f$1^\circ\f$ cell</span>
+  <span class="c">!&gt; second cell</span>
+  <span class="c">!&gt; cell_type(2) = 14 pyramid type of \f$2^\circ\f$ cell</span>
   <span class="c">!&gt; @return E_IO: integer(I4P) error flag</span>
   <span class="c">!&gt; @ingroup Lib_VTK_IOPublicProcedure</span>
   <span class="k">function </span><span class="n">VTK_CON</span><span class="p">(</span><span class="n">NC</span><span class="p">,</span><span class="n">connect</span><span class="p">,</span><span class="n">cell_type</span><span class="p">,</span><span class="n">cf</span><span class="p">)</span> <span class="k">result</span><span class="p">(</span><span class="n">E_IO</span><span class="p">)</span>
@@ -5796,12 +5690,12 @@
   <span class="c">!&gt; saving of data variables indicating the \em type (node or cell centered) of variables that will be saved.</span>
   <span class="c">!&gt; @note A single file can contain both cell and node centered variables. In this case the VTK_DAT function must be</span>
   <span class="c">!&gt; called two times, before saving cell-centered variables and before saving node-centered variables.</span>
-  <span class="c">!&gt; Examples of usage are: \n</span>
-  <span class="c">!&gt; \b Node piece: \n</span>
+  <span class="c">!&gt; Examples of usage are:</span>
+  <span class="c">!&gt; \b Node piece:</span>
   <span class="c">!&gt; @code ...</span>
   <span class="c">!&gt; E_IO=VTK_DAT(50,&#39;node&#39;)</span>
   <span class="c">!&gt; ... @endcode</span>
-  <span class="c">!&gt; \b Cell piece: \n</span>
+  <span class="c">!&gt; \b Cell piece:</span>
   <span class="c">!&gt; @code ...</span>
   <span class="c">!&gt; E_IO=VTK_DAT(50,&#39;cell&#39;)</span>
   <span class="c">!&gt; ... @endcode</span>
@@ -6160,7 +6054,7 @@
 
   <span class="c">!&gt;Function for finalizing open file,  it has not inputs, @libvtk manages the file unit without the</span>
   <span class="c">!&gt;user&#39;s action.</span>
-  <span class="c">!&gt; @note An example of usage is: \n</span>
+  <span class="c">!&gt; @note An example of usage is:</span>
   <span class="c">!&gt; @code ...</span>
   <span class="c">!&gt; E_IO=VTK_END()</span>
   <span class="c">!&gt; ... @endcode</span>

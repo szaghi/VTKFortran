@@ -617,8 +617,58 @@
     
     <div class="col-lg-9" id='text'>
     <h2>public  interface VTK_GEO_XML</h2>
-	 
-    
+	 <p>VTK_GEO_XML is an interface to 15 different functions; there are 2 functions for each of 3 topologies supported and a function
+ for closing XML pieces: one function for mesh coordinates with R8P precision and one for mesh coordinates with R4P precision.
+ 1D/3D-rank arrays and packed API for any kinds</p>
+<ul>
+<li>For StructuredGrid there are 4 functions for each real kinds:<ul>
+<li>inputs are 1D-rank arrays: X[1:NN],Y[1:NN],Z[1:NN];</li>
+<li>inputs are 3D-rank arrays: X[nx1:nx2,ny1:ny2,nz1:nz2],Y[nx1:nx2,ny1:ny2,nz1:nz2],Z[nx1:nx2,ny1:ny2,nz1:nz2];</li>
+<li>input is 1D-rank array (packed API): XYZ[1:3,1:NN];</li>
+<li>input is 3D-rank array (packed API): XYZ[1:3,nx1:nx2,ny1:ny2,nz1:nz2].</li>
+</ul>
+</li>
+<li>For UnStructuredGrid there are 2 functions for each real kinds:<ul>
+<li>inputs are 1D arrays: X[1:NN],Y[1:NN],Z[1:NN];</li>
+<li>input is 1D array (packed API): XYZ[1:3,1:NN].</li>
+</ul>
+</li>
+</ul>
+<p>VTK_GEO_XML must be called after VTK_INI_XML. It saves the mesh geometry. The inputs that must be passed
+ change depending on the topologies chosen. Not all VTK topologies have been implemented (<em>polydata</em> topologies are absent).</p>
+<p><div class="alert alert-info" role="alert"><h4>Note</h4>The XML standard is more powerful than legacy. XML file can contain more than 1 mesh with its
+ associated variables. Thus there is the necessity to close each <em>pieces</em> that compose the data-set saved in the
+ XML file. The VTK_GEO_XML called in the <em>close piece</em> format is used just to close the
+ current piece before saving another piece or closing the file.</div></p>
+<h3>Examples of usage</h3>
+<h4>Structured grid calling</h4>
+<div class="codehilite"><pre> <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span> <span class="n">nx1</span><span class="p">,</span><span class="n">nx2</span><span class="p">,</span><span class="n">ny1</span><span class="p">,</span><span class="n">ny2</span><span class="p">,</span><span class="n">nz1</span><span class="p">,</span><span class="n">nz2</span><span class="p">,</span><span class="n">NN</span>
+ <span class="kt">real</span><span class="p">(</span><span class="n">R8P</span><span class="p">)</span><span class="kd">::</span>    <span class="n">X</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">NN</span><span class="p">),</span><span class="n">Y</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">NN</span><span class="p">),</span><span class="n">Z</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">NN</span><span class="p">)</span>
+ <span class="p">...</span>
+ <span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_GEO_XML</span><span class="p">(</span><span class="n">nx1</span><span class="p">,</span><span class="n">nx2</span><span class="p">,</span><span class="n">ny1</span><span class="p">,</span><span class="n">ny2</span><span class="p">,</span><span class="n">nz1</span><span class="p">,</span><span class="n">nz2</span><span class="p">,</span><span class="n">Nn</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Z</span><span class="p">)</span>
+</pre></div>
+
+
+<h4>Rectilinear grid calling</h4>
+<div class="codehilite"><pre> <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span> <span class="n">nx1</span><span class="p">,</span><span class="n">nx2</span><span class="p">,</span><span class="n">ny1</span><span class="p">,</span><span class="n">ny2</span><span class="p">,</span><span class="n">nz1</span><span class="p">,</span><span class="n">nz2</span>
+ <span class="kt">real</span><span class="p">(</span><span class="n">R8P</span><span class="p">)</span><span class="kd">::</span>    <span class="n">X</span><span class="p">(</span><span class="n">nx1</span><span class="p">:</span><span class="n">nx2</span><span class="p">),</span><span class="n">Y</span><span class="p">(</span><span class="n">ny1</span><span class="p">:</span><span class="n">ny2</span><span class="p">),</span><span class="n">Z</span><span class="p">(</span><span class="n">nz1</span><span class="p">:</span><span class="n">nz2</span><span class="p">)</span>
+ <span class="p">...</span>
+ <span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_GEO_XML</span><span class="p">(</span><span class="n">nx1</span><span class="p">,</span><span class="n">nx2</span><span class="p">,</span><span class="n">ny1</span><span class="p">,</span><span class="n">ny2</span><span class="p">,</span><span class="n">nz1</span><span class="p">,</span><span class="n">nz2</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Z</span><span class="p">)</span>
+</pre></div>
+
+
+<h4>Unstructured grid calling</h4>
+<div class="codehilite"><pre> <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span> <span class="n">Nn</span><span class="p">,</span><span class="n">Nc</span>
+ <span class="kt">real</span><span class="p">(</span><span class="n">R8P</span><span class="p">)</span><span class="kd">::</span>    <span class="n">X</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">Nn</span><span class="p">),</span><span class="n">Y</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">Nn</span><span class="p">),</span><span class="n">Z</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">Nn</span><span class="p">)</span>
+ <span class="p">...</span>
+ <span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_GEO_XML</span><span class="p">(</span><span class="n">Nn</span><span class="p">,</span><span class="n">Nc</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Z</span><span class="p">)</span>
+</pre></div>
+
+
+<h4>Closing piece calling</h4>
+<div class="codehilite"><pre> <span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_GEO_XML</span><span class="p">()</span>
+</pre></div>
+    <br>
 	
 	
 

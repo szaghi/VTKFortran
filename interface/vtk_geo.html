@@ -619,8 +619,46 @@
     
     <div class="col-lg-9" id='text'>
     <h2>public  interface VTK_GEO</h2>
-	 
-    
+	 <p>VTK_GEO is an interface to 16 different functions, there are 2 functions for each of 4 different topologies actually supported:
+ one function for mesh coordinates with R8P precision and one for mesh coordinates with R4P precision.</p>
+<p><div class="alert alert-info" role="alert"><h4>Note</h4>This function must be called after VTK_INI. It saves the mesh geometry. The inputs that must be passed change depending
+ on the topologies chosen. Not all VTK topologies have been implemented (<em>polydata</em> topologies are absent).</div></p>
+<h3>Examples of usage</h3>
+<h4>Structured points calling</h4>
+<div class="codehilite"><pre> <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span> <span class="n">Nx</span><span class="p">,</span><span class="n">Ny</span><span class="p">,</span><span class="n">Nz</span>
+ <span class="kt">real</span><span class="p">(</span><span class="n">I8P</span><span class="p">)</span><span class="kd">::</span>    <span class="n">X0</span><span class="p">,</span><span class="n">Y0</span><span class="p">,</span><span class="n">Z0</span><span class="p">,</span><span class="n">Dx</span><span class="p">,</span><span class="n">Dy</span><span class="p">,</span><span class="n">Dz</span>
+ <span class="p">...</span>
+ <span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_GEO</span><span class="p">(</span><span class="n">Nx</span><span class="p">,</span><span class="n">Ny</span><span class="p">,</span><span class="n">Nz</span><span class="p">,</span><span class="n">X0</span><span class="p">,</span><span class="n">Y0</span><span class="p">,</span><span class="n">Z0</span><span class="p">,</span><span class="n">Dx</span><span class="p">,</span><span class="n">Dy</span><span class="p">,</span><span class="n">Dz</span><span class="p">)</span>
+ <span class="p">...</span>
+</pre></div>
+
+
+<h4>Structured grid calling</h4>
+<div class="codehilite"><pre> <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span> <span class="n">Nx</span><span class="p">,</span><span class="n">Ny</span><span class="p">,</span><span class="n">Nz</span><span class="p">,</span><span class="n">Nnodes</span>
+ <span class="kt">real</span><span class="p">(</span><span class="n">R8P</span><span class="p">)</span><span class="kd">::</span>    <span class="n">X</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">Nnodes</span><span class="p">),</span><span class="n">Y</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">Nnodes</span><span class="p">),</span><span class="n">Z</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">Nnodes</span><span class="p">)</span>
+ <span class="p">...</span>
+ <span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_GEO</span><span class="p">(</span><span class="n">Nx</span><span class="p">,</span><span class="n">Ny</span><span class="p">,</span><span class="n">Nz</span><span class="p">,</span><span class="n">Nnodes</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Z</span><span class="p">)</span>
+ <span class="p">...</span>
+</pre></div>
+
+
+<h4>Rectilinear grid calling</h4>
+<div class="codehilite"><pre> <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span> <span class="n">Nx</span><span class="p">,</span><span class="n">Ny</span><span class="p">,</span><span class="n">Nz</span>
+ <span class="kt">real</span><span class="p">(</span><span class="n">R8P</span><span class="p">)</span><span class="kd">::</span>    <span class="n">X</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">Nx</span><span class="p">),</span><span class="n">Y</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">Ny</span><span class="p">),</span><span class="n">Z</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">Nz</span><span class="p">)</span>
+ <span class="p">...</span>
+ <span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_GEO</span><span class="p">(</span><span class="n">Nx</span><span class="p">,</span><span class="n">Ny</span><span class="p">,</span><span class="n">Nz</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Z</span><span class="p">)</span>
+ <span class="p">...</span>
+</pre></div>
+
+
+<h4>Unstructured grid calling</h4>
+<div class="codehilite"><pre> <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span> <span class="n">NN</span>
+ <span class="kt">real</span><span class="p">(</span><span class="n">R4P</span><span class="p">)</span><span class="kd">::</span>    <span class="n">X</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">NN</span><span class="p">),</span><span class="n">Y</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">NN</span><span class="p">),</span><span class="n">Z</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">NN</span><span class="p">)</span>
+ <span class="p">...</span>
+ <span class="n">E_IO</span><span class="o">=</span><span class="n">VTK_GEO</span><span class="p">(</span><span class="n">NN</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Z</span><span class="p">)</span>
+ <span class="p">...</span>
+</pre></div>
+    <br>
 	
 	
 
