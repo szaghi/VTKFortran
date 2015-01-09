@@ -1,5 +1,0 @@
-<map id="save_node_variables" name="save_node_variables">
-<area shape="rect" id="node3" href="$dc/d15/Test__Driver_8f90.html#a9cf9f077a18e51d156557b3bb72b996d" title="Subroutine for saving node&#45;located variables. " alt="" coords="199,5,276,35"/>
-<area shape="rect" id="node5" href="$d3/dc8/group__Lib__TestersPublicProcedure.html#ga9a20b522009796e25619c5fababe2dc6" title="Subroutine for testing all functions: R4P and R8P mesh data, 1D and 3D arrays inputs, standard (X,Y,Z,... " alt="" coords="325,5,480,35"/>
-<area shape="rect" id="node7" href="$db/d79/group__Test__DriverProgram.html#gace6497b24c8efebdc38efbc575a345b9" title="&quot;Driver&quot; program for testing Lib_VTK_IO functions. " alt="" coords="528,5,611,35"/>
-</map>

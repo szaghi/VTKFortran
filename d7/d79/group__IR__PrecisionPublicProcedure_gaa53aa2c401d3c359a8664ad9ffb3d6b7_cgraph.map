@@ -1,5 +1,0 @@
-<map id="ir_precision::ir_print" name="ir_precision::ir_print">
-<area shape="rect" id="node3" href="$d7/d79/group__IR__PrecisionPublicProcedure.html#gafa5b943c855757625cdb5d9530ec1844" title="Subroutine for initilizing module&#39;s variables that are not initialized into the definition specificat..." alt="" coords="191,13,316,43"/>
-<area shape="rect" id="node5" href="$d7/d79/group__IR__PrecisionPublicProcedure.html#gaf78144df1ed4b537f9608a7d16804684" title="Subroutine for checking the type of bit ordering (big or little endian) of the running architecture; ..." alt="" coords="365,5,496,51"/>
-<area shape="rect" id="node7" href="$d7/d79/group__IR__PrecisionPublicProcedure.html#ga8242dfafd2d8d64423aa70230aa2c6fa" title="Function for checking if the type of the bit ordering of the running architecture is little endian..." alt="" coords="545,5,681,51"/>
-</map>
