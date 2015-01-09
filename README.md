@@ -4,12 +4,10 @@
 [![Open bugs](https://badge.waffle.io/szaghi/Lib_VTK_IO.png?label=bug&title=Open%20Bugs)](https://waffle.io/szaghi/Lib_VTK_IO)
 
 # Lib\_VTK\_IO
-### Lib\_VTK\_IO, VTK IO in pure Fortran (2003)
-
-Lib\_VTK\_IO is a pure Fortran (2003) library to write and read data conforming the [VTK standard](http://www.vtk.org/).
+### Lib\_VTK\_IO, VTK IO in pure Fortran (2003+)
 
 + Lib\_VTK\_IO is a pure Fortran library to write and read data conforming the [VTK standard](http://www.vtk.org/);
-+ Lib\_VTK\_IO is Fortran 2003 standard compliant;
++ Lib\_VTK\_IO is Fortran 2003+ standard compliant;
 + Lib\_VTK\_IO supports parallel architectures by means OpenMP and MPI paradigms;
 + Lib\_VTK\_IO supports _ascii_, _binary_ and _base64_ file formats;
 + Lib\_VTK\_IO is a Free, Open Source Project.

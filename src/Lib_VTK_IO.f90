@@ -213,7 +213,7 @@ public:: VTK_END
 !> @brief Function for saving field data (global auxiliary data, eg time, step number, dataset name, etc).
 !> VTK_FLD_XML is an interface to 7 different functions, there are 2 functions for real field data, 4 functions for integer one
 !> and one function for open and close field data tag.
-!> @remark VTK_FLD_XML must be called after VTK_INI_XML and befor VTK_GEO_XML. It must always called three times at least: 1) for
+!> @remark VTK_FLD_XML must be called after VTK_INI_XML and before VTK_GEO_XML. It must always called three times at least: 1) for
 !> opening the FieldData tag, 2) for saving at least one FieldData entry and 3) for closing the FieldData tag.
 !> Examples of usage are: \n
 !> \b saving the time and step cicle counter of current dataset: \n
