@@ -11,4 +11,7 @@ display: public
          protected
          private
 
-{{../README.md}}
+{!README-Lib_VTK_IO.md!}
+
+### ChangeLog
+{!ChangeLog-Lib_VTK_IO.md!}
