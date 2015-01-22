@@ -136,17 +136,11 @@
       
       <a class="list-group-item" href="../proc/test_pstrg.html#var-nx1_p">nx1_p</a>
       
-      <a class="list-group-item" href="../proc/test_pstrg.html#var-4_I4P]">4_I4P]</a>
-      
       <a class="list-group-item" href="../proc/test_pstrg.html#var-nx2_p">nx2_p</a>
-      
-      <a class="list-group-item" href="../proc/test_pstrg.html#var-nx2]">nx2]</a>
       
       <a class="list-group-item" href="../proc/test_pstrg.html#var-nn">nn</a>
       
       <a class="list-group-item" href="../proc/test_pstrg.html#var-nn_p">nn_p</a>
-      
-      <a class="list-group-item" href="../proc/test_pstrg.html#var-(nx2_p(2)-nx2_p(1)+1)*(ny2-ny1+1)*(nz2-nz1+1)]">(nx2_p(2)-nx2_p(1)+1)*(ny2-ny1+1)*(nz2-nz1+1)]</a>
       
       <a class="list-group-item" href="../proc/test_pstrg.html#var-x">x</a>
       
@@ -754,21 +748,7 @@ public  subroutine test_pstrg()
   
   <td>public,</td>
   <td>parameter</td><td>::</td>
-  <td><strong>nx1_p</strong>(1:2)</td><td> =</td><td>[nx1</td><td></td>
-  
-</tr>
-
-  
-  
-  
-  
-<tr>
-  
-  <td><a class="anchor" name="var-4_I4P]"></a>integer(kind=I4P),</td>
-  
-  <td>public,</td>
-  <td>parameter</td><td>::</td>
-  <td><strong>4_I4P]</strong></td><td></td><td></td><td></td>
+  <td><strong>nx1_p</strong>(1:2)</td><td> =</td><td>[nx1,4_I4P]</td><td></td>
   
 </tr>
 
@@ -782,21 +762,7 @@ public  subroutine test_pstrg()
   
   <td>public,</td>
   <td>parameter</td><td>::</td>
-  <td><strong>nx2_p</strong>(1:2)</td><td> =</td><td>[4_I4P</td><td></td>
-  
-</tr>
-
-  
-  
-  
-  
-<tr>
-  
-  <td><a class="anchor" name="var-nx2]"></a>integer(kind=I4P),</td>
-  
-  <td>public,</td>
-  <td>parameter</td><td>::</td>
-  <td><strong>nx2]</strong></td><td></td><td></td><td></td>
+  <td><strong>nx2_p</strong>(1:2)</td><td> =</td><td>[4_I4P,nx2]</td><td></td>
   
 </tr>
 
@@ -824,21 +790,7 @@ public  subroutine test_pstrg()
   
   <td>public,</td>
   <td>parameter</td><td>::</td>
-  <td><strong>nn_p</strong>(1:2)</td><td> =</td><td>[(nx2_p(1)-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)</td><td></td>
-  
-</tr>
-
-  
-  
-  
-  
-<tr>
-  
-  <td><a class="anchor" name="var-(nx2_p(2)-nx2_p(1)+1)*(ny2-ny1+1)*(nz2-nz1+1)]"></a>integer(kind=I4P),</td>
-  
-  <td>public,</td>
-  <td>parameter</td><td>::</td>
-  <td><strong>(nx2_p(2)-nx2_p(1)+1)*(ny2-ny1+1)*(nz2-nz1+1)]</strong></td><td></td><td></td><td></td>
+  <td><strong>nn_p</strong>(1:2)</td><td> =</td><td>[(nx2_p(1)-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1),(nx2_p(2)-nx2_p(1)+1)*(ny2-ny1+1)*(nz2-nz1+1)]</td><td></td>
   
 </tr>
 

@@ -198,41 +198,13 @@
       
       <a class="list-group-item" href="../module/ir_precision.html#var-RPl">RPl</a>
       
-      <a class="list-group-item" href="../module/ir_precision.html#var-R8P">R8P</a>
-      
-      <a class="list-group-item" href="../module/ir_precision.html#var-R4P">R4P</a>
-      
-      <a class="list-group-item" href="../module/ir_precision.html#var-R_P]">R_P]</a>
-      
       <a class="list-group-item" href="../module/ir_precision.html#var-FRl">FRl</a>
-      
-      <a class="list-group-item" href="../module/ir_precision.html#var-FR8P">FR8P</a>
-      
-      <a class="list-group-item" href="../module/ir_precision.html#var-FR4P//"0"">FR4P//"0"</a>
-      
-      <a class="list-group-item" href="../module/ir_precision.html#var-FR_P]">FR_P]</a>
       
       <a class="list-group-item" href="../module/ir_precision.html#var-NIknd">NIknd</a>
       
       <a class="list-group-item" href="../module/ir_precision.html#var-RIl">RIl</a>
       
-      <a class="list-group-item" href="../module/ir_precision.html#var-I4P">I4P</a>
-      
-      <a class="list-group-item" href="../module/ir_precision.html#var-I2P">I2P</a>
-      
-      <a class="list-group-item" href="../module/ir_precision.html#var-I1P">I1P</a>
-      
-      <a class="list-group-item" href="../module/ir_precision.html#var-I_P]">I_P]</a>
-      
       <a class="list-group-item" href="../module/ir_precision.html#var-FIl">FIl</a>
-      
-      <a class="list-group-item" href="../module/ir_precision.html#var-FI4P">FI4P</a>
-      
-      <a class="list-group-item" href="../module/ir_precision.html#var-FI2P//"0"">FI2P//"0"</a>
-      
-      <a class="list-group-item" href="../module/ir_precision.html#var-FI1P//"1"">FI1P//"1"</a>
-      
-      <a class="list-group-item" href="../module/ir_precision.html#var-FI_P]">FI_P]</a>
       
       <a class="list-group-item" href="../module/ir_precision.html#var-MinR16P">MinR16P</a>
       
@@ -1069,49 +1041,7 @@
   
   <td>public,</td>
   <td>parameter</td><td>::</td>
-  <td><strong>RPl</strong>(1:NRknd)</td><td> =</td><td>[R16P</td><td></td>
-  
-</tr>
-
-  
-  
-  
-  
-<tr>
-  
-  <td><a class="anchor" name="var-R8P"></a>integer,</td>
-  
-  <td>public,</td>
-  <td>parameter</td><td>::</td>
-  <td><strong>R8P</strong></td><td></td><td></td><td></td>
-  
-</tr>
-
-  
-  
-  
-  
-<tr>
-  
-  <td><a class="anchor" name="var-R4P"></a>integer,</td>
-  
-  <td>public,</td>
-  <td>parameter</td><td>::</td>
-  <td><strong>R4P</strong></td><td></td><td></td><td></td>
-  
-</tr>
-
-  
-  
-  
-  
-<tr>
-  
-  <td><a class="anchor" name="var-R_P]"></a>integer,</td>
-  
-  <td>private,</td>
-  <td>parameter</td><td>::</td>
-  <td><strong>R_P]</strong></td><td></td><td></td><td><p>List of defined real kinds.</p></td>
+  <td><strong>RPl</strong>(1:NRknd)</td><td> =</td><td>[R16P,R8P,R4P,R_P]</td><td><p>List of defined real kinds.</p></td>
   
 </tr>
 
@@ -1125,49 +1055,7 @@
   
   <td>public,</td>
   <td>parameter</td><td>::</td>
-  <td><strong>FRl</strong>(1:NRknd)</td><td> =</td><td>[FR16P</td><td></td>
-  
-</tr>
-
-  
-  
-  
-  
-<tr>
-  
-  <td><a class="anchor" name="var-FR8P"></a>character(len=10),</td>
-  
-  <td>public,</td>
-  <td>parameter</td><td>::</td>
-  <td><strong>FR8P</strong></td><td></td><td></td><td></td>
-  
-</tr>
-
-  
-  
-  
-  
-<tr>
-  
-  <td><a class="anchor" name="var-FR4P//"0""></a>character(len=10),</td>
-  
-  <td>private,</td>
-  <td>parameter</td><td>::</td>
-  <td><strong>FR4P//"0"</strong></td><td></td><td></td><td></td>
-  
-</tr>
-
-  
-  
-  
-  
-<tr>
-  
-  <td><a class="anchor" name="var-FR_P]"></a>character(len=10),</td>
-  
-  <td>private,</td>
-  <td>parameter</td><td>::</td>
-  <td><strong>FR_P]</strong></td><td></td><td></td><td><p>List of defined real kinds output format.</p></td>
+  <td><strong>FRl</strong>(1:NRknd)</td><td> =</td><td>[FR16P,FR8P,FR4P//' ',FR_P]</td><td><p>List of defined real kinds output format.</p></td>
   
 </tr>
 
@@ -1195,63 +1083,7 @@
   
   <td>public,</td>
   <td>parameter</td><td>::</td>
-  <td><strong>RIl</strong>(1:NIknd)</td><td> =</td><td>[I8P</td><td></td>
-  
-</tr>
-
-  
-  
-  
-  
-<tr>
-  
-  <td><a class="anchor" name="var-I4P"></a>integer,</td>
-  
-  <td>public,</td>
-  <td>parameter</td><td>::</td>
-  <td><strong>I4P</strong></td><td></td><td></td><td></td>
-  
-</tr>
-
-  
-  
-  
-  
-<tr>
-  
-  <td><a class="anchor" name="var-I2P"></a>integer,</td>
-  
-  <td>public,</td>
-  <td>parameter</td><td>::</td>
-  <td><strong>I2P</strong></td><td></td><td></td><td></td>
-  
-</tr>
-
-  
-  
-  
-  
-<tr>
-  
-  <td><a class="anchor" name="var-I1P"></a>integer,</td>
-  
-  <td>public,</td>
-  <td>parameter</td><td>::</td>
-  <td><strong>I1P</strong></td><td></td><td></td><td></td>
-  
-</tr>
-
-  
-  
-  
-  
-<tr>
-  
-  <td><a class="anchor" name="var-I_P]"></a>integer,</td>
-  
-  <td>private,</td>
-  <td>parameter</td><td>::</td>
-  <td><strong>I_P]</strong></td><td></td><td></td><td><p>List of defined integer kinds.</p></td>
+  <td><strong>RIl</strong>(1:NIknd)</td><td> =</td><td>[I8P,I4P,I2P,I1P,I_P]</td><td><p>List of defined integer kinds.</p></td>
   
 </tr>
 
@@ -1265,63 +1097,7 @@
   
   <td>public,</td>
   <td>parameter</td><td>::</td>
-  <td><strong>FIl</strong>(1:NIknd)</td><td> =</td><td>[FI8P</td><td></td>
-  
-</tr>
-
-  
-  
-  
-  
-<tr>
-  
-  <td><a class="anchor" name="var-FI4P"></a>character(len=5),</td>
-  
-  <td>public,</td>
-  <td>parameter</td><td>::</td>
-  <td><strong>FI4P</strong></td><td></td><td></td><td></td>
-  
-</tr>
-
-  
-  
-  
-  
-<tr>
-  
-  <td><a class="anchor" name="var-FI2P//"0""></a>character(len=5),</td>
-  
-  <td>private,</td>
-  <td>parameter</td><td>::</td>
-  <td><strong>FI2P//"0"</strong></td><td></td><td></td><td></td>
-  
-</tr>
-
-  
-  
-  
-  
-<tr>
-  
-  <td><a class="anchor" name="var-FI1P//"1""></a>character(len=5),</td>
-  
-  <td>private,</td>
-  <td>parameter</td><td>::</td>
-  <td><strong>FI1P//"1"</strong></td><td></td><td></td><td></td>
-  
-</tr>
-
-  
-  
-  
-  
-<tr>
-  
-  <td><a class="anchor" name="var-FI_P]"></a>character(len=5),</td>
-  
-  <td>private,</td>
-  <td>parameter</td><td>::</td>
-  <td><strong>FI_P]</strong></td><td></td><td></td><td><p>List of defined integer kinds output format.</p></td>
+  <td><strong>FIl</strong>(1:NIknd)</td><td> =</td><td>[FI8P,FI4P,FI2P//' ',FI1P//' ',FI_P]</td><td><p>List of defined integer kinds output format.</p></td>
   
 </tr>
 
