@@ -49,6 +49,10 @@ Go to [Top](#top)
 ## Version History
 
 In the following the changelog of most important releases is reported.
+### v1.0.1
+##### Download [ZIP](https://github.com/szaghi/IR_Precision/archive/v1.0.1.zip) ball or [TAR](https://github.com/szaghi/IR_Precision/archive/v1.0.1.tar.gz) one
+Stable release. Fully backward compatible. Introduce `digit` function.
+
 ### v1.0.0
 ##### Download [ZIP](https://github.com/szaghi/IR_Precision/archive/v1.0.0.zip) ball or [TAR](https://github.com/szaghi/IR_Precision/archive/v1.0.0.tar.gz) one
 First Stable Release.
