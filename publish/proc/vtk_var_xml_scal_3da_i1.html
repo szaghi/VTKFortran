@@ -10,7 +10,7 @@
     <meta name="author" content="Chris MacMackin" >
     <link rel="icon" href="../favicon.png">
 
-    <title>VTM_WRF_XML &ndash; Lib_VTK_IO</title>
+    <title>VTK_VAR_XML_SCAL_3DA_I1 &ndash; Lib_VTK_IO</title>
 
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/pygments.css" rel="stylesheet">
@@ -80,7 +80,7 @@
     
   
   <div class="row">
-    <h1>VTM_WRF_XML
+    <h1>VTK_VAR_XML_SCAL_3DA_I1
     <small>Function</small>
     
     </h1>
@@ -107,7 +107,7 @@
   
      <li><a href='../module/lib_vtk_io.html'>Lib_VTK_IO</a></li>
   
-     <li class="active">VTM_WRF_XML</li>
+     <li class="active">VTK_VAR_XML_SCAL_3DA_I1</li>
   </ol>
   </div>
 </div>
@@ -122,7 +122,19 @@
     <div class="panel-heading text-left"><h3 class="panel-title">Variables</h3></div>
     <div class="list-group">
       
-      <a class="list-group-item" href="../proc/vtm_wrf_xml.html#var-f">f</a>
+      <a class="list-group-item" href="../proc/vtk_var_xml_scal_3da_i1.html#var-s_buffer">s_buffer</a>
+      
+      <a class="list-group-item" href="../proc/vtk_var_xml_scal_3da_i1.html#var-varp">varp</a>
+      
+      <a class="list-group-item" href="../proc/vtk_var_xml_scal_3da_i1.html#var-var64">var64</a>
+      
+      <a class="list-group-item" href="../proc/vtk_var_xml_scal_3da_i1.html#var-rf">rf</a>
+      
+      <a class="list-group-item" href="../proc/vtk_var_xml_scal_3da_i1.html#var-nx">nx</a>
+      
+      <a class="list-group-item" href="../proc/vtk_var_xml_scal_3da_i1.html#var-ny">ny</a>
+      
+      <a class="list-group-item" href="../proc/vtk_var_xml_scal_3da_i1.html#var-nz">nz</a>
       
     </div>
   </div>
@@ -579,7 +591,11 @@
       
       <a class="list-group-item" href="../proc/vtm_ini_xml.html">VTM_INI_XML</a>
       
-      <a class="list-group-item" href="../proc/vtm_wrf_xml.html">VTM_WRF_XML</a>
+      <a class="list-group-item" href="../interface/vtm_wrf_xml.html">VTM_WRF_XML</a>
+      
+      <a class="list-group-item" href="../proc/vtm_wrf_xml_array.html">VTM_WRF_XML_array</a>
+      
+      <a class="list-group-item" href="../proc/vtm_wrf_xml_string.html">VTM_WRF_XML_string</a>
       
     </div>
   </div>
@@ -589,7 +605,7 @@
     
     <div class="col-lg-9" id='text'>
     <h2>
-public  function VTM_WRF_XML(flist)
+private  function VTK_VAR_XML_SCAL_3DA_I1(NC_NN, varname, var, cf)
 </h2>
     
   
@@ -614,12 +630,57 @@ public  function VTM_WRF_XML(flist)
   
 <tr>
   
-  <td><a class="anchor" name="var-flist"></a>character(len=*),</td>
+  <td><a class="anchor" name="var-NC_NN"></a>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
   
   <td></td><td>::</td>
-  <td><strong>flist</strong>(:)</td><td><p>List of VTK-XML wrapped files.</p></td>
+  <td><strong>NC_NN</strong></td><td><p>Number of cells or nodes.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><a class="anchor" name="var-varname"></a>character(len=*),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>varname</strong></td><td><p>Variable name.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><a class="anchor" name="var-var"></a>integer(kind=I1P),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>var</strong>(1:,1:,1:)</td><td><p>Variable to be saved [1:Nx,1:ny,1:Nz].</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><a class="anchor" name="var-cf"></a>integer(kind=I4P),</td>
+  <td>intent(in),</td>
+  <td>optional</td>
+  
+  <td></td><td>::</td>
+  <td><strong>cf</strong></td><td><p>Current file index (for concurrent files IO).</p></td>
   
 </tr>
 
@@ -635,11 +696,11 @@ public  function VTM_WRF_XML(flist)
     
 	 <h3>Return Value <small><a class="anchor" name="var-E_IO"></a>integer(kind=I4P)
     </small></h3>
-    <p>Input/Output inquiring flag: 0 if IO is done, &gt; 0 if IO is not done.</p>
+    <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
     
     
     <h3>Description</h3>
-    <p>Function for saving the list of VTK-XML wrapped files by the actual block of the mutliblock VTM file.</p>
+    <p>Function for saving field of scalar variable (I1P, 3D array).</p>
     
     <br>
     
@@ -661,11 +722,95 @@ public  function VTM_WRF_XML(flist)
   
 <tr>
   
-  <td><a class="anchor" name="var-f"></a>integer(kind=I4P),</td>
+  <td><a class="anchor" name="var-s_buffer"></a>character(len=maxlen),</td>
   
   <td>public</td>
   <td></td><td>::</td>
-  <td><strong>f</strong></td><td></td><td></td><td><p>File counter.</p></td>
+  <td><strong>s_buffer</strong></td><td></td><td></td><td><p>Buffer string.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><a class="anchor" name="var-varp"></a>integer(kind=I1P),</td>
+  
+  <td>public,</td>
+  <td>allocatable</td><td>::</td>
+  <td><strong>varp</strong>(:)</td><td></td><td></td><td><p>Packed data.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><a class="anchor" name="var-var64"></a>character(len=1),</td>
+  
+  <td>public,</td>
+  <td>allocatable</td><td>::</td>
+  <td><strong>var64</strong>(:)</td><td></td><td></td><td><p>Variable encoded in base64.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><a class="anchor" name="var-rf"></a>integer(kind=I4P),</td>
+  
+  <td>public</td>
+  <td></td><td>::</td>
+  <td><strong>rf</strong></td><td></td><td></td><td><p>Real file index.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><a class="anchor" name="var-nx"></a>integer(kind=I4P),</td>
+  
+  <td>public</td>
+  <td></td><td>::</td>
+  <td><strong>nx</strong></td><td></td><td></td><td></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><a class="anchor" name="var-ny"></a>integer(kind=I4P),</td>
+  
+  <td>public</td>
+  <td></td><td>::</td>
+  <td><strong>ny</strong></td><td></td><td></td><td></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><a class="anchor" name="var-nz"></a>integer(kind=I4P),</td>
+  
+  <td>public</td>
+  <td></td><td>::</td>
+  <td><strong>nz</strong></td><td></td><td></td><td><p>Counters.</p></td>
   
 </tr>
 
