@@ -1,5 +1,6 @@
 !< Pure Fortran (2003+) library to write and read data conforming the VTK standard
 module Lib_VTK_IO
+!-----------------------------------------------------------------------------------------------------------------------------------
 !< Pure Fortran (2003+) library to write and read data conforming the VTK standard
 !<{!README-Lib_VTK_IO.md!}
 !<
