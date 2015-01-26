@@ -201,6 +201,27 @@ interface VTK_VAR_XML
                    VTK_VAR_XML_LIST_1DA_I2,VTK_VAR_XML_LIST_3DA_I2, & ! integer(I2P) list      1D/3D array
                    VTK_VAR_XML_LIST_1DA_I1,VTK_VAR_XML_LIST_3DA_I1    ! integer(I1P) list      1D/3D array
 endinterface
+interface VTM_WRF_XML
+  !< Procedure for saving the list of VTK-XML wrapped files by a mutliblock VTM file.
+  !<
+  !< VTK_WRF_XML is an interface to 2 different functions, one for files list passed as an array and one for files list passed
+  !< a single string. If a single string is used, the delimiter of each file can be customized, while the default values is '&'.
+  !<### Examples of usage
+  !<
+  !<#### Example with array files list: 3 files block with default delimiter
+  !<```fortran
+  !< E_IO = VTK_WRF_XML(flist=['file_1.vts','file_2.vts','file_3.vtu'])
+  !<```
+  !<#### Example with single string files list: 3 files block with default delimiter
+  !<```fortran
+  !< E_IO = VTK_WRF_XML(flist='file_1.vts&file_2.vts&file_3.vtu')
+  !<```
+  !<#### Example with single string files list: 2 files block with custom delimiter (!!)
+  !<```fortran
+  !< E_IO = VTK_WRF_XML(flist='file_1.vts!!file_2.vts',delimiter='!!')
+  !<```
+  module procedure VTM_WRF_XML_array,VTM_WRF_XML_string
+endinterface
 interface VTK_GEO
   !< Procedure for saving mesh with different topologies in VTK-legacy standard.
   !<
@@ -329,9 +350,9 @@ integer(I4P)::                     f    = 0_I4P !< Current VTK file index.
 ! VTM file data:
 type:: Type_VTM_File
   !< Derived type for handling VTM files.
-  integer(I4P):: u      = 0_I4P !< Logical unit.
-  integer(I4P):: blk    = 0_I4P !< Block index.
-  integer(I4P):: indent = 0_I4P !< Indent pointer.
+  integer(I4P):: u        = 0_I4P         !< Logical unit.
+  integer(I4P):: blk(1:2) = [0_I4P,0_I4P] !< Block indexes.
+  integer(I4P):: indent   = 0_I4P         !< Indent pointer.
 endtype Type_VTM_File
 type(Type_VTM_File):: vtm !< Global data of VTM files.
 !> @}
@@ -4494,13 +4515,14 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTM_INI_XML
 
-  function VTM_BLK_XML(block_action) result(E_IO)
+  function VTM_BLK_XML(block_action,name) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Function for opening or closing a block level of a VTM file.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  character(*), intent(IN):: block_action !< Block action: OPEN or CLOSE block.
-  integer(I4P)::             E_IO         !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(*),           intent(IN):: block_action !< Block action: OPEN or CLOSE block.
+  character(*), optional, intent(IN):: name         !< Block name.
+  integer(I4P)::                       E_IO         !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -4508,18 +4530,32 @@ contains
   select case(trim(Upper_Case(block_action)))
   case('OPEN')
     vtm%blk = vtm%blk + 1
-    write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<Block index="'//trim(str(.true.,vtm%blk))//'">'
+    if (present(name)) then
+      write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//                                     &
+                                             '<Block index="'//trim(str(.true.,(vtm%blk(1)+vtm%blk(2))))//&
+                                             '" name="'//trim(name)//'">'
+    else
+      write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//&
+                                             '<Block index="'//trim(str(.true.,(vtm%blk(1)+vtm%blk(2))))//'">'
+    endif
     vtm%indent = vtm%indent + 2
   case('CLOSE')
     vtm%indent = vtm%indent - 2 ; write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'</Block>'
+    vtm%blk(2) = -1
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTM_BLK_XML
 
-  function VTM_WRF_XML(flist) result(E_IO)
+  function VTM_WRF_XML_array(flist) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Function for saving the list of VTK-XML wrapped files by the actual block of the mutliblock VTM file.
+  !< @note the list is passed as an array.
+  !<
+  !<#### Example of usage: 3 files block with default delimiter
+  !<```fortran
+  !< E_IO = VTK_WRF_XML(flist=['file_1.vts','file_2.vts','file_3.vtu'])
+  !<```
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   character(*), intent(IN):: flist(:) !< List of VTK-XML wrapped files.
@@ -4531,11 +4567,71 @@ contains
   E_IO = -1_I4P
   do f=1,size(flist)
     write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<DataSet index="'//trim(str(.true.,f-1))//'" file="'// &
-                                           adjustl(trim(flist(f)))//'"/>'
+                                           trim(adjustl(flist(f)))//'"/>'
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction VTM_WRF_XML
+  endfunction VTM_WRF_XML_array
+
+  function VTM_WRF_XML_string(delimiter,flist) result(E_IO)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Function for saving the list of VTK-XML wrapped files by the actual block of the mutliblock VTM file.
+  !< @note the list is passed as a single string. The delimiter of each file can be customized: default value is "&". For supporting
+  !< compiler with not varying string support the maximum delimiter length is fixed to 50.
+  !<
+  !<### Examples of usage
+  !<
+  !<#### Example: 3 files block with default delimiter
+  !<```fortran
+  !< E_IO = VTK_WRF_XML(flist='file_1.vts&file_2.vts&file_3.vtu')
+  !<```
+  !<#### Example: 2 files block with custom delimiter (!!)
+  !<```fortran
+  !< E_IO = VTK_WRF_XML(flist='file_1.vts!!file_2.vts',delimiter='!!')
+  !<```
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  character(*), optional, intent(IN):: delimiter !< Delimiter of files into files list string.
+  character(*),           intent(IN):: flist     !< List of VTK-XML wrapped files.
+  integer(I4P)::                       E_IO      !< Input/Output inquiring flag: 0 if IO is done, > 0 if IO is not done.
+  integer(I4P)::                       f         !< File counter.
+  character(50)::                      delimit   !< Delimiter value.
+  character(len(flist))::              flistd    !< Dummy files list.
+  character(len(flist))::              fname     !< Dummy file name.
+  integer(I4P)::                       d_len     !< Delimiter character length.
+  integer(I4P)::                       i         !< Counter.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  E_IO = -1_I4P
+  delimit = '&' ; if (present(delimiter)) delimit = delimiter ; d_len = len_trim(delimit)
+  flistd = flist
+  if (len_trim(flistd)<=d_len) return ! no list to save
+  ! purging out leading and trailing delimeters
+  if (flistd(1:d_len)==trim(delimit)) flistd = flistd(d_len+1:)
+  if (flistd(len_trim(flistd)-d_len:)==trim(delimit)) flistd = flistd(1:len_trim(flistd)-d_len-1)
+  f = -1
+  do while(len_trim(flistd)>0)
+    f = f + 1
+    i = index(flistd,trim(delimit))
+    if (i>0) then
+      fname = flistd(1:i-1)
+      write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<DataSet index="'//trim(str(.true.,f))//'" file="'// &
+                                             trim(adjustl(fname))//'"/>'
+      flistd = trim(flistd(i+1:))
+    elseif (len_trim(flistd)>0) then
+      fname = trim(adjustl(flistd))
+      write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<DataSet index="'//trim(str(.true.,f))//'" file="'// &
+                                             trim(adjustl(fname))//'"/>'
+
+      flistd = ''
+    else
+      exit
+    endif
+  enddo
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction VTM_WRF_XML_string
 
   function VTM_END_XML() result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------

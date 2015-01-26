@@ -1,3 +1,23 @@
+### Version v1.1.1
+
++ Extend VTM_WRF_XML function, now it is an interface to two functions, one for files list passed as an array and one for files list passed a single string. If a single string is used, the delimiter of each file can be customized, while the default values is '&';
++ The internal API of Type_VTM_File is changed: the `blk` member is now an array instead of a scalar to allow nested blocks.
+
+##### Examples of usage
+
+###### Example with array files list: 3 files block with default delimiter
+```fortran
+ E_IO = VTK_WRF_XML(flist=['file_1.vts','file_2.vts','file_3.vtu'])
+```
+###### Example with single string files list: 3 files block with default delimiter
+```fortran
+ E_IO = VTK_WRF_XML(flist='file_1.vts&file_2.vts&file_3.vtu')
+```
+###### Example with single string files list: 2 files block with custom delimiter (!!)
+```fortran
+ E_IO = VTK_WRF_XML(flist='file_1.vts!!file_2.vts',delimiter='!!')
+```
+
 ### Version v1.1.0
 
 + Added packed API and 3D(or higher) arrays for VTK_VAR_XML function: this avoids the necessity of explicit reshape of multi-dimensional arrays containing saved variables in VAR callings; the following inputs are now available:

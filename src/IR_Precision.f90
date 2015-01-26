@@ -2,10 +2,11 @@
 module IR_Precision
 !-----------------------------------------------------------------------------------------------------------------------------------
 !< Pure Fortran (2003+) library for ensuring codes portability
+!<{!README-IR_Precision.md!}
 !<
-!< The library makes available many portable kind-parameters and many useful procedures to deal with them.
-!< @note It is worth noting that the library provides procedures to convert a strings to numbers and vice versa, a function to
-!< check the endianism of the running calculator.
+!<### ChangeLog
+!<
+!<{!ChangeLog-IR_Precision.md!}
 !-----------------------------------------------------------------------------------------------------------------------------------
 USE, intrinsic:: ISO_FORTRAN_ENV, only: stdout => OUTPUT_UNIT, stderr => ERROR_UNIT ! Standard output/error logical units.
 !-----------------------------------------------------------------------------------------------------------------------------------
