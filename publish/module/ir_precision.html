@@ -325,6 +325,8 @@
       
       <a class="list-group-item" href="../module/ir_precision.html#intr-bcton">bcton</a>
       
+      <a class="list-group-item" href="../module/ir_precision.html#intr-digit">digit</a>
+      
     </div>
   </div>
   
@@ -436,6 +438,14 @@
       
       <a class="list-group-item" href="../module/ir_precision.html#proc-bctoi_I1P">bctoi_I1P</a>
       
+      <a class="list-group-item" href="../module/ir_precision.html#proc-digit_I8">digit_I8</a>
+      
+      <a class="list-group-item" href="../module/ir_precision.html#proc-digit_I4">digit_I4</a>
+      
+      <a class="list-group-item" href="../module/ir_precision.html#proc-digit_I2">digit_I2</a>
+      
+      <a class="list-group-item" href="../module/ir_precision.html#proc-digit_I1">digit_I1</a>
+      
     </div>
   </div>
   
@@ -512,11 +522,16 @@
 <p>Go to <a href="#top">Top</a></p>
 <h2>Version History</h2>
 <p>In the following the changelog of most important releases is reported.</p>
+<h3>v1.0.1</h3>
+<h5>Download <a href="https://github.com/szaghi/IR_Precision/archive/v1.0.1.zip">ZIP</a> ball or <a href="https://github.com/szaghi/IR_Precision/archive/v1.0.1.tar.gz">TAR</a> one</h5>
+<p>Stable release. Fully backward compatible. Introduce <code>digit</code> function.</p>
 <h3>v1.0.0</h3>
 <h5>Download <a href="https://github.com/szaghi/IR_Precision/archive/v1.0.0.zip">ZIP</a> ball or <a href="https://github.com/szaghi/IR_Precision/archive/v1.0.0.tar.gz">TAR</a> one</h5>
 <p>First Stable Release.</p>
 <p>Go to <a href="#top">Top</a></p>
 <h3>ChangeLog</h3>
+<h3>Version v1.0.1</h3>
+<p>Stable release. Fully backward compatible. Introduce <code>digit</code> function.</p>
 <h3>Version v1.0.0</h3>
 <p>First stable release.</p>
     <br>
@@ -5431,6 +5446,266 @@ private  function <a href='../proc/bctoi_i1p.html'>bctoi_I1P</a>(bstr, knd)
 </div>
 
     
+	   
+<div class="panel panel-default">
+  <div class="panel-heading codesum"><a class="anchor" name="intr-digit"></a><h3>public  interface <a href='../interface/digit.html'>digit</a>
+    
+  </h3></div>
+  
+  <div class="panel-body">
+    
+
+
+    <p>Procedure for computing the number of digits in decimal base of the input integer.</p>
+  </div>
+  
+  <ul class="list-group">
+  
+  
+    <li class="list-group-item">
+    
+    
+    <h3>
+private  function <a href='../proc/digit_i8.html'>digit_I8</a>(n)
+</h3>
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><a class="anchor" name="var-n"></a>integer(kind=I8P),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>n</strong></td><td><p>Input integer.</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small><a class="anchor" name="var-digit"></a>integer(kind=I4P)
+  </small></h4>
+  <p>Number of digits.</p>
+    
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for computing the number of digits in decimal base of the input integer.</p>
+        
+
+    </li>
+  
+    <li class="list-group-item">
+    
+    
+    <h3>
+private  function <a href='../proc/digit_i4.html'>digit_I4</a>(n)
+</h3>
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><a class="anchor" name="var-n"></a>integer(kind=I4P),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>n</strong></td><td><p>Input integer.</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small><a class="anchor" name="var-digit"></a>integer(kind=I4P)
+  </small></h4>
+  <p>Number of digits.</p>
+    
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for computing the number of digits in decimal base of the input integer.</p>
+        
+
+    </li>
+  
+    <li class="list-group-item">
+    
+    
+    <h3>
+private  function <a href='../proc/digit_i2.html'>digit_I2</a>(n)
+</h3>
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><a class="anchor" name="var-n"></a>integer(kind=I2P),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>n</strong></td><td><p>Input integer.</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small><a class="anchor" name="var-digit"></a>integer(kind=I4P)
+  </small></h4>
+  <p>Number of digits.</p>
+    
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for computing the number of digits in decimal base of the input integer.</p>
+        
+
+    </li>
+  
+    <li class="list-group-item">
+    
+    
+    <h3>
+private  function <a href='../proc/digit_i1.html'>digit_I1</a>(n)
+</h3>
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><a class="anchor" name="var-n"></a>integer(kind=I1P),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>n</strong></td><td><p>Input integer.</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small><a class="anchor" name="var-digit"></a>integer(kind=I4P)
+  </small></h4>
+  <p>Number of digits.</p>
+    
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for computing the number of digits in decimal base of the input integer.</p>
+        
+
+    </li>
+  
+  </ul>
+</div>
+
+    
     </section>
 	 <br>
     
@@ -9088,6 +9363,258 @@ private  function <a href='../proc/bctoi_i1p.html'>bctoi_I1P</a>(bstr, knd)
 
 
        <p>Procedure for converting bit-string to integer. This function achieves casting of bit-string to integer.</p>
+        
+
+  </div>
+  </div>
+
+    
+    
+  <div class="panel panel-default">
+  <div class="panel-heading codesum"><a class="anchor" name="proc-digit_I8"></a><h3>
+private  function <a href='../proc/digit_i8.html'>digit_I8</a>(n)
+</h3></div>
+  <div class="panel-body">
+       
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><a class="anchor" name="var-n"></a>integer(kind=I8P),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>n</strong></td><td><p>Input integer.</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small><a class="anchor" name="var-digit"></a>integer(kind=I4P)
+  </small></h4>
+  <p>Number of digits.</p>
+    
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for computing the number of digits in decimal base of the input integer.</p>
+        
+
+  </div>
+  </div>
+
+    
+    
+  <div class="panel panel-default">
+  <div class="panel-heading codesum"><a class="anchor" name="proc-digit_I4"></a><h3>
+private  function <a href='../proc/digit_i4.html'>digit_I4</a>(n)
+</h3></div>
+  <div class="panel-body">
+       
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><a class="anchor" name="var-n"></a>integer(kind=I4P),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>n</strong></td><td><p>Input integer.</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small><a class="anchor" name="var-digit"></a>integer(kind=I4P)
+  </small></h4>
+  <p>Number of digits.</p>
+    
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for computing the number of digits in decimal base of the input integer.</p>
+        
+
+  </div>
+  </div>
+
+    
+    
+  <div class="panel panel-default">
+  <div class="panel-heading codesum"><a class="anchor" name="proc-digit_I2"></a><h3>
+private  function <a href='../proc/digit_i2.html'>digit_I2</a>(n)
+</h3></div>
+  <div class="panel-body">
+       
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><a class="anchor" name="var-n"></a>integer(kind=I2P),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>n</strong></td><td><p>Input integer.</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small><a class="anchor" name="var-digit"></a>integer(kind=I4P)
+  </small></h4>
+  <p>Number of digits.</p>
+    
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for computing the number of digits in decimal base of the input integer.</p>
+        
+
+  </div>
+  </div>
+
+    
+    
+  <div class="panel panel-default">
+  <div class="panel-heading codesum"><a class="anchor" name="proc-digit_I1"></a><h3>
+private  function <a href='../proc/digit_i1.html'>digit_I1</a>(n)
+</h3></div>
+  <div class="panel-body">
+       
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><a class="anchor" name="var-n"></a>integer(kind=I1P),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>n</strong></td><td><p>Input integer.</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small><a class="anchor" name="var-digit"></a>integer(kind=I4P)
+  </small></h4>
+  <p>Number of digits.</p>
+    
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for computing the number of digits in decimal base of the input integer.</p>
         
 
   </div>

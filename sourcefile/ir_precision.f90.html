@@ -185,6 +185,7 @@
 <span class="k">public</span><span class="kd">::</span> <span class="n">check_endian</span>
 <span class="k">public</span><span class="kd">::</span> <span class="nb">bit_size</span><span class="p">,</span><span class="n">byte_size</span>
 <span class="k">public</span><span class="kd">::</span> <span class="n">str</span><span class="p">,</span> <span class="n">strz</span><span class="p">,</span> <span class="n">cton</span><span class="p">,</span> <span class="n">bstr</span><span class="p">,</span> <span class="n">bcton</span>
+<span class="k">public</span><span class="kd">::</span> <span class="n">digit</span>
 <span class="k">public</span><span class="kd">::</span> <span class="n">ir_initialized</span><span class="p">,</span><span class="n">IR_Init</span>
 <span class="k">public</span><span class="kd">::</span> <span class="n">IR_Print</span>
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
@@ -377,6 +378,10 @@
                    <span class="n">bctoi_I4P</span><span class="p">,</span>  <span class="p">&amp;</span>
                    <span class="n">bctoi_I2P</span><span class="p">,</span>  <span class="p">&amp;</span>
                    <span class="n">bctoi_I1P</span>
+<span class="n">endinterface</span>
+<span class="k">interface </span><span class="n">digit</span>
+  <span class="c">!&lt; Procedure for computing the number of digits in decimal base of the input integer.</span>
+  <span class="k">module procedure </span><span class="n">digit_I8</span><span class="p">,</span><span class="n">digit_I4</span><span class="p">,</span><span class="n">digit_I2</span><span class="p">,</span><span class="n">digit_I1</span>
 <span class="n">endinterface</span>
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
 <span class="k">contains</span>
@@ -1285,6 +1290,74 @@
   <span class="k">return</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="n">endfunction</span> <span class="n">bctoi_I1P</span>
+
+  <span class="k">elemental function </span><span class="n">digit_I8</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">result</span><span class="p">(</span><span class="n">digit</span><span class="p">)</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="c">!&lt; Procedure for computing the number of digits in decimal base of the input integer.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">implicit none</span>
+<span class="k">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I8P</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span> <span class="n">n</span>     <span class="c">!&lt; Input integer.</span>
+  <span class="kt">character</span><span class="p">(</span><span class="n">DI8P</span><span class="p">)</span><span class="kd">::</span>          <span class="n">str</span>   <span class="c">!&lt; Returned string containing input number plus padding zeros.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span>             <span class="n">digit</span> <span class="c">!&lt; Number of digits.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">write</span><span class="p">(</span><span class="n">str</span><span class="p">,</span><span class="n">FI8P</span><span class="p">)</span> <span class="nb">abs</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>         <span class="c">! Casting of n to string.</span>
+  <span class="n">digit</span> <span class="o">=</span> <span class="nb">len_trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">str</span><span class="p">))</span> <span class="c">! Calculating the digits number of n.</span>
+  <span class="k">return</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="n">endfunction</span> <span class="n">digit_I8</span>
+
+  <span class="k">elemental function </span><span class="n">digit_I4</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">result</span><span class="p">(</span><span class="n">digit</span><span class="p">)</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="c">!&lt; Procedure for computing the number of digits in decimal base of the input integer.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">implicit none</span>
+<span class="k">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span> <span class="n">n</span>     <span class="c">!&lt; Input integer.</span>
+  <span class="kt">character</span><span class="p">(</span><span class="n">DI4P</span><span class="p">)</span><span class="kd">::</span>          <span class="n">str</span>   <span class="c">!&lt; Returned string containing input number plus padding zeros.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span>             <span class="n">digit</span> <span class="c">!&lt; Number of digits.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">write</span><span class="p">(</span><span class="n">str</span><span class="p">,</span><span class="n">FI4P</span><span class="p">)</span> <span class="nb">abs</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>         <span class="c">! Casting of n to string.</span>
+  <span class="n">digit</span> <span class="o">=</span> <span class="nb">len_trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">str</span><span class="p">))</span> <span class="c">! Calculating the digits number of n.</span>
+  <span class="k">return</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="n">endfunction</span> <span class="n">digit_I4</span>
+
+  <span class="k">elemental function </span><span class="n">digit_I2</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">result</span><span class="p">(</span><span class="n">digit</span><span class="p">)</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="c">!&lt; Procedure for computing the number of digits in decimal base of the input integer.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">implicit none</span>
+<span class="k">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I2P</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span> <span class="n">n</span>     <span class="c">!&lt; Input integer.</span>
+  <span class="kt">character</span><span class="p">(</span><span class="n">DI2P</span><span class="p">)</span><span class="kd">::</span>          <span class="n">str</span>   <span class="c">!&lt; Returned string containing input number plus padding zeros.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span>             <span class="n">digit</span> <span class="c">!&lt; Number of digits.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">write</span><span class="p">(</span><span class="n">str</span><span class="p">,</span><span class="n">FI2P</span><span class="p">)</span> <span class="nb">abs</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>         <span class="c">! Casting of n to string.</span>
+  <span class="n">digit</span> <span class="o">=</span> <span class="nb">len_trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">str</span><span class="p">))</span> <span class="c">! Calculating the digits number of n.</span>
+  <span class="k">return</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="n">endfunction</span> <span class="n">digit_I2</span>
+
+  <span class="k">elemental function </span><span class="n">digit_I1</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">result</span><span class="p">(</span><span class="n">digit</span><span class="p">)</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="c">!&lt; Procedure for computing the number of digits in decimal base of the input integer.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">implicit none</span>
+<span class="k">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span> <span class="n">n</span>     <span class="c">!&lt; Input integer.</span>
+  <span class="kt">character</span><span class="p">(</span><span class="n">DI1P</span><span class="p">)</span><span class="kd">::</span>          <span class="n">str</span>   <span class="c">!&lt; Returned string containing input number plus padding zeros.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span>             <span class="n">digit</span> <span class="c">!&lt; Number of digits.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">write</span><span class="p">(</span><span class="n">str</span><span class="p">,</span><span class="n">FI1P</span><span class="p">)</span> <span class="nb">abs</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>         <span class="c">! Casting of n to string.</span>
+  <span class="n">digit</span> <span class="o">=</span> <span class="nb">len_trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">str</span><span class="p">))</span> <span class="c">! Calculating the digits number of n.</span>
+  <span class="k">return</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="n">endfunction</span> <span class="n">digit_I1</span>
 
   <span class="k">subroutine </span><span class="n">IR_init</span><span class="p">()</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
