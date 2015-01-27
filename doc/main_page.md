@@ -7,6 +7,7 @@ author: Stefano Zaghi
 github: https://github.com/szaghi
 email: stefano.zaghi@gmail.com
 docmark: <
+md_extensions: markdown_checklist.extension
 display: public
          protected
          private
