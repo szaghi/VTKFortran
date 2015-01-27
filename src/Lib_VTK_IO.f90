@@ -343,7 +343,7 @@ type:: Type_VTK_File
   integer(I8P)::          ioffset  = 0_I8P !< Offset pointer.
   integer(I4P)::          indent   = 0_I4P !< Indent pointer.
   contains
-    procedure:: byte_update ! Procedure for updating N_Byte and ioffset pointer.
+    procedure:: byte_update !< Procedure for updating N_Byte and ioffset pointer.
 endtype Type_VTK_File
 type(Type_VTK_File), allocatable:: vtk(:)       !< Global data of VTK files [1:Nvtk].
 integer(I4P)::                     Nvtk = 0_I4P !< Number of (concurrent) VTK files.
@@ -360,7 +360,7 @@ type(Type_VTM_File):: vtm !< Global data of VTM files.
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
   ! The library uses five auxiliary procedures that are private thus they cannot be called outside the library.
-  integer function Get_Unit(Free_Unit)
+  function Get_Unit(Free_Unit) result(funit)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Function for getting a free logic unit.
   !<
@@ -369,6 +369,7 @@ contains
   !< but it will choice one that is free.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
+  integer::                        funit     !< Free logic unit.
   integer, intent(OUT), optional:: Free_Unit !< Free logic unit.
   integer::                        n1        !< Counter.
   integer::                        ios       !< Inquiring flag.
@@ -376,14 +377,15 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  Get_Unit = -1
+  funit = -1
+  if (present(Free_Unit)) Free_Unit = funit
   n1=1
   do
     if ((n1/=stdout).AND.(n1/=stderr)) then
       inquire(unit=n1,opened=lopen,iostat=ios)
       if (ios==0) then
         if (.NOT.lopen) then
-          Get_Unit = n1 ; if (present(Free_Unit)) Free_Unit = Get_Unit
+          funit = n1 ; if (present(Free_Unit)) Free_Unit = funit
           return
         endif
       endif

@@ -14,9 +14,6 @@
 
 Lib\_VTK\_IO has a comprehensive [wiki](https://github.com/szaghi/Lib_VTK_IO/wiki). Moreover, the API is well documented, on the [GitHub pages](http://szaghi.github.com/Lib_VTK_IO/index.html) of the project.
 
-* [ ] test
-* [X] ol
-
 Go to [Top](#top)
 
 ## Team Members
