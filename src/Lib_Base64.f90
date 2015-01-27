@@ -1,6 +1,12 @@
-!< summary: Pure Fortran (2003+) library to encode/decode data in base64
+!< BeFoR64, Base64 encoding/decoding library for FoRtran poor men
 module Lib_Base64
-!< summary: Pure Fortran (2003+) library to encode/decode data in base64
+!-----------------------------------------------------------------------------------------------------------------------------------
+!< BeFoR64, Base64 encoding/decoding library for FoRtran poor men
+!<{!README-BeFoR64.md!}
+!<
+!<### ChangeLog
+!<
+!<{!ChangeLog-BeFoR64.md!}
 !-----------------------------------------------------------------------------------------------------------------------------------
 USE IR_Precision ! Integers and reals precision definition.
 !-----------------------------------------------------------------------------------------------------------------------------------
