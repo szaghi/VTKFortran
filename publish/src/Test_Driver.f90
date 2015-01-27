@@ -1,6 +1,6 @@
-!< summary: Testing program for Lib_VTK_IO
+!< Testing program for Lib_VTK_IO, a pure Fortran (2003+) library to write and read data conforming the VTK standard
 module Lib_Testers
-!< summary: Library of procedures for testing Lib_VTK_IO and for providing practical examples.
+!< Module library of procedures for testing Lib_VTK_IO and for providing practical examples.
 !-----------------------------------------------------------------------------------------------------------------------------------
 USE IR_Precision
 USE Lib_VTK_IO
@@ -911,7 +911,7 @@ endmodule Lib_Testers
 
 program Test_Driver
 !-----------------------------------------------------------------------------------------------------------------------------------
-!< Testing program for Lib_VTK_IO
+!< Testing program for Lib_VTK_IO, a pure Fortran (2003+) library to write and read data conforming the VTK standard
 !<
 !<### Usage
 !< For printing help message for usage run it without command line arguments
