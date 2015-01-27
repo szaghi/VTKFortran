@@ -499,7 +499,7 @@
   <span class="kt">integer</span><span class="p">(</span><span class="n">I8P</span><span class="p">)</span><span class="kd">::</span>          <span class="n">ioffset</span>  <span class="o">=</span> <span class="mi">0_I8P</span> <span class="c">!&lt; Offset pointer.</span>
   <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span>          <span class="n">indent</span>   <span class="o">=</span> <span class="mi">0_I4P</span> <span class="c">!&lt; Indent pointer.</span>
   <span class="k">contains</span>
-<span class="k">    procedure</span><span class="kd">::</span> <span class="n">byte_update</span> <span class="c">! Procedure for updating N_Byte and ioffset pointer.</span>
+<span class="k">    procedure</span><span class="kd">::</span> <span class="n">byte_update</span> <span class="c">!&lt; Procedure for updating N_Byte and ioffset pointer.</span>
 <span class="n">endtype</span> <span class="n">Type_VTK_File</span>
 <span class="k">type</span><span class="p">(</span><span class="n">Type_VTK_File</span><span class="p">),</span> <span class="k">allocatable</span><span class="kd">::</span> <span class="n">vtk</span><span class="p">(:)</span>       <span class="c">!&lt; Global data of VTK files [1:Nvtk].</span>
 <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span>                     <span class="n">Nvtk</span> <span class="o">=</span> <span class="mi">0_I4P</span> <span class="c">!&lt; Number of (concurrent) VTK files.</span>
@@ -516,7 +516,7 @@
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
 <span class="k">contains</span>
   <span class="c">! The library uses five auxiliary procedures that are private thus they cannot be called outside the library.</span>
-  <span class="kt">integer </span><span class="k">function </span><span class="n">Get_Unit</span><span class="p">(</span><span class="n">Free_Unit</span><span class="p">)</span>
+  <span class="k">function </span><span class="n">Get_Unit</span><span class="p">(</span><span class="n">Free_Unit</span><span class="p">)</span> <span class="k">result</span><span class="p">(</span><span class="n">funit</span><span class="p">)</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="c">!&lt; Function for getting a free logic unit.</span>
   <span class="c">!&lt;</span>
@@ -525,21 +525,23 @@
   <span class="c">!&lt; but it will choice one that is free.</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="k">implicit none</span>
-<span class="k">  </span><span class="kt">integer</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">),</span> <span class="k">optional</span><span class="kd">::</span> <span class="n">Free_Unit</span> <span class="c">!&lt; Free logic unit.</span>
+<span class="k">  </span><span class="kt">integer</span><span class="kd">::</span>                        <span class="n">funit</span>     <span class="c">!&lt; Free logic unit.</span>
+  <span class="kt">integer</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">),</span> <span class="k">optional</span><span class="kd">::</span> <span class="n">Free_Unit</span> <span class="c">!&lt; Free logic unit.</span>
   <span class="kt">integer</span><span class="kd">::</span>                        <span class="n">n1</span>        <span class="c">!&lt; Counter.</span>
   <span class="kt">integer</span><span class="kd">::</span>                        <span class="n">ios</span>       <span class="c">!&lt; Inquiring flag.</span>
   <span class="kt">logical</span><span class="kd">::</span>                        <span class="n">lopen</span>     <span class="c">!&lt; Inquiring flag.</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
 
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
-  <span class="n">Get_Unit</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+  <span class="n">funit</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">Free_Unit</span><span class="p">))</span> <span class="n">Free_Unit</span> <span class="o">=</span> <span class="n">funit</span>
   <span class="n">n1</span><span class="o">=</span><span class="mi">1</span>
   <span class="k">do</span>
 <span class="k">    if</span> <span class="p">((</span><span class="n">n1</span><span class="o">/=</span><span class="n">stdout</span><span class="p">).</span><span class="nb">AND</span><span class="p">.(</span><span class="n">n1</span><span class="o">/=</span><span class="n">stderr</span><span class="p">))</span> <span class="k">then</span>
 <span class="k">      inquire</span><span class="p">(</span><span class="n">unit</span><span class="o">=</span><span class="n">n1</span><span class="p">,</span><span class="n">opened</span><span class="o">=</span><span class="n">lopen</span><span class="p">,</span><span class="n">iostat</span><span class="o">=</span><span class="n">ios</span><span class="p">)</span>
       <span class="k">if</span> <span class="p">(</span><span class="n">ios</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="k">then</span>
 <span class="k">        if</span> <span class="p">(.</span><span class="nb">NOT</span><span class="p">.</span><span class="n">lopen</span><span class="p">)</span> <span class="k">then</span>
-<span class="k">          </span><span class="n">Get_Unit</span> <span class="o">=</span> <span class="n">n1</span> <span class="p">;</span> <span class="k">if</span> <span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">Free_Unit</span><span class="p">))</span> <span class="n">Free_Unit</span> <span class="o">=</span> <span class="n">Get_Unit</span>
+<span class="k">          </span><span class="n">funit</span> <span class="o">=</span> <span class="n">n1</span> <span class="p">;</span> <span class="k">if</span> <span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">Free_Unit</span><span class="p">))</span> <span class="n">Free_Unit</span> <span class="o">=</span> <span class="n">funit</span>
           <span class="k">return</span>
 <span class="k">        </span><span class="n">endif</span>
       <span class="n">endif</span>
