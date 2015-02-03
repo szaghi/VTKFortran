@@ -1,3 +1,8 @@
+### Version v1.2.0
+Stable release. Fully backward compatible. Modern compiler required.
+
++ Switch to the new Lib_Base64, [BeFoR64](https://github.com/szaghi/BeFoR64) project: the use of *deferred length string*, namely `character(len=:), allocatabale:: var`, imposes a modern compiler supporting automatic (re)allocation of LHS on assignment.
+
 ### Version v1.1.1
 
 + Extend VTM_WRF_XML function, now it is an interface to two functions, one for files list passed as an array and one for files list passed a single string. If a single string is used, the delimiter of each file can be customized, while the default values is '&';

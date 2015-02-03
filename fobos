@@ -3,8 +3,8 @@ modes = shared static test-driver
         shared-debug static-debug test-driver-debug
 
 [common-variables]
-$CFLAGS_SHARED = -cpp -c -fpic
-$CFLAGS_STATIC = -cpp -c
+$CFLAGS_SHARED = -cpp -c -assume realloc_lhs -fpic
+$CFLAGS_STATIC = -cpp -c -assume realloc_lhs
 $LFLAGS_SHARED = -shared
 $DEBUG         = -O0 -debug all -check all -warn all -traceback
 $OPTIMIZE      = -O3
@@ -141,4 +141,4 @@ rule = rm -rf doc/html/*
 
 [rule-maketar]
 help = Rule for making tar archive of the project
-rule = rm -rf Lib_VTK_IO ; mkdir -p Lib_VTK_IO ; cp -r fobos makefile README.md .doxygenconfig .gitignore Lib_VTK_IO/ ; cp -rL src Lib_VTK_IO/ ; tar czf Lib_VTK_IO.tgz Lib_VTK_IO ; rm -rf Lib_VTK_IO
+rule = tar -czf Lib_VTK_IO.tar.gz *

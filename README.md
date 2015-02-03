@@ -35,6 +35,10 @@ Go to [Top](#top)
 ### Version History
 
 In the following the changelog of most important releases is reported.
+### v1.2.0
+##### Download [ZIP](https://github.com/szaghi/Lib_VTK_IO/archive/v1.2.0.zip) ball or [TAR](https://github.com/szaghi/Lib_VTK_IO/archive/v1.2.0.tar.gz) one
+Stable Release. Fully backward compatible. Modern compiler required.
+
 ### v1.1.1
 ##### Download [ZIP](https://github.com/szaghi/Lib_VTK_IO/archive/v1.1.1.zip) ball or [TAR](https://github.com/szaghi/Lib_VTK_IO/archive/v1.1.1.tar.gz) one
 Stable Release. Fully backward compatible.

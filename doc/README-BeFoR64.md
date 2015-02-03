@@ -16,9 +16,9 @@ Go to [Top](#top)
 
 * [ ] User-friendly methods for encoding/decoding in base64:
     * [x] encode real/integer scalar variables;
-    * [ ] decode real/integer scalar variables;
+    * [X] decode real/integer scalar variables;
     * [x] encode real/integer array variables;
-    * [ ] decode real/integer array variables;
+    * [X] decode real/integer array variables;
     * [ ] encode character scalar variables;
     * [ ] decode character scalar variables;
     * [ ] encode character array variables;
@@ -34,7 +34,7 @@ Go to [Top](#top)
     * [x] pack real/real (different kinds) arrays;
     * [ ] pack integer/real scalars;
     * [x] pack integer/real arrays;
-* [x] errors trapping mechanism.
+* [ ] errors trapping mechanism.
 
 Any feature request is welcome.
 
@@ -59,6 +59,9 @@ Go to [Top](#top)
 ## Version History
 
 In the following the changelog of most important releases is reported.
+### v1.0.0
+##### Download [ZIP](https://github.com/szaghi/BeFoR64/archive/v1.0.0.zip) ball or [TAR](https://github.com/szaghi/BeFoR64/archive/v1.0.0.tar.gz) one
+Stable Release. Fully backward compatible.
 ### v0.0.1
 ##### Download [ZIP](https://github.com/szaghi/BeFoR64/archive/v0.0.1.zip) ball or [TAR](https://github.com/szaghi/BeFoR64/archive/v0.0.1.tar.gz) one
 First Stable Release.
