@@ -173,8 +173,8 @@
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
 <span class="k">implicit none</span>
 <span class="k">private</span>
-<span class="k">public</span><span class="kd">::</span> <span class="n">b64_encode</span>
-<span class="k">public</span><span class="kd">::</span> <span class="n">b64_decode</span>
+<span class="k">public</span><span class="kd">::</span> <span class="n">b64_encode</span><span class="p">,</span><span class="n">b64_encode_up</span>
+<span class="k">public</span><span class="kd">::</span> <span class="n">b64_decode</span><span class="p">,</span><span class="n">b64_decode_up</span>
 <span class="k">public</span><span class="kd">::</span> <span class="n">pack_data</span>
 <span class="k">public</span><span class="kd">::</span> <span class="n">b64_initialized</span><span class="p">,</span><span class="n">b64_init</span>
 <span class="k">public</span><span class="kd">::</span> <span class="n">autotest</span>
@@ -217,16 +217,53 @@
   <span class="c">!&lt;</span>
   <span class="c">!&lt; @note If you want to encode heterogenous data (e.g. integer and real numbers), you must use the auxiliary `pack_data`</span>
   <span class="c">!&lt; procedure.</span>
+  <span class="c">!&lt;</span>
+  <span class="c">!&lt; @warning The encoding of array of strings is admitted only if each string of the array has the same length.</span>
   <span class="k">module procedure</span> <span class="p">&amp;</span>
 <span class="cp">#ifdef r16p</span>
-                   <span class="n">b64_encode_R16</span><span class="p">,</span><span class="n">b64_encode_R16_a</span><span class="p">,</span> <span class="p">&amp;</span>
+                   <span class="n">b64_encode_R16</span><span class="p">,</span>   <span class="n">b64_encode_R16_a</span><span class="p">,</span> <span class="p">&amp;</span>
 <span class="cp">#endif</span>
-                   <span class="n">b64_encode_R8</span><span class="p">,</span> <span class="n">b64_encode_R8_a</span><span class="p">,</span>  <span class="p">&amp;</span>
-                   <span class="n">b64_encode_R4</span><span class="p">,</span> <span class="n">b64_encode_R4_a</span><span class="p">,</span>  <span class="p">&amp;</span>
-                   <span class="n">b64_encode_I8</span><span class="p">,</span> <span class="n">b64_encode_I8_a</span><span class="p">,</span>  <span class="p">&amp;</span>
-                   <span class="n">b64_encode_I4</span><span class="p">,</span> <span class="n">b64_encode_I4_a</span><span class="p">,</span>  <span class="p">&amp;</span>
-                   <span class="n">b64_encode_I2</span><span class="p">,</span> <span class="n">b64_encode_I2_a</span><span class="p">,</span>  <span class="p">&amp;</span>
-                   <span class="n">b64_encode_I1</span><span class="p">,</span> <span class="n">b64_encode_I1_a</span>
+                   <span class="n">b64_encode_R8</span><span class="p">,</span>    <span class="n">b64_encode_R8_a</span><span class="p">,</span>  <span class="p">&amp;</span>
+                   <span class="n">b64_encode_R4</span><span class="p">,</span>    <span class="n">b64_encode_R4_a</span><span class="p">,</span>  <span class="p">&amp;</span>
+                   <span class="n">b64_encode_I8</span><span class="p">,</span>    <span class="n">b64_encode_I8_a</span><span class="p">,</span>  <span class="p">&amp;</span>
+                   <span class="n">b64_encode_I4</span><span class="p">,</span>    <span class="n">b64_encode_I4_a</span><span class="p">,</span>  <span class="p">&amp;</span>
+                   <span class="n">b64_encode_I2</span><span class="p">,</span>    <span class="n">b64_encode_I2_a</span><span class="p">,</span>  <span class="p">&amp;</span>
+                   <span class="n">b64_encode_I1</span><span class="p">,</span>    <span class="n">b64_encode_I1_a</span><span class="p">,</span>  <span class="p">&amp;</span>
+                   <span class="n">b64_encode_string</span><span class="p">,</span><span class="n">b64_encode_string_a</span>
+<span class="n">endinterface</span>
+<span class="k">interface </span><span class="n">b64_encode_up</span>
+  <span class="c">!&lt; Procedure for encoding unlimited polymorphic variable to base64.</span>
+  <span class="c">!&lt;</span>
+  <span class="c">!&lt; This is an interface for encoding both scalar and array.</span>
+  <span class="c">!&lt;</span>
+  <span class="c">!&lt; @warning The encoded string is returned as varying length character string, `character(len=:), allocatable:: string`, thus the</span>
+  <span class="c">!&lt; compiler must support such a Fortran (2003) feature.</span>
+  <span class="c">!&lt;</span>
+  <span class="c">!&lt; @note Before start to encode anything the library must be initialized. The procedure `b64_init` must be called at first. The</span>
+  <span class="c">!&lt; global variable `b64_initialized` can be used to check the status of the initialization.</span>
+  <span class="c">!&lt;</span>
+  <span class="c">!&lt;### Usage</span>
+  <span class="c">!&lt; For a practical example see the `autotest` procedure.</span>
+  <span class="c">!&lt;</span>
+  <span class="c">!&lt;#### Scalar encoding</span>
+  <span class="c">!&lt;```fortran</span>
+  <span class="c">!&lt;character(len=:), allocatable:: code64 ! base64 encoded string</span>
+  <span class="c">!&lt;...</span>
+  <span class="c">!&lt;call b64_encode_up(up=12._R8P,code=code64)</span>
+  <span class="c">!&lt;```</span>
+  <span class="c">!&lt;</span>
+  <span class="c">!&lt;#### Array encoding</span>
+  <span class="c">!&lt;```fortran</span>
+  <span class="c">!&lt;character(len=:), allocatable:: code64 ! base64 encoded string</span>
+  <span class="c">!&lt;...</span>
+  <span class="c">!&lt;call b64_encode_up(up=[12_I4P,1_I4P],code=code64)</span>
+  <span class="c">!&lt;```</span>
+  <span class="c">!&lt;</span>
+  <span class="c">!&lt; @note If you want to encode heterogenous data (e.g. integer and real numbers), you must use the auxiliary `pack_data`</span>
+  <span class="c">!&lt; procedure.</span>
+  <span class="c">!&lt;</span>
+  <span class="c">!&lt; @warning The encoding of array of strings is admitted only if each string of the array has the same length.</span>
+  <span class="k">module procedure </span><span class="n">b64_encode_up</span><span class="p">,</span><span class="n">b64_encode_up_a</span>
 <span class="n">endinterface</span>
 <span class="k">interface </span><span class="n">b64_decode</span>
   <span class="c">!&lt; Procedure for decoding numbers (integer and real) from base64.</span>
@@ -256,16 +293,50 @@
   <span class="c">!&lt;</span>
   <span class="c">!&lt; @note If you want to decode heterogenous data (e.g. integer and real numbers), you must use the auxiliary `pack_data`</span>
   <span class="c">!&lt; procedure.</span>
+  <span class="c">!&lt;</span>
+  <span class="c">!&lt; @warning The decoding of array of strings is admitted only if each string of the array has the same length.</span>
   <span class="k">module procedure</span> <span class="p">&amp;</span>
 <span class="cp">#ifdef r16p</span>
-                   <span class="n">b64_decode_R16</span><span class="p">,</span><span class="n">b64_decode_R16_a</span><span class="p">,</span> <span class="p">&amp;</span>
+                   <span class="n">b64_decode_R16</span><span class="p">,</span>   <span class="n">b64_decode_R16_a</span><span class="p">,</span> <span class="p">&amp;</span>
 <span class="cp">#endif</span>
-                   <span class="n">b64_decode_R8</span><span class="p">,</span> <span class="n">b64_decode_R8_a</span><span class="p">,</span>  <span class="p">&amp;</span>
-                   <span class="n">b64_decode_R4</span><span class="p">,</span> <span class="n">b64_decode_R4_a</span><span class="p">,</span>  <span class="p">&amp;</span>
-                   <span class="n">b64_decode_I8</span><span class="p">,</span> <span class="n">b64_decode_I8_a</span><span class="p">,</span>  <span class="p">&amp;</span>
-                   <span class="n">b64_decode_I4</span><span class="p">,</span> <span class="n">b64_decode_I4_a</span><span class="p">,</span>  <span class="p">&amp;</span>
-                   <span class="n">b64_decode_I2</span><span class="p">,</span> <span class="n">b64_decode_I2_a</span><span class="p">,</span>  <span class="p">&amp;</span>
-                   <span class="n">b64_decode_I1</span><span class="p">,</span> <span class="n">b64_decode_I1_a</span>
+                   <span class="n">b64_decode_R8</span><span class="p">,</span>    <span class="n">b64_decode_R8_a</span><span class="p">,</span>  <span class="p">&amp;</span>
+                   <span class="n">b64_decode_R4</span><span class="p">,</span>    <span class="n">b64_decode_R4_a</span><span class="p">,</span>  <span class="p">&amp;</span>
+                   <span class="n">b64_decode_I8</span><span class="p">,</span>    <span class="n">b64_decode_I8_a</span><span class="p">,</span>  <span class="p">&amp;</span>
+                   <span class="n">b64_decode_I4</span><span class="p">,</span>    <span class="n">b64_decode_I4_a</span><span class="p">,</span>  <span class="p">&amp;</span>
+                   <span class="n">b64_decode_I2</span><span class="p">,</span>    <span class="n">b64_decode_I2_a</span><span class="p">,</span>  <span class="p">&amp;</span>
+                   <span class="n">b64_decode_I1</span><span class="p">,</span>    <span class="n">b64_decode_I1_a</span><span class="p">,</span>  <span class="p">&amp;</span>
+                   <span class="n">b64_decode_string</span><span class="p">,</span><span class="n">b64_decode_string_a</span>
+<span class="n">endinterface</span>
+<span class="k">interface </span><span class="n">b64_decode_up</span>
+  <span class="c">!&lt; Procedure for decoding unlimited polymorphic variable from base64.</span>
+  <span class="c">!&lt;</span>
+  <span class="c">!&lt; This is an interface for decoding both scalar and array.</span>
+  <span class="c">!&lt;</span>
+  <span class="c">!&lt; @note Before start to decode anything the library must be initialized. The procedure `b64_init` must be called at first. The</span>
+  <span class="c">!&lt; global variable `b64_initialized` can be used to check the status of the initialization.</span>
+  <span class="c">!&lt;</span>
+  <span class="c">!&lt;### Usage</span>
+  <span class="c">!&lt; For a practical example see the `autotest` procedure.</span>
+  <span class="c">!&lt;</span>
+  <span class="c">!&lt;#### Scalar decoding</span>
+  <span class="c">!&lt;```fortran</span>
+  <span class="c">!&lt;real(R8P):: decoded ! scalar to be decoded</span>
+  <span class="c">!&lt;...</span>
+  <span class="c">!&lt;call b64_decode_up(code=&#39;AAAAAAAA8D8=&#39;,up=decoded)</span>
+  <span class="c">!&lt;```</span>
+  <span class="c">!&lt;</span>
+  <span class="c">!&lt;#### Array decoding</span>
+  <span class="c">!&lt;```fortran</span>
+  <span class="c">!&lt;integer(I8P):: decoded(1:4) ! array to be decoded</span>
+  <span class="c">!&lt;...</span>
+  <span class="c">!&lt;call b64_decode_up(code=&#39;FwAAAAAAAABEAQAAAAAAABBwhAEAAAAAAgAAAAAAAAA=&#39;,up=decoded)</span>
+  <span class="c">!&lt;```</span>
+  <span class="c">!&lt;</span>
+  <span class="c">!&lt; @note If you want to decode heterogenous data (e.g. integer and real numbers), you must use the auxiliary `pack_data`</span>
+  <span class="c">!&lt; procedure.</span>
+  <span class="c">!&lt;</span>
+  <span class="c">!&lt; @warning The decoding of array of strings is admitted only if each string of the array has the same length.</span>
+  <span class="k">module procedure </span><span class="n">b64_decode_up</span><span class="p">,</span><span class="n">b64_decode_up_a</span>
 <span class="n">endinterface</span>
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
 <span class="k">contains</span>
@@ -387,6 +458,126 @@
   <span class="k">return</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="n">endsubroutine</span> <span class="n">decode_bits</span>
+
+  <span class="k">elemental subroutine </span><span class="n">b64_encode_up</span><span class="p">(</span><span class="n">up</span><span class="p">,</span><span class="n">code</span><span class="p">)</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="c">!&lt; Procedure for encoding an unlimited polymorphic scalar to base64.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">implicit none</span>
+<span class="k">  class</span><span class="p">(</span><span class="o">*</span><span class="p">),</span>                      <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">up</span>   <span class="c">!&lt; Unlimited polymorphic variable to be encoded.</span>
+  <span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span> <span class="k">allocatable</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">code</span> <span class="c">!&lt; Encoded scalar.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">select type</span><span class="p">(</span><span class="n">up</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">real</span><span class="p">(</span><span class="n">R8P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_encode_R8</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">,</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">real</span><span class="p">(</span><span class="n">R4P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_encode_R4</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">,</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">integer</span><span class="p">(</span><span class="n">I8P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_encode_I8</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">,</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_encode_I4</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">,</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">integer</span><span class="p">(</span><span class="n">I2P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_encode_I2</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">,</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_encode_I1</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">,</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_encode_string</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">up</span><span class="p">,</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+  <span class="n">endselect</span>
+  <span class="k">return</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="n">endsubroutine</span> <span class="n">b64_encode_up</span>
+
+  <span class="k">pure subroutine </span><span class="n">b64_encode_up_a</span><span class="p">(</span><span class="n">up</span><span class="p">,</span><span class="n">code</span><span class="p">)</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="c">!&lt; Procedure for encoding an unlimited polymorphic array to base64.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">implicit none</span>
+<span class="k">  class</span><span class="p">(</span><span class="o">*</span><span class="p">),</span>                      <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">up</span><span class="p">(</span><span class="mi">1</span><span class="p">:)</span> <span class="c">!&lt; Unlimited polymorphic variable to be encoded.</span>
+  <span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span> <span class="k">allocatable</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">code</span>   <span class="c">!&lt; Encoded array.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">select type</span><span class="p">(</span><span class="n">up</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">real</span><span class="p">(</span><span class="n">R8P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_encode_R8_a</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">,</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">real</span><span class="p">(</span><span class="n">R4P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_encode_R4_a</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">,</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">integer</span><span class="p">(</span><span class="n">I8P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_encode_I8_a</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">,</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_encode_I4_a</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">,</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">integer</span><span class="p">(</span><span class="n">I2P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_encode_I2_a</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">,</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_encode_I1_a</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">,</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_encode_string_a</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">up</span><span class="p">,</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+  <span class="n">endselect</span>
+  <span class="k">return</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="n">endsubroutine</span> <span class="n">b64_encode_up_a</span>
+
+  <span class="k">elemental subroutine </span><span class="n">b64_decode_up</span><span class="p">(</span><span class="n">code</span><span class="p">,</span><span class="n">up</span><span class="p">)</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="c">!&lt; Procedure for decoding an unlimited polymorphic scalar from base64.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">implicit none</span>
+<span class="k">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">code</span> <span class="c">!&lt; Encoded scalar.</span>
+  <span class="k">class</span><span class="p">(</span><span class="o">*</span><span class="p">),</span>     <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">up</span>   <span class="c">!&lt; Unlimited polymorphic variable to be decoded.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">select type</span><span class="p">(</span><span class="n">up</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">real</span><span class="p">(</span><span class="n">R8P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_decode_R8</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">real</span><span class="p">(</span><span class="n">R4P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_decode_R4</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">integer</span><span class="p">(</span><span class="n">I8P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_decode_I8</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_decode_I4</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">integer</span><span class="p">(</span><span class="n">I2P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_decode_I2</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_decode_I1</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_decode_string</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="n">up</span><span class="p">)</span>
+  <span class="n">endselect</span>
+  <span class="k">return</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="n">endsubroutine</span> <span class="n">b64_decode_up</span>
+
+  <span class="k">pure subroutine </span><span class="n">b64_decode_up_a</span><span class="p">(</span><span class="n">code</span><span class="p">,</span><span class="n">up</span><span class="p">)</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="c">!&lt; Procedure for decoding an unlimited polymorphic array from base64.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">implicit none</span>
+<span class="k">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">code</span>   <span class="c">!&lt; Encoded array.</span>
+  <span class="k">class</span><span class="p">(</span><span class="o">*</span><span class="p">),</span>     <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">up</span><span class="p">(</span><span class="mi">1</span><span class="p">:)</span> <span class="c">!&lt; Unlimited polymorphic variable to be decoded.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">select type</span><span class="p">(</span><span class="n">up</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">real</span><span class="p">(</span><span class="n">R8P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_decode_R8_a</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">real</span><span class="p">(</span><span class="n">R4P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_decode_R4_a</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">integer</span><span class="p">(</span><span class="n">I8P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_decode_I8_a</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_decode_I4_a</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">integer</span><span class="p">(</span><span class="n">I2P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_decode_I2_a</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_decode_I1_a</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="n">up</span><span class="p">)</span>
+  <span class="k">type is</span><span class="p">(</span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">))</span>
+    <span class="k">call </span><span class="n">b64_decode_string_a</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="n">up</span><span class="p">)</span>
+  <span class="n">endselect</span>
+  <span class="k">return</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="n">endsubroutine</span> <span class="n">b64_decode_up_a</span>
 
   <span class="k">elemental subroutine </span><span class="n">b64_encode_R16</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">code</span><span class="p">)</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
@@ -534,6 +725,29 @@
   <span class="k">return</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="n">endsubroutine</span> <span class="n">b64_encode_I1</span>
+
+  <span class="k">elemental subroutine </span><span class="n">b64_encode_string</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">code</span><span class="p">)</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="c">!&lt; Procedure for encoding scalar string to base64.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">implicit none</span>
+<span class="k">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span>                  <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">s</span>       <span class="c">!&lt; String to be encoded.</span>
+  <span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span> <span class="k">allocatable</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">code</span>    <span class="c">!&lt; Encoded scalar.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span>     <span class="k">allocatable</span><span class="kd">::</span>              <span class="n">nI1P</span><span class="p">(:)</span> <span class="c">!&lt; One byte integer array containing n.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span>                               <span class="n">padd</span>    <span class="c">!&lt; Number of padding characters (&#39;=&#39;).</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span>                               <span class="n">BYCHS</span>   <span class="c">!&lt; Bytes of character string.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="n">BYCHS</span> <span class="o">=</span> <span class="n">byte_size</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+  <span class="k">allocate</span><span class="p">(</span><span class="n">nI1P</span><span class="p">(</span><span class="mi">1</span><span class="p">:((</span><span class="n">BYCHS</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="mi">3</span><span class="p">))</span> <span class="p">;</span> <span class="n">nI1P</span> <span class="o">=</span> <span class="mi">0_I1P</span>
+  <span class="n">code</span> <span class="o">=</span> <span class="nb">repeat</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,((</span><span class="n">BYCHS</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+  <span class="n">nI1P</span> <span class="o">=</span> <span class="nb">transfer</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">nI1P</span><span class="p">)</span>
+  <span class="n">padd</span> <span class="o">=</span> <span class="nb">mod</span><span class="p">((</span><span class="n">BYCHS</span><span class="p">),</span><span class="mi">3_I1P</span><span class="p">)</span> <span class="p">;</span> <span class="k">if</span> <span class="p">(</span><span class="n">padd</span><span class="o">&gt;</span><span class="mi">0_I4P</span><span class="p">)</span> <span class="n">padd</span> <span class="o">=</span> <span class="mi">3_I4P</span> <span class="o">-</span> <span class="n">padd</span>
+  <span class="k">call </span><span class="n">encode_bits</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">nI1P</span><span class="p">,</span><span class="n">padd</span><span class="o">=</span><span class="n">padd</span><span class="p">,</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">return</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="n">endsubroutine</span> <span class="n">b64_encode_string</span>
 
   <span class="k">pure subroutine </span><span class="n">b64_encode_R16_a</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">code</span><span class="p">)</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
@@ -696,7 +910,30 @@
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="n">endsubroutine</span> <span class="n">b64_encode_I1_a</span>
 
-  <span class="k">elemental subroutine </span><span class="n">b64_decode_R16</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">pure subroutine </span><span class="n">b64_encode_string_a</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">code</span><span class="p">)</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="c">!&lt; Procedure for encoding array string to base64.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">implicit none</span>
+<span class="k">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span>                  <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">s</span><span class="p">(</span><span class="mi">1</span><span class="p">:)</span>   <span class="c">!&lt; String to be encoded.</span>
+  <span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span> <span class="k">allocatable</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">code</span>    <span class="c">!&lt; Encoded scalar.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span>     <span class="k">allocatable</span><span class="kd">::</span>              <span class="n">nI1P</span><span class="p">(:)</span> <span class="c">!&lt; One byte integer array containing n.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span>                               <span class="n">padd</span>    <span class="c">!&lt; Number of padding characters (&#39;=&#39;).</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span>                               <span class="n">BYCHS</span>   <span class="c">!&lt; Bytes of character string.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="n">BYCHS</span> <span class="o">=</span> <span class="n">byte_size</span><span class="p">(</span><span class="n">s</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="n">size</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="nb">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+  <span class="k">allocate</span><span class="p">(</span><span class="n">nI1P</span><span class="p">(</span><span class="mi">1</span><span class="p">:((</span><span class="n">BYCHS</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="mi">3</span><span class="p">))</span> <span class="p">;</span> <span class="n">nI1P</span> <span class="o">=</span> <span class="mi">0_I1P</span>
+  <span class="n">code</span> <span class="o">=</span> <span class="nb">repeat</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,((</span><span class="n">BYCHS</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+  <span class="n">nI1P</span> <span class="o">=</span> <span class="nb">transfer</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">nI1P</span><span class="p">)</span>
+  <span class="n">padd</span> <span class="o">=</span> <span class="nb">mod</span><span class="p">((</span><span class="n">BYCHS</span><span class="p">),</span><span class="mi">3_I1P</span><span class="p">)</span> <span class="p">;</span> <span class="k">if</span> <span class="p">(</span><span class="n">padd</span><span class="o">&gt;</span><span class="mi">0_I4P</span><span class="p">)</span> <span class="n">padd</span> <span class="o">=</span> <span class="mi">3_I4P</span> <span class="o">-</span> <span class="n">padd</span>
+  <span class="k">call </span><span class="n">encode_bits</span><span class="p">(</span><span class="n">bits</span><span class="o">=</span><span class="n">nI1P</span><span class="p">,</span><span class="n">padd</span><span class="o">=</span><span class="n">padd</span><span class="p">,</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">return</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="n">endsubroutine</span> <span class="n">b64_encode_string_a</span>
+
+  <span class="k">elemental subroutine </span><span class="n">b64_decode_R16</span><span class="p">(</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="c">!&lt; Procedure for decoding a base64 code into a scalar number (R16P).</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
@@ -714,7 +951,7 @@
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="n">endsubroutine</span> <span class="n">b64_decode_R16</span>
 
-  <span class="k">elemental subroutine </span><span class="n">b64_decode_R8</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">elemental subroutine </span><span class="n">b64_decode_R8</span><span class="p">(</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="c">!&lt; Procedure for decoding a base64 code into a scalar number (R8P).</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
@@ -732,7 +969,7 @@
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="n">endsubroutine</span> <span class="n">b64_decode_R8</span>
 
-  <span class="k">elemental subroutine </span><span class="n">b64_decode_R4</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">elemental subroutine </span><span class="n">b64_decode_R4</span><span class="p">(</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="c">!&lt; Procedure for decoding a base64 code into a scalar number (R4P).</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
@@ -750,7 +987,7 @@
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="n">endsubroutine</span> <span class="n">b64_decode_R4</span>
 
-  <span class="k">elemental subroutine </span><span class="n">b64_decode_I8</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">elemental subroutine </span><span class="n">b64_decode_I8</span><span class="p">(</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="c">!&lt; Procedure for decoding a base64 code into a scalar number (I8P).</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
@@ -768,7 +1005,7 @@
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="n">endsubroutine</span> <span class="n">b64_decode_I8</span>
 
-  <span class="k">elemental subroutine </span><span class="n">b64_decode_I4</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">elemental subroutine </span><span class="n">b64_decode_I4</span><span class="p">(</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="c">!&lt; Procedure for decoding a base64 code into a scalar number (I4P).</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
@@ -786,7 +1023,7 @@
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="n">endsubroutine</span> <span class="n">b64_decode_I4</span>
 
-  <span class="k">elemental subroutine </span><span class="n">b64_decode_I2</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">elemental subroutine </span><span class="n">b64_decode_I2</span><span class="p">(</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="c">!&lt; Procedure for decoding a base64 code into a scalar number (I2P).</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
@@ -804,7 +1041,7 @@
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="n">endsubroutine</span> <span class="n">b64_decode_I2</span>
 
-  <span class="k">elemental subroutine </span><span class="n">b64_decode_I1</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">elemental subroutine </span><span class="n">b64_decode_I1</span><span class="p">(</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="c">!&lt; Procedure for decoding a base64 code into a scalar number (I1P).</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
@@ -822,14 +1059,32 @@
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="n">endsubroutine</span> <span class="n">b64_decode_I1</span>
 
-  <span class="k">pure subroutine </span><span class="n">b64_decode_R16_a</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">elemental subroutine </span><span class="n">b64_decode_string</span><span class="p">(</span><span class="n">code</span><span class="p">,</span><span class="n">s</span><span class="p">)</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="c">!&lt; Procedure for decoding a base64 code into a scalar string.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">implicit none</span>
+<span class="k">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">code</span>    <span class="c">!&lt; Encoded scalar.</span>
+  <span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">s</span>       <span class="c">!&lt; String to be decoded.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span> <span class="k">allocatable</span><span class="kd">::</span> <span class="n">nI1P</span><span class="p">(:)</span> <span class="c">!&lt; One byte integer array containing n.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">allocate</span><span class="p">(</span><span class="n">nI1P</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">byte_size</span><span class="p">(</span><span class="n">s</span><span class="p">)))</span> <span class="p">;</span> <span class="n">nI1P</span> <span class="o">=</span> <span class="mi">0_I1P</span>
+  <span class="k">call </span><span class="n">decode_bits</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span><span class="n">bits</span><span class="o">=</span><span class="n">nI1P</span><span class="p">)</span>
+  <span class="n">s</span> <span class="o">=</span> <span class="nb">transfer</span><span class="p">(</span><span class="n">nI1P</span><span class="p">,</span><span class="n">s</span><span class="p">)</span>
+  <span class="k">return</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="n">endsubroutine</span> <span class="n">b64_decode_string</span>
+
+  <span class="k">pure subroutine </span><span class="n">b64_decode_R16_a</span><span class="p">(</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="c">!&lt; Procedure for decoding a base64 code into an array numbers (R16P).</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="k">implicit none</span>
-<span class="k">  </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span> <span class="k">allocatable</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">code</span>    <span class="c">!&lt; Encoded array.</span>
-  <span class="kt">real</span><span class="p">(</span><span class="n">R16P</span><span class="p">),</span>                    <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">n</span><span class="p">(</span><span class="mi">1</span><span class="p">:)</span>   <span class="c">!&lt; Array of numbers to be decoded.</span>
-  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span>     <span class="k">allocatable</span><span class="kd">::</span>              <span class="n">nI1P</span><span class="p">(:)</span> <span class="c">!&lt; One byte integer array containing n.</span>
+<span class="k">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">code</span>    <span class="c">!&lt; Encoded array.</span>
+  <span class="kt">real</span><span class="p">(</span><span class="n">R16P</span><span class="p">),</span>   <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">n</span><span class="p">(</span><span class="mi">1</span><span class="p">:)</span>   <span class="c">!&lt; Array of numbers to be decoded.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span> <span class="k">allocatable</span><span class="kd">::</span> <span class="n">nI1P</span><span class="p">(:)</span> <span class="c">!&lt; One byte integer array containing n.</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
 
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
@@ -840,14 +1095,14 @@
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="n">endsubroutine</span> <span class="n">b64_decode_R16_a</span>
 
-  <span class="k">pure subroutine </span><span class="n">b64_decode_R8_a</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">pure subroutine </span><span class="n">b64_decode_R8_a</span><span class="p">(</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="c">!&lt; Procedure for decoding a base64 code into an array numbers (R8P).</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="k">implicit none</span>
-<span class="k">  </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span> <span class="k">allocatable</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">code</span>    <span class="c">!&lt; Encoded array.</span>
-  <span class="kt">real</span><span class="p">(</span><span class="n">R8P</span><span class="p">),</span>                     <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">n</span><span class="p">(</span><span class="mi">1</span><span class="p">:)</span>   <span class="c">!&lt; Array of numbers to be decoded.</span>
-  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span>     <span class="k">allocatable</span><span class="kd">::</span>              <span class="n">nI1P</span><span class="p">(:)</span> <span class="c">!&lt; One byte integer array containing n.</span>
+<span class="k">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">code</span>    <span class="c">!&lt; Encoded array.</span>
+  <span class="kt">real</span><span class="p">(</span><span class="n">R8P</span><span class="p">),</span>    <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">n</span><span class="p">(</span><span class="mi">1</span><span class="p">:)</span>   <span class="c">!&lt; Array of numbers to be decoded.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span> <span class="k">allocatable</span><span class="kd">::</span> <span class="n">nI1P</span><span class="p">(:)</span> <span class="c">!&lt; One byte integer array containing n.</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
 
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
@@ -858,14 +1113,14 @@
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="n">endsubroutine</span> <span class="n">b64_decode_R8_a</span>
 
-  <span class="k">pure subroutine </span><span class="n">b64_decode_R4_a</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">pure subroutine </span><span class="n">b64_decode_R4_a</span><span class="p">(</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="c">!&lt; Procedure for decoding a base64 code into an array numbers (R4P).</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="k">implicit none</span>
-<span class="k">  </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span> <span class="k">allocatable</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">code</span>    <span class="c">!&lt; Encoded array.</span>
-  <span class="kt">real</span><span class="p">(</span><span class="n">R4P</span><span class="p">),</span>                     <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">n</span><span class="p">(</span><span class="mi">1</span><span class="p">:)</span>   <span class="c">!&lt; Array of numbers to be decoded.</span>
-  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span>     <span class="k">allocatable</span><span class="kd">::</span>              <span class="n">nI1P</span><span class="p">(:)</span> <span class="c">!&lt; One byte integer array containing n.</span>
+<span class="k">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">code</span>    <span class="c">!&lt; Encoded array.</span>
+  <span class="kt">real</span><span class="p">(</span><span class="n">R4P</span><span class="p">),</span>    <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">n</span><span class="p">(</span><span class="mi">1</span><span class="p">:)</span>   <span class="c">!&lt; Array of numbers to be decoded.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span> <span class="k">allocatable</span><span class="kd">::</span> <span class="n">nI1P</span><span class="p">(:)</span> <span class="c">!&lt; One byte integer array containing n.</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
 
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
@@ -876,14 +1131,14 @@
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="n">endsubroutine</span> <span class="n">b64_decode_R4_a</span>
 
-  <span class="k">pure subroutine </span><span class="n">b64_decode_I8_a</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">pure subroutine </span><span class="n">b64_decode_I8_a</span><span class="p">(</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="c">!&lt; Procedure for decoding a base64 code into an array numbers (I8P).</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="k">implicit none</span>
-<span class="k">  </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span> <span class="k">allocatable</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">code</span>    <span class="c">!&lt; Encoded array.</span>
-  <span class="kt">integer</span><span class="p">(</span><span class="n">I8P</span><span class="p">),</span>                  <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">n</span><span class="p">(</span><span class="mi">1</span><span class="p">:)</span>   <span class="c">!&lt; Array of numbers to be decoded.</span>
-  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span>     <span class="k">allocatable</span><span class="kd">::</span>              <span class="n">nI1P</span><span class="p">(:)</span> <span class="c">!&lt; One byte integer array containing n.</span>
+<span class="k">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">code</span>    <span class="c">!&lt; Encoded array.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I8P</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">n</span><span class="p">(</span><span class="mi">1</span><span class="p">:)</span>   <span class="c">!&lt; Array of numbers to be decoded.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span> <span class="k">allocatable</span><span class="kd">::</span> <span class="n">nI1P</span><span class="p">(:)</span> <span class="c">!&lt; One byte integer array containing n.</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
 
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
@@ -894,14 +1149,14 @@
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="n">endsubroutine</span> <span class="n">b64_decode_I8_a</span>
 
-  <span class="k">pure subroutine </span><span class="n">b64_decode_I4_a</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">pure subroutine </span><span class="n">b64_decode_I4_a</span><span class="p">(</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="c">!&lt; Procedure for decoding a base64 code into an array numbers (I4P).</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="k">implicit none</span>
-<span class="k">  </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span> <span class="k">allocatable</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">code</span>    <span class="c">!&lt; Encoded array.</span>
-  <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span>                  <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">n</span><span class="p">(</span><span class="mi">1</span><span class="p">:)</span>   <span class="c">!&lt; Array of numbers to be decoded.</span>
-  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span>     <span class="k">allocatable</span><span class="kd">::</span>              <span class="n">nI1P</span><span class="p">(:)</span> <span class="c">!&lt; One byte integer array containing n.</span>
+<span class="k">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">code</span>    <span class="c">!&lt; Encoded array.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">n</span><span class="p">(</span><span class="mi">1</span><span class="p">:)</span>   <span class="c">!&lt; Array of numbers to be decoded.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span> <span class="k">allocatable</span><span class="kd">::</span> <span class="n">nI1P</span><span class="p">(:)</span> <span class="c">!&lt; One byte integer array containing n.</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
 
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
@@ -912,14 +1167,14 @@
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="n">endsubroutine</span> <span class="n">b64_decode_I4_a</span>
 
-  <span class="k">pure subroutine </span><span class="n">b64_decode_I2_a</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">pure subroutine </span><span class="n">b64_decode_I2_a</span><span class="p">(</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="c">!&lt; Procedure for decoding a base64 code into an array numbers (I2P).</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="k">implicit none</span>
-<span class="k">  </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span> <span class="k">allocatable</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">code</span>    <span class="c">!&lt; Encoded array.</span>
-  <span class="kt">integer</span><span class="p">(</span><span class="n">I2P</span><span class="p">),</span>                  <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">n</span><span class="p">(</span><span class="mi">1</span><span class="p">:)</span>   <span class="c">!&lt; Array of numbers to be decoded.</span>
-  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span>     <span class="k">allocatable</span><span class="kd">::</span>              <span class="n">nI1P</span><span class="p">(:)</span> <span class="c">!&lt; One byte integer array containing n.</span>
+<span class="k">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">code</span>    <span class="c">!&lt; Encoded array.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I2P</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">n</span><span class="p">(</span><span class="mi">1</span><span class="p">:)</span>   <span class="c">!&lt; Array of numbers to be decoded.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span> <span class="k">allocatable</span><span class="kd">::</span> <span class="n">nI1P</span><span class="p">(:)</span> <span class="c">!&lt; One byte integer array containing n.</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
 
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
@@ -930,14 +1185,14 @@
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="n">endsubroutine</span> <span class="n">b64_decode_I2_a</span>
 
-  <span class="k">pure subroutine </span><span class="n">b64_decode_I1_a</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">code</span><span class="p">)</span>
+  <span class="k">pure subroutine </span><span class="n">b64_decode_I1_a</span><span class="p">(</span><span class="n">code</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="c">!&lt; Procedure for decoding a base64 code into an array numbers (I1P).</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="k">implicit none</span>
-<span class="k">  </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span> <span class="k">allocatable</span><span class="p">,</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">code</span>    <span class="c">!&lt; Encoded array.</span>
-  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span>                  <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">n</span><span class="p">(</span><span class="mi">1</span><span class="p">:)</span>   <span class="c">!&lt; Array of numbers to be decoded.</span>
-  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span>     <span class="k">allocatable</span><span class="kd">::</span>              <span class="n">nI1P</span><span class="p">(:)</span> <span class="c">!&lt; One byte integer array containing n.</span>
+<span class="k">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">code</span>    <span class="c">!&lt; Encoded array.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">n</span><span class="p">(</span><span class="mi">1</span><span class="p">:)</span>   <span class="c">!&lt; Array of numbers to be decoded.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span> <span class="k">allocatable</span><span class="kd">::</span> <span class="n">nI1P</span><span class="p">(:)</span> <span class="c">!&lt; One byte integer array containing n.</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
 
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
@@ -948,6 +1203,24 @@
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="n">endsubroutine</span> <span class="n">b64_decode_I1_a</span>
 
+  <span class="k">pure subroutine </span><span class="n">b64_decode_string_a</span><span class="p">(</span><span class="n">code</span><span class="p">,</span><span class="n">s</span><span class="p">)</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="c">!&lt; Procedure for decoding a base64 code into an array of strings.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">implicit none</span>
+<span class="k">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">IN</span><span class="p">)</span><span class="kd">::</span>  <span class="n">code</span>    <span class="c">!&lt; Encoded scalar.</span>
+  <span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span> <span class="k">intent</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="kd">::</span> <span class="n">s</span><span class="p">(</span><span class="mi">1</span><span class="p">:)</span>   <span class="c">!&lt; String to be decoded.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span> <span class="k">allocatable</span><span class="kd">::</span> <span class="n">nI1P</span><span class="p">(:)</span> <span class="c">!&lt; One byte integer array containing n.</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="k">allocate</span><span class="p">(</span><span class="n">nI1P</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">byte_size</span><span class="p">(</span><span class="n">s</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="n">size</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="nb">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)))</span> <span class="p">;</span> <span class="n">nI1P</span> <span class="o">=</span> <span class="mi">0_I1P</span>
+  <span class="k">call </span><span class="n">decode_bits</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span><span class="n">bits</span><span class="o">=</span><span class="n">nI1P</span><span class="p">)</span>
+  <span class="n">s</span> <span class="o">=</span> <span class="nb">transfer</span><span class="p">(</span><span class="n">nI1P</span><span class="p">,</span><span class="n">s</span><span class="p">)</span>
+  <span class="k">return</span>
+  <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
+  <span class="n">endsubroutine</span> <span class="n">b64_decode_string_a</span>
+
   <span class="k">subroutine </span><span class="n">autotest</span><span class="p">()</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="c">!&lt; Procedure for autotesting the library functionalities.</span>
@@ -956,20 +1229,22 @@
   <span class="c">!&lt; correctness by a comparison with other widely used tools such as the python builtin module *struct*.</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="k">implicit none</span>
-<span class="k">  </span><span class="kt">real</span><span class="p">(</span><span class="n">R16P</span><span class="p">)</span><span class="kd">::</span>                    <span class="n">scalar_R16</span> <span class="o">=</span> <span class="mi">13</span><span class="mf">4.231_R16P</span>             <span class="c">!&lt; Real input to be encoded.</span>
-  <span class="kt">real</span><span class="p">(</span><span class="n">R8P</span><span class="p">)</span><span class="kd">::</span>                     <span class="n">scalar_R8</span>  <span class="o">=</span> <span class="mf">1._R8P</span>                   <span class="c">!&lt; Real input to be encoded.</span>
-  <span class="kt">real</span><span class="p">(</span><span class="n">R4P</span><span class="p">)</span><span class="kd">::</span>                     <span class="n">scalar_R4</span>  <span class="o">=</span> <span class="mf">0._R4P</span>                   <span class="c">!&lt; Real input to be encoded.</span>
-  <span class="kt">integer</span><span class="p">(</span><span class="n">I8P</span><span class="p">)</span><span class="kd">::</span>                  <span class="n">scalar_I8</span>  <span class="o">=</span> <span class="mi">23_I8P</span>                   <span class="c">!&lt; Integer input to be encoded.</span>
-  <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span>                  <span class="n">scalar_I4</span>  <span class="o">=</span> <span class="mi">2023_I4P</span>                 <span class="c">!&lt; Integer input to be encoded.</span>
-  <span class="kt">integer</span><span class="p">(</span><span class="n">I2P</span><span class="p">)</span><span class="kd">::</span>                  <span class="n">scalar_I2</span>  <span class="o">=</span> <span class="o">-</span><span class="mi">203_I2P</span>                 <span class="c">!&lt; Integer input to be encoded.</span>
-  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">)</span><span class="kd">::</span>                  <span class="n">scalar_I1</span>  <span class="o">=</span> <span class="mi">120_I1P</span>                  <span class="c">!&lt; Integer input to be encoded.</span>
-  <span class="kt">real</span><span class="p">(</span><span class="n">R16P</span><span class="p">)</span><span class="kd">::</span>                    <span class="n">array_R16</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">)</span><span class="o">=</span> <span class="p">[</span><span class="mi">12</span><span class="mf">1._R16P</span><span class="p">,</span><span class="mf">2.32_R16P</span><span class="p">]</span> <span class="c">!&lt; Real input to be encoded.</span>
-  <span class="kt">real</span><span class="p">(</span><span class="n">R8P</span><span class="p">)</span><span class="kd">::</span>                     <span class="n">array_R8</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1._R8P</span><span class="p">,</span><span class="mf">2._R8P</span>      <span class="p">]</span> <span class="c">!&lt; Real input to be encoded.</span>
-  <span class="kt">real</span><span class="p">(</span><span class="n">R4P</span><span class="p">)</span><span class="kd">::</span>                     <span class="n">array_R4</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0._R4P</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="mf">2.12_R4P</span>  <span class="p">]</span> <span class="c">!&lt; Real input to be encoded.</span>
-  <span class="kt">integer</span><span class="p">(</span><span class="n">I8P</span><span class="p">)</span><span class="kd">::</span>                  <span class="n">array_I8</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mi">23</span><span class="p">,</span><span class="mi">324</span><span class="p">,</span><span class="mi">25456656</span><span class="p">,</span><span class="mi">2</span>  <span class="p">]</span> <span class="c">!&lt; Integer input to be encoded.</span>
-  <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span>                  <span class="n">array_I4</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2023</span><span class="p">,</span><span class="o">-</span><span class="mi">24</span>           <span class="p">]</span> <span class="c">!&lt; Integer input to be encoded.</span>
-  <span class="kt">integer</span><span class="p">(</span><span class="n">I2P</span><span class="p">)</span><span class="kd">::</span>                  <span class="n">array_I2</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">203</span><span class="p">,</span><span class="o">-</span><span class="mi">10</span>           <span class="p">]</span> <span class="c">!&lt; Integer input to be encoded.</span>
-  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">)</span><span class="kd">::</span>                  <span class="n">array_I1</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="o">+</span><span class="mi">120</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span>            <span class="p">]</span> <span class="c">!&lt; Integer input to be encoded.</span>
+<span class="k">  </span><span class="kt">real</span><span class="p">(</span><span class="n">R16P</span><span class="p">)</span><span class="kd">::</span>                    <span class="n">scalar_R16</span> <span class="o">=</span> <span class="mi">13</span><span class="mf">4.231_R16P</span>             <span class="c">!&lt; Real input to be encoded/decoded.</span>
+  <span class="kt">real</span><span class="p">(</span><span class="n">R8P</span><span class="p">)</span><span class="kd">::</span>                     <span class="n">scalar_R8</span>  <span class="o">=</span> <span class="mf">1._R8P</span>                   <span class="c">!&lt; Real input to be encoded/decoded.</span>
+  <span class="kt">real</span><span class="p">(</span><span class="n">R4P</span><span class="p">)</span><span class="kd">::</span>                     <span class="n">scalar_R4</span>  <span class="o">=</span> <span class="mf">0._R4P</span>                   <span class="c">!&lt; Real input to be encoded/decoded.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I8P</span><span class="p">)</span><span class="kd">::</span>                  <span class="n">scalar_I8</span>  <span class="o">=</span> <span class="mi">23_I8P</span>                   <span class="c">!&lt; Integer input to be encoded/decoded.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span>                  <span class="n">scalar_I4</span>  <span class="o">=</span> <span class="mi">2023_I4P</span>                 <span class="c">!&lt; Integer input to be encoded/decoded.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I2P</span><span class="p">)</span><span class="kd">::</span>                  <span class="n">scalar_I2</span>  <span class="o">=</span> <span class="o">-</span><span class="mi">203_I2P</span>                 <span class="c">!&lt; Integer input to be encoded/decoded.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">)</span><span class="kd">::</span>                  <span class="n">scalar_I1</span>  <span class="o">=</span> <span class="mi">120_I1P</span>                  <span class="c">!&lt; Integer input to be encoded/decoded.</span>
+  <span class="kt">real</span><span class="p">(</span><span class="n">R16P</span><span class="p">)</span><span class="kd">::</span>                    <span class="n">array_R16</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">)</span><span class="o">=</span> <span class="p">[</span><span class="mi">12</span><span class="mf">1._R16P</span><span class="p">,</span><span class="mf">2.32_R16P</span><span class="p">]</span> <span class="c">!&lt; Real input to be encoded/decoded.</span>
+  <span class="kt">real</span><span class="p">(</span><span class="n">R8P</span><span class="p">)</span><span class="kd">::</span>                     <span class="n">array_R8</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1._R8P</span><span class="p">,</span><span class="mf">2._R8P</span>      <span class="p">]</span> <span class="c">!&lt; Real input to be encoded/decoded.</span>
+  <span class="kt">real</span><span class="p">(</span><span class="n">R4P</span><span class="p">)</span><span class="kd">::</span>                     <span class="n">array_R4</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0._R4P</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="mf">2.12_R4P</span>  <span class="p">]</span> <span class="c">!&lt; Real input to be encoded/decoded.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I8P</span><span class="p">)</span><span class="kd">::</span>                  <span class="n">array_I8</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mi">23</span><span class="p">,</span><span class="mi">324</span><span class="p">,</span><span class="mi">25456656</span><span class="p">,</span><span class="mi">2</span>  <span class="p">]</span> <span class="c">!&lt; Integer input to be encoded/decoded.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span>                  <span class="n">array_I4</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2023</span><span class="p">,</span><span class="o">-</span><span class="mi">24</span>           <span class="p">]</span> <span class="c">!&lt; Integer input to be encoded/decoded.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I2P</span><span class="p">)</span><span class="kd">::</span>                  <span class="n">array_I2</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">203</span><span class="p">,</span><span class="o">-</span><span class="mi">10</span>           <span class="p">]</span> <span class="c">!&lt; Integer input to be encoded/decoded.</span>
+  <span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">)</span><span class="kd">::</span>                  <span class="n">array_I1</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="o">+</span><span class="mi">120</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span>            <span class="p">]</span> <span class="c">!&lt; Integer input to be encoded/decoded.</span>
+  <span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span> <span class="k">allocatable</span><span class="kd">::</span> <span class="n">string</span>                                <span class="c">!&lt; String to be encoded/decoded.</span>
+  <span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span> <span class="k">allocatable</span><span class="kd">::</span> <span class="n">string_a</span><span class="p">(:)</span>                           <span class="c">!&lt; Strings to be encoded/decoded.</span>
   <span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span> <span class="k">allocatable</span><span class="kd">::</span> <span class="n">code64</span>                                <span class="c">!&lt; Base64 encoded array.</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
 
@@ -1000,6 +1275,10 @@
 
   <span class="k">call </span><span class="n">b64_encode</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">scalar_I1</span><span class="p">,</span><span class="n">code</span><span class="o">=</span><span class="n">code64</span><span class="p">)</span>
   <span class="k">print</span> <span class="s2">&quot;(A,1X,L1)&quot;</span><span class="p">,</span> <span class="s1">&#39;+ Code of &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">str</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">scalar_I1</span><span class="p">))</span><span class="o">//</span><span class="s1">&#39;: &quot;&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">code64</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39;&quot;, Is it correct?&#39;</span><span class="p">,</span><span class="nb">trim</span><span class="p">(</span><span class="n">code64</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;eA==&#39;</span>
+
+  <span class="n">string</span> <span class="o">=</span> <span class="s1">&#39;hello&#39;</span>
+  <span class="k">call </span><span class="n">b64_encode</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">string</span><span class="p">,</span><span class="n">code</span><span class="o">=</span><span class="n">code64</span><span class="p">)</span>
+  <span class="k">print</span> <span class="s2">&quot;(A,1X,L1)&quot;</span><span class="p">,</span> <span class="s1">&#39;+ Code of &#39;</span><span class="o">//</span><span class="n">string</span><span class="o">//</span><span class="s1">&#39;: &quot;&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">code64</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39;&quot;, Is it correct?&#39;</span><span class="p">,</span><span class="nb">trim</span><span class="p">(</span><span class="n">code64</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;aGVsbG8=&#39;</span>
 
   <span class="k">print</span> <span class="s2">&quot;(A)&quot;</span><span class="p">,</span> <span class="s1">&#39;Arrays&#39;</span>
 
@@ -1032,6 +1311,9 @@
   <span class="k">print</span> <span class="s2">&quot;(A,1X,L1)&quot;</span><span class="p">,</span> <span class="s1">&#39;+ Code of [&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">str</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">array_I1</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span><span class="o">//</span><span class="s1">&#39;,&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">str</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">array_I1</span><span class="p">(</span><span class="mi">2</span><span class="p">)))</span><span class="o">//</span><span class="s1">&#39;]: &quot;&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">code64</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span>
     <span class="s1">&#39;&quot;, Is it correct?&#39;</span><span class="p">,</span><span class="nb">trim</span><span class="p">(</span><span class="n">code64</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;eP8=&#39;</span>
 
+  <span class="k">call </span><span class="n">b64_encode</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span><span class="s1">&#39;world&#39;</span><span class="p">],</span><span class="n">code</span><span class="o">=</span><span class="n">code64</span><span class="p">)</span>
+  <span class="k">print</span> <span class="s2">&quot;(A,1X,L1)&quot;</span><span class="p">,</span> <span class="s1">&#39;+ Code of [hello,world]: &quot;&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">code64</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39;&quot;, Is it correct?&#39;</span><span class="p">,</span><span class="nb">trim</span><span class="p">(</span><span class="n">code64</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;aGVsbG93b3JsZA==&#39;</span>
+
   <span class="k">print</span> <span class="s2">&quot;(A)&quot;</span><span class="p">,</span> <span class="s1">&#39;Decoders&#39;</span>
 
   <span class="k">print</span> <span class="s2">&quot;(A)&quot;</span><span class="p">,</span> <span class="s1">&#39;Scalars&#39;</span>
@@ -1053,6 +1335,10 @@
 
   <span class="n">code64</span> <span class="o">=</span> <span class="s1">&#39;eA==&#39;</span> <span class="p">;</span> <span class="k">call </span><span class="n">b64_decode</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code64</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="n">scalar_I1</span><span class="p">)</span>
   <span class="k">print</span> <span class="s2">&quot;(A)&quot;</span><span class="p">,</span> <span class="s1">&#39;+ Decode of &quot;&#39;</span><span class="o">//</span><span class="n">code64</span><span class="o">//</span><span class="s1">&#39;&quot;: &#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">str</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">scalar_I1</span><span class="p">))</span><span class="o">//</span><span class="s1">&#39;, Should be 120&#39;</span>
+
+  <span class="n">string</span> <span class="o">=</span> <span class="nb">repeat</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+  <span class="n">code64</span> <span class="o">=</span> <span class="s1">&#39;aGVsbG8=&#39;</span> <span class="p">;</span> <span class="k">call </span><span class="n">b64_decode</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code64</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="n">string</span><span class="p">)</span>
+  <span class="k">print</span> <span class="s2">&quot;(A)&quot;</span><span class="p">,</span> <span class="s1">&#39;+ Decode of &quot;&#39;</span><span class="o">//</span><span class="n">code64</span><span class="o">//</span><span class="s1">&#39;&quot;: &#39;</span><span class="o">//</span><span class="n">string</span><span class="o">//</span><span class="s1">&#39;, Should be &quot;hello&quot;&#39;</span>
 
   <span class="k">print</span> <span class="s2">&quot;(A)&quot;</span><span class="p">,</span> <span class="s1">&#39;Arrays&#39;</span>
 
@@ -1076,6 +1362,10 @@
 
   <span class="n">code64</span> <span class="o">=</span> <span class="s1">&#39;eP8=&#39;</span> <span class="p">;</span> <span class="k">call </span><span class="n">b64_decode</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code64</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="n">array_I1</span><span class="p">)</span>
   <span class="k">print</span> <span class="s2">&quot;(A)&quot;</span><span class="p">,</span> <span class="s1">&#39;+ Decode of &quot;&#39;</span><span class="o">//</span><span class="n">code64</span><span class="o">//</span><span class="s1">&#39;&quot;: [&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">str</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">array_I1</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span><span class="o">//</span><span class="s1">&#39;,&#39;</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">str</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">array_I1</span><span class="p">(</span><span class="mi">2</span><span class="p">)))</span><span class="o">//</span><span class="s1">&#39;], Should be [120,-1]&#39;</span>
+
+  <span class="k">allocate</span><span class="p">(</span><span class="kt">character</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="kd">::</span> <span class="n">string_a</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">))</span>
+  <span class="n">code64</span> <span class="o">=</span> <span class="s1">&#39;aGVsbG93b3JsZA==&#39;</span> <span class="p">;</span> <span class="k">call </span><span class="n">b64_decode</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code64</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="n">string_a</span><span class="p">)</span>
+  <span class="k">print</span> <span class="s2">&quot;(A)&quot;</span><span class="p">,</span> <span class="s1">&#39;+ Decode of &quot;&#39;</span><span class="o">//</span><span class="n">code64</span><span class="o">//</span><span class="s1">&#39;&quot;: &#39;</span><span class="o">//</span><span class="n">string_a</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">//</span><span class="n">string_a</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39;, Should be &quot;helloworld&quot;&#39;</span>
   <span class="k">return</span>
   <span class="c">!---------------------------------------------------------------------------------------------------------------------------------</span>
   <span class="n">endsubroutine</span> <span class="n">autotest</span>

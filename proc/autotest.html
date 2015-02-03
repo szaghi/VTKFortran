@@ -150,6 +150,10 @@
       
       <a class="list-group-item" href="../proc/autotest.html#var-array_I1">array_I1</a>
       
+      <a class="list-group-item" href="../proc/autotest.html#var-string">string</a>
+      
+      <a class="list-group-item" href="../proc/autotest.html#var-string_a">string_a</a>
+      
       <a class="list-group-item" href="../proc/autotest.html#var-code64">code64</a>
       
     </div>
@@ -203,6 +207,16 @@
       
       <a class="list-group-item" href="../proc/b64_decode_r8_a.html">b64_decode_R8_a</a>
       
+      <a class="list-group-item" href="../proc/b64_decode_string.html">b64_decode_string</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_string_a.html">b64_decode_string_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_up.html">b64_decode_up</a>
+      
+      <a class="list-group-item" href="../interface/b64_decode_up.html">b64_decode_up</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_up_a.html">b64_decode_up_a</a>
+      
       <a class="list-group-item" href="../interface/b64_encode.html">b64_encode</a>
       
       <a class="list-group-item" href="../proc/b64_encode_i1.html">b64_encode_I1</a>
@@ -232,6 +246,16 @@
       <a class="list-group-item" href="../proc/b64_encode_r8.html">b64_encode_R8</a>
       
       <a class="list-group-item" href="../proc/b64_encode_r8_a.html">b64_encode_R8_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_encode_string.html">b64_encode_string</a>
+      
+      <a class="list-group-item" href="../proc/b64_encode_string_a.html">b64_encode_string_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_encode_up.html">b64_encode_up</a>
+      
+      <a class="list-group-item" href="../interface/b64_encode_up.html">b64_encode_up</a>
+      
+      <a class="list-group-item" href="../proc/b64_encode_up_a.html">b64_encode_up_a</a>
       
       <a class="list-group-item" href="../proc/b64_init.html">b64_init</a>
       
@@ -723,7 +747,7 @@ public  subroutine autotest()
   
   <td>public</td>
   <td></td><td>::</td>
-  <td><strong>scalar_R16</strong></td><td> =</td><td>134.231_R16P</td><td><p>Real input to be encoded.</p></td>
+  <td><strong>scalar_R16</strong></td><td> =</td><td>134.231_R16P</td><td><p>Real input to be encoded/decoded.</p></td>
   
 </tr>
 
@@ -737,7 +761,7 @@ public  subroutine autotest()
   
   <td>public</td>
   <td></td><td>::</td>
-  <td><strong>scalar_R8</strong></td><td> =</td><td>1._R8P</td><td><p>Real input to be encoded.</p></td>
+  <td><strong>scalar_R8</strong></td><td> =</td><td>1._R8P</td><td><p>Real input to be encoded/decoded.</p></td>
   
 </tr>
 
@@ -751,7 +775,7 @@ public  subroutine autotest()
   
   <td>public</td>
   <td></td><td>::</td>
-  <td><strong>scalar_R4</strong></td><td> =</td><td>0._R4P</td><td><p>Real input to be encoded.</p></td>
+  <td><strong>scalar_R4</strong></td><td> =</td><td>0._R4P</td><td><p>Real input to be encoded/decoded.</p></td>
   
 </tr>
 
@@ -765,7 +789,7 @@ public  subroutine autotest()
   
   <td>public</td>
   <td></td><td>::</td>
-  <td><strong>scalar_I8</strong></td><td> =</td><td>23_I8P</td><td><p>Integer input to be encoded.</p></td>
+  <td><strong>scalar_I8</strong></td><td> =</td><td>23_I8P</td><td><p>Integer input to be encoded/decoded.</p></td>
   
 </tr>
 
@@ -779,7 +803,7 @@ public  subroutine autotest()
   
   <td>public</td>
   <td></td><td>::</td>
-  <td><strong>scalar_I4</strong></td><td> =</td><td>2023_I4P</td><td><p>Integer input to be encoded.</p></td>
+  <td><strong>scalar_I4</strong></td><td> =</td><td>2023_I4P</td><td><p>Integer input to be encoded/decoded.</p></td>
   
 </tr>
 
@@ -793,7 +817,7 @@ public  subroutine autotest()
   
   <td>public</td>
   <td></td><td>::</td>
-  <td><strong>scalar_I2</strong></td><td> =</td><td>-203_I2P</td><td><p>Integer input to be encoded.</p></td>
+  <td><strong>scalar_I2</strong></td><td> =</td><td>-203_I2P</td><td><p>Integer input to be encoded/decoded.</p></td>
   
 </tr>
 
@@ -807,7 +831,7 @@ public  subroutine autotest()
   
   <td>public</td>
   <td></td><td>::</td>
-  <td><strong>scalar_I1</strong></td><td> =</td><td>120_I1P</td><td><p>Integer input to be encoded.</p></td>
+  <td><strong>scalar_I1</strong></td><td> =</td><td>120_I1P</td><td><p>Integer input to be encoded/decoded.</p></td>
   
 </tr>
 
@@ -821,7 +845,7 @@ public  subroutine autotest()
   
   <td>public</td>
   <td></td><td>::</td>
-  <td><strong>array_R16</strong>(1:2)</td><td> =</td><td>[121._R16P,2.32_R16P]</td><td><p>Real input to be encoded.</p></td>
+  <td><strong>array_R16</strong>(1:2)</td><td> =</td><td>[121._R16P,2.32_R16P]</td><td><p>Real input to be encoded/decoded.</p></td>
   
 </tr>
 
@@ -835,7 +859,7 @@ public  subroutine autotest()
   
   <td>public</td>
   <td></td><td>::</td>
-  <td><strong>array_R8</strong>(1:2)</td><td> =</td><td>[1._R8P,2._R8P]</td><td><p>Real input to be encoded.</p></td>
+  <td><strong>array_R8</strong>(1:2)</td><td> =</td><td>[1._R8P,2._R8P]</td><td><p>Real input to be encoded/decoded.</p></td>
   
 </tr>
 
@@ -849,7 +873,7 @@ public  subroutine autotest()
   
   <td>public</td>
   <td></td><td>::</td>
-  <td><strong>array_R4</strong>(1:2)</td><td> =</td><td>[0._R4P,-32.12_R4P]</td><td><p>Real input to be encoded.</p></td>
+  <td><strong>array_R4</strong>(1:2)</td><td> =</td><td>[0._R4P,-32.12_R4P]</td><td><p>Real input to be encoded/decoded.</p></td>
   
 </tr>
 
@@ -863,7 +887,7 @@ public  subroutine autotest()
   
   <td>public</td>
   <td></td><td>::</td>
-  <td><strong>array_I8</strong>(1:4)</td><td> =</td><td>[23,324,25456656,2]</td><td><p>Integer input to be encoded.</p></td>
+  <td><strong>array_I8</strong>(1:4)</td><td> =</td><td>[23,324,25456656,2]</td><td><p>Integer input to be encoded/decoded.</p></td>
   
 </tr>
 
@@ -877,7 +901,7 @@ public  subroutine autotest()
   
   <td>public</td>
   <td></td><td>::</td>
-  <td><strong>array_I4</strong>(1:2)</td><td> =</td><td>[2023,-24]</td><td><p>Integer input to be encoded.</p></td>
+  <td><strong>array_I4</strong>(1:2)</td><td> =</td><td>[2023,-24]</td><td><p>Integer input to be encoded/decoded.</p></td>
   
 </tr>
 
@@ -891,7 +915,7 @@ public  subroutine autotest()
   
   <td>public</td>
   <td></td><td>::</td>
-  <td><strong>array_I2</strong>(1:2)</td><td> =</td><td>[-203,-10]</td><td><p>Integer input to be encoded.</p></td>
+  <td><strong>array_I2</strong>(1:2)</td><td> =</td><td>[-203,-10]</td><td><p>Integer input to be encoded/decoded.</p></td>
   
 </tr>
 
@@ -905,7 +929,35 @@ public  subroutine autotest()
   
   <td>public</td>
   <td></td><td>::</td>
-  <td><strong>array_I1</strong>(1:2)</td><td> =</td><td>[+120,-1]</td><td><p>Integer input to be encoded.</p></td>
+  <td><strong>array_I1</strong>(1:2)</td><td> =</td><td>[+120,-1]</td><td><p>Integer input to be encoded/decoded.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><a class="anchor" name="var-string"></a>character(len=:),</td>
+  
+  <td>public,</td>
+  <td>allocatable</td><td>::</td>
+  <td><strong>string</strong></td><td></td><td></td><td><p>String to be encoded/decoded.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><a class="anchor" name="var-string_a"></a>character(len=:),</td>
+  
+  <td>public,</td>
+  <td>allocatable</td><td>::</td>
+  <td><strong>string_a</strong>(:)</td><td></td><td></td><td><p>Strings to be encoded/decoded.</p></td>
   
 </tr>
 
