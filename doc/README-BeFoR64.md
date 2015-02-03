@@ -14,19 +14,19 @@ Go to [Top](#top)
 
 ## Main features
 
-* [ ] User-friendly methods for encoding/decoding in base64:
+* [X] User-friendly methods for encoding/decoding in base64:
     * [x] encode real/integer scalar variables;
     * [X] decode real/integer scalar variables;
     * [x] encode real/integer array variables;
     * [X] decode real/integer array variables;
-    * [ ] encode character scalar variables;
-    * [ ] decode character scalar variables;
-    * [ ] encode character array variables;
-    * [ ] decode character array variables;
-    * [ ] encode unlimited polymorphic scalar variables;
-    * [ ] decode unlimited polymorphic scalar variables;
-    * [ ] encode unlimited polymorphic array variables;
-    * [ ] decode unlimited polymorphic array variables;
+    * [X] encode character scalar variables;
+    * [X] decode character scalar variables;
+    * [X] encode character array variables;
+    * [X] decode character array variables;
+    * [X] encode unlimited polymorphic scalar variables;
+    * [X] decode unlimited polymorphic scalar variables;
+    * [X] encode unlimited polymorphic array variables;
+    * [X] decode unlimited polymorphic array variables;
 * [ ] user-friendly methods for packing heterogeneous data:
     * [ ] pack integer/integer (different kinds) scalars;
     * [x] pack integer/integer (different kinds) arrays;
@@ -59,6 +59,9 @@ Go to [Top](#top)
 ## Version History
 
 In the following the changelog of most important releases is reported.
+### v1.0.1
+##### Download [ZIP](https://github.com/szaghi/BeFoR64/archive/v1.0.1.zip) ball or [TAR](https://github.com/szaghi/BeFoR64/archive/v1.0.1.tar.gz) one
+Stable Release. Fully backward compatible.
 ### v1.0.0
 ##### Download [ZIP](https://github.com/szaghi/BeFoR64/archive/v1.0.0.zip) ball or [TAR](https://github.com/szaghi/BeFoR64/archive/v1.0.0.tar.gz) one
 Stable Release. Fully backward compatible.
