@@ -509,26 +509,6 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine vtk_update
 
-  pure function tochar(string) result (char_string)
-  !---------------------------------------------------------------------------------------------------------------------------------
-  !< Function for converting array of 1 character to a string of characters.
-  !<
-  !< It is used for writing the stream of base64 encoded data.
-  !---------------------------------------------------------------------------------------------------------------------------------
-  implicit none
-  character(1), intent(IN)::      string(1:)  !< Array of 1 character.
-  character(size(string,dim=1)):: char_string !< String of characters.
-  integer(I4P)::                  i           !< Counter.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
-  forall(i = 1:size(string,dim=1))
-     char_string(i:i) = string(i)
-  endforall
-  return
-  !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction tochar
-
   ! VTK functions
   function VTK_INI_XML(output_format,filename,mesh_topology,cf,nx1,nx2,ny1,ny2,nz1,nz2) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -579,6 +559,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   E_IO = -1_I4P
   if (.not.ir_initialized) call IR_Init
+  if (.not.b64_initialized) call b64_init
   call vtk_update(act='add',cf=rf,Nvtk=Nvtk,vtk=vtk)
   f = rf
   if (present(cf)) cf = rf
@@ -707,7 +688,7 @@ contains
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I1P), allocatable::          fldp(:)  !< Packed field data.
-  character(1), allocatable::          fld64(:) !< Field data encoded in base64.
+  character(len=:), allocatable::      fld64    !< Field data encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   !---------------------------------------------------------------------------------------------------------------------------------
 
@@ -733,8 +714,8 @@ contains
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" NumberOfTuples="1" Name="'//trim(fname)//'" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(BYR8P,I4P)],a2=[fld],packed=fldp)
-    call b64_encode(nB=int(BYI1P,I4P),n=fldp,code=fld64) ; deallocate(fldp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(fld64)//end_rec ; deallocate(fld64)
+    call b64_encode(n=fldp,code=fld64) ; deallocate(fldp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//fld64//end_rec ; deallocate(fld64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -752,7 +733,7 @@ contains
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I1P), allocatable::          fldp(:)  !< Packed field data.
-  character(1), allocatable::          fld64(:) !< Field data encoded in base64.
+  character(len=:), allocatable::      fld64    !< Field data encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   !---------------------------------------------------------------------------------------------------------------------------------
 
@@ -778,8 +759,8 @@ contains
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" NumberOfTuples="1" Name="'//trim(fname)//'" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(BYR4P,I4P)],a2=[fld],packed=fldp)
-    call b64_encode(nB=int(BYI1P,I4P),n=fldp,code=fld64) ; deallocate(fldp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(fld64)//end_rec ; deallocate(fld64)
+    call b64_encode(n=fldp,code=fld64) ; deallocate(fldp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//fld64//end_rec ; deallocate(fld64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -797,7 +778,7 @@ contains
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I1P), allocatable::          fldp(:)  !< Packed field data.
-  character(1), allocatable::          fld64(:) !< Field data encoded in base64.
+  character(len=:), allocatable::      fld64    !< Field data encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   !---------------------------------------------------------------------------------------------------------------------------------
 
@@ -823,8 +804,8 @@ contains
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" NumberOfTuples="1" Name="'//trim(fname)//'" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(BYI8P,I4P)],a2=[fld],packed=fldp)
-    call b64_encode(nB=int(BYI1P,I4P),n=fldp,code=fld64) ; deallocate(fldp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(fld64)//end_rec ; deallocate(fld64)
+    call b64_encode(n=fldp,code=fld64) ; deallocate(fldp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//fld64//end_rec ; deallocate(fld64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -842,7 +823,7 @@ contains
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I1P), allocatable::          fldp(:)  !< Packed field data.
-  character(1), allocatable::          fld64(:) !< Field data encoded in base64.
+  character(len=:), allocatable::      fld64    !< Field data encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   integer(I8P)::                       Nfldp    !< Dimension of fldp, packed data.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -870,8 +851,8 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     Nfldp=size(transfer([int(BYI4P,I4P),fld],fldp),kind=I8P) ; if (allocated(fldp)) deallocate(fldp) ; allocate(fldp(1:Nfldp))
     fldp = transfer([int(BYI4P,I4P),fld],fldp)
-    call b64_encode(nB=int(BYI1P,I4P),n=fldp,code=fld64) ; deallocate(fldp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(fld64)//end_rec ; deallocate(fld64)
+    call b64_encode(n=fldp,code=fld64) ; deallocate(fldp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//fld64//end_rec ; deallocate(fld64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -889,7 +870,7 @@ contains
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I1P), allocatable::          fldp(:)  !< Packed field data.
-  character(1), allocatable::          fld64(:) !< Field data encoded in base64.
+  character(len=:), allocatable::      fld64    !< Field data encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   !---------------------------------------------------------------------------------------------------------------------------------
 
@@ -915,8 +896,8 @@ contains
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" NumberOfTuples="1" Name="'//trim(fname)//'" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(BYI2P,I4P)],a2=[fld],packed=fldp)
-    call b64_encode(nB=int(BYI1P,I4P),n=fldp,code=fld64) ; deallocate(fldp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(fld64)//end_rec ; deallocate(fld64)
+    call b64_encode(n=fldp,code=fld64) ; deallocate(fldp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//fld64//end_rec ; deallocate(fld64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -934,7 +915,7 @@ contains
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I1P), allocatable::          fldp(:)  !< Packed field data.
-  character(1), allocatable::          fld64(:) !< Field data encoded in base64.
+  character(len=:), allocatable::      fld64    !< Field data encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   !---------------------------------------------------------------------------------------------------------------------------------
 
@@ -960,8 +941,8 @@ contains
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" NumberOfTuples="1" Name="'//trim(fname)//'" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(BYI1P,I4P)],a2=[fld],packed=fldp)
-    call b64_encode(nB=int(BYI1P,I4P),n=fldp,code=fld64) ; deallocate(fldp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(fld64)//end_rec ; deallocate(fld64)
+    call b64_encode(n=fldp,code=fld64) ; deallocate(fldp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//fld64//end_rec ; deallocate(fld64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -986,7 +967,7 @@ contains
   integer(I4P), intent(IN), optional:: cf       !< Current file index (for concurrent files IO).
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   integer(I1P), allocatable::          XYZp(:)  !< Packed coordinates data.
-  character(1), allocatable::          XYZ64(:) !< X, Y, Z coordinates encoded in base64.
+  character(len=:), allocatable::      XYZ64    !< X, Y, Z coordinates encoded in base64.
   character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
@@ -1035,8 +1016,8 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" NumberOfComponents="3" Name="Points" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(3*NN*BYR8P,I4P)],a2=[(X(n1),Y(n1),Z(n1),n1=1,NN)],packed=XYZp)
-    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
+    call b64_encode(n=XYZp,code=XYZ64) ; deallocate(XYZp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//XYZ64//end_rec ; deallocate(XYZ64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     vtk(rf)%indent = vtk(rf)%indent - 2 ; write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'//end_rec
   endselect
@@ -1062,7 +1043,7 @@ contains
   integer(I4P), intent(IN), optional:: cf                !< Current file index (for concurrent files IO).
   integer(I4P)::                       E_IO              !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   integer(I1P), allocatable::          XYZp(:)           !< Packed coordinates data.
-  character(1), allocatable::          XYZ64(:)          !< X, Y, Z coordinates encoded in base64.
+  character(len=:), allocatable::      XYZ64             !< X, Y, Z coordinates encoded in base64.
   character(len=maxlen)::              s_buffer          !< Buffer string.
   integer(I4P)::                       rf                !< Real file index.
   integer(I4P)::                       nx,ny,nz          !< Counters.
@@ -1117,8 +1098,8 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(3*NN*BYR8P,I4P)],a2=[(((X(nx,ny,nz),Y(nx,ny,nz),Z(nx,ny,nz),nx=nx1,nx2),ny=ny1,ny2),nz=nz1,nz2)],&
                    packed=XYZp)
-    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
+    call b64_encode(n=XYZp,code=XYZ64) ; deallocate(XYZp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//XYZ64//end_rec ; deallocate(XYZ64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     vtk(rf)%indent = vtk(rf)%indent - 2 ; write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'//end_rec
   endselect
@@ -1142,7 +1123,7 @@ contains
   integer(I4P), intent(IN), optional:: cf         !< Current file index (for concurrent files IO).
   integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   integer(I1P), allocatable::          XYZp(:)    !< Packed coordinates data.
-  character(1), allocatable::          XYZ64(:)   !< X, Y, Z coordinates encoded in base64.
+  character(len=:), allocatable::      XYZ64      !< X, Y, Z coordinates encoded in base64.
   character(len=maxlen)::              s_buffer   !< Buffer string.
   integer(I4P)::                       rf         !< Real file index.
   integer(I4P)::                       n1         !< Counter.
@@ -1192,8 +1173,8 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" NumberOfComponents="3" Name="Points" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(3*NN*BYR8P,I4P)],a2=reshape(XYZ,[3*NN]),packed=XYZp)
-    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
+    call b64_encode(n=XYZp,code=XYZ64) ; deallocate(XYZp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//XYZ64//end_rec ; deallocate(XYZ64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     vtk(rf)%indent = vtk(rf)%indent - 2 ; write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'//end_rec
   endselect
@@ -1217,7 +1198,7 @@ contains
   integer(I4P), intent(IN), optional:: cf                     !< Current file index (for concurrent files IO).
   integer(I4P)::                       E_IO              !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   integer(I1P), allocatable::          XYZp(:)                !< Packed coordinates data.
-  character(1), allocatable::          XYZ64(:)               !< X, Y, Z coordinates encoded in base64.
+  character(len=:), allocatable::      XYZ64                  !< X, Y, Z coordinates encoded in base64.
   character(len=maxlen)::              s_buffer               !< Buffer string.
   integer(I4P)::                       rf                     !< Real file index.
   integer(I4P)::                       nx,ny,nz               !< Counters.
@@ -1271,8 +1252,8 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" NumberOfComponents="3" Name="Points" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(3*NN*BYR8P,I4P)],a2=reshape(XYZ,[3*NN]),packed=XYZp)
-    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
+    call b64_encode(n=XYZp,code=XYZ64) ; deallocate(XYZp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//XYZ64//end_rec ; deallocate(XYZ64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     vtk(rf)%indent = vtk(rf)%indent - 2 ; write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'//end_rec
   endselect
@@ -1299,7 +1280,7 @@ contains
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I1P), allocatable::          XYZp(:)  !< Packed data.
-  character(1), allocatable::          XYZ64(:) !< X, Y, Z coordinates encoded in base64.
+  character(len=:), allocatable::      XYZ64    !< X, Y, Z coordinates encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1347,8 +1328,8 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" NumberOfComponents="3" Name="Points" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(3*NN*BYR4P,I4P)],a2=[(X(n1),Y(n1),Z(n1),n1=1,NN)],packed=XYZp)
-    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
+    call b64_encode(n=XYZp,code=XYZ64) ; deallocate(XYZp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//XYZ64//end_rec ; deallocate(XYZ64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     vtk(rf)%indent = vtk(rf)%indent - 2 ; write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'//end_rec
   endselect
@@ -1375,7 +1356,7 @@ contains
   integer(I4P)::                       E_IO              !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer          !< Buffer string.
   integer(I1P), allocatable::          XYZp(:)           !< Packed data.
-  character(1), allocatable::          XYZ64(:)          !< X, Y, Z coordinates encoded in base64.
+  character(len=:), allocatable::      XYZ64             !< X, Y, Z coordinates encoded in base64.
   integer(I4P)::                       rf                !< Real file index.
   integer(I4P)::                       nx,ny,nz          !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1429,8 +1410,8 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(3*NN*BYR4P,I4P)],a2=[(((X(nx,ny,nz),Y(nx,ny,nz),Z(nx,ny,nz),nx=nx1,nx2),ny=ny1,ny2),nz=nz1,nz2)], &
                    packed=XYZp)
-    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
+    call b64_encode(n=XYZp,code=XYZ64) ; deallocate(XYZp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//XYZ64//end_rec ; deallocate(XYZ64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     vtk(rf)%indent = vtk(rf)%indent - 2 ; write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'//end_rec
   endselect
@@ -1455,7 +1436,7 @@ contains
   integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer   !< Buffer string.
   integer(I1P), allocatable::          XYZp(:)    !< Packed data.
-  character(1), allocatable::          XYZ64(:)   !< X, Y, Z coordinates encoded in base64.
+  character(len=:), allocatable::      XYZ64      !< X, Y, Z coordinates encoded in base64.
   integer(I4P)::                       rf         !< Real file index.
   integer(I4P)::                       n1         !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1504,8 +1485,8 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" NumberOfComponents="3" Name="Points" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(3*NN*BYR4P,I4P)],a2=reshape(XYZ,[3*NN]),packed=XYZp)
-    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
+    call b64_encode(n=XYZp,code=XYZ64) ; deallocate(XYZp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//XYZ64//end_rec ; deallocate(XYZ64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     vtk(rf)%indent = vtk(rf)%indent - 2 ; write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'//end_rec
   endselect
@@ -1530,7 +1511,7 @@ contains
   integer(I4P)::                       E_IO             !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer               !< Buffer string.
   integer(I1P), allocatable::          XYZp(:)                !< Packed data.
-  character(1), allocatable::          XYZ64(:)               !< X, Y, Z coordinates encoded in base64.
+  character(len=:), allocatable::      XYZ64                  !< X, Y, Z coordinates encoded in base64.
   integer(I4P)::                       rf                     !< Real file index.
   integer(I4P)::                       nx,ny,nz               !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1583,8 +1564,8 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" NumberOfComponents="3" Name="Points" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(3*NN*BYR4P,I4P)],a2=reshape(XYZ,[3*NN]),packed=XYZp)
-    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
+    call b64_encode(n=XYZp,code=XYZ64) ; deallocate(XYZp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//XYZ64//end_rec ; deallocate(XYZ64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     vtk(rf)%indent = vtk(rf)%indent - 2 ; write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'//end_rec
   endselect
@@ -1597,22 +1578,22 @@ contains
   !< Function for saving mesh with \b RectilinearGrid topology (R8P).
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN)::             nx1        !< Initial node of x axis.
-  integer(I4P), intent(IN)::             nx2        !< Final node of x axis.
-  integer(I4P), intent(IN)::             ny1        !< Initial node of y axis.
-  integer(I4P), intent(IN)::             ny2        !< Final node of y axis.
-  integer(I4P), intent(IN)::             nz1        !< Initial node of z axis.
-  integer(I4P), intent(IN)::             nz2        !< Final node of z axis.
-  real(R8P),    intent(IN)::             X(nx1:nx2) !< X coordinates.
-  real(R8P),    intent(IN)::             Y(ny1:ny2) !< Y coordinates.
-  real(R8P),    intent(IN)::             Z(nz1:nz2) !< Z coordinates.
-  integer(I4P), intent(IN), optional::   cf         !< Current file index (for concurrent files IO).
-  integer(I4P)::                         E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::                s_buffer   !< Buffer string.
-  integer(I1P), allocatable::            XYZp(:)    !< Packed data.
-  character(1), allocatable::            XYZ64(:)   !< X, Y, Z coordinates encoded in base64.
-  integer(I4P)::                         rf         !< Real file index.
-  integer(I4P)::                         n1         !< Counter.
+  integer(I4P), intent(IN)::           nx1        !< Initial node of x axis.
+  integer(I4P), intent(IN)::           nx2        !< Final node of x axis.
+  integer(I4P), intent(IN)::           ny1        !< Initial node of y axis.
+  integer(I4P), intent(IN)::           ny2        !< Final node of y axis.
+  integer(I4P), intent(IN)::           nz1        !< Initial node of z axis.
+  integer(I4P), intent(IN)::           nz2        !< Final node of z axis.
+  real(R8P),    intent(IN)::           X(nx1:nx2) !< X coordinates.
+  real(R8P),    intent(IN)::           Y(ny1:ny2) !< Y coordinates.
+  real(R8P),    intent(IN)::           Z(nz1:nz2) !< Z coordinates.
+  integer(I4P), intent(IN), optional:: cf         !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer   !< Buffer string.
+  integer(I1P), allocatable::          XYZp(:)    !< Packed data.
+  character(len=:), allocatable::      XYZ64      !< X, Y, Z coordinates encoded in base64.
+  integer(I4P)::                       rf         !< Real file index.
+  integer(I4P)::                       n1         !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1673,20 +1654,20 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="X" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int((nx2-nx1+1)*BYR8P,I4P)],a2=X,packed=XYZp)
-    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec
+    call b64_encode(n=XYZp,code=XYZ64)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//XYZ64//end_rec
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="Y" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int((ny2-ny1+1)*BYR8P,I4P)],a2=Y,packed=XYZp)
-    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec
+    call b64_encode(n=XYZp,code=XYZ64)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//XYZ64//end_rec
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="Z" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int((nz2-nz1+1)*BYR8P,I4P)],a2=Z,packed=XYZp)
-    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
+    call b64_encode(n=XYZp,code=XYZ64) ; deallocate(XYZp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//XYZ64//end_rec ; deallocate(XYZ64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     vtk(rf)%indent = vtk(rf)%indent - 2
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Coordinates>'//end_rec
@@ -1700,22 +1681,22 @@ contains
   !< Function for saving mesh with \b RectilinearGrid topology (R4P).
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), intent(IN)::             nx1        !< Initial node of x axis.
-  integer(I4P), intent(IN)::             nx2        !< Final node of x axis.
-  integer(I4P), intent(IN)::             ny1        !< Initial node of y axis.
-  integer(I4P), intent(IN)::             ny2        !< Final node of y axis.
-  integer(I4P), intent(IN)::             nz1        !< Initial node of z axis.
-  integer(I4P), intent(IN)::             nz2        !< Final node of z axis.
-  real(R4P),    intent(IN)::             X(nx1:nx2) !< X coordinates.
-  real(R4P),    intent(IN)::             Y(ny1:ny2) !< Y coordinates.
-  real(R4P),    intent(IN)::             Z(nz1:nz2) !< Z coordinates.
-  integer(I4P), intent(IN), optional::   cf         !< Current file index (for concurrent files IO).
-  integer(I4P)::                         E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  character(len=maxlen)::                s_buffer   !< Buffer string.
-  integer(I1P), allocatable::            XYZp(:)    !< Packed data.
-  character(1), allocatable::            XYZ64(:)   !< X, Y, Z coordinates encoded in base64.
-  integer(I4P)::                         rf         !< Real file index.
-  integer(I4P)::                         n1         !< Counter.
+  integer(I4P), intent(IN)::           nx1        !< Initial node of x axis.
+  integer(I4P), intent(IN)::           nx2        !< Final node of x axis.
+  integer(I4P), intent(IN)::           ny1        !< Initial node of y axis.
+  integer(I4P), intent(IN)::           ny2        !< Final node of y axis.
+  integer(I4P), intent(IN)::           nz1        !< Initial node of z axis.
+  integer(I4P), intent(IN)::           nz2        !< Final node of z axis.
+  real(R4P),    intent(IN)::           X(nx1:nx2) !< X coordinates.
+  real(R4P),    intent(IN)::           Y(ny1:ny2) !< Y coordinates.
+  real(R4P),    intent(IN)::           Z(nz1:nz2) !< Z coordinates.
+  integer(I4P), intent(IN), optional:: cf         !< Current file index (for concurrent files IO).
+  integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  character(len=maxlen)::              s_buffer   !< Buffer string.
+  integer(I1P), allocatable::          XYZp(:)    !< Packed data.
+  character(len=:), allocatable::      XYZ64      !< X, Y, Z coordinates encoded in base64.
+  integer(I4P)::                       rf         !< Real file index.
+  integer(I4P)::                       n1         !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1776,20 +1757,20 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="X" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int((nx2-nx1+1)*BYR4P,I4P)],a2=X,packed=XYZp)
-    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec
+    call b64_encode(n=XYZp,code=XYZ64)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//XYZ64//end_rec
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="Y" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int((ny2-ny1+1)*BYR4P,I4P)],a2=Y,packed=XYZp)
-    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec
+    call b64_encode(n=XYZp,code=XYZ64)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//XYZ64//end_rec
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="Z" format="binary">'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int((nz2-nz1+1)*BYR4P,I4P)],a2=Z,packed=XYZp)
-    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
+    call b64_encode(n=XYZp,code=XYZ64) ; deallocate(XYZp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//XYZ64//end_rec ; deallocate(XYZ64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     vtk(rf)%indent = vtk(rf)%indent - 2
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Coordinates>'//end_rec
@@ -1813,7 +1794,7 @@ contains
   character(len=maxlen)::              s_buffer !< Buffer string.
   real(R8P), allocatable::             XYZa(:)  !< X, Y, Z coordinates.
   integer(I1P), allocatable::          XYZp(:)  !< Packed data.
-  character(1), allocatable::          XYZ64(:) !< X, Y, Z coordinates encoded in base64.
+  character(len=:), allocatable::      XYZ64    !< X, Y, Z coordinates encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1859,8 +1840,8 @@ contains
       XYZa(1+(n1-1)*3:1+(n1-1)*3+2)=[X(n1),Y(n1),Z(n1)]
     enddo
     call pack_data(a1=[int(3*NN*BYR8P,I4P)],a2=XYZa,packed=XYZp) ; deallocate(XYZa)
-    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
+    call b64_encode(n=XYZp,code=XYZ64) ; deallocate(XYZp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//XYZ64//end_rec ; deallocate(XYZ64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     vtk(rf)%indent = vtk(rf)%indent - 2 ; write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'//end_rec
   endselect
@@ -1881,7 +1862,7 @@ contains
   character(len=maxlen)::              s_buffer      !< Buffer string.
   real(R8P), allocatable::             XYZa(:)       !< X, Y, Z coordinates.
   integer(I1P), allocatable::          XYZp(:)       !< Packed data.
-  character(1), allocatable::          XYZ64(:)      !< X, Y, Z coordinates encoded in base64.
+  character(len=:), allocatable::      XYZ64         !< X, Y, Z coordinates encoded in base64.
   integer(I4P)::                       rf            !< Real file index.
   integer(I4P)::                       n1            !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1928,8 +1909,8 @@ contains
       XYZa(1+(n1-1)*3:1+(n1-1)*3+2)=XYZ(1:3,n1)
     enddo
     call pack_data(a1=[int(3*NN*BYR8P,I4P)],a2=XYZa,packed=XYZp) ; deallocate(XYZa)
-    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
+    call b64_encode(n=XYZp,code=XYZ64) ; deallocate(XYZp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//XYZ64//end_rec ; deallocate(XYZ64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     vtk(rf)%indent = vtk(rf)%indent - 2 ; write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'//end_rec
   endselect
@@ -1952,7 +1933,7 @@ contains
   character(len=maxlen)::              s_buffer !< Buffer string.
   real(R4P), allocatable::             XYZa(:)  !< X, Y, Z coordinates.
   integer(I1P), allocatable::          XYZp(:)  !< Packed data.
-  character(1), allocatable::          XYZ64(:) !< X, Y, Z coordinates encoded in base64.
+  character(len=:), allocatable::      XYZ64    !< X, Y, Z coordinates encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1998,8 +1979,8 @@ contains
       XYZa(1+(n1-1)*3:1+(n1-1)*3+2)=[X(n1),Y(n1),Z(n1)]
     enddo
     call pack_data(a1=[int(3*NN*BYR4P,I4P)],a2=XYZa,packed=XYZp) ; deallocate(XYZa)
-    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
+    call b64_encode(n=XYZp,code=XYZ64) ; deallocate(XYZp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//XYZ64//end_rec ; deallocate(XYZ64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     vtk(rf)%indent = vtk(rf)%indent - 2 ; write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'//end_rec
   endselect
@@ -2020,7 +2001,7 @@ contains
   character(len=maxlen)::              s_buffer      !< Buffer string.
   real(R4P), allocatable::             XYZa(:)       !< X, Y, Z coordinates.
   integer(I1P), allocatable::          XYZp(:)       !< Packed data.
-  character(1), allocatable::          XYZ64(:)      !< X, Y, Z coordinates encoded in base64.
+  character(len=:), allocatable::      XYZ64         !< X, Y, Z coordinates encoded in base64.
   integer(I4P)::                       rf            !< Real file index.
   integer(I4P)::                       n1            !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2067,8 +2048,8 @@ contains
       XYZa(1+(n1-1)*3:1+(n1-1)*3+2)=XYZ(1:3,n1)
     enddo
     call pack_data(a1=[int(3*NN*BYR4P,I4P)],a2=XYZa,packed=XYZp) ; deallocate(XYZa)
-    call b64_encode(nB=int(BYI1P,I4P),n=XYZp,code=XYZ64) ; deallocate(XYZp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(XYZ64)//end_rec ; deallocate(XYZ64)
+    call b64_encode(n=XYZp,code=XYZ64) ; deallocate(XYZp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//XYZ64//end_rec ; deallocate(XYZ64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     vtk(rf)%indent = vtk(rf)%indent - 2 ; write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Points>'//end_rec
   endselect
@@ -2168,7 +2149,7 @@ contains
   integer(I4P)::                       E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer      !< Buffer string.
   integer(I1P), allocatable::          cocp(:)       !< Packed data.
-  character(1), allocatable::          coc64(:)      !< Data encoded in base64.
+  character(len=:), allocatable::      coc64         !< Data encoded in base64.
   integer(I1P)::                       incr          !< Actual id offset increment.
   integer(I4P)::                       rf            !< Real file index.
   integer(I4P)::                       n1            !< Counter.
@@ -2235,16 +2216,16 @@ contains
     Ncocp=size(transfer([int(offset(NC)*BYI4P,I4P),connect],cocp),kind=I8P)
     if (allocated(cocp)) deallocate(cocp) ; allocate(cocp(1:Ncocp))
     cocp = transfer([int(offset(NC)*BYI4P,I4P),connect],cocp)
-    call b64_encode(nB=int(BYI1P,I4P),n=cocp,code=coc64)
+    call b64_encode(n=cocp,code=coc64)
     deallocate(cocp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(coc64)//end_rec
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//coc64//end_rec
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="offsets" format="binary">'//end_rec
     Ncocp=size(transfer([int(NC*BYI4P,I4P),offset],cocp),kind=I8P) ; if (allocated(cocp)) deallocate(cocp) ; allocate(cocp(1:Ncocp))
     cocp = transfer([int(NC*BYI4P,I4P),offset],cocp)
-    call b64_encode(nB=int(BYI1P,I4P),n=cocp,code=coc64)
+    call b64_encode(n=cocp,code=coc64)
     deallocate(cocp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(coc64)//end_rec
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//coc64//end_rec
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="types" format="binary">'//end_rec
     if (lbound(cell_type,dim=1)==ubound(cell_type,dim=1)) then
@@ -2252,8 +2233,8 @@ contains
     else
       call pack_data(a1=[int(NC*BYI1P,I4P)],a2=cell_type,packed=cocp)
     endif
-    call b64_encode(nB=int(BYI1P,I4P),n=cocp,code=coc64) ; deallocate(cocp)
-    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(coc64)//end_rec ; deallocate(coc64)
+    call b64_encode(n=cocp,code=coc64) ; deallocate(cocp)
+    write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//coc64//end_rec ; deallocate(coc64)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent - 2
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</Cells>'//end_rec
   endselect
@@ -2358,7 +2339,7 @@ contains
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I1P), allocatable::          varp(:)  !< Packed data.
-  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  character(len=:), allocatable::      var64    !< Variable encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2388,8 +2369,8 @@ contains
              '" NumberOfComponents="1" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(NC_NN*BYR8P,I4P)],a2=var,packed=varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -2408,7 +2389,7 @@ contains
   integer(I4P)::                       E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer      !< Buffer string.
   integer(I1P), allocatable::          varp(:)       !< Packed data.
-  character(1), allocatable::          var64(:)      !< Variable encoded in base64.
+  character(len=:), allocatable::      var64         !< Variable encoded in base64.
   integer(I4P)::                       rf            !< Real file index.
   integer(I4P)::                       nx,ny,nz      !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2439,8 +2420,8 @@ contains
              '" NumberOfComponents="1" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(NC_NN*BYR8P,I4P)],a2=reshape(var,[NC_NN]),packed=varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -2459,7 +2440,7 @@ contains
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I1P), allocatable::          varp(:)  !< Packed data.
-  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  character(len=:), allocatable::      var64    !< Variable encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2489,8 +2470,8 @@ contains
              '" NumberOfComponents="1" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(NC_NN*BYR4P,I4P)],a2=var,packed=varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -2509,7 +2490,7 @@ contains
   integer(I4P)::                       E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer      !< Buffer string.
   integer(I1P), allocatable::          varp(:)       !< Packed data.
-  character(1), allocatable::          var64(:)      !< Variable encoded in base64.
+  character(len=:), allocatable::      var64         !< Variable encoded in base64.
   integer(I4P)::                       rf            !< Real file index.
   integer(I4P)::                       nx,ny,nz      !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2540,8 +2521,8 @@ contains
              '" NumberOfComponents="1" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(NC_NN*BYR4P,I4P)],a2=reshape(var,[NC_NN]),packed=varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -2560,7 +2541,7 @@ contains
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I1P), allocatable::          varp(:)  !< Packed data.
-  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  character(len=:), allocatable::      var64    !< Variable encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2590,8 +2571,8 @@ contains
              '" NumberOfComponents="1" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(NC_NN*BYI8P,I4P)],a2=var,packed=varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -2610,7 +2591,7 @@ contains
   integer(I4P)::                       E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer      !< Buffer string.
   integer(I1P), allocatable::          varp(:)       !< Packed data.
-  character(1), allocatable::          var64(:)      !< Variable encoded in base64.
+  character(len=:), allocatable::      var64         !< Variable encoded in base64.
   integer(I4P)::                       rf            !< Real file index.
   integer(I4P)::                       nx,ny,nz      !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2641,8 +2622,8 @@ contains
              '" NumberOfComponents="1" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(NC_NN*BYI8P,I4P)],a2=reshape(var,[NC_NN]),packed=varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -2661,7 +2642,7 @@ contains
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I1P), allocatable::          varp(:)  !< Packed data.
-  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  character(len=:), allocatable::      var64    !< Variable encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
   integer(I8P)::                       Nvarp    !< Dimension of varp, packed data.
@@ -2693,8 +2674,8 @@ contains
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     Nvarp=size(transfer([int(NC_NN*BYI4P,I4P),var],varp),kind=I8P) ; if (allocated(varp)) deallocate(varp) ; allocate(varp(1:Nvarp))
     varp = transfer([int(NC_NN*BYI4P,I4P),var],varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -2713,7 +2694,7 @@ contains
   integer(I4P)::                       E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer      !< Buffer string.
   integer(I1P), allocatable::          varp(:)       !< Packed data.
-  character(1), allocatable::          var64(:)      !< Variable encoded in base64.
+  character(len=:), allocatable::      var64         !< Variable encoded in base64.
   integer(I4P)::                       rf            !< Real file index.
   integer(I4P)::                       nx,ny,nz      !< Counters.
   integer(I8P)::                       Nvarp         !< Dimension of varp, packed data.
@@ -2747,8 +2728,8 @@ contains
     Nvarp=size(transfer([int(NC_NN*BYI4P,I4P),reshape(var,[NC_NN])],varp),kind=I8P)
     if (allocated(varp)) deallocate(varp); allocate(varp(1:Nvarp))
     varp = transfer([int(NC_NN*BYI4P,I4P),reshape(var,[NC_NN])],varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -2767,7 +2748,7 @@ contains
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I1P), allocatable::          varp(:)  !< Packed data.
-  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  character(len=:), allocatable::      var64    !< Variable encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2797,8 +2778,8 @@ contains
              '" NumberOfComponents="1" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(NC_NN*BYI2P,I4P)],a2=var,packed=varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -2817,7 +2798,7 @@ contains
   integer(I4P)::                       E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer      !< Buffer string.
   integer(I1P), allocatable::          varp(:)       !< Packed data.
-  character(1), allocatable::          var64(:)      !< Variable encoded in base64.
+  character(len=:), allocatable::      var64         !< Variable encoded in base64.
   integer(I4P)::                       rf            !< Real file index.
   integer(I4P)::                       nx,ny,nz      !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2848,8 +2829,8 @@ contains
              '" NumberOfComponents="1" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(NC_NN*BYI2P,I4P)],a2=reshape(var,[NC_NN]),packed=varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -2868,7 +2849,7 @@ contains
   integer(I4P)::                       E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I1P), allocatable::          varp(:)  !< Packed data.
-  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  character(len=:), allocatable::      var64    !< Variable encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2897,8 +2878,8 @@ contains
              '" NumberOfComponents="1" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(NC_NN*BYI1P,I4P)],a2=var,packed=varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -2917,7 +2898,7 @@ contains
   integer(I4P)::                       E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer      !< Buffer string.
   integer(I1P), allocatable::          varp(:)       !< Packed data.
-  character(1), allocatable::          var64(:)      !< Variable encoded in base64.
+  character(len=:), allocatable::      var64         !< Variable encoded in base64.
   integer(I4P)::                       rf            !< Real file index.
   integer(I4P)::                       nx,ny,nz      !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -2947,8 +2928,8 @@ contains
              '" NumberOfComponents="1" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(NC_NN*BYI1P,I4P)],a2=reshape(var,[NC_NN]),packed=varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -2970,7 +2951,7 @@ contains
   character(len=maxlen)::              s_buffer !< Buffer string.
   real(R8P),    allocatable::          var(:)   !< X, Y, Z component.
   integer(I1P), allocatable::          varp(:)  !< Packed data.
-  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  character(len=:), allocatable::      var64    !< Variable encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3006,8 +2987,8 @@ contains
       var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(n1),varY(n1),varZ(n1)]
     enddo
     call pack_data(a1=[int(3*NC_NN*BYR8P,I4P)],a2=var,packed=varp) ; deallocate(var)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -3029,7 +3010,7 @@ contains
   character(len=maxlen)::              s_buffer       !< Buffer string.
   real(R8P),    allocatable::          var(:)         !< X, Y, Z component.
   integer(I1P), allocatable::          varp(:)        !< Packed data.
-  character(1), allocatable::          var64(:)       !< Variable encoded in base64.
+  character(len=:), allocatable::      var64          !< Variable encoded in base64.
   integer(I4P)::                       rf             !< Real file index.
   integer(I4P)::                       nx,ny,nz,n1    !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3068,8 +3049,8 @@ contains
       n1 = n1 + 1_I4P ; var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(nx,ny,nz),varY(nx,ny,nz),varZ(nx,ny,nz)]
     enddo ; enddo ; enddo
     call pack_data(a1=[int(3*NC_NN*BYR8P,I4P)],a2=var,packed=varp) ; deallocate(var)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -3091,7 +3072,7 @@ contains
   character(len=maxlen)::              s_buffer !< Buffer string.
   real(R4P),    allocatable::          var(:)   !< X, Y, Z component.
   integer(I1P), allocatable::          varp(:)  !< Packed data.
-  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  character(len=:), allocatable::      var64    !< Variable encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3127,8 +3108,8 @@ contains
       var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(n1),varY(n1),varZ(n1)]
     enddo
     call pack_data(a1=[int(3*NC_NN*BYR4P,I4P)],a2=var,packed=varp) ; deallocate(var)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -3150,7 +3131,7 @@ contains
   character(len=maxlen)::              s_buffer       !< Buffer string.
   real(R4P),    allocatable::          var(:)         !< X, Y, Z component.
   integer(I1P), allocatable::          varp(:)        !< Packed data.
-  character(1), allocatable::          var64(:)       !< Variable encoded in base64.
+  character(len=:), allocatable::      var64          !< Variable encoded in base64.
   integer(I4P)::                       rf             !< Real file index.
   integer(I4P)::                       nx,ny,nz,n1    !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3189,8 +3170,8 @@ contains
       n1 = n1 + 1_I4P ; var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(nx,ny,nz),varY(nx,ny,nz),varZ(nx,ny,nz)]
     enddo ; enddo ; enddo
     call pack_data(a1=[int(3*NC_NN*BYR4P,I4P)],a2=var,packed=varp) ; deallocate(var)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -3212,7 +3193,7 @@ contains
   character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I8P), allocatable::          var(:)   !< X, Y, Z component.
   integer(I1P), allocatable::          varp(:)  !< Packed data.
-  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  character(len=:), allocatable::      var64    !< Variable encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3248,8 +3229,8 @@ contains
       var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(n1),varY(n1),varZ(n1)]
     enddo
     call pack_data(a1=[int(3*NC_NN*BYI8P,I4P)],a2=var,packed=varp) ; deallocate(var)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -3271,7 +3252,7 @@ contains
   character(len=maxlen)::              s_buffer       !< Buffer string.
   integer(I8P), allocatable::          var(:)         !< X, Y, Z component.
   integer(I1P), allocatable::          varp(:)        !< Packed data.
-  character(1), allocatable::          var64(:)       !< Variable encoded in base64.
+  character(len=:), allocatable::      var64          !< Variable encoded in base64.
   integer(I4P)::                       rf             !< Real file index.
   integer(I4P)::                       nx,ny,nz,n1    !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3310,8 +3291,8 @@ contains
       n1 = n1 + 1_I4P ; var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(nx,ny,nz),varY(nx,ny,nz),varZ(nx,ny,nz)]
     enddo ; enddo ; enddo
     call pack_data(a1=[int(3*NC_NN*BYI8P,I4P)],a2=var,packed=varp) ; deallocate(var)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -3333,7 +3314,7 @@ contains
   character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I4P), allocatable::          var(:)   !< X, Y, Z component.
   integer(I1P), allocatable::          varp(:)  !< Packed data.
-  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  character(len=:), allocatable::      var64    !< Variable encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
   integer(I8P)::                       Nvarp    !< Dimension of varp, packed data.
@@ -3372,8 +3353,8 @@ contains
     Nvarp=size(transfer([int(3*NC_NN*BYI4P,I4P),var],varp),kind=I8P)
     if (allocated(varp)) deallocate(varp); allocate(varp(1:Nvarp))
     varp = transfer([int(3*NC_NN*BYI4P,I4P),var],varp) ; deallocate(var)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -3395,7 +3376,7 @@ contains
   character(len=maxlen)::              s_buffer       !< Buffer string.
   integer(I4P), allocatable::          var(:)         !< X, Y, Z component.
   integer(I1P), allocatable::          varp(:)        !< Packed data.
-  character(1), allocatable::          var64(:)       !< Variable encoded in base64.
+  character(len=:), allocatable::      var64          !< Variable encoded in base64.
   integer(I4P)::                       rf             !< Real file index.
   integer(I4P)::                       nx,ny,nz,n1    !< Counters.
   integer(I8P)::                       Nvarp          !< Dimension of varp, packed data.
@@ -3437,8 +3418,8 @@ contains
     Nvarp=size(transfer([int(3*NC_NN*BYI4P,I4P),var],varp),kind=I8P)
     if (allocated(varp)) deallocate(varp); allocate(varp(1:Nvarp))
     varp = transfer([int(3*NC_NN*BYI4P,I4P),var],varp) ; deallocate(var)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -3460,7 +3441,7 @@ contains
   character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I2P), allocatable::          var(:)   !< X, Y, Z component.
   integer(I1P), allocatable::          varp(:)  !< Packed data.
-  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  character(len=:), allocatable::      var64    !< Variable encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3496,8 +3477,8 @@ contains
       var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(n1),varY(n1),varZ(n1)]
     enddo
     call pack_data(a1=[int(3*NC_NN*BYI2P,I4P)],a2=var,packed=varp) ; deallocate(var)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -3519,7 +3500,7 @@ contains
   character(len=maxlen)::              s_buffer       !< Buffer string.
   integer(I2P), allocatable::          var(:)         !< X, Y, Z component.
   integer(I1P), allocatable::          varp(:)        !< Packed data.
-  character(1), allocatable::          var64(:)       !< Variable encoded in base64.
+  character(len=:), allocatable::      var64          !< Variable encoded in base64.
   integer(I4P)::                       rf             !< Real file index.
   integer(I4P)::                       nx,ny,nz,n1    !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3558,8 +3539,8 @@ contains
       n1 = n1 + 1_I4P ; var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(nx,ny,nz),varY(nx,ny,nz),varZ(nx,ny,nz)]
     enddo ; enddo ; enddo
     call pack_data(a1=[int(3*NC_NN*BYI2P,I4P)],a2=var,packed=varp) ; deallocate(var)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -3581,7 +3562,7 @@ contains
   character(len=maxlen)::              s_buffer !< Buffer string.
   integer(I1P), allocatable::          var(:)   !< X, Y, Z component.
   integer(I1P), allocatable::          varp(:)  !< Packed data.
-  character(1), allocatable::          var64(:) !< Variable encoded in base64.
+  character(len=:), allocatable::      var64    !< Variable encoded in base64.
   integer(I4P)::                       rf       !< Real file index.
   integer(I4P)::                       n1       !< Counter.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3617,8 +3598,8 @@ contains
       var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(n1),varY(n1),varZ(n1)]
     enddo
     call pack_data(a1=[int(3*NC_NN*BYI1P,I4P)],a2=var,packed=varp) ; deallocate(var)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -3640,7 +3621,7 @@ contains
   character(len=maxlen)::              s_buffer       !< Buffer string.
   integer(I1P), allocatable::          var(:)         !< X, Y, Z component.
   integer(I1P), allocatable::          varp(:)        !< Packed data.
-  character(1), allocatable::          var64(:)       !< Variable encoded in base64.
+  character(len=:), allocatable::      var64          !< Variable encoded in base64.
   integer(I4P)::                       rf             !< Real file index.
   integer(I4P)::                       nx,ny,nz,n1    !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3679,8 +3660,8 @@ contains
       n1 = n1 + 1_I4P ; var(1+(n1-1)*3:1+(n1-1)*3+2)=[varX(nx,ny,nz),varY(nx,ny,nz),varZ(nx,ny,nz)]
     enddo ; enddo ; enddo
     call pack_data(a1=[int(3*NC_NN*BYI1P,I4P)],a2=var,packed=varp) ; deallocate(var)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -3700,7 +3681,7 @@ contains
   integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer   !< Buffer string.
   integer(I1P), allocatable::          varp(:)    !< Packed data.
-  character(1), allocatable::          var64(:)   !< Variable encoded in base64.
+  character(len=:), allocatable::      var64      !< Variable encoded in base64.
   integer(I4P)::                       rf         !< Real file index.
   integer(I4P)::                       n1,n2      !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3733,8 +3714,8 @@ contains
                trim(str(.true.,N_COL))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(N_COL*NC_NN*BYR8P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -3754,7 +3735,7 @@ contains
   integer(I4P)::                       E_IO             !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer         !< Buffer string.
   integer(I1P), allocatable::          varp(:)          !< Packed data.
-  character(1), allocatable::          var64(:)         !< Variable encoded in base64.
+  character(len=:), allocatable::      var64            !< Variable encoded in base64.
   integer(I4P)::                       rf               !< Real file index.
   integer(I4P)::                       nx,ny,nz,n1      !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3787,8 +3768,8 @@ contains
                trim(str(.true.,N_COL))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(N_COL*NC_NN*BYR8P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -3808,7 +3789,7 @@ contains
   integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer   !< Buffer string.
   integer(I1P), allocatable::          varp(:)    !< Packed data.
-  character(1), allocatable::          var64(:)   !< Variable encoded in base64.
+  character(len=:), allocatable::      var64      !< Variable encoded in base64.
   integer(I4P)::                       rf         !< Real file index.
   integer(I4P)::                       n1,n2      !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3841,8 +3822,8 @@ contains
                trim(str(.true.,N_COL))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(N_COL*NC_NN*BYR4P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -3862,7 +3843,7 @@ contains
   integer(I4P)::                       E_IO             !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer         !< Buffer string.
   integer(I1P), allocatable::          varp(:)          !< Packed data.
-  character(1), allocatable::          var64(:)         !< Variable encoded in base64.
+  character(len=:), allocatable::      var64            !< Variable encoded in base64.
   integer(I4P)::                       rf               !< Real file index.
   integer(I4P)::                       nx,ny,nz,n1      !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3895,8 +3876,8 @@ contains
                trim(str(.true.,N_COL))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(N_COL*NC_NN*BYR4P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -3916,7 +3897,7 @@ contains
   integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer   !< Buffer string.
   integer(I1P), allocatable::          varp(:)    !< Packed data.
-  character(1), allocatable::          var64(:)   !< Variable encoded in base64.
+  character(len=:), allocatable::      var64      !< Variable encoded in base64.
   integer(I4P)::                       rf         !< Real file index.
   integer(I4P)::                       n1,n2      !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -3949,8 +3930,8 @@ contains
                trim(str(.true.,N_COL))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(N_COL*NC_NN*BYI8P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -3970,7 +3951,7 @@ contains
   integer(I4P)::                       E_IO             !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer         !< Buffer string.
   integer(I1P), allocatable::          varp(:)          !< Packed data.
-  character(1), allocatable::          var64(:)         !< Variable encoded in base64.
+  character(len=:), allocatable::      var64            !< Variable encoded in base64.
   integer(I4P)::                       rf               !< Real file index.
   integer(I4P)::                       nx,ny,nz,n1      !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -4003,8 +3984,8 @@ contains
                trim(str(.true.,N_COL))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(N_COL*NC_NN*BYI8P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -4024,7 +4005,7 @@ contains
   integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer   !< Buffer string.
   integer(I1P), allocatable::          varp(:)    !< Packed data.
-  character(1), allocatable::          var64(:)   !< Variable encoded in base64.
+  character(len=:), allocatable::      var64      !< Variable encoded in base64.
   integer(I4P)::                       rf         !< Real file index.
   integer(I4P)::                       n1,n2      !< Counters.
   integer(I8P)::                       Nvarp      !< Dimension of varp, packed data.
@@ -4060,8 +4041,8 @@ contains
     Nvarp=size(transfer([int(N_COL*NC_NN*BYI4P,I4P),reshape(var,[N_COL*NC_NN])],varp),kind=I8P)
     if (allocated(varp)) deallocate(varp); allocate(varp(1:Nvarp))
     varp = transfer([int(N_COL*NC_NN*BYI4P,I4P),reshape(var,[N_COL*NC_NN])],varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -4081,7 +4062,7 @@ contains
   integer(I4P)::                       E_IO             !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer         !< Buffer string.
   integer(I1P), allocatable::          varp(:)          !< Packed data.
-  character(1), allocatable::          var64(:)         !< Variable encoded in base64.
+  character(len=:), allocatable::      var64            !< Variable encoded in base64.
   integer(I4P)::                       rf               !< Real file index.
   integer(I4P)::                       nx,ny,nz,n1      !< Counters.
   integer(I8P)::                       Nvarp            !< Dimension of varp, packed data.
@@ -4117,8 +4098,8 @@ contains
     Nvarp=size(transfer([int(N_COL*NC_NN*BYI4P,I4P),reshape(var,[N_COL*NC_NN])],varp),kind=I8P)
     if (allocated(varp)) deallocate(varp); allocate(varp(1:Nvarp))
     varp = transfer([int(N_COL*NC_NN*BYI4P,I4P),reshape(var,[N_COL*NC_NN])],varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -4138,7 +4119,7 @@ contains
   integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer   !< Buffer string.
   integer(I1P), allocatable::          varp(:)    !< Packed data.
-  character(1), allocatable::          var64(:)   !< Variable encoded in base64.
+  character(len=:), allocatable::      var64      !< Variable encoded in base64.
   integer(I4P)::                       rf         !< Real file index.
   integer(I4P)::                       n1,n2      !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -4171,8 +4152,8 @@ contains
                trim(str(.true.,N_COL))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(N_COL*NC_NN*BYI2P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -4192,7 +4173,7 @@ contains
   integer(I4P)::                       E_IO             !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer         !< Buffer string.
   integer(I1P), allocatable::          varp(:)          !< Packed data.
-  character(1), allocatable::          var64(:)         !< Variable encoded in base64.
+  character(len=:), allocatable::      var64            !< Variable encoded in base64.
   integer(I4P)::                       rf               !< Real file index.
   integer(I4P)::                       nx,ny,nz,n1      !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -4225,8 +4206,8 @@ contains
                trim(str(.true.,N_COL))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(N_COL*NC_NN*BYI2P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -4246,7 +4227,7 @@ contains
   integer(I4P)::                       E_IO       !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer   !< Buffer string.
   integer(I1P), allocatable::          varp(:)    !< Packed data.
-  character(1), allocatable::          var64(:)   !< Variable encoded in base64.
+  character(len=:), allocatable::      var64      !< Variable encoded in base64.
   integer(I4P)::                       rf         !< Real file index.
   integer(I4P)::                       n1,n2      !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -4279,8 +4260,8 @@ contains
                trim(str(.true.,N_COL))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(N_COL*NC_NN*BYI1P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -4300,7 +4281,7 @@ contains
   integer(I4P)::                       E_IO             !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(len=maxlen)::              s_buffer         !< Buffer string.
   integer(I1P), allocatable::          varp(:)          !< Packed data.
-  character(1), allocatable::          var64(:)         !< Variable encoded in base64.
+  character(len=:), allocatable::      var64            !< Variable encoded in base64.
   integer(I4P)::                       rf               !< Real file index.
   integer(I4P)::                       nx,ny,nz,n1      !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -4333,8 +4314,8 @@ contains
                trim(str(.true.,N_COL))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(N_COL*NC_NN*BYI1P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
-    call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//tochar(var64)//end_rec ; deallocate(var64)
+    call b64_encode(n=varp,code=var64) ; deallocate(varp)
+    write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent+2)//var64//end_rec ; deallocate(var64)
     write(vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'//end_rec
   endselect
   return
@@ -4354,14 +4335,14 @@ contains
   integer(I4P), intent(INOUT), optional:: cf       !< Current file index (for concurrent files IO).
   integer(I4P)::                          E_IO     !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
   character(2)::                          var_type !< Varable type = R8,R4,I8,I4,I2,I1.
-  real(R8P),    allocatable::             v_R8(:)  !< R8 vector for IO in AppendData.
-  real(R4P),    allocatable::             v_R4(:)  !< R4 vector for IO in AppendData.
-  integer(I8P), allocatable::             v_I8(:)  !< I8 vector for IO in AppendData.
-  integer(I4P), allocatable::             v_I4(:)  !< I4 vector for IO in AppendData.
-  integer(I2P), allocatable::             v_I2(:)  !< I2 vector for IO in AppendData.
-  integer(I1P), allocatable::             v_I1(:)  !< I1 vector for IO in AppendData.
-  integer(I1P), allocatable::             varp(:)  !< Packed data.
-  character(1), allocatable::             var64(:) !< Variable encoded in base64.
+  real(R8P),        allocatable::         v_R8(:)  !< R8 vector for IO in AppendData.
+  real(R4P),        allocatable::         v_R4(:)  !< R4 vector for IO in AppendData.
+  integer(I8P),     allocatable::         v_I8(:)  !< I8 vector for IO in AppendData.
+  integer(I4P),     allocatable::         v_I4(:)  !< I4 vector for IO in AppendData.
+  integer(I2P),     allocatable::         v_I2(:)  !< I2 vector for IO in AppendData.
+  integer(I1P),     allocatable::         v_I1(:)  !< I1 vector for IO in AppendData.
+  integer(I1P),     allocatable::         varp(:)  !< Packed data.
+  character(len=:), allocatable::         var64    !< Variable encoded in base64.
   integer(I4P)::                          rf       !< Real file index.
   integer(I8P)::                          Nvarp    !< Dimension of varp, packed data.
 #ifdef HUGE
@@ -4405,8 +4386,8 @@ contains
           write(unit=vtk(rf)%u,iostat=E_IO)int(vtk(rf)%N_Byte,I4P),(v_R8(n1),n1=1,N_v)
         else
           call pack_data(a1=[int(vtk(rf)%N_Byte,I4P)],a2=v_R8,packed=varp)
-          call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-          write(unit=vtk(rf)%u,iostat=E_IO)tochar(var64) ; deallocate(var64)
+          call b64_encode(n=varp,code=var64) ; deallocate(varp)
+          write(unit=vtk(rf)%u,iostat=E_IO)var64 ; deallocate(var64)
         endif
         deallocate(v_R8)
       case('R4')
@@ -4416,8 +4397,8 @@ contains
           write(unit=vtk(rf)%u,iostat=E_IO)int(vtk(rf)%N_Byte,I4P),(v_R4(n1),n1=1,N_v)
         else
           call pack_data(a1=[int(vtk(rf)%N_Byte,I4P)],a2=v_R4,packed=varp)
-          call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-          write(unit=vtk(rf)%u,iostat=E_IO)tochar(var64) ; deallocate(var64)
+          call b64_encode(n=varp,code=var64) ; deallocate(varp)
+          write(unit=vtk(rf)%u,iostat=E_IO)var64 ; deallocate(var64)
         endif
         deallocate(v_R4)
       case('I8')
@@ -4427,8 +4408,8 @@ contains
           write(unit=vtk(rf)%u,iostat=E_IO)int(vtk(rf)%N_Byte,I4P),(v_I8(n1),n1=1,N_v)
         else
           call pack_data(a1=[int(vtk(rf)%N_Byte,I4P)],a2=v_I8,packed=varp)
-          call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-          write(unit=vtk(rf)%u,iostat=E_IO)tochar(var64) ; deallocate(var64)
+          call b64_encode(n=varp,code=var64) ; deallocate(varp)
+          write(unit=vtk(rf)%u,iostat=E_IO)var64 ; deallocate(var64)
         endif
         deallocate(v_I8)
       case('I4')
@@ -4440,8 +4421,8 @@ contains
           Nvarp=size(transfer([int(vtk(rf)%N_Byte,I4P),v_I4],varp),kind=I8P)
           if (allocated(varp)) deallocate(varp); allocate(varp(1:Nvarp))
           varp = transfer([int(vtk(rf)%N_Byte,I4P),v_I4],varp)
-          call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-          write(unit=vtk(rf)%u,iostat=E_IO)tochar(var64) ; deallocate(var64)
+          call b64_encode(n=varp,code=var64) ; deallocate(varp)
+          write(unit=vtk(rf)%u,iostat=E_IO)var64 ; deallocate(var64)
         endif
         deallocate(v_I4)
       case('I2')
@@ -4451,8 +4432,8 @@ contains
           write(unit=vtk(rf)%u,iostat=E_IO)int(vtk(rf)%N_Byte,I4P),(v_I2(n1),n1=1,N_v)
         else
           call pack_data(a1=[int(vtk(rf)%N_Byte,I4P)],a2=v_I2,packed=varp)
-          call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-          write(unit=vtk(rf)%u,iostat=E_IO)tochar(var64) ; deallocate(var64)
+          call b64_encode(n=varp,code=var64) ; deallocate(varp)
+          write(unit=vtk(rf)%u,iostat=E_IO)var64 ; deallocate(var64)
         endif
         deallocate(v_I2)
       case('I1')
@@ -4462,8 +4443,8 @@ contains
           write(unit=vtk(rf)%u,iostat=E_IO)int(vtk(rf)%N_Byte,I4P),(v_I1(n1),n1=1,N_v)
         else
           call pack_data(a1=[int(vtk(rf)%N_Byte,I4P)],a2=v_I1,packed=varp)
-          call b64_encode(nB=int(BYI1P,I4P),n=varp,code=var64) ; deallocate(varp)
-          write(unit=vtk(rf)%u,iostat=E_IO)tochar(var64) ; deallocate(var64)
+          call b64_encode(n=varp,code=var64) ; deallocate(varp)
+          write(unit=vtk(rf)%u,iostat=E_IO)var64 ; deallocate(var64)
         endif
         deallocate(v_I1)
       case default
@@ -4504,6 +4485,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   E_IO = -1_I4P
   if (.not.ir_initialized) call IR_Init
+  if (.not.b64_initialized) call b64_init
   if (endian==endianL) then
     s_buffer='<VTKFile type="vtkMultiBlockDataSet" version="1.0" byte_order="LittleEndian">'
   else
@@ -4677,6 +4659,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   E_IO = -1_I4P
   if (.not.ir_initialized) call IR_Init
+  if (.not.b64_initialized) call b64_init
   call vtk_update(act='add',cf=rf,Nvtk=Nvtk,vtk=vtk)
   f = rf
   if (present(cf)) cf = rf
@@ -4885,6 +4868,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   E_IO = -1_I4P
   if (.not.ir_initialized) call IR_Init
+  if (.not.b64_initialized) call b64_init
   call vtk_update(act='add',cf=rf,Nvtk=Nvtk,vtk=vtk)
   f = rf
   if (present(cf)) cf = rf

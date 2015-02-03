@@ -129,6 +129,9 @@
 <p>Go to <a href="#top">Top</a></p>
 <h3>Version History</h3>
 <p>In the following the changelog of most important releases is reported.</p>
+<h3>v1.2.0</h3>
+<h5>Download <a href="https://github.com/szaghi/Lib_VTK_IO/archive/v1.2.0.zip">ZIP</a> ball or <a href="https://github.com/szaghi/Lib_VTK_IO/archive/v1.2.0.tar.gz">TAR</a> one</h5>
+<p>Stable Release. Fully backward compatible. Modern compiler required.</p>
 <h3>v1.1.1</h3>
 <h5>Download <a href="https://github.com/szaghi/Lib_VTK_IO/archive/v1.1.1.zip">ZIP</a> ball or <a href="https://github.com/szaghi/Lib_VTK_IO/archive/v1.1.1.tar.gz">TAR</a> one</h5>
 <p>Stable Release. Fully backward compatible.</p>
@@ -137,6 +140,11 @@
 <p>Stable Release.</p>
 <p>Go to <a href="#top">Top</a></p>
 <h3>ChangeLog</h3>
+<h3>Version v1.2.0</h3>
+<p>Stable release. Fully backward compatible. Modern compiler required.</p>
+<ul>
+<li>Switch to the new Lib_Base64, <a href="https://github.com/szaghi/BeFoR64">BeFoR64</a> project: the use of <em>deferred length string</em>, namely <code>character(len=:), allocatabale:: var</code>, imposes a modern compiler supporting automatic (re)allocation of LHS on assignment.</li>
+</ul>
 <h3>Version v1.1.1</h3>
 <ul>
 <li>Extend VTM_WRF_XML function, now it is an interface to two functions, one for files list passed as an array and one for files list passed a single string. If a single string is used, the delimiter of each file can be customized, while the default values is '&amp;';</li>
@@ -248,6 +256,10 @@
                   
                 
                   
+                    <li><a href='./sourcefile/lib_pack_data.f90.html'>Lib_Pack_Data.f90</a></li>
+                  
+                
+                  
                     <li><a href='./sourcefile/lib_vtk_io.f90.html'>Lib_VTK_IO.f90</a></li>
                   
                 
@@ -271,6 +283,10 @@
                   
                 
                   
+                    <li><a href='./module/lib_pack_data.html'>Lib_Pack_Data</a></li>
+                  
+                
+                  
                     <li><a href='./module/lib_testers.html'>Lib_Testers</a></li>
                   
                 
@@ -287,47 +303,97 @@
               <ul>
                 
                   
-                    <li><a href='./interface/b64_encode.html'>b64_encode</a></li>
+                    <li><a href='./proc/autotest.html'>autotest</a></li>
                   
                 
                   
-                    <li><a href='./proc/b64_encode_i1_a.html'>b64_encode_I1_a</a></li>
+                    <li><a href='./interface/b64_decode.html'>b64_decode</a></li>
                   
                 
                   
-                    <li><a href='./proc/b64_encode_i2_a.html'>b64_encode_I2_a</a></li>
+                    <li><a href='./proc/b64_decode_i1.html'>b64_decode_I1</a></li>
                   
                 
                   
-                    <li><a href='./proc/b64_encode_i4_a.html'>b64_encode_I4_a</a></li>
+                    <li><a href='./proc/b64_decode_i1_a.html'>b64_decode_I1_a</a></li>
                   
                 
                   
-                    <li><a href='./proc/b64_encode_i8_a.html'>b64_encode_I8_a</a></li>
+                    <li><a href='./proc/b64_decode_i2.html'>b64_decode_I2</a></li>
                   
                 
                   
-                    <li><a href='./proc/b64_encode_r4_a.html'>b64_encode_R4_a</a></li>
+                    <li><a href='./proc/b64_decode_i2_a.html'>b64_decode_I2_a</a></li>
                   
                 
                   
-                    <li><a href='./proc/b64_encode_r8_a.html'>b64_encode_R8_a</a></li>
+                    <li><a href='./proc/b64_decode_i4.html'>b64_decode_I4</a></li>
                   
                 
                   
-                    <li><a href='./proc/bctoi_i1p.html'>bctoi_I1P</a></li>
+                    <li><a href='./proc/b64_decode_i4_a.html'>b64_decode_I4_a</a></li>
                   
                 
                   
-                    <li><a href='./proc/bctoi_i2p.html'>bctoi_I2P</a></li>
+                    <li><a href='./proc/b64_decode_i8.html'>b64_decode_I8</a></li>
                   
                 
                   
-                    <li><a href='./proc/bctoi_i4p.html'>bctoi_I4P</a></li>
+                    <li><a href='./proc/b64_decode_i8_a.html'>b64_decode_I8_a</a></li>
                   
                 
                   
                     <li><a href="./lists/procedures.html"><em>All procedures&hellip;</em></a></li>
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
                   
                 
                   

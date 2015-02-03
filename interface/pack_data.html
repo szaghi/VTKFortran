@@ -95,7 +95,7 @@
      
     
     
-    <li><i class="fa fa-code"></i><a href="../src/Lib_Base64.f90"> Source File</a></li>
+    <li><i class="fa fa-code"></i><a href="../src/Lib_Pack_Data.f90"> Source File</a></li>
      
   </ul>
   </div>
@@ -103,9 +103,9 @@
   <div class="col-lg-5">
   <ol class="breadcrumb hierarchy text-right">
   
-     <li><a href='../sourcefile/lib_base64.f90.html'>Lib_Base64.f90</a></li>
+     <li><a href='../sourcefile/lib_pack_data.f90.html'>Lib_Pack_Data.f90</a></li>
   
-     <li><a href='../module/lib_base64.html'>Lib_Base64</a></li>
+     <li><a href='../module/lib_pack_data.html'>Lib_Pack_Data</a></li>
   
      <li class="active">pack_data</li>
   </ol>
@@ -201,19 +201,69 @@
     <div class="panel-heading text-left"><h3 class="panel-title">All Procedures</h3></div>
     <div class="list-group">
       
+      <a class="list-group-item" href="../proc/autotest.html">autotest</a>
+      
+      <a class="list-group-item" href="../interface/b64_decode.html">b64_decode</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i1.html">b64_decode_I1</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i1_a.html">b64_decode_I1_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i2.html">b64_decode_I2</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i2_a.html">b64_decode_I2_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i4.html">b64_decode_I4</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i4_a.html">b64_decode_I4_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i8.html">b64_decode_I8</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i8_a.html">b64_decode_I8_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_r16.html">b64_decode_R16</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_r16_a.html">b64_decode_R16_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_r4.html">b64_decode_R4</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_r4_a.html">b64_decode_R4_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_r8.html">b64_decode_R8</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_r8_a.html">b64_decode_R8_a</a>
+      
       <a class="list-group-item" href="../interface/b64_encode.html">b64_encode</a>
+      
+      <a class="list-group-item" href="../proc/b64_encode_i1.html">b64_encode_I1</a>
       
       <a class="list-group-item" href="../proc/b64_encode_i1_a.html">b64_encode_I1_a</a>
       
+      <a class="list-group-item" href="../proc/b64_encode_i2.html">b64_encode_I2</a>
+      
       <a class="list-group-item" href="../proc/b64_encode_i2_a.html">b64_encode_I2_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_encode_i4.html">b64_encode_I4</a>
       
       <a class="list-group-item" href="../proc/b64_encode_i4_a.html">b64_encode_I4_a</a>
       
+      <a class="list-group-item" href="../proc/b64_encode_i8.html">b64_encode_I8</a>
+      
       <a class="list-group-item" href="../proc/b64_encode_i8_a.html">b64_encode_I8_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_encode_r16.html">b64_encode_R16</a>
+      
+      <a class="list-group-item" href="../proc/b64_encode_r16_a.html">b64_encode_R16_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_encode_r4.html">b64_encode_R4</a>
       
       <a class="list-group-item" href="../proc/b64_encode_r4_a.html">b64_encode_R4_a</a>
       
+      <a class="list-group-item" href="../proc/b64_encode_r8.html">b64_encode_R8</a>
+      
       <a class="list-group-item" href="../proc/b64_encode_r8_a.html">b64_encode_R8_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_init.html">b64_init</a>
       
       <a class="list-group-item" href="../proc/bctoi_i1p.html">bctoi_I1P</a>
       
@@ -292,6 +342,8 @@
       <a class="list-group-item" href="../proc/ctor_r4p.html">ctor_R4P</a>
       
       <a class="list-group-item" href="../proc/ctor_r8p.html">ctor_R8P</a>
+      
+      <a class="list-group-item" href="../proc/decode_bits.html">decode_bits</a>
       
       <a class="list-group-item" href="../interface/digit.html">digit</a>
       
@@ -444,8 +496,6 @@
       <a class="list-group-item" href="../proc/test_unst.html">test_unst</a>
       
       <a class="list-group-item" href="../proc/test_vtm.html">test_vtm</a>
-      
-      <a class="list-group-item" href="../proc/tochar.html">tochar</a>
       
       <a class="list-group-item" href="../proc/upper_case.html">Upper_Case</a>
       
@@ -661,8 +711,56 @@
     
     <div class="col-lg-9" id='text'>
     <h2>public  interface pack_data</h2>
-	 
-    
+	 <p>Procedure for packing different kinds of data into single I1P array.</p>
+<p>This is useful for encoding different (heterogeneous) kinds variables into a single (homogeneous) stream of bits.
+ <div class="alert alert-info" role="alert"><h4>Note</h4>This procedure exploits the <code>transfer</code> builtin function, that from the standard (2003+) is defined as
+ <code>TRANSFER(SOURCE, MOLD [, SIZE])</code>. Data object having a physical representation identical to that of <code>SOURCE</code> but with the type
+ and type parameters of <code>MOLD</code>. The result is of the same type and type parameters as <code>MOLD</code>.
+ If <code>MOLD</code> is an array and <code>SIZE</code> is absent, the result is an array and of rank one. Its size is as small as possible such
+ that its physical representation is not shorter than that of <code>SOURCE</code>.</div></p>
+<p>Presently, the following combinations are available:</p>
+<ul class="checklist">
+<li><input type="checkbox" disabled> Arrays-Arrays:<ul class="checklist">
+<li><input type="checkbox" disabled checked> real(any)-real(any);</li>
+<li><input type="checkbox" disabled checked> real(any)-integer(any);</li>
+<li><input type="checkbox" disabled checked> integer(any)-integer(any);</li>
+<li><input type="checkbox" disabled checked> integer(any)-real(any);</li>
+<li><input type="checkbox" disabled> real(any)-character;</li>
+<li><input type="checkbox" disabled> character-real(any);</li>
+<li><input type="checkbox" disabled> integer(any)-character;</li>
+<li><input type="checkbox" disabled> character-integer(any);</li>
+</ul>
+</li>
+<li><input type="checkbox" disabled> Scalars-Scalars:<ul class="checklist">
+<li><input type="checkbox" disabled> real(any)-real(any);</li>
+<li><input type="checkbox" disabled> real(any)-integer(any);</li>
+<li><input type="checkbox" disabled> integer(any)-integer(any);</li>
+<li><input type="checkbox" disabled> integer(any)-real(any);</li>
+<li><input type="checkbox" disabled> real(any)-character;</li>
+<li><input type="checkbox" disabled> character-real(any);</li>
+<li><input type="checkbox" disabled> integer(any)-character;</li>
+<li><input type="checkbox" disabled> character-integer(any);</li>
+</ul>
+</li>
+</ul>
+<h3>Examples of usage</h3>
+<h4>Packing two real arrays, one with kind R8P and one with R4P</h4>
+<div class="codehilite"><pre><span class="kt">real</span><span class="p">(</span><span class="n">R8P</span><span class="p">)</span><span class="kd">::</span>                 <span class="n">array_r8</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">12</span><span class="p">)</span>
+<span class="kt">real</span><span class="p">(</span><span class="n">R4P</span><span class="p">)</span><span class="kd">::</span>                 <span class="n">array_r4</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">)</span>
+<span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span> <span class="k">allocatable</span><span class="kd">::</span> <span class="n">rpack</span>
+<span class="p">...</span>
+<span class="k">call </span><span class="n">pack_data</span><span class="p">(</span><span class="n">a1</span><span class="o">=</span><span class="n">array_r8</span><span class="p">,</span><span class="n">a2</span><span class="o">=</span><span class="n">array_r4</span><span class="p">,</span><span class="n">packed</span><span class="o">=</span><span class="n">rpack</span><span class="p">)</span>
+</pre></div>
+
+
+<h4>Packing two arrays, one real with kind R4P and one integer with I4P</h4>
+<div class="codehilite"><pre><span class="kt">real</span><span class="p">(</span><span class="n">R4P</span><span class="p">)</span><span class="kd">::</span>                 <span class="n">array_r4</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="kd">::</span>              <span class="n">array_i4</span><span class="p">(</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">)</span>
+<span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span> <span class="k">allocatable</span><span class="kd">::</span> <span class="n">rpack</span>
+<span class="p">...</span>
+<span class="k">call </span><span class="n">pack_data</span><span class="p">(</span><span class="n">a1</span><span class="o">=</span><span class="n">array_r4</span><span class="p">,</span><span class="n">a2</span><span class="o">=</span><span class="n">array_i4</span><span class="p">,</span><span class="n">packed</span><span class="o">=</span><span class="n">rpack</span><span class="p">)</span>
+</pre></div>
+    <br>
 	
 	
 
@@ -743,6 +841,12 @@ private pure subroutine <a href='../proc/pack_data_r8_r4.html'>pack_data_R8_R4</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -821,6 +925,12 @@ private pure subroutine <a href='../proc/pack_data_r8_i8.html'>pack_data_R8_I8</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -899,6 +1009,12 @@ private pure subroutine <a href='../proc/pack_data_r8_i4.html'>pack_data_R8_I4</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -977,6 +1093,12 @@ private pure subroutine <a href='../proc/pack_data_r8_i2.html'>pack_data_R8_I2</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -1055,6 +1177,12 @@ private pure subroutine <a href='../proc/pack_data_r8_i1.html'>pack_data_R8_I1</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -1133,6 +1261,12 @@ private pure subroutine <a href='../proc/pack_data_r4_r8.html'>pack_data_R4_R8</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -1211,6 +1345,12 @@ private pure subroutine <a href='../proc/pack_data_r4_i8.html'>pack_data_R4_I8</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -1289,6 +1429,12 @@ private pure subroutine <a href='../proc/pack_data_r4_i4.html'>pack_data_R4_I4</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -1367,6 +1513,12 @@ private pure subroutine <a href='../proc/pack_data_r4_i2.html'>pack_data_R4_I2</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -1445,6 +1597,12 @@ private pure subroutine <a href='../proc/pack_data_r4_i1.html'>pack_data_R4_I1</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -1523,6 +1681,12 @@ private pure subroutine <a href='../proc/pack_data_i8_r8.html'>pack_data_I8_R8</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -1601,6 +1765,12 @@ private pure subroutine <a href='../proc/pack_data_i8_r4.html'>pack_data_I8_R4</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -1679,6 +1849,12 @@ private pure subroutine <a href='../proc/pack_data_i8_i4.html'>pack_data_I8_I4</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -1757,6 +1933,12 @@ private pure subroutine <a href='../proc/pack_data_i8_i2.html'>pack_data_I8_I2</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -1835,6 +2017,12 @@ private pure subroutine <a href='../proc/pack_data_i8_i1.html'>pack_data_I8_I1</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -1913,6 +2101,12 @@ private pure subroutine <a href='../proc/pack_data_i4_r8.html'>pack_data_I4_R8</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -1991,6 +2185,12 @@ private pure subroutine <a href='../proc/pack_data_i4_r4.html'>pack_data_I4_R4</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -2069,6 +2269,12 @@ private pure subroutine <a href='../proc/pack_data_i4_i8.html'>pack_data_I4_I8</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -2147,6 +2353,12 @@ private pure subroutine <a href='../proc/pack_data_i4_i2.html'>pack_data_I4_I2</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -2225,6 +2437,12 @@ private pure subroutine <a href='../proc/pack_data_i4_i1.html'>pack_data_I4_I1</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -2303,6 +2521,12 @@ private pure subroutine <a href='../proc/pack_data_i2_r8.html'>pack_data_I2_R8</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -2381,6 +2605,12 @@ private pure subroutine <a href='../proc/pack_data_i2_r4.html'>pack_data_I2_R4</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -2459,6 +2689,12 @@ private pure subroutine <a href='../proc/pack_data_i2_i8.html'>pack_data_I2_I8</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -2537,6 +2773,12 @@ private pure subroutine <a href='../proc/pack_data_i2_i4.html'>pack_data_I2_I4</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -2615,6 +2857,12 @@ private pure subroutine <a href='../proc/pack_data_i2_i1.html'>pack_data_I2_I1</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -2693,6 +2941,12 @@ private pure subroutine <a href='../proc/pack_data_i1_r8.html'>pack_data_I1_R8</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -2771,6 +3025,12 @@ private pure subroutine <a href='../proc/pack_data_i1_r4.html'>pack_data_I1_R4</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -2849,6 +3109,12 @@ private pure subroutine <a href='../proc/pack_data_i1_i8.html'>pack_data_I1_I8</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -2927,6 +3193,12 @@ private pure subroutine <a href='../proc/pack_data_i1_i4.html'>pack_data_I1_I4</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -3005,6 +3277,12 @@ private pure subroutine <a href='../proc/pack_data_i1_i2.html'>pack_data_I1_I2</
       
     
     
+    
+    <h4>Description</h4>
+       
+
+
+       <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
   </div>

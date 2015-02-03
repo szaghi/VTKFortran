@@ -147,19 +147,69 @@
     <div class="panel-heading text-left"><h3 class="panel-title">All Procedures</h3></div>
     <div class="list-group">
       
+      <a class="list-group-item" href="../proc/autotest.html">autotest</a>
+      
+      <a class="list-group-item" href="../interface/b64_decode.html">b64_decode</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i1.html">b64_decode_I1</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i1_a.html">b64_decode_I1_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i2.html">b64_decode_I2</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i2_a.html">b64_decode_I2_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i4.html">b64_decode_I4</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i4_a.html">b64_decode_I4_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i8.html">b64_decode_I8</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i8_a.html">b64_decode_I8_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_r16.html">b64_decode_R16</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_r16_a.html">b64_decode_R16_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_r4.html">b64_decode_R4</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_r4_a.html">b64_decode_R4_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_r8.html">b64_decode_R8</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_r8_a.html">b64_decode_R8_a</a>
+      
       <a class="list-group-item" href="../interface/b64_encode.html">b64_encode</a>
+      
+      <a class="list-group-item" href="../proc/b64_encode_i1.html">b64_encode_I1</a>
       
       <a class="list-group-item" href="../proc/b64_encode_i1_a.html">b64_encode_I1_a</a>
       
+      <a class="list-group-item" href="../proc/b64_encode_i2.html">b64_encode_I2</a>
+      
       <a class="list-group-item" href="../proc/b64_encode_i2_a.html">b64_encode_I2_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_encode_i4.html">b64_encode_I4</a>
       
       <a class="list-group-item" href="../proc/b64_encode_i4_a.html">b64_encode_I4_a</a>
       
+      <a class="list-group-item" href="../proc/b64_encode_i8.html">b64_encode_I8</a>
+      
       <a class="list-group-item" href="../proc/b64_encode_i8_a.html">b64_encode_I8_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_encode_r16.html">b64_encode_R16</a>
+      
+      <a class="list-group-item" href="../proc/b64_encode_r16_a.html">b64_encode_R16_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_encode_r4.html">b64_encode_R4</a>
       
       <a class="list-group-item" href="../proc/b64_encode_r4_a.html">b64_encode_R4_a</a>
       
+      <a class="list-group-item" href="../proc/b64_encode_r8.html">b64_encode_R8</a>
+      
       <a class="list-group-item" href="../proc/b64_encode_r8_a.html">b64_encode_R8_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_init.html">b64_init</a>
       
       <a class="list-group-item" href="../proc/bctoi_i1p.html">bctoi_I1P</a>
       
@@ -238,6 +288,8 @@
       <a class="list-group-item" href="../proc/ctor_r4p.html">ctor_R4P</a>
       
       <a class="list-group-item" href="../proc/ctor_r8p.html">ctor_R8P</a>
+      
+      <a class="list-group-item" href="../proc/decode_bits.html">decode_bits</a>
       
       <a class="list-group-item" href="../interface/digit.html">digit</a>
       
@@ -390,8 +442,6 @@
       <a class="list-group-item" href="../proc/test_unst.html">test_unst</a>
       
       <a class="list-group-item" href="../proc/test_vtm.html">test_vtm</a>
-      
-      <a class="list-group-item" href="../proc/tochar.html">tochar</a>
       
       <a class="list-group-item" href="../proc/upper_case.html">Upper_Case</a>
       
@@ -662,12 +712,12 @@ private pure subroutine encode_bits(bits, padd, code)
   
 <tr>
   
-  <td><a class="anchor" name="var-code"></a>character(len=1),</td>
+  <td><a class="anchor" name="var-code"></a>character(len=*),</td>
   <td>intent(out)</td>
   <td></td>
   
   <td></td><td>::</td>
-  <td><strong>code</strong>(1:)</td><td><p>Characters code.</p></td>
+  <td><strong>code</strong></td><td><p>Characters code.</p></td>
   
 </tr>
 
@@ -676,6 +726,21 @@ private pure subroutine encode_bits(bits, padd, code)
 
     
     
+    
+    <h3>Description</h3>
+    <p>Procedure for encoding a bits stream (must be multiple of 24 bits) into base64 charcaters code (of length multiple of 4).</p>
+<p>The bits stream are encoded in chunks of 24 bits as the following example (in little endian order)</p>
+<div class="codehilite"><pre> +--first octet--+-second octet--+--third octet--+
+ |7 6 5 4 3 2 1 0|7 6 5 4 3 2 1 0|7 6 5 4 3 2 1 0|
+ +-----------+---+-------+-------+---+-----------+
+ |5 4 3 2 1 0|5 4 3 2 1 0|5 4 3 2 1 0|5 4 3 2 1 0|
+ +--1.index--+--2.index--+--3.index--+--4.index--+
+</pre></div>
+
+
+<p><div class="alert alert-info" role="alert"><h4>Note</h4>The 4 indexes are stored into 4 elements 8 bits array, thus 2 bits of each array element are not used.</div></p>
+<p><div class="alert alert-info" role="alert"><h4>Note</h4>The number of paddings must be computed outside this procedure, into the calling scope.</div></p>
+<p><div class="alert alert-warning" role="alert"><h4>Warning</h4>This procedure is the backend of encoding, thus it must be never called outside the module.</div></p>
     
     <br>
     
@@ -715,7 +780,7 @@ private pure subroutine encode_bits(bits, padd, code)
   
   <td>public</td>
   <td></td><td>::</td>
-  <td><strong>c</strong></td><td></td><td></td><td></td>
+  <td><strong>c</strong></td><td></td><td></td><td><p>Counter.</p></td>
   
 </tr>
 
@@ -729,7 +794,7 @@ private pure subroutine encode_bits(bits, padd, code)
   
   <td>public</td>
   <td></td><td>::</td>
-  <td><strong>e</strong></td><td></td><td></td><td><p>Counters.</p></td>
+  <td><strong>e</strong></td><td></td><td></td><td><p>Counter.</p></td>
   
 </tr>
 

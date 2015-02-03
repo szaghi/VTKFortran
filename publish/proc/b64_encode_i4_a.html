@@ -126,6 +126,8 @@
       
       <a class="list-group-item" href="../proc/b64_encode_i4_a.html#var-padd">padd</a>
       
+      <a class="list-group-item" href="../proc/b64_encode_i4_a.html#var-ns">ns</a>
+      
     </div>
   </div>
   
@@ -145,19 +147,69 @@
     <div class="panel-heading text-left"><h3 class="panel-title">All Procedures</h3></div>
     <div class="list-group">
       
+      <a class="list-group-item" href="../proc/autotest.html">autotest</a>
+      
+      <a class="list-group-item" href="../interface/b64_decode.html">b64_decode</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i1.html">b64_decode_I1</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i1_a.html">b64_decode_I1_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i2.html">b64_decode_I2</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i2_a.html">b64_decode_I2_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i4.html">b64_decode_I4</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i4_a.html">b64_decode_I4_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i8.html">b64_decode_I8</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_i8_a.html">b64_decode_I8_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_r16.html">b64_decode_R16</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_r16_a.html">b64_decode_R16_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_r4.html">b64_decode_R4</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_r4_a.html">b64_decode_R4_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_r8.html">b64_decode_R8</a>
+      
+      <a class="list-group-item" href="../proc/b64_decode_r8_a.html">b64_decode_R8_a</a>
+      
       <a class="list-group-item" href="../interface/b64_encode.html">b64_encode</a>
+      
+      <a class="list-group-item" href="../proc/b64_encode_i1.html">b64_encode_I1</a>
       
       <a class="list-group-item" href="../proc/b64_encode_i1_a.html">b64_encode_I1_a</a>
       
+      <a class="list-group-item" href="../proc/b64_encode_i2.html">b64_encode_I2</a>
+      
       <a class="list-group-item" href="../proc/b64_encode_i2_a.html">b64_encode_I2_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_encode_i4.html">b64_encode_I4</a>
       
       <a class="list-group-item" href="../proc/b64_encode_i4_a.html">b64_encode_I4_a</a>
       
+      <a class="list-group-item" href="../proc/b64_encode_i8.html">b64_encode_I8</a>
+      
       <a class="list-group-item" href="../proc/b64_encode_i8_a.html">b64_encode_I8_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_encode_r16.html">b64_encode_R16</a>
+      
+      <a class="list-group-item" href="../proc/b64_encode_r16_a.html">b64_encode_R16_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_encode_r4.html">b64_encode_R4</a>
       
       <a class="list-group-item" href="../proc/b64_encode_r4_a.html">b64_encode_R4_a</a>
       
+      <a class="list-group-item" href="../proc/b64_encode_r8.html">b64_encode_R8</a>
+      
       <a class="list-group-item" href="../proc/b64_encode_r8_a.html">b64_encode_R8_a</a>
+      
+      <a class="list-group-item" href="../proc/b64_init.html">b64_init</a>
       
       <a class="list-group-item" href="../proc/bctoi_i1p.html">bctoi_I1P</a>
       
@@ -236,6 +288,8 @@
       <a class="list-group-item" href="../proc/ctor_r4p.html">ctor_R4P</a>
       
       <a class="list-group-item" href="../proc/ctor_r8p.html">ctor_R8P</a>
+      
+      <a class="list-group-item" href="../proc/decode_bits.html">decode_bits</a>
       
       <a class="list-group-item" href="../interface/digit.html">digit</a>
       
@@ -388,8 +442,6 @@
       <a class="list-group-item" href="../proc/test_unst.html">test_unst</a>
       
       <a class="list-group-item" href="../proc/test_vtm.html">test_vtm</a>
-      
-      <a class="list-group-item" href="../proc/tochar.html">tochar</a>
       
       <a class="list-group-item" href="../proc/upper_case.html">Upper_Case</a>
       
@@ -605,7 +657,7 @@
     
     <div class="col-lg-9" id='text'>
     <h2>
-private pure subroutine b64_encode_I4_a(nB, n, code)
+private pure subroutine b64_encode_I4_a(n, code)
 </h2>
     
   
@@ -630,21 +682,6 @@ private pure subroutine b64_encode_I4_a(nB, n, code)
   
 <tr>
   
-  <td><a class="anchor" name="var-nB"></a>integer(kind=I4P),</td>
-  <td>intent(in)</td>
-  <td></td>
-  
-  <td></td><td>::</td>
-  <td><strong>nB</strong></td><td><p>Number of bytes of single element of n.</p></td>
-  
-</tr>
-
-  
-  
-  
-  
-<tr>
-  
   <td><a class="anchor" name="var-n"></a>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
@@ -660,12 +697,12 @@ private pure subroutine b64_encode_I4_a(nB, n, code)
   
 <tr>
   
-  <td><a class="anchor" name="var-code"></a>character(len=1),</td>
+  <td><a class="anchor" name="var-code"></a>character(len=:),</td>
   <td>intent(out),</td>
   <td></td>
   
   <td>allocatable</td><td>::</td>
-  <td><strong>code</strong>(:)</td><td><p>Encoded array.</p></td>
+  <td><strong>code</strong></td><td><p>Encoded array.</p></td>
   
 </tr>
 
@@ -674,6 +711,9 @@ private pure subroutine b64_encode_I4_a(nB, n, code)
 
     
     
+    
+    <h3>Description</h3>
+    <p>Procedure for encoding array numbers to base64 (I4P).</p>
     
     <br>
     
@@ -697,9 +737,9 @@ private pure subroutine b64_encode_I4_a(nB, n, code)
   
   <td><a class="anchor" name="var-nI1P"></a>integer(kind=I1P),</td>
   
-  <td>public</td>
-  <td></td><td>::</td>
-  <td><strong>nI1P</strong>(1:((size(n,dim=1)*nB+2)/3)*3)</td><td></td><td></td><td><p>One byte integer array containing n.</p></td>
+  <td>public,</td>
+  <td>allocatable</td><td>::</td>
+  <td><strong>nI1P</strong>(:)</td><td></td><td></td><td><p>One byte integer array containing n.</p></td>
   
 </tr>
 
@@ -714,6 +754,20 @@ private pure subroutine b64_encode_I4_a(nB, n, code)
   <td>public</td>
   <td></td><td>::</td>
   <td><strong>padd</strong></td><td></td><td></td><td><p>Number of padding characters ('=').</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><a class="anchor" name="var-ns"></a>integer(kind=I8P),</td>
+  
+  <td>public</td>
+  <td></td><td>::</td>
+  <td><strong>ns</strong></td><td></td><td></td><td><p>Size of n.</p></td>
   
 </tr>
 

@@ -187,8 +187,6 @@
       
       <a class="list-group-item" href="../module/lib_vtk_io.html#proc-Upper_Case">Upper_Case</a>
       
-      <a class="list-group-item" href="../module/lib_vtk_io.html#proc-tochar">tochar</a>
-      
       <a class="list-group-item" href="../module/lib_vtk_io.html#proc-VTK_INI_XML">VTK_INI_XML</a>
       
       <a class="list-group-item" href="../module/lib_vtk_io.html#proc-VTK_FLD_XML_OC">VTK_FLD_XML_OC</a>
@@ -417,6 +415,8 @@
       
       <a class="list-group-item" href="../module/lib_base64.html">Lib_Base64</a>
       
+      <a class="list-group-item" href="../module/lib_pack_data.html">Lib_Pack_Data</a>
+      
       <a class="list-group-item" href="../module/lib_testers.html">Lib_Testers</a>
       
       <a class="list-group-item" href="../module/lib_vtk_io.html">Lib_VTK_IO</a>
@@ -470,6 +470,9 @@
 <p>Go to <a href="#top">Top</a></p>
 <h3>Version History</h3>
 <p>In the following the changelog of most important releases is reported.</p>
+<h3>v1.2.0</h3>
+<h5>Download <a href="https://github.com/szaghi/Lib_VTK_IO/archive/v1.2.0.zip">ZIP</a> ball or <a href="https://github.com/szaghi/Lib_VTK_IO/archive/v1.2.0.tar.gz">TAR</a> one</h5>
+<p>Stable Release. Fully backward compatible. Modern compiler required.</p>
 <h3>v1.1.1</h3>
 <h5>Download <a href="https://github.com/szaghi/Lib_VTK_IO/archive/v1.1.1.zip">ZIP</a> ball or <a href="https://github.com/szaghi/Lib_VTK_IO/archive/v1.1.1.tar.gz">TAR</a> one</h5>
 <p>Stable Release. Fully backward compatible.</p>
@@ -478,6 +481,11 @@
 <p>Stable Release.</p>
 <p>Go to <a href="#top">Top</a></p>
 <h3>ChangeLog</h3>
+<h3>Version v1.2.0</h3>
+<p>Stable release. Fully backward compatible. Modern compiler required.</p>
+<ul>
+<li>Switch to the new Lib_Base64, <a href="https://github.com/szaghi/BeFoR64">BeFoR64</a> project: the use of <em>deferred length string</em>, namely <code>character(len=:), allocatabale:: var</code>, imposes a modern compiler supporting automatic (re)allocation of LHS on assignment.</li>
+</ul>
 <h3>Version v1.1.1</h3>
 <ul>
 <li>Extend VTM_WRF_XML function, now it is an interface to two functions, one for files list passed as an array and one for files list passed a single string. If a single string is used, the delimiter of each file can be customized, while the default values is '&amp;';</li>
@@ -12061,69 +12069,6 @@ private  function <a href='../proc/upper_case.html'>Upper_Case</a>(string)
 
 
        <p>Function for converting lower case characters of a string to upper case ones.</p>
-        
-
-  </div>
-  </div>
-
-    
-    
-  <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-tochar"></a><h3>
-private pure function <a href='../proc/tochar.html'>tochar</a>(string)
-</h3></div>
-  <div class="panel-body">
-       
-    
-    <h4>Arguments</h4>
-    
-      
-      
-<table class="table table-striped varlist">
-<thead><tr><th>Type</th>
-<th>Intent</th><th>Optional</th>
-<th>Attributes</th><th></th><th>Name</th><th></th></thead>
-
-
-
-<tbody>
-
-  
-  
-  
-  
-<tr>
-  
-  <td><a class="anchor" name="var-string"></a>character(len=1),</td>
-  <td>intent(in)</td>
-  <td></td>
-  
-  <td></td><td>::</td>
-  <td><strong>string</strong>(1:)</td><td><p>Array of 1 character.</p></td>
-  
-</tr>
-
-</tbody>
-</table>
-
-      
-    
-    
-
-  
-  
-  
-  
-     <h4>Return Value <small><a class="anchor" name="var-char_string"></a>character(len=size(string,dim=1))
-  </small></h4>
-  <p>String of characters.</p>
-    
-    
-    <h4>Description</h4>
-       
-
-
-       <p>Function for converting array of 1 character to a string of characters.</p>
         
 
   </div>
