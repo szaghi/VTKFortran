@@ -1,3 +1,11 @@
+### Version v1.0.2
+
+Stable release. Fully backward compatible, minor bugs fix:
+
++ change encoders from elemental to pure due to the allocation of code;
++ check the dimensions of bits array for not overtake its dimensions;
++ add travis ci support.
+
 ### Version v1.0.1
 
 Stable release. Fully backward compatible:

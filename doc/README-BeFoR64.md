@@ -1,10 +1,13 @@
 ### <a name="top"></a>BeFoR64, Base64 encoding/decoding library for FoRtran poor men
 
+[![Build Status](https://travis-ci.org/szaghi/BeFoR64.svg?branch=master)](https://travis-ci.org/szaghi/BeFoR64)
 [![Ready in backlog](https://badge.waffle.io/szaghi/BeFoR64.png?label=ready&title=Ready)](https://waffle.io/szaghi/BeFoR64)
 [![In Progress](https://badge.waffle.io/szaghi/BeFoR64.png?label=in%20progress&title=In%20Progress)](https://waffle.io/szaghi/BeFoR64)
 [![Open bugs](https://badge.waffle.io/szaghi/BeFoR64.png?label=bug&title=Open%20Bugs)](https://waffle.io/szaghi/BeFoR64)
 
-A KISS library for base64 encoding/decoding for modern (2003+) Fortran projects.
++ BeFoR64 is a pure Fortran (KISS) library for base64 encoding/decoding for modern (2003+) Fortran projects;
++ BeFoR64 is Fortran 2003+ standard compliant;
++ BeFoR64 is a Free, Open Source Project.
 
 ## What is BeFoR64?
 
@@ -51,14 +54,26 @@ Go to [Top](#top)
 Besides this README file the BeFoR64 documentation is contained into its own [wiki](https://github.com/szaghi/BeFoR64/wiki). Detailed documentation of the API is contained into the [GitHub Pages](http://szaghi.github.io/BeFoR64/index.html) that can also be created locally by means of [ford tool](https://github.com/cmacmackin/ford).
 
 ### A Taste of BeFoR64
+Let us assume our goal is encoding a binary integer. It is as simple as
+```fortran
+USE Lib_Base64
+...
+character(len=:), allocatable:: code64 ! base64 encoded string
+...
+call b64_encode(n=12._R8P,code=code64)
+print "(A)", code64
+```
 
-To be written.
+But you are not limited to a simple integer scalar, you can encode real, integer, characters scalar or arrays, and by means of the auxiliary `Lib_Pack` library also mixed types. See the [wiki](https://github.com/szaghi/BeFoR64/wiki).
 
 Go to [Top](#top)
 
 ## Version History
 
 In the following the changelog of most important releases is reported.
+### v1.0.2
+##### Download [ZIP](https://github.com/szaghi/BeFoR64/archive/v1.0.2.zip) ball or [TAR](https://github.com/szaghi/BeFoR64/archive/v1.0.2.tar.gz) one
+Stable Release. Fully backward compatible. Minor bugs fix.
 ### v1.0.1
 ##### Download [ZIP](https://github.com/szaghi/BeFoR64/archive/v1.0.1.zip) ball or [TAR](https://github.com/szaghi/BeFoR64/archive/v1.0.1.tar.gz) one
 Stable Release. Fully backward compatible.

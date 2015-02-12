@@ -1,133 +1,196 @@
 [modes]
-modes = shared static test-driver
-        shared-debug static-debug test-driver-debug
+modes = shared-gnu static-gnu test-driver-gnu
+        shared-gnu-debug static-gnu-debug test-driver-gnu-debug
+        shared-intel static-intel test-driver-intel
+        shared-intel-debug static-intel-debug test-driver-intel-debug
 
 [common-variables]
-$CFLAGS_SHARED = -cpp -c -assume realloc_lhs -fpic
-$CFLAGS_STATIC = -cpp -c -assume realloc_lhs
-$LFLAGS_SHARED = -shared
-$DEBUG         = -O0 -debug all -check all -warn all -traceback
-$OPTIMIZE      = -O3
+$CSHARED_GNU = -cpp -c -fPIC -frealloc-lhs
+$CSHARED_INT = -cpp -c -fpic -assume realloc_lhs
+$LSHARED     = -shared
+$CSTATIC_GNU = -cpp -c -frealloc-lhs
+$CSTATIC_INT = -cpp -c -assume realloc_lhs
+$DEBUG_GNU   = -O0 -g3 -Warray-bounds -Wcharacter-truncation -Wline-truncation -Wimplicit-interface -Wimplicit-procedure -Wunderflow -Wuninitialized -fcheck=all -fmodule-private -ffree-line-length-132 -fimplicit-none -fbacktrace -fdump-core -finit-real=nan -std=f2003 -fall-intrinsics
+$DEBUG_INT   = -O0 -debug all -check all -warn all -extend-source 132 -traceback -gen-interfaces#-fpe-all=0 -fp-stack-check -fstack-protector-all -ftrapuv -no-ftz -std03
+$OPTIMIZE    = -O2
 
 # main modes
-[shared]
-template = template-shared
-target   = src/Lib_VTK_IO.f90
-output   = Lib_VTK_IO.so
-mklib    = shared
+[shared-gnu]
+template  = template-shared-gnu
+target    = src/Lib_VTK_IO.f90
+build_dir = ./shared/
+output    = Lib_VTK_IO.so
+mklib     = shared
 
-[static]
-template = template-static
-target   = src/Lib_VTK_IO.f90
-output   = Lib_VTK_IO.a
-mklib    = static
+[static-gnu]
+template  = template-static-gnu
+target    = src/Lib_VTK_IO.f90
+build_dir = ./static/
+output    = Lib_VTK_IO.a
+mklib     = static
 
-[test-driver]
-template = template-test-driver
-target   = src/Test_Driver.f90
-output   = Test_Driver
+[test-driver-gnu]
+template  = template-static-gnu
+target    = src/Test_Driver.f90
+build_dir = ./Test_Driver/
+output    = Test_Driver
 
-[shared-debug]
-template = template-shared-debug
-target   = src/Lib_VTK_IO.f90
-output   = Lib_VTK_IO.so
-mklib    = shared
+[shared-gnu-debug]
+template  = template-shared-gnu-debug
+target    = src/Lib_VTK_IO.f90
+build_dir = ./shared/
+output    = Lib_VTK_IO.so
+mklib     = shared
 
-[static-debug]
-template = template-static-debug
-target   = src/Lib_VTK_IO.f90
-output   = Lib_VTK_IO.a
-mklib    = static
+[static-gnu-debug]
+template  = template-static-gnu-debug
+target    = src/Lib_VTK_IO.f90
+build_dir = ./static/
+output    = Lib_VTK_IO.a
+mklib     = static
 
-[test-driver-debug]
-template = template-test-driver-debug
-target   = src/Test_Driver.f90
-output   = Test_Driver
+[test-driver-gnu-debug]
+template  = template-static-gnu-debug
+target    = src/Test_Driver.f90
+build_dir = ./Test_Driver/
+output    = Test_Driver
+
+[shared-intel]
+template  = template-shared-intel
+target    = src/Lib_VTK_IO.f90
+build_dir = ./shared/
+output    = Lib_VTK_IO.so
+mklib     = shared
+
+[static-intel]
+template  = template-static-intel
+target    = src/Lib_VTK_IO.f90
+build_dir = ./static/
+output    = Lib_VTK_IO.a
+mklib     = static
+
+[test-driver-intel]
+template  = template-static-intel
+target    = src/Test_Driver.f90
+build_dir = ./Test_Driver/
+output    = Test_Driver
+
+[shared-intel-debug]
+template  = template-shared-intel-debug
+target    = src/Lib_VTK_IO.f90
+build_dir = ./shared/
+output    = Lib_VTK_IO.so
+mklib     = shared
+
+[static-intel-debug]
+template  = template-static-intel-debug
+target    = src/Lib_VTK_IO.f90
+build_dir = ./static/
+output    = Lib_VTK_IO.a
+mklib     = static
+
+[test-driver-intel-debug]
+template  = template-static-intel-debug
+target    = src/Test_Driver.f90
+build_dir = ./Test_Driver/
+output    = Test_Driver
 
 #templates
-[template-shared]
-help      = Shared Library
-compiler  = intel
-cflags    = $CFLAGS_SHARED $OPTIMIZE
-lflags    = $LFLAGS_SHARED $OPTIMIZE
-mod_dir   = ./mod/
-obj_dir   = ./obj/
-build_dir = ./shared/
-src       = ./src/
-colors    = True
-quiet     = False
-log       = True
-jobs      = 2
+[template-shared-gnu]
+compiler = gnu
+cflags   = $CSHARED_GNU $OPTIMIZE
+lflags   = $LSHARED $OPTIMIZE
+mod_dir  = ./mod/
+obj_dir  = ./obj/
+src      = ./src/
+colors   = True
+quiet    = False
+log      = True
+jobs     = 2
 
-[template-static]
-help      = Static Library
-compiler  = intel
-cflags    = $CFLAGS_STATIC $OPTIMIZE
-lflags    =                $OPTIMIZE
-mod_dir   = ./mod/
-obj_dir   = ./obj/
-build_dir = ./static/
-src       = ./src/
-colors    = True
-quiet     = False
-log       = True
-jobs      = 2
+[template-static-gnu]
+compiler = gnu
+cflags   = $CSTATIC_GNU $OPTIMIZE
+lflags   = $OPTIMIZE
+mod_dir  = ./mod/
+obj_dir  = ./obj/
+src      = ./src/
+colors   = True
+quiet    = False
+log      = True
+jobs     = 2
 
-[template-test-driver]
-help      = Test Driver Program
-compiler  = intel
-cflags    = $CFLAGS_STATIC $OPTIMIZE
-lflags    =                $OPTIMIZE
-mod_dir   = ./mod/
-obj_dir   = ./obj/
-build_dir = ./Test_Driver/
-src       = ./src/
-colors    = True
-quiet     = False
-log       = True
-jobs      = 2
+[template-shared-gnu-debug]
+compiler = gnu
+cflags   = $CSHARED_GNU $DEBUG_GNU
+lflags   = $LSHARED $DEBUG_GNU
+mod_dir  = ./mod/
+obj_dir  = ./obj/
+src      = ./src/
+colors   = True
+quiet    = False
+log      = True
+jobs     = 2
 
-[template-shared-debug]
-help      = Shared Library in debug mode
-compiler  = intel
-cflags    = $CFLAGS_SHARED $DEBUG
-lflags    = $LFLAGS_SHARED $DEBUG
-mod_dir   = ./mod/
-obj_dir   = ./obj/
-build_dir = ./shared/
-src       = ./src/
-colors    = True
-quiet     = False
-log       = True
-jobs      = 2
+[template-static-gnu-debug]
+compiler = gnu
+cflags   = $CSTATIC_GNU $DEBUG_GNU
+lflags   = $DEBUG_GNU
+mod_dir  = ./mod/
+obj_dir  = ./obj/
+src      = ./src/
+colors   = True
+quiet    = False
+log      = True
+jobs     = 2
 
-[template-static-debug]
-help      = Static Library in debug mode
-compiler  = intel
-cflags    = $CFLAGS_STATIC $DEBUG
-lflags    =                $DEBUG
-mod_dir   = ./mod/
-obj_dir   = ./obj/
-build_dir = ./static/
-src       = ./src/
-colors    = True
-quiet     = False
-log       = True
-jobs      = 2
+[template-shared-intel]
+compiler = intel
+cflags   = $CSHARED_INT $OPTIMIZE
+lflags   = $LSHARED $OPTIMIZE
+mod_dir  = ./mod/
+obj_dir  = ./obj/
+src      = ./src/
+colors   = True
+quiet    = False
+log      = True
+jobs     = 2
 
-[template-test-driver-debug]
-help      = Test Driver Program in debug mode
-compiler  = intel
-cflags    = $CFLAGS_STATIC $DEBUG
-lflags    =                $DEBUG
-mod_dir   = ./mod/
-obj_dir   = ./obj/
-build_dir = ./Test_Driver/
-src       = ./src/
-colors    = True
-quiet     = False
-log       = True
-jobs      = 2
+[template-static-intel]
+compiler = intel
+cflags   = $CSTATIC_INT $OPTIMIZE
+lflags   = $OPTIMIZE
+mod_dir  = ./mod/
+obj_dir  = ./obj/
+src      = ./src/
+colors   = True
+quiet    = False
+log      = True
+jobs     = 2
+
+[template-shared-intel-debug]
+compiler = intel
+cflags   = $CSHARED_INT $DEBUG_INT
+lflags   = $LSHARED $DEBUG_INT
+mod_dir  = ./mod/
+obj_dir  = ./obj/
+src      = ./src/
+colors   = True
+quiet    = False
+log      = True
+jobs     = 2
+
+[template-static-intel-debug]
+compiler = intel
+cflags   = $CSTATIC_INT $DEBUG_INT
+lflags   = $DEBUG_INT
+mod_dir  = ./mod/
+obj_dir  = ./obj/
+src      = ./src/
+colors   = True
+quiet    = False
+log      = True
+jobs     = 2
 
 [rule-makedoc]
 help   = Rule for building documentation from source files
