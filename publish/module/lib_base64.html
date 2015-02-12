@@ -276,10 +276,15 @@
 
     <p>BeFoR64, Base64 encoding/decoding library for FoRtran poor men</p>
 <h3><a name="top"></a>BeFoR64, Base64 encoding/decoding library for FoRtran poor men</h3>
-<p><a href="https://waffle.io/szaghi/BeFoR64"><img alt="Ready in backlog" src="https://badge.waffle.io/szaghi/BeFoR64.png?label=ready&amp;title=Ready"></a>
+<p><a href="https://travis-ci.org/szaghi/BeFoR64"><img alt="Build Status" src="https://travis-ci.org/szaghi/BeFoR64.svg?branch=master"></a>
+<a href="https://waffle.io/szaghi/BeFoR64"><img alt="Ready in backlog" src="https://badge.waffle.io/szaghi/BeFoR64.png?label=ready&amp;title=Ready"></a>
 <a href="https://waffle.io/szaghi/BeFoR64"><img alt="In Progress" src="https://badge.waffle.io/szaghi/BeFoR64.png?label=in%20progress&amp;title=In%20Progress"></a>
 <a href="https://waffle.io/szaghi/BeFoR64"><img alt="Open bugs" src="https://badge.waffle.io/szaghi/BeFoR64.png?label=bug&amp;title=Open%20Bugs"></a></p>
-<p>A KISS library for base64 encoding/decoding for modern (2003+) Fortran projects.</p>
+<ul>
+<li>BeFoR64 is a pure Fortran (KISS) library for base64 encoding/decoding for modern (2003+) Fortran projects;</li>
+<li>BeFoR64 is Fortran 2003+ standard compliant;</li>
+<li>BeFoR64 is a Free, Open Source Project.</li>
+</ul>
 <h2>What is BeFoR64?</h2>
 <p>Modern Fortran standards (2003+) have introduced better support for strings manipulations. Exploiting such new Fortran capabilities, BeFoR64 provides an easy to use module library for encoding and decoding Fortran types (binary internal representation) in ascii-<a href="http://en.wikipedia.org/wiki/Base64">base64</a>-encoded string.</p>
 <p>Go to <a href="#top">Top</a></p>
@@ -319,10 +324,23 @@
 <h2>Documentation</h2>
 <p>Besides this README file the BeFoR64 documentation is contained into its own <a href="https://github.com/szaghi/BeFoR64/wiki">wiki</a>. Detailed documentation of the API is contained into the <a href="http://szaghi.github.io/BeFoR64/index.html">GitHub Pages</a> that can also be created locally by means of <a href="https://github.com/cmacmackin/ford">ford tool</a>.</p>
 <h3>A Taste of BeFoR64</h3>
-<p>To be written.</p>
+<p>Let us assume our goal is encoding a binary integer. It is as simple as</p>
+<div class="codehilite"><pre><span class="k">USE </span><span class="n">Lib_Base64</span>
+<span class="p">...</span>
+<span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span> <span class="k">allocatable</span><span class="kd">::</span> <span class="n">code64</span> <span class="c">! base64 encoded string</span>
+<span class="p">...</span>
+<span class="k">call </span><span class="n">b64_encode</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="mf">2._R8P</span><span class="p">,</span><span class="n">code</span><span class="o">=</span><span class="n">code64</span><span class="p">)</span>
+<span class="k">print</span> <span class="s2">&quot;(A)&quot;</span><span class="p">,</span> <span class="n">code64</span>
+</pre></div>
+
+
+<p>But you are not limited to a simple integer scalar, you can encode real, integer, characters scalar or arrays, and by means of the auxiliary <code>Lib_Pack</code> library also mixed types. See the <a href="https://github.com/szaghi/BeFoR64/wiki">wiki</a>.</p>
 <p>Go to <a href="#top">Top</a></p>
 <h2>Version History</h2>
 <p>In the following the changelog of most important releases is reported.</p>
+<h3>v1.0.2</h3>
+<h5>Download <a href="https://github.com/szaghi/BeFoR64/archive/v1.0.2.zip">ZIP</a> ball or <a href="https://github.com/szaghi/BeFoR64/archive/v1.0.2.tar.gz">TAR</a> one</h5>
+<p>Stable Release. Fully backward compatible. Minor bugs fix.</p>
 <h3>v1.0.1</h3>
 <h5>Download <a href="https://github.com/szaghi/BeFoR64/archive/v1.0.1.zip">ZIP</a> ball or <a href="https://github.com/szaghi/BeFoR64/archive/v1.0.1.tar.gz">TAR</a> one</h5>
 <p>Stable Release. Fully backward compatible.</p>
@@ -334,6 +352,13 @@
 <p>First Stable Release.</p>
 <p>Go to <a href="#top">Top</a></p>
 <h3>ChangeLog</h3>
+<h3>Version v1.0.2</h3>
+<p>Stable release. Fully backward compatible, minor bugs fix:</p>
+<ul>
+<li>change encoders from elemental to pure due to the allocation of code;</li>
+<li>check the dimensions of bits array for not overtake its dimensions;</li>
+<li>add travis ci support.</li>
+</ul>
 <h3>Version v1.0.1</h3>
 <p>Stable release. Fully backward compatible:</p>
 <ul>
@@ -425,7 +450,7 @@
     
     
     <h3>
-private  subroutine <a href='../proc/b64_encode_r16.html'>b64_encode_R16</a>(n, code)
+private pure subroutine <a href='../proc/b64_encode_r16.html'>b64_encode_R16</a>(n, code)
 </h3>
     
     <h4>Arguments</h4>
@@ -557,7 +582,7 @@ private pure subroutine <a href='../proc/b64_encode_r16_a.html'>b64_encode_R16_a
     
     
     <h3>
-private  subroutine <a href='../proc/b64_encode_r8.html'>b64_encode_R8</a>(n, code)
+private pure subroutine <a href='../proc/b64_encode_r8.html'>b64_encode_R8</a>(n, code)
 </h3>
     
     <h4>Arguments</h4>
@@ -689,7 +714,7 @@ private pure subroutine <a href='../proc/b64_encode_r8_a.html'>b64_encode_R8_a</
     
     
     <h3>
-private  subroutine <a href='../proc/b64_encode_r4.html'>b64_encode_R4</a>(n, code)
+private pure subroutine <a href='../proc/b64_encode_r4.html'>b64_encode_R4</a>(n, code)
 </h3>
     
     <h4>Arguments</h4>
@@ -821,7 +846,7 @@ private pure subroutine <a href='../proc/b64_encode_r4_a.html'>b64_encode_R4_a</
     
     
     <h3>
-private  subroutine <a href='../proc/b64_encode_i8.html'>b64_encode_I8</a>(n, code)
+private pure subroutine <a href='../proc/b64_encode_i8.html'>b64_encode_I8</a>(n, code)
 </h3>
     
     <h4>Arguments</h4>
@@ -953,7 +978,7 @@ private pure subroutine <a href='../proc/b64_encode_i8_a.html'>b64_encode_I8_a</
     
     
     <h3>
-private  subroutine <a href='../proc/b64_encode_i4.html'>b64_encode_I4</a>(n, code)
+private pure subroutine <a href='../proc/b64_encode_i4.html'>b64_encode_I4</a>(n, code)
 </h3>
     
     <h4>Arguments</h4>
@@ -1085,7 +1110,7 @@ private pure subroutine <a href='../proc/b64_encode_i4_a.html'>b64_encode_I4_a</
     
     
     <h3>
-private  subroutine <a href='../proc/b64_encode_i2.html'>b64_encode_I2</a>(n, code)
+private pure subroutine <a href='../proc/b64_encode_i2.html'>b64_encode_I2</a>(n, code)
 </h3>
     
     <h4>Arguments</h4>
@@ -1217,7 +1242,7 @@ private pure subroutine <a href='../proc/b64_encode_i2_a.html'>b64_encode_I2_a</
     
     
     <h3>
-private  subroutine <a href='../proc/b64_encode_i1.html'>b64_encode_I1</a>(n, code)
+private pure subroutine <a href='../proc/b64_encode_i1.html'>b64_encode_I1</a>(n, code)
 </h3>
     
     <h4>Arguments</h4>
@@ -1349,7 +1374,7 @@ private pure subroutine <a href='../proc/b64_encode_i1_a.html'>b64_encode_I1_a</
     
     
     <h3>
-private  subroutine <a href='../proc/b64_encode_string.html'>b64_encode_string</a>(s, code)
+private pure subroutine <a href='../proc/b64_encode_string.html'>b64_encode_string</a>(s, code)
 </h3>
     
     <h4>Arguments</h4>
@@ -3331,7 +3356,7 @@ private pure subroutine <a href='../proc/b64_decode_up_a.html'>b64_decode_up_a</
     
   <div class="panel panel-default">
   <div class="panel-heading codesum"><a class="anchor" name="proc-b64_encode_R16"></a><h3>
-private  subroutine <a href='../proc/b64_encode_r16.html'>b64_encode_R16</a>(n, code)
+private pure subroutine <a href='../proc/b64_encode_r16.html'>b64_encode_R16</a>(n, code)
 </h3></div>
   <div class="panel-body">
        
@@ -3400,7 +3425,7 @@ private  subroutine <a href='../proc/b64_encode_r16.html'>b64_encode_R16</a>(n, 
     
   <div class="panel panel-default">
   <div class="panel-heading codesum"><a class="anchor" name="proc-b64_encode_R8"></a><h3>
-private  subroutine <a href='../proc/b64_encode_r8.html'>b64_encode_R8</a>(n, code)
+private pure subroutine <a href='../proc/b64_encode_r8.html'>b64_encode_R8</a>(n, code)
 </h3></div>
   <div class="panel-body">
        
@@ -3469,7 +3494,7 @@ private  subroutine <a href='../proc/b64_encode_r8.html'>b64_encode_R8</a>(n, co
     
   <div class="panel panel-default">
   <div class="panel-heading codesum"><a class="anchor" name="proc-b64_encode_R4"></a><h3>
-private  subroutine <a href='../proc/b64_encode_r4.html'>b64_encode_R4</a>(n, code)
+private pure subroutine <a href='../proc/b64_encode_r4.html'>b64_encode_R4</a>(n, code)
 </h3></div>
   <div class="panel-body">
        
@@ -3538,7 +3563,7 @@ private  subroutine <a href='../proc/b64_encode_r4.html'>b64_encode_R4</a>(n, co
     
   <div class="panel panel-default">
   <div class="panel-heading codesum"><a class="anchor" name="proc-b64_encode_I8"></a><h3>
-private  subroutine <a href='../proc/b64_encode_i8.html'>b64_encode_I8</a>(n, code)
+private pure subroutine <a href='../proc/b64_encode_i8.html'>b64_encode_I8</a>(n, code)
 </h3></div>
   <div class="panel-body">
        
@@ -3607,7 +3632,7 @@ private  subroutine <a href='../proc/b64_encode_i8.html'>b64_encode_I8</a>(n, co
     
   <div class="panel panel-default">
   <div class="panel-heading codesum"><a class="anchor" name="proc-b64_encode_I4"></a><h3>
-private  subroutine <a href='../proc/b64_encode_i4.html'>b64_encode_I4</a>(n, code)
+private pure subroutine <a href='../proc/b64_encode_i4.html'>b64_encode_I4</a>(n, code)
 </h3></div>
   <div class="panel-body">
        
@@ -3676,7 +3701,7 @@ private  subroutine <a href='../proc/b64_encode_i4.html'>b64_encode_I4</a>(n, co
     
   <div class="panel panel-default">
   <div class="panel-heading codesum"><a class="anchor" name="proc-b64_encode_I2"></a><h3>
-private  subroutine <a href='../proc/b64_encode_i2.html'>b64_encode_I2</a>(n, code)
+private pure subroutine <a href='../proc/b64_encode_i2.html'>b64_encode_I2</a>(n, code)
 </h3></div>
   <div class="panel-body">
        
@@ -3745,7 +3770,7 @@ private  subroutine <a href='../proc/b64_encode_i2.html'>b64_encode_I2</a>(n, co
     
   <div class="panel panel-default">
   <div class="panel-heading codesum"><a class="anchor" name="proc-b64_encode_I1"></a><h3>
-private  subroutine <a href='../proc/b64_encode_i1.html'>b64_encode_I1</a>(n, code)
+private pure subroutine <a href='../proc/b64_encode_i1.html'>b64_encode_I1</a>(n, code)
 </h3></div>
   <div class="panel-body">
        
@@ -3814,7 +3839,7 @@ private  subroutine <a href='../proc/b64_encode_i1.html'>b64_encode_I1</a>(n, co
     
   <div class="panel panel-default">
   <div class="panel-heading codesum"><a class="anchor" name="proc-b64_encode_string"></a><h3>
-private  subroutine <a href='../proc/b64_encode_string.html'>b64_encode_string</a>(s, code)
+private pure subroutine <a href='../proc/b64_encode_string.html'>b64_encode_string</a>(s, code)
 </h3></div>
   <div class="panel-body">
        

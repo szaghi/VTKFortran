@@ -223,16 +223,24 @@ contains
   integer(I1P)::              sixb(1:4) !< 6 bits slices (stored into 8 bits integer) of 24 bits input.
   integer(I8P)::              c         !< Counter.
   integer(I8P)::              e         !< Counter.
+  integer(I8P)::              Nb        !< Length of bits array.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
+  Nb=size(bits,dim=1,kind=I8P)
   c = 1_I8P
-  do e=1_I8P,size(bits,dim=1,kind=I8P),3_I8P ! loop over array elements: 3 bytes (24 bits) scanning
+  do e=1_I8P,Nb,3_I8P ! loop over array elements: 3 bytes (24 bits) scanning
     sixb = 0_I1P
     call mvbits(bits(e  ),2,6,sixb(1),0)
-    call mvbits(bits(e  ),0,2,sixb(2),4) ; call mvbits(bits(e+1),4,4,sixb(2),0)
-    call mvbits(bits(e+1),0,4,sixb(3),2) ; call mvbits(bits(e+2),6,2,sixb(3),0)
-    call mvbits(bits(e+2),0,6,sixb(4),0)
+    call mvbits(bits(e  ),0,2,sixb(2),4)
+    if (e+1<=Nb) then
+      call mvbits(bits(e+1),4,4,sixb(2),0)
+      call mvbits(bits(e+1),0,4,sixb(3),2)
+    endif
+    if (e+2<=Nb) then
+      call mvbits(bits(e+2),6,2,sixb(3),0)
+      call mvbits(bits(e+2),0,6,sixb(4),0)
+    endif
     sixb = sixb + 1_I1P
     code(c  :c  ) = base64(sixb(1):sixb(1))
     code(c+1:c+1) = base64(sixb(2):sixb(2))
@@ -272,9 +280,11 @@ contains
   integer(I1P)::              sixb(1:4) !< 6 bits slices (stored into 8 bits integer) of 24 bits input.
   integer(I8P)::              c         !< Counter.
   integer(I8P)::              e         !< Counter.
+  integer(I8P)::              Nb        !< Length of bits array.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
+  Nb=size(bits,dim=1,kind=I8P)
   e = 1_I8P
   do c=1_I8P,len(code),4_I8P ! loop over code characters: 3 bytes (24 bits) scanning
     sixb = 0_I1P
@@ -283,10 +293,10 @@ contains
     sixb(3) = index(base64,code(c+2:c+2)) - 1
     sixb(4) = index(base64,code(c+3:c+3)) - 1
       call mvbits(sixb(1),0,6,bits(e  ),2) ; call mvbits(sixb(2),4,2,bits(e  ),0)
-    if (size(bits,dim=1)>=2) then
+    if (e+1<=Nb) then
       call mvbits(sixb(2),0,4,bits(e+1),4) ; call mvbits(sixb(3),2,4,bits(e+1),0)
     endif
-    if (size(bits,dim=1)>=3) then
+    if (e+2<=Nb) then
       call mvbits(sixb(3),0,2,bits(e+2),6) ; call mvbits(sixb(4),0,6,bits(e+2),0)
     endif
     e = e + 3_I8P
@@ -301,7 +311,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine decode_bits
 
-  elemental subroutine b64_encode_up(up,code)
+  subroutine b64_encode_up(up,code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Procedure for encoding an unlimited polymorphic scalar to base64.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -421,7 +431,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine b64_decode_up_a
 
-  elemental subroutine b64_encode_R16(n,code)
+  pure subroutine b64_encode_R16(n,code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Procedure for encoding scalar number to base64 (R16P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -436,13 +446,13 @@ contains
   allocate(nI1P(1:((BYR16P+2)/3)*3)) ; nI1P = 0_I1P
   code = repeat(' ',((BYR16P+2)/3)*4)
   nI1P = transfer(n,nI1P)
-  padd = mod((BYR16P),3_I1P) ; if (padd>0_I4P) padd = 3_I4P - padd
+  padd = mod((BYR16P),3_I2P) ; if (padd>0_I4P) padd = 3_I4P - padd
   call encode_bits(bits=nI1P,padd=padd,code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine b64_encode_R16
 
-  elemental subroutine b64_encode_R8(n,code)
+  pure subroutine b64_encode_R8(n,code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Procedure for encoding scalar number to base64 (R8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -463,7 +473,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine b64_encode_R8
 
-  elemental subroutine b64_encode_R4(n,code)
+  pure subroutine b64_encode_R4(n,code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Procedure for encoding scalar number to base64 (R4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -484,7 +494,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine b64_encode_R4
 
-  elemental subroutine b64_encode_I8(n,code)
+  pure subroutine b64_encode_I8(n,code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Procedure for encoding scalar number to base64 (I8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -505,7 +515,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine b64_encode_I8
 
-  elemental subroutine b64_encode_I4(n,code)
+  pure subroutine b64_encode_I4(n,code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Procedure for encoding scalar number to base64 (I4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -526,7 +536,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine b64_encode_I4
 
-  elemental subroutine b64_encode_I2(n,code)
+  pure subroutine b64_encode_I2(n,code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Procedure for encoding scalar number to base64 (I2P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -547,7 +557,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine b64_encode_I2
 
-  elemental subroutine b64_encode_I1(n,code)
+  pure subroutine b64_encode_I1(n,code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Procedure for encoding scalar number to base64 (I1P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -568,7 +578,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine b64_encode_I1
 
-  elemental subroutine b64_encode_string(s,code)
+  pure subroutine b64_encode_string(s,code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Procedure for encoding scalar string to base64.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -585,7 +595,7 @@ contains
   allocate(nI1P(1:((BYCHS+2)/3)*3)) ; nI1P = 0_I1P
   code = repeat(' ',((BYCHS+2)/3)*4)
   nI1P = transfer(s,nI1P)
-  padd = mod((BYCHS),3_I1P) ; if (padd>0_I4P) padd = 3_I4P - padd
+  padd = mod((BYCHS),3_I4P) ; if (padd>0_I4P) padd = 3_I4P - padd
   call encode_bits(bits=nI1P,padd=padd,code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -769,7 +779,7 @@ contains
   allocate(nI1P(1:((BYCHS+2)/3)*3)) ; nI1P = 0_I1P
   code = repeat(' ',((BYCHS+2)/3)*4)
   nI1P = transfer(s,nI1P)
-  padd = mod((BYCHS),3_I1P) ; if (padd>0_I4P) padd = 3_I4P - padd
+  padd = mod((BYCHS),3_I4P) ; if (padd>0_I4P) padd = 3_I4P - padd
   call encode_bits(bits=nI1P,padd=padd,code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1071,14 +1081,18 @@ contains
   !< correctness by a comparison with other widely used tools such as the python builtin module *struct*.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
+#ifdef r16p
   real(R16P)::                    scalar_R16 = 134.231_R16P             !< Real input to be encoded/decoded.
+#endif
   real(R8P)::                     scalar_R8  = 1._R8P                   !< Real input to be encoded/decoded.
   real(R4P)::                     scalar_R4  = 0._R4P                   !< Real input to be encoded/decoded.
   integer(I8P)::                  scalar_I8  = 23_I8P                   !< Integer input to be encoded/decoded.
   integer(I4P)::                  scalar_I4  = 2023_I4P                 !< Integer input to be encoded/decoded.
   integer(I2P)::                  scalar_I2  = -203_I2P                 !< Integer input to be encoded/decoded.
   integer(I1P)::                  scalar_I1  = 120_I1P                  !< Integer input to be encoded/decoded.
+#ifdef r16p
   real(R16P)::                    array_R16(1:2)= [121._R16P,2.32_R16P] !< Real input to be encoded/decoded.
+#endif
   real(R8P)::                     array_R8(1:2) = [1._R8P,2._R8P      ] !< Real input to be encoded/decoded.
   real(R4P)::                     array_R4(1:2) = [0._R4P,-32.12_R4P  ] !< Real input to be encoded/decoded.
   integer(I8P)::                  array_I8(1:4) = [23,324,25456656,2  ] !< Integer input to be encoded/decoded.
@@ -1086,7 +1100,7 @@ contains
   integer(I2P)::                  array_I2(1:2) = [-203,-10           ] !< Integer input to be encoded/decoded.
   integer(I1P)::                  array_I1(1:2) = [+120,-1            ] !< Integer input to be encoded/decoded.
   character(len=:), allocatable:: string                                !< String to be encoded/decoded.
-  character(len=:), allocatable:: string_a(:)                           !< Strings to be encoded/decoded.
+  character(len=5)::              string_a(1:2)                         !< Strings to be encoded/decoded.
   character(len=:), allocatable:: code64                                !< Base64 encoded array.
   !---------------------------------------------------------------------------------------------------------------------------------
 
@@ -1097,8 +1111,10 @@ contains
 
   print "(A)", 'Scalars'
 
+#ifdef r16p
   call b64_encode(n=scalar_R16,code=code64)
   print "(A,1X,L1)", '+ Code of '//trim(str(n=scalar_R16))//': "'//trim(code64)//'", Is it correct?',trim(code64)=='CKwcWmTHYEA='
+#endif
 
   call b64_encode(n=scalar_R8,code=code64)
   print "(A,1X,L1)", '+ Code of '//trim(str(n=scalar_R8))//': "'//trim(code64)//'", Is it correct?',trim(code64)=='AAAAAAAA8D8='
@@ -1124,9 +1140,11 @@ contains
 
   print "(A)", 'Arrays'
 
+#ifdef r16p
   call b64_encode(n=array_R16,code=code64)
   print "(A,1X,L1)", '+ Code of ['//trim(str(n=array_R16(1)))//','//trim(str(n=array_R16(2)))//']: "'//trim(code64)//&
     '", Is it correct?',trim(code64)=='AAAAAABAXkCPwvUoXI8CQA=='
+#endif
 
   call b64_encode(n=array_R8,code=code64)
   print "(A,1X,L1)", '+ Code of ['//trim(str(n=array_R8(1)))//','//trim(str(n=array_R8(2)))//']: "'//trim(code64)//&
@@ -1205,7 +1223,6 @@ contains
   code64 = 'eP8=' ; call b64_decode(code=code64,n=array_I1)
   print "(A)", '+ Decode of "'//code64//'": ['//trim(str(n=array_I1(1)))//','//trim(str(n=array_I1(2)))//'], Should be [120,-1]'
 
-  allocate(character(5) :: string_a(1:2))
   code64 = 'aGVsbG93b3JsZA==' ; call b64_decode(code=code64,s=string_a)
   print "(A)", '+ Decode of "'//code64//'": '//string_a(1)//string_a(2)//', Should be "helloworld"'
   return
