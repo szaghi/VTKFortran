@@ -1,9 +1,8 @@
 ### <a name="top"></a>Lib\_VTK\_IO, VTK IO in pure Fortran (2003+)
 
-[![GitHub release](https://img.shields.io/github/release/szaghi/Lib_VTK_IO.svg)]()
+[![Build Status](https://travis-ci.org/szaghi/Lib_VTK_IO.svg?branch=master)](https://travis-ci.org/szaghi/Lib_VTK_IO)
 [![GitHub tag](https://img.shields.io/github/tag/szaghi/Lib_VTK_IO.svg)]()
 [![GitHub issues](https://img.shields.io/github/issues/szaghi/Lib_VTK_IO.svg)]()
-[![Build Status](https://travis-ci.org/szaghi/Lib_VTK_IO.svg?branch=master)](https://travis-ci.org/szaghi/Lib_VTK_IO)
 [![Ready in backlog](https://badge.waffle.io/szaghi/Lib_VTK_IO.png?label=ready&title=Ready)](https://waffle.io/szaghi/Lib_VTK_IO)
 [![In Progress](https://badge.waffle.io/szaghi/Lib_VTK_IO.png?label=in%20progress&title=In%20Progress)](https://waffle.io/szaghi/Lib_VTK_IO)
 [![Open bugs](https://badge.waffle.io/szaghi/Lib_VTK_IO.png?label=bug&title=Open%20Bugs)](https://waffle.io/szaghi/Lib_VTK_IO)
