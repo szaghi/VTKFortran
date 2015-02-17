@@ -1,13 +1,36 @@
-### <a name="top"></a>BeFoR64, Base64 encoding/decoding library for FoRtran poor men
+<a name="top"></a>
 
+# BeFoR64 [![GitHub tag](https://img.shields.io/github/tag/szaghi/BeFoR64.svg)]()
+
+[![License](https://img.shields.io/badge/license-GNU%20GeneraL%20Public%20License%20v3%20,%20GPLv3-blue.svg)]()
+
+[![Status](https://img.shields.io/badge/status-stable-brightgreen.svg)]()
 [![Build Status](https://travis-ci.org/szaghi/BeFoR64.svg?branch=master)](https://travis-ci.org/szaghi/BeFoR64)
-[![Ready in backlog](https://badge.waffle.io/szaghi/BeFoR64.png?label=ready&title=Ready)](https://waffle.io/szaghi/BeFoR64)
-[![In Progress](https://badge.waffle.io/szaghi/BeFoR64.png?label=in%20progress&title=In%20Progress)](https://waffle.io/szaghi/BeFoR64)
-[![Open bugs](https://badge.waffle.io/szaghi/BeFoR64.png?label=bug&title=Open%20Bugs)](https://waffle.io/szaghi/BeFoR64)
+
+### BeFoR64, Base64 encoding/decoding library for FoRtran poor men
 
 + BeFoR64 is a pure Fortran (KISS) library for base64 encoding/decoding for modern (2003+) Fortran projects;
 + BeFoR64 is Fortran 2003+ standard compliant;
 + BeFoR64 is a Free, Open Source Project.
+
+#### Issues
+[![GitHub issues](https://img.shields.io/github/issues/szaghi/BeFoR64.svg)]()
+[![Ready in backlog](https://badge.waffle.io/szaghi/BeFoR64.png?label=ready&title=Ready)](https://waffle.io/szaghi/BeFoR64)
+[![In Progress](https://badge.waffle.io/szaghi/BeFoR64.png?label=in%20progress&title=In%20Progress)](https://waffle.io/szaghi/BeFoR64)
+[![Open bugs](https://badge.waffle.io/szaghi/BeFoR64.png?label=bug&title=Open%20Bugs)](https://waffle.io/szaghi/BeFoR64)
+
+#### Compiler Support
+[![Compiler](https://img.shields.io/badge/GNU%20Gfortran%20Compiler-build%20pass%20with%20v4.9.2+-brightgreen.svg)]()
+
+[![Compiler](https://img.shields.io/badge/Intel%20Fortran%20Compiler-build%20pass%20with%20v12.x+-brightgreen.svg)]()
+
+[![Compiler](https://img.shields.io/badge/IBM%20XL%20Fortran%20Compiler-not%20tested-yellow.svg)]()
+
+[![Compiler](https://img.shields.io/badge/g95%20Fortran%20Compiler-not%20tested-yellow.svg)]()
+
+[![Compiler](https://img.shields.io/badge/NAG%20Fortran%20Compiler-not%20tested-yellow.svg)]()
+
+[![Compiler](https://img.shields.io/badge/PGI%20Fortran%20Compiler-not%20tested-yellow.svg)]()
 
 ## What is BeFoR64?
 
@@ -65,23 +88,5 @@ print "(A)", code64
 ```
 
 But you are not limited to a simple integer scalar, you can encode real, integer, characters scalar or arrays, and by means of the auxiliary `Lib_Pack` library also mixed types. See the [wiki](https://github.com/szaghi/BeFoR64/wiki).
-
-Go to [Top](#top)
-
-## Version History
-
-In the following the changelog of most important releases is reported.
-### v1.0.2
-##### Download [ZIP](https://github.com/szaghi/BeFoR64/archive/v1.0.2.zip) ball or [TAR](https://github.com/szaghi/BeFoR64/archive/v1.0.2.tar.gz) one
-Stable Release. Fully backward compatible. Minor bugs fix.
-### v1.0.1
-##### Download [ZIP](https://github.com/szaghi/BeFoR64/archive/v1.0.1.zip) ball or [TAR](https://github.com/szaghi/BeFoR64/archive/v1.0.1.tar.gz) one
-Stable Release. Fully backward compatible.
-### v1.0.0
-##### Download [ZIP](https://github.com/szaghi/BeFoR64/archive/v1.0.0.zip) ball or [TAR](https://github.com/szaghi/BeFoR64/archive/v1.0.0.tar.gz) one
-Stable Release. Fully backward compatible.
-### v0.0.1
-##### Download [ZIP](https://github.com/szaghi/BeFoR64/archive/v0.0.1.zip) ball or [TAR](https://github.com/szaghi/BeFoR64/archive/v0.0.1.tar.gz) one
-First Stable Release.
 
 Go to [Top](#top)
