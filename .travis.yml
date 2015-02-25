@@ -9,6 +9,7 @@ before_install:
   - sudo apt-get install gfortran-4.9
   - ln -fs /usr/bin/gfortran-4.9 gfortran
   - pip install FoBiS.py
+  - pip install markdown-checklist
   - pip install ford
   - export PATH=".:$PATH"
 
@@ -19,11 +20,12 @@ script:
   - ./Test_Driver/Test_Driver -unst
 
 after_success:
-  - git config --global user.name ${GIT_NAME}
-  - git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/szaghi/Lib_VTK_IO doc/html > /dev/null
+  - git config --global user.name "Stefano Zaghi"
+  - git config --global user.email "stefano.zaghi@gmail.com"
+  - git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/szaghi/Lib_VTK_IO doc/html
   - FoBiS.py rule -ex makedoc
   - cd doc/html
-  - git add -f *
+  - git add -f --all *
   - git commit -m "Travis CI autocommit from travis build ${TRAVIS_BUILD_NUMBER}"
-  - git push -fq origin gh-pages > /dev/null
+  - git push -fq origin gh-pages
   - cd ../../
