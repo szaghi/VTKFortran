@@ -9,6 +9,7 @@ before_install:
   - sudo apt-get install gfortran-4.9
   - ln -fs /usr/bin/gfortran-4.9 gfortran
   - pip install FoBiS.py
+  - pip install ford
   - export PATH=".:$PATH"
 
 before_script:
@@ -16,3 +17,13 @@ before_script:
 
 script:
   - ./Test_Driver/Test_Driver -unst
+
+after_success:
+  - git config --global user.name ${GIT_NAME}
+  - git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/szaghi/Lib_VTK_IO doc/html > /dev/null
+  - FoBiS.py rule -ex makedoc
+  - cd doc/html
+  - git add -f *
+  - git commit -m "Travis CI autocommit from travis build ${TRAVIS_BUILD_NUMBER}"
+  - git push -fq origin gh-pages > /dev/null
+  - cd ../../
