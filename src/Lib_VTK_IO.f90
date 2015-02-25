@@ -4535,6 +4535,7 @@ contains
   function VTM_WRF_XML_array(flist) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Function for saving the list of VTK-XML wrapped files by the actual block of the mutliblock VTM file.
+  !<
   !< @note the list is passed as an array.
   !<
   !<#### Example of usage: 3 files block with default delimiter
@@ -4561,6 +4562,7 @@ contains
   function VTM_WRF_XML_string(delimiter,flist) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Function for saving the list of VTK-XML wrapped files by the actual block of the mutliblock VTM file.
+  !<
   !< @note the list is passed as a single string. The delimiter of each file can be customized: default value is "&". For supporting
   !< compiler with not varying string support the maximum delimiter length is fixed to 50.
   !<

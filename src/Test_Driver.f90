@@ -25,12 +25,13 @@ public:: test_mpi
 #endif
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
-  !> @ingroup Lib_TestersPublicProcedure
-  !> @{
-  !> Subroutine for testing all functions: R4P and R8P mesh data, 1D and 3D arrays inputs, standard (X,Y,Z,... separated arrays) and
-  !> packed API (X,Y,Z,... packed into a single array). All available formats are used. The StructuredGrid topology is used.
-  !> @note This subroutine is designed not as an example rather than a comprehensive stress-tester for function of any kind/rank.
   subroutine test_stress()
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for testing all functions.
+  !<
+  !< R4P and R8P mesh data, 1D and 3D arrays inputs, standard (X,Y,Z,... separated arrays) and
+  !< packed API (X,Y,Z,... packed into a single array). All available formats are used. The StructuredGrid topology is used.
+  !< @note This subroutine is designed not as an example rather than a comprehensive stress-tester for functions of any kind/rank.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   ! dataset dimensions
@@ -105,8 +106,9 @@ contains
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   contains
-    !> @brief Subroutine for initializing data.
     subroutine initialize()
+    !-------------------------------------------------------------------------------------------------------------------------------
+    !< Procedure for initializing data.
     !-------------------------------------------------------------------------------------------------------------------------------
     implicit none
     integer(I4P):: i,j,k,p
@@ -133,8 +135,9 @@ contains
     !-------------------------------------------------------------------------------------------------------------------------------
     endsubroutine initialize
 
-    !> @brief Subroutine for saving StructuredGrid files.
     function save_node_variables(threeD) result(E_IO)
+    !-------------------------------------------------------------------------------------------------------------------------------
+    !< Procedure for saving StructuredGrid files.
     !-------------------------------------------------------------------------------------------------------------------------------
     implicit none
     logical, intent(IN):: threeD !< Flag for checking the rank-dimensions of outputs.
@@ -203,8 +206,9 @@ contains
     !-------------------------------------------------------------------------------------------------------------------------------
     endfunction save_node_variables
 
-    !> @brief Subroutine for saving node-located variables.
     function save_strg(x64,y64,z64,xyz64,x32,y32,z32,xyz32,threeD,out_f) result(E_IO)
+    !-------------------------------------------------------------------------------------------------------------------------------
+    !< Procedure for saving node-located variables.
     !-------------------------------------------------------------------------------------------------------------------------------
     implicit none
     real(R8P), optional, intent(IN):: x64(:,:,:)     !< X Coordinates components (64 bits).
@@ -268,8 +272,9 @@ contains
     endfunction save_strg
   endsubroutine test_stress
 
-  !> Subroutine for testing UnstructuredGrid functions.
   subroutine test_unst()
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for testing UnstructuredGrid functions.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), parameter::       Nn = 27_I4P
@@ -339,8 +344,9 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_unst
 
-  !> Subroutine for testing StructuredGrid functions.
   subroutine test_strg()
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for testing StructuredGrid functions.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), parameter::                       nx1=0_I4P,nx2=9_I4P,ny1=0_I4P,ny2=5_I4P,nz1=0_I4P,nz2=5_I4P
@@ -376,10 +382,12 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_strg
 
-  !> Subroutine for testing RectilinearGrid functions.
-  !> @note This subroutine also shows the usage of FieldData functions that are useful for saving global auxiliary data, e.g. time,
-  !> time step, ecc.
   subroutine test_rect()
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for testing RectilinearGrid functions.
+  !<
+  !< @note This subroutine also shows the usage of FieldData functions that are useful for saving global auxiliary data, e.g. time,
+  !< time step, ecc.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), parameter:: nx1=0_I4P,nx2=30_I4P,ny1=0_I4P,ny2=20_I4P,nz1=0_I4P,nz2=10_I4P
@@ -453,9 +461,11 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_rect
 
-  !> Subroutine for testing parallel (partitioned) PStructuredGrid functions.
-  !> @note Note that the two parts are completely independet.
   subroutine test_punst()
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for testing parallel (partitioned) PStructuredGrid functions.
+  !<
+  !< @note Note that the two parts are completely independet.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), parameter::       Nn = 27_I4P
@@ -526,19 +536,21 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_punst
 
-  !> Subroutine for testing parallel (partitioned) PStructuredGrid functions.
-  !> @note The mesh is a simple prism partitioned into two pieces along x direction at ordinate i=nx2_p(1).
-  !> @code
-  !> y ^
-  !>   |               ny2 +-----------------+--------------+
-  !>   |                   |                 |              |
-  !>   |                   |                 |              |
-  !>   |                   |                 |              |
-  !>   |                   |                 |              |
-  !>   o-------->      ny1 +-----------------+--------------+
-  !>            x         nx1               i=nx2_p(1)     nx2
-  !> @endcode
   subroutine test_pstrg()
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for testing parallel (partitioned) PStructuredGrid functions.
+  !<
+  !< The mesh is a simple prism partitioned into two pieces along x direction at ordinate i=nx2_p(1).
+  !<```
+  !< y ^
+  !<   |               ny2 +-----------------+--------------+
+  !<   |                   |                 |              |
+  !<   |                   |                 |              |
+  !<   |                   |                 |              |
+  !<   |                   |                 |              |
+  !<   o-------->      ny1 +-----------------+--------------+
+  !<            x         nx1               i=nx2_p(1)     nx2
+  !<```
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), parameter::                          nx1=0_I4P,nx2=9_I4P,ny1=0_I4P,ny2=5_I4P,nz1=0_I4P,nz2=5_I4P
@@ -592,9 +604,11 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_pstrg
 
-  !> Subroutine for testing multi-blocks VTM functions. There are 4 subset of data organized into 2 blocks. All the subsets are
-  !> simple StructuredGrid prisms shifted along x direction.
   subroutine test_vtm()
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for testing multi-blocks VTM functions.
+  !<
+  !< There are 4 subset of data organized into 2 blocks. All the subsets are simple StructuredGrid prisms shifted along x direction.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), parameter::                          nx1=0_I4P,nx2=9_I4P,ny1=0_I4P,ny2=5_I4P,nz1=0_I4P,nz2=5_I4P
@@ -650,29 +664,34 @@ contains
   endsubroutine test_vtm
 
 #ifdef OPENMP
-  !> Subroutine for testing the libray in an OpenMP parallel framework. It is used for testing thread-safe capability and the
-  !> library speedup into OpenMP parallel framework. The output is a parallel (partitioned) PStructuredGrid file.
-  !> @note The whole grid is composed of blocks of 32x32x32 structured mesh. The total number of blocks/files, Nf_tot, is passed as
-  !> argument. The whole grid is built up composing the blocks along the X axis with a regular shift as following:
-  !> @code
-  !> y ^
-  !>   |               ny2 +------------+------------+------------+------///////////-----+
-  !>   |                   |            |            |            |                      |
-  !>   |                   |            |            |            |                      |
-  !>   |                   |            |            |            |                      |
-  !>   |                   |            |            |            |                      |
-  !>   o-------->      ny1 +------------+------------+------------+------///////////-----+
-  !>            x         nx1          nx2    2*(nx2-nx+1)  3*(nx2-nx+1)          Nf_tot*(nx2-nx+1)
-  !> @endcode
-  !> @note When the total number of blocks/files, Nf_tot, is not an integral of the number of threads used, Nths, the last
-  !> thread saves its own files (Nf_tot/Nths) plus the remainder blocks/files (mod(Nf_tot,Nths)). As a consequence the last
-  !> thread could has different elapsed time and it could degrade the speedup. Therefore the subroutine prints to stdout the
-  !> maximum and minimum elapsed time among the threads as well the average elapsed time in order to facilitate the assessing
-  !> of the parallel scalability.
-  !> @note It is important to note that the output files initialization and finalization must be done outside the parallel ambient.
-  !> @note The array containing the files indexes could be shared among threads, but the counter of this array ('p' in this example)
-  !> must be private.
   subroutine test_openmp(Nf_tot)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for testing the libray in an OpenMP parallel framework.
+  !<
+  !< It is used for testing thread-safe capability and the
+  !< library speedup into OpenMP parallel framework. The output is a parallel (partitioned) PStructuredGrid file.
+  !< @note The whole grid is composed of blocks of 32x32x32 structured mesh. The total number of blocks/files, Nf_tot, is passed as
+  !< argument. The whole grid is built up composing the blocks along the X axis with a regular shift as following:
+  !<```
+  !< y ^
+  !<   |               ny2 +------------+------------+------------+------///////////-----+
+  !<   |                   |            |            |            |                      |
+  !<   |                   |            |            |            |                      |
+  !<   |                   |            |            |            |                      |
+  !<   |                   |            |            |            |                      |
+  !<   o-------->      ny1 +------------+------------+------------+------///////////-----+
+  !<            x         nx1          nx2    2*(nx2-nx+1)  3*(nx2-nx+1)          Nf_tot*(nx2-nx+1)
+  !<```
+  !< @note When the total number of blocks/files, Nf_tot, is not an integral of the number of threads used, Nths, the last
+  !< thread saves its own files (Nf_tot/Nths) plus the remainder blocks/files (mod(Nf_tot,Nths)). As a consequence the last
+  !< thread could has different elapsed time and it could degrade the speedup. Therefore the subroutine prints to stdout the
+  !< maximum and minimum elapsed time among the threads as well the average elapsed time in order to facilitate the assessing
+  !< of the parallel scalability.
+  !<
+  !< @note It is important to note that the output files initialization and finalization must be done outside the parallel ambient.
+  !<
+  !< @note The array containing the files indexes could be shared among threads, but the counter of this array ('p' in this example)
+  !< must be private.
   !---------------------------------------------------------------------------------------------------------------------------------
   USE omp_lib ! OpenMP runtime library.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -776,26 +795,29 @@ contains
 #endif
 
 #ifdef MPI2
-  !> Subroutine for testing the library in an MPI parallel framework. It is used for testing the process-safe capability and the
-  !> library speedup into MPI parallel framework.  The output is a parallel (partitioned) PStructuredGrid file.
-  !> @note The whole grid is composed of blocks of 32x32x32 structured mesh. The total number of blocks/files, Nf_tot, is passed as
-  !> argument. The whole grid is built up composing the blocks along the X axis with a regular shift as following:
-  !> @code
-  !> y ^
-  !>   |               ny2 +------------+------------+------------+------///////////-----+
-  !>   |                   |            |            |            |                      |
-  !>   |                   |            |            |            |                      |
-  !>   |                   |            |            |            |                      |
-  !>   |                   |            |            |            |                      |
-  !>   o-------->      ny1 +------------+------------+------------+------///////////-----+
-  !>            x         nx1          nx2    2*(nx2-nx+1)  3*(nx2-nx+1)          Nf_tot*(nx2-nx+1)
-  !> @endcode
-  !> @note When the total number of blocks/files, Nf_tot, is not an integral of the number of processes used, nproc, the last
-  !> process saves its own files (Nf_tot/nproc) plus the remainder blocks/files (mod(Nf_tot,nproc)). As a consequence the last
-  !> process could has different elapsed time and it could degrade the speedup. Therefore the subroutine prints to stdout the
-  !> maximum and minimum elapsed time among the processes as well the average elapsed time in order to facilitate the assessing
-  !> of the parallel scalability.
   subroutine test_mpi(Nf_tot)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for testing the library in an MPI parallel framework.
+  !<
+  !< It is used for testing the process-safe capability and the
+  !< library speedup into MPI parallel framework.  The output is a parallel (partitioned) PStructuredGrid file.
+  !< @note The whole grid is composed of blocks of 32x32x32 structured mesh. The total number of blocks/files, Nf_tot, is passed as
+  !< argument. The whole grid is built up composing the blocks along the X axis with a regular shift as following:
+  !<```
+  !< y ^
+  !<   |               ny2 +------------+------------+------------+------///////////-----+
+  !<   |                   |            |            |            |                      |
+  !<   |                   |            |            |            |                      |
+  !<   |                   |            |            |            |                      |
+  !<   |                   |            |            |            |                      |
+  !<   o-------->      ny1 +------------+------------+------------+------///////////-----+
+  !<            x         nx1          nx2    2*(nx2-nx+1)  3*(nx2-nx+1)          Nf_tot*(nx2-nx+1)
+  !<```
+  !< @note When the total number of blocks/files, Nf_tot, is not an integral of the number of processes used, nproc, the last
+  !< process saves its own files (Nf_tot/nproc) plus the remainder blocks/files (mod(Nf_tot,nproc)). As a consequence the last
+  !< process could has different elapsed time and it could degrade the speedup. Therefore the subroutine prints to stdout the
+  !< maximum and minimum elapsed time among the processes as well the average elapsed time in order to facilitate the assessing
+  !< of the parallel scalability.
   !---------------------------------------------------------------------------------------------------------------------------------
   USE MPI ! MPI runtime library.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -906,7 +928,6 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_mpi
 #endif
-  !> @}
 endmodule Lib_Testers
 
 program Test_Driver
@@ -1023,8 +1044,9 @@ endselect
 stop
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
-  !> Subroutine for printing usage help message to stdout.
   subroutine print_usage()
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for printing usage help message to stdout.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   !---------------------------------------------------------------------------------------------------------------------------------
