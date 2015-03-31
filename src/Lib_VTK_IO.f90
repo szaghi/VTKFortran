@@ -4532,34 +4532,50 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTM_BLK_XML
 
-  function VTM_WRF_XML_array(flist) result(E_IO)
+  function VTM_WRF_XML_array(nlist,flist) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Function for saving the list of VTK-XML wrapped files by the actual block of the mutliblock VTM file.
   !<
   !< @note the list is passed as an array.
   !<
-  !<#### Example of usage: 3 files block with default delimiter
+  !<#### Example of usage: 3 files blocks
   !<```fortran
   !< E_IO = VTK_WRF_XML(flist=['file_1.vts','file_2.vts','file_3.vtu'])
   !<```
+  !<
+  !<#### Example of usage: 3 files blocks with custom name
+  !<```fortran
+  !< E_IO = VTK_WRF_XML(flist=['file_1.vts','file_2.vts','file_3.vtu'],&
+  !<                    nlist=['block-bar','block-foo','block-baz'])
+  !<```
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  character(*), intent(IN):: flist(:) !< List of VTK-XML wrapped files.
-  integer(I4P)::             E_IO     !< Input/Output inquiring flag: 0 if IO is done, > 0 if IO is not done.
-  integer(I4P)::             f        !< File counter.
+  character(*), optional, intent(IN):: nlist(:) !< List names attributed to wrapped files.
+  character(*),           intent(IN):: flist(:) !< List of VTK-XML wrapped files.
+  integer(I4P)::                       E_IO     !< Input/Output inquiring flag: 0 if IO is done, > 0 if IO is not done.
+  integer(I4P)::                       f        !< File counter.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
   E_IO = -1_I4P
-  do f=1,size(flist)
-    write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<DataSet index="'//trim(str(.true.,f-1))//'" file="'// &
-                                           trim(adjustl(flist(f)))//'"/>'
-  enddo
+  if (present(nlist)) then
+    if (size(nlist) == size(flist)) then
+      do f=1,size(flist)
+        write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<DataSet index="'//trim(str(.true.,f-1))//'" file="'// &
+                                               trim(adjustl(flist(f)))//'" name="'//trim(adjustl(nlist(f)))//'"/>'
+      enddo
+    endif
+  else
+    do f=1,size(flist)
+      write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<DataSet index="'//trim(str(.true.,f-1))//'" file="'// &
+                                             trim(adjustl(flist(f)))//'"/>'
+    enddo
+  endif
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction VTM_WRF_XML_array
 
-  function VTM_WRF_XML_string(delimiter,flist) result(E_IO)
+  function VTM_WRF_XML_string(delimiter,nlist,flist) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Function for saving the list of VTK-XML wrapped files by the actual block of the mutliblock VTM file.
   !<
@@ -4572,6 +4588,13 @@ contains
   !<```fortran
   !< E_IO = VTK_WRF_XML(flist='file_1.vts&file_2.vts&file_3.vtu')
   !<```
+  !<
+  !<#### Example: 3 files block with custom name
+  !<```fortran
+  !< E_IO = VTK_WRF_XML(flist='file_1.vts&file_2.vts&file_3.vtu',&
+  !<                    nlist='foo&bar&baz')
+  !<```
+  !<
   !<#### Example: 2 files block with custom delimiter (!!)
   !<```fortran
   !< E_IO = VTK_WRF_XML(flist='file_1.vts!!file_2.vts',delimiter='!!')
@@ -4579,41 +4602,60 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   character(*), optional, intent(IN):: delimiter !< Delimiter of files into files list string.
+  character(*), optional, intent(IN):: nlist     !< List names attributed to wrapped files.
   character(*),           intent(IN):: flist     !< List of VTK-XML wrapped files.
   integer(I4P)::                       E_IO      !< Input/Output inquiring flag: 0 if IO is done, > 0 if IO is not done.
   integer(I4P)::                       f         !< File counter.
   character(50)::                      delimit   !< Delimiter value.
   character(len(flist))::              flistd    !< Dummy files list.
-  character(len(flist))::              fname     !< Dummy file name.
+  character(len(flist))::              nlistd    !< Dummy names list.
+  character(len(flist))::              dummy(1:2)!< Dummy strings.
   integer(I4P)::                       d_len     !< Delimiter character length.
-  integer(I4P)::                       i         !< Counter.
+  integer(I4P)::                       i,n       !< Counters.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
   E_IO = -1_I4P
   delimit = '&' ; if (present(delimiter)) delimit = delimiter ; d_len = len_trim(delimit)
   flistd = flist
+  if (present(nlist)) nlistd = nlist
   if (len_trim(flistd)<=d_len) return ! no list to save
   ! purging out leading and trailing delimeters
   if (flistd(1:d_len)==trim(delimit)) flistd = flistd(d_len+1:)
   if (flistd(len_trim(flistd)-d_len:)==trim(delimit)) flistd = flistd(1:len_trim(flistd)-d_len-1)
+  if (present(nlist)) then
+    if (nlistd(1:d_len)==trim(delimit)) nlistd = nlistd(d_len+1:)
+    if (nlistd(len_trim(nlistd)-d_len:)==trim(delimit)) nlistd = nlistd(1:len_trim(nlistd)-d_len-1)
+  endif
   f = -1
   do while(len_trim(flistd)>0)
     f = f + 1
     i = index(flistd,trim(delimit))
     if (i>0) then
-      fname = flistd(1:i-1)
-      write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<DataSet index="'//trim(str(.true.,f))//'" file="'// &
-                                             trim(adjustl(fname))//'"/>'
+      dummy(1) = trim(adjustl(flistd(1:i-1)))
       flistd = trim(flistd(i+1:))
     elseif (len_trim(flistd)>0) then
-      fname = trim(adjustl(flistd))
-      write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<DataSet index="'//trim(str(.true.,f))//'" file="'// &
-                                             trim(adjustl(fname))//'"/>'
-
+      dummy(1) = trim(adjustl(flistd))
       flistd = ''
     else
       exit
+    endif
+    if (present(nlist)) then
+      n = index(nlistd,trim(delimit))
+      if (n>0) then
+        dummy(2) = trim(adjustl(nlistd(1:n-1)))
+        nlistd = trim(nlistd(n+1:))
+      else
+        dummy(2) = trim(adjustl(nlistd))
+        nlistd = ''
+      endif
+    endif
+    if (present(nlist)) then
+      write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<DataSet index="'//trim(str(.true.,f))//'" file="'// &
+                                             trim(adjustl(dummy(1)))//'" name="'//trim(adjustl(dummy(2)))//'"/>'
+    else
+      write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<DataSet index="'//trim(str(.true.,f))//'" file="'// &
+                                             trim(adjustl(dummy(1)))//'"/>'
     endif
   enddo
   return

@@ -185,7 +185,17 @@ interface str
                    strf_I8P ,str_I8P, &
                    strf_I4P ,str_I4P, &
                    strf_I2P ,str_I2P, &
-                   strf_I1P ,str_I1P
+                   strf_I1P ,str_I1P, &
+                             str_bol, &
+#ifdef r16p
+                             str_a_R16P,&
+#endif
+                             str_a_R8P, &
+                             str_a_R4P, &
+                             str_a_I8P, &
+                             str_a_I4P, &
+                             str_a_I2P, &
+                             str_a_I1P
 endinterface
 interface strz
   !< Procedure for converting number, integer, to string, prefixing with the right number of zeros (number to string type
@@ -700,6 +710,252 @@ contains
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction str_I1P
+
+  elemental function str_bol(n) result(str)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for converting logical to string. This function achieves casting of logical to string.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  logical, intent(IN):: n   !< Logical to be converted.
+  character(1)::        str !< Returned string containing input number plus padding zeros.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  write(str,'(L1)') n
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction str_bol
+
+  pure function str_a_R16P(no_sign,delimiters,n) result(str)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for converting real (array) to string. This function achieves casting of real to string.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  logical,      intent(IN), optional:: no_sign         !< Flag for leaving out the sign.
+  character(*), intent(IN), optional:: delimiters(1:2) !< Eventual delimiters of array values.
+  real(R16P),   intent(IN)::           n(:)            !< Real array to be converted.
+  character(len=:), allocatable::      str             !< Returned string containing input number.
+  character(DR16P)::                   strn            !< String containing of element of input array number.
+  integer::                            i               !< Counter.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  if (present(no_sign)) then
+    str = ''
+    do i=1,size(n)
+      strn = str_R16P(no_sign=no_sign, n=n(i))
+      str = str//','//trim(strn)
+    enddo
+  else
+    str = ''
+    do i=1,size(n)
+      strn = str_R16P(n=n(i))
+      str = str//','//trim(strn)
+    enddo
+  endif
+  str = trim(str(2:))
+  if (present(delimiters)) str = delimiters(1)//str//delimiters(2)
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction str_a_R16P
+
+  pure function str_a_R8P(no_sign,delimiters,n) result(str)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for converting real (array) to string. This function achieves casting of real to string.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  logical,      intent(IN), optional:: no_sign         !< Flag for leaving out the sign.
+  character(*), intent(IN), optional:: delimiters(1:2) !< Eventual delimiters of array values.
+  real(R8P),    intent(IN)::           n(:)            !< Real array to be converted.
+  character(len=:), allocatable::      str             !< Returned string containing input number.
+  character(DR8P)::                    strn            !< String containing of element of input array number.
+  integer::                            i               !< Counter.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  if (present(no_sign)) then
+    str = ''
+    do i=1,size(n)
+      strn = str_R8P(no_sign=no_sign, n=n(i))
+      str = str//','//trim(strn)
+    enddo
+  else
+    str = ''
+    do i=1,size(n)
+      strn = str_R8P(n=n(i))
+      str = str//','//trim(strn)
+    enddo
+  endif
+  str = trim(str(2:))
+  if (present(delimiters)) str = delimiters(1)//str//delimiters(2)
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction str_a_R8P
+
+  pure function str_a_R4P(no_sign,delimiters,n) result(str)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for converting real (array) to string. This function achieves casting of real to string.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  logical,      intent(IN), optional:: no_sign         !< Flag for leaving out the sign.
+  character(*), intent(IN), optional:: delimiters(1:2) !< Eventual delimiters of array values.
+  real(R4P),    intent(IN)::           n(:)            !< Real array to be converted.
+  character(len=:), allocatable::      str             !< Returned string containing input number.
+  character(DR4P)::                    strn            !< String containing of element of input array number.
+  integer::                            i               !< Counter.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  if (present(no_sign)) then
+    str = ''
+    do i=1,size(n)
+      strn = str_R4P(no_sign=no_sign, n=n(i))
+      str = str//','//trim(strn)
+    enddo
+  else
+    str = ''
+    do i=1,size(n)
+      strn = str_R4P(n=n(i))
+      str = str//','//trim(strn)
+    enddo
+  endif
+  str = trim(str(2:))
+  if (present(delimiters)) str = delimiters(1)//str//delimiters(2)
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction str_a_R4P
+
+  pure function str_a_I8P(no_sign,delimiters,n) result(str)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for converting integer (array) to string. This function achieves casting of integer to string.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  logical,      intent(IN), optional:: no_sign         !< Flag for leaving out the sign.
+  character(*), intent(IN), optional:: delimiters(1:2) !< Eventual delimiters of array values.
+  integer(I8P), intent(IN)::           n(:)            !< Integer array to be converted.
+  character(len=:), allocatable::      str             !< Returned string containing input number.
+  character(DI8P)::                    strn            !< String containing of element of input array number.
+  integer::                            i               !< Counter.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  if (present(no_sign)) then
+    str = ''
+    do i=1,size(n)
+      strn = str_I8P(no_sign=no_sign, n=n(i))
+      str = str//','//trim(strn)
+    enddo
+  else
+    str = ''
+    do i=1,size(n)
+      strn = str_I8P(n=n(i))
+      str = str//','//trim(strn)
+    enddo
+  endif
+  str = trim(str(2:))
+  if (present(delimiters)) str = delimiters(1)//str//delimiters(2)
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction str_a_I8P
+
+  pure function str_a_I4P(no_sign,delimiters,n) result(str)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for converting integer (array) to string. This function achieves casting of integer to string.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  logical,      intent(IN), optional:: no_sign         !< Flag for leaving out the sign.
+  character(*), intent(IN), optional:: delimiters(1:2) !< Eventual delimiters of array values.
+  integer(I4P), intent(IN)::           n(:)            !< Integer array to be converted.
+  character(len=:), allocatable::      str             !< Returned string containing input number.
+  character(DI4P)::                    strn            !< String containing of element of input array number.
+  integer::                            i               !< Counter.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  if (present(no_sign)) then
+    str = ''
+    do i=1,size(n)
+      strn = str_I4P(no_sign=no_sign, n=n(i))
+      str = str//','//trim(strn)
+    enddo
+  else
+    str = ''
+    do i=1,size(n)
+      strn = str_I4P(n=n(i))
+      str = str//','//trim(strn)
+    enddo
+  endif
+  str = trim(str(2:))
+  if (present(delimiters)) str = delimiters(1)//str//delimiters(2)
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction str_a_I4P
+
+  pure function str_a_I2P(no_sign,delimiters,n) result(str)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for converting integer (array) to string. This function achieves casting of integer to string.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  logical,      intent(IN), optional:: no_sign         !< Flag for leaving out the sign.
+  character(*), intent(IN), optional:: delimiters(1:2) !< Eventual delimiters of array values.
+  integer(I2P), intent(IN)::           n(:)            !< Integer array to be converted.
+  character(len=:), allocatable::      str             !< Returned string containing input number.
+  character(DI2P)::                    strn            !< String containing of element of input array number.
+  integer::                            i               !< Counter.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  if (present(no_sign)) then
+    str = ''
+    do i=1,size(n)
+      strn = str_I2P(no_sign=no_sign, n=n(i))
+      str = str//','//trim(strn)
+    enddo
+  else
+    str = ''
+    do i=1,size(n)
+      strn = str_I2P(n=n(i))
+      str = str//','//trim(strn)
+    enddo
+  endif
+  str = trim(str(2:))
+  if (present(delimiters)) str = delimiters(1)//str//delimiters(2)
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction str_a_I2P
+
+  pure function str_a_I1P(no_sign,delimiters,n) result(str)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for converting integer (array) to string. This function achieves casting of integer to string.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  implicit none
+  logical,      intent(IN), optional:: no_sign         !< Flag for leaving out the sign.
+  character(*), intent(IN), optional:: delimiters(1:2) !< Eventual delimiters of array values.
+  integer(I1P), intent(IN)::           n(:)            !< Integer array to be converted.
+  character(len=:), allocatable::      str             !< Returned string containing input number.
+  character(DI1P)::                    strn            !< String containing of element of input array number.
+  integer::                            i               !< Counter.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  if (present(no_sign)) then
+    str = ''
+    do i=1,size(n)
+      strn = str_I1P(no_sign=no_sign, n=n(i))
+      str = str//','//trim(strn)
+    enddo
+  else
+    str = ''
+    do i=1,size(n)
+      strn = str_I1P(n=n(i))
+      str = str//','//trim(strn)
+    enddo
+  endif
+  str = trim(str(2:))
+  if (present(delimiters)) str = delimiters(1)//str//delimiters(2)
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction str_a_I1P
 
   elemental function strz_I8P(nz_pad,n) result(str)
   !---------------------------------------------------------------------------------------------------------------------------------

@@ -255,13 +255,20 @@ $(DOBJ)ir_precision.o : IR_Precision.f90
 	@echo $(COTEXT) | tee -a make.log
 	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
 
-$(DOBJ)lib_base64.o : Lib_Base64.f90 \
+$(DOBJ)lib_pack_data.o : Lib_Pack_Data.f90 \
 	$(DOBJ)ir_precision.o
+	@echo $(COTEXT) | tee -a make.log
+	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+
+$(DOBJ)lib_base64.o : Lib_Base64.f90 \
+	$(DOBJ)ir_precision.o\
+	$(DOBJ)lib_pack_data.o
 	@echo $(COTEXT) | tee -a make.log
 	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
 
 $(DOBJ)lib_vtk_io.o : Lib_VTK_IO.f90 \
 	$(DOBJ)ir_precision.o \
+	$(DOBJ)lib_pack_data.o \
 	$(DOBJ)lib_base64.o
 	@echo $(COTEXT) | tee -a make.log
 	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages

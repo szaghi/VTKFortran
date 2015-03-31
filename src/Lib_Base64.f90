@@ -1081,27 +1081,22 @@ contains
   !< correctness by a comparison with other widely used tools such as the python builtin module *struct*.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-#ifdef r16p
-  real(R16P)::                    scalar_R16 = 134.231_R16P             !< Real input to be encoded/decoded.
-#endif
-  real(R8P)::                     scalar_R8  = 1._R8P                   !< Real input to be encoded/decoded.
-  real(R4P)::                     scalar_R4  = 0._R4P                   !< Real input to be encoded/decoded.
-  integer(I8P)::                  scalar_I8  = 23_I8P                   !< Integer input to be encoded/decoded.
-  integer(I4P)::                  scalar_I4  = 2023_I4P                 !< Integer input to be encoded/decoded.
-  integer(I2P)::                  scalar_I2  = -203_I2P                 !< Integer input to be encoded/decoded.
-  integer(I1P)::                  scalar_I1  = 120_I1P                  !< Integer input to be encoded/decoded.
-#ifdef r16p
-  real(R16P)::                    array_R16(1:2)= [121._R16P,2.32_R16P] !< Real input to be encoded/decoded.
-#endif
-  real(R8P)::                     array_R8(1:2) = [1._R8P,2._R8P      ] !< Real input to be encoded/decoded.
-  real(R4P)::                     array_R4(1:2) = [0._R4P,-32.12_R4P  ] !< Real input to be encoded/decoded.
-  integer(I8P)::                  array_I8(1:4) = [23,324,25456656,2  ] !< Integer input to be encoded/decoded.
-  integer(I4P)::                  array_I4(1:2) = [2023,-24           ] !< Integer input to be encoded/decoded.
-  integer(I2P)::                  array_I2(1:2) = [-203,-10           ] !< Integer input to be encoded/decoded.
-  integer(I1P)::                  array_I1(1:2) = [+120,-1            ] !< Integer input to be encoded/decoded.
-  character(len=:), allocatable:: string                                !< String to be encoded/decoded.
-  character(len=5)::              string_a(1:2)                         !< Strings to be encoded/decoded.
-  character(len=:), allocatable:: code64                                !< Base64 encoded array.
+  character(len=:), allocatable:: code64        !< Base64 code.
+  logical::                       ok            !< Flag for checking the result of encoding/decoding.
+  real(R16P)::                    scalar_R16    !< Decoded scalar.
+  real(R8P)::                     scalar_R8     !< Decoded scalar.
+  real(R4P)::                     scalar_R4     !< Decoded scalar.
+  integer(I8P)::                  scalar_I8     !< Decoded scalar.
+  integer(I4P)::                  scalar_I4     !< Decoded scalar.
+  integer(I2P)::                  scalar_I2     !< Decoded scalar.
+  integer(I1P)::                  scalar_I1     !< Decoded scalar.
+  real(R8P)::                     array_R8(1:2) !< Decoded array.
+  real(R4P)::                     array_R4(1:2) !< Decoded array.
+  integer(I8P)::                  array_I8(1:4) !< Decoded array.
+  integer(I4P)::                  array_I4(1:2) !< Decoded array.
+  integer(I2P)::                  array_I2(1:2) !< Decoded array.
+  integer(I1P)::                  array_I1(1:2) !< Decoded array.
+  character(5)::                  array_s(1:2)  !< Decoded array.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1112,119 +1107,200 @@ contains
   print "(A)", 'Scalars'
 
 #ifdef r16p
-  call b64_encode(n=scalar_R16,code=code64)
-  print "(A,1X,L1)", '+ Code of '//trim(str(n=scalar_R16))//': "'//trim(code64)//'", Is it correct?',trim(code64)=='CKwcWmTHYEA='
+  call b64_encode(n=134.231_R16P,code=code64)
+  ok = code64=='CKwcWmTHYEA='
+  print "(A)", '+ Code of '//trim(str(n=134.231_R16P))//': "'//code64//'"'
+  print "(A,1X,L1)", '  Expected code: "'//'CKwcWmTHYEA='//'", Is it correct?',ok
+  if (.not.ok) stop
 #endif
 
-  call b64_encode(n=scalar_R8,code=code64)
-  print "(A,1X,L1)", '+ Code of '//trim(str(n=scalar_R8))//': "'//trim(code64)//'", Is it correct?',trim(code64)=='AAAAAAAA8D8='
+  call b64_encode(n=1._R8P,code=code64)
+  ok = code64=='AAAAAAAA8D8='
+  print "(A)", '+ Code of '//trim(str(n=1._R8P))//': "'//code64//'"'
+  print "(A,1X,L1)", '  Expected code: "'//'AAAAAAAA8D8='//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  call b64_encode(n=scalar_R4,code=code64)
-  print "(A,1X,L1)", '+ Code of '//trim(str(n=scalar_R4))//': "'//trim(code64)//'", Is it correct?',trim(code64)=='AAAAAA=='
+  call b64_encode(n=0._R4P,code=code64)
+  ok = code64=='AAAAAA=='
+  print "(A)", '+ Code of '//trim(str(n=0._R4P))//': "'//code64//'"'
+  print "(A,1X,L1)", '  Expected code: "'//'AAAAAA=='//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  call b64_encode(n=scalar_I8,code=code64)
-  print "(A,1X,L1)", '+ Code of '//trim(str(n=scalar_I8))//': "'//trim(code64)//'", Is it correct?',trim(code64)=='FwAAAAAAAAA='
+  call b64_encode(n=23_I8P,code=code64)
+  ok = code64=='FwAAAAAAAAA='
+  print "(A)", '+ Code of '//trim(str(n=23_I8P))//': "'//code64//'"'
+  print "(A,1X,L1)", '  Expected code: "'//'FwAAAAAAAAA='//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  call b64_encode(n=scalar_I4,code=code64)
-  print "(A,1X,L1)", '+ Code of '//trim(str(n=scalar_I4))//': "'//trim(code64)//'", Is it correct?',trim(code64)=='5wcAAA=='
+  call b64_encode(n=2023_I4P,code=code64)
+  ok = code64=='5wcAAA=='
+  print "(A)", '+ Code of '//trim(str(n=2023_I4P))//': "'//code64//'"'
+  print "(A,1X,L1)", '  Expected code: "'//'5wcAAA=='//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  call b64_encode(n=scalar_I2,code=code64)
-  print "(A,1X,L1)", '+ Code of '//trim(str(n=scalar_I2))//': "'//trim(code64)//'", Is it correct?',trim(code64)=='Nf8='
+  call b64_encode(n=-203_I2P,code=code64)
+  ok = code64=='Nf8='
+  print "(A)", '+ Code of '//trim(str(n=-203_I2P))//': "'//code64//'"'
+  print "(A,1X,L1)", '  Expected code: "'//'Nf8='//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  call b64_encode(n=scalar_I1,code=code64)
-  print "(A,1X,L1)", '+ Code of '//trim(str(n=scalar_I1))//': "'//trim(code64)//'", Is it correct?',trim(code64)=='eA=='
+  call b64_encode(n=120_I1P,code=code64)
+  ok = code64=='eA=='
+  print "(A)", '+ Code of '//trim(str(n=120_I1P))//': "'//code64//'"'
+  print "(A,1X,L1)", '  Expected code: "'//'eA=='//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  string = 'hello'
-  call b64_encode(s=string,code=code64)
-  print "(A,1X,L1)", '+ Code of '//string//': "'//trim(code64)//'", Is it correct?',trim(code64)=='aGVsbG8='
+  call b64_encode(s='hello',code=code64)
+  ok = code64=='aGVsbG8='
+  print "(A)", '+ Code of hello: "'//code64//'"'
+  print "(A,1X,L1)", '  Expected code: "'//'aGVsbG8='//'", Is it correct?',ok
+  if (.not.ok) stop
 
   print "(A)", 'Arrays'
 
 #ifdef r16p
-  call b64_encode(n=array_R16,code=code64)
-  print "(A,1X,L1)", '+ Code of ['//trim(str(n=array_R16(1)))//','//trim(str(n=array_R16(2)))//']: "'//trim(code64)//&
-    '", Is it correct?',trim(code64)=='AAAAAABAXkCPwvUoXI8CQA=='
+  call b64_encode(n=[121._R16P,2.32_R16P],code=code64)
+  ok = code64=='AAAAAABAXkCPwvUoXI8CQA=='
+  print "(A)", '+ Code of '//trim(str(n=[121._R16P,2.32_R16P], delimiters=['[',']']))//': "'//code64//'"'
+  print "(A,1X,L1)", '  Expected code: "'//'AAAAAABAXkCPwvUoXI8CQA=='//'", Is it correct?',ok
+  if (.not.ok) stop
 #endif
 
-  call b64_encode(n=array_R8,code=code64)
-  print "(A,1X,L1)", '+ Code of ['//trim(str(n=array_R8(1)))//','//trim(str(n=array_R8(2)))//']: "'//trim(code64)//&
-    '", Is it correct?',trim(code64)=='AAAAAAAA8D8AAAAAAAAAQA=='
+  call b64_encode(n=[1._R8P,2._R8P],code=code64)
+  ok = code64=='AAAAAAAA8D8AAAAAAAAAQA=='
+  print "(A)", '+ Code of '//trim(str(n=[1._R8P,2._R8P], delimiters=['[',']']))//': "'//code64//'"'
+  print "(A,1X,L1)", '  Expected code: "'//'AAAAAAAA8D8AAAAAAAAAQA=='//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  call b64_encode(n=array_R4,code=code64)
-  print "(A,1X,L1)", '+ Code of ['//trim(str(n=array_R4(1)))//','//trim(str(n=array_R4(2)))//']: "'//trim(code64)//&
-    '", Is it correct?',trim(code64)=='AAAAAOF6AMI='
+  call b64_encode(n=[0._R4P,-32.12_R4P],code=code64)
+  ok = code64=='AAAAAOF6AMI='
+  print "(A)", '+ Code of '//trim(str(n=[0._R4P,-32.12_R4P], delimiters=['[',']']))//': "'//code64//'"'
+  print "(A,1X,L1)", '  Expected code: "'//'AAAAAOF6AMI='//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  call b64_encode(n=array_I8,code=code64)
-  print "(A,1X,L1)", '+ Code of ['//trim(str(n=array_I8(1)))//','//trim(str(n=array_I8(2)))//','//                 &
-                                    trim(str(n=array_I8(3)))//','//trim(str(n=array_I8(4)))//']: "'//trim(code64)//&
-                                    '", Is it correct?',trim(code64)=='FwAAAAAAAABEAQAAAAAAABBwhAEAAAAAAgAAAAAAAAA='
+  call b64_encode(n=[23_I8P,324_I8P,25456656_I8P,2_I8P],code=code64)
+  ok = code64=='FwAAAAAAAABEAQAAAAAAABBwhAEAAAAAAgAAAAAAAAA='
+  print "(A)", '+ Code of '//trim(str(n=[23_I8P,324_I8P,25456656_I8P,2_I8P], delimiters=['[',']']))//': "'//code64//'"'
+  print "(A,1X,L1)", '  Expected code: "'//'FwAAAAAAAABEAQAAAAAAABBwhAEAAAAAAgAAAAAAAAA='//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  call b64_encode(n=array_I4,code=code64)
-  print "(A,1X,L1)", '+ Code of ['//trim(str(n=array_I4(1)))//','//trim(str(n=array_I4(2)))//']: "'//trim(code64)//&
-    '", Is it correct?',trim(code64)=='5wcAAOj///8='
+  call b64_encode(n=[2023_I4P,-24_I4P],code=code64)
+  ok = code64=='5wcAAOj///8='
+  print "(A)", '+ Code of '//trim(str(n=[2023_I4P,-24_I4P], delimiters=['[',']']))//': "'//code64//'"'
+  print "(A,1X,L1)", '  Expected code: "'//'5wcAAOj///8='//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  call b64_encode(n=array_I2,code=code64)
-  print "(A,1X,L1)", '+ Code of ['//trim(str(n=array_I2(1)))//','//trim(str(n=array_I2(2)))//']: "'//trim(code64)//&
-    '", Is it correct?',trim(code64)=='Nf/2/w=='
+  call b64_encode(n=[-203_I2P,-10_I2P],code=code64)
+  ok = code64=='Nf/2/w=='
+  print "(A)", '+ Code of '//trim(str(n=[-203_I2P,-10_I2P], delimiters=['[',']']))//': "'//code64//'"'
+  print "(A,1X,L1)", '  Expected code: "'//'Nf/2/w=='//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  call b64_encode(n=array_I1,code=code64)
-  print "(A,1X,L1)", '+ Code of ['//trim(str(n=array_I1(1)))//','//trim(str(n=array_I1(2)))//']: "'//trim(code64)//&
-    '", Is it correct?',trim(code64)=='eP8='
+  call b64_encode(n=[120_I1P,-1_I1P],code=code64)
+  ok = code64=='eP8='
+  print "(A)", '+ Code of '//trim(str(n=[120_I1P,-1_I1P], delimiters=['[',']']))//': "'//code64//'"'
+  print "(A,1X,L1)", '  Expected code: "'//'eP8='//'", Is it correct?',ok
+  if (.not.ok) stop
 
   call b64_encode(s=['hello','world'],code=code64)
-  print "(A,1X,L1)", '+ Code of [hello,world]: "'//trim(code64)//'", Is it correct?',trim(code64)=='aGVsbG93b3JsZA=='
+  ok = code64=='aGVsbG93b3JsZA=='
+  print "(A)", '+ Code of [hello,world]: "'//code64//'"'
+  print "(A,1X,L1)", '  Expected code: "'//'aGVsbG93b3JsZA=='//'", Is it correct?',ok
+  if (.not.ok) stop
 
   print "(A)", 'Decoders'
 
   print "(A)", 'Scalars'
 
-  code64 = 'AAAAAAAA8D8=' ; call b64_decode(code=code64,n=scalar_R8)
-  print "(A)", '+ Decode of "'//code64//'": '//trim(str(n=scalar_R8))//', Should be 1.0'
+  call b64_decode(code='AAAAAAAA8D8=',n=scalar_R8)
+  ok = str(n=scalar_R8)==str(n=1._R8P)
+  print "(A)", '+ Decode of '//'AAAAAAAA8D8='//': "'//trim(str(n=scalar_R8))//'"'
+  print "(A,1X,L1)", '  Expected value: "'//trim(str(n=1._R8P))//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  code64 = 'AAAAAA==' ; call b64_decode(code=code64,n=scalar_R4)
-  print "(A)", '+ Decode of "'//code64//'": '//trim(str(n=scalar_R4))//', Should be 0.0'
+  call b64_decode(code='AAAAAA==',n=scalar_R4)
+  ok = str(n=scalar_R4)==str(n=0._R4P)
+  print "(A)", '+ Decode of '//'AAAAAA=='//': "'//trim(str(n=scalar_R4))//'"'
+  print "(A,1X,L1)", '  Expected value: "'//trim(str(n=0._R4P))//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  code64 = 'FwAAAAAAAAA=' ; call b64_decode(code=code64,n=scalar_I8)
-  print "(A)", '+ Decode of "'//code64//'": '//trim(str(n=scalar_I8))//', Should be 23'
+  call b64_decode(code='FwAAAAAAAAA=',n=scalar_I8)
+  ok = str(n=scalar_I8)==str(n=23_I8P)
+  print "(A)", '+ Decode of '//'FwAAAAAAAAA='//': "'//trim(str(n=scalar_I8))//'"'
+  print "(A,1X,L1)", '  Expected value: "'//trim(str(n=23_I8P))//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  code64 = '5wcAAA==' ; call b64_decode(code=code64,n=scalar_I4)
-  print "(A)", '+ Decode of "'//code64//'": '//trim(str(n=scalar_I4))//', Should be 2023'
+  call b64_decode(code='5wcAAA==',n=scalar_I4)
+  ok = str(n=scalar_I4)==str(n=2023_I4P)
+  print "(A)", '+ Decode of '//'5wcAAA=='//': "'//trim(str(n=scalar_I4))//'"'
+  print "(A,1X,L1)", '  Expected value: "'//trim(str(n=2023_I4P))//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  code64 = 'Nf8=' ; call b64_decode(code=code64,n=scalar_I2)
-  print "(A)", '+ Decode of "'//code64//'": '//trim(str(n=scalar_I2))//', Should be -203'
+  call b64_decode(code='Nf8=',n=scalar_I2)
+  ok = str(n=scalar_I2)==str(n=-203_I2P)
+  print "(A)", '+ Decode of '//'Nf8='//': "'//trim(str(n=scalar_I2))//'"'
+  print "(A,1X,L1)", '  Expected value: "'//trim(str(n=-203_I2P))//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  code64 = 'eA==' ; call b64_decode(code=code64,n=scalar_I1)
-  print "(A)", '+ Decode of "'//code64//'": '//trim(str(n=scalar_I1))//', Should be 120'
+  call b64_decode(code='eA==',n=scalar_I1)
+  ok = str(n=scalar_I1)==str(n=120_I1P)
+  print "(A)", '+ Decode of '//'eA=='//': "'//trim(str(n=scalar_I1))//'"'
+  print "(A,1X,L1)", '  Expected value: "'//trim(str(n=120_I1P))//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  string = repeat(' ',5)
-  code64 = 'aGVsbG8=' ; call b64_decode(code=code64,s=string)
-  print "(A)", '+ Decode of "'//code64//'": '//string//', Should be "hello"'
+  code64 = repeat(' ',5)
+  call b64_decode(code='aGVsbG8=',s=code64)
+  ok = 'hello'==code64
+  print "(A)", '+ Decode of '//'aGVsbG8='//': "'//code64//'"'
+  print "(A,1X,L1)", '  Expected value: "hello", Is it correct?',ok
+  if (.not.ok) stop
 
   print "(A)", 'Arrays'
 
-  code64 = 'AAAAAAAA8D8AAAAAAAAAQA==' ; call b64_decode(code=code64,n=array_R8)
-  print "(A)", '+ Decode of "'//code64//'": ['//trim(str(n=array_R8(1)))//','//trim(str(n=array_R8(2)))//'], Should be [1.0,2.0]'
+  call b64_decode(code='AAAAAAAA8D8AAAAAAAAAQA==',n=array_R8)
+  ok = str(n=array_R8)==str(n=[1._R8P,2._R8P])
+  print "(A)", '+ Decode of '//'AAAAAAAA8D8AAAAAAAAAQA=='//': "'//trim(str(n=array_R8, delimiters=['[',']']))//'"'
+  print "(A,1X,L1)", '  Expected value: "'//trim(str(n=[1._R8P,2._R8P], delimiters=['[',']']))//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  code64 = 'AAAAAOF6AMI=' ; call b64_decode(code=code64,n=array_R4)
-  print "(A)", '+ Decode of "'//code64//'": ['//trim(str(n=array_R4(1)))//','//trim(str(n=array_R4(2)))//'], Should be [0.0,-32.12]'
+  call b64_decode(code='AAAAAOF6AMI=',n=array_R4)
+  ok = str(n=array_R4)==str(n=[0._R4P,-32.12_R4P])
+  print "(A)", '+ Decode of '//'AAAAAOF6AMI='//': "'//trim(str(n=array_R4, delimiters=['[',']']))//'"'
+  print "(A,1X,L1)", '  Expected value: "'//trim(str(n=[0._R4P,-32.12_R4P], delimiters=['[',']']))//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  code64 = 'FwAAAAAAAABEAQAAAAAAABBwhAEAAAAAAgAAAAAAAAA=' ; call b64_decode(code=code64,n=array_I8)
-  print "(A)", '+ Decode of "'//code64//'": ['//trim(str(n=array_I8(1)))//','//&
-                                                trim(str(n=array_I8(2)))//','//&
-                                                trim(str(n=array_I8(3)))//','//&
-                                                trim(str(n=array_I8(4)))//'], Should be [23,324,25456656,2]'
+  ! ok = test_decode_array(code=, input=) ; if (.not.ok) stop
+  call b64_decode(code='FwAAAAAAAABEAQAAAAAAABBwhAEAAAAAAgAAAAAAAAA=',n=array_I8)
+  ok = str(n=array_I8)==str(n=[23_I8P,324_I8P,25456656_I8P,2_I8P])
+  print "(A)", '+ Decode of '//'FwAAAAAAAABEAQAAAAAAABBwhAEAAAAAAgAAAAAAAAA='//': "'//&
+    trim(str(n=array_I8, delimiters=['[',']']))//'"'
+  print "(A,1X,L1)", '  Expected value: "'//trim(str(n=[23_I8P,324_I8P,25456656_I8P,2_I8P], delimiters=['[',']']))//&
+    '", Is it correct?',ok
+  if (.not.ok) stop
 
-  code64 = '5wcAAOj///8=' ; call b64_decode(code=code64,n=array_I4)
-  print "(A)", '+ Decode of "'//code64//'": ['//trim(str(n=array_I4(1)))//','//trim(str(n=array_I4(2)))//'], Should be [2023,-24]'
+  call b64_decode(code='5wcAAOj///8=',n=array_I4)
+  ok = str(n=array_I4)==str(n=[2023_I4P,-24_I4P])
+  print "(A)", '+ Decode of '//'5wcAAOj///8='//': "'//trim(str(n=array_I4, delimiters=['[',']']))//'"'
+  print "(A,1X,L1)", '  Expected value: "'//trim(str(n=[2023_I4P,-24_I4P], delimiters=['[',']']))//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  code64 = 'Nf/2/w==' ; call b64_decode(code=code64,n=array_I2)
-  print "(A)", '+ Decode of "'//code64//'": ['//trim(str(n=array_I2(1)))//','//trim(str(n=array_I2(2)))//'], Should be [-203,-10]'
+  call b64_decode(code='Nf/2/w==',n=array_I2)
+  ok = str(n=array_I2)==str(n=[-203_I2P,-10_I2P])
+  print "(A)", '+ Decode of '//'Nf/2/w=='//': "'//trim(str(n=array_I2, delimiters=['[',']']))//'"'
+  print "(A,1X,L1)", '  Expected value: "'//trim(str(n=[-203_I2P,-10_I2P], delimiters=['[',']']))//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  code64 = 'eP8=' ; call b64_decode(code=code64,n=array_I1)
-  print "(A)", '+ Decode of "'//code64//'": ['//trim(str(n=array_I1(1)))//','//trim(str(n=array_I1(2)))//'], Should be [120,-1]'
+  call b64_decode(code='eP8=',n=array_I1)
+  ok = str(n=array_I1)==str(n=[120_I1P,-1_I1P])
+  print "(A)", '+ Decode of '//'eP8='//': "'//trim(str(n=array_I1, delimiters=['[',']']))//'"'
+  print "(A,1X,L1)", '  Expected value: "'//trim(str(n=[120_I1P,-1_I1P], delimiters=['[',']']))//'", Is it correct?',ok
+  if (.not.ok) stop
 
-  code64 = 'aGVsbG93b3JsZA==' ; call b64_decode(code=code64,s=string_a)
-  print "(A)", '+ Decode of "'//code64//'": '//string_a(1)//string_a(2)//', Should be "helloworld"'
+  call b64_decode(code='aGVsbG93b3JsZA==',s=array_s)
+  ok = array_s(1)//array_s(2)=='helloworld'
+  print "(A)", '+ Decode of '//'aGVsbG93b3JsZA=='//': "'//array_s(1)//array_s(2)//'"'
+  print "(A,1X,L1)", '  Expected value: "helloworld", Is it correct?',ok
+  if (.not.ok) stop
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine autotest
