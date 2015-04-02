@@ -37,8 +37,7 @@ A KISS pure Fortran Library to IO data conforming the VTK standard
 
 ## Copyrights
 
-The Lib\_VTK\_IO is an open source project, it is distributed under the [GPL v3](http://www.gnu.org/licenses/gpl-3.0.html). Anyone is interest to use, to develop or to contribute to Lib\_VTK\_IO is welcome. Take a look at the [contributing guidelines](CONTRIBUTING.md) for starting to contribute to the project.
-
+The Lib\_VTK\_IO is an open source project, it is distributed under a dual licensing system: the [GPL v3](http://www.gnu.org/licenses/gpl-3.0.html) and the [MIT](http://opensource.org/licenses/MIT) licenses. Anyone is interest to use, to develop or to contribute to FiNeR is welcome: you are free to select the GPL license for FOSS projects or the MIT one for commercial softwares.
 Go to [Top](#top)
 
 ## Documentation

@@ -1,3 +1,8 @@
+### Version v1.2.1
+Stable release. Fully backward compatible. Licensing changed.
+
++ Switch to dual licensing system: GPLv3 or MIT as user preference;
+
 ### Version v1.2.0
 Stable release. Fully backward compatible. Modern compiler required.
 
