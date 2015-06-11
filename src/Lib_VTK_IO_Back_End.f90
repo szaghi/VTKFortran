@@ -20,6 +20,8 @@ public:: binary
 public:: raw
 public:: bin_app
 public:: vtk
+public:: Nvtk
+public:: f
 public:: vtm
 public:: Get_Unit
 public:: Upper_Case
