@@ -206,6 +206,13 @@ rule = rm -rf doc/html/*
 help = Rule for making tar archive of the project
 rule = tar -czf Lib_VTK_IO.tar.gz *
 
+[rule-makecoverage]
+help   = Rule for performing coverage analysis
+rule_1 = FoBiS.py clean -mode test-driver-gnu
+rule_2 = FoBiS.py build -mode test-driver-gnu -coverage
+rule_3 = ./Test_Driver/Test_Driver -all
+rule_4 = gcov -o Test_Driver/obj/ src/Lib_VTK_IO.f90
+
 [rule-coverage-analysis]
 help   = Rule for performing coverage analysis and saving reports in markdown
 rule_1 = FoBiS.py clean -mode test-driver-gnu

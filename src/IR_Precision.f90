@@ -1033,156 +1033,177 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction strz_I1P
 
-  function ctor_R16P(str,knd) result(n)
+  function ctor_R16P(pref,error,str,knd) result(n)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Procedure for converting string to real. This function achieves casting of string to real.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  character(*), intent(IN):: str !< String containing input number.
-  real(R16P),   intent(IN):: knd !< Number kind.
-  real(R16P)::               n   !< Number returned.
-  integer(I4P)::             err !< Error trapping flag: 0 no errors, >0 error occurs.
+  character(*), optional, intent(IN)::  pref  !< Prefixing string.
+  integer(I4P), optional, intent(OUT):: error !< Error trapping flag: 0 no errors, >0 error occurs.
+  character(*),           intent(IN)::  str   !< String containing input number.
+  real(R16P),             intent(IN)::  knd   !< Number kind.
+  real(R16P)::                          n     !< Number returned.
+  integer(I4P)::                        err   !< Error trapping flag: 0 no errors, >0 error occurs.
+  character(len=:), allocatable::       prefd !< Prefixing string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
   read(str,*,iostat=err) n ! Casting of str to n.
   if (err/=0) then
-    write(stderr,'(A)')             'Conversion of string "'//str//'" to real failed'
-    write(stderr,'(A,'//FR16P//')') 'Kind parameter ',knd
-    write(stderr,'(A)')             'Function used "ctor_R16P"'
+    prefd = '' ; if (present(pref)) prefd = pref
+    write(stderr,'(A,I1,A)') prefd//' Error: conversion of string "'//str//'" to real failed! real(',kind(knd),')'
   endif
+  if (present(error)) error = err
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction ctor_R16P
 
-  function ctor_R8P(str,knd) result(n)
+  function ctor_R8P(pref,error,str,knd) result(n)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Procedure for converting string to real. This function achieves casting of string to real.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  character(*), intent(IN):: str !< String containing input number.
-  real(R8P),    intent(IN):: knd !< Number kind.
-  real(R8P)::                n   !< Number returned.
-  integer(I4P)::             err !< Error trapping flag: 0 no errors, >0 error occurs.
+  character(*), optional, intent(IN)::  pref  !< Prefixing string.
+  integer(I4P), optional, intent(OUT):: error !< Error trapping flag: 0 no errors, >0 error occurs.
+  character(*),           intent(IN)::  str   !< String containing input number.
+  real(R8P),              intent(IN)::  knd   !< Number kind.
+  real(R8P)::                           n     !< Number returned.
+  integer(I4P)::                        err   !< Error trapping flag: 0 no errors, >0 error occurs.
+  character(len=:), allocatable::       prefd !< Prefixing string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
   read(str,*,iostat=err) n ! Casting of str to n.
   if (err/=0) then
-    write(stderr,'(A)')            'Conversion of string "'//str//'" to real failed'
-    write(stderr,'(A,'//FR8P//')') 'Kind parameter ',knd
-    write(stderr,'(A)')            'Function used "ctor_R8P"'
+    prefd = '' ; if (present(pref)) prefd = pref
+    write(stderr,'(A,I1,A)') prefd//' Error: conversion of string "'//str//'" to real failed! real(',kind(knd),')'
   endif
+  if (present(error)) error = err
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction ctor_R8P
 
-  function ctor_R4P(str,knd) result(n)
+  function ctor_R4P(pref,error,str,knd) result(n)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Procedure for converting string to real. This function achieves casting of string to real.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  character(*), intent(IN):: str !< String containing input number.
-  real(R4P),    intent(IN):: knd !< Number kind.
-  real(R4P)::                n   !< Number returned.
-  integer(I4P)::             err !< Error trapping flag: 0 no errors, >0 error occurs.
+  character(*), optional, intent(IN)::  pref  !< Prefixing string.
+  integer(I4P), optional, intent(OUT):: error !< Error trapping flag: 0 no errors, >0 error occurs.
+  character(*),           intent(IN)::  str   !< String containing input number.
+  real(R4P),              intent(IN)::  knd   !< Number kind.
+  real(R4P)::                           n     !< Number returned.
+  integer(I4P)::                        err   !< Error trapping flag: 0 no errors, >0 error occurs.
+  character(len=:), allocatable::       prefd !< Prefixing string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
   read(str,*,iostat=err) n ! Casting of str to n.
   if (err/=0) then
-    write(stderr,'(A)')            'Conversion of string "'//str//'" to real failed'
-    write(stderr,'(A,'//FR4P//')') 'Kind parameter ',knd
-    write(stderr,'(A)')            'Function used "ctor_R4P"'
+    prefd = '' ; if (present(pref)) prefd = pref
+    write(stderr,'(A,I1,A)') prefd//' Error: conversion of string "'//str//'" to real failed! real(',kind(knd),')'
   endif
+  if (present(error)) error = err
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction ctor_R4P
 
-  function ctoi_I8P(str,knd) result(n)
+  function ctoi_I8P(pref,error,str,knd) result(n)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Procedure for converting string to integer. This function achieves casting of string to integer.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  character(*), intent(IN):: str !< String containing input number.
-  integer(I8P), intent(IN):: knd !< Number kind.
-  integer(I8P)::             n   !< Number returned.
-  integer(I4P)::             err !< Error trapping flag: 0 no errors, >0 error occurs.
+  character(*), optional, intent(IN)::  pref  !< Prefixing string.
+  integer(I4P), optional, intent(OUT):: error !< Error trapping flag: 0 no errors, >0 error occurs.
+  character(*),           intent(IN)::  str   !< String containing input number.
+  integer(I8P),           intent(IN)::  knd   !< Number kind.
+  integer(I8P)::                        n     !< Number returned.
+  integer(I4P)::                        err   !< Error trapping flag: 0 no errors, >0 error occurs.
+  character(len=:), allocatable::       prefd !< Prefixing string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
   read(str,*,iostat=err) n ! Casting of str to n.
   if (err/=0) then
-    write(stderr,'(A)')            'Conversion of string "'//str//'" to integer failed'
-    write(stderr,'(A,'//FI8P//')') 'Kind parameter ',knd
-    write(stderr,'(A)')            'Function used "ctoi_I8P"'
+    prefd = '' ; if (present(pref)) prefd = pref
+    write(stderr,'(A,I1,A)') prefd//' Error: conversion of string "'//str//'" to real failed! integer(',kind(knd),')'
   endif
+  if (present(error)) error = err
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction ctoi_I8P
 
-  function ctoi_I4P(str,knd) result(n)
+  function ctoi_I4P(pref,error,str,knd) result(n)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Procedure for converting string to integer. This function achieves casting of string to integer.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  character(*), intent(IN):: str !< String containing input number.
-  integer(I4P), intent(IN):: knd !< Number kind.
-  integer(I4P)::             n   !< Number returned.
-  integer(I4P)::             err !< Error trapping flag: 0 no errors, >0 error occurs.
+  character(*), optional, intent(IN)::  pref  !< Prefixing string.
+  integer(I4P), optional, intent(OUT):: error !< Error trapping flag: 0 no errors, >0 error occurs.
+  character(*),           intent(IN)::  str   !< String containing input number.
+  integer(I4P),           intent(IN)::  knd   !< Number kind.
+  integer(I4P)::                        n     !< Number returned.
+  integer(I4P)::                        err   !< Error trapping flag: 0 no errors, >0 error occurs.
+  character(len=:), allocatable::       prefd !< Prefixing string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
   read(str,*,iostat=err) n ! Casting of str to n.
   if (err/=0) then
-    write(stderr,'(A)')            'Conversion of string "'//str//'" to integer failed'
-    write(stderr,'(A,'//FI4P//')') 'Kind parameter ',knd
-    write(stderr,'(A)')            'Function used "ctoi_I4P"'
+    prefd = '' ; if (present(pref)) prefd = pref
+    write(stderr,'(A,I1,A)') prefd//' Error: conversion of string "'//str//'" to real failed! integer(',kind(knd),')'
   endif
+  if (present(error)) error = err
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction ctoi_I4P
 
-  function ctoi_I2P(str,knd) result(n)
+  function ctoi_I2P(pref,error,str,knd) result(n)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Procedure for converting string to integer. This function achieves casting of string to integer.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  character(*), intent(IN):: str !< String containing input number.
-  integer(I2P), intent(IN):: knd !< Number kind.
-  integer(I2P)::             n   !< Number returned.
-  integer(I4P)::             err !< Error trapping flag: 0 no errors, >0 error occurs.
+  character(*), optional, intent(IN)::  pref  !< Prefixing string.
+  integer(I4P), optional, intent(OUT):: error !< Error trapping flag: 0 no errors, >0 error occurs.
+  character(*),           intent(IN)::  str   !< String containing input number.
+  integer(I2P),           intent(IN)::  knd   !< Number kind.
+  integer(I2P)::                        n     !< Number returned.
+  integer(I4P)::                        err   !< Error trapping flag: 0 no errors, >0 error occurs.
+  character(len=:), allocatable::       prefd !< Prefixing string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
   read(str,*,iostat=err) n ! Casting of str to n.
   if (err/=0) then
-    write(stderr,'(A)')            'Conversion of string "'//str//'" to integer failed'
-    write(stderr,'(A,'//FI2P//')') 'Kind parameter ',knd
-    write(stderr,'(A)')            'Function used "ctoi_I2P"'
+    prefd = '' ; if (present(pref)) prefd = pref
+    write(stderr,'(A,I1,A)') prefd//' Error: conversion of string "'//str//'" to real failed! integer(',kind(knd),')'
   endif
+  if (present(error)) error = err
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction ctoi_I2P
 
-  function ctoi_I1P(str,knd) result(n)
+  function ctoi_I1P(pref,error,str,knd) result(n)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Procedure for converting string to integer. This function achieves casting of string to integer.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  character(*), intent(IN):: str !< String containing input number.
-  integer(I1P), intent(IN):: knd !< Number kind.
-  integer(I1P)::             n   !< Number returned.
-  integer(I4P)::             err !< Error trapping flag: 0 no errors, >0 error occurs.
+  character(*), optional, intent(IN)::  pref  !< Prefixing string.
+  integer(I4P), optional, intent(OUT):: error !< Error trapping flag: 0 no errors, >0 error occurs.
+  character(*),           intent(IN)::  str   !< String containing input number.
+  integer(I1P),           intent(IN)::  knd   !< Number kind.
+  integer(I1P)::                        n     !< Number returned.
+  integer(I4P)::                        err   !< Error trapping flag: 0 no errors, >0 error occurs.
+  character(len=:), allocatable::       prefd !< Prefixing string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
   read(str,*,iostat=err) n ! Casting of str to n.
   if (err/=0) then
-    write(stderr,'(A)')            'Conversion of string "'//str//'" to integer failed'
-    write(stderr,'(A,'//FI1P//')') 'Kind parameter ',knd
-    write(stderr,'(A)')            'Function used "ctoi_I1P"'
+    prefd = '' ; if (present(pref)) prefd = pref
+    write(stderr,'(A,I1,A)') prefd//' Error: conversion of string "'//str//'" to real failed! integer(',kind(knd),')'
   endif
+  if (present(error)) error = err
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction ctoi_I1P

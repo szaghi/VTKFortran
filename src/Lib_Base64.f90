@@ -371,7 +371,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine b64_encode_up_a
 
-  elemental subroutine b64_decode_up(code,up)
+  subroutine b64_decode_up(code,up)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Procedure for decoding an unlimited polymorphic scalar from base64.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -401,7 +401,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine b64_decode_up
 
-  pure subroutine b64_decode_up_a(code,up)
+  subroutine b64_decode_up_a(code,up)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Procedure for decoding an unlimited polymorphic array from base64.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1083,7 +1083,9 @@ contains
   implicit none
   character(len=:), allocatable:: code64        !< Base64 code.
   logical::                       ok            !< Flag for checking the result of encoding/decoding.
+#ifdef r16p
   real(R16P)::                    scalar_R16    !< Decoded scalar.
+#endif
   real(R8P)::                     scalar_R8     !< Decoded scalar.
   real(R4P)::                     scalar_R4     !< Decoded scalar.
   integer(I8P)::                  scalar_I8     !< Decoded scalar.
