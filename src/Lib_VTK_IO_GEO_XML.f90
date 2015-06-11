@@ -1,7 +1,7 @@
 !< GEO_XML interface definition for Lib_VTK_IO.
 module Lib_VTK_IO_GEO_XML
 !-----------------------------------------------------------------------------------------------------------------------------------
-!< Pure Fortran (2003+) library to write and read data conforming the VTK standard
+!< GEO_XML interface definition for Lib_VTK_IO.
 !-----------------------------------------------------------------------------------------------------------------------------------
 USE IR_Precision        ! Integers and reals precision definition.
 USE Lib_Base64          ! Base64 encoding/decoding procedures.
