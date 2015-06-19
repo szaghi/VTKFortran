@@ -1018,7 +1018,7 @@ case('-openmp')
   stop
 #else
   call get_command_argument(2,nF)
-  call test_openmp(Nf_tot=cton(trim(nF),I4P))
+  call test_openmp(Nf_tot=cton(str=trim(nF),knd=I4P))
 #endif
 case('-mpi')
 #ifndef MPI2
@@ -1026,7 +1026,7 @@ case('-mpi')
   stop
 #else
   call get_command_argument(2,nF)
-  call test_mpi(Nf_tot=cton(trim(nF),I4P))
+  call test_mpi(Nf_tot=cton(str=trim(nF),knd=I4P))
 #endif
 case('-all')
   call test_rect

@@ -19,6 +19,7 @@ USE Lib_VTK_IO_DAT_VAR_XML ! DAT_XML and VAR_XML interface module.
 USE Lib_VTK_IO_END_XML     ! END_XML interface module.
 USE Lib_VTK_IO_VTM_XML     ! VTM_XML interface module.
 USE Lib_VTK_IO_PVTK_XML    ! PVTK_XML interface module.
+USE Lib_VTK_IO_PVD_XML     ! PVD_XML interface module.
 USE Lib_VTK_IO_INI         ! INI interface module.
 USE Lib_VTK_IO_GEO         ! GEO interface module.
 USE Lib_VTK_IO_CON         ! CON interface module.
@@ -49,6 +50,10 @@ public:: PVTK_GEO_XML
 public:: PVTK_DAT_XML
 public:: PVTK_VAR_XML
 public:: PVTK_END_XML
+
+public:: PVD_INI_XML
+public:: PVD_DAT_XML
+public:: PVD_END_XML
 
 public:: VTK_INI
 public:: VTK_GEO
