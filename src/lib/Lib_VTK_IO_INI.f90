@@ -15,7 +15,7 @@ save
 public:: VTK_INI
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
-  function VTK_INI(output_format,filename,title,mesh_topology,cf) result(E_IO)
+  function VTK_INI(fformat,filename,title,mesh_topology,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Function for initializing VTK-legacy file.
   !<
@@ -27,13 +27,13 @@ contains
   !<```
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  character(*), intent(IN)::            output_format !< Output format: ASCII or RAW.
-  character(*), intent(IN)::            filename      !< Name of file.
-  character(*), intent(IN)::            title         !< Title.
-  character(*), intent(IN)::            mesh_topology !< Mesh topology.
-  integer(I4P), intent(OUT), optional:: cf            !< Current file index (for concurrent files IO).
-  integer(I4P)::                        E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
-  integer(I4P)::                        rf            !< Real file index.
+  character(*), intent(IN)            :: fformat       !< Output format: ASCII or RAW.
+  character(*), intent(IN)            :: filename      !< Name of file.
+  character(*), intent(IN)            :: title         !< Title.
+  character(*), intent(IN)            :: mesh_topology !< Mesh topology.
+  integer(I4P), intent(OUT), optional :: cf            !< Current file index (for concurrent files IO).
+  integer(I4P)                        :: E_IO          !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done.
+  integer(I4P)                        :: rf            !< Real file index.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ contains
   f = rf
   if (present(cf)) cf = rf
   vtk(rf)%topology = trim(mesh_topology)
-  select case(trim(Upper_Case(output_format)))
+  select case(trim(Upper_Case(fformat)))
   case('ASCII')
     vtk(rf)%f = ascii
     open(unit=Get_Unit(vtk(rf)%u),file=trim(filename),form='FORMATTED',&
@@ -52,7 +52,7 @@ contains
     ! writing header of file
     write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)'# vtk DataFile Version 3.0'
     write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(title)
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(Upper_Case(output_format))
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(Upper_Case(fformat))
     write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)'DATASET '//trim(vtk(rf)%topology)
   case('RAW')
     vtk(rf)%f = raw
@@ -61,7 +61,7 @@ contains
     ! writing header of file
     write(unit=vtk(rf)%u,iostat=E_IO)'# vtk DataFile Version 3.0'//end_rec
     write(unit=vtk(rf)%u,iostat=E_IO)trim(title)//end_rec
-    write(unit=vtk(rf)%u,iostat=E_IO)trim(Upper_Case(output_format))//end_rec
+    write(unit=vtk(rf)%u,iostat=E_IO)trim(Upper_Case(fformat))//end_rec
     write(unit=vtk(rf)%u,iostat=E_IO)'DATASET '//trim(vtk(rf)%topology)//end_rec
   endselect
   return

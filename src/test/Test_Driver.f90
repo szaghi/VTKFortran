@@ -227,40 +227,40 @@ contains
     !-------------------------------------------------------------------------------------------------------------------------------
     if (threeD) then
       if (present(x64)) then ! non packed, 3D rank array, 64 bits data
-        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-3DA-'//trim(out_f)//'-64.vts',&
-                           mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+        E_IO = VTK_INI_XML(fformat=trim(out_f),filename='XML_STRG-3DA-'//trim(out_f)//'-64.vts',&
+                           mesh_topology='StructuredGrid',act='w',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
         E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x64,Y=y64,Z=z64)
       elseif (present(x32)) then ! non packed, 3D rank array, 32 bits data
-        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-3DA-'//trim(out_f)//'-32.vts',&
-                           mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+        E_IO = VTK_INI_XML(fformat=trim(out_f),filename='XML_STRG-3DA-'//trim(out_f)//'-32.vts',&
+                           mesh_topology='StructuredGrid',act='w',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
         E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x32,Y=y32,Z=z32)
       elseif (present(xyz64)) then ! packed, 3D rank array, 64 bits data
-        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-3DAP-'//trim(out_f)//'-64.vts',&
-                           mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+        E_IO = VTK_INI_XML(fformat=trim(out_f),filename='XML_STRG-3DAP-'//trim(out_f)//'-64.vts',&
+                           mesh_topology='StructuredGrid',act='w',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
         E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=xyz64)
       elseif (present(xyz32)) then ! packed, 3D rank array, 32 bits data
-        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-3DAP-'//trim(out_f)//'-32.vts',&
-                           mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+        E_IO = VTK_INI_XML(fformat=trim(out_f),filename='XML_STRG-3DAP-'//trim(out_f)//'-32.vts',&
+                           mesh_topology='StructuredGrid',act='w',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
         E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=xyz32)
       endif
     else
       if (present(x64)) then ! non packed, 1D rank array, 64 bits data
-        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-1DA-'//trim(out_f)//'-64.vts',&
-                           mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+        E_IO = VTK_INI_XML(fformat=trim(out_f),filename='XML_STRG-1DA-'//trim(out_f)//'-64.vts',&
+                           mesh_topology='StructuredGrid',act='w',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
         E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
                            X=reshape(x64,[nn]),Y=reshape(y64,[nn]),Z=reshape(z64,[nn]))
       elseif (present(x32)) then ! non packed, 1D rank array, 32 bits data
-        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-1DA-'//trim(out_f)//'-32.vts',&
-                           mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+        E_IO = VTK_INI_XML(fformat=trim(out_f),filename='XML_STRG-1DA-'//trim(out_f)//'-32.vts',&
+                           mesh_topology='StructuredGrid',act='w',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
         E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
                            X=reshape(x32,[nn]),Y=reshape(y32,[nn]),Z=reshape(z32,[nn]))
       elseif (present(xyz64)) then ! packed, 1D rank array, 64 bits data
-        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-1DAP-'//trim(out_f)//'-64.vts',&
-                           mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+        E_IO = VTK_INI_XML(fformat=trim(out_f),filename='XML_STRG-1DAP-'//trim(out_f)//'-64.vts',&
+                           mesh_topology='StructuredGrid',act='w',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
         E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=reshape(xyz64,[3,nn]))
       elseif (present(xyz32)) then ! packed, 1D rank array, 32 bits data
-        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-1DAP-'//trim(out_f)//'-32.vts',&
-                           mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+        E_IO = VTK_INI_XML(fformat=trim(out_f),filename='XML_STRG-1DAP-'//trim(out_f)//'-32.vts',&
+                           mesh_topology='StructuredGrid',act='w',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
         E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=reshape(xyz32,[3,nn]))
       endif
     endif
@@ -311,7 +311,7 @@ contains
   v_Y=(/0,1,2,0,1,2,0,1,2,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0/)
   v_Z=(/0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1/)
   ! ascii
-  E_IO = VTK_INI_XML(output_format = 'ascii', filename = 'XML_UNST-ascii.vtu', mesh_topology = 'UnstructuredGrid')
+  E_IO = VTK_INI_XML(fformat = 'ascii', filename = 'XML_UNST-ascii.vtu', mesh_topology = 'UnstructuredGrid', act='w')
   E_IO = VTK_GEO_XML(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'opeN')
@@ -321,7 +321,7 @@ contains
   E_IO = VTK_GEO_XML()
   E_IO = VTK_END_XML()
   ! raw
-  E_IO = VTK_INI_XML(output_format = 'raw', filename = 'XML_UNST-raw.vtu', mesh_topology = 'UnstructuredGrid')
+  E_IO = VTK_INI_XML(fformat = 'raw', filename = 'XML_UNST-raw.vtu', mesh_topology = 'UnstructuredGrid', act='w')
   E_IO = VTK_GEO_XML(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'opeN')
@@ -331,7 +331,7 @@ contains
   E_IO = VTK_GEO_XML()
   E_IO = VTK_END_XML()
   ! binary
-  E_IO = VTK_INI_XML(output_format = 'binary', filename = 'XML_UNST-binary.vtu', mesh_topology = 'UnstructuredGrid')
+  E_IO = VTK_INI_XML(fformat = 'binary', filename = 'XML_UNST-binary.vtu', mesh_topology = 'UnstructuredGrid', act='w')
   E_IO = VTK_GEO_XML(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'opeN')
@@ -370,7 +370,7 @@ contains
       enddo
     enddo
   enddo
-  E_IO = VTK_INI_XML(output_format='binary',filename='XML_STRG.vts',mesh_topology='StructuredGrid',&
+  E_IO = VTK_INI_XML(fformat='binary',filename='XML_STRG.vts',mesh_topology='StructuredGrid',act='w',&
                      nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
   E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x,Y=y,Z=z)
   E_IO = VTK_DAT_XML(var_location='node',var_block_action='open')
@@ -419,8 +419,8 @@ contains
     z(k) = k*1._R4P
   enddo
   ! ascii
-  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_RECT-ascii.vtr', &
-                     mesh_topology='RectilinearGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+  E_IO = VTK_INI_XML(fformat='ascii', filename='XML_RECT-ascii.vtr', &
+                     mesh_topology='RectilinearGrid',act='w', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
   E_IO = VTK_FLD_XML(fld_action='open')
   E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
   E_IO = VTK_FLD_XML(fld=1_I8P,fname='CYCLE')
@@ -432,8 +432,8 @@ contains
   E_IO = VTK_GEO_XML()
   E_IO = VTK_END_XML()
   ! raw
-  E_IO = VTK_INI_XML(output_format='raw', filename='XML_RECT-raw.vtr', &
-                     mesh_topology='RectilinearGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+  E_IO = VTK_INI_XML(fformat='raw', filename='XML_RECT-raw.vtr', &
+                     mesh_topology='RectilinearGrid',act='w', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
   E_IO = VTK_FLD_XML(fld_action='open')
   E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
   E_IO = VTK_FLD_XML(fld=1_I8P,fname='CYCLE')
@@ -445,8 +445,8 @@ contains
   E_IO = VTK_GEO_XML()
   E_IO = VTK_END_XML()
   ! binary
-  E_IO = VTK_INI_XML(output_format='binary', filename='XML_RECT-binary.vtr', &
-                     mesh_topology='RectilinearGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+  E_IO = VTK_INI_XML(fformat='binary', filename='XML_RECT-binary.vtr', &
+                     mesh_topology='RectilinearGrid',act='w', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
   E_IO = VTK_FLD_XML(fld_action='open')
   E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
   E_IO = VTK_FLD_XML(fld=1_I8P,fname='CYCLE')
@@ -503,7 +503,7 @@ contains
   v_Y=(/0,1,2,0,1,2,0,1,2,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0/)
   v_Z=(/0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1/)
   ! first part
-  E_IO = VTK_INI_XML(output_format = 'raw', filename = 'XML_UNST_part0.vtu', mesh_topology = 'UnstructuredGrid')
+  E_IO = VTK_INI_XML(fformat = 'raw', filename = 'XML_UNST_part0.vtu', mesh_topology = 'UnstructuredGrid',act='w')
   E_IO = VTK_GEO_XML(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'opeN')
@@ -514,7 +514,7 @@ contains
   E_IO = VTK_END_XML()
   ! second part
   x = x + 10._R4P
-  E_IO = VTK_INI_XML(output_format = 'raw', filename = 'XML_UNST_part1.vtu', mesh_topology = 'UnstructuredGrid')
+  E_IO = VTK_INI_XML(fformat = 'raw', filename = 'XML_UNST_part1.vtu', mesh_topology = 'UnstructuredGrid',act='w')
   E_IO = VTK_GEO_XML(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'opeN')
@@ -579,8 +579,8 @@ contains
    enddo
   enddo
   do p=1,2 ! loop over pieces
-    E_IO = VTK_INI_XML(cf=mf(p),output_format='raw', filename='XML_STRG_part'//trim(str(.true.,p-1))//'.vts', &
-                       mesh_topology='StructuredGrid', nx1=nx1_p(p), nx2=nx2_p(p), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+    E_IO = VTK_INI_XML(cf=mf(p),fformat='raw', filename='XML_STRG_part'//trim(str(.true.,p-1))//'.vts', &
+                       mesh_topology='StructuredGrid',act='w', nx1=nx1_p(p), nx2=nx2_p(p), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
     E_IO = VTK_GEO_XML(cf=mf(p),nx1=nx1_p(p), nx2=nx2_p(p), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn_p(p), &
                        X=reshape(x(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)),                                     &
                        Y=reshape(y(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)),                                     &
@@ -634,8 +634,8 @@ contains
   enddo
   ! vts
   do b=1,4 ! loop over blocks
-    E_IO = VTK_INI_XML(cf=mf(b),output_format='binary', filename='XML_M-STRG_part.'//trim(str(.true.,b-1))//'.vts', &
-                       mesh_topology='StructuredGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+    E_IO = VTK_INI_XML(cf=mf(b),fformat='binary', filename='XML_M-STRG_part.'//trim(str(.true.,b-1))//'.vts', &
+                       mesh_topology='StructuredGrid',act='w', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
     if (b>1) then
       x = x + nx2*1._R8P
       v = b
@@ -745,8 +745,8 @@ contains
   ! opening files outside OpenMP framework
   do f=1,Nf_tot
     nxf = (nx2-nx1+1)*f-(f-1)
-    E_IO = VTK_INI_XML(cf=mf(f),output_format='binary',filename='XML_OPENMP_f'//trim(strz(3,f))//'.vts', &
-                       mesh_topology='StructuredGrid',nx1=nxf-(nx2-nx1+1)+1,nx2=nxf,&
+    E_IO = VTK_INI_XML(cf=mf(f),fformat='binary',filename='XML_OPENMP_f'//trim(strz(3,f))//'.vts', &
+                       mesh_topology='StructuredGrid',act='w',nx1=nxf-(nx2-nx1+1)+1,nx2=nxf,&
                        ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
   enddo
   ! saving files
@@ -886,8 +886,8 @@ contains
     endif
     nxf = (nx2-nx1+1)*foffset-(foffset-1)
     vtk_start = MPI_Wtime()
-    E_IO = VTK_INI_XML(output_format='binary',filename='XML_MPI_f'//trim(strz(3,foffset))//'.vts', &
-                       mesh_topology='StructuredGrid',nx1=nxf-(nx2-nx1+1)+1,nx2=nxf,&
+    E_IO = VTK_INI_XML(fformat='binary',filename='XML_MPI_f'//trim(strz(3,foffset))//'.vts', &
+                       mesh_topology='StructuredGrid',act='w',nx1=nxf-(nx2-nx1+1)+1,nx2=nxf,&
                        ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
     ! updating x coordinates of current process/file
     xf = x + real(foffset-1_I4P,R8P)
