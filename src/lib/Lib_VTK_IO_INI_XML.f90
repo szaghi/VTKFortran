@@ -12,10 +12,11 @@ USE Lib_VTK_IO_Back_End ! Lib_VTK_IO back end module.
 implicit none
 private
 save
-public:: VTK_INI_XML
+public:: VTK_INI_XML_WRITE
+public:: VTK_INI_XML_READ
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
-  function VTK_INI_XML_WRITE(fformat, filename, mesh_topology, act, nx1, nx2, ny1, ny2, nz1, nz2, cf) result(E_IO)
+  function VTK_INI_XML_WRITE(fformat, filename, mesh_topology, nx1, nx2, ny1, ny2, nz1, nz2, cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Procedure for initializing VTK-XML file (exporter).
   !<
@@ -45,11 +46,9 @@ contains
   !< Note that the file extension is necessary in the file name. The XML standard has different extensions for each
   !< different topologies (e.g. *vtr* for rectilinear topology). See the VTK-standard file for more information.
   !---------------------------------------------------------------------------------------------------------------------------------
-  implicit none
   character(*), intent(IN)            :: fformat       !< File format: ASCII, BINARY, RAW or BINARY-APPENDED.
   character(*), intent(IN)            :: filename      !< File name.
   character(*), intent(IN)            :: mesh_topology !< Mesh topology.
-  character(*), intent(IN),  optional :: act           !< Action: 'r' => read (import), 'w' => write (export).
   integer(I4P), intent(IN),  optional :: nx1           !< Initial node of x axis.
   integer(I4P), intent(IN),  optional :: nx2           !< Final node of x axis.
   integer(I4P), intent(IN),  optional :: ny1           !< Initial node of y axis.
@@ -183,67 +182,66 @@ contains
   integer(I4P)                        :: E_IO           !< Input/Output inquiring flag: $0$ if IO is done, $> 0$ if IO is not done
   integer(I4P)                        :: rf             !< Real file index.
   integer(I4P)                        :: np             !< Real number of pieces.
-  character(len=:),allocatable        :: s_buffer       !< Buffer string.
-  character                           :: c1, c2
-  character(len=:),allocatable        :: aux
-  integer(I4P), dimension(6)          :: rn             !< Real node ranges in WholeExtent [nx1,nx2,ny1,ny2,nz1,nz2]
-  logical                             :: fexist
+  character(len=:), allocatable       :: s_buffer       !< Buffer string.
+  character                           :: c1, c2         !< Characters dummies.
+  character(len=:), allocatable       :: aux            !< Auxiliary string.
+  integer(I4P), dimension(6)          :: rn             !< Real node ranges in WholeExtent [nx1,nx2,ny1,ny2,nz1,nz2].
+  logical                             :: fexist         !< Flag for checking the existence of file to import.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
   E_IO = -1_I4P
   if (.not.ir_initialized) call IR_Init
   if (.not.b64_initialized) call b64_init
-  call vtk_update(act='add',cf=rf,Nvtk=Nvtk,vtk=vtk)
+  call vtk_update(act='add', cf=rf, Nvtk=Nvtk, vtk=vtk)
   f = rf
   if (present(cf)) cf = rf
   vtk(rf)%topology = trim(mesh_topology)
+  inquire(file=trim(filename), exist=fexist); if(.not.fexist) return
 
-  inquire( file=trim(filename), exist=fexist ); if(.not. fexist) return
-
-  select case(trim(Upper_Case(input_format)))
+  select case(trim(Upper_Case(fformat)))
   case('ASCII')
     vtk(rf)%f = ascii
 
     select case(trim(vtk(rf)%topology))
       case('RectilinearGrid', 'StructuredGrid', 'UnstructuredGrid')
 
-        open(unit=Get_Unit(vtk(rf)%u),file=trim(filename),status='old', &
-             form='UNFORMATTED',access='STREAM',action='READ', &
+        open(unit=Get_Unit(vtk(rf)%u), file=trim(filename), status='old', &
+             form='UNFORMATTED', access='STREAM', action='READ',          &
              iostat=E_IO, position='REWIND')
 
         select case(trim(vtk(rf)%topology))
           case('RectilinearGrid', 'StructuredGrid')
-            ! Get WholeExtent
+            ! get WholeExtent
             E_IO = move(inside='VTKFile', to_find=trim(vtk(rf)%topology), cf=rf,buffer=s_buffer)
             call get_char(buffer=s_buffer, attrib='WholeExtent', val=aux, E_IO=E_IO)
-            if(E_IO == 0) then
+            if (E_IO == 0) then
               read(aux,*) rn
-              if(present(nx1)) nx1 = rn(1); if(present(nx2)) nx2 = rn(2)
-              if(present(ny1)) ny1 = rn(3); if(present(ny2)) ny2 = rn(4)
-              if(present(nz1)) nz1 = rn(5); if(present(nz2)) nz2 = rn(6)
+              if (present(nx1)) nx1 = rn(1); if(present(nx2)) nx2 = rn(2)
+              if (present(ny1)) ny1 = rn(3); if(present(ny2)) ny2 = rn(4)
+              if (present(nz1)) nz1 = rn(5); if(present(nz2)) nz2 = rn(6)
             endif
-        end select
+        endselect
 
         ! count the pieces
         rewind(unit=vtk(rf)%u, iostat=E_IO)
         np = 0
         do
-          E_IO = read_record(s_buffer, cf=rf); if(E_IO /= 0) exit
+          E_IO = read_record(buffer=s_buffer, cf=rf); if (E_IO/=0) exit
           s_buffer = trim(adjustl(Upper_Case(s_buffer)))
-          if (index(s_buffer, '</'//trim(Upper_Case(vtk(rf)%topology))) > 0) exit !end of ASCII header section found
+          if (index(s_buffer, '</'//trim(Upper_Case(vtk(rf)%topology)))>0) exit ! end of ASCII header section found
           if (index(s_buffer, '<PIECE') > 0) np = np + 1
         enddo
 
-    end select
+    endselect
 
   case('BINARY')
     vtk(rf)%f = binary
     select case(trim(vtk(rf)%topology))
       case('RectilinearGrid', 'StructuredGrid', 'UnstructuredGrid')
 
-        open(unit=Get_Unit(vtk(rf)%u),file=trim(filename),status='old', &
-             form='UNFORMATTED',access='STREAM',action='READ', &
+        open(unit=Get_Unit(vtk(rf)%u), file=trim(filename), status='old', &
+             form='UNFORMATTED', access='STREAM', action='READ',          &
              iostat=E_IO, position='REWIND')
 
         select case(trim(vtk(rf)%topology))
@@ -251,48 +249,48 @@ contains
             ! Get WholeExtent
             E_IO = move(inside='VTKFile', to_find=trim(vtk(rf)%topology), cf=rf,buffer=s_buffer)
             call get_char(buffer=s_buffer, attrib='WholeExtent', val=aux, E_IO=E_IO)
-            if(E_IO == 0) then
+            if (E_IO == 0) then
               read(aux,*) rn
-              if(present(nx1)) nx1 = rn(1); if(present(nx2)) nx2 = rn(2)
-              if(present(ny1)) ny1 = rn(3); if(present(ny2)) ny2 = rn(4)
-              if(present(nz1)) nz1 = rn(5); if(present(nz2)) nz2 = rn(6)
+              if (present(nx1)) nx1 = rn(1); if (present(nx2)) nx2 = rn(2)
+              if (present(ny1)) ny1 = rn(3); if (present(ny2)) ny2 = rn(4)
+              if (present(nz1)) nz1 = rn(5); if (present(nz2)) nz2 = rn(6)
             endif
-        end select
+        endselect
 
         ! count the pieces
         rewind(unit=vtk(rf)%u, iostat=E_IO)
         np = 0
         do
-          E_IO = read_record(s_buffer, cf=rf); if(E_IO /= 0) exit
+          E_IO = read_record(buffer=s_buffer, cf=rf); if(E_IO /= 0) exit
           s_buffer = trim(adjustl(Upper_Case(s_buffer)))
-          if (index(s_buffer, '</'//trim(Upper_Case(vtk(rf)%topology))) > 0) exit !end of ASCII header section found
+          if (index(s_buffer, '</'//trim(Upper_Case(vtk(rf)%topology))) > 0) exit ! end of ASCII header section found
           if (index(s_buffer, '<PIECE') > 0) np = np + 1
         enddo
 
-    end select
+    endselect
 
   case('RAW')
     vtk(rf)%f = raw
     select case(trim(vtk(rf)%topology))
       case('RectilinearGrid', 'StructuredGrid', 'UnstructuredGrid')
 
-        open(unit=Get_Unit(vtk(rf)%u),file=trim(filename),status='old', &
-             form='UNFORMATTED',access='STREAM',action='READ', &
+        open(unit=Get_Unit(vtk(rf)%u), file=trim(filename), status='old', &
+             form='UNFORMATTED', access='STREAM', action='READ',          &
              iostat=E_IO, position='REWIND')
 
         E_IO = move(inside='VTKFile', cf=rf, buffer=s_buffer)
         call get_char(buffer=s_buffer, attrib='byte_order', val=aux, E_IO=E_IO)
 
-        ! Check the file endianness
-        if (index(trim(aux), 'LITTLEENDIAN') > 0) then
+        ! check the file endianness
+        if (index(trim(aux), 'LITTLEENDIAN')>0) then
           close(unit=vtk(rf)%u, iostat=E_IO)
-          open(unit=Get_Unit(vtk(rf)%u),file=trim(filename),status='old', &
-               form='UNFORMATTED',access='STREAM',action='READ', &
+          open(unit=Get_Unit(vtk(rf)%u), file=trim(filename), status='old', &
+               form='UNFORMATTED', access='STREAM', action='READ',          &
                convert='LITTLE_ENDIAN', iostat=E_IO, position='REWIND')
-        elseif (index(trim(aux), 'BIGENDIAN') > 0) then
+        elseif (index(trim(aux), 'BIGENDIAN')>0) then
           close(unit=vtk(rf)%u, iostat=E_IO)
-          open(unit=Get_Unit(vtk(rf)%u),file=trim(filename),status='old', &
-               form='UNFORMATTED',access='STREAM',action='READ', &
+          open(unit=Get_Unit(vtk(rf)%u), file=trim(filename), status='old', &
+               form='UNFORMATTED', access='STREAM', action='READ',          &
                convert='BIG_ENDIAN', iostat=E_IO, position='REWIND')
         else
           rewind(unit=vtk(rf)%u, iostat=E_IO)
@@ -301,38 +299,38 @@ contains
         select case(trim(vtk(rf)%topology))
           case('RectilinearGrid', 'StructuredGrid')
             ! Get WholeExtent
-            E_IO = move(inside='VTKFile', to_find=trim(vtk(rf)%topology), cf=rf,buffer=s_buffer)
+            E_IO = move(inside='VTKFile', to_find=trim(vtk(rf)%topology), cf=rf, buffer=s_buffer)
             call get_char(buffer=s_buffer, attrib='WholeExtent', val=aux, E_IO=E_IO)
-            if(E_IO == 0) then
+            if (E_IO == 0) then
               read(aux,*) rn
-              if(present(nx1)) nx1 = rn(1); if(present(nx2)) nx2 = rn(2)
-              if(present(ny1)) ny1 = rn(3); if(present(ny2)) ny2 = rn(4)
-              if(present(nz1)) nz1 = rn(5); if(present(nz2)) nz2 = rn(6)
+              if (present(nx1)) nx1 = rn(1); if (present(nx2)) nx2 = rn(2)
+              if (present(ny1)) ny1 = rn(3); if (present(ny2)) ny2 = rn(4)
+              if (present(nz1)) nz1 = rn(5); if (present(nz2)) nz2 = rn(6)
             endif
-        end select
+        endselect
 
         ! count the pieces
         rewind(unit=vtk(rf)%u, iostat=E_IO)
         np = 0
         do
-          E_IO = read_record(s_buffer, cf=rf); if(E_IO /= 0) exit
+          E_IO = read_record(buffer=s_buffer, cf=rf); if(E_IO /= 0) exit
           s_buffer = trim(adjustl(Upper_Case(s_buffer)))
-          if (index(s_buffer, '</'//trim(Upper_Case(vtk(rf)%topology))) > 0) exit !end of ASCII header section found
-          if (index(s_buffer, '<PIECE') > 0) np = np + 1
+          if (index(s_buffer, '</'//trim(Upper_Case(vtk(rf)%topology)))>0) exit ! end of ASCII header section found
+          if (index(s_buffer, '<PIECE')>0) np = np + 1
         enddo
 
-      ! calculate the offset to reach the appended data
+        ! calculate the offset to reach the appended data
         rewind(unit=vtk(rf)%u, iostat=E_IO)
-        read(unit=vtk(rf)%u,iostat=E_IO) c1
+        read(unit=vtk(rf)%u, iostat=E_IO) c1
         do
-          read(unit=vtk(rf)%u,iostat=E_IO) c2; if(E_IO /= 0) exit
-          if (iachar(c1)==10 .and. c2 =='_') exit
+          read(unit=vtk(rf)%u, iostat=E_IO) c2; if (E_IO/=0) exit
+          if (iachar(c1)==10.and.c2=='_') exit
           c1 = c2
         enddo
         inquire(unit=vtk(rf)%u, pos=vtk(rf)%ioffset)
 
-    end select
-  end select
-  if(present(npieces)) npieces = np
+    endselect
+  endselect
+  if (present(npieces)) npieces = np
   endfunction VTK_INI_XML_READ
 endmodule Lib_VTK_IO_INI_XML
