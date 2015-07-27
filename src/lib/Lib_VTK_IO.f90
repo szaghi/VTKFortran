@@ -3,10 +3,6 @@ module Lib_VTK_IO
 !-----------------------------------------------------------------------------------------------------------------------------------
 !< Pure Fortran (2003+) library to write and read data conforming the VTK standard
 !<{!README-Lib_VTK_IO.md!}
-!<
-!<### ChangeLog
-!<
-!<{!ChangeLog-Lib_VTK_IO.md!}
 !-----------------------------------------------------------------------------------------------------------------------------------
 USE IR_Precision           ! Integers and reals precision definition.
 USE Lib_Base64             ! Base64 encoding/decoding procedures.

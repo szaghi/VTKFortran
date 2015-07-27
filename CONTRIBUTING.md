@@ -28,7 +28,7 @@ If you like to directly contribute to the project you are welcome. To improve th
 + make sure you have properly tested for your changes;
 + as long as possible, try to follow our [coding style](#fstyle);
 
-###<a name="gitws"></a> Make git to get the rid of unnecessary white-spaces
+### <a name="gitws"></a> Make git to get the rid of unnecessary white-spaces
 
 It is suggested to allow git to get the rid of unnecessary white-spaces eventually introduced into the sources. To this aim check that your git configuration (global or repository-specific) contains the following settings:
 
@@ -41,11 +41,13 @@ It is suggested to allow git to get the rid of unnecessary white-spaces eventual
   whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
 ```
 
-###<a name="fstyle"></a> Fortran Coding Style
+### <a name="fstyle"></a> Fortran Coding Style
 
 As long as possible, contributors are kindly requested to follow the current coding style:
 
-+ write code that comments itself, e.g. clearness naming (even if lengthy) is better than conciseness one which often means obscure;
++ write code that comments itself, e.g. clearness naming (even if lengthy) is better than conciseness one which often means obscure:
+  + human readable variables names are better than obscure acronyms, e.g. `real :: gas_ideal_air` is better than `real :: gia`;
+  + variables name of one character should be avoided; they should be used only for counters, e.g. `do i=1, Number_iterations ; ! loop statements ; enddo`
 + name all constants;
 + minimize global data:
   + use global types parameters, i.e. kinds and precisions of numbers, especially;

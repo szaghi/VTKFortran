@@ -388,9 +388,12 @@ contains
   !< time step, ecc.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), parameter:: nx1=0_I4P,nx2=30_I4P,ny1=0_I4P,ny2=20_I4P,nz1=0_I4P,nz2=10_I4P
+  integer(I4P), parameter:: nx1=0_I4P,nx2=16_I4P,ny1=0_I4P,ny2=16_I4P,nz1=0_I4P,nz2=16_I4P
   integer(I4P), parameter:: nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
   real(R8P)::               x(nx1:nx2),y(ny1:ny2),z(nz1:nz2)
+  real(R8P)::               x1=-3._R8P,x2=3._R8P
+  real(R8P)::               y1=-2._R8P,y2=0.25_R8P
+  real(R8P)::               z1=-2._R8P,z2=0.16_R8P
   integer(I4P)::            v(1:nn)
   integer(I4P)::            i,j,k,n,E_IO
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -408,13 +411,13 @@ contains
    enddo
   enddo
   do i=nx1,nx2
-    x(i) = i*1._R4P
+    x(i) = x1 + (i - 1) * (x2 - x1)/real(nx2 - nx1, kind=R8P)
   enddo
   do j=ny1,ny2
-    y(j) = j*1._R4P
+    y(j) = y1 + (j - 1) * (y2 - y1)/real(ny2 - ny1, kind=R8P)
   enddo
   do k=nz1,nz2
-    z(k) = k*1._R4P
+    z(k) = z1 + (k - 1) * (z2 - z1)/real(nz2 - nz1, kind=R8P)
   enddo
   ! ascii
   E_IO = VTK_INI_XML_WRITE(fformat='ascii', filename='XML_RECT-ascii.vtr', &
