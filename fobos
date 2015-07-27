@@ -106,7 +106,7 @@ src      = ./src/
 colors   = True
 quiet    = False
 log      = True
-jobs     = 2
+jobs     = 10
 
 [template-static-gnu]
 compiler = gnu
@@ -118,7 +118,7 @@ src      = ./src/
 colors   = True
 quiet    = False
 log      = True
-jobs     = 2
+jobs     = 10
 
 [template-shared-gnu-debug]
 compiler = gnu
@@ -130,7 +130,7 @@ src      = ./src/
 colors   = True
 quiet    = False
 log      = True
-jobs     = 2
+jobs     = 10
 
 [template-static-gnu-debug]
 compiler = gnu
@@ -142,7 +142,7 @@ src      = ./src/
 colors   = True
 quiet    = False
 log      = True
-jobs     = 2
+jobs     = 10
 
 [template-shared-intel]
 compiler = intel
@@ -154,7 +154,7 @@ src      = ./src/
 colors   = True
 quiet    = False
 log      = True
-jobs     = 2
+jobs     = 10
 
 [template-static-intel]
 compiler = intel
@@ -166,7 +166,7 @@ src      = ./src/
 colors   = True
 quiet    = False
 log      = True
-jobs     = 2
+jobs     = 10
 
 [template-shared-intel-debug]
 compiler = intel
@@ -178,7 +178,7 @@ src      = ./src/
 colors   = True
 quiet    = False
 log      = True
-jobs     = 2
+jobs     = 10
 
 [template-static-intel-debug]
 compiler = intel
@@ -190,7 +190,7 @@ src      = ./src/
 colors   = True
 quiet    = False
 log      = True
-jobs     = 2
+jobs     = 10
 
 [rule-makedoc]
 help   = Rule for building documentation from source files

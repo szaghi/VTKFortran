@@ -12,7 +12,4 @@ display: public
          protected
          private
 
-{!README-Lib_VTK_IO.md!}
-
-### ChangeLog
-{!ChangeLog-Lib_VTK_IO.md!}
+{!README.md!}
