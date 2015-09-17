@@ -82,7 +82,7 @@ help:
 
 #----------------------------------------------------------------------------------------------------------------------------------
 # directory & file
-DSRC  = ./src/
+DSRC  = ./src/lib/ ./src/test/
 DOBJ  = ./obj/
 DMOD  = ./mod/
 DEXE  = ./
@@ -247,10 +247,20 @@ doc:
 #----------------------------------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------------------------------
-# rules of linking and compiling
 COTEXT  = -e "\033[1;31m Compiling\033[0m\033[1m $(<F)\033[0m"
 LITEXT  = -e "\033[1;31m Linking library\033[0m\033[1m $@\033[0m"
 
+# linking rules
+Lib_VTK_IO : PRINTINFO $(MKDIRS) $(DOBJ)ir_precision.o $(DOBJ)lib_vtk_io.o
+	@echo $(LITEXT) | tee -a make.log
+	@$(MAKELIB) 1>> diagnostic_messages 2>> error_messages
+
+$(DEXE)Test_Driver : PRINTINFO $(MKDIRS) $(DOBJ)Test_Driver.o
+	@echo | tee -a make.log
+	@echo $(LITEXT) | tee -a make.log
+	@$(FC) $(OPTSL) $(DOBJ)*.o $(LIBS) -o $@ 1>> diagnostic_messages 2>> error_messages
+
+# compiling rules
 $(DOBJ)ir_precision.o : IR_Precision.f90
 	@echo $(COTEXT) | tee -a make.log
 	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
@@ -266,9 +276,123 @@ $(DOBJ)lib_base64.o : Lib_Base64.f90 \
 	@echo $(COTEXT) | tee -a make.log
 	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
 
+$(DOBJ)lib_vtk_io_pvtk_xml.o: Lib_VTK_IO_PVTK_XML.f90 \
+	$(DOBJ)ir_precision.o \
+	$(DOBJ)lib_base64.o \
+	$(DOBJ)lib_vtk_io_back_end.o
+	@echo $(COTEXT) | tee -a make.log
+	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+
+$(DOBJ)lib_vtk_io_end_xml.o: Lib_VTK_IO_END_XML.f90 \
+	$(DOBJ)ir_precision.o \
+	$(DOBJ)lib_base64.o \
+	$(DOBJ)lib_vtk_io_back_end.o
+	@echo $(COTEXT) | tee -a make.log
+	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+
+$(DOBJ)lib_vtk_io_geo.o: Lib_VTK_IO_GEO.f90 \
+	$(DOBJ)ir_precision.o \
+	$(DOBJ)lib_vtk_io_back_end.o
+	@echo $(COTEXT) | tee -a make.log
+	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+
+$(DOBJ)lib_vtk_io_ini_xml.o: Lib_VTK_IO_INI_XML.f90 \
+	$(DOBJ)ir_precision.o \
+	$(DOBJ)lib_base64.o \
+	$(DOBJ)lib_vtk_io_back_end.o
+	@echo $(COTEXT) | tee -a make.log
+	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+
+$(DOBJ)lib_vtk_io_fld_xml.o: Lib_VTK_IO_FLD_XML.f90 \
+	$(DOBJ)ir_precision.o \
+	$(DOBJ)lib_base64.o \
+	$(DOBJ)lib_vtk_io_back_end.o
+	@echo $(COTEXT) | tee -a make.log
+	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+
+$(DOBJ)lib_vtk_io_dat_var_xml.o: Lib_VTK_IO_DAT_VAR_XML.f90 \
+	$(DOBJ)ir_precision.o \
+	$(DOBJ)lib_base64.o \
+	$(DOBJ)lib_vtk_io_back_end.o
+	@echo $(COTEXT) | tee -a make.log
+	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+
+$(DOBJ)lib_vtk_io_con_xml.o: Lib_VTK_IO_CON_XML.f90 \
+	$(DOBJ)ir_precision.o \
+	$(DOBJ)lib_base64.o \
+	$(DOBJ)lib_vtk_io_back_end.o
+	@echo $(COTEXT) | tee -a make.log
+	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+
+$(DOBJ)lib_vtk_io_back_end.o: Lib_VTK_IO_Back_End.f90 \
+	$(DOBJ)ir_precision.o
+	@echo $(COTEXT) | tee -a make.log
+	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+
+$(DOBJ)lib_vtk_io_ini.o: Lib_VTK_IO_INI.f90 \
+	$(DOBJ)ir_precision.o \
+	$(DOBJ)lib_base64.o \
+	$(DOBJ)lib_vtk_io_back_end.o
+	@echo $(COTEXT) | tee -a make.log
+	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+
+$(DOBJ)lib_vtk_io_pvd_xml.o: Lib_VTK_IO_PVD_XML.f90 \
+	$(DOBJ)ir_precision.o \
+	$(DOBJ)lib_base64.o \
+	$(DOBJ)lib_vtk_io_back_end.o
+	@echo $(COTEXT) | tee -a make.log
+	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+
+$(DOBJ)lib_vtk_io_geo_xml.o: Lib_VTK_IO_GEO_XML.f90 \
+	$(DOBJ)ir_precision.o \
+	$(DOBJ)lib_base64.o \
+	$(DOBJ)lib_vtk_io_back_end.o
+	@echo $(COTEXT) | tee -a make.log
+	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+
+$(DOBJ)lib_vtk_io_end.o: Lib_VTK_IO_END.f90 \
+	$(DOBJ)ir_precision.o \
+	$(DOBJ)lib_vtk_io_back_end.o
+	@echo $(COTEXT) | tee -a make.log
+	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+
+$(DOBJ)lib_vtk_io_con.o: Lib_VTK_IO_CON.f90 \
+	$(DOBJ)ir_precision.o \
+	$(DOBJ)lib_vtk_io_back_end.o
+	@echo $(COTEXT) | tee -a make.log
+	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+
+$(DOBJ)lib_vtk_io_dat_var.o: Lib_VTK_IO_DAT_VAR.f90 \
+	$(DOBJ)ir_precision.o \
+	$(DOBJ)lib_vtk_io_back_end.o
+	@echo $(COTEXT) | tee -a make.log
+	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+
+$(DOBJ)lib_vtk_io_vtm_xml.o: Lib_VTK_IO_VTM_XML.f90 \
+	$(DOBJ)ir_precision.o \
+	$(DOBJ)lib_base64.o \
+	$(DOBJ)lib_vtk_io_back_end.o
+	@echo $(COTEXT) | tee -a make.log
+	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+
 $(DOBJ)lib_vtk_io.o : Lib_VTK_IO.f90 \
 	$(DOBJ)ir_precision.o \
-	$(DOBJ)lib_base64.o
+	$(DOBJ)lib_base64.o \
+	$(DOBJ)lib_vtk_io_back_end.o \
+	$(DOBJ)lib_vtk_io_ini_xml.o \
+	$(DOBJ)lib_vtk_io_fld_xml.o \
+	$(DOBJ)lib_vtk_io_geo_xml.o \
+	$(DOBJ)lib_vtk_io_con_xml.o \
+	$(DOBJ)lib_vtk_io_dat_var_xml.o \
+	$(DOBJ)lib_vtk_io_end_xml.o \
+	$(DOBJ)lib_vtk_io_vtm_xml.o \
+	$(DOBJ)lib_vtk_io_pvtk_xml.o \
+	$(DOBJ)lib_vtk_io_pvd_xml.o \
+	$(DOBJ)lib_vtk_io_ini.o \
+	$(DOBJ)lib_vtk_io_geo.o \
+	$(DOBJ)lib_vtk_io_con.o \
+	$(DOBJ)lib_vtk_io_dat_var.o \
+	$(DOBJ)lib_vtk_io_end.o
 	@echo $(COTEXT) | tee -a make.log
 	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
 
@@ -277,13 +401,4 @@ $(DOBJ)Test_Driver.o : Test_Driver.f90 \
 	$(DOBJ)lib_vtk_io.o
 	@echo $(COTEXT) | tee -a make.log
 	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
-
-Lib_VTK_IO : PRINTINFO $(MKDIRS) $(DOBJ)ir_precision.o $(DOBJ)lib_vtk_io.o
-	@echo $(LITEXT) | tee -a make.log
-	@$(MAKELIB) 1>> diagnostic_messages 2>> error_messages
-
-$(DEXE)Test_Driver : PRINTINFO $(MKDIRS) $(DOBJ)Test_Driver.o
-	@echo | tee -a make.log
-	@echo $(LITEXT) | tee -a make.log
-	@$(FC) $(OPTSL) $(DOBJ)*.o $(LIBS) -o $@ 1>> diagnostic_messages 2>> error_messages
 #-----------------------------------------------------------------------------------------------------------------------------------
