@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	 
-	 <meta name="description" content="<p>Pure Fortran (2003+) library to write and read data conforming the VTK standard</p>">
+	 <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
     
     <meta name="author" content="Chris MacMackin" >
     <link rel="icon" href="../favicon.png">
@@ -25,17 +25,21 @@
     <![endif]-->
     
     <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+
+    
     <script src="../tipuesearch/tipuesearch_content.js"></script>
     <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
     <script src="../tipuesearch/tipuesearch_set.js"></script>
     <script src="../tipuesearch/tipuesearch.js"></script>
+    
 
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -48,7 +52,8 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            
+				
+                
             <li><a href="../lists/files.html">Source Files</a></li>
 				
 				
@@ -57,13 +62,14 @@
 				
             <li><a href="../lists/procedures.html">Procedures</a></li>
 				
-				
+								
             <li><a href="../lists/types.html">Derived Types</a></li>
 				
 				
             <li><a href="../program/test_driver.html">Program</a></li>
-								
+				
           </ul>
+        
         <form action="../search.html" class="navbar-form navbar-right" role="search">
         <div class="form-group">
           <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
@@ -72,6 +78,7 @@
         <button type="submit" class="btn btn-default">Submit</button>
 -->
         </form>
+        
         </div><!--/.nav-collapse -->
       </div>
     </nav>
@@ -86,9 +93,9 @@
     </h1>
 	 
 <div class="row">
-<div class="col-lg-7">
+<div class="col-lg-12">
 <div class="well well-sm">
-  <ul class="list-inline" style="margin-bottom:0px">
+  <ul class="list-inline" style="margin-bottom:0px;display:inline">
      
      
      
@@ -98,16 +105,14 @@
     <li><i class="fa fa-code"></i><a href="../src/Lib_Pack_Data.f90"> Source File</a></li>
      
   </ul>
-  </div>
-  </div>
-  <div class="col-lg-5">
-  <ol class="breadcrumb hierarchy text-right">
+  <ol class="breadcrumb in-well text-right">
   
      <li><a href='../sourcefile/lib_pack_data.f90.html'>Lib_Pack_Data.f90</a></li>
   
      <li class="active">Lib_Pack_Data</li>
   </ol>
-  </div>
+</div>
+</div>
 </div>
     
   </div>
@@ -115,89 +120,104 @@
   <div class="row">
     <div class="col-lg-3">
     
+<div id="sidebar">
+  
+  
+  
+  
   
   
   
   
   
   <div class="panel panel-primary">
-    <div class="panel-heading text-left"><h3 class="panel-title">Interfaces</h3></div>
-    <div class="list-group">
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#intr-pack_data">pack_data</a>
-      
+    <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#inters">Interfaces</a></h3></div>
+    <div id="inters" class="panel-collapse collapse">
+        <div class="list-group">
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#interface-pack_data">pack_data</a>
+          
+        </div>
     </div>
   </div>
   
   
   
   
+  
+  
   <div class="panel panel-primary">
-    <div class="panel-heading text-left"><h3 class="panel-title">Subroutines</h3></div>
+    <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#subs">Subroutines</a></h3></div>
     <div class="list-group">
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_R8_R4">pack_data_R8_R4</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_R8_I8">pack_data_R8_I8</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_R8_I4">pack_data_R8_I4</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_R8_I2">pack_data_R8_I2</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_R8_I1">pack_data_R8_I1</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_R4_R8">pack_data_R4_R8</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_R4_I8">pack_data_R4_I8</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_R4_I4">pack_data_R4_I4</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_R4_I2">pack_data_R4_I2</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_R4_I1">pack_data_R4_I1</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_I8_R8">pack_data_I8_R8</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_I8_R4">pack_data_I8_R4</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_I8_I4">pack_data_I8_I4</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_I8_I2">pack_data_I8_I2</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_I8_I1">pack_data_I8_I1</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_I4_R8">pack_data_I4_R8</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_I4_R4">pack_data_I4_R4</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_I4_I8">pack_data_I4_I8</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_I4_I2">pack_data_I4_I2</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_I4_I1">pack_data_I4_I1</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_I2_R8">pack_data_I2_R8</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_I2_R4">pack_data_I2_R4</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_I2_I8">pack_data_I2_I8</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_I2_I4">pack_data_I2_I4</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_I2_I1">pack_data_I2_I1</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_I1_R8">pack_data_I1_R8</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_I1_R4">pack_data_I1_R4</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_I1_I8">pack_data_I1_I8</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_I1_I4">pack_data_I1_I4</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_I1_I2">pack_data_I1_I2</a>
-      
+        <div id="subs" class="panel-collapse collapse">
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_r8_r4">pack_data_R8_R4</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_r8_i8">pack_data_R8_I8</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_r8_i4">pack_data_R8_I4</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_r8_i2">pack_data_R8_I2</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_r8_i1">pack_data_R8_I1</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_r4_r8">pack_data_R4_R8</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_r4_i8">pack_data_R4_I8</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_r4_i4">pack_data_R4_I4</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_r4_i2">pack_data_R4_I2</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_r4_i1">pack_data_R4_I1</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_i8_r8">pack_data_I8_R8</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_i8_r4">pack_data_I8_R4</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_i8_i4">pack_data_I8_I4</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_i8_i2">pack_data_I8_I2</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_i8_i1">pack_data_I8_I1</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_i4_r8">pack_data_I4_R8</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_i4_r4">pack_data_I4_R4</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_i4_i8">pack_data_I4_I8</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_i4_i2">pack_data_I4_I2</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_i4_i1">pack_data_I4_I1</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_i2_r8">pack_data_I2_R8</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_i2_r4">pack_data_I2_R4</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_i2_i8">pack_data_I2_I8</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_i2_i4">pack_data_I2_I4</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_i2_i1">pack_data_I2_I1</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_i1_r8">pack_data_I1_R8</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_i1_r4">pack_data_I1_R4</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_i1_i8">pack_data_I1_I8</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_i1_i4">pack_data_I1_I4</a>
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html#proc-pack_data_i1_i2">pack_data_I1_I2</a>
+          
+        </div>
     </div>
   </div>
+  
+  
+  
+  
   
   
   
@@ -205,65 +225,103 @@
   <hr>
   
   <div class="panel panel-default">
-    <div class="panel-heading text-left"><h3 class="panel-title">All Modules</h3></div>
-    <div class="list-group">
-      
-      <a class="list-group-item" href="../module/ir_precision.html">IR_Precision</a>
-      
-      <a class="list-group-item" href="../module/lib_base64.html">Lib_Base64</a>
-      
-      <a class="list-group-item" href="../module/lib_pack_data.html">Lib_Pack_Data</a>
-      
-      <a class="list-group-item" href="../module/lib_testers.html">Lib_Testers</a>
-      
-      <a class="list-group-item" href="../module/lib_vtk_io.html">Lib_VTK_IO</a>
-      
+    <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#allmods">All Modules</a></h3></div>
+    <div id="allmods" class="panel-collapse collapse">
+        <div class="list-group">
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html">Lib_Pack_Data</a>
+          
+          <a class="list-group-item" href="../module/lib_testers.html">Lib_Testers</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io.html">Lib_VTK_IO</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_back_end.html">Lib_VTK_IO_Back_End</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_con.html">Lib_VTK_IO_CON</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_con_xml.html">Lib_VTK_IO_CON_XML</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_dat_var.html">Lib_VTK_IO_DAT_VAR</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_dat_var_xml.html">Lib_VTK_IO_DAT_VAR_XML</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_end.html">Lib_VTK_IO_END</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_end_xml.html">Lib_VTK_IO_END_XML</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_fld_xml.html">Lib_VTK_IO_FLD_XML</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_geo.html">Lib_VTK_IO_GEO</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_geo_xml.html">Lib_VTK_IO_GEO_XML</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_ini.html">Lib_VTK_IO_INI</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_ini_xml.html">Lib_VTK_IO_INI_XML</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_pvd_xml.html">Lib_VTK_IO_PVD_XML</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_pvtk_xml.html">Lib_VTK_IO_PVTK_XML</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_vtm_xml.html">Lib_VTK_IO_VTM_XML</a>
+          
+        </div>
     </div>
   </div>
   
-  
+</div>
+
     </div>
     
     <div class="col-lg-9" id='text'>
+    
     
   
     <ul class="list-inline">
       <li><h4>Uses:</h4></li>
       
-      <li><a href='../module/ir_precision.html'>IR_Precision</a></li>
+      <li>IR_Precision</li>
       
     </ul>
   
 
+    
+    
     <p>KISS library for packing heterogeneous data into single (homogeneous) packed one</p>
     <br>
+    
 
     
     
     
+    
+    
+    <section>
 	 <h2>Interfaces</h2>
 	 
 	   
 <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="intr-pack_data"></a><h3>public  interface <a href='../interface/pack_data.html'>pack_data</a>
+  <div class="panel-heading codesum"><span class="anchor" id="interface-pack_data"></span><h3>public interface <a href='../interface/pack_data.html'>pack_data</a>
     
   </h3></div>
   
   <div class="panel-body">
     
-
-
     <p>Procedure for packing different kinds of data into single I1P array.</p>
   </div>
   
   <ul class="list-group">
   
   
+  
     <li class="list-group-item">
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_r8_r4.html'>pack_data_R8_R4</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_r8_r4.html'>pack_data_R8_R4</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -285,7 +343,7 @@ private pure subroutine <a href='../proc/pack_data_r8_r4.html'>pack_data_R8_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>real(kind=R8P),</td>
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -300,7 +358,7 @@ private pure subroutine <a href='../proc/pack_data_r8_r4.html'>pack_data_R8_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>real(kind=R4P),</td>
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -315,7 +373,7 @@ private pure subroutine <a href='../proc/pack_data_r8_r4.html'>pack_data_R8_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -333,8 +391,10 @@ private pure subroutine <a href='../proc/pack_data_r8_r4.html'>pack_data_R8_R4</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -344,7 +404,10 @@ private pure subroutine <a href='../proc/pack_data_r8_r4.html'>pack_data_R8_R4</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_r8_i8.html'>pack_data_R8_I8</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_r8_i8.html'>pack_data_R8_I8</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -366,7 +429,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i8.html'>pack_data_R8_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>real(kind=R8P),</td>
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -381,7 +444,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i8.html'>pack_data_R8_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -396,7 +459,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i8.html'>pack_data_R8_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -414,8 +477,10 @@ private pure subroutine <a href='../proc/pack_data_r8_i8.html'>pack_data_R8_I8</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -425,7 +490,10 @@ private pure subroutine <a href='../proc/pack_data_r8_i8.html'>pack_data_R8_I8</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_r8_i4.html'>pack_data_R8_I4</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_r8_i4.html'>pack_data_R8_I4</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -447,7 +515,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i4.html'>pack_data_R8_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>real(kind=R8P),</td>
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -462,7 +530,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i4.html'>pack_data_R8_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -477,7 +545,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i4.html'>pack_data_R8_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -495,8 +563,10 @@ private pure subroutine <a href='../proc/pack_data_r8_i4.html'>pack_data_R8_I4</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -506,7 +576,10 @@ private pure subroutine <a href='../proc/pack_data_r8_i4.html'>pack_data_R8_I4</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_r8_i2.html'>pack_data_R8_I2</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_r8_i2.html'>pack_data_R8_I2</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -528,7 +601,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i2.html'>pack_data_R8_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>real(kind=R8P),</td>
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -543,7 +616,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i2.html'>pack_data_R8_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I2P),</td>
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -558,7 +631,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i2.html'>pack_data_R8_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -576,8 +649,10 @@ private pure subroutine <a href='../proc/pack_data_r8_i2.html'>pack_data_R8_I2</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -587,7 +662,10 @@ private pure subroutine <a href='../proc/pack_data_r8_i2.html'>pack_data_R8_I2</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_r8_i1.html'>pack_data_R8_I1</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_r8_i1.html'>pack_data_R8_I1</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -609,7 +687,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i1.html'>pack_data_R8_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>real(kind=R8P),</td>
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -624,7 +702,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i1.html'>pack_data_R8_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -639,7 +717,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i1.html'>pack_data_R8_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -657,8 +735,10 @@ private pure subroutine <a href='../proc/pack_data_r8_i1.html'>pack_data_R8_I1</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -668,7 +748,10 @@ private pure subroutine <a href='../proc/pack_data_r8_i1.html'>pack_data_R8_I1</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_r4_r8.html'>pack_data_R4_R8</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_r4_r8.html'>pack_data_R4_R8</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -690,7 +773,7 @@ private pure subroutine <a href='../proc/pack_data_r4_r8.html'>pack_data_R4_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>real(kind=R4P),</td>
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -705,7 +788,7 @@ private pure subroutine <a href='../proc/pack_data_r4_r8.html'>pack_data_R4_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>real(kind=R8P),</td>
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -720,7 +803,7 @@ private pure subroutine <a href='../proc/pack_data_r4_r8.html'>pack_data_R4_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -738,8 +821,10 @@ private pure subroutine <a href='../proc/pack_data_r4_r8.html'>pack_data_R4_R8</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -749,7 +834,10 @@ private pure subroutine <a href='../proc/pack_data_r4_r8.html'>pack_data_R4_R8</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_r4_i8.html'>pack_data_R4_I8</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_r4_i8.html'>pack_data_R4_I8</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -771,7 +859,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i8.html'>pack_data_R4_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>real(kind=R4P),</td>
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -786,7 +874,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i8.html'>pack_data_R4_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -801,7 +889,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i8.html'>pack_data_R4_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -819,8 +907,10 @@ private pure subroutine <a href='../proc/pack_data_r4_i8.html'>pack_data_R4_I8</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -830,7 +920,10 @@ private pure subroutine <a href='../proc/pack_data_r4_i8.html'>pack_data_R4_I8</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_r4_i4.html'>pack_data_R4_I4</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_r4_i4.html'>pack_data_R4_I4</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -852,7 +945,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i4.html'>pack_data_R4_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>real(kind=R4P),</td>
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -867,7 +960,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i4.html'>pack_data_R4_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -882,7 +975,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i4.html'>pack_data_R4_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -900,8 +993,10 @@ private pure subroutine <a href='../proc/pack_data_r4_i4.html'>pack_data_R4_I4</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -911,7 +1006,10 @@ private pure subroutine <a href='../proc/pack_data_r4_i4.html'>pack_data_R4_I4</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_r4_i2.html'>pack_data_R4_I2</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_r4_i2.html'>pack_data_R4_I2</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -933,7 +1031,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i2.html'>pack_data_R4_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>real(kind=R4P),</td>
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -948,7 +1046,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i2.html'>pack_data_R4_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I2P),</td>
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -963,7 +1061,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i2.html'>pack_data_R4_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -981,8 +1079,10 @@ private pure subroutine <a href='../proc/pack_data_r4_i2.html'>pack_data_R4_I2</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -992,7 +1092,10 @@ private pure subroutine <a href='../proc/pack_data_r4_i2.html'>pack_data_R4_I2</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_r4_i1.html'>pack_data_R4_I1</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_r4_i1.html'>pack_data_R4_I1</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -1014,7 +1117,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i1.html'>pack_data_R4_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>real(kind=R4P),</td>
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1029,7 +1132,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i1.html'>pack_data_R4_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1044,7 +1147,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i1.html'>pack_data_R4_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -1062,8 +1165,10 @@ private pure subroutine <a href='../proc/pack_data_r4_i1.html'>pack_data_R4_I1</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -1073,7 +1178,10 @@ private pure subroutine <a href='../proc/pack_data_r4_i1.html'>pack_data_R4_I1</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_i8_r8.html'>pack_data_I8_R8</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_i8_r8.html'>pack_data_I8_R8</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -1095,7 +1203,7 @@ private pure subroutine <a href='../proc/pack_data_i8_r8.html'>pack_data_I8_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1110,7 +1218,7 @@ private pure subroutine <a href='../proc/pack_data_i8_r8.html'>pack_data_I8_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>real(kind=R8P),</td>
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1125,7 +1233,7 @@ private pure subroutine <a href='../proc/pack_data_i8_r8.html'>pack_data_I8_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -1143,8 +1251,10 @@ private pure subroutine <a href='../proc/pack_data_i8_r8.html'>pack_data_I8_R8</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -1154,7 +1264,10 @@ private pure subroutine <a href='../proc/pack_data_i8_r8.html'>pack_data_I8_R8</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_i8_r4.html'>pack_data_I8_R4</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_i8_r4.html'>pack_data_I8_R4</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -1176,7 +1289,7 @@ private pure subroutine <a href='../proc/pack_data_i8_r4.html'>pack_data_I8_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1191,7 +1304,7 @@ private pure subroutine <a href='../proc/pack_data_i8_r4.html'>pack_data_I8_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>real(kind=R4P),</td>
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1206,7 +1319,7 @@ private pure subroutine <a href='../proc/pack_data_i8_r4.html'>pack_data_I8_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -1224,8 +1337,10 @@ private pure subroutine <a href='../proc/pack_data_i8_r4.html'>pack_data_I8_R4</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -1235,7 +1350,10 @@ private pure subroutine <a href='../proc/pack_data_i8_r4.html'>pack_data_I8_R4</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_i8_i4.html'>pack_data_I8_I4</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_i8_i4.html'>pack_data_I8_I4</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -1257,7 +1375,7 @@ private pure subroutine <a href='../proc/pack_data_i8_i4.html'>pack_data_I8_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1272,7 +1390,7 @@ private pure subroutine <a href='../proc/pack_data_i8_i4.html'>pack_data_I8_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1287,7 +1405,7 @@ private pure subroutine <a href='../proc/pack_data_i8_i4.html'>pack_data_I8_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -1305,8 +1423,10 @@ private pure subroutine <a href='../proc/pack_data_i8_i4.html'>pack_data_I8_I4</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -1316,7 +1436,10 @@ private pure subroutine <a href='../proc/pack_data_i8_i4.html'>pack_data_I8_I4</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_i8_i2.html'>pack_data_I8_I2</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_i8_i2.html'>pack_data_I8_I2</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -1338,7 +1461,7 @@ private pure subroutine <a href='../proc/pack_data_i8_i2.html'>pack_data_I8_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1353,7 +1476,7 @@ private pure subroutine <a href='../proc/pack_data_i8_i2.html'>pack_data_I8_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I2P),</td>
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1368,7 +1491,7 @@ private pure subroutine <a href='../proc/pack_data_i8_i2.html'>pack_data_I8_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -1386,8 +1509,10 @@ private pure subroutine <a href='../proc/pack_data_i8_i2.html'>pack_data_I8_I2</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -1397,7 +1522,10 @@ private pure subroutine <a href='../proc/pack_data_i8_i2.html'>pack_data_I8_I2</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_i8_i1.html'>pack_data_I8_I1</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_i8_i1.html'>pack_data_I8_I1</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -1419,7 +1547,7 @@ private pure subroutine <a href='../proc/pack_data_i8_i1.html'>pack_data_I8_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1434,7 +1562,7 @@ private pure subroutine <a href='../proc/pack_data_i8_i1.html'>pack_data_I8_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1449,7 +1577,7 @@ private pure subroutine <a href='../proc/pack_data_i8_i1.html'>pack_data_I8_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -1467,8 +1595,10 @@ private pure subroutine <a href='../proc/pack_data_i8_i1.html'>pack_data_I8_I1</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -1478,7 +1608,10 @@ private pure subroutine <a href='../proc/pack_data_i8_i1.html'>pack_data_I8_I1</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_i4_r8.html'>pack_data_I4_R8</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_i4_r8.html'>pack_data_I4_R8</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -1500,7 +1633,7 @@ private pure subroutine <a href='../proc/pack_data_i4_r8.html'>pack_data_I4_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1515,7 +1648,7 @@ private pure subroutine <a href='../proc/pack_data_i4_r8.html'>pack_data_I4_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>real(kind=R8P),</td>
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1530,7 +1663,7 @@ private pure subroutine <a href='../proc/pack_data_i4_r8.html'>pack_data_I4_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -1548,8 +1681,10 @@ private pure subroutine <a href='../proc/pack_data_i4_r8.html'>pack_data_I4_R8</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -1559,7 +1694,10 @@ private pure subroutine <a href='../proc/pack_data_i4_r8.html'>pack_data_I4_R8</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_i4_r4.html'>pack_data_I4_R4</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_i4_r4.html'>pack_data_I4_R4</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -1581,7 +1719,7 @@ private pure subroutine <a href='../proc/pack_data_i4_r4.html'>pack_data_I4_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1596,7 +1734,7 @@ private pure subroutine <a href='../proc/pack_data_i4_r4.html'>pack_data_I4_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>real(kind=R4P),</td>
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1611,7 +1749,7 @@ private pure subroutine <a href='../proc/pack_data_i4_r4.html'>pack_data_I4_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -1629,8 +1767,10 @@ private pure subroutine <a href='../proc/pack_data_i4_r4.html'>pack_data_I4_R4</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -1640,7 +1780,10 @@ private pure subroutine <a href='../proc/pack_data_i4_r4.html'>pack_data_I4_R4</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_i4_i8.html'>pack_data_I4_I8</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_i4_i8.html'>pack_data_I4_I8</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -1662,7 +1805,7 @@ private pure subroutine <a href='../proc/pack_data_i4_i8.html'>pack_data_I4_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1677,7 +1820,7 @@ private pure subroutine <a href='../proc/pack_data_i4_i8.html'>pack_data_I4_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1692,7 +1835,7 @@ private pure subroutine <a href='../proc/pack_data_i4_i8.html'>pack_data_I4_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -1710,8 +1853,10 @@ private pure subroutine <a href='../proc/pack_data_i4_i8.html'>pack_data_I4_I8</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -1721,7 +1866,10 @@ private pure subroutine <a href='../proc/pack_data_i4_i8.html'>pack_data_I4_I8</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_i4_i2.html'>pack_data_I4_I2</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_i4_i2.html'>pack_data_I4_I2</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -1743,7 +1891,7 @@ private pure subroutine <a href='../proc/pack_data_i4_i2.html'>pack_data_I4_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1758,7 +1906,7 @@ private pure subroutine <a href='../proc/pack_data_i4_i2.html'>pack_data_I4_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I2P),</td>
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1773,7 +1921,7 @@ private pure subroutine <a href='../proc/pack_data_i4_i2.html'>pack_data_I4_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -1791,8 +1939,10 @@ private pure subroutine <a href='../proc/pack_data_i4_i2.html'>pack_data_I4_I2</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -1802,7 +1952,10 @@ private pure subroutine <a href='../proc/pack_data_i4_i2.html'>pack_data_I4_I2</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_i4_i1.html'>pack_data_I4_I1</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_i4_i1.html'>pack_data_I4_I1</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -1824,7 +1977,7 @@ private pure subroutine <a href='../proc/pack_data_i4_i1.html'>pack_data_I4_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1839,7 +1992,7 @@ private pure subroutine <a href='../proc/pack_data_i4_i1.html'>pack_data_I4_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1854,7 +2007,7 @@ private pure subroutine <a href='../proc/pack_data_i4_i1.html'>pack_data_I4_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -1872,8 +2025,10 @@ private pure subroutine <a href='../proc/pack_data_i4_i1.html'>pack_data_I4_I1</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -1883,7 +2038,10 @@ private pure subroutine <a href='../proc/pack_data_i4_i1.html'>pack_data_I4_I1</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_i2_r8.html'>pack_data_I2_R8</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_i2_r8.html'>pack_data_I2_R8</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -1905,7 +2063,7 @@ private pure subroutine <a href='../proc/pack_data_i2_r8.html'>pack_data_I2_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I2P),</td>
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1920,7 +2078,7 @@ private pure subroutine <a href='../proc/pack_data_i2_r8.html'>pack_data_I2_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>real(kind=R8P),</td>
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -1935,7 +2093,7 @@ private pure subroutine <a href='../proc/pack_data_i2_r8.html'>pack_data_I2_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -1953,8 +2111,10 @@ private pure subroutine <a href='../proc/pack_data_i2_r8.html'>pack_data_I2_R8</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -1964,7 +2124,10 @@ private pure subroutine <a href='../proc/pack_data_i2_r8.html'>pack_data_I2_R8</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_i2_r4.html'>pack_data_I2_R4</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_i2_r4.html'>pack_data_I2_R4</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -1986,7 +2149,7 @@ private pure subroutine <a href='../proc/pack_data_i2_r4.html'>pack_data_I2_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I2P),</td>
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2001,7 +2164,7 @@ private pure subroutine <a href='../proc/pack_data_i2_r4.html'>pack_data_I2_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>real(kind=R4P),</td>
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2016,7 +2179,7 @@ private pure subroutine <a href='../proc/pack_data_i2_r4.html'>pack_data_I2_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -2034,8 +2197,10 @@ private pure subroutine <a href='../proc/pack_data_i2_r4.html'>pack_data_I2_R4</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -2045,7 +2210,10 @@ private pure subroutine <a href='../proc/pack_data_i2_r4.html'>pack_data_I2_R4</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_i2_i8.html'>pack_data_I2_I8</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_i2_i8.html'>pack_data_I2_I8</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -2067,7 +2235,7 @@ private pure subroutine <a href='../proc/pack_data_i2_i8.html'>pack_data_I2_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I2P),</td>
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2082,7 +2250,7 @@ private pure subroutine <a href='../proc/pack_data_i2_i8.html'>pack_data_I2_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2097,7 +2265,7 @@ private pure subroutine <a href='../proc/pack_data_i2_i8.html'>pack_data_I2_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -2115,8 +2283,10 @@ private pure subroutine <a href='../proc/pack_data_i2_i8.html'>pack_data_I2_I8</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -2126,7 +2296,10 @@ private pure subroutine <a href='../proc/pack_data_i2_i8.html'>pack_data_I2_I8</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_i2_i4.html'>pack_data_I2_I4</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_i2_i4.html'>pack_data_I2_I4</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -2148,7 +2321,7 @@ private pure subroutine <a href='../proc/pack_data_i2_i4.html'>pack_data_I2_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I2P),</td>
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2163,7 +2336,7 @@ private pure subroutine <a href='../proc/pack_data_i2_i4.html'>pack_data_I2_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2178,7 +2351,7 @@ private pure subroutine <a href='../proc/pack_data_i2_i4.html'>pack_data_I2_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -2196,8 +2369,10 @@ private pure subroutine <a href='../proc/pack_data_i2_i4.html'>pack_data_I2_I4</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -2207,7 +2382,10 @@ private pure subroutine <a href='../proc/pack_data_i2_i4.html'>pack_data_I2_I4</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_i2_i1.html'>pack_data_I2_I1</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_i2_i1.html'>pack_data_I2_I1</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -2229,7 +2407,7 @@ private pure subroutine <a href='../proc/pack_data_i2_i1.html'>pack_data_I2_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I2P),</td>
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2244,7 +2422,7 @@ private pure subroutine <a href='../proc/pack_data_i2_i1.html'>pack_data_I2_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2259,7 +2437,7 @@ private pure subroutine <a href='../proc/pack_data_i2_i1.html'>pack_data_I2_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -2277,8 +2455,10 @@ private pure subroutine <a href='../proc/pack_data_i2_i1.html'>pack_data_I2_I1</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -2288,7 +2468,10 @@ private pure subroutine <a href='../proc/pack_data_i2_i1.html'>pack_data_I2_I1</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_i1_r8.html'>pack_data_I1_R8</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_i1_r8.html'>pack_data_I1_R8</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -2310,7 +2493,7 @@ private pure subroutine <a href='../proc/pack_data_i1_r8.html'>pack_data_I1_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2325,7 +2508,7 @@ private pure subroutine <a href='../proc/pack_data_i1_r8.html'>pack_data_I1_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>real(kind=R8P),</td>
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2340,7 +2523,7 @@ private pure subroutine <a href='../proc/pack_data_i1_r8.html'>pack_data_I1_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -2358,8 +2541,10 @@ private pure subroutine <a href='../proc/pack_data_i1_r8.html'>pack_data_I1_R8</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -2369,7 +2554,10 @@ private pure subroutine <a href='../proc/pack_data_i1_r8.html'>pack_data_I1_R8</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_i1_r4.html'>pack_data_I1_R4</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_i1_r4.html'>pack_data_I1_R4</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -2391,7 +2579,7 @@ private pure subroutine <a href='../proc/pack_data_i1_r4.html'>pack_data_I1_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2406,7 +2594,7 @@ private pure subroutine <a href='../proc/pack_data_i1_r4.html'>pack_data_I1_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>real(kind=R4P),</td>
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2421,7 +2609,7 @@ private pure subroutine <a href='../proc/pack_data_i1_r4.html'>pack_data_I1_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -2439,8 +2627,10 @@ private pure subroutine <a href='../proc/pack_data_i1_r4.html'>pack_data_I1_R4</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -2450,7 +2640,10 @@ private pure subroutine <a href='../proc/pack_data_i1_r4.html'>pack_data_I1_R4</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_i1_i8.html'>pack_data_I1_I8</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_i1_i8.html'>pack_data_I1_I8</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -2472,7 +2665,7 @@ private pure subroutine <a href='../proc/pack_data_i1_i8.html'>pack_data_I1_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2487,7 +2680,7 @@ private pure subroutine <a href='../proc/pack_data_i1_i8.html'>pack_data_I1_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2502,7 +2695,7 @@ private pure subroutine <a href='../proc/pack_data_i1_i8.html'>pack_data_I1_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -2520,8 +2713,10 @@ private pure subroutine <a href='../proc/pack_data_i1_i8.html'>pack_data_I1_I8</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -2531,7 +2726,10 @@ private pure subroutine <a href='../proc/pack_data_i1_i8.html'>pack_data_I1_I8</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_i1_i4.html'>pack_data_I1_I4</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_i1_i4.html'>pack_data_I1_I4</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -2553,7 +2751,7 @@ private pure subroutine <a href='../proc/pack_data_i1_i4.html'>pack_data_I1_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2568,7 +2766,7 @@ private pure subroutine <a href='../proc/pack_data_i1_i4.html'>pack_data_I1_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2583,7 +2781,7 @@ private pure subroutine <a href='../proc/pack_data_i1_i4.html'>pack_data_I1_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -2601,8 +2799,10 @@ private pure subroutine <a href='../proc/pack_data_i1_i4.html'>pack_data_I1_I4</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -2612,7 +2812,10 @@ private pure subroutine <a href='../proc/pack_data_i1_i4.html'>pack_data_I1_I4</
     
     
     <h3>
-private pure subroutine <a href='../proc/pack_data_i1_i2.html'>pack_data_I1_I2</a>(a1, a2, packed)
+private puresubroutine <a href='../proc/pack_data_i1_i2.html'>pack_data_I1_I2</a>(a1, a2, packed)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -2634,7 +2837,7 @@ private pure subroutine <a href='../proc/pack_data_i1_i2.html'>pack_data_I1_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2649,7 +2852,7 @@ private pure subroutine <a href='../proc/pack_data_i1_i2.html'>pack_data_I1_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I2P),</td>
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2664,7 +2867,7 @@ private pure subroutine <a href='../proc/pack_data_i1_i2.html'>pack_data_I1_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -2682,25 +2885,29 @@ private pure subroutine <a href='../proc/pack_data_i1_i2.html'>pack_data_I1_I2</
     
     <h4>Description</h4>
        
+       
 
 
-       <p>Procedure for packing different kinds of data into single I1P array.</p>
+       
+       <p>@brief Subroutine for packing different kinds of data into single I1P array.</p>
         
 
     </li>
+  
   
   </ul>
 </div>
 
     
     </section>
-	 <br>
-    
-    
-    
-    
+	<br>
     
 
+    
+    
+    
+    
+    
 
     
     <section>
@@ -2708,8 +2915,11 @@ private pure subroutine <a href='../proc/pack_data_i1_i2.html'>pack_data_I1_I2</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_R8_R4"></a><h3>
-private pure subroutine <a href='../proc/pack_data_r8_r4.html'>pack_data_R8_R4</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_r8_r4"></span><h3>
+private puresubroutine <a href='../proc/pack_data_r8_r4.html'>pack_data_R8_R4</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -2733,7 +2943,7 @@ private pure subroutine <a href='../proc/pack_data_r8_r4.html'>pack_data_R8_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>real(kind=R8P),</td>
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2748,7 +2958,7 @@ private pure subroutine <a href='../proc/pack_data_r8_r4.html'>pack_data_R8_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>real(kind=R4P),</td>
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2763,7 +2973,7 @@ private pure subroutine <a href='../proc/pack_data_r8_r4.html'>pack_data_R8_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -2781,8 +2991,10 @@ private pure subroutine <a href='../proc/pack_data_r8_r4.html'>pack_data_R8_R4</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -2792,8 +3004,11 @@ private pure subroutine <a href='../proc/pack_data_r8_r4.html'>pack_data_R8_R4</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_R8_I8"></a><h3>
-private pure subroutine <a href='../proc/pack_data_r8_i8.html'>pack_data_R8_I8</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_r8_i8"></span><h3>
+private puresubroutine <a href='../proc/pack_data_r8_i8.html'>pack_data_R8_I8</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -2817,7 +3032,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i8.html'>pack_data_R8_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>real(kind=R8P),</td>
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2832,7 +3047,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i8.html'>pack_data_R8_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2847,7 +3062,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i8.html'>pack_data_R8_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -2865,8 +3080,10 @@ private pure subroutine <a href='../proc/pack_data_r8_i8.html'>pack_data_R8_I8</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -2876,8 +3093,11 @@ private pure subroutine <a href='../proc/pack_data_r8_i8.html'>pack_data_R8_I8</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_R8_I4"></a><h3>
-private pure subroutine <a href='../proc/pack_data_r8_i4.html'>pack_data_R8_I4</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_r8_i4"></span><h3>
+private puresubroutine <a href='../proc/pack_data_r8_i4.html'>pack_data_R8_I4</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -2901,7 +3121,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i4.html'>pack_data_R8_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>real(kind=R8P),</td>
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2916,7 +3136,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i4.html'>pack_data_R8_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -2931,7 +3151,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i4.html'>pack_data_R8_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -2949,8 +3169,10 @@ private pure subroutine <a href='../proc/pack_data_r8_i4.html'>pack_data_R8_I4</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -2960,8 +3182,11 @@ private pure subroutine <a href='../proc/pack_data_r8_i4.html'>pack_data_R8_I4</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_R8_I2"></a><h3>
-private pure subroutine <a href='../proc/pack_data_r8_i2.html'>pack_data_R8_I2</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_r8_i2"></span><h3>
+private puresubroutine <a href='../proc/pack_data_r8_i2.html'>pack_data_R8_I2</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -2985,7 +3210,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i2.html'>pack_data_R8_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>real(kind=R8P),</td>
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3000,7 +3225,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i2.html'>pack_data_R8_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I2P),</td>
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3015,7 +3240,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i2.html'>pack_data_R8_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -3033,8 +3258,10 @@ private pure subroutine <a href='../proc/pack_data_r8_i2.html'>pack_data_R8_I2</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -3044,8 +3271,11 @@ private pure subroutine <a href='../proc/pack_data_r8_i2.html'>pack_data_R8_I2</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_R8_I1"></a><h3>
-private pure subroutine <a href='../proc/pack_data_r8_i1.html'>pack_data_R8_I1</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_r8_i1"></span><h3>
+private puresubroutine <a href='../proc/pack_data_r8_i1.html'>pack_data_R8_I1</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -3069,7 +3299,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i1.html'>pack_data_R8_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>real(kind=R8P),</td>
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3084,7 +3314,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i1.html'>pack_data_R8_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3099,7 +3329,7 @@ private pure subroutine <a href='../proc/pack_data_r8_i1.html'>pack_data_R8_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -3117,8 +3347,10 @@ private pure subroutine <a href='../proc/pack_data_r8_i1.html'>pack_data_R8_I1</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -3128,8 +3360,11 @@ private pure subroutine <a href='../proc/pack_data_r8_i1.html'>pack_data_R8_I1</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_R4_R8"></a><h3>
-private pure subroutine <a href='../proc/pack_data_r4_r8.html'>pack_data_R4_R8</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_r4_r8"></span><h3>
+private puresubroutine <a href='../proc/pack_data_r4_r8.html'>pack_data_R4_R8</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -3153,7 +3388,7 @@ private pure subroutine <a href='../proc/pack_data_r4_r8.html'>pack_data_R4_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>real(kind=R4P),</td>
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3168,7 +3403,7 @@ private pure subroutine <a href='../proc/pack_data_r4_r8.html'>pack_data_R4_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>real(kind=R8P),</td>
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3183,7 +3418,7 @@ private pure subroutine <a href='../proc/pack_data_r4_r8.html'>pack_data_R4_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -3201,8 +3436,10 @@ private pure subroutine <a href='../proc/pack_data_r4_r8.html'>pack_data_R4_R8</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -3212,8 +3449,11 @@ private pure subroutine <a href='../proc/pack_data_r4_r8.html'>pack_data_R4_R8</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_R4_I8"></a><h3>
-private pure subroutine <a href='../proc/pack_data_r4_i8.html'>pack_data_R4_I8</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_r4_i8"></span><h3>
+private puresubroutine <a href='../proc/pack_data_r4_i8.html'>pack_data_R4_I8</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -3237,7 +3477,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i8.html'>pack_data_R4_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>real(kind=R4P),</td>
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3252,7 +3492,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i8.html'>pack_data_R4_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3267,7 +3507,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i8.html'>pack_data_R4_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -3285,8 +3525,10 @@ private pure subroutine <a href='../proc/pack_data_r4_i8.html'>pack_data_R4_I8</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -3296,8 +3538,11 @@ private pure subroutine <a href='../proc/pack_data_r4_i8.html'>pack_data_R4_I8</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_R4_I4"></a><h3>
-private pure subroutine <a href='../proc/pack_data_r4_i4.html'>pack_data_R4_I4</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_r4_i4"></span><h3>
+private puresubroutine <a href='../proc/pack_data_r4_i4.html'>pack_data_R4_I4</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -3321,7 +3566,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i4.html'>pack_data_R4_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>real(kind=R4P),</td>
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3336,7 +3581,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i4.html'>pack_data_R4_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3351,7 +3596,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i4.html'>pack_data_R4_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -3369,8 +3614,10 @@ private pure subroutine <a href='../proc/pack_data_r4_i4.html'>pack_data_R4_I4</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -3380,8 +3627,11 @@ private pure subroutine <a href='../proc/pack_data_r4_i4.html'>pack_data_R4_I4</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_R4_I2"></a><h3>
-private pure subroutine <a href='../proc/pack_data_r4_i2.html'>pack_data_R4_I2</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_r4_i2"></span><h3>
+private puresubroutine <a href='../proc/pack_data_r4_i2.html'>pack_data_R4_I2</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -3405,7 +3655,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i2.html'>pack_data_R4_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>real(kind=R4P),</td>
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3420,7 +3670,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i2.html'>pack_data_R4_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I2P),</td>
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3435,7 +3685,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i2.html'>pack_data_R4_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -3453,8 +3703,10 @@ private pure subroutine <a href='../proc/pack_data_r4_i2.html'>pack_data_R4_I2</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -3464,8 +3716,11 @@ private pure subroutine <a href='../proc/pack_data_r4_i2.html'>pack_data_R4_I2</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_R4_I1"></a><h3>
-private pure subroutine <a href='../proc/pack_data_r4_i1.html'>pack_data_R4_I1</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_r4_i1"></span><h3>
+private puresubroutine <a href='../proc/pack_data_r4_i1.html'>pack_data_R4_I1</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -3489,7 +3744,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i1.html'>pack_data_R4_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>real(kind=R4P),</td>
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3504,7 +3759,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i1.html'>pack_data_R4_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3519,7 +3774,7 @@ private pure subroutine <a href='../proc/pack_data_r4_i1.html'>pack_data_R4_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -3537,8 +3792,10 @@ private pure subroutine <a href='../proc/pack_data_r4_i1.html'>pack_data_R4_I1</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -3548,8 +3805,11 @@ private pure subroutine <a href='../proc/pack_data_r4_i1.html'>pack_data_R4_I1</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_I8_R8"></a><h3>
-private pure subroutine <a href='../proc/pack_data_i8_r8.html'>pack_data_I8_R8</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_i8_r8"></span><h3>
+private puresubroutine <a href='../proc/pack_data_i8_r8.html'>pack_data_I8_R8</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -3573,7 +3833,7 @@ private pure subroutine <a href='../proc/pack_data_i8_r8.html'>pack_data_I8_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3588,7 +3848,7 @@ private pure subroutine <a href='../proc/pack_data_i8_r8.html'>pack_data_I8_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>real(kind=R8P),</td>
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3603,7 +3863,7 @@ private pure subroutine <a href='../proc/pack_data_i8_r8.html'>pack_data_I8_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -3621,8 +3881,10 @@ private pure subroutine <a href='../proc/pack_data_i8_r8.html'>pack_data_I8_R8</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -3632,8 +3894,11 @@ private pure subroutine <a href='../proc/pack_data_i8_r8.html'>pack_data_I8_R8</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_I8_R4"></a><h3>
-private pure subroutine <a href='../proc/pack_data_i8_r4.html'>pack_data_I8_R4</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_i8_r4"></span><h3>
+private puresubroutine <a href='../proc/pack_data_i8_r4.html'>pack_data_I8_R4</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -3657,7 +3922,7 @@ private pure subroutine <a href='../proc/pack_data_i8_r4.html'>pack_data_I8_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3672,7 +3937,7 @@ private pure subroutine <a href='../proc/pack_data_i8_r4.html'>pack_data_I8_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>real(kind=R4P),</td>
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3687,7 +3952,7 @@ private pure subroutine <a href='../proc/pack_data_i8_r4.html'>pack_data_I8_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -3705,8 +3970,10 @@ private pure subroutine <a href='../proc/pack_data_i8_r4.html'>pack_data_I8_R4</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -3716,8 +3983,11 @@ private pure subroutine <a href='../proc/pack_data_i8_r4.html'>pack_data_I8_R4</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_I8_I4"></a><h3>
-private pure subroutine <a href='../proc/pack_data_i8_i4.html'>pack_data_I8_I4</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_i8_i4"></span><h3>
+private puresubroutine <a href='../proc/pack_data_i8_i4.html'>pack_data_I8_I4</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -3741,7 +4011,7 @@ private pure subroutine <a href='../proc/pack_data_i8_i4.html'>pack_data_I8_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3756,7 +4026,7 @@ private pure subroutine <a href='../proc/pack_data_i8_i4.html'>pack_data_I8_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3771,7 +4041,7 @@ private pure subroutine <a href='../proc/pack_data_i8_i4.html'>pack_data_I8_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -3789,8 +4059,10 @@ private pure subroutine <a href='../proc/pack_data_i8_i4.html'>pack_data_I8_I4</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -3800,8 +4072,11 @@ private pure subroutine <a href='../proc/pack_data_i8_i4.html'>pack_data_I8_I4</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_I8_I2"></a><h3>
-private pure subroutine <a href='../proc/pack_data_i8_i2.html'>pack_data_I8_I2</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_i8_i2"></span><h3>
+private puresubroutine <a href='../proc/pack_data_i8_i2.html'>pack_data_I8_I2</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -3825,7 +4100,7 @@ private pure subroutine <a href='../proc/pack_data_i8_i2.html'>pack_data_I8_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3840,7 +4115,7 @@ private pure subroutine <a href='../proc/pack_data_i8_i2.html'>pack_data_I8_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I2P),</td>
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3855,7 +4130,7 @@ private pure subroutine <a href='../proc/pack_data_i8_i2.html'>pack_data_I8_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -3873,8 +4148,10 @@ private pure subroutine <a href='../proc/pack_data_i8_i2.html'>pack_data_I8_I2</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -3884,8 +4161,11 @@ private pure subroutine <a href='../proc/pack_data_i8_i2.html'>pack_data_I8_I2</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_I8_I1"></a><h3>
-private pure subroutine <a href='../proc/pack_data_i8_i1.html'>pack_data_I8_I1</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_i8_i1"></span><h3>
+private puresubroutine <a href='../proc/pack_data_i8_i1.html'>pack_data_I8_I1</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -3909,7 +4189,7 @@ private pure subroutine <a href='../proc/pack_data_i8_i1.html'>pack_data_I8_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3924,7 +4204,7 @@ private pure subroutine <a href='../proc/pack_data_i8_i1.html'>pack_data_I8_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -3939,7 +4219,7 @@ private pure subroutine <a href='../proc/pack_data_i8_i1.html'>pack_data_I8_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -3957,8 +4237,10 @@ private pure subroutine <a href='../proc/pack_data_i8_i1.html'>pack_data_I8_I1</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -3968,8 +4250,11 @@ private pure subroutine <a href='../proc/pack_data_i8_i1.html'>pack_data_I8_I1</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_I4_R8"></a><h3>
-private pure subroutine <a href='../proc/pack_data_i4_r8.html'>pack_data_I4_R8</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_i4_r8"></span><h3>
+private puresubroutine <a href='../proc/pack_data_i4_r8.html'>pack_data_I4_R8</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -3993,7 +4278,7 @@ private pure subroutine <a href='../proc/pack_data_i4_r8.html'>pack_data_I4_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4008,7 +4293,7 @@ private pure subroutine <a href='../proc/pack_data_i4_r8.html'>pack_data_I4_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>real(kind=R8P),</td>
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4023,7 +4308,7 @@ private pure subroutine <a href='../proc/pack_data_i4_r8.html'>pack_data_I4_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -4041,8 +4326,10 @@ private pure subroutine <a href='../proc/pack_data_i4_r8.html'>pack_data_I4_R8</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -4052,8 +4339,11 @@ private pure subroutine <a href='../proc/pack_data_i4_r8.html'>pack_data_I4_R8</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_I4_R4"></a><h3>
-private pure subroutine <a href='../proc/pack_data_i4_r4.html'>pack_data_I4_R4</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_i4_r4"></span><h3>
+private puresubroutine <a href='../proc/pack_data_i4_r4.html'>pack_data_I4_R4</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -4077,7 +4367,7 @@ private pure subroutine <a href='../proc/pack_data_i4_r4.html'>pack_data_I4_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4092,7 +4382,7 @@ private pure subroutine <a href='../proc/pack_data_i4_r4.html'>pack_data_I4_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>real(kind=R4P),</td>
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4107,7 +4397,7 @@ private pure subroutine <a href='../proc/pack_data_i4_r4.html'>pack_data_I4_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -4125,8 +4415,10 @@ private pure subroutine <a href='../proc/pack_data_i4_r4.html'>pack_data_I4_R4</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -4136,8 +4428,11 @@ private pure subroutine <a href='../proc/pack_data_i4_r4.html'>pack_data_I4_R4</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_I4_I8"></a><h3>
-private pure subroutine <a href='../proc/pack_data_i4_i8.html'>pack_data_I4_I8</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_i4_i8"></span><h3>
+private puresubroutine <a href='../proc/pack_data_i4_i8.html'>pack_data_I4_I8</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -4161,7 +4456,7 @@ private pure subroutine <a href='../proc/pack_data_i4_i8.html'>pack_data_I4_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4176,7 +4471,7 @@ private pure subroutine <a href='../proc/pack_data_i4_i8.html'>pack_data_I4_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4191,7 +4486,7 @@ private pure subroutine <a href='../proc/pack_data_i4_i8.html'>pack_data_I4_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -4209,8 +4504,10 @@ private pure subroutine <a href='../proc/pack_data_i4_i8.html'>pack_data_I4_I8</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -4220,8 +4517,11 @@ private pure subroutine <a href='../proc/pack_data_i4_i8.html'>pack_data_I4_I8</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_I4_I2"></a><h3>
-private pure subroutine <a href='../proc/pack_data_i4_i2.html'>pack_data_I4_I2</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_i4_i2"></span><h3>
+private puresubroutine <a href='../proc/pack_data_i4_i2.html'>pack_data_I4_I2</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -4245,7 +4545,7 @@ private pure subroutine <a href='../proc/pack_data_i4_i2.html'>pack_data_I4_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4260,7 +4560,7 @@ private pure subroutine <a href='../proc/pack_data_i4_i2.html'>pack_data_I4_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I2P),</td>
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4275,7 +4575,7 @@ private pure subroutine <a href='../proc/pack_data_i4_i2.html'>pack_data_I4_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -4293,8 +4593,10 @@ private pure subroutine <a href='../proc/pack_data_i4_i2.html'>pack_data_I4_I2</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -4304,8 +4606,11 @@ private pure subroutine <a href='../proc/pack_data_i4_i2.html'>pack_data_I4_I2</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_I4_I1"></a><h3>
-private pure subroutine <a href='../proc/pack_data_i4_i1.html'>pack_data_I4_I1</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_i4_i1"></span><h3>
+private puresubroutine <a href='../proc/pack_data_i4_i1.html'>pack_data_I4_I1</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -4329,7 +4634,7 @@ private pure subroutine <a href='../proc/pack_data_i4_i1.html'>pack_data_I4_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4344,7 +4649,7 @@ private pure subroutine <a href='../proc/pack_data_i4_i1.html'>pack_data_I4_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4359,7 +4664,7 @@ private pure subroutine <a href='../proc/pack_data_i4_i1.html'>pack_data_I4_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -4377,8 +4682,10 @@ private pure subroutine <a href='../proc/pack_data_i4_i1.html'>pack_data_I4_I1</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -4388,8 +4695,11 @@ private pure subroutine <a href='../proc/pack_data_i4_i1.html'>pack_data_I4_I1</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_I2_R8"></a><h3>
-private pure subroutine <a href='../proc/pack_data_i2_r8.html'>pack_data_I2_R8</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_i2_r8"></span><h3>
+private puresubroutine <a href='../proc/pack_data_i2_r8.html'>pack_data_I2_R8</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -4413,7 +4723,7 @@ private pure subroutine <a href='../proc/pack_data_i2_r8.html'>pack_data_I2_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I2P),</td>
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4428,7 +4738,7 @@ private pure subroutine <a href='../proc/pack_data_i2_r8.html'>pack_data_I2_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>real(kind=R8P),</td>
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4443,7 +4753,7 @@ private pure subroutine <a href='../proc/pack_data_i2_r8.html'>pack_data_I2_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -4461,8 +4771,10 @@ private pure subroutine <a href='../proc/pack_data_i2_r8.html'>pack_data_I2_R8</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -4472,8 +4784,11 @@ private pure subroutine <a href='../proc/pack_data_i2_r8.html'>pack_data_I2_R8</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_I2_R4"></a><h3>
-private pure subroutine <a href='../proc/pack_data_i2_r4.html'>pack_data_I2_R4</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_i2_r4"></span><h3>
+private puresubroutine <a href='../proc/pack_data_i2_r4.html'>pack_data_I2_R4</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -4497,7 +4812,7 @@ private pure subroutine <a href='../proc/pack_data_i2_r4.html'>pack_data_I2_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I2P),</td>
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4512,7 +4827,7 @@ private pure subroutine <a href='../proc/pack_data_i2_r4.html'>pack_data_I2_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>real(kind=R4P),</td>
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4527,7 +4842,7 @@ private pure subroutine <a href='../proc/pack_data_i2_r4.html'>pack_data_I2_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -4545,8 +4860,10 @@ private pure subroutine <a href='../proc/pack_data_i2_r4.html'>pack_data_I2_R4</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -4556,8 +4873,11 @@ private pure subroutine <a href='../proc/pack_data_i2_r4.html'>pack_data_I2_R4</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_I2_I8"></a><h3>
-private pure subroutine <a href='../proc/pack_data_i2_i8.html'>pack_data_I2_I8</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_i2_i8"></span><h3>
+private puresubroutine <a href='../proc/pack_data_i2_i8.html'>pack_data_I2_I8</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -4581,7 +4901,7 @@ private pure subroutine <a href='../proc/pack_data_i2_i8.html'>pack_data_I2_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I2P),</td>
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4596,7 +4916,7 @@ private pure subroutine <a href='../proc/pack_data_i2_i8.html'>pack_data_I2_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4611,7 +4931,7 @@ private pure subroutine <a href='../proc/pack_data_i2_i8.html'>pack_data_I2_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -4629,8 +4949,10 @@ private pure subroutine <a href='../proc/pack_data_i2_i8.html'>pack_data_I2_I8</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -4640,8 +4962,11 @@ private pure subroutine <a href='../proc/pack_data_i2_i8.html'>pack_data_I2_I8</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_I2_I4"></a><h3>
-private pure subroutine <a href='../proc/pack_data_i2_i4.html'>pack_data_I2_I4</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_i2_i4"></span><h3>
+private puresubroutine <a href='../proc/pack_data_i2_i4.html'>pack_data_I2_I4</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -4665,7 +4990,7 @@ private pure subroutine <a href='../proc/pack_data_i2_i4.html'>pack_data_I2_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I2P),</td>
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4680,7 +5005,7 @@ private pure subroutine <a href='../proc/pack_data_i2_i4.html'>pack_data_I2_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4695,7 +5020,7 @@ private pure subroutine <a href='../proc/pack_data_i2_i4.html'>pack_data_I2_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -4713,8 +5038,10 @@ private pure subroutine <a href='../proc/pack_data_i2_i4.html'>pack_data_I2_I4</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -4724,8 +5051,11 @@ private pure subroutine <a href='../proc/pack_data_i2_i4.html'>pack_data_I2_I4</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_I2_I1"></a><h3>
-private pure subroutine <a href='../proc/pack_data_i2_i1.html'>pack_data_I2_I1</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_i2_i1"></span><h3>
+private puresubroutine <a href='../proc/pack_data_i2_i1.html'>pack_data_I2_I1</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -4749,7 +5079,7 @@ private pure subroutine <a href='../proc/pack_data_i2_i1.html'>pack_data_I2_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I2P),</td>
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4764,7 +5094,7 @@ private pure subroutine <a href='../proc/pack_data_i2_i1.html'>pack_data_I2_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4779,7 +5109,7 @@ private pure subroutine <a href='../proc/pack_data_i2_i1.html'>pack_data_I2_I1</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -4797,8 +5127,10 @@ private pure subroutine <a href='../proc/pack_data_i2_i1.html'>pack_data_I2_I1</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -4808,8 +5140,11 @@ private pure subroutine <a href='../proc/pack_data_i2_i1.html'>pack_data_I2_I1</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_I1_R8"></a><h3>
-private pure subroutine <a href='../proc/pack_data_i1_r8.html'>pack_data_I1_R8</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_i1_r8"></span><h3>
+private puresubroutine <a href='../proc/pack_data_i1_r8.html'>pack_data_I1_R8</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -4833,7 +5168,7 @@ private pure subroutine <a href='../proc/pack_data_i1_r8.html'>pack_data_I1_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4848,7 +5183,7 @@ private pure subroutine <a href='../proc/pack_data_i1_r8.html'>pack_data_I1_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>real(kind=R8P),</td>
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4863,7 +5198,7 @@ private pure subroutine <a href='../proc/pack_data_i1_r8.html'>pack_data_I1_R8</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -4881,8 +5216,10 @@ private pure subroutine <a href='../proc/pack_data_i1_r8.html'>pack_data_I1_R8</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -4892,8 +5229,11 @@ private pure subroutine <a href='../proc/pack_data_i1_r8.html'>pack_data_I1_R8</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_I1_R4"></a><h3>
-private pure subroutine <a href='../proc/pack_data_i1_r4.html'>pack_data_I1_R4</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_i1_r4"></span><h3>
+private puresubroutine <a href='../proc/pack_data_i1_r4.html'>pack_data_I1_R4</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -4917,7 +5257,7 @@ private pure subroutine <a href='../proc/pack_data_i1_r4.html'>pack_data_I1_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4932,7 +5272,7 @@ private pure subroutine <a href='../proc/pack_data_i1_r4.html'>pack_data_I1_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>real(kind=R4P),</td>
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -4947,7 +5287,7 @@ private pure subroutine <a href='../proc/pack_data_i1_r4.html'>pack_data_I1_R4</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -4965,8 +5305,10 @@ private pure subroutine <a href='../proc/pack_data_i1_r4.html'>pack_data_I1_R4</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -4976,8 +5318,11 @@ private pure subroutine <a href='../proc/pack_data_i1_r4.html'>pack_data_I1_R4</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_I1_I8"></a><h3>
-private pure subroutine <a href='../proc/pack_data_i1_i8.html'>pack_data_I1_I8</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_i1_i8"></span><h3>
+private puresubroutine <a href='../proc/pack_data_i1_i8.html'>pack_data_I1_I8</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -5001,7 +5346,7 @@ private pure subroutine <a href='../proc/pack_data_i1_i8.html'>pack_data_I1_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -5016,7 +5361,7 @@ private pure subroutine <a href='../proc/pack_data_i1_i8.html'>pack_data_I1_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -5031,7 +5376,7 @@ private pure subroutine <a href='../proc/pack_data_i1_i8.html'>pack_data_I1_I8</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -5049,8 +5394,10 @@ private pure subroutine <a href='../proc/pack_data_i1_i8.html'>pack_data_I1_I8</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -5060,8 +5407,11 @@ private pure subroutine <a href='../proc/pack_data_i1_i8.html'>pack_data_I1_I8</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_I1_I4"></a><h3>
-private pure subroutine <a href='../proc/pack_data_i1_i4.html'>pack_data_I1_I4</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_i1_i4"></span><h3>
+private puresubroutine <a href='../proc/pack_data_i1_i4.html'>pack_data_I1_I4</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -5085,7 +5435,7 @@ private pure subroutine <a href='../proc/pack_data_i1_i4.html'>pack_data_I1_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -5100,7 +5450,7 @@ private pure subroutine <a href='../proc/pack_data_i1_i4.html'>pack_data_I1_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -5115,7 +5465,7 @@ private pure subroutine <a href='../proc/pack_data_i1_i4.html'>pack_data_I1_I4</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -5133,8 +5483,10 @@ private pure subroutine <a href='../proc/pack_data_i1_i4.html'>pack_data_I1_I4</
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Procedure for packing different kinds of data into single I1P array.</p>
         
 
@@ -5144,8 +5496,11 @@ private pure subroutine <a href='../proc/pack_data_i1_i4.html'>pack_data_I1_I4</
     
     
   <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="proc-pack_data_I1_I2"></a><h3>
-private pure subroutine <a href='../proc/pack_data_i1_i2.html'>pack_data_I1_I2</a>(a1, a2, packed)
+  <div class="panel-heading codesum"><span class="anchor" id="proc-pack_data_i1_i2"></span><h3>
+private puresubroutine <a href='../proc/pack_data_i1_i2.html'>pack_data_I1_I2</a>(a1, a2, packed)
+    
+    
+    
 </h3></div>
   <div class="panel-body">
        
@@ -5169,7 +5524,7 @@ private pure subroutine <a href='../proc/pack_data_i1_i2.html'>pack_data_I1_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-a1"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -5184,7 +5539,7 @@ private pure subroutine <a href='../proc/pack_data_i1_i2.html'>pack_data_I1_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-a2"></a>integer(kind=I2P),</td>
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -5199,7 +5554,7 @@ private pure subroutine <a href='../proc/pack_data_i1_i2.html'>pack_data_I1_I2</
   
 <tr>
   
-  <td><a class="anchor" name="var-packed"></a>integer(kind=I1P),</td>
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
   <td>intent(inout),</td>
   <td></td>
   
@@ -5217,9 +5572,11 @@ private pure subroutine <a href='../proc/pack_data_i1_i2.html'>pack_data_I1_I2</
     
     <h4>Description</h4>
        
+       
 
 
-       <p>Procedure for packing different kinds of data into single I1P array.</p>
+       
+       <p>@brief Subroutine for packing different kinds of data into single I1P array.</p>
         
 
   </div>
@@ -5227,6 +5584,8 @@ private pure subroutine <a href='../proc/pack_data_i1_i2.html'>pack_data_I1_I2</
 
     
     </section>    
+    <br>
+    
     
     
     </div>

@@ -25,14 +25,14 @@ public:: test_mpi
 #endif
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
-  !> @ingroup Lib_TestersPublicProcedure
-  !> @{
-  !> Subroutine for testing all functions: R4P and R8P mesh data, 1D and 3D arrays inputs, standard (X,Y,Z,... separated arrays) and
-  !> packed API (X,Y,Z,... packed into a single array). All available formats are used. The StructuredGrid topology is used.
-  !> @note This subroutine is designed not as an example rather than a comprehensive stress-tester for function of any kind/rank.
   subroutine test_stress()
   !---------------------------------------------------------------------------------------------------------------------------------
-  implicit none
+  !< Procedure for testing all functions.
+  !<
+  !< R4P and R8P mesh data, 1D and 3D arrays inputs, standard (X,Y,Z,... separated arrays) and
+  !< packed API (X,Y,Z,... packed into a single array). All available formats are used. The StructuredGrid topology is used.
+  !< @note This subroutine is designed not as an example rather than a comprehensive stress-tester for functions of any kind/rank.
+  !---------------------------------------------------------------------------------------------------------------------------------
   ! dataset dimensions
   integer(I4P), parameter:: nx1=0_I4P,nx2=9_I4P,ny1=0_I4P,ny2=5_I4P,nz1=0_I4P,nz2=5_I4P
   integer(I4P), parameter:: nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
@@ -79,34 +79,35 @@ contains
   ! testing 64 bits grid coordinates data, 3D rank arrays packed, RAW format
   E_IO = save_strg(xyz64=xyz,threeD=.true.,out_f='RAW')
   ! testing 32 bits grid coordinates data, 1D rank arrays non packed, ASCII format
-  E_IO = save_strg(x32=real(x,R4P),y32=real(y,R4P),z32=real(z,R4P),threeD=.false.,out_f='ASCII')
+  E_IO = save_strg(x32=real(x, R4P),y32=real(y, R4P),z32=real(z, R4P),threeD=.false.,out_f='ASCII')
   ! testing 32 bits grid coordinates data, 1D rank arrays packed, ASCII format
-  E_IO = save_strg(xyz32=real(xyz,R4P),threeD=.false.,out_f='ASCII')
+  E_IO = save_strg(xyz32=real(xyz, R4P),threeD=.false.,out_f='ASCII')
   ! testing 32 bits grid coordinates data, 3D rank arrays non packed, ASCII format
-  E_IO = save_strg(x32=real(x,R4P),y32=real(y,R4P),z32=real(z,R4P),threeD=.true.,out_f='ASCII')
+  E_IO = save_strg(x32=real(x, R4P),y32=real(y, R4P),z32=real(z, R4P),threeD=.true.,out_f='ASCII')
   ! testing 32 bits grid coordinates data, 3D rank arrays packed, ASCII format
-  E_IO = save_strg(xyz32=real(xyz,R4P),threeD=.true.,out_f='ASCII')
+  E_IO = save_strg(xyz32=real(xyz, R4P),threeD=.true.,out_f='ASCII')
   ! testing 32 bits grid coordinates data, 1D rank arrays non packed, BINARY format
-  E_IO = save_strg(x32=real(x,R4P),y32=real(y,R4P),z32=real(z,R4P),threeD=.false.,out_f='BINARY')
+  E_IO = save_strg(x32=real(x, R4P),y32=real(y, R4P),z32=real(z, R4P),threeD=.false.,out_f='BINARY')
   ! testing 32 bits grid coordinates data, 1D rank arrays packed, BINARY format
-  E_IO = save_strg(xyz32=real(xyz,R4P),threeD=.false.,out_f='BINARY')
+  E_IO = save_strg(xyz32=real(xyz, R4P),threeD=.false.,out_f='BINARY')
   ! testing 32 bits grid coordinates data, 3D rank arrays non packed, ABINARYformat
-  E_IO = save_strg(x32=real(x,R4P),y32=real(y,R4P),z32=real(z,R4P),threeD=.true.,out_f='BINARY')
+  E_IO = save_strg(x32=real(x, R4P),y32=real(y, R4P),z32=real(z, R4P),threeD=.true.,out_f='BINARY')
   ! testing 32 bits grid coordinates data, 3D rank arrays packed, BINARY format
-  E_IO = save_strg(xyz32=real(xyz,R4P),threeD=.true.,out_f='BINARY')
+  E_IO = save_strg(xyz32=real(xyz, R4P),threeD=.true.,out_f='BINARY')
   ! testing 32 bits grid coordinates data, 1D rank arrays non packed, RAW format
-  E_IO = save_strg(x32=real(x,R4P),y32=real(y,R4P),z32=real(z,R4P),threeD=.false.,out_f='RAW')
+  E_IO = save_strg(x32=real(x, R4P),y32=real(y, R4P),z32=real(z, R4P),threeD=.false.,out_f='RAW')
   ! testing 32 bits grid coordinates data, 1D rank arrays packed, RAW format
-  E_IO = save_strg(xyz32=real(xyz,R4P),threeD=.false.,out_f='RAW')
+  E_IO = save_strg(xyz32=real(xyz, R4P),threeD=.false.,out_f='RAW')
   ! testing 32 bits grid coordinates data, 3D rank arrays non packed, RAW format
-  E_IO = save_strg(x32=real(x,R4P),y32=real(y,R4P),z32=real(z,R4P),threeD=.true.,out_f='RAW')
+  E_IO = save_strg(x32=real(x, R4P),y32=real(y, R4P),z32=real(z, R4P),threeD=.true.,out_f='RAW')
   ! testing 32 bits grid coordinates data, 3D rank arrays packed, RAW format
-  E_IO = save_strg(xyz32=real(xyz,R4P),threeD=.true.,out_f='RAW')
+  E_IO = save_strg(xyz32=real(xyz, R4P),threeD=.true.,out_f='RAW')
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   contains
-    !> @brief Subroutine for initializing data.
     subroutine initialize()
+    !-------------------------------------------------------------------------------------------------------------------------------
+    !< Procedure for initializing data.
     !-------------------------------------------------------------------------------------------------------------------------------
     implicit none
     integer(I4P):: i,j,k,p
@@ -119,13 +120,13 @@ contains
           x(     i,j,k) = i*1._R8P ; xyz(1,i,j,k) = x(i,j,k)
           y(     i,j,k) = j*1._R8P ; xyz(2,i,j,k) = y(i,j,k)
           z(     i,j,k) = k*1._R8P ; xyz(3,i,j,k) = z(i,j,k)
-          v_R(   i,j,k) = real(i*j*k,R8P)
-          v_I(   i,j,k) = int( i*j*k,I8P)
-          vX_R(  i,j,k) = x(i,j,k) ; vX_I(i,j,k) = int(x(i,j,k),I8P)
-          vY_R(  i,j,k) = y(i,j,k) ; vY_I(i,j,k) = int(y(i,j,k),I8P)
-          vZ_R(  i,j,k) = z(i,j,k) ; vZ_I(i,j,k) = int(z(i,j,k),I8P)
+          v_R(   i,j,k) = real(i*j*k, R8P)
+          v_I(   i,j,k) = int( i*j*k, I8P)
+          vX_R(  i,j,k) = x(i,j,k) ; vX_I(i,j,k) = int(x(i,j,k), I8P)
+          vY_R(  i,j,k) = y(i,j,k) ; vY_I(i,j,k) = int(y(i,j,k), I8P)
+          vZ_R(  i,j,k) = z(i,j,k) ; vZ_I(i,j,k) = int(z(i,j,k), I8P)
           vP_R(:,i,j,k) = [(x(i,j,k)*p,p=1,4)]
-          vP_I(:,i,j,k) = int(vP_R(:,i,j,k),I8P)
+          vP_I(:,i,j,k) = int(vP_R(:,i,j,k), I8P)
         enddo
       enddo
     enddo
@@ -133,23 +134,24 @@ contains
     !-------------------------------------------------------------------------------------------------------------------------------
     endsubroutine initialize
 
-    !> @brief Subroutine for saving StructuredGrid files.
     function save_node_variables(threeD) result(E_IO)
+    !-------------------------------------------------------------------------------------------------------------------------------
+    !< Procedure for saving StructuredGrid files.
     !-------------------------------------------------------------------------------------------------------------------------------
     implicit none
     logical, intent(IN):: threeD !< Flag for checking the rank-dimensions of outputs.
-    integer(I4P)::        E_IO   !< Error traping flag.
+    integer(I4P)::        E_IO   !< Error trapping flag.
     !-------------------------------------------------------------------------------------------------------------------------------
 
     !-------------------------------------------------------------------------------------------------------------------------------
     E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
     if (threeD) then ! 3D rank arrays
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_R8',var=     v_R     ) ! scalar, R8P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_R4',var=real(v_R,R4P)) ! scalar, R4P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I8',var=     v_I     ) ! scalar, I8P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I4',var= int(v_I,I4P)) ! scalar, I4P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I2',var= int(v_I,I2P)) ! scalar, I2P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I1',var= int(v_I,I1P)) ! scalar, I1P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_R8',var=     v_R      ) ! scalar, R8P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_R4',var=real(v_R, R4P)) ! scalar, R4P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I8',var=     v_I      ) ! scalar, I8P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I4',var= int(v_I, I4P)) ! scalar, I4P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I2',var= int(v_I, I2P)) ! scalar, I2P
+      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I1',var= int(v_I, I1P)) ! scalar, I1P
 
       E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_R8',varX=     vX_R,     varY=     vY_R,     varZ=     vZ_R     ) ! vector, R8P
       E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_R4',varX=real(vX_R,R4P),varY=real(vY_R,R4P),varZ=real(vZ_R,R4P)) ! vector, R4P
@@ -203,73 +205,74 @@ contains
     !-------------------------------------------------------------------------------------------------------------------------------
     endfunction save_node_variables
 
-    !> @brief Subroutine for saving node-located variables.
     function save_strg(x64,y64,z64,xyz64,x32,y32,z32,xyz32,threeD,out_f) result(E_IO)
     !-------------------------------------------------------------------------------------------------------------------------------
-    implicit none
-    real(R8P), optional, intent(IN):: x64(:,:,:)     !< X Coordinates components (64 bits).
-    real(R8P), optional, intent(IN):: y64(:,:,:)     !< Y Coordinates components (64 bits).
-    real(R8P), optional, intent(IN):: z64(:,:,:)     !< Z Coordinates components (64 bits).
-    real(R8P), optional, intent(IN):: xyz64(:,:,:,:) !< Packed coordinates components (64 bits).
-    real(R4P), optional, intent(IN):: x32(:,:,:)     !< X Coordinates components (32 bits).
-    real(R4P), optional, intent(IN):: y32(:,:,:)     !< Y Coordinates components (32 bits).
-    real(R4P), optional, intent(IN):: z32(:,:,:)     !< Z Coordinates components (32 bits).
-    real(R4P), optional, intent(IN):: xyz32(:,:,:,:) !< Packed coordinates components (32 bits).
-    logical,             intent(IN):: threeD         !< Flag for checking the rank-dimensions of outputs.
-    character(*),        intent(IN):: out_f          !< Output format.
-    integer(I4P)::                    E_IO           !< Error traping flag.
+    !< Procedure for saving node-located variables.
+    !-------------------------------------------------------------------------------------------------------------------------------
+    real(R8P), optional, intent(IN) :: x64(:,:,:)     !< X Coordinates components (64 bits).
+    real(R8P), optional, intent(IN) :: y64(:,:,:)     !< Y Coordinates components (64 bits).
+    real(R8P), optional, intent(IN) :: z64(:,:,:)     !< Z Coordinates components (64 bits).
+    real(R8P), optional, intent(IN) :: xyz64(:,:,:,:) !< Packed coordinates components (64 bits).
+    real(R4P), optional, intent(IN) :: x32(:,:,:)     !< X Coordinates components (32 bits).
+    real(R4P), optional, intent(IN) :: y32(:,:,:)     !< Y Coordinates components (32 bits).
+    real(R4P), optional, intent(IN) :: z32(:,:,:)     !< Z Coordinates components (32 bits).
+    real(R4P), optional, intent(IN) :: xyz32(:,:,:,:) !< Packed coordinates components (32 bits).
+    logical,             intent(IN) :: threeD         !< Flag for checking the rank-dimensions of outputs.
+    character(*),        intent(IN) :: out_f          !< Output format.
+    integer(I4P)::                     E_IO           !< Error trapping flag.
     !-------------------------------------------------------------------------------------------------------------------------------
 
     !-------------------------------------------------------------------------------------------------------------------------------
     if (threeD) then
       if (present(x64)) then ! non packed, 3D rank array, 64 bits data
-        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-3DA-'//trim(out_f)//'-64.vts',&
-                           mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-        E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x64,Y=y64,Z=z64)
+        E_IO = VTK_INI_XML_WRITE(fformat=trim(out_f), filename='XML_STRG-3DA-'//trim(out_f)//'-64.vts',&
+                           mesh_topology='StructuredGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+        E_IO = VTK_GEO_XML_WRITE(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x64,Y=y64,Z=z64)
       elseif (present(x32)) then ! non packed, 3D rank array, 32 bits data
-        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-3DA-'//trim(out_f)//'-32.vts',&
+        E_IO = VTK_INI_XML_WRITE(fformat=trim(out_f),filename='XML_STRG-3DA-'//trim(out_f)//'-32.vts',&
                            mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-        E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x32,Y=y32,Z=z32)
+        E_IO = VTK_GEO_XML_WRITE(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x32,Y=y32,Z=z32)
       elseif (present(xyz64)) then ! packed, 3D rank array, 64 bits data
-        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-3DAP-'//trim(out_f)//'-64.vts',&
+        E_IO = VTK_INI_XML_WRITE(fformat=trim(out_f),filename='XML_STRG-3DAP-'//trim(out_f)//'-64.vts',&
                            mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-        E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=xyz64)
+        E_IO = VTK_GEO_XML_WRITE(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=xyz64)
       elseif (present(xyz32)) then ! packed, 3D rank array, 32 bits data
-        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-3DAP-'//trim(out_f)//'-32.vts',&
+        E_IO = VTK_INI_XML_WRITE(fformat=trim(out_f),filename='XML_STRG-3DAP-'//trim(out_f)//'-32.vts',&
                            mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-        E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=xyz32)
+        E_IO = VTK_GEO_XML_WRITE(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=xyz32)
       endif
     else
       if (present(x64)) then ! non packed, 1D rank array, 64 bits data
-        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-1DA-'//trim(out_f)//'-64.vts',&
+        E_IO = VTK_INI_XML_WRITE(fformat=trim(out_f),filename='XML_STRG-1DA-'//trim(out_f)//'-64.vts',&
                            mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-        E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
+        E_IO = VTK_GEO_XML_WRITE(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
                            X=reshape(x64,[nn]),Y=reshape(y64,[nn]),Z=reshape(z64,[nn]))
       elseif (present(x32)) then ! non packed, 1D rank array, 32 bits data
-        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-1DA-'//trim(out_f)//'-32.vts',&
+        E_IO = VTK_INI_XML_WRITE(fformat=trim(out_f),filename='XML_STRG-1DA-'//trim(out_f)//'-32.vts',&
                            mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-        E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
+        E_IO = VTK_GEO_XML_WRITE(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,&
                            X=reshape(x32,[nn]),Y=reshape(y32,[nn]),Z=reshape(z32,[nn]))
       elseif (present(xyz64)) then ! packed, 1D rank array, 64 bits data
-        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-1DAP-'//trim(out_f)//'-64.vts',&
+        E_IO = VTK_INI_XML_WRITE(fformat=trim(out_f),filename='XML_STRG-1DAP-'//trim(out_f)//'-64.vts',&
                            mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-        E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=reshape(xyz64,[3,nn]))
+        E_IO = VTK_GEO_XML_WRITE(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=reshape(xyz64,[3,nn]))
       elseif (present(xyz32)) then ! packed, 1D rank array, 32 bits data
-        E_IO = VTK_INI_XML(output_format=trim(out_f),filename='XML_STRG-1DAP-'//trim(out_f)//'-32.vts',&
+        E_IO = VTK_INI_XML_WRITE(fformat=trim(out_f),filename='XML_STRG-1DAP-'//trim(out_f)//'-32.vts',&
                            mesh_topology='StructuredGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-        E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=reshape(xyz32,[3,nn]))
+        E_IO = VTK_GEO_XML_WRITE(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,XYZ=reshape(xyz32,[3,nn]))
       endif
     endif
     E_IO = save_node_variables(threeD=threeD)
-    E_IO = VTK_GEO_XML()
+    E_IO = VTK_GEO_XML_WRITE()
     E_IO = VTK_END_XML()
     return
     !-------------------------------------------------------------------------------------------------------------------------------
     endfunction save_strg
   endsubroutine test_stress
 
-  !> Subroutine for testing UnstructuredGrid functions.
   subroutine test_unst()
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for testing UnstructuredGrid functions.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), parameter::       Nn = 27_I4P
@@ -306,41 +309,42 @@ contains
   v_Y=(/0,1,2,0,1,2,0,1,2,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0/)
   v_Z=(/0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1/)
   ! ascii
-  E_IO = VTK_INI_XML(output_format = 'ascii', filename = 'XML_UNST-ascii.vtu', mesh_topology = 'UnstructuredGrid')
-  E_IO = VTK_GEO_XML(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
+  E_IO = VTK_INI_XML_WRITE(fformat = 'ascii', filename = 'XML_UNST-ascii.vtu', mesh_topology = 'UnstructuredGrid')
+  E_IO = VTK_GEO_XML_WRITE(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'opeN')
   E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'scalars', var = v)
   E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'vector', varX=v_X,varY=v_Y,varZ=v_Z)
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'CLOSE')
-  E_IO = VTK_GEO_XML()
+  E_IO = VTK_GEO_XML_WRITE()
   E_IO = VTK_END_XML()
   ! raw
-  E_IO = VTK_INI_XML(output_format = 'raw', filename = 'XML_UNST-raw.vtu', mesh_topology = 'UnstructuredGrid')
-  E_IO = VTK_GEO_XML(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
+  E_IO = VTK_INI_XML_WRITE(fformat = 'raw', filename = 'XML_UNST-raw.vtu', mesh_topology = 'UnstructuredGrid')
+  E_IO = VTK_GEO_XML_WRITE(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'opeN')
   E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'scalars', var = v)
   E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'vector', varX=v_X,varY=v_Y,varZ=v_Z)
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'CLOSE')
-  E_IO = VTK_GEO_XML()
+  E_IO = VTK_GEO_XML_WRITE()
   E_IO = VTK_END_XML()
   ! binary
-  E_IO = VTK_INI_XML(output_format = 'binary', filename = 'XML_UNST-binary.vtu', mesh_topology = 'UnstructuredGrid')
-  E_IO = VTK_GEO_XML(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
+  E_IO = VTK_INI_XML_WRITE(fformat = 'binary', filename = 'XML_UNST-binary.vtu', mesh_topology = 'UnstructuredGrid')
+  E_IO = VTK_GEO_XML_WRITE(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'opeN')
   E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'scalars', var = v)
   E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'vector', varX=v_X,varY=v_Y,varZ=v_Z)
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'CLOSE')
-  E_IO = VTK_GEO_XML()
+  E_IO = VTK_GEO_XML_WRITE()
   E_IO = VTK_END_XML()
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_unst
 
-  !> Subroutine for testing StructuredGrid functions.
   subroutine test_strg()
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for testing StructuredGrid functions.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), parameter::                       nx1=0_I4P,nx2=9_I4P,ny1=0_I4P,ny2=5_I4P,nz1=0_I4P,nz2=5_I4P
@@ -364,27 +368,32 @@ contains
       enddo
     enddo
   enddo
-  E_IO = VTK_INI_XML(output_format='binary',filename='XML_STRG.vts',mesh_topology='StructuredGrid',&
-                     nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
-  E_IO = VTK_GEO_XML(nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=x,Y=y,Z=z)
-  E_IO = VTK_DAT_XML(var_location='node',var_block_action='open')
-  E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_R8',var=v_R)
-  E_IO = VTK_DAT_XML(var_location='node',var_block_action='close')
-  E_IO = VTK_GEO_XML()
+  E_IO = VTK_INI_XML_WRITE(fformat='binary',filename='XML_STRG.vts',mesh_topology='StructuredGrid',&
+                     nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+  E_IO = VTK_GEO_XML_WRITE(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn, X=x, Y=y, Z=z)
+  E_IO = VTK_DAT_XML(var_location='node', var_block_action='open')
+  E_IO = VTK_VAR_XML(NC_NN=nn, varname='scal_R8', var=v_R)
+  E_IO = VTK_DAT_XML(var_location='node', var_block_action='close')
+  E_IO = VTK_GEO_XML_WRITE()
   E_IO = VTK_END_XML()
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_strg
 
-  !> Subroutine for testing RectilinearGrid functions.
-  !> @note This subroutine also shows the usage of FieldData functions that are useful for saving global auxiliary data, e.g. time,
-  !> time step, ecc.
   subroutine test_rect()
   !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for testing RectilinearGrid functions.
+  !<
+  !< @note This subroutine also shows the usage of FieldData functions that are useful for saving global auxiliary data, e.g. time,
+  !< time step, ecc.
+  !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
-  integer(I4P), parameter:: nx1=0_I4P,nx2=30_I4P,ny1=0_I4P,ny2=20_I4P,nz1=0_I4P,nz2=10_I4P
+  integer(I4P), parameter:: nx1=0_I4P,nx2=16_I4P,ny1=0_I4P,ny2=16_I4P,nz1=0_I4P,nz2=16_I4P
   integer(I4P), parameter:: nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
   real(R8P)::               x(nx1:nx2),y(ny1:ny2),z(nz1:nz2)
+  real(R8P)::               x1=-3._R8P,x2=3._R8P
+  real(R8P)::               y1=-2._R8P,y2=0.25_R8P
+  real(R8P)::               z1=-2._R8P,z2=0.16_R8P
   integer(I4P)::            v(1:nn)
   integer(I4P)::            i,j,k,n,E_IO
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -402,60 +411,62 @@ contains
    enddo
   enddo
   do i=nx1,nx2
-    x(i) = i*1._R4P
+    x(i) = x1 + (i - 1) * (x2 - x1)/real(nx2 - nx1, kind=R8P)
   enddo
   do j=ny1,ny2
-    y(j) = j*1._R4P
+    y(j) = y1 + (j - 1) * (y2 - y1)/real(ny2 - ny1, kind=R8P)
   enddo
   do k=nz1,nz2
-    z(k) = k*1._R4P
+    z(k) = z1 + (k - 1) * (z2 - z1)/real(nz2 - nz1, kind=R8P)
   enddo
   ! ascii
-  E_IO = VTK_INI_XML(output_format='ascii', filename='XML_RECT-ascii.vtr', &
+  E_IO = VTK_INI_XML_WRITE(fformat='ascii', filename='XML_RECT-ascii.vtr', &
                      mesh_topology='RectilinearGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
   E_IO = VTK_FLD_XML(fld_action='open')
   E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
   E_IO = VTK_FLD_XML(fld=1_I8P,fname='CYCLE')
   E_IO = VTK_FLD_XML(fld_action='close')
-  E_IO = VTK_GEO_XML(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, X=x, Y=y, Z=z)
+  E_IO = VTK_GEO_XML_WRITE(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, X=x, Y=y, Z=z)
   E_IO = VTK_DAT_XML(var_location = 'cell', var_block_action = 'open')
   E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'cell_value', var = v)
   E_IO = VTK_DAT_XML(var_location = 'cell', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
+  E_IO = VTK_GEO_XML_WRITE()
   E_IO = VTK_END_XML()
   ! raw
-  E_IO = VTK_INI_XML(output_format='raw', filename='XML_RECT-raw.vtr', &
+  E_IO = VTK_INI_XML_WRITE(fformat='raw', filename='XML_RECT-raw.vtr', &
                      mesh_topology='RectilinearGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
   E_IO = VTK_FLD_XML(fld_action='open')
   E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
   E_IO = VTK_FLD_XML(fld=1_I8P,fname='CYCLE')
   E_IO = VTK_FLD_XML(fld_action='close')
-  E_IO = VTK_GEO_XML(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, X=x, Y=y, Z=z)
+  E_IO = VTK_GEO_XML_WRITE(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, X=x, Y=y, Z=z)
   E_IO = VTK_DAT_XML(var_location = 'cell', var_block_action = 'open')
   E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'cell_value', var = v)
   E_IO = VTK_DAT_XML(var_location = 'cell', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
+  E_IO = VTK_GEO_XML_WRITE()
   E_IO = VTK_END_XML()
   ! binary
-  E_IO = VTK_INI_XML(output_format='binary', filename='XML_RECT-binary.vtr', &
+  E_IO = VTK_INI_XML_WRITE(fformat='binary', filename='XML_RECT-binary.vtr', &
                      mesh_topology='RectilinearGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
   E_IO = VTK_FLD_XML(fld_action='open')
   E_IO = VTK_FLD_XML(fld=0._R8P,fname='TIME')
   E_IO = VTK_FLD_XML(fld=1_I8P,fname='CYCLE')
   E_IO = VTK_FLD_XML(fld_action='close')
-  E_IO = VTK_GEO_XML(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, X=x, Y=y, Z=z)
+  E_IO = VTK_GEO_XML_WRITE(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, X=x, Y=y, Z=z)
   E_IO = VTK_DAT_XML(var_location = 'cell', var_block_action = 'open')
   E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'cell_value', var = v)
   E_IO = VTK_DAT_XML(var_location = 'cell', var_block_action = 'close')
-  E_IO = VTK_GEO_XML()
+  E_IO = VTK_GEO_XML_WRITE()
   E_IO = VTK_END_XML()
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_rect
 
-  !> Subroutine for testing parallel (partitioned) PStructuredGrid functions.
-  !> @note Note that the two parts are completely independet.
   subroutine test_punst()
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for testing parallel (partitioned) PStructuredGrid functions.
+  !<
+  !< @note Note that the two parts are completely independet.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), parameter::       Nn = 27_I4P
@@ -493,25 +504,25 @@ contains
   v_Y=(/0,1,2,0,1,2,0,1,2,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0/)
   v_Z=(/0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1/)
   ! first part
-  E_IO = VTK_INI_XML(output_format = 'raw', filename = 'XML_UNST_part0.vtu', mesh_topology = 'UnstructuredGrid')
-  E_IO = VTK_GEO_XML(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
+  E_IO = VTK_INI_XML_WRITE(fformat = 'raw', filename = 'XML_UNST_part0.vtu', mesh_topology = 'UnstructuredGrid')
+  E_IO = VTK_GEO_XML_WRITE(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'opeN')
   E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'scalars', var = v)
   E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'vector', varX=v_X,varY=v_Y,varZ=v_Z)
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'CLOSE')
-  E_IO = VTK_GEO_XML()
+  E_IO = VTK_GEO_XML_WRITE()
   E_IO = VTK_END_XML()
   ! second part
   x = x + 10._R4P
-  E_IO = VTK_INI_XML(output_format = 'raw', filename = 'XML_UNST_part1.vtu', mesh_topology = 'UnstructuredGrid')
-  E_IO = VTK_GEO_XML(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
+  E_IO = VTK_INI_XML_WRITE(fformat = 'raw', filename = 'XML_UNST_part1.vtu', mesh_topology = 'UnstructuredGrid')
+  E_IO = VTK_GEO_XML_WRITE(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'opeN')
   E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'scalars', var = v)
   E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'vector', varX=v_X,varY=v_Y,varZ=v_Z)
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'CLOSE')
-  E_IO = VTK_GEO_XML()
+  E_IO = VTK_GEO_XML_WRITE()
   E_IO = VTK_END_XML()
   ! pvtu
   E_IO = PVTK_INI_XML(filename = 'XML_UNST.pvtu', mesh_topology = 'PUnstructuredGrid', tp='Float32')
@@ -526,19 +537,21 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_punst
 
-  !> Subroutine for testing parallel (partitioned) PStructuredGrid functions.
-  !> @note The mesh is a simple prism partitioned into two pieces along x direction at ordinate i=nx2_p(1).
-  !> @code
-  !> y ^
-  !>   |               ny2 +-----------------+--------------+
-  !>   |                   |                 |              |
-  !>   |                   |                 |              |
-  !>   |                   |                 |              |
-  !>   |                   |                 |              |
-  !>   o-------->      ny1 +-----------------+--------------+
-  !>            x         nx1               i=nx2_p(1)     nx2
-  !> @endcode
   subroutine test_pstrg()
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for testing parallel (partitioned) PStructuredGrid functions.
+  !<
+  !< The mesh is a simple prism partitioned into two pieces along x direction at ordinate i=nx2_p(1).
+  !<```
+  !< y ^
+  !<   |               ny2 +-----------------+--------------+
+  !<   |                   |                 |              |
+  !<   |                   |                 |              |
+  !<   |                   |                 |              |
+  !<   |                   |                 |              |
+  !<   o-------->      ny1 +-----------------+--------------+
+  !<            x         nx1               i=nx2_p(1)     nx2
+  !<```
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), parameter::                          nx1=0_I4P,nx2=9_I4P,ny1=0_I4P,ny2=5_I4P,nz1=0_I4P,nz2=5_I4P
@@ -567,16 +580,16 @@ contains
    enddo
   enddo
   do p=1,2 ! loop over pieces
-    E_IO = VTK_INI_XML(cf=mf(p),output_format='raw', filename='XML_STRG_part'//trim(str(.true.,p-1))//'.vts', &
+    E_IO = VTK_INI_XML_WRITE(cf=mf(p),fformat='raw', filename='XML_STRG_part'//trim(str(.true.,p-1))//'.vts', &
                        mesh_topology='StructuredGrid', nx1=nx1_p(p), nx2=nx2_p(p), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
-    E_IO = VTK_GEO_XML(cf=mf(p),nx1=nx1_p(p), nx2=nx2_p(p), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn_p(p), &
+    E_IO = VTK_GEO_XML_WRITE(cf=mf(p),nx1=nx1_p(p), nx2=nx2_p(p), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn_p(p), &
                        X=reshape(x(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)),                                     &
                        Y=reshape(y(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)),                                     &
                        Z=reshape(z(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)))
     E_IO = VTK_DAT_XML(cf=mf(p),var_location = 'node', var_block_action = 'open')
     E_IO = VTK_VAR_XML(cf=mf(p),NC_NN = nn_p(p), varname = 'node_value', var = reshape(v(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)))
     E_IO = VTK_DAT_XML(cf=mf(p),var_location = 'node', var_block_action = 'close')
-    E_IO = VTK_GEO_XML(cf=mf(p))
+    E_IO = VTK_GEO_XML_WRITE(cf=mf(p))
     E_IO = VTK_END_XML()
   enddo
   ! pvts
@@ -592,9 +605,11 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_pstrg
 
-  !> Subroutine for testing multi-blocks VTM functions. There are 4 subset of data organized into 2 blocks. All the subsets are
-  !> simple StructuredGrid prisms shifted along x direction.
   subroutine test_vtm()
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for testing multi-blocks VTM functions.
+  !<
+  !< There are 4 subset of data organized into 2 blocks. All the subsets are simple StructuredGrid prisms shifted along x direction.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   integer(I4P), parameter::                          nx1=0_I4P,nx2=9_I4P,ny1=0_I4P,ny2=5_I4P,nz1=0_I4P,nz2=5_I4P
@@ -620,20 +635,20 @@ contains
   enddo
   ! vts
   do b=1,4 ! loop over blocks
-    E_IO = VTK_INI_XML(cf=mf(b),output_format='binary', filename='XML_M-STRG_part.'//trim(str(.true.,b-1))//'.vts', &
+    E_IO = VTK_INI_XML_WRITE(cf=mf(b), fformat='binary', filename='XML_M-STRG_part.'//trim(str(.true.,b-1))//'.vts', &
                        mesh_topology='StructuredGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
     if (b>1) then
       x = x + nx2*1._R8P
       v = b
     endif
-    E_IO = VTK_GEO_XML(cf=mf(b),nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn, &
+    E_IO = VTK_GEO_XML_WRITE(cf=mf(b),nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn, &
                        X=reshape(x(nx1:nx2,:,:),(/nn/)),                                     &
                        Y=reshape(y(nx1:nx2,:,:),(/nn/)),                                     &
                        Z=reshape(z(nx1:nx2,:,:),(/nn/)))
     E_IO = VTK_DAT_XML(cf=mf(b),var_location = 'node', var_block_action = 'open')
     E_IO = VTK_VAR_XML(cf=mf(b),NC_NN = nn, varname = 'node_value', var = reshape(v(nx1:nx2,:,:),(/nn/)))
     E_IO = VTK_DAT_XML(cf=mf(b),var_location = 'node', var_block_action = 'close')
-    E_IO = VTK_GEO_XML(cf=mf(b))
+    E_IO = VTK_GEO_XML_WRITE(cf=mf(b))
     E_IO = VTK_END_XML()
   enddo
   ! vtm
@@ -650,29 +665,34 @@ contains
   endsubroutine test_vtm
 
 #ifdef OPENMP
-  !> Subroutine for testing the libray in an OpenMP parallel framework. It is used for testing thread-safe capability and the
-  !> library speedup into OpenMP parallel framework. The output is a parallel (partitioned) PStructuredGrid file.
-  !> @note The whole grid is composed of blocks of 32x32x32 structured mesh. The total number of blocks/files, Nf_tot, is passed as
-  !> argument. The whole grid is built up composing the blocks along the X axis with a regular shift as following:
-  !> @code
-  !> y ^
-  !>   |               ny2 +------------+------------+------------+------///////////-----+
-  !>   |                   |            |            |            |                      |
-  !>   |                   |            |            |            |                      |
-  !>   |                   |            |            |            |                      |
-  !>   |                   |            |            |            |                      |
-  !>   o-------->      ny1 +------------+------------+------------+------///////////-----+
-  !>            x         nx1          nx2    2*(nx2-nx+1)  3*(nx2-nx+1)          Nf_tot*(nx2-nx+1)
-  !> @endcode
-  !> @note When the total number of blocks/files, Nf_tot, is not an integral of the number of threads used, Nths, the last
-  !> thread saves its own files (Nf_tot/Nths) plus the remainder blocks/files (mod(Nf_tot,Nths)). As a consequence the last
-  !> thread could has different elapsed time and it could degrade the speedup. Therefore the subroutine prints to stdout the
-  !> maximum and minimum elapsed time among the threads as well the average elapsed time in order to facilitate the assessing
-  !> of the parallel scalability.
-  !> @note It is important to note that the output files initialization and finalization must be done outside the parallel ambient.
-  !> @note The array containing the files indexes could be shared among threads, but the counter of this array ('p' in this example)
-  !> must be private.
   subroutine test_openmp(Nf_tot)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for testing the libray in an OpenMP parallel framework.
+  !<
+  !< It is used for testing thread-safe capability and the
+  !< library speedup into OpenMP parallel framework. The output is a parallel (partitioned) PStructuredGrid file.
+  !< @note The whole grid is composed of blocks of 32x32x32 structured mesh. The total number of blocks/files, Nf_tot, is passed as
+  !< argument. The whole grid is built up composing the blocks along the X axis with a regular shift as following:
+  !<```
+  !< y ^
+  !<   |               ny2 +------------+------------+------------+------///////////-----+
+  !<   |                   |            |            |            |                      |
+  !<   |                   |            |            |            |                      |
+  !<   |                   |            |            |            |                      |
+  !<   |                   |            |            |            |                      |
+  !<   o-------->      ny1 +------------+------------+------------+------///////////-----+
+  !<            x         nx1          nx2    2*(nx2-nx+1)  3*(nx2-nx+1)          Nf_tot*(nx2-nx+1)
+  !<```
+  !< @note When the total number of blocks/files, Nf_tot, is not an integral of the number of threads used, Nths, the last
+  !< thread saves its own files (Nf_tot/Nths) plus the remainder blocks/files (mod(Nf_tot,Nths)). As a consequence the last
+  !< thread could has different elapsed time and it could degrade the speedup. Therefore the subroutine prints to stdout the
+  !< maximum and minimum elapsed time among the threads as well the average elapsed time in order to facilitate the assessing
+  !< of the parallel scalability.
+  !<
+  !< @note It is important to note that the output files initialization and finalization must be done outside the parallel ambient.
+  !<
+  !< @note The array containing the files indexes could be shared among threads, but the counter of this array ('p' in this example)
+  !< must be private.
   !---------------------------------------------------------------------------------------------------------------------------------
   USE omp_lib ! OpenMP runtime library.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -726,7 +746,7 @@ contains
   ! opening files outside OpenMP framework
   do f=1,Nf_tot
     nxf = (nx2-nx1+1)*f-(f-1)
-    E_IO = VTK_INI_XML(cf=mf(f),output_format='binary',filename='XML_OPENMP_f'//trim(strz(3,f))//'.vts', &
+    E_IO = VTK_INI_XML_WRITE(cf=mf(f),fformat='binary',filename='XML_OPENMP_f'//trim(strz(3,f))//'.vts', &
                        mesh_topology='StructuredGrid',nx1=nxf-(nx2-nx1+1)+1,nx2=nxf,&
                        ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
   enddo
@@ -740,13 +760,13 @@ contains
   !$OMP DO
   do f=1,Nf_tot ! loop over files
     nxf = (nx2-nx1+1)*f-(f-1)
-    xf = x + real(f-1_I4P,R8P)
+    xf = x + real(f-1_I4P, R8P)
     vtk_start = OMP_GET_WTIME()
-    E_IO = VTK_GEO_XML(cf=mf(f),nx1=nxf-(nx2-nx1+1)+1,nx2=nxf,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=xf,Y=y,Z=z)
+    E_IO = VTK_GEO_XML_WRITE(cf=mf(f),nx1=nxf-(nx2-nx1+1)+1,nx2=nxf,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=xf,Y=y,Z=z)
     E_IO = VTK_DAT_XML(cf=mf(f),var_location='node',var_block_action='open')
     E_IO = VTK_VAR_XML(cf=mf(f),NC_NN=nn,varname='node_value',var=v(th,:,:,:))
     E_IO = VTK_DAT_XML(cf=mf(f),var_location='node',var_block_action='close')
-    E_IO = VTK_GEO_XML(cf=mf(f))
+    E_IO = VTK_GEO_XML_WRITE(cf=mf(f))
     vtk_stop = OMP_GET_WTIME()
     t(th) = t(th) + vtk_stop-vtk_start
   enddo
@@ -760,7 +780,7 @@ contains
   write(stdout,'(A)')' Average elapsed time '//trim(adjustl(str('(F9.4)',sum(t)/Nths)))
   ! saving the composite .pvts file
   E_IO = PVTK_INI_XML(filename = 'XML_OPENMP.pvts', mesh_topology = 'PStructuredGrid',&
-                      nx1=nx1,nx2=(nx2-nx1+1)*Nf_tot-(Nf_tot-1),ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,tp='Float64')
+                      nx1=nx1, nx2=(nx2-nx1+1)*Nf_tot-(Nf_tot-1), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, tp='Float64')
   do f=1,Nf_tot
     nxf = (nx2-nx1+1)*f-(f-1)
     E_IO = PVTK_GEO_XML(nx1=nxf-(nx2-nx1+1)+1,nx2=nxf,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,&
@@ -776,26 +796,29 @@ contains
 #endif
 
 #ifdef MPI2
-  !> Subroutine for testing the library in an MPI parallel framework. It is used for testing the process-safe capability and the
-  !> library speedup into MPI parallel framework.  The output is a parallel (partitioned) PStructuredGrid file.
-  !> @note The whole grid is composed of blocks of 32x32x32 structured mesh. The total number of blocks/files, Nf_tot, is passed as
-  !> argument. The whole grid is built up composing the blocks along the X axis with a regular shift as following:
-  !> @code
-  !> y ^
-  !>   |               ny2 +------------+------------+------------+------///////////-----+
-  !>   |                   |            |            |            |                      |
-  !>   |                   |            |            |            |                      |
-  !>   |                   |            |            |            |                      |
-  !>   |                   |            |            |            |                      |
-  !>   o-------->      ny1 +------------+------------+------------+------///////////-----+
-  !>            x         nx1          nx2    2*(nx2-nx+1)  3*(nx2-nx+1)          Nf_tot*(nx2-nx+1)
-  !> @endcode
-  !> @note When the total number of blocks/files, Nf_tot, is not an integral of the number of processes used, nproc, the last
-  !> process saves its own files (Nf_tot/nproc) plus the remainder blocks/files (mod(Nf_tot,nproc)). As a consequence the last
-  !> process could has different elapsed time and it could degrade the speedup. Therefore the subroutine prints to stdout the
-  !> maximum and minimum elapsed time among the processes as well the average elapsed time in order to facilitate the assessing
-  !> of the parallel scalability.
   subroutine test_mpi(Nf_tot)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for testing the library in an MPI parallel framework.
+  !<
+  !< It is used for testing the process-safe capability and the
+  !< library speedup into MPI parallel framework.  The output is a parallel (partitioned) PStructuredGrid file.
+  !< @note The whole grid is composed of blocks of 32x32x32 structured mesh. The total number of blocks/files, Nf_tot, is passed as
+  !< argument. The whole grid is built up composing the blocks along the X axis with a regular shift as following:
+  !<```
+  !< y ^
+  !<   |               ny2 +------------+------------+------------+------///////////-----+
+  !<   |                   |            |            |            |                      |
+  !<   |                   |            |            |            |                      |
+  !<   |                   |            |            |            |                      |
+  !<   |                   |            |            |            |                      |
+  !<   o-------->      ny1 +------------+------------+------------+------///////////-----+
+  !<            x         nx1          nx2    2*(nx2-nx+1)  3*(nx2-nx+1)          Nf_tot*(nx2-nx+1)
+  !<```
+  !< @note When the total number of blocks/files, Nf_tot, is not an integral of the number of processes used, nproc, the last
+  !< process saves its own files (Nf_tot/nproc) plus the remainder blocks/files (mod(Nf_tot,nproc)). As a consequence the last
+  !< process could has different elapsed time and it could degrade the speedup. Therefore the subroutine prints to stdout the
+  !< maximum and minimum elapsed time among the processes as well the average elapsed time in order to facilitate the assessing
+  !< of the parallel scalability.
   !---------------------------------------------------------------------------------------------------------------------------------
   USE MPI ! MPI runtime library.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -864,23 +887,23 @@ contains
     endif
     nxf = (nx2-nx1+1)*foffset-(foffset-1)
     vtk_start = MPI_Wtime()
-    E_IO = VTK_INI_XML(output_format='binary',filename='XML_MPI_f'//trim(strz(3,foffset))//'.vts', &
-                       mesh_topology='StructuredGrid',nx1=nxf-(nx2-nx1+1)+1,nx2=nxf,&
-                       ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
+    E_IO = VTK_INI_XML_WRITE(fformat='binary', filename='XML_MPI_f'//trim(strz(3,foffset))//'.vts', &
+                       mesh_topology='StructuredGrid', nx1=nxf-(nx2-nx1+1)+1, nx2=nxf,        &
+                       ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
     ! updating x coordinates of current process/file
-    xf = x + real(foffset-1_I4P,R8P)
-    E_IO = VTK_GEO_XML(nx1=nxf-(nx2-nx1+1)+1,nx2=nxf,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=xf,Y=y,Z=z)
+    xf = x + real(foffset-1_I4P, R8P)
+    E_IO = VTK_GEO_XML_WRITE(nx1=nxf-(nx2-nx1+1)+1,nx2=nxf,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=xf,Y=y,Z=z)
     E_IO = VTK_DAT_XML(var_location='node',var_block_action='open')
     E_IO = VTK_VAR_XML(NC_NN=nn,varname='node_value',var=v)
     E_IO = VTK_DAT_XML(var_location='node',var_block_action='close')
-    E_IO = VTK_GEO_XML()
+    E_IO = VTK_GEO_XML_WRITE()
     E_IO = VTK_END_XML()
     vtk_stop = MPI_Wtime()
     t = t + vtk_stop-vtk_start
   enddo
-  call MPI_REDUCE(t,tmax,1,MPI_REAL8,MPI_MAX,0,MPI_COMM_WORLD,E_IO)
-  call MPI_REDUCE(t,tmin,1,MPI_REAL8,MPI_MIN,0,MPI_COMM_WORLD,E_IO)
-  call MPI_REDUCE(t,tmean,1,MPI_REAL8,MPI_SUM,0,MPI_COMM_WORLD,E_IO)
+  call MPI_REDUCE(t,tmax,1,MPI_REAL8,MPI_MAX,0,MPI_COMM_WORLD, E_IO)
+  call MPI_REDUCE(t,tmin,1,MPI_REAL8,MPI_MIN,0,MPI_COMM_WORLD, E_IO)
+  call MPI_REDUCE(t,tmean,1,MPI_REAL8,MPI_SUM,0,MPI_COMM_WORLD, E_IO)
   if (myrank==0) then
     tmean = tmean/nproc
     ! first process prints the elapsed time to stdout
@@ -889,7 +912,7 @@ contains
     write(stdout,'(A)')' Average elapsed time '//trim(adjustl(str('(F9.4)',tmean)))
     ! first process saves also the composite .pvts file
     E_IO = PVTK_INI_XML(filename = 'XML_MPI.pvts', mesh_topology = 'PStructuredGrid',&
-                        nx1=nx1,nx2=(nx2-nx1+1)*Nf_tot-(Nf_tot-1),ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,tp='Float64')
+                        nx1=nx1, nx2=(nx2-nx1+1)*Nf_tot-(Nf_tot-1), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, tp='Float64')
     do f=1,Nf_tot
       nxf = (nx2-nx1+1)*f-(f-1)
       E_IO = PVTK_GEO_XML(nx1=nxf-(nx2-nx1+1)+1,nx2=nxf,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,&
@@ -906,7 +929,6 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_mpi
 #endif
-  !> @}
 endmodule Lib_Testers
 
 program Test_Driver
@@ -997,7 +1019,7 @@ case('-openmp')
   stop
 #else
   call get_command_argument(2,nF)
-  call test_openmp(Nf_tot=cton(trim(nF),I4P))
+  call test_openmp(Nf_tot=cton(str=trim(nF),knd=I4P))
 #endif
 case('-mpi')
 #ifndef MPI2
@@ -1005,7 +1027,7 @@ case('-mpi')
   stop
 #else
   call get_command_argument(2,nF)
-  call test_mpi(Nf_tot=cton(trim(nF),I4P))
+  call test_mpi(Nf_tot=cton(str=trim(nF),knd=I4P))
 #endif
 case('-all')
   call test_rect
@@ -1023,8 +1045,9 @@ endselect
 stop
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
-  !> Subroutine for printing usage help message to stdout.
   subroutine print_usage()
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Procedure for printing usage help message to stdout.
   !---------------------------------------------------------------------------------------------------------------------------------
   implicit none
   !---------------------------------------------------------------------------------------------------------------------------------

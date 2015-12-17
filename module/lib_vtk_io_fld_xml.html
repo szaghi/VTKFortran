@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	 
+	 <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
+    
+    <meta name="author" content="Chris MacMackin" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>Lib_VTK_IO_FLD_XML &ndash; Lib_VTK_IO</title>
+
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+    
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+    <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+
+    
+    <script src="../tipuesearch/tipuesearch_content.js"></script>
+    <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+    <script src="../tipuesearch/tipuesearch_set.js"></script>
+    <script src="../tipuesearch/tipuesearch.js"></script>
+    
+
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="../index.html">Lib_VTK_IO </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+				
+                
+            <li><a href="../lists/files.html">Source Files</a></li>
+				
+				
+            <li><a href="../lists/modules.html">Modules</a></li>
+				
+				
+            <li><a href="../lists/procedures.html">Procedures</a></li>
+				
+								
+            <li><a href="../lists/types.html">Derived Types</a></li>
+				
+				
+            <li><a href="../program/test_driver.html">Program</a></li>
+				
+          </ul>
+        
+        <form action="../search.html" class="navbar-form navbar-right" role="search">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+        </div>
+<!--
+        <button type="submit" class="btn btn-default">Submit</button>
+-->
+        </form>
+        
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container">
+    
+  
+  <div class="row">
+    <h1>Lib_VTK_IO_FLD_XML 
+    <small>Module</small>
+    
+    </h1>
+	 
+<div class="row">
+<div class="col-lg-12">
+<div class="well well-sm">
+  <ul class="list-inline" style="margin-bottom:0px;display:inline">
+     
+     
+     
+     
+    
+    
+    <li><i class="fa fa-code"></i><a href="../src/Lib_VTK_IO_FLD_XML.f90"> Source File</a></li>
+     
+  </ul>
+  <ol class="breadcrumb in-well text-right">
+  
+     <li><a href='../sourcefile/lib_vtk_io_fld_xml.f90.html'>Lib_VTK_IO_FLD_XML.f90</a></li>
+  
+     <li class="active">Lib_VTK_IO_FLD_XML</li>
+  </ol>
+</div>
+</div>
+</div>
+    
+  </div>
+  
+  <div class="row">
+    <div class="col-lg-3">
+    
+<div id="sidebar">
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <div class="panel panel-primary">
+    <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#inters">Interfaces</a></h3></div>
+    <div id="inters" class="panel-collapse collapse">
+        <div class="list-group">
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_fld_xml.html#interface-vtk_fld_xml">VTK_FLD_XML</a>
+          
+        </div>
+    </div>
+  </div>
+  
+  
+  
+  
+  
+  <div class="panel panel-primary">
+    <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#funcs">Functions</a></h3></div>
+    <div id="funcs" class="panel-collapse collapse">
+        <div class="list-group">
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_fld_xml.html#proc-vtk_fld_xml_oc">VTK_FLD_XML_OC</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_fld_xml.html#proc-vtk_fld_xml_r8">VTK_FLD_XML_R8</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_fld_xml.html#proc-vtk_fld_xml_r4">VTK_FLD_XML_R4</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_fld_xml.html#proc-vtk_fld_xml_i8">VTK_FLD_XML_I8</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_fld_xml.html#proc-vtk_fld_xml_i4">VTK_FLD_XML_I4</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_fld_xml.html#proc-vtk_fld_xml_i2">VTK_FLD_XML_I2</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_fld_xml.html#proc-vtk_fld_xml_i1">VTK_FLD_XML_I1</a>
+          
+        </div>
+    </div>
+  </div>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <hr>
+  
+  <div class="panel panel-default">
+    <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#allmods">All Modules</a></h3></div>
+    <div id="allmods" class="panel-collapse collapse">
+        <div class="list-group">
+          
+          <a class="list-group-item" href="../module/lib_pack_data.html">Lib_Pack_Data</a>
+          
+          <a class="list-group-item" href="../module/lib_testers.html">Lib_Testers</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io.html">Lib_VTK_IO</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_back_end.html">Lib_VTK_IO_Back_End</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_con.html">Lib_VTK_IO_CON</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_con_xml.html">Lib_VTK_IO_CON_XML</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_dat_var.html">Lib_VTK_IO_DAT_VAR</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_dat_var_xml.html">Lib_VTK_IO_DAT_VAR_XML</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_end.html">Lib_VTK_IO_END</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_end_xml.html">Lib_VTK_IO_END_XML</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_fld_xml.html">Lib_VTK_IO_FLD_XML</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_geo.html">Lib_VTK_IO_GEO</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_geo_xml.html">Lib_VTK_IO_GEO_XML</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_ini.html">Lib_VTK_IO_INI</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_ini_xml.html">Lib_VTK_IO_INI_XML</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_pvd_xml.html">Lib_VTK_IO_PVD_XML</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_pvtk_xml.html">Lib_VTK_IO_PVTK_XML</a>
+          
+          <a class="list-group-item" href="../module/lib_vtk_io_vtm_xml.html">Lib_VTK_IO_VTM_XML</a>
+          
+        </div>
+    </div>
+  </div>
+  
+</div>
+
+    </div>
+    
+    <div class="col-lg-9" id='text'>
+    
+    
+  
+    <ul class="list-inline">
+      <li><h4>Uses:</h4></li>
+      
+      <li>IR_Precision</li>
+      
+      <li>Lib_Base64</li>
+      
+      <li><a href='../module/lib_vtk_io_back_end.html'>Lib_VTK_IO_Back_End</a></li>
+      
+    </ul>
+  
+
+    
+    
+    <p>FLD_XML interface definition for Lib_VTK_IO.</p>
+    <br>
+    
+
+    
+    
+    
+    
+    
+    <section>
+	 <h2>Interfaces</h2>
+	 
+	   
+<div class="panel panel-default">
+  <div class="panel-heading codesum"><span class="anchor" id="interface-vtk_fld_xml"></span><h3>public interface <a href='../interface/vtk_fld_xml.html'>VTK_FLD_XML</a>
+    
+  </h3></div>
+  
+  <div class="panel-body">
+    
+    <p>Procedure for saving field data (global auxiliary data, eg time, step number, dataset name, etc).</p>
+  </div>
+  
+  <ul class="list-group">
+  
+  
+  
+    <li class="list-group-item">
+    
+    
+    <h3>
+private function <a href='../proc/vtk_fld_xml_oc.html'>VTK_FLD_XML_OC</a>(fld_action, cf) result(E_IO)
+    
+    
+    
+</h3>
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>character(len=*),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fld_action</strong></td><td><p>Field data tag action: OPEN or CLOSE tag.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+  <td>intent(in),</td>
+  <td>optional</td>
+  
+  <td></td><td>::</td>
+  <td><strong>cf</strong></td><td><p>Current file index (for concurrent files IO).</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small>integer(kind=I4P)
+  </small></h4>
+  <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
+    
+    
+    <h4>Description</h4>
+       
+       
+
+
+       
+       <p>Function for open/close field data tag.</p>
+        
+
+    </li>
+  
+    <li class="list-group-item">
+    
+    
+    <h3>
+private function <a href='../proc/vtk_fld_xml_r8.html'>VTK_FLD_XML_R8</a>(fld, fname, cf) result(E_IO)
+    
+    
+    
+</h3>
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fld</strong></td><td><p>Field data value.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>character(len=*),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fname</strong></td><td><p>Field data name.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+  <td>intent(in),</td>
+  <td>optional</td>
+  
+  <td></td><td>::</td>
+  <td><strong>cf</strong></td><td><p>Current file index (for concurrent files IO).</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small>integer(kind=I4P)
+  </small></h4>
+  <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
+    
+    
+    <h4>Description</h4>
+       
+       
+
+
+       
+       <p>Function for saving field data (global auxiliary data, e.g. time, step number, data set name...) (R8P).</p>
+        
+
+    </li>
+  
+    <li class="list-group-item">
+    
+    
+    <h3>
+private function <a href='../proc/vtk_fld_xml_r4.html'>VTK_FLD_XML_R4</a>(fld, fname, cf) result(E_IO)
+    
+    
+    
+</h3>
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fld</strong></td><td><p>Field data value.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>character(len=*),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fname</strong></td><td><p>Field data name.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+  <td>intent(in),</td>
+  <td>optional</td>
+  
+  <td></td><td>::</td>
+  <td><strong>cf</strong></td><td><p>Current file index (for concurrent files IO).</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small>integer(kind=I4P)
+  </small></h4>
+  <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
+    
+    
+    <h4>Description</h4>
+       
+       
+
+
+       
+       <p>Function for saving field data (global auxiliary data, e.g. time, step number, data set name...) (R4P).</p>
+        
+
+    </li>
+  
+    <li class="list-group-item">
+    
+    
+    <h3>
+private function <a href='../proc/vtk_fld_xml_i8.html'>VTK_FLD_XML_I8</a>(fld, fname, cf) result(E_IO)
+    
+    
+    
+</h3>
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fld</strong></td><td><p>Field data value.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>character(len=*),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fname</strong></td><td><p>Field data name.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+  <td>intent(in),</td>
+  <td>optional</td>
+  
+  <td></td><td>::</td>
+  <td><strong>cf</strong></td><td><p>Current file index (for concurrent files IO).</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small>integer(kind=I4P)
+  </small></h4>
+  <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
+    
+    
+    <h4>Description</h4>
+       
+       
+
+
+       
+       <p>Function for saving field data (global auxiliary data, e.g. time, step number, data set name...) (I8P).</p>
+        
+
+    </li>
+  
+    <li class="list-group-item">
+    
+    
+    <h3>
+private function <a href='../proc/vtk_fld_xml_i4.html'>VTK_FLD_XML_I4</a>(fld, fname, cf) result(E_IO)
+    
+    
+    
+</h3>
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fld</strong></td><td><p>Field data value.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>character(len=*),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fname</strong></td><td><p>Field data name.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+  <td>intent(in),</td>
+  <td>optional</td>
+  
+  <td></td><td>::</td>
+  <td><strong>cf</strong></td><td><p>Current file index (for concurrent files IO).</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small>integer(kind=I4P)
+  </small></h4>
+  <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
+    
+    
+    <h4>Description</h4>
+       
+       
+
+
+       
+       <p>Function for saving field data (global auxiliary data, e.g. time, step number, data set name...) (I4P).</p>
+        
+
+    </li>
+  
+    <li class="list-group-item">
+    
+    
+    <h3>
+private function <a href='../proc/vtk_fld_xml_i2.html'>VTK_FLD_XML_I2</a>(fld, fname, cf) result(E_IO)
+    
+    
+    
+</h3>
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fld</strong></td><td><p>Field data value.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>character(len=*),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fname</strong></td><td><p>Field data name.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+  <td>intent(in),</td>
+  <td>optional</td>
+  
+  <td></td><td>::</td>
+  <td><strong>cf</strong></td><td><p>Current file index (for concurrent files IO).</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small>integer(kind=I4P)
+  </small></h4>
+  <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
+    
+    
+    <h4>Description</h4>
+       
+       
+
+
+       
+       <p>Function for saving field data (global auxiliary data, e.g. time, step number, data set name...) (I2P).</p>
+        
+
+    </li>
+  
+    <li class="list-group-item">
+    
+    
+    <h3>
+private function <a href='../proc/vtk_fld_xml_i1.html'>VTK_FLD_XML_I1</a>(fld, fname, cf) result(E_IO)
+    
+    
+    
+</h3>
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fld</strong></td><td><p>Field data value.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>character(len=*),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fname</strong></td><td><p>Field data name.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+  <td>intent(in),</td>
+  <td>optional</td>
+  
+  <td></td><td>::</td>
+  <td><strong>cf</strong></td><td><p>Current file index (for concurrent files IO).</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small>integer(kind=I4P)
+  </small></h4>
+  <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
+    
+    
+    <h4>Description</h4>
+       
+       
+
+
+       
+       <p>Function for saving field data (global auxiliary data, e.g. time, step number, data set name...) (I1P).</p>
+        
+
+    </li>
+  
+  
+  </ul>
+</div>
+
+    
+    </section>
+	<br>
+    
+
+    
+    
+    
+    
+     
+    <section>
+    <h2>Functions</h2>
+    
+    
+  <div class="panel panel-default">
+  <div class="panel-heading codesum"><span class="anchor" id="proc-vtk_fld_xml_oc"></span><h3>
+private function <a href='../proc/vtk_fld_xml_oc.html'>VTK_FLD_XML_OC</a>(fld_action, cf) result(E_IO)
+    
+    
+    
+</h3></div>
+  <div class="panel-body">
+       
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>character(len=*),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fld_action</strong></td><td><p>Field data tag action: OPEN or CLOSE tag.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+  <td>intent(in),</td>
+  <td>optional</td>
+  
+  <td></td><td>::</td>
+  <td><strong>cf</strong></td><td><p>Current file index (for concurrent files IO).</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small>integer(kind=I4P)
+  </small></h4>
+  <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
+    
+    
+    <h4>Description</h4>
+       
+       
+
+
+       
+       <p>Function for open/close field data tag.</p>
+        
+
+  </div>
+  </div>
+
+    
+    
+  <div class="panel panel-default">
+  <div class="panel-heading codesum"><span class="anchor" id="proc-vtk_fld_xml_r8"></span><h3>
+private function <a href='../proc/vtk_fld_xml_r8.html'>VTK_FLD_XML_R8</a>(fld, fname, cf) result(E_IO)
+    
+    
+    
+</h3></div>
+  <div class="panel-body">
+       
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>real(kind=R8P),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fld</strong></td><td><p>Field data value.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>character(len=*),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fname</strong></td><td><p>Field data name.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+  <td>intent(in),</td>
+  <td>optional</td>
+  
+  <td></td><td>::</td>
+  <td><strong>cf</strong></td><td><p>Current file index (for concurrent files IO).</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small>integer(kind=I4P)
+  </small></h4>
+  <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
+    
+    
+    <h4>Description</h4>
+       
+       
+
+
+       
+       <p>Function for saving field data (global auxiliary data, e.g. time, step number, data set name...) (R8P).</p>
+        
+
+  </div>
+  </div>
+
+    
+    
+  <div class="panel panel-default">
+  <div class="panel-heading codesum"><span class="anchor" id="proc-vtk_fld_xml_r4"></span><h3>
+private function <a href='../proc/vtk_fld_xml_r4.html'>VTK_FLD_XML_R4</a>(fld, fname, cf) result(E_IO)
+    
+    
+    
+</h3></div>
+  <div class="panel-body">
+       
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>real(kind=R4P),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fld</strong></td><td><p>Field data value.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>character(len=*),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fname</strong></td><td><p>Field data name.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+  <td>intent(in),</td>
+  <td>optional</td>
+  
+  <td></td><td>::</td>
+  <td><strong>cf</strong></td><td><p>Current file index (for concurrent files IO).</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small>integer(kind=I4P)
+  </small></h4>
+  <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
+    
+    
+    <h4>Description</h4>
+       
+       
+
+
+       
+       <p>Function for saving field data (global auxiliary data, e.g. time, step number, data set name...) (R4P).</p>
+        
+
+  </div>
+  </div>
+
+    
+    
+  <div class="panel panel-default">
+  <div class="panel-heading codesum"><span class="anchor" id="proc-vtk_fld_xml_i8"></span><h3>
+private function <a href='../proc/vtk_fld_xml_i8.html'>VTK_FLD_XML_I8</a>(fld, fname, cf) result(E_IO)
+    
+    
+    
+</h3></div>
+  <div class="panel-body">
+       
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fld</strong></td><td><p>Field data value.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>character(len=*),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fname</strong></td><td><p>Field data name.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+  <td>intent(in),</td>
+  <td>optional</td>
+  
+  <td></td><td>::</td>
+  <td><strong>cf</strong></td><td><p>Current file index (for concurrent files IO).</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small>integer(kind=I4P)
+  </small></h4>
+  <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
+    
+    
+    <h4>Description</h4>
+       
+       
+
+
+       
+       <p>Function for saving field data (global auxiliary data, e.g. time, step number, data set name...) (I8P).</p>
+        
+
+  </div>
+  </div>
+
+    
+    
+  <div class="panel panel-default">
+  <div class="panel-heading codesum"><span class="anchor" id="proc-vtk_fld_xml_i4"></span><h3>
+private function <a href='../proc/vtk_fld_xml_i4.html'>VTK_FLD_XML_I4</a>(fld, fname, cf) result(E_IO)
+    
+    
+    
+</h3></div>
+  <div class="panel-body">
+       
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fld</strong></td><td><p>Field data value.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>character(len=*),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fname</strong></td><td><p>Field data name.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+  <td>intent(in),</td>
+  <td>optional</td>
+  
+  <td></td><td>::</td>
+  <td><strong>cf</strong></td><td><p>Current file index (for concurrent files IO).</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small>integer(kind=I4P)
+  </small></h4>
+  <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
+    
+    
+    <h4>Description</h4>
+       
+       
+
+
+       
+       <p>Function for saving field data (global auxiliary data, e.g. time, step number, data set name...) (I4P).</p>
+        
+
+  </div>
+  </div>
+
+    
+    
+  <div class="panel panel-default">
+  <div class="panel-heading codesum"><span class="anchor" id="proc-vtk_fld_xml_i2"></span><h3>
+private function <a href='../proc/vtk_fld_xml_i2.html'>VTK_FLD_XML_I2</a>(fld, fname, cf) result(E_IO)
+    
+    
+    
+</h3></div>
+  <div class="panel-body">
+       
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I2P),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fld</strong></td><td><p>Field data value.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>character(len=*),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fname</strong></td><td><p>Field data name.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+  <td>intent(in),</td>
+  <td>optional</td>
+  
+  <td></td><td>::</td>
+  <td><strong>cf</strong></td><td><p>Current file index (for concurrent files IO).</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small>integer(kind=I4P)
+  </small></h4>
+  <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
+    
+    
+    <h4>Description</h4>
+       
+       
+
+
+       
+       <p>Function for saving field data (global auxiliary data, e.g. time, step number, data set name...) (I2P).</p>
+        
+
+  </div>
+  </div>
+
+    
+    
+  <div class="panel panel-default">
+  <div class="panel-heading codesum"><span class="anchor" id="proc-vtk_fld_xml_i1"></span><h3>
+private function <a href='../proc/vtk_fld_xml_i1.html'>VTK_FLD_XML_I1</a>(fld, fname, cf) result(E_IO)
+    
+    
+    
+</h3></div>
+  <div class="panel-body">
+       
+    
+    <h4>Arguments</h4>
+    
+      
+      
+<table class="table table-striped varlist">
+<thead><tr><th>Type</th>
+<th>Intent</th><th>Optional</th>
+<th>Attributes</th><th></th><th>Name</th><th></th></thead>
+
+
+
+<tbody>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I1P),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fld</strong></td><td><p>Field data value.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>character(len=*),</td>
+  <td>intent(in)</td>
+  <td></td>
+  
+  <td></td><td>::</td>
+  <td><strong>fname</strong></td><td><p>Field data name.</p></td>
+  
+</tr>
+
+  
+  
+  
+  
+<tr>
+  
+  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+  <td>intent(in),</td>
+  <td>optional</td>
+  
+  <td></td><td>::</td>
+  <td><strong>cf</strong></td><td><p>Current file index (for concurrent files IO).</p></td>
+  
+</tr>
+
+</tbody>
+</table>
+
+      
+    
+    
+
+  
+  
+  
+  
+     <h4>Return Value <small>integer(kind=I4P)
+  </small></h4>
+  <p>Input/Output inquiring flag: $0$ if IO is done, $&gt; 0$ if IO is not done.</p>
+    
+    
+    <h4>Description</h4>
+       
+       
+
+
+       
+       <p>Function for saving field data (global auxiliary data, e.g. time, step number, data set name...) (I1P).</p>
+        
+
+  </div>
+  </div>
+
+    
+    </section>
+    <br>
+    
+
+    
+    
+    
+    </div>
+  </div>
+
+    <hr>
+    <footer>
+        <div class="row">
+        <div class="col-md-6">&copy; 2015 Lib_VTK_IO was written by Stefano Zaghi. </div>
+        <div class="col-md-6"><span class="pull-right">Documentation generated by <a href="https://github.com/cmacmackin/ford">FORD</a>.</span></div>
+        </div>
+        <br>
+    </footer>
+    </div> <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+<!--
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+-->
+    <script src="../js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../js/ie10-viewport-bug-workaround.js"></script>
+
+    <!-- MathJax JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+        jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+        extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js'],
+        'HTML-CSS': { 
+           styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: '#000000 ! important'} }
+        }
+      });
+    </script>
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  </body>
+</html>

@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	 
-	 <meta name="description" content="<p>Pure Fortran (2003+) library to write and read data conforming the VTK standard</p>">
+	 <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
     
     <meta name="author" content="Chris MacMackin" >
     <link rel="icon" href="./favicon.png">
@@ -25,17 +25,21 @@
     <![endif]-->
     
     <script src="./js/jquery-2.1.3.min.js"></script>
+    <script src="./js/svg-pan-zoom.min.js"></script>
+
+    
     <script src="./tipuesearch/tipuesearch_content.js"></script>
     <link  href="./tipuesearch/tipuesearch.css" rel="stylesheet">
     <script src="./tipuesearch/tipuesearch_set.js"></script>
     <script src="./tipuesearch/tipuesearch.js"></script>
+    
 
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -48,7 +52,8 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            
+				
+                
             <li><a href="./lists/files.html">Source Files</a></li>
 				
 				
@@ -57,13 +62,14 @@
 				
             <li><a href="./lists/procedures.html">Procedures</a></li>
 				
-				
+								
             <li><a href="./lists/types.html">Derived Types</a></li>
 				
 				
             <li><a href="./program/test_driver.html">Program</a></li>
-								
+				
           </ul>
+        
         <form action="./search.html" class="navbar-form navbar-right" role="search">
         <div class="form-group">
           <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
@@ -72,6 +78,7 @@
         <button type="submit" class="btn btn-default">Submit</button>
 -->
         </form>
+        
         </div><!--/.nav-collapse -->
       </div>
     </nav>
@@ -102,9 +109,14 @@
           <h1>Lib_VTK_IO</h1>
           <p><a name="top"></a></p>
 <h1>Lib_VTK_IO <a href=""><img alt="GitHub tag" src="https://img.shields.io/github/tag/szaghi/Lib_VTK_IO.svg"></a></h1>
-<p><a href=""><img alt="License" src="https://img.shields.io/badge/license-GNU%20GeneraL%20Public%20License%20v3%20,%20GPLv3-blue.svg"></a></p>
+<p><a href="https://gitter.im/szaghi/Lib_VTK_IO?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img alt="Join the chat at https://gitter.im/szaghi/Lib_VTK_IO" src="https://badges.gitter.im/Join%20Chat.svg"></a></p>
+<p><a href=""><img alt="License" src="https://img.shields.io/badge/license-GNU%20GeneraL%20Public%20License%20v3,%20GPLv3-blue.svg"></a>
+<a href=""><img alt="License" src="https://img.shields.io/badge/license-BSD2-red.svg"></a>
+<a href=""><img alt="License" src="https://img.shields.io/badge/license-BSD3-red.svg"></a>
+<a href=""><img alt="License" src="https://img.shields.io/badge/license-MIT-red.svg"></a></p>
 <p><a href=""><img alt="Status" src="https://img.shields.io/badge/status-stable-brightgreen.svg"></a>
-<a href="https://travis-ci.org/szaghi/Lib_VTK_IO"><img alt="Build Status" src="https://travis-ci.org/szaghi/Lib_VTK_IO.svg?branch=master"></a></p>
+<a href="https://travis-ci.org/szaghi/Lib_VTK_IO"><img alt="Build Status" src="https://travis-ci.org/szaghi/Lib_VTK_IO.svg?branch=master"></a>
+<a href="https://coveralls.io/r/szaghi/Lib_VTK_IO?branch=master"><img alt="Coverage Status" src="https://coveralls.io/repos/szaghi/Lib_VTK_IO/badge.svg?branch=master"></a></p>
 <h3>Lib_VTK_IO, VTK IO in pure Fortran (2003+)</h3>
 <p>A KISS pure Fortran Library to IO data conforming the VTK standard</p>
 <ul>
@@ -114,23 +126,79 @@
 <li>Lib_VTK_IO supports <em>ascii</em>, <em>binary</em> and <em>base64</em> file formats;</li>
 <li>Lib_VTK_IO is a Free, Open Source Project.</li>
 </ul>
+<h4>Table of Contents</h4>
+<ul>
+<li><a href="#main-features">Main features</a></li>
+<li><a href="#copyrights">Copyrights</a></li>
+<li><a href="#documentation">Documentation</a></li>
+<li><a href="#a-taste-of-lib_vtk_io">A Taste of Lib_VTK_IO</a></li>
+</ul>
 <h4>Issues</h4>
 <p><a href=""><img alt="GitHub issues" src="https://img.shields.io/github/issues/szaghi/Lib_VTK_IO.svg"></a>
 <a href="https://waffle.io/szaghi/Lib_VTK_IO"><img alt="Ready in backlog" src="https://badge.waffle.io/szaghi/Lib_VTK_IO.png?label=ready&amp;title=Ready"></a>
 <a href="https://waffle.io/szaghi/Lib_VTK_IO"><img alt="In Progress" src="https://badge.waffle.io/szaghi/Lib_VTK_IO.png?label=in%20progress&amp;title=In%20Progress"></a>
 <a href="https://waffle.io/szaghi/Lib_VTK_IO"><img alt="Open bugs" src="https://badge.waffle.io/szaghi/Lib_VTK_IO.png?label=bug&amp;title=Open%20Bugs"></a></p>
 <h4>Compiler Support</h4>
-<p><a href=""><img alt="Compiler" src="https://img.shields.io/badge/GNU%20Gfortran%20Compiler-build%20pass%20with%20v4.9.2+-brightgreen.svg"></a></p>
-<p><a href=""><img alt="Compiler" src="https://img.shields.io/badge/Intel%20Fortran%20Compiler-build%20pass%20with%20v12.x+-brightgreen.svg"></a></p>
-<p><a href=""><img alt="Compiler" src="https://img.shields.io/badge/IBM%20XL%20Fortran%20Compiler-not%20tested-yellow.svg"></a></p>
-<p><a href=""><img alt="Compiler" src="https://img.shields.io/badge/g95%20Fortran%20Compiler-not%20tested-yellow.svg"></a></p>
-<p><a href=""><img alt="Compiler" src="https://img.shields.io/badge/NAG%20Fortran%20Compiler-not%20tested-yellow.svg"></a></p>
-<p><a href=""><img alt="Compiler" src="https://img.shields.io/badge/PGI%20Fortran%20Compiler-not%20tested-yellow.svg"></a></p>
+<p><a href=""><img alt="Compiler" src="https://img.shields.io/badge/GNU-pass%20(v4.9.2+">-brightgreen.svg)</a>
+<a href=""><img alt="Compiler" src="https://img.shields.io/badge/Intel-pass%20(v12.x+">-brightgreen.svg)</a>
+<a href=""><img alt="Compiler" src="https://img.shields.io/badge/IBM%20XL-not%20tested-yellow.svg"></a>
+<a href=""><img alt="Compiler" src="https://img.shields.io/badge/g95-not%20tested-yellow.svg"></a>
+<a href=""><img alt="Compiler" src="https://img.shields.io/badge/NAG-not%20tested-yellow.svg"></a>
+<a href=""><img alt="Compiler" src="https://img.shields.io/badge/PGI-not%20tested-yellow.svg"></a></p>
+<h2>Main features</h2>
+<h3>VTK features</h3>
+<h4>Exporters</h4>
+<h5>Legacy standard</h5>
+<ul class="checklist">
+<li><input type="checkbox" disabled checked> Structured Points;</li>
+<li><input type="checkbox" disabled checked> Structured Grid;</li>
+<li><input type="checkbox" disabled checked> Unstructured Grid;</li>
+<li><input type="checkbox" disabled> Polydata;</li>
+<li><input type="checkbox" disabled checked> Rectilinear Grid;</li>
+<li><input type="checkbox" disabled> Field;</li>
+</ul>
+<h5>XML standard</h5>
+<ul class="checklist">
+<li><input type="checkbox" disabled> serial dataset:<ul class="checklist">
+<li><input type="checkbox" disabled> Image Data;</li>
+<li><input type="checkbox" disabled> Polydata;</li>
+<li><input type="checkbox" disabled checked> Rectilinear Grid;</li>
+<li><input type="checkbox" disabled checked> Structured Grid;</li>
+<li><input type="checkbox" disabled checked> Unstructured Grid;</li>
+</ul>
+</li>
+<li><input type="checkbox" disabled> parallel (partitioned) dataset:<ul class="checklist">
+<li><input type="checkbox" disabled> Image Data;</li>
+<li><input type="checkbox" disabled> Polydata;</li>
+<li><input type="checkbox" disabled checked> Rectilinear Grid;</li>
+<li><input type="checkbox" disabled checked> Structured Grid;</li>
+<li><input type="checkbox" disabled checked> Unstructured Grid;</li>
+</ul>
+</li>
+<li><input type="checkbox" disabled checked> composite dataset:<ul class="checklist">
+<li><input type="checkbox" disabled checked> vtkMultiBlockDataSet.</li>
+</ul>
+</li>
+</ul>
+<h4>Importers</h4>
+<p>The importers are under developing.</p>
+<h3>Parallel Architectures</h3>
+<p>Lib_VTK_IO can handle multiple concurrent files and it is \b thread/processor-safe, meaning that it can be safely used into parallel architectures using OpenMP and/or MPI paradigms. Into section [[Parallel-benchmarks]] some more details can be found.</p>
 <h2>Copyrights</h2>
-<p>The Lib_VTK_IO is an open source project, it is distributed under the <a href="http://www.gnu.org/licenses/gpl-3.0.html">GPL v3</a>. Anyone is interest to use, to develop or to contribute to Lib_VTK_IO is welcome. Take a look at the <a href="CONTRIBUTING.md">contributing guidelines</a> for starting to contribute to the project.</p>
+<p>Lib_VTK_IO is an open source project, it is distributed under a multi-licensing system:</p>
+<ul>
+<li>for FOSS projects:</li>
+<li><a href="http://www.gnu.org/licenses/gpl-3.0.html">GPL v3</a>;</li>
+<li>for closed source/commercial projects:</li>
+<li><a href="http://opensource.org/licenses/BSD-2-Clause">BSD 2-Clause</a>;</li>
+<li><a href="http://opensource.org/licenses/BSD-3-Clause">BSD 3-Clause</a>;</li>
+<li><a href="http://opensource.org/licenses/MIT">MIT</a>.</li>
+</ul>
+<p>Anyone is interest to use, to develop or to contribute to Lib_VTK_IO is welcome, feel free to select the license that best matches your soul!</p>
+<p>More details can be found on <a href="https://github.com/szaghi/Lib_VTK_IO/wiki/Copyrights">wiki</a>.</p>
 <p>Go to <a href="#top">Top</a></p>
 <h2>Documentation</h2>
-<p>Lib_VTK_IO has a comprehensive <a href="https://github.com/szaghi/Lib_VTK_IO/wiki">wiki</a>. Moreover, the API is well documented, on the <a href="http://szaghi.github.com/Lib_VTK_IO/index.html">GitHub pages</a> of the project.</p>
+<p>Besides this README file the Lib_VTK_IO documentation is contained into its own <a href="https://github.com/szaghi/Lib_VTK_IO/wiki">wiki</a>. Detailed documentation of the API is contained into the <a href="http://szaghi.github.io/Lib_VTK_IO/index.html">GitHub Pages</a> that can also be created locally by means of <a href="https://github.com/cmacmackin/ford">ford tool</a>.</p>
 <p>Go to <a href="#top">Top</a></p>
 <h3>A taste of Lib_VTK_IO</h3>
 <p>Let us assume our aim being to save our pure Fortran data into a VTK structured grid file in binary XML form. This is simple as</p>
@@ -157,76 +225,6 @@
 
 
 <p>Note that all Lib_VTK_IO functions return an error code (<code>E_IO</code>) that can be used for sophisticated error trapping algorithms.</p>
-<h3>ChangeLog</h3>
-<h3>Version v1.2.0</h3>
-<p>Stable release. Fully backward compatible. Modern compiler required.</p>
-<ul>
-<li>Switch to the new Lib_Base64, <a href="https://github.com/szaghi/BeFoR64">BeFoR64</a> project: the use of <em>deferred length string</em>, namely <code>character(len=:), allocatabale:: var</code>, imposes a modern compiler supporting automatic (re)allocation of LHS on assignment.</li>
-</ul>
-<h3>Version v1.1.1</h3>
-<ul>
-<li>Extend VTM_WRF_XML function, now it is an interface to two functions, one for files list passed as an array and one for files list passed a single string. If a single string is used, the delimiter of each file can be customized, while the default values is '&amp;';</li>
-<li>The internal API of Type_VTM_File is changed: the <code>blk</code> member is now an array instead of a scalar to allow nested blocks.</li>
-</ul>
-<h5>Examples of usage</h5>
-<h6>Example with array files list: 3 files block with default delimiter</h6>
-<div class="codehilite"><pre> <span class="n">E_IO</span> <span class="o">=</span> <span class="n">VTK_WRF_XML</span><span class="p">(</span><span class="n">flist</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;file_1.vts&#39;</span><span class="p">,</span><span class="s1">&#39;file_2.vts&#39;</span><span class="p">,</span><span class="s1">&#39;file_3.vtu&#39;</span><span class="p">])</span>
-</pre></div>
-
-
-<h6>Example with single string files list: 3 files block with default delimiter</h6>
-<div class="codehilite"><pre> <span class="n">E_IO</span> <span class="o">=</span> <span class="n">VTK_WRF_XML</span><span class="p">(</span><span class="n">flist</span><span class="o">=</span><span class="s1">&#39;file_1.vts&amp;file_2.vts&amp;file_3.vtu&#39;</span><span class="p">)</span>
-</pre></div>
-
-
-<h6>Example with single string files list: 2 files block with custom delimiter (!!)</h6>
-<div class="codehilite"><pre> <span class="n">E_IO</span> <span class="o">=</span> <span class="n">VTK_WRF_XML</span><span class="p">(</span><span class="n">flist</span><span class="o">=</span><span class="s1">&#39;file_1.vts!!file_2.vts&#39;</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;!!&#39;</span><span class="p">)</span>
-</pre></div>
-
-
-<h3>Version v1.1.0</h3>
-<ul>
-<li>Added packed API and 3D(or higher) arrays for VTK_VAR_XML function: this avoids the necessity of explicit reshape of multi-dimensional arrays containing saved variables in VAR callings; the following inputs are now available:</li>
-<li>scalar input:<ul>
-<li>input is 1D-rank array: var[1:NC_NN];</li>
-<li>input is 3D-rank array: var[nx1:nx2,ny1:ny2,nz1:nz2];</li>
-</ul>
-</li>
-<li>vectorial inputs:<ul>
-<li>inputs are 1D-rank arrays: varX[1:NC_NN],varY[1:NC_NN],varZ[1:NC_NN];</li>
-<li>inputs are 3D-rank arrays: varX[nx1:nx2,ny1:ny2,nz1:nz2],varY[nx1:nx2,ny1:ny2,nz1:nz2],varX[nx1:nx2,ny1:ny2,nz1:nz2];</li>
-</ul>
-</li>
-<li>3D(or higher) vectorial inputs:<ul>
-<li>input is 1D-rank (packed API): var[1:N_COL,1:NC_NN];</li>
-<li>input is 3D-rank (packed API): var[1:N_COL,nx1:nx2,ny1:ny2,nz1:nz2].</li>
-</ul>
-</li>
-<li>Added packed API and 3D arrays for VTK_GEO and VTK_GEO_XML function: this avoids the necessity of explicit reshape of multi-dimensional arrays containing X, Y and Z coordinates in GEO callings; the following inputs are now available:</li>
-<li>StructuredGrid (NN is the number of grid points, n#1-n#2, #x,y,z are the domain extents):<ul>
-<li>1D arrays of size NN: X[1:NN],Y[1:NN],Z[1:NN];</li>
-<li>3D arrays of size NN: X[nx1:nx2,ny1:ny2,nz1:nz2],Y[nx1:nx2,ny1:ny2,nz1:nz2],Z[nx1:nx2,ny1:ny2,nz1:nz2];</li>
-<li>1D array of size 3*NN (packed API): XYZ[1:3,1:NN];</li>
-<li>3D array of size 3*NN (packed API): XYZ[1:3,nx1:nx2,ny1:ny2,nz1:nz2].</li>
-</ul>
-</li>
-<li>UnStructuredGrid (NN is the number of grid points):<ul>
-<li>1D arrays of size NN: X[1:NN],Y[1:NN],Z[1:NN];</li>
-<li>1D array of size 3*NN (packed API): XYZ[1:3,1:NN].</li>
-</ul>
-</li>
-<li>Added base64 encoding format: the output format specifier of VTK_INI_XML has been changed:</li>
-<li>output_format = 'ascii' means \b ascii data, the same as the previous version;</li>
-<li>output_format = 'binary' means \b base64 encoded data, different from the previous version where it meant appended raw-binary data; base64 encoding was missing in the previous version;</li>
-<li>output_format = 'raw' means \b appended \b raw-binary data, as 'binary' of the previous version;</li>
-<li>Added support for OpenMP multi-threads framework;</li>
-<li>Correct bug affecting binary output;</li>
-<li>implement concurrent multiple files IO capability;</li>
-<li>implement FieldData tag for XML files, useful for tagging dataset with global auxiliary data, e.g. time, time step, ecc;</li>
-<li>implement Parallel (Partitioned) XML files support (.pvtu,.pvts,.pvtr);</li>
-<li>implement Driver testing program for providing practical examples of @libvtk usage;</li>
-<li>added support for parallel framework, namely OpenMP (thread-safe) and MPI (process-safe).</li>
-</ul>
         </div>
 		  
         <div class="col-lg-4">
@@ -266,14 +264,6 @@
               <ul>
                 
                   
-                    <li><a href='./sourcefile/ir_precision.f90.html'>IR_Precision.f90</a></li>
-                  
-                
-                  
-                    <li><a href='./sourcefile/lib_base64.f90.html'>Lib_Base64.f90</a></li>
-                  
-                
-                  
                     <li><a href='./sourcefile/lib_pack_data.f90.html'>Lib_Pack_Data.f90</a></li>
                   
                 
@@ -282,7 +272,53 @@
                   
                 
                   
-                    <li><a href='./sourcefile/test_driver.f90.html'>Test_Driver.f90</a></li>
+                    <li><a href='./sourcefile/lib_vtk_io_back_end.f90.html'>Lib_VTK_IO_Back_End.f90</a></li>
+                  
+                
+                  
+                    <li><a href='./sourcefile/lib_vtk_io_con.f90.html'>Lib_VTK_IO_CON.f90</a></li>
+                  
+                
+                  
+                    <li><a href='./sourcefile/lib_vtk_io_con_xml.f90.html'>Lib_VTK_IO_CON_XML.f90</a></li>
+                  
+                
+                  
+                    <li><a href='./sourcefile/lib_vtk_io_dat_var.f90.html'>Lib_VTK_IO_DAT_VAR.f90</a></li>
+                  
+                
+                  
+                    <li><a href='./sourcefile/lib_vtk_io_dat_var_xml.f90.html'>Lib_VTK_IO_DAT_VAR_XML.f90</a></li>
+                  
+                
+                  
+                    <li><a href='./sourcefile/lib_vtk_io_end.f90.html'>Lib_VTK_IO_END.f90</a></li>
+                  
+                
+                  
+                    <li><a href='./sourcefile/lib_vtk_io_end_xml.f90.html'>Lib_VTK_IO_END_XML.f90</a></li>
+                  
+                
+                  
+                    <li><a href='./sourcefile/lib_vtk_io_fld_xml.f90.html'>Lib_VTK_IO_FLD_XML.f90</a></li>
+                  
+                
+                  
+                    <li><a href="./lists/files.html"><em>All source files&hellip;</em></a></li>
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
                   
                 
               </ul>
@@ -291,14 +327,6 @@
           <div class="col-lg-3">
               <h3>Modules</h3>
               <ul>
-                
-                  
-                    <li><a href='./module/ir_precision.html'>IR_Precision</a></li>
-                  
-                
-                  
-                    <li><a href='./module/lib_base64.html'>Lib_Base64</a></li>
-                  
                 
                   
                     <li><a href='./module/lib_pack_data.html'>Lib_Pack_Data</a></li>
@@ -312,6 +340,52 @@
                     <li><a href='./module/lib_vtk_io.html'>Lib_VTK_IO</a></li>
                   
                 
+                  
+                    <li><a href='./module/lib_vtk_io_back_end.html'>Lib_VTK_IO_Back_End</a></li>
+                  
+                
+                  
+                    <li><a href='./module/lib_vtk_io_con.html'>Lib_VTK_IO_CON</a></li>
+                  
+                
+                  
+                    <li><a href='./module/lib_vtk_io_con_xml.html'>Lib_VTK_IO_CON_XML</a></li>
+                  
+                
+                  
+                    <li><a href='./module/lib_vtk_io_dat_var.html'>Lib_VTK_IO_DAT_VAR</a></li>
+                  
+                
+                  
+                    <li><a href='./module/lib_vtk_io_dat_var_xml.html'>Lib_VTK_IO_DAT_VAR_XML</a></li>
+                  
+                
+                  
+                    <li><a href='./module/lib_vtk_io_end.html'>Lib_VTK_IO_END</a></li>
+                  
+                
+                  
+                    <li><a href='./module/lib_vtk_io_end_xml.html'>Lib_VTK_IO_END_XML</a></li>
+                  
+                
+                  
+                    <li><a href="./lists/modules.html"><em>All modules&hellip;</em></a></li>
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
               </ul>
           </div>
           
@@ -321,205 +395,47 @@
               <ul>
                 
                   
-                    <li><a href='./proc/autotest.html'>autotest</a></li>
+                    <li><a href='./proc/adjustlt.html'>adjustlt</a></li>
                   
                 
                   
-                    <li><a href='./interface/b64_decode.html'>b64_decode</a></li>
+                    <li><a href='./proc/byte_update.html'>byte_update</a></li>
                   
                 
                   
-                    <li><a href='./proc/b64_decode_i1.html'>b64_decode_I1</a></li>
+                    <li><a href='./proc/get_char.html'>get_char</a></li>
                   
                 
                   
-                    <li><a href='./proc/b64_decode_i1_a.html'>b64_decode_I1_a</a></li>
+                    <li><a href='./proc/get_int.html'>get_int</a></li>
                   
                 
                   
-                    <li><a href='./proc/b64_decode_i2.html'>b64_decode_I2</a></li>
+                    <li><a href='./proc/get_unit.html'>Get_Unit</a></li>
                   
                 
                   
-                    <li><a href='./proc/b64_decode_i2_a.html'>b64_decode_I2_a</a></li>
+                    <li><a href='./proc/move.html'>move</a></li>
                   
                 
                   
-                    <li><a href='./proc/b64_decode_i4.html'>b64_decode_I4</a></li>
+                    <li><a href='./interface/pack_data.html'>pack_data</a></li>
                   
                 
                   
-                    <li><a href='./proc/b64_decode_i4_a.html'>b64_decode_I4_a</a></li>
+                    <li><a href='./proc/pack_data_i1_i2.html'>pack_data_I1_I2</a></li>
                   
                 
                   
-                    <li><a href='./proc/b64_decode_i8.html'>b64_decode_I8</a></li>
+                    <li><a href='./proc/pack_data_i1_i4.html'>pack_data_I1_I4</a></li>
                   
                 
                   
-                    <li><a href='./proc/b64_decode_i8_a.html'>b64_decode_I8_a</a></li>
+                    <li><a href='./proc/pack_data_i1_i8.html'>pack_data_I1_I8</a></li>
                   
                 
                   
                     <li><a href="./lists/procedures.html"><em>All procedures&hellip;</em></a></li>
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                
                   
                 
                   

@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	 
-	 <meta name="description" content="<p>Pure Fortran (2003+) library to write and read data conforming the VTK standard</p>">
+	 <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
     
     <meta name="author" content="Chris MacMackin" >
     <link rel="icon" href="../favicon.png">
@@ -25,17 +25,21 @@
     <![endif]-->
     
     <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+
+    
     <script src="../tipuesearch/tipuesearch_content.js"></script>
     <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
     <script src="../tipuesearch/tipuesearch_set.js"></script>
     <script src="../tipuesearch/tipuesearch.js"></script>
+    
 
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -48,7 +52,8 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            
+				
+                
             <li><a href="../lists/files.html">Source Files</a></li>
 				
 				
@@ -57,13 +62,14 @@
 				
             <li><a href="../lists/procedures.html">Procedures</a></li>
 				
-				
+								
             <li><a href="../lists/types.html">Derived Types</a></li>
 				
 				
             <li><a href="../program/test_driver.html">Program</a></li>
-								
+				
           </ul>
+        
         <form action="../search.html" class="navbar-form navbar-right" role="search">
         <div class="form-group">
           <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
@@ -72,6 +78,7 @@
         <button type="submit" class="btn btn-default">Submit</button>
 -->
         </form>
+        
         </div><!--/.nav-collapse -->
       </div>
     </nav>
@@ -86,30 +93,28 @@
     </h1>
 	 
 <div class="row">
-<div class="col-lg-7">
+<div class="col-lg-12">
 <div class="well well-sm">
-  <ul class="list-inline" style="margin-bottom:0px">
+  <ul class="list-inline" style="margin-bottom:0px;display:inline">
      
      
      
      
     
     
-    <li><i class="fa fa-code"></i><a href="../src/Lib_VTK_IO.f90"> Source File</a></li>
+    <li><i class="fa fa-code"></i><a href="../src/Lib_VTK_IO_Back_End.f90"> Source File</a></li>
      
   </ul>
-  </div>
-  </div>
-  <div class="col-lg-5">
-  <ol class="breadcrumb hierarchy text-right">
+  <ol class="breadcrumb in-well text-right">
   
-     <li><a href='../sourcefile/lib_vtk_io.f90.html'>Lib_VTK_IO.f90</a></li>
+     <li><a href='../sourcefile/lib_vtk_io_back_end.f90.html'>Lib_VTK_IO_Back_End.f90</a></li>
   
-     <li><a href='../module/lib_vtk_io.html'>Lib_VTK_IO</a></li>
+     <li><a href='../module/lib_vtk_io_back_end.html'>Lib_VTK_IO_Back_End</a></li>
   
      <li class="active">Type_VTK_File</li>
   </ol>
-  </div>
+</div>
+</div>
 </div>
     
   </div>
@@ -117,27 +122,32 @@
   <div class="row">
     <div class="col-lg-3">
     
+<div id="sidebar">
+  
+  
   
   <div class="panel panel-primary">
-    <div class="panel-heading text-left"><h3 class="panel-title">Variables</h3></div>
-    <div class="list-group">
-      
-      <a class="list-group-item" href="../type/type_vtk_file.html#var-f">f</a>
-      
-      <a class="list-group-item" href="../type/type_vtk_file.html#var-topology">topology</a>
-      
-      <a class="list-group-item" href="../type/type_vtk_file.html#var-u">u</a>
-      
-      <a class="list-group-item" href="../type/type_vtk_file.html#var-ua">ua</a>
-      
-      <a class="list-group-item" href="../type/type_vtk_file.html#var-N_Byte">N_Byte</a>
-      
-      <a class="list-group-item" href="../type/type_vtk_file.html#var-N_Byte">N_Byte</a>
-      
-      <a class="list-group-item" href="../type/type_vtk_file.html#var-ioffset">ioffset</a>
-      
-      <a class="list-group-item" href="../type/type_vtk_file.html#var-indent">indent</a>
-      
+    <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#vars">Variables</a></h3></div>
+    <div id="vars" class="panel-collapse collapse">
+      <div class="list-group">
+        
+        <a class="list-group-item" href="../type/type_vtk_file.html#variable-f">f</a>
+        
+        <a class="list-group-item" href="../type/type_vtk_file.html#variable-topology">topology</a>
+        
+        <a class="list-group-item" href="../type/type_vtk_file.html#variable-u">u</a>
+        
+        <a class="list-group-item" href="../type/type_vtk_file.html#variable-ua">ua</a>
+        
+        <a class="list-group-item" href="../type/type_vtk_file.html#variable-n_byte">N_Byte</a>
+        
+        <a class="list-group-item" href="../type/type_vtk_file.html#variable-n_byte%7E2">N_Byte</a>
+        
+        <a class="list-group-item" href="../type/type_vtk_file.html#variable-ioffset">ioffset</a>
+        
+        <a class="list-group-item" href="../type/type_vtk_file.html#variable-indent">indent</a>
+        
+      </div>
     </div>
   </div>
   
@@ -150,36 +160,52 @@
   
   
   
+  
+  
+  
+  
+  
+  
+  
   <div class="panel panel-primary">
-    <div class="panel-heading text-left"><h3 class="panel-title">Type-Bound Procedures</h3></div>
-    <div class="list-group">
-      
-      <a class="list-group-item" href="../type/type_vtk_file.html#bp-byte_update">byte_update</a>
-      
+    <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#boundprocs">Type-Bound Procedures</a></h3></div>
+    <div id="boundprocs" class="panel-collapse collapse">
+        <div class="list-group">
+          
+          <a class="list-group-item" href="../type/type_vtk_file.html#boundprocedure-byte_update">byte_update</a>
+          
+        </div>
     </div>
   </div>
+  
   
   
   <hr>
   
   <div class="panel panel-default">
-    <div class="panel-heading text-left"><h3 class="panel-title">All Derived Types</h3></div>
-    <div class="list-group">
-      
-      <a class="list-group-item" href="../type/type_vtk_file.html">Type_VTK_File</a>
-      
-      <a class="list-group-item" href="../type/type_vtm_file.html">Type_VTM_File</a>
-      
+    <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#alltypes">All Derived Types</a></h3></div>
+    <div id="alltypes" class="panel-collapse collapse">
+        <div class="list-group">
+          
+          <a class="list-group-item" href="../type/type_vtk_file.html">Type_VTK_File</a>
+          
+          <a class="list-group-item" href="../type/type_vtm_file.html">Type_VTM_File</a>
+          
+        </div>
     </div>
   </div>
   
-  
+</div>
+
     </div>
     
     <div class="col-lg-9" id='text'>
+    <h2>type, private :: Type_VTK_File</h2>
+    
     <p>Derived type for handling VTK files.</p>
-<p><div class="alert alert-info" role="alert"><h4>Note</h4>The OOP encapsulation allows safe use of parallel paradigms.</div></p>
+<p></p><div class="alert alert-info" role="alert"><h4>Note</h4>The OOP encapsulation allows safe use of parallel paradigms.</div>
     <br>
+    
     
     <section>
     <h2>Components</h2>
@@ -199,7 +225,7 @@
   
 <tr>
   
-  <td><a class="anchor" name="var-f"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" id="variable-f"></span>integer(kind=I4P),</td>
   
   <td>public</td>
   <td></td><td>::</td>
@@ -213,7 +239,7 @@
   
 <tr>
   
-  <td><a class="anchor" name="var-topology"></a>character(len=maxlen),</td>
+  <td><span class="anchor" id="variable-topology"></span>character(len=maxlen),</td>
   
   <td>public</td>
   <td></td><td>::</td>
@@ -227,7 +253,7 @@
   
 <tr>
   
-  <td><a class="anchor" name="var-u"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" id="variable-u"></span>integer(kind=I4P),</td>
   
   <td>public</td>
   <td></td><td>::</td>
@@ -241,7 +267,7 @@
   
 <tr>
   
-  <td><a class="anchor" name="var-ua"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" id="variable-ua"></span>integer(kind=I4P),</td>
   
   <td>public</td>
   <td></td><td>::</td>
@@ -255,7 +281,7 @@
   
 <tr>
   
-  <td><a class="anchor" name="var-N_Byte"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" id="variable-n_byte"></span>integer(kind=I8P),</td>
   
   <td>public</td>
   <td></td><td>::</td>
@@ -269,7 +295,7 @@
   
 <tr>
   
-  <td><a class="anchor" name="var-N_Byte"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" id="variable-n_byte%7E2"></span>integer(kind=I4P),</td>
   
   <td>public</td>
   <td></td><td>::</td>
@@ -283,7 +309,7 @@
   
 <tr>
   
-  <td><a class="anchor" name="var-ioffset"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" id="variable-ioffset"></span>integer(kind=I8P),</td>
   
   <td>public</td>
   <td></td><td>::</td>
@@ -297,7 +323,7 @@
   
 <tr>
   
-  <td><a class="anchor" name="var-indent"></a>integer(kind=I4P),</td>
+  <td><span class="anchor" id="variable-indent"></span>integer(kind=I4P),</td>
   
   <td>public</td>
   <td></td><td>::</td>
@@ -322,9 +348,9 @@
     
 	   
 <div class="panel panel-default">
-  <div class="panel-heading codesum"><a class="anchor" name="bp-byte_update"></a><h3>procedure, public :: <strong>byte_update</strong>  
+  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-byte_update"></span><h3>procedure, public :: <strong>byte_update</strong>  
     
-  <h3></div>
+  </h3></div>
   
   <div class="panel-body">
     
@@ -337,9 +363,13 @@
     
       <li class="list-group-item">
       
+         
     
     <h3>
-private  subroutine <a href='../proc/byte_update.html'>byte_update</a>(vtk, N_Byte)
+public elementalsubroutine <a href='../proc/byte_update.html'>byte_update</a>(vtk, N_Byte)
+    
+    
+    
 </h3>
     
     <h4>Arguments</h4>
@@ -361,7 +391,7 @@ private  subroutine <a href='../proc/byte_update.html'>byte_update</a>(vtk, N_By
   
 <tr>
   
-  <td><a class="anchor" name="var-vtk"></a>class(Type_VTK_File),</td>
+  <td><span class="anchor" ></span>class(<a href='../type/type_vtk_file.html'>Type_VTK_File</a>),</td>
   <td>intent(inout)</td>
   <td></td>
   
@@ -376,7 +406,7 @@ private  subroutine <a href='../proc/byte_update.html'>byte_update</a>(vtk, N_By
   
 <tr>
   
-  <td><a class="anchor" name="var-N_Byte"></a>integer(kind=I8P),</td>
+  <td><span class="anchor" ></span>integer(kind=I8P),</td>
   <td>intent(in)</td>
   <td></td>
   
@@ -394,11 +424,14 @@ private  subroutine <a href='../proc/byte_update.html'>byte_update</a>(vtk, N_By
     
     <h4>Description</h4>
        
+       
 
 
+       
        <p>Subroutine for updating N_Byte and ioffset pointer.</p>
         
 
+      
       </li>
     
   </ul>
@@ -406,6 +439,9 @@ private  subroutine <a href='../proc/byte_update.html'>byte_update</a>(vtk, N_By
 
     
     </section>
+    
+    
+    
     
     </div>
   </div>
