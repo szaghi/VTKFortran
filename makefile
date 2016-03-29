@@ -83,21 +83,22 @@ help:
 #----------------------------------------------------------------------------------------------------------------------------------
 # directory & file
 DSRC  = ./src/lib/ ./src/test/
-DOBJ  = ./obj/
-DMOD  = ./mod/
 DEXE  = ./
-VPATH = $(DSRC) $(DOBJ) $(DMOD)
-
 ifeq "$(SHARED)" "yes"
   DLIB    = ./shared/
+  DOBJ    = $(DLIB)obj/
+  DMOD    = $(DLIB)mod/
   MAIN    = $(DLIB)Lib_VTK_IO.so
   MAKELIB = $(FC) $(OPTSL) $(DOBJ)lib_vtk_io.o -o $(MAIN)
 else
   DLIB    = ./static/
+  DOBJ    = $(DLIB)obj/
+  DMOD    = $(DLIB)mod/
   MAIN    = $(DLIB)Lib_VTK_IO.a
-  MAKELIB = ar -rcs $(MAIN) $(DOBJ)lib_vtk_io.o ; ranlib $(MAIN)
+  MAKELIB = ar -rcs $(MAIN) $(DOBJ)*.o ; ranlib $(MAIN)
 endif
 MKDIRS = $(DOBJ) $(DMOD) $(DLIB)
+VPATH = $(DSRC) $(DOBJ) $(DMOD)
 #----------------------------------------------------------------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------------------------------------------------------------
