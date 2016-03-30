@@ -3,16 +3,15 @@ module Lib_VTK_IO_FLD_XML
 !-----------------------------------------------------------------------------------------------------------------------------------
 !< FLD_XML interface definition for Lib_VTK_IO.
 !-----------------------------------------------------------------------------------------------------------------------------------
-USE IR_Precision        ! Integers and reals precision definition.
-USE Lib_Base64          ! Base64 encoding/decoding procedures.
-USE Lib_VTK_IO_Back_End ! Lib_VTK_IO back end module.
+use befor64             ! Base64 encoding/decoding library.
+use Lib_VTK_IO_Back_End ! Lib_VTK_IO back end module.
+use penf                ! Portability environment.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
 implicit none
 private
-save
-public:: VTK_FLD_XML
+public :: VTK_FLD_XML
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -115,7 +114,7 @@ contains
     write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
   case(raw,bin_app)
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" NumberOfTuples="1" Name="'//trim(fname)// &
-             '" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+             '" format="appended" offset="'//trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = int(BYR8P,I4P))
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',1_I4P
@@ -160,7 +159,7 @@ contains
     write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
   case(raw,bin_app)
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" NumberOfTuples="1" Name="'//trim(fname)// &
-             '" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+             '" format="appended" offset="'//trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = int(BYR4P,I4P))
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',1_I4P
@@ -205,7 +204,7 @@ contains
     write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" NumberOfTuples="1" Name="'//trim(fname)// &
-               '" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = int(BYI8P,I4P))
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I8',1_I4P
@@ -251,7 +250,7 @@ contains
     write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" NumberOfTuples="1" Name="'//trim(fname)// &
-               '" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = int(BYI4P,I4P))
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I4',1_I4P
@@ -297,7 +296,7 @@ contains
     write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" NumberOfTuples="1" Name="'//trim(fname)// &
-               '" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = int(BYI2P,I4P))
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I2',1_I4P
@@ -342,7 +341,7 @@ contains
     write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)trim(s_buffer)
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" NumberOfTuples="1" Name="'//trim(fname)// &
-               '" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = int(BYI1P,I4P))
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I1',1_I4P

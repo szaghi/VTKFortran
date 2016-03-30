@@ -3,19 +3,18 @@ module Lib_VTK_IO_VTM_XML
 !-----------------------------------------------------------------------------------------------------------------------------------
 !< VTM_XML interface definitions for Lib_VTK_IO.
 !-----------------------------------------------------------------------------------------------------------------------------------
-USE IR_Precision        ! Integers and reals precision definition.
-USE Lib_Base64          ! Base64 encoding/decoding procedures.
-USE Lib_VTK_IO_Back_End ! Lib_VTK_IO back end module.
+use befor64             ! Base64 encoding/decoding library.
+use Lib_VTK_IO_Back_End ! Lib_VTK_IO back end module.
+use penf                ! Portability environment.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
 implicit none
 private
-save
-public:: VTM_INI_XML
-public:: VTM_BLK_XML
-public:: VTM_WRF_XML
-public:: VTM_END_XML
+public :: VTM_INI_XML
+public :: VTM_BLK_XML
+public :: VTM_WRF_XML
+public :: VTM_END_XML
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -54,8 +53,8 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   E_IO = -1_I4P
-  if (.not.ir_initialized) call IR_Init
-  if (.not.b64_initialized) call b64_init
+  if (.not.is_initialized) call penf_init
+  if (.not.is_b64_initialized) call b64_init
   if (endian==endianL) then
     s_buffer='<VTKFile type="vtkMultiBlockDataSet" version="1.0" byte_order="LittleEndian">'
   else
@@ -87,11 +86,11 @@ contains
     vtm%blk = vtm%blk + 1
     if (present(name)) then
       write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//                                     &
-                                             '<Block index="'//trim(str(.true.,(vtm%blk(1)+vtm%blk(2))))//&
+                                             '<Block index="'//trim(str((vtm%blk(1)+vtm%blk(2)), .true.))//&
                                              '" name="'//trim(name)//'">'
     else
       write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//&
-                                             '<Block index="'//trim(str(.true.,(vtm%blk(1)+vtm%blk(2))))//'">'
+                                             '<Block index="'//trim(str((vtm%blk(1)+vtm%blk(2)), .true.))//'">'
     endif
     vtm%indent = vtm%indent + 2
   case('CLOSE')
@@ -131,13 +130,13 @@ contains
   if (present(nlist)) then
     if (size(nlist) == size(flist)) then
       do f=1,size(flist)
-        write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<DataSet index="'//trim(str(.true.,f-1))//'" file="'// &
+        write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<DataSet index="'//trim(str(f-1, .true.))//'" file="'// &
                                                trim(adjustl(flist(f)))//'" name="'//trim(adjustl(nlist(f)))//'"/>'
       enddo
     endif
   else
     do f=1,size(flist)
-      write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<DataSet index="'//trim(str(.true.,f-1))//'" file="'// &
+      write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<DataSet index="'//trim(str(f-1, .true.))//'" file="'// &
                                              trim(adjustl(flist(f)))//'"/>'
     enddo
   endif
@@ -221,10 +220,10 @@ contains
       endif
     endif
     if (present(nlist)) then
-      write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<DataSet index="'//trim(str(.true.,f))//'" file="'// &
+      write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<DataSet index="'//trim(str(f, .true.))//'" file="'// &
                                              trim(adjustl(dummy(1)))//'" name="'//trim(adjustl(dummy(2)))//'"/>'
     else
-      write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<DataSet index="'//trim(str(.true.,f))//'" file="'// &
+      write(unit=vtm%u,fmt='(A)',iostat=E_IO)repeat(' ',vtm%indent)//'<DataSet index="'//trim(str(f, .true.))//'" file="'// &
                                              trim(adjustl(dummy(1)))//'"/>'
     endif
   enddo

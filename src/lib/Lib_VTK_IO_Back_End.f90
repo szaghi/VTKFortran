@@ -3,75 +3,75 @@ module Lib_VTK_IO_Back_End
 !-----------------------------------------------------------------------------------------------------------------------------------
 !< Back-end module for Lib_VTK_IO.
 !-----------------------------------------------------------------------------------------------------------------------------------
-USE IR_Precision                                                                ! Integers and reals precision definition.
-USE, intrinsic:: ISO_FORTRAN_ENV, only: stdout=>OUTPUT_UNIT, stderr=>ERROR_UNIT ! Standard output/error logical units.
+use, intrinsic :: ISO_FORTRAN_ENV, only : stdout=>OUTPUT_UNIT, stderr=>ERROR_UNIT ! Standard output/error logical units.
+use penf                                                                          ! Portability environment.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
 implicit none
 private
 save
-public:: stdout
-public:: stderr
-public:: maxlen
-public:: end_rec
-public:: ascii
-public:: binary
-public:: raw
-public:: bin_app
-public:: vtk
-public:: Nvtk
-public:: f
-public:: vtm
-public:: Get_Unit
-public:: Upper_Case
-public:: byte_update
-public:: vtk_update
-public:: adjustlt
-public:: get_int
-public:: get_char
-public:: read_record
-public:: move
-public:: search
+public :: stdout
+public :: stderr
+public :: maxlen
+public :: end_rec
+public :: ascii
+public :: binary
+public :: raw
+public :: bin_app
+public :: vtk
+public :: Nvtk
+public :: f
+public :: vtm
+public :: Get_Unit
+public :: Upper_Case
+public :: byte_update
+public :: vtk_update
+public :: adjustlt
+public :: get_int
+public :: get_char
+public :: read_record
+public :: move
+public :: search
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
-integer(I4P), parameter:: maxlen  = 500      !< Max number of characters of static string.
-character(1), parameter:: end_rec = char(10) !< End-character for binary-record finalize.
-integer(I4P), parameter:: ascii   = 0        !< Ascii-output-format parameter identifier.
-integer(I4P), parameter:: binary  = 1        !< Base64-output-format parameter identifier.
-integer(I4P), parameter:: raw     = 2        !< Raw-appended-binary-output-format parameter identifier.
-integer(I4P), parameter:: bin_app = 3        !< Base64-appended-output-format parameter identifier.
+integer(I4P), parameter :: maxlen  = 500      !< Max number of characters of static string.
+character(1), parameter :: end_rec = char(10) !< End-character for binary-record finalize.
+integer(I4P), parameter :: ascii   = 0        !< Ascii-output-format parameter identifier.
+integer(I4P), parameter :: binary  = 1        !< Base64-output-format parameter identifier.
+integer(I4P), parameter :: raw     = 2        !< Raw-appended-binary-output-format parameter identifier.
+integer(I4P), parameter :: bin_app = 3        !< Base64-appended-output-format parameter identifier.
 
 type:: Type_VTK_File
   !< Derived type for handling VTK files.
   !<
   !< @note The OOP encapsulation allows safe use of parallel paradigms.
-  integer(I4P)::          f        = ascii !< Current output-format (initialized to ascii format).
-  character(len=maxlen):: topology = ''    !< Mesh topology.
-  integer(I4P)::          u        = 0_I4P !< Logical unit.
-  integer(I4P)::          ua       = 0_I4P !< Logical unit for raw binary XML append file.
+  integer(I4P)          :: f        = ascii !< Current output-format (initialized to ascii format).
+  character(len=maxlen) :: topology = ''    !< Mesh topology.
+  integer(I4P)          :: u        = 0_I4P !< Logical unit.
+  integer(I4P)          :: ua       = 0_I4P !< Logical unit for raw binary XML append file.
 #ifdef HUGE
-  integer(I8P)::          N_Byte   = 0_I8P !< Number of byte to be written/read.
+  integer(I8P)          ::  N_Byte  = 0_I8P !< Number of byte to be written/read.
 #else
-  integer(I4P)::          N_Byte   = 0_I4P !< Number of byte to be written/read.
+  integer(I4P)          ::  N_Byte  = 0_I4P !< Number of byte to be written/read.
 #endif
-  integer(I8P)::          ioffset  = 0_I8P !< Offset pointer.
-  integer(I4P)::          indent   = 0_I4P !< Indent pointer.
+  integer(I8P)          ::  ioffset = 0_I8P !< Offset pointer.
+  integer(I4P)          ::  indent  = 0_I4P !< Indent pointer.
   contains
-    procedure:: byte_update !< Procedure for updating N_Byte and ioffset pointer.
+    procedure :: byte_update !< Procedure for updating N_Byte and ioffset pointer.
 endtype Type_VTK_File
-type(Type_VTK_File), allocatable:: vtk(:)       !< Global data of VTK files [1:Nvtk].
-integer(I4P)::                     Nvtk = 0_I4P !< Number of (concurrent) VTK files.
-integer(I4P)::                     f    = 0_I4P !< Current VTK file index.
+type(Type_VTK_File), allocatable :: vtk(:)       !< Global data of VTK files [1:Nvtk].
+integer(I4P)                     :: Nvtk = 0_I4P !< Number of (concurrent) VTK files.
+integer(I4P)                     :: f    = 0_I4P !< Current VTK file index.
 
 type:: Type_VTM_File
   !< Derived type for handling VTM files.
-  integer(I4P):: u        = 0_I4P         !< Logical unit.
-  integer(I4P):: blk(1:2) = [0_I4P,0_I4P] !< Block indexes.
-  integer(I4P):: indent   = 0_I4P         !< Indent pointer.
+  integer(I4P) :: u        = 0_I4P         !< Logical unit.
+  integer(I4P) :: blk(1:2) = [0_I4P,0_I4P] !< Block indexes.
+  integer(I4P) :: indent   = 0_I4P         !< Indent pointer.
 endtype Type_VTM_File
-type(Type_VTM_File):: vtm !< Global data of VTM files.
+type(Type_VTM_File) :: vtm !< Global data of VTM files.
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
   function Get_Unit(Free_Unit) result(funit)

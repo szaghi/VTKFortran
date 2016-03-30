@@ -3,27 +3,25 @@ module Lib_VTK_IO_PVTK_XML
 !-----------------------------------------------------------------------------------------------------------------------------------
 !< PVTK_XML interface definitions for Lib_VTK_IO.
 !-----------------------------------------------------------------------------------------------------------------------------------
-USE IR_Precision        ! Integers and reals precision definition.
-USE Lib_Base64          ! Base64 encoding/decoding procedures.
-USE Lib_VTK_IO_Back_End ! Lib_VTK_IO back end module.
+use befor64             ! Base64 encoding/decoding library.
+use Lib_VTK_IO_Back_End ! Lib_VTK_IO back end module.
+use penf                ! Portability environment.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
 implicit none
 private
-save
-public:: PVTK_INI_XML
-public:: PVTK_GEO_XML
-public:: PVTK_DAT_XML
-public:: PVTK_VAR_XML
-public:: PVTK_END_XML
+public :: PVTK_INI_XML
+public :: PVTK_GEO_XML
+public :: PVTK_DAT_XML
+public :: PVTK_VAR_XML
+public :: PVTK_END_XML
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
   function PVTK_INI_XML(filename,mesh_topology,tp,cf,nx1,nx2,ny1,ny2,nz1,nz2) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Function for initializing parallel (partitioned) VTK-XML file.
   !---------------------------------------------------------------------------------------------------------------------------------
-  implicit none
   character(*), intent(IN)::            filename      !< File name.
   character(*), intent(IN)::            mesh_topology !< Mesh topology.
   character(*), intent(IN)::            tp            !< Type of geometry representation (Float32, Float64, ecc).
@@ -41,8 +39,8 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   E_IO = -1_I4P
-  if (.not.ir_initialized) call IR_Init
-  if (.not.b64_initialized) call b64_init
+  if (.not.is_initialized) call penf_init
+  if (.not.is_b64_initialized) call b64_init
   call vtk_update(act='add',cf=rf,Nvtk=Nvtk,vtk=vtk)
   f = rf
   if (present(cf)) cf = rf
@@ -191,7 +189,7 @@ contains
   endif
   if (present(Nc)) then
     s_buffer = repeat(' ',vtk(rf)%indent)//'<PDataArray type="'//trim(tp)//'" Name="'//trim(varname)//&
-               '" NumberOfComponents="'//trim(str(.true.,Nc))//'"/>'
+               '" NumberOfComponents="'//trim(str(Nc, .true.))//'"/>'
   else
     s_buffer = repeat(' ',vtk(rf)%indent)//'<PDataArray type="'//trim(tp)//'" Name="'//trim(varname)//'"/>'
   endif

@@ -3,17 +3,16 @@ module Lib_VTK_IO_DAT_VAR_XML
 !-----------------------------------------------------------------------------------------------------------------------------------
 !< DAT_XML and VAR_XML interface definitions for Lib_VTK_IO.
 !-----------------------------------------------------------------------------------------------------------------------------------
-USE IR_Precision        ! Integers and reals precision definition.
-USE Lib_Base64          ! Base64 encoding/decoding procedures.
-USE Lib_VTK_IO_Back_End ! Lib_VTK_IO back end module.
+use befor64             ! Base64 encoding/decoding library.
+use Lib_VTK_IO_Back_End ! Lib_VTK_IO back end module.
+use penf                ! Portability environment.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
 implicit none
 private
-save
-public:: VTK_DAT_XML
-public:: VTK_VAR_XML
+public :: VTK_DAT_XML
+public :: VTK_VAR_XML
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -192,11 +191,11 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//&
                '" NumberOfComponents="1" format="ascii">'
     write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
-    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),(' '//str(n=var(n1)),n1=1,NC_NN)
+    write(vtk(rf)%u,'('//trim(str(NC_NN+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),(' '//str(n=var(n1)),n1=1,NC_NN)
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//&
-               '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" NumberOfComponents="1" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = NC_NN*BYR8P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',NC_NN
@@ -242,12 +241,12 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//&
                '" NumberOfComponents="1" format="ascii">'
     write(vtk(rf)%u,'(A)', iostat=E_IO)trim(s_buffer)
-    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+    write(vtk(rf)%u,'('//trim(str(NC_NN+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
                                       (((' '//str(n=var(nx,ny,nz)),nx=1,size(var,dim=1)),ny=1,size(var,dim=2)),nz=1,size(var,dim=3))
     write(vtk(rf)%u,'(A)', iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//&
-               '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" NumberOfComponents="1" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = NC_NN*BYR8P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',NC_NN
@@ -293,11 +292,11 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//&
                '" NumberOfComponents="1" format="ascii">'
     write(vtk(rf)%u,'(A)', iostat=E_IO)trim(s_buffer)
-    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),(' '//str(n=var(n1)),n1=1,NC_NN)
+    write(vtk(rf)%u,'('//trim(str(NC_NN+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),(' '//str(n=var(n1)),n1=1,NC_NN)
     write(vtk(rf)%u,'(A)', iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//&
-               '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" NumberOfComponents="1" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = NC_NN*BYR4P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',NC_NN
@@ -343,12 +342,12 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//&
                '" NumberOfComponents="1" format="ascii">'
     write(vtk(rf)%u,'(A)', iostat=E_IO)trim(s_buffer)
-    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+    write(vtk(rf)%u,'('//trim(str(NC_NN+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
                                       (((' '//str(n=var(nx,ny,nz)),nx=1,size(var,dim=1)),ny=1,size(var,dim=2)),nz=1,size(var,dim=3))
     write(vtk(rf)%u,'(A)', iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//&
-               '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" NumberOfComponents="1" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = NC_NN*BYR4P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',NC_NN
@@ -394,11 +393,11 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//&
                '" NumberOfComponents="1" format="ascii">'
     write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
-    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),(' '//str(n=var(n1)),n1=1,NC_NN)
+    write(vtk(rf)%u,'('//trim(str(NC_NN+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),(' '//str(n=var(n1)),n1=1,NC_NN)
     write(vtk(rf)%u,'(A)',iostat=E_IO)'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//&
-               '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" NumberOfComponents="1" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = int(NC_NN*BYI8P,I4P))
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I8',NC_NN
@@ -444,12 +443,12 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//&
                '" NumberOfComponents="1" format="ascii">'
     write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
-    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+    write(vtk(rf)%u,'('//trim(str(NC_NN+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
                                       (((' '//str(n=var(nx,ny,nz)),nx=1,size(var,dim=1)),ny=1,size(var,dim=2)),nz=1,size(var,dim=3))
     write(vtk(rf)%u,'(A)',iostat=E_IO)'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//&
-               '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" NumberOfComponents="1" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = int(NC_NN*BYI8P,I4P))
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I8',NC_NN
@@ -496,11 +495,11 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//&
                '" NumberOfComponents="1" format="ascii">'
     write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
-    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),(' '//str(n=var(n1)),n1=1,NC_NN)
+    write(vtk(rf)%u,'('//trim(str(NC_NN+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),(' '//str(n=var(n1)),n1=1,NC_NN)
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)// &
-               '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" NumberOfComponents="1" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = NC_NN*BYI4P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I4',NC_NN
@@ -548,12 +547,12 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//&
                '" NumberOfComponents="1" format="ascii">'
     write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
-    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+    write(vtk(rf)%u,'('//trim(str(NC_NN+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
                                       (((' '//str(n=var(nx,ny,nz)),nx=1,size(var,dim=1)),ny=1,size(var,dim=2)),nz=1,size(var,dim=3))
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)// &
-               '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" NumberOfComponents="1" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = NC_NN*BYI4P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I4',NC_NN
@@ -601,11 +600,11 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//&
                '" NumberOfComponents="1" format="ascii">'
     write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
-    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),(' '//str(n=var(n1)),n1=1,NC_NN)
+    write(vtk(rf)%u,'('//trim(str(NC_NN+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),(' '//str(n=var(n1)),n1=1,NC_NN)
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//&
-               '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" NumberOfComponents="1" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = NC_NN*BYI2P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I2',NC_NN
@@ -651,12 +650,12 @@ contains
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//&
                '" NumberOfComponents="1" format="ascii">'
     write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
-    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+    write(vtk(rf)%u,'('//trim(str(NC_NN+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
                                       (((' '//str(n=var(nx,ny,nz)),nx=1,size(var,dim=1)),ny=1,size(var,dim=2)),nz=1,size(var,dim=3))
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//&
-               '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" NumberOfComponents="1" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = NC_NN*BYI2P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I2',NC_NN
@@ -701,11 +700,11 @@ contains
   case(ascii)
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//'" NumberOfComponents="1" format="ascii">'
     write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
-    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),(' '//str(n=var(n1)),n1=1,NC_NN)
+    write(vtk(rf)%u,'('//trim(str(NC_NN+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),(' '//str(n=var(n1)),n1=1,NC_NN)
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//&
-             '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+             '" NumberOfComponents="1" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = NC_NN*BYI1P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I1',NC_NN
@@ -750,12 +749,12 @@ contains
   case(ascii)
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//'" NumberOfComponents="1" format="ascii">'
     write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
-    write(vtk(rf)%u,'('//trim(str(.true.,NC_NN+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+    write(vtk(rf)%u,'('//trim(str(NC_NN+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
                                       (((' '//str(n=var(nx,ny,nz)),nx=1,size(var,dim=1)),ny=1,size(var,dim=2)),nz=1,size(var,dim=3))
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//&
-             '" NumberOfComponents="1" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+             '" NumberOfComponents="1" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = NC_NN*BYI1P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I1',NC_NN
@@ -810,7 +809,7 @@ contains
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//&
-               '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" NumberOfComponents="3" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NC_NN*BYR8P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',3*NC_NN
@@ -870,7 +869,7 @@ contains
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//&
-               '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" NumberOfComponents="3" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NC_NN*BYR8P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',3*NC_NN
@@ -931,7 +930,7 @@ contains
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//&
-               '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" NumberOfComponents="3" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NC_NN*BYR4P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',3*NC_NN
@@ -991,7 +990,7 @@ contains
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//&
-               '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" NumberOfComponents="3" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NC_NN*BYR4P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',3*NC_NN
@@ -1052,7 +1051,7 @@ contains
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//&
-               '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" NumberOfComponents="3" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = int(3*NC_NN*BYI8P,I4P))
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I8',3*NC_NN
@@ -1112,7 +1111,7 @@ contains
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//&
-               '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" NumberOfComponents="3" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = int(3*NC_NN*BYI8P,I4P))
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I8',3*NC_NN
@@ -1174,7 +1173,7 @@ contains
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//&
-               '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" NumberOfComponents="3" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NC_NN*BYI4P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I4',3*NC_NN
@@ -1237,7 +1236,7 @@ contains
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//&
-               '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" NumberOfComponents="3" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NC_NN*BYI4P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I4',3*NC_NN
@@ -1300,7 +1299,7 @@ contains
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//&
-               '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" NumberOfComponents="3" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NC_NN*BYI2P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I2',3*NC_NN
@@ -1360,7 +1359,7 @@ contains
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//&
-               '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               '" NumberOfComponents="3" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NC_NN*BYI2P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I2',3*NC_NN
@@ -1420,7 +1419,7 @@ contains
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//&
-             '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+             '" NumberOfComponents="3" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     vtk(rf)%N_Byte = 3*NC_NN*BYI1P
     call vtk(rf)%byte_update(N_Byte = 3*NC_NN*BYI1P)
@@ -1480,7 +1479,7 @@ contains
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer=repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//&
-             '" NumberOfComponents="3" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+             '" NumberOfComponents="3" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     vtk(rf)%N_Byte = 3*NC_NN*BYI1P
     call vtk(rf)%byte_update(N_Byte = 3*NC_NN*BYI1P)
@@ -1532,23 +1531,23 @@ contains
   select case(vtk(rf)%f)
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="ascii">'
+               trim(str(N_COL,.true.))//'" format="ascii">'
     write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do n2=1,NC_NN
-      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+      write(vtk(rf)%u,'('//trim(str(N_COL+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
                                                                        (' '//str(n=var(n1,n2)),n1=1,N_COL)
     enddo
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(N_COL,.true.))//'" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = N_COL*NC_NN*BYR8P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',N_COL*NC_NN
     write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="binary">'
+               trim(str(N_COL,.true.))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(N_COL*NC_NN*BYR8P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
     call b64_encode(n=varp,code=var64) ; deallocate(varp)
@@ -1586,23 +1585,23 @@ contains
   select case(vtk(rf)%f)
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="ascii">'
+               trim(str(N_COL,.true.))//'" format="ascii">'
     write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do nz=1,size(var,dim=4) ; do ny=1,size(var,dim=3) ; do nx=1,size(var,dim=2)
-      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+      write(vtk(rf)%u,'('//trim(str(N_COL+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
                                                                        (' '//str(n=var(n1,nx,ny,nz)),n1=1,N_COL)
     enddo ; enddo ; enddo
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(N_COL,.true.))//'" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = N_COL*NC_NN*BYR8P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',N_COL*NC_NN
     write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="binary">'
+               trim(str(N_COL,.true.))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(N_COL*NC_NN*BYR8P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
     call b64_encode(n=varp,code=var64) ; deallocate(varp)
@@ -1640,23 +1639,23 @@ contains
   select case(vtk(rf)%f)
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="ascii">'
+               trim(str(N_COL,.true.))//'" format="ascii">'
     write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do n2=1,NC_NN
-      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+      write(vtk(rf)%u,'('//trim(str(N_COL+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
                                                                        (' '//str(n=var(n1,n2)),n1=1,N_COL)
     enddo
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(N_COL,.true.))//'" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = N_COL*NC_NN*BYR4P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',N_COL*NC_NN
     write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="binary">'
+               trim(str(N_COL,.true.))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(N_COL*NC_NN*BYR4P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
     call b64_encode(n=varp,code=var64) ; deallocate(varp)
@@ -1694,23 +1693,23 @@ contains
   select case(vtk(rf)%f)
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="ascii">'
+               trim(str(N_COL,.true.))//'" format="ascii">'
     write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do nz=1,size(var,dim=4) ; do ny=1,size(var,dim=3) ; do nx=1,size(var,dim=2)
-      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+      write(vtk(rf)%u,'('//trim(str(N_COL+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
                                                                        (' '//str(n=var(n1,nx,ny,nz)),n1=1,N_COL)
     enddo ; enddo ; enddo
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(N_COL,.true.))//'" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = N_COL*NC_NN*BYR4P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',N_COL*NC_NN
     write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="binary">'
+               trim(str(N_COL,.true.))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(N_COL*NC_NN*BYR4P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
     call b64_encode(n=varp,code=var64) ; deallocate(varp)
@@ -1748,23 +1747,23 @@ contains
   select case(vtk(rf)%f)
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="ascii">'
+               trim(str(N_COL,.true.))//'" format="ascii">'
     write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do n2=1,NC_NN
-      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+      write(vtk(rf)%u,'('//trim(str(N_COL+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
                                                                        (' '//str(n=var(n1,n2)),n1=1,N_COL)
     enddo
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(N_COL,.true.))//'" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = int(N_COL*NC_NN*BYI8P,I4P))
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I8',N_COL*NC_NN
     write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="binary">'
+               trim(str(N_COL,.true.))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(N_COL*NC_NN*BYI8P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
     call b64_encode(n=varp,code=var64) ; deallocate(varp)
@@ -1802,23 +1801,23 @@ contains
   select case(vtk(rf)%f)
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="ascii">'
+               trim(str(N_COL,.true.))//'" format="ascii">'
     write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do nz=1,size(var,dim=4) ; do ny=1,size(var,dim=3) ; do nx=1,size(var,dim=2)
-      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+      write(vtk(rf)%u,'('//trim(str(N_COL+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
                                                                        (' '//str(n=var(n1,nx,ny,nz)),n1=1,N_COL)
     enddo ; enddo ; enddo
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(N_COL,.true.))//'" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = int(N_COL*NC_NN*BYI8P,I4P))
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I8',N_COL*NC_NN
     write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int64" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="binary">'
+               trim(str(N_COL,.true.))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(N_COL*NC_NN*BYI8P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
     call b64_encode(n=varp,code=var64) ; deallocate(varp)
@@ -1857,23 +1856,23 @@ contains
   select case(vtk(rf)%f)
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="ascii">'
+               trim(str(N_COL,.true.))//'" format="ascii">'
     write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do n2=1,NC_NN
-      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+      write(vtk(rf)%u,'('//trim(str(N_COL+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
                                                                        (' '//str(n=var(n1,n2)),n1=1,N_COL)
     enddo
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(N_COL,.true.))//'" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = N_COL*NC_NN*BYI4P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I4',N_COL*NC_NN
     write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="binary">'
+               trim(str(N_COL,.true.))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     Nvarp=size(transfer([int(N_COL*NC_NN*BYI4P,I4P),reshape(var,[N_COL*NC_NN])],varp),kind=I8P)
     if (allocated(varp)) deallocate(varp); allocate(varp(1:Nvarp))
@@ -1914,23 +1913,23 @@ contains
   select case(vtk(rf)%f)
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="ascii">'
+               trim(str(N_COL,.true.))//'" format="ascii">'
     write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do nz=1,size(var,dim=4) ; do ny=1,size(var,dim=3) ; do nx=1,size(var,dim=2)
-      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+      write(vtk(rf)%u,'('//trim(str(N_COL+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
                                                                        (' '//str(n=var(n1,nx,ny,nz)),n1=1,N_COL)
     enddo ; enddo ; enddo
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(N_COL,.true.))//'" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = N_COL*NC_NN*BYI4P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I4',N_COL*NC_NN
     write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="binary">'
+               trim(str(N_COL,.true.))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     Nvarp=size(transfer([int(N_COL*NC_NN*BYI4P,I4P),reshape(var,[N_COL*NC_NN])],varp),kind=I8P)
     if (allocated(varp)) deallocate(varp); allocate(varp(1:Nvarp))
@@ -1970,23 +1969,23 @@ contains
   select case(vtk(rf)%f)
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="ascii">'
+               trim(str(N_COL,.true.))//'" format="ascii">'
     write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do n2=1,NC_NN
-      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+      write(vtk(rf)%u,'('//trim(str(N_COL+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
                                                                        (' '//str(n=var(n1,n2)),n1=1,N_COL)
     enddo
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(N_COL,.true.))//'" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = N_COL*NC_NN*BYI2P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I2',N_COL*NC_NN
     write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="binary">'
+               trim(str(N_COL,.true.))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(N_COL*NC_NN*BYI2P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
     call b64_encode(n=varp,code=var64) ; deallocate(varp)
@@ -2024,23 +2023,23 @@ contains
   select case(vtk(rf)%f)
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="ascii">'
+               trim(str(N_COL,.true.))//'" format="ascii">'
     write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do nz=1,size(var,dim=4) ; do ny=1,size(var,dim=3) ; do nx=1,size(var,dim=2)
-      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+      write(vtk(rf)%u,'('//trim(str(N_COL+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
                                                                        (' '//str(n=var(n1,nx,ny,nz)),n1=1,N_COL)
     enddo ; enddo ; enddo
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(N_COL,.true.))//'" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = N_COL*NC_NN*BYI2P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I2',N_COL*NC_NN
     write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int16" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="binary">'
+               trim(str(N_COL,.true.))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(N_COL*NC_NN*BYI2P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
     call b64_encode(n=varp,code=var64) ; deallocate(varp)
@@ -2078,23 +2077,23 @@ contains
   select case(vtk(rf)%f)
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="ascii">'
+               trim(str(N_COL,.true.))//'" format="ascii">'
     write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do n2=1,NC_NN
-      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+      write(vtk(rf)%u,'('//trim(str(N_COL+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
                                                                        (' '//str(n=var(n1,n2)),n1=1,N_COL)
     enddo
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(N_COL,.true.))//'" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = N_COL*NC_NN*BYI1P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I1',N_COL*NC_NN
     write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="binary">'
+               trim(str(N_COL,.true.))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(N_COL*NC_NN*BYI1P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
     call b64_encode(n=varp,code=var64) ; deallocate(varp)
@@ -2132,23 +2131,23 @@ contains
   select case(vtk(rf)%f)
   case(ascii)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="ascii">'
+               trim(str(N_COL,.true.))//'" format="ascii">'
     write(vtk(rf)%u,'(A)',iostat=E_IO)trim(s_buffer)
     do nz=1,size(var,dim=4) ; do ny=1,size(var,dim=3) ; do nx=1,size(var,dim=2)
-      write(vtk(rf)%u,'('//trim(str(.true.,N_COL+1))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
+      write(vtk(rf)%u,'('//trim(str(N_COL+1,.true.))//'A)',iostat=E_IO)repeat(' ',vtk(rf)%indent),&
                                                                        (' '//str(n=var(n1,nx,ny,nz)),n1=1,N_COL)
     enddo ; enddo ; enddo
     write(vtk(rf)%u,'(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'</DataArray>'
   case(raw,bin_app)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="appended" offset="'//trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(N_COL,.true.))//'" format="appended" offset="'//trim(str(vtk(rf)%ioffset,.true.))//'"/>'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = N_COL*NC_NN*BYI1P)
     write(vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I1',N_COL*NC_NN
     write(vtk(rf)%ua,iostat=E_IO)var
   case(binary)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="'//trim(varname)//'" NumberOfComponents="'// &
-               trim(str(.true.,N_COL))//'" format="binary">'
+               trim(str(N_COL,.true.))//'" format="binary">'
     write(vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call pack_data(a1=[int(N_COL*NC_NN*BYI1P,I4P)],a2=reshape(var,[N_COL*NC_NN]),packed=varp)
     call b64_encode(n=varp,code=var64) ; deallocate(varp)

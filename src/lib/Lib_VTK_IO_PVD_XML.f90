@@ -3,18 +3,17 @@ module Lib_VTK_IO_PVD_XML
 !-----------------------------------------------------------------------------------------------------------------------------------
 !< PVD_XML interface definitions for Lib_VTK_IO.
 !-----------------------------------------------------------------------------------------------------------------------------------
-USE IR_Precision        ! Integers and reals precision definition.
-USE Lib_Base64          ! Base64 encoding/decoding procedures.
-USE Lib_VTK_IO_Back_End ! Lib_VTK_IO back end module.
+use befor64             ! Base64 encoding/decoding library.
+use Lib_VTK_IO_Back_End ! Lib_VTK_IO back end module.
+use penf                ! Portability environment.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
 implicit none
 private
-save
-public:: PVD_INI_XML
-public:: PVD_DAT_XML
-public:: PVD_END_XML
+public :: PVD_INI_XML
+public :: PVD_DAT_XML
+public :: PVD_END_XML
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -38,8 +37,6 @@ interface PVD_DAT_XML
 endinterface
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
-
-
   function PVD_INI_XML(filename,cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Function for initializing a PVD-XML file.
@@ -54,8 +51,8 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   E_IO = -1_I4P
-  if (.not.ir_initialized) call IR_Init
-  if (.not.b64_initialized) call b64_init
+  if (.not.is_initialized) call penf_init
+  if (.not.is_b64_initialized) call b64_init
   call vtk_update(act='add',cf=rf,Nvtk=Nvtk,vtk=vtk)
   f = rf
   if (present(cf)) cf = rf
@@ -73,9 +70,7 @@ contains
   write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Collection>'
   vtk(rf)%indent = vtk(rf)%indent + 2
 
-
   end function PVD_INI_XML
-
 
   function PVD_DAT_XML_R8(filename,timestep, part, cf) result(E_IO) !group, part, cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -108,7 +103,6 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   end function PVD_DAT_XML_R8
 
-
   function PVD_DAT_XML_R4(filename,timestep, part, cf) result(E_IO) !group, part, cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Function for saving of PVD data associated to the sequence of VTK files
@@ -139,7 +133,6 @@ contains
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   end function PVD_DAT_XML_R4
-
 
   function PVD_DAT_XML_I8(filename,timestep, part, cf) result(E_IO) !group, part, cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -203,7 +196,6 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   end function PVD_DAT_XML_I4
 
-
   function PVD_DAT_XML_I2(filename,timestep, part, cf) result(E_IO) !group, part, cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Function for saving of PVD data associated to the sequence of VTK files
@@ -234,7 +226,6 @@ contains
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   end function PVD_DAT_XML_I2
-
 
   function PVD_DAT_XML_I1(filename,timestep, part, cf) result(E_IO) !group, part, cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -267,7 +258,6 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   end function PVD_DAT_XML_I1
 
-
   function PVD_END_XML(cf) result(E_IO)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Function for finalizing the PVD-XML file.
@@ -293,9 +283,8 @@ contains
   call vtk_update(act='remove',cf=rf,Nvtk=Nvtk,vtk=vtk)
   f = rf
   if (present(cf)) cf = rf
-  
+
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   end function PVD_END_XML
-
 endmodule Lib_VTK_IO_PVD_XML
