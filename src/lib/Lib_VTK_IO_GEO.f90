@@ -3,15 +3,14 @@ module Lib_VTK_IO_GEO
 !-----------------------------------------------------------------------------------------------------------------------------------
 !< GEO interface definition for Lib_VTK_IO.
 !-----------------------------------------------------------------------------------------------------------------------------------
-USE IR_Precision        ! Integers and reals precision definition.
-USE Lib_VTK_IO_Back_End ! Lib_VTK_IO back end module.
+use Lib_VTK_IO_Back_End ! Lib_VTK_IO back end module.
+use penf                ! Portability environment.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
 implicit none
 private
-save
-public:: VTK_GEO
+public :: VTK_GEO
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -101,11 +100,11 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(Nx, .true.))//' '//trim(str(Ny, .true.))//' '//trim(str(Nz, .true.))
     write(vtk(rf)%u,'(A)',iostat=E_IO)'ORIGIN '//trim(str(n=X0))//' '//trim(str(n=Y0))//' '//trim(str(n=Z0))
     write(vtk(rf)%u,'(A)',iostat=E_IO)'SPACING '//trim(str(n=Dx))//' '//trim(str(n=Dy))//' '//trim(str(n=Dz))
   case(raw)
-    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(Nx, .true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))//end_rec
     write(vtk(rf)%u,iostat=E_IO)'ORIGIN '//trim(str(n=X0))//' '//trim(str(n=Y0))//' '//trim(str(n=Z0))//end_rec
     write(vtk(rf)%u,iostat=E_IO)'SPACING '//trim(str(n=Dx))//' '//trim(str(n=Dy))//' '//trim(str(n=Dz))//end_rec
   endselect
@@ -140,11 +139,11 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(Nx, .true.))//' '//trim(str(Ny, .true.))//' '//trim(str(Nz, .true.))
     write(vtk(rf)%u,'(A)',iostat=E_IO)'ORIGIN '//trim(str(n=X0))//' '//trim(str(n=Y0))//' '//trim(str(n=Z0))
     write(vtk(rf)%u,'(A)',iostat=E_IO)'SPACING '//trim(str(n=Dx))//' '//trim(str(n=Dy))//' '//trim(str(n=Dz))
   case(raw)
-    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(Nx,.true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))//end_rec
     write(vtk(rf)%u,iostat=E_IO)'ORIGIN '//trim(str(n=X0))//' '//trim(str(n=Y0))//' '//trim(str(n=Z0))//end_rec
     write(vtk(rf)%u,iostat=E_IO)'SPACING '//trim(str(n=Dx))//' '//trim(str(n=Dy))//' '//trim(str(n=Dz))//end_rec
   endselect
@@ -178,14 +177,14 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' double'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(Nx,.true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(NN, .true.))//' double'
     do n1=1,NN
       write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=X(n1))//' '//str(n=Y(n1))//' '//str(n=Z(n1))
     enddo
   case(raw)
-    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
-    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' double'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(Nx,.true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(NN, .true.))//' double'//end_rec
     write(vtk(rf)%u,iostat=E_IO)(X(n1),Y(n1),Z(n1),n1=1,NN)
     write(vtk(rf)%u,iostat=E_IO)end_rec
   endselect
@@ -217,14 +216,14 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' double'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(Nx,.true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(NN,.true.))//' double'
     do n1=1,NN
       write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=XYZ(1,n1))//' '//str(n=XYZ(2,n1))//' '//str(n=XYZ(3,n1))
     enddo
   case(raw)
-    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
-    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' double'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(Nx,.true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(NN, .true.))//' double'//end_rec
     write(vtk(rf)%u,iostat=E_IO)XYZ
     write(vtk(rf)%u,iostat=E_IO)end_rec
   endselect
@@ -258,8 +257,8 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' double'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(Nx,.true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(NN,.true.))//' double'
     do n3=1,Nz
       do n2=1,Ny
         do n1=1,Nx
@@ -268,8 +267,8 @@ contains
       enddo
     enddo
   case(raw)
-    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
-    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' double'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(Nx,.true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(NN,.true.))//' double'//end_rec
     write(vtk(rf)%u,iostat=E_IO)(((X(n1,n2,n3),Y(n1,n2,n3),Z(n1,n2,n3),n1=1,Nx),n2=1,Ny),n3=1,Nz)
     write(vtk(rf)%u,iostat=E_IO)end_rec
   endselect
@@ -301,8 +300,8 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' double'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(Nx,.true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(NN,.true.))//' double'
     do n3=1,Nz
       do n2=1,Ny
         do n1=1,Nx
@@ -311,8 +310,8 @@ contains
       enddo
     enddo
   case(raw)
-    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
-    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' double'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(Nx,.true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(NN,.true.))//' double'//end_rec
     write(vtk(rf)%u,iostat=E_IO)XYZ
     write(vtk(rf)%u,iostat=E_IO)end_rec
   endselect
@@ -346,14 +345,14 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' float'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(Nx,.true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(NN,.true.))//' float'
     do n1=1,NN
       write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=X(n1))//' '//str(n=Y(n1))//' '//str(n=Z(n1))
     enddo
   case(raw)
-    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
-    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' float'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(Nx,.true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(NN,.true.))//' float'//end_rec
     write(vtk(rf)%u,iostat=E_IO)(X(n1),Y(n1),Z(n1),n1=1,NN)
     write(vtk(rf)%u,iostat=E_IO)end_rec
   endselect
@@ -385,14 +384,14 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' float'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(Nx,.true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(NN,.true.))//' float'
     do n1=1,NN
       write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=XYZ(1,n1))//' '//str(n=XYZ(2,n1))//' '//str(n=XYZ(3,n1))
     enddo
   case(raw)
-    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
-    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' float'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(Nx,.true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(NN,.true.))//' float'//end_rec
     write(vtk(rf)%u,iostat=E_IO)XYZ
     write(vtk(rf)%u,iostat=E_IO)end_rec
   endselect
@@ -426,8 +425,8 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' float'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(Nx,.true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(NN,.true.))//' float'
     do n3=1,Nz
       do n2=1,Ny
         do n1=1,Nx
@@ -436,8 +435,8 @@ contains
       enddo
     enddo
   case(raw)
-    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
-    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' float'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(Nx,.true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(NN,.true.))//' float'//end_rec
     write(vtk(rf)%u,iostat=E_IO)(((X(n1,n2,n3),Y(n1,n2,n3),Z(n1,n2,n3),n1=1,Nx),n2=1,Ny),n3=1,Nz)
     write(vtk(rf)%u,iostat=E_IO)end_rec
   endselect
@@ -469,8 +468,8 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' float'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(Nx,.true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'POINTS '//trim(str(NN,.true.))//' float'
     do n3=1,Nz
       do n2=1,Ny
         do n1=1,Nx
@@ -479,8 +478,8 @@ contains
       enddo
     enddo
   case(raw)
-    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
-    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(.true.,NN))//' float'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(Nx,.true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'POINTS '//trim(str(NN,.true.))//' float'//end_rec
     write(vtk(rf)%u,iostat=E_IO)XYZ
     write(vtk(rf)%u,iostat=E_IO)end_rec
   endselect
@@ -513,28 +512,28 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'X_COORDINATES '//trim(str(.true.,Nx))//' double'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(Nx,.true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'X_COORDINATES '//trim(str(Nx,.true.))//' double'
     do n1=1,Nx
       write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=X(n1))
     enddo
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'Y_COORDINATES '//trim(str(.true.,Ny))//' double'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'Y_COORDINATES '//trim(str(Ny,.true.))//' double'
     do n1=1,Ny
       write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=Y(n1))
     enddo
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'Z_COORDINATES '//trim(str(.true.,Nz))//' double'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'Z_COORDINATES '//trim(str(Nz,.true.))//' double'
     do n1=1,Nz
       write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=Z(n1))
     enddo
   case(raw)
-    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
-    write(vtk(rf)%u,iostat=E_IO)'X_COORDINATES '//trim(str(.true.,Nx))//' double'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(Nx,.true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'X_COORDINATES '//trim(str(Nx,.true.))//' double'//end_rec
     write(vtk(rf)%u,iostat=E_IO)X
     write(vtk(rf)%u,iostat=E_IO)end_rec
-    write(vtk(rf)%u,iostat=E_IO)'Y_COORDINATES '//trim(str(.true.,Ny))//' double'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'Y_COORDINATES '//trim(str(Ny,.true.))//' double'//end_rec
     write(vtk(rf)%u,iostat=E_IO)Y
     write(vtk(rf)%u,iostat=E_IO)end_rec
-    write(vtk(rf)%u,iostat=E_IO)'Z_COORDINATES '//trim(str(.true.,Nz))//' double'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'Z_COORDINATES '//trim(str(Nz,.true.))//' double'//end_rec
     write(vtk(rf)%u,iostat=E_IO)Z
     write(vtk(rf)%u,iostat=E_IO)end_rec
   endselect
@@ -567,28 +566,28 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'X_COORDINATES '//trim(str(.true.,Nx))//' float'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'DIMENSIONS '//trim(str(Nx,.true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'X_COORDINATES '//trim(str(Nx,.true.))//' float'
     do n1=1,Nx
       write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=X(n1))
     enddo
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'Y_COORDINATES '//trim(str(.true.,Ny))//' float'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'Y_COORDINATES '//trim(str(Ny,.true.))//' float'
     do n1=1,Ny
       write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=Y(n1))
     enddo
-    write(vtk(rf)%u,'(A)',iostat=E_IO)'Z_COORDINATES '//trim(str(.true.,Nz))//' float'
+    write(vtk(rf)%u,'(A)',iostat=E_IO)'Z_COORDINATES '//trim(str(Nz,.true.))//' float'
     do n1=1,Nz
       write(vtk(rf)%u,'(A)',iostat=E_IO)str(n=Z(n1))
     enddo
   case(raw)
-    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(.true.,Nx))//' '//trim(str(.true.,Ny))//' '//trim(str(.true.,Nz))//end_rec
-    write(vtk(rf)%u,iostat=E_IO)'X_COORDINATES '//trim(str(.true.,Nx))//' float'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'DIMENSIONS '//trim(str(Nx,.true.))//' '//trim(str(Ny,.true.))//' '//trim(str(Nz,.true.))//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'X_COORDINATES '//trim(str(Nx,.true.))//' float'//end_rec
     write(vtk(rf)%u,iostat=E_IO)X
     write(vtk(rf)%u,iostat=E_IO)end_rec
-    write(vtk(rf)%u,iostat=E_IO)'Y_COORDINATES '//trim(str(.true.,Ny))//' float'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'Y_COORDINATES '//trim(str(Ny,.true.))//' float'//end_rec
     write(vtk(rf)%u,iostat=E_IO)Y
     write(vtk(rf)%u,iostat=E_IO)end_rec
-    write(vtk(rf)%u,iostat=E_IO)'Z_COORDINATES '//trim(str(.true.,Nz))//' float'//end_rec
+    write(vtk(rf)%u,iostat=E_IO)'Z_COORDINATES '//trim(str(Nz,.true.))//' float'//end_rec
     write(vtk(rf)%u,iostat=E_IO)Z
     write(vtk(rf)%u,iostat=E_IO)end_rec
   endselect
@@ -619,12 +618,12 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)'POINTS '//str(.true.,NN)//' double'
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)'POINTS '//str(NN,.true.)//' double'
     do n1=1,NN
       write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)str(n=X(n1))//' '//str(n=Y(n1))//' '//str(n=Z(n1))
     enddo
   case(raw)
-    write(unit=vtk(rf)%u,iostat=E_IO)'POINTS '//str(.true.,NN)//' double'//end_rec
+    write(unit=vtk(rf)%u,iostat=E_IO)'POINTS '//str(NN,.true.)//' double'//end_rec
     write(unit=vtk(rf)%u,iostat=E_IO)(X(n1),Y(n1),Z(n1),n1=1,NN)
     write(unit=vtk(rf)%u,iostat=E_IO)end_rec
   endselect
@@ -653,12 +652,12 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)'POINTS '//str(.true.,NN)//' double'
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)'POINTS '//str(NN,.true.)//' double'
     do n1=1,NN
       write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)str(n=XYZ(1,n1))//' '//str(n=XYZ(2,n1))//' '//str(n=XYZ(3,n1))
     enddo
   case(raw)
-    write(unit=vtk(rf)%u,iostat=E_IO)'POINTS '//str(.true.,NN)//' double'//end_rec
+    write(unit=vtk(rf)%u,iostat=E_IO)'POINTS '//str(NN,.true.)//' double'//end_rec
     write(unit=vtk(rf)%u,iostat=E_IO)XYZ
     write(unit=vtk(rf)%u,iostat=E_IO)end_rec
   endselect
@@ -689,12 +688,12 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)'POINTS '//str(.true.,NN)//' float'
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)'POINTS '//str(NN,.true.)//' float'
     do n1=1,NN
       write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)str(n=X(n1))//' '//str(n=Y(n1))//' '//str(n=Z(n1))
     enddo
   case(raw)
-    write(unit=vtk(rf)%u,iostat=E_IO)'POINTS '//str(.true.,NN)//' float'//end_rec
+    write(unit=vtk(rf)%u,iostat=E_IO)'POINTS '//str(NN,.true.)//' float'//end_rec
     write(unit=vtk(rf)%u,iostat=E_IO)(X(n1),Y(n1),Z(n1),n1=1,NN)
     write(unit=vtk(rf)%u,iostat=E_IO)end_rec
   endselect
@@ -723,12 +722,12 @@ contains
   endif
   select case(vtk(rf)%f)
   case(ascii)
-    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)'POINTS '//str(.true.,NN)//' float'
+    write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)'POINTS '//str(NN,.true.)//' float'
     do n1=1,NN
       write(unit=vtk(rf)%u,fmt='(A)',iostat=E_IO)str(n=XYZ(1,n1))//' '//str(n=XYZ(2,n1))//' '//str(n=XYZ(3,n1))
     enddo
   case(raw)
-    write(unit=vtk(rf)%u,iostat=E_IO)'POINTS '//str(.true.,NN)//' float'//end_rec
+    write(unit=vtk(rf)%u,iostat=E_IO)'POINTS '//str(NN,.true.)//' float'//end_rec
     write(unit=vtk(rf)%u,iostat=E_IO)XYZ
     write(unit=vtk(rf)%u,iostat=E_IO)end_rec
   endselect

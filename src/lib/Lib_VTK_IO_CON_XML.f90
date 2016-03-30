@@ -3,16 +3,15 @@ module Lib_VTK_IO_CON_XML
 !-----------------------------------------------------------------------------------------------------------------------------------
 !< CON_XML interface definition for Lib_VTK_IO.
 !-----------------------------------------------------------------------------------------------------------------------------------
-USE IR_Precision        ! Integers and reals precision definition.
-USE Lib_Base64          ! Base64 encoding/decoding procedures.
-USE Lib_VTK_IO_Back_End ! Lib_VTK_IO back end module.
+use befor64             ! Base64 encoding/decoding library.
+use Lib_VTK_IO_Back_End ! Lib_VTK_IO back end module.
+use penf                ! Portability environment.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
 implicit none
 private
-save
-public:: VTK_CON_XML
+public :: VTK_CON_XML
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
   function VTK_CON_XML(NC,connect,offset,cell_type,idx,cf) result(E_IO)
@@ -118,19 +117,19 @@ contains
   case(raw,bin_app)
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Cells>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="connectivity" format="appended" offset="'// &
-               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = offset(NC)*BYI4P)
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I4',offset(NC)
     write(unit=vtk(rf)%ua,iostat=E_IO)(connect(n1)+incr,n1=1,offset(NC))
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int32" Name="offsets" format="appended" offset="'// &
-               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = NC*BYI4P)
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I4',NC
     write(unit=vtk(rf)%ua,iostat=E_IO)(offset(n1),n1=1,NC)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Int8" Name="types" format="appended" offset="'// &
-               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = NC*BYI1P)
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'I1',NC

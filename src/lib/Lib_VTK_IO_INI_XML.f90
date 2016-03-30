@@ -3,17 +3,16 @@ module Lib_VTK_IO_INI_XML
 !-----------------------------------------------------------------------------------------------------------------------------------
 !< INI_XML interface definition for Lib_VTK_IO.
 !-----------------------------------------------------------------------------------------------------------------------------------
-USE IR_Precision        ! Integers and reals precision definition.
-USE Lib_Base64          ! Base64 encoding/decoding procedures.
-USE Lib_VTK_IO_Back_End ! Lib_VTK_IO back end module.
+use befor64             ! Base64 encoding/decoding library.
+use Lib_VTK_IO_Back_End ! Lib_VTK_IO back end module.
+use penf                ! Portability environment.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
 implicit none
 private
-save
-public:: VTK_INI_XML_WRITE
-public:: VTK_INI_XML_READ
+public :: VTK_INI_XML_WRITE
+public :: VTK_INI_XML_READ
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
   function VTK_INI_XML_WRITE(fformat, filename, mesh_topology, nx1, nx2, ny1, ny2, nz1, nz2, cf) result(E_IO)
@@ -63,8 +62,8 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   E_IO = -1_I4P
-  if (.not.ir_initialized) call IR_Init
-  if (.not.b64_initialized) call b64_init
+  if (.not.is_initialized) call penf_init
+  if (.not.is_b64_initialized) call b64_init
   call vtk_update(act='add',cf=rf,Nvtk=Nvtk,vtk=vtk)
   f = rf
   if (present(cf)) cf = rf
@@ -191,8 +190,8 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   E_IO = -1_I4P
-  if (.not.ir_initialized) call IR_Init
-  if (.not.b64_initialized) call b64_init
+  if (.not.is_initialized) call penf_init
+  if (.not.is_b64_initialized) call b64_init
   call vtk_update(act='add', cf=rf, Nvtk=Nvtk, vtk=vtk)
   f = rf
   if (present(cf)) cf = rf

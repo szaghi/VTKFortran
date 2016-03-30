@@ -3,16 +3,15 @@ module Lib_VTK_IO_INI
 !-----------------------------------------------------------------------------------------------------------------------------------
 !< INI interface definition for Lib_VTK_IO.
 !-----------------------------------------------------------------------------------------------------------------------------------
-USE IR_Precision        ! Integers and reals precision definition.
-USE Lib_Base64          ! Base64 encoding/decoding procedures.
-USE Lib_VTK_IO_Back_End ! Lib_VTK_IO back end module.
+use befor64             ! Base64 encoding/decoding library.
+use Lib_VTK_IO_Back_End ! Lib_VTK_IO back end module.
+use penf                ! Portability environment.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
 implicit none
 private
-save
-public:: VTK_INI
+public :: VTK_INI
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
   function VTK_INI(fformat,filename,title,mesh_topology,cf) result(E_IO)
@@ -38,8 +37,8 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   E_IO = -1_I4P
-  if (.not.ir_initialized) call IR_Init
-  if (.not.b64_initialized) call b64_init
+  if (.not.is_initialized) call penf_init
+  if (.not.is_b64_initialized) call b64_init
   call vtk_update(act='add',cf=rf,Nvtk=Nvtk,vtk=vtk)
   f = rf
   if (present(cf)) cf = rf

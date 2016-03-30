@@ -1,3 +1,6 @@
-[submodule "src/lib/IR_Precision"]
-	path = external/IR_Precision
-	url = https://github.com/szaghi/IR_Precision
+[submodule "src/third_party/PENF"]
+	path = src/third_party/PENF
+	url = https://github.com/szaghi/PENF
+[submodule "src/third_party/BeFoR64"]
+	path = src/third_party/BeFoR64
+	url = https://github.com/szaghi/BeFoR64

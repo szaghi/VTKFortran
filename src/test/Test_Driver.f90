@@ -2,26 +2,26 @@
 module Lib_Testers
 !< Module library of procedures for testing Lib_VTK_IO and for providing practical examples.
 !-----------------------------------------------------------------------------------------------------------------------------------
-USE IR_Precision
-USE Lib_VTK_IO
-USE, intrinsic:: ISO_FORTRAN_ENV, only: stdout=>OUTPUT_UNIT, stderr=>ERROR_UNIT
+use, intrinsic :: ISO_FORTRAN_ENV, only : stdout=>OUTPUT_UNIT
+use Lib_VTK_IO
+use penf
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
 implicit none
 private
-public:: test_stress
-public:: test_rect
-public:: test_unst
-public:: test_strg
-public:: test_punst
-public:: test_pstrg
-public:: test_vtm
+public :: test_stress
+public :: test_rect
+public :: test_unst
+public :: test_strg
+public :: test_punst
+public :: test_pstrg
+public :: test_vtm
 #ifdef OPENMP
-public:: test_openmp
+public :: test_openmp
 #endif
 #ifdef MPI2
-public:: test_mpi
+public :: test_mpi
 #endif
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
@@ -933,7 +933,7 @@ endmodule Lib_Testers
 
 program Test_Driver
 !-----------------------------------------------------------------------------------------------------------------------------------
-!< Testing program for Lib_VTK_IO, a pure Fortran (2003+) library to write and read data conforming the VTK standard
+!< Test program for Lib_VTK_IO, a pure Fortran (2003+) library to write and read data conforming the VTK standard.
 !<
 !<### Usage
 !< For printing help message for usage run it without command line arguments
@@ -981,16 +981,16 @@ program Test_Driver
 !< ./Test_Driver -mpi
 !<```
 !-----------------------------------------------------------------------------------------------------------------------------------
-USE IR_Precision
+use, intrinsic :: ISO_FORTRAN_ENV, only : stdout=>OUTPUT_UNIT, stderr=>ERROR_UNIT
 USE Lib_Testers
-USE, intrinsic:: ISO_FORTRAN_ENV, only: stdout=>OUTPUT_UNIT, stderr=>ERROR_UNIT
+use penf
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
 implicit none
-integer(I4P):: Nca = 0 !<  Number of command line arguments.
-character(7):: cas     !<  Command line argument switch.
-character(10):: nF     !<  Number of files for MPI and OpenMP benchmarks.
+integer(I4P)  :: Nca = 0 !<  Number of command line arguments.
+character(7)  :: cas     !<  Command line argument switch.
+character(10) :: nF      !<  Number of files for MPI and OpenMP benchmarks.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -1047,30 +1047,28 @@ stop
 contains
   subroutine print_usage()
   !---------------------------------------------------------------------------------------------------------------------------------
-  !< Procedure for printing usage help message to stdout.
-  !---------------------------------------------------------------------------------------------------------------------------------
-  implicit none
+  !< Print usage help message to stdout.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  write(stdout,'(A)')' Test_Driver: a "driver" program for testing Lib_VTK_IO functions'
-  write(stdout,'(A)')' Usage:'
-  write(stdout,'(A)')'   Test_Driver [-switch]'
-  write(stdout,'(A)')'     switch = unst   => testing UnstructuredGrid functions'
-  write(stdout,'(A)')'     switch = strg   => testing StructuredGrid functions'
-  write(stdout,'(A)')'     switch = rect   => testing RectilinearGrid functions'
-  write(stdout,'(A)')'     switch = punst  => testing parallel (partitioned) PUnstructuredGrid functions'
-  write(stdout,'(A)')'     switch = pstrg  => testing parallel (partitioned) StructuredGrid functions'
-  write(stdout,'(A)')'     switch = vtm    => testing multi-block XML functions'
-  write(stdout,'(A)')'     switch = all    => testing all above functions'
-  write(stdout,'(A)')'     switch = openmp => testing functions in parallel OpenMP framework'
-  write(stdout,'(A)')'     switch = mpi    => testing functions in parallel MPI    framework'
-  write(stdout,'(A)')'     switch = stress => testing functions of any kind/rank producing many files'
-  write(stdout,'(A)')' Examples:'
-  write(stdout,'(A)')'   Test_Driver -pstrg'
-  write(stdout,'(A)')'   Test_Driver -vtm'
-  write(stdout,'(A)')'   Test_Driver -openmp'
-  write(stdout,'(A)')' If switch is not passed (or is unknown) this help message is printed to stdout'
+  write(stdout, '(A)')' Test_Driver: a "driver" program for testing Lib_VTK_IO functions'
+  write(stdout, '(A)')' Usage:'
+  write(stdout, '(A)')'   Test_Driver [-switch]'
+  write(stdout, '(A)')'     switch = unst   => testing UnstructuredGrid functions'
+  write(stdout, '(A)')'     switch = strg   => testing StructuredGrid functions'
+  write(stdout, '(A)')'     switch = rect   => testing RectilinearGrid functions'
+  write(stdout, '(A)')'     switch = punst  => testing parallel (partitioned) PUnstructuredGrid functions'
+  write(stdout, '(A)')'     switch = pstrg  => testing parallel (partitioned) StructuredGrid functions'
+  write(stdout, '(A)')'     switch = vtm    => testing multi-block XML functions'
+  write(stdout, '(A)')'     switch = all    => testing all above functions'
+  write(stdout, '(A)')'     switch = openmp => testing functions in parallel OpenMP framework'
+  write(stdout, '(A)')'     switch = mpi    => testing functions in parallel MPI    framework'
+  write(stdout, '(A)')'     switch = stress => testing functions of any kind/rank producing many files'
+  write(stdout, '(A)')' Examples:'
+  write(stdout, '(A)')'   Test_Driver -pstrg'
+  write(stdout, '(A)')'   Test_Driver -vtm'
+  write(stdout, '(A)')'   Test_Driver -openmp'
+  write(stdout, '(A)')' If switch is not passed (or is unknown) this help message is printed to stdout'
   stop
   return
   !---------------------------------------------------------------------------------------------------------------------------------

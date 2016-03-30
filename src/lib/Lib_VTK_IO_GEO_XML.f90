@@ -3,17 +3,16 @@ module Lib_VTK_IO_GEO_XML
 !-----------------------------------------------------------------------------------------------------------------------------------
 !< GEO_XML interface definition for Lib_VTK_IO.
 !-----------------------------------------------------------------------------------------------------------------------------------
-USE IR_Precision        ! Integers and reals precision definition.
-USE Lib_Base64          ! Base64 encoding/decoding procedures.
-USE Lib_VTK_IO_Back_End ! Lib_VTK_IO back end module.
+use befor64             ! Base64 encoding/decoding library.
+use Lib_VTK_IO_Back_End ! Lib_VTK_IO back end module.
+use penf                ! Portability environment.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
 implicit none
 private
-save
-public:: VTK_GEO_XML_WRITE
-public:: VTK_GEO_XML_READ
+public :: VTK_GEO_XML_WRITE
+public :: VTK_GEO_XML_READ
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -169,7 +168,7 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     s_buffer = repeat(' ',vtk(rf)%indent)//                                                                  &
                '<DataArray type="Float64" NumberOfComponents="3" Name="Points" format="appended" offset="'// &
-               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NN*BYR8P)
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',3*NN
@@ -249,7 +248,7 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     s_buffer = repeat(' ',vtk(rf)%indent)//                                                                  &
                '<DataArray type="Float64" NumberOfComponents="3" Name="Points" format="appended" offset="'// &
-               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NN*BYR8P)
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',3*NN
@@ -324,7 +323,7 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     s_buffer = repeat(' ',vtk(rf)%indent)//                                                                  &
                '<DataArray type="Float64" NumberOfComponents="3" Name="Points" format="appended" offset="'// &
-               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NN*BYR8P)
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',3*NN
@@ -402,7 +401,7 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     s_buffer = repeat(' ',vtk(rf)%indent)//                                                                  &
                '<DataArray type="Float64" NumberOfComponents="3" Name="Points" format="appended" offset="'// &
-               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NN*BYR8P)
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',3*NN
@@ -477,7 +476,7 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     s_buffer = repeat(' ',vtk(rf)%indent)//                                                                  &
                '<DataArray type="Float32" NumberOfComponents="3" Name="Points" format="appended" offset="'// &
-               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NN*BYR4P)
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',3*NN
@@ -557,7 +556,7 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     s_buffer = repeat(' ',vtk(rf)%indent)//                                                                  &
                '<DataArray type="Float32" NumberOfComponents="3" Name="Points" format="appended" offset="'// &
-               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NN*BYR4P)
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',3*NN
@@ -632,7 +631,7 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     s_buffer = repeat(' ',vtk(rf)%indent)//                                                                  &
                '<DataArray type="Float32" NumberOfComponents="3" Name="Points" format="appended" offset="'// &
-               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NN*BYR4P)
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',3*NN
@@ -710,7 +709,7 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     s_buffer = repeat(' ',vtk(rf)%indent)//                                                                  &
                '<DataArray type="Float32" NumberOfComponents="3" Name="Points" format="appended" offset="'// &
-               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NN*BYR4P)
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',3*NN
@@ -786,19 +785,19 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Coordinates>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="X" format="appended" offset="'//&
-               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = (nx2-nx1+1)*BYR8P)
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',(nx2-nx1+1)
     write(unit=vtk(rf)%ua,iostat=E_IO)(X(n1),n1=nx1,nx2)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="Y" format="appended" offset="'//&
-               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = (ny2-ny1+1)*BYR8P)
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',(ny2-ny1+1)
     write(unit=vtk(rf)%ua,iostat=E_IO)(Y(n1),n1=ny1,ny2)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float64" Name="Z" format="appended" offset="'//&
-               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = (nz2-nz1+1)*BYR8P)
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',(nz2-nz1+1)
@@ -888,19 +887,19 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Coordinates>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="X" format="appended" offset="'//&
-               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = (nx2-nx1+1)*BYR4P)
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',(nx2-nx1+1)
     write(unit=vtk(rf)%ua,iostat=E_IO)(X(n1),n1=nx1,nx2)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="Y" format="appended" offset="'//&
-               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = (ny2-ny1+1)*BYR4P)
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',(ny2-ny1+1)
     write(unit=vtk(rf)%ua,iostat=E_IO)(Y(n1),n1=ny1,ny2)
     s_buffer = repeat(' ',vtk(rf)%indent)//'<DataArray type="Float32" Name="Z" format="appended" offset="'//&
-               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = (nz2-nz1+1)*BYR4P)
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',(nz2-nz1+1)
@@ -981,7 +980,7 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     s_buffer = repeat(' ',vtk(rf)%indent)//                                                                  &
                '<DataArray type="Float64" NumberOfComponents="3" Name="Points" format="appended" offset="'// &
-               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NN*BYR8P)
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',3*NN
@@ -1049,7 +1048,7 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     s_buffer = repeat(' ',vtk(rf)%indent)//                                                                  &
                '<DataArray type="Float64" NumberOfComponents="3" Name="Points" format="appended" offset="'// &
-               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NN*BYR8P)
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R8',3*NN
@@ -1118,7 +1117,7 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     s_buffer = repeat(' ',vtk(rf)%indent)//                                                                  &
                '<DataArray type="Float32" NumberOfComponents="3" Name="Points" format="appended" offset="'// &
-               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NN*BYR4P)
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',3*NN
@@ -1186,7 +1185,7 @@ contains
     write(unit=vtk(rf)%u,iostat=E_IO)repeat(' ',vtk(rf)%indent)//'<Points>'//end_rec ; vtk(rf)%indent = vtk(rf)%indent + 2
     s_buffer = repeat(' ',vtk(rf)%indent)//                                                                  &
                '<DataArray type="Float32" NumberOfComponents="3" Name="Points" format="appended" offset="'// &
-               trim(str(.true.,vtk(rf)%ioffset))//'"/>'
+               trim(str(vtk(rf)%ioffset, .true.))//'"/>'
     write(unit=vtk(rf)%u,iostat=E_IO)trim(s_buffer)//end_rec
     call vtk(rf)%byte_update(N_Byte = 3*NN*BYR4P)
     write(unit=vtk(rf)%ua,iostat=E_IO)vtk(rf)%N_Byte,'R4',3*NN
