@@ -580,7 +580,7 @@ contains
    enddo
   enddo
   do p=1,2 ! loop over pieces
-    E_IO = VTK_INI_XML_WRITE(cf=mf(p),fformat='raw', filename='XML_STRG_part'//trim(str(.true.,p-1))//'.vts', &
+    E_IO = VTK_INI_XML_WRITE(cf=mf(p),fformat='raw', filename='XML_STRG_part'//trim(str(p-1,.true.))//'.vts', &
                        mesh_topology='StructuredGrid', nx1=nx1_p(p), nx2=nx2_p(p), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
     E_IO = VTK_GEO_XML_WRITE(cf=mf(p),nx1=nx1_p(p), nx2=nx2_p(p), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn_p(p), &
                        X=reshape(x(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)),                                     &
@@ -635,7 +635,7 @@ contains
   enddo
   ! vts
   do b=1,4 ! loop over blocks
-    E_IO = VTK_INI_XML_WRITE(cf=mf(b), fformat='binary', filename='XML_M-STRG_part.'//trim(str(.true.,b-1))//'.vts', &
+    E_IO = VTK_INI_XML_WRITE(cf=mf(b), fformat='binary', filename='XML_M-STRG_part.'//trim(str(b-1,.true.))//'.vts', &
                        mesh_topology='StructuredGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
     if (b>1) then
       x = x + nx2*1._R8P
@@ -654,10 +654,10 @@ contains
   ! vtm
   E_IO = VTM_INI_XML('XML_M-STRG.vtm')
   E_IO = VTM_BLK_XML(block_action='open')
-  E_IO = VTM_WRF_XML(flist=(/('XML_M-STRG_part.'//trim(str(.true.,b-1))//'.vts',b=1,2)/))
+  E_IO = VTM_WRF_XML(flist=(/('XML_M-STRG_part.'//trim(str(b-1,.true.))//'.vts',b=1,2)/))
   E_IO = VTM_BLK_XML(block_action='close')
   E_IO = VTM_BLK_XML(block_action='open')
-  E_IO = VTM_WRF_XML(flist=(/('XML_M-STRG_part.'//trim(str(.true.,b-1))//'.vts',b=3,4)/))
+  E_IO = VTM_WRF_XML(flist=(/('XML_M-STRG_part.'//trim(str(b-1,.true.))//'.vts',b=3,4)/))
   E_IO = VTM_BLK_XML(block_action='close')
   E_IO = VTM_END_XML()
   return
@@ -727,9 +727,9 @@ contains
   allocate(v(0:Nths-1,nx1:nx2,ny1:ny2,nz1:nz2))
   allocate(t(0:Nths-1))
   write(stdout,'(A)')' Testing OpenMP parallel framework'
-  write(stdout,'(A)')' The test uses '//trim(str(.true.,Nf_tot))//' vts files of '//trim(str(.true.,nn))//' grid nodes as'//&
+  write(stdout,'(A)')' The test uses '//trim(str(Nf_tot,.true.))//' vts files of '//trim(str(nn,.true.))//' grid nodes as'//&
                      ' benchmark'
-  write(stdout,'(A)')' Number of files saved by each thread is '//trim(str(.true.,Nf_tot/Nths))
+  write(stdout,'(A)')' Number of files saved by each thread is '//trim(str(Nf_tot/Nths,.true.))
   ! arrays initialization
   do k=nz1,nz2
     do j=ny1,ny2
@@ -860,11 +860,11 @@ contains
   endif
   if (myrank==0) then
     write(stdout,'(A)')' Testing MPI parallel framework'
-    write(stdout,'(A)')' The test uses '//trim(str(.true.,Nf_tot))//' vts files of '//trim(str(.true.,nn))//' grid nodes as'//&
+    write(stdout,'(A)')' The test uses '//trim(str(Nf_tot,.true.))//' vts files of '//trim(str(nn,.true.))//' grid nodes as'//&
                        ' benchmark'
-    write(stdout,'(A)')' Number of files saved by processes other than the last is '//trim(str(.true.,Nf))
+    write(stdout,'(A)')' Number of files saved by processes other than the last is '//trim(str(Nf,.true.))
   elseif (myrank==nproc-1) then
-    write(stdout,'(A)')' Number of files saved by last process is '//trim(str(.true.,Nf))
+    write(stdout,'(A)')' Number of files saved by last process is '//trim(str(Nf,.true.))
   endif
   ! arrays initialization
   do k=nz1,nz2
