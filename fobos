@@ -13,6 +13,7 @@ $CSTATIC_INT = -cpp -c -assume realloc_lhs
 $DEBUG_GNU   = -O0 -g3 -Warray-bounds -Wcharacter-truncation -Wline-truncation -Wimplicit-interface -Wimplicit-procedure -Wunderflow -Wuninitialized -fcheck=all -fmodule-private -ffree-line-length-132 -fimplicit-none -fbacktrace -fdump-core -finit-real=nan -std=f2003 -fall-intrinsics
 $DEBUG_INT   = -O0 -debug all -check all -warn all -extend-source 132 -traceback -gen-interfaces#-fpe-all=0 -fp-stack-check -fstack-protector-all -ftrapuv -no-ftz -std03
 $OPTIMIZE    = -O2
+$EXDIRS      = src/third_party/BeFoR64/src/tests/ src/third_party/PENF/src/tests/
 
 # main modes
 [shared-gnu]
@@ -31,7 +32,7 @@ mklib     = static
 
 [test-driver-gnu]
 template  = template-static-gnu
-target    = src/Test_Driver.f90
+target    = src/test/Test_Driver.f90
 build_dir = ./Test_Driver/
 output    = Test_Driver
 
@@ -51,7 +52,7 @@ mklib     = static
 
 [test-driver-gnu-debug]
 template  = template-static-gnu-debug
-target    = src/Test_Driver.f90
+target    = src/test/Test_Driver.f90
 build_dir = ./Test_Driver/
 output    = Test_Driver
 
@@ -71,7 +72,7 @@ mklib     = static
 
 [test-driver-intel]
 template  = template-static-intel
-target    = src/Test_Driver.f90
+target    = src/test/Test_Driver.f90
 build_dir = ./Test_Driver/
 output    = Test_Driver
 
@@ -91,106 +92,114 @@ mklib     = static
 
 [test-driver-intel-debug]
 template  = template-static-intel-debug
-target    = src/Test_Driver.f90
+target    = src/test/Test_Driver.f90
 build_dir = ./Test_Driver/
 output    = Test_Driver
 
 #templates
 [template-shared-gnu]
-compiler = gnu
-cflags   = $CSHARED_GNU $OPTIMIZE
-lflags   = $LSHARED $OPTIMIZE
-mod_dir  = ./mod/
-obj_dir  = ./obj/
-src      = ./src/
-colors   = True
-quiet    = False
-log      = True
-jobs     = 10
+compiler     = gnu
+cflags       = $CSHARED_GNU $OPTIMIZE
+lflags       = $LSHARED $OPTIMIZE
+mod_dir      = ./mod/
+obj_dir      = ./obj/
+src          = ./src/
+exclude_dirs = $EXDIRS
+colors       = True
+quiet        = False
+log          = True
+jobs         = 10
 
 [template-static-gnu]
-compiler = gnu
-cflags   = $CSTATIC_GNU $OPTIMIZE
-lflags   = $OPTIMIZE
-mod_dir  = ./mod/
-obj_dir  = ./obj/
-src      = ./src/
-colors   = True
-quiet    = False
-log      = True
-jobs     = 10
+compiler     = gnu
+cflags       = $CSTATIC_GNU $OPTIMIZE
+lflags       = $OPTIMIZE
+mod_dir      = ./mod/
+obj_dir      = ./obj/
+src          = ./src/
+exclude_dirs = $EXDIRS
+colors       = True
+quiet        = False
+log          = True
+jobs         = 10
 
 [template-shared-gnu-debug]
-compiler = gnu
-cflags   = $CSHARED_GNU $DEBUG_GNU
-lflags   = $LSHARED $DEBUG_GNU
-mod_dir  = ./mod/
-obj_dir  = ./obj/
-src      = ./src/
-colors   = True
-quiet    = False
-log      = True
-jobs     = 10
+compiler     = gnu
+cflags       = $CSHARED_GNU $DEBUG_GNU
+lflags       = $LSHARED $DEBUG_GNU
+mod_dir      = ./mod/
+obj_dir      = ./obj/
+src          = ./src/
+exclude_dirs = $EXDIRS
+colors       = True
+quiet        = False
+log          = True
+jobs         = 10
 
 [template-static-gnu-debug]
-compiler = gnu
-cflags   = $CSTATIC_GNU $DEBUG_GNU
-lflags   = $DEBUG_GNU
-mod_dir  = ./mod/
-obj_dir  = ./obj/
-src      = ./src/
-colors   = True
-quiet    = False
-log      = True
-jobs     = 10
+compiler     = gnu
+cflags       = $CSTATIC_GNU $DEBUG_GNU
+lflags       = $DEBUG_GNU
+mod_dir      = ./mod/
+obj_dir      = ./obj/
+src          = ./src/
+exclude_dirs = $EXDIRS
+colors       = True
+quiet        = False
+log          = True
+jobs         = 10
 
 [template-shared-intel]
-compiler = intel
-cflags   = $CSHARED_INT $OPTIMIZE
-lflags   = $LSHARED $OPTIMIZE
-mod_dir  = ./mod/
-obj_dir  = ./obj/
-src      = ./src/
-colors   = True
-quiet    = False
-log      = True
-jobs     = 10
+compiler     = intel
+cflags       = $CSHARED_INT $OPTIMIZE
+lflags       = $LSHARED $OPTIMIZE
+mod_dir      = ./mod/
+obj_dir      = ./obj/
+src          = ./src/
+exclude_dirs = $EXDIRS
+colors       = True
+quiet        = False
+log          = True
+jobs         = 10
 
 [template-static-intel]
-compiler = intel
-cflags   = $CSTATIC_INT $OPTIMIZE
-lflags   = $OPTIMIZE
-mod_dir  = ./mod/
-obj_dir  = ./obj/
-src      = ./src/
-colors   = True
-quiet    = False
-log      = True
-jobs     = 10
+compiler     = intel
+cflags       = $CSTATIC_INT $OPTIMIZE
+lflags       = $OPTIMIZE
+mod_dir      = ./mod/
+obj_dir      = ./obj/
+src          = ./src/
+exclude_dirs = $EXDIRS
+colors       = True
+quiet        = False
+log          = True
+jobs         = 10
 
 [template-shared-intel-debug]
-compiler = intel
-cflags   = $CSHARED_INT $DEBUG_INT
-lflags   = $LSHARED $DEBUG_INT
-mod_dir  = ./mod/
-obj_dir  = ./obj/
-src      = ./src/
-colors   = True
-quiet    = False
-log      = True
-jobs     = 10
+compiler     = intel
+cflags       = $CSHARED_INT $DEBUG_INT
+lflags       = $LSHARED $DEBUG_INT
+mod_dir      = ./mod/
+obj_dir      = ./obj/
+src          = ./src/
+exclude_dirs = $EXDIRS
+colors       = True
+quiet        = False
+log          = True
+jobs         = 10
 
 [template-static-intel-debug]
-compiler = intel
-cflags   = $CSTATIC_INT $DEBUG_INT
-lflags   = $DEBUG_INT
-mod_dir  = ./mod/
-obj_dir  = ./obj/
-src      = ./src/
-colors   = True
-quiet    = False
-log      = True
-jobs     = 10
+compiler     = intel
+cflags       = $CSTATIC_INT $DEBUG_INT
+lflags       = $DEBUG_INT
+mod_dir      = ./mod/
+obj_dir      = ./obj/
+src          = ./src/
+exclude_dirs = $EXDIRS
+colors       = True
+quiet        = False
+log          = True
+jobs         = 10
 
 [rule-makedoc]
 help   = Rule for building documentation from source files
@@ -211,13 +220,13 @@ help   = Rule for performing coverage analysis
 rule_1 = FoBiS.py clean -mode test-driver-gnu
 rule_2 = FoBiS.py build -mode test-driver-gnu -coverage
 rule_3 = ./Test_Driver/Test_Driver -all
-rule_4 = gcov -o Test_Driver/obj/ src/Lib_VTK_IO.f90
+rule_4 = gcov -o Test_Driver/obj/ src/lib/*
 
 [rule-coverage-analysis]
 help   = Rule for performing coverage analysis and saving reports in markdown
 rule_1 = FoBiS.py clean -mode test-driver-gnu
 rule_2 = FoBiS.py build -mode test-driver-gnu -coverage
 rule_3 = ./Test_Driver/Test_Driver -all
-rule_4 = gcov -o Test_Driver/obj/ src/*
+rule_4 = gcov -o Test_Driver/obj/ src/lib/*
 rule_5 = FoBiS.py rule -gcov_analyzer wiki/ Coverage-Analysis
 rule_6 = rm -f *.gcov XML_*vt?
