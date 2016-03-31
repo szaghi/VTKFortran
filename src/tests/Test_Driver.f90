@@ -146,59 +146,59 @@ contains
     !-------------------------------------------------------------------------------------------------------------------------------
     E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
     if (threeD) then ! 3D rank arrays
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_R8',var=     v_R      ) ! scalar, R8P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_R4',var=real(v_R, R4P)) ! scalar, R4P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I8',var=     v_I      ) ! scalar, I8P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I4',var= int(v_I, I4P)) ! scalar, I4P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I2',var= int(v_I, I2P)) ! scalar, I2P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I1',var= int(v_I, I1P)) ! scalar, I1P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='scal_R8',var=     v_R      ) ! scalar, R8P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='scal_R4',var=real(v_R, R4P)) ! scalar, R4P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='scal_I8',var=     v_I      ) ! scalar, I8P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='scal_I4',var= int(v_I, I4P)) ! scalar, I4P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='scal_I2',var= int(v_I, I2P)) ! scalar, I2P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='scal_I1',var= int(v_I, I1P)) ! scalar, I1P
 
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_R8',varX=     vX_R,     varY=     vY_R,     varZ=     vZ_R     ) ! vector, R8P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_R4',varX=real(vX_R,R4P),varY=real(vY_R,R4P),varZ=real(vZ_R,R4P)) ! vector, R4P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_I8',varX=     vX_I,     varY=     vY_I,     varZ=     vZ_I     ) ! vector, I8P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_I4',varX= int(vX_I,I4P),varY= int(vY_I,I4P),varZ= int(vZ_I,I4P)) ! vector, I4P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_I2',varX= int(vX_I,I2P),varY= int(vY_I,I2P),varZ= int(vZ_I,I2P)) ! vector, I2P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_I1',varX= int(vX_I,I1P),varY= int(vY_I,I1P),varZ= int(vZ_I,I1P)) ! vector, I1P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='vect_R8',varX=     vX_R,     varY=     vY_R,     varZ=     vZ_R     ) ! vector, R8P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='vect_R4',varX=real(vX_R,R4P),varY=real(vY_R,R4P),varZ=real(vZ_R,R4P)) ! vector, R4P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='vect_I8',varX=     vX_I,     varY=     vY_I,     varZ=     vZ_I     ) ! vector, I8P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='vect_I4',varX= int(vX_I,I4P),varY= int(vY_I,I4P),varZ= int(vZ_I,I4P)) ! vector, I4P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='vect_I2',varX= int(vX_I,I2P),varY= int(vY_I,I2P),varZ= int(vZ_I,I2P)) ! vector, I2P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='vect_I1',varX= int(vX_I,I1P),varY= int(vY_I,I1P),varZ= int(vZ_I,I1P)) ! vector, I1P
 
-      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_R8',var=     vP_R     ) ! packed 4D vector, R8P
-      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_R4',var=real(vP_R,R4P)) ! packed 4D vector, R4P
-      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_I8',var=     vP_I     ) ! packed 4D vector, I8P
-      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_I4',var= int(vP_I,I4P)) ! packed 4D vector, I4P
-      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_I2',var= int(vP_I,I2P)) ! packed 4D vector, I2P
-      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_I1',var= int(vP_I,I1P)) ! packed 4D vector, I1P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,N_COL=4_I4P,varname='vectP_R8',var=     vP_R     ) ! packed 4D vector, R8P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,N_COL=4_I4P,varname='vectP_R4',var=real(vP_R,R4P)) ! packed 4D vector, R4P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,N_COL=4_I4P,varname='vectP_I8',var=     vP_I     ) ! packed 4D vector, I8P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,N_COL=4_I4P,varname='vectP_I4',var= int(vP_I,I4P)) ! packed 4D vector, I4P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,N_COL=4_I4P,varname='vectP_I2',var= int(vP_I,I2P)) ! packed 4D vector, I2P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,N_COL=4_I4P,varname='vectP_I1',var= int(vP_I,I1P)) ! packed 4D vector, I1P
     else ! 1D rank arrays
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_R8',var=     reshape(v_R,[nn])     ) ! scalar, R8P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_R4',var=real(reshape(v_R,[nn]),R4P)) ! scalar, R4P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I8',var=     reshape(v_I,[nn])     ) ! scalar, I8P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I4',var= int(reshape(v_I,[nn]),I4P)) ! scalar, I4P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I2',var= int(reshape(v_I,[nn]),I2P)) ! scalar, I2P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='scal_I1',var= int(reshape(v_I,[nn]),I1P)) ! scalar, I1P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='scal_R8',var=     reshape(v_R,[nn])     ) ! scalar, R8P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='scal_R4',var=real(reshape(v_R,[nn]),R4P)) ! scalar, R4P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='scal_I8',var=     reshape(v_I,[nn])     ) ! scalar, I8P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='scal_I4',var= int(reshape(v_I,[nn]),I4P)) ! scalar, I4P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='scal_I2',var= int(reshape(v_I,[nn]),I2P)) ! scalar, I2P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='scal_I1',var= int(reshape(v_I,[nn]),I1P)) ! scalar, I1P
 
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_R8',varX=     reshape(vX_R,[nn]),     &
-                                                    varY=     reshape(vY_R,[nn]),     &
-                                                    varZ=     reshape(vZ_R,[nn])     ) ! vector, R8P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_R4',varX=real(reshape(vX_R,[nn]),R4P),&
-                                                    varY=real(reshape(vY_R,[nn]),R4P),&
-                                                    varZ=real(reshape(vZ_R,[nn]),R4P)) ! vector, R4P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_I8',varX=     reshape(vX_I,[nn]),     &
-                                                    varY=     reshape(vY_I,[nn]),     &
-                                                    varZ=     reshape(vZ_I,[nn])     ) ! vector, I8P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_I4',varX= int(reshape(vX_I,[nn]),I4P),&
-                                                    varY= int(reshape(vY_I,[nn]),I4P),&
-                                                    varZ= int(reshape(vZ_I,[nn]),I4P)) ! vector, I4P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_I2',varX= int(reshape(vX_I,[nn]),I2P),&
-                                                    varY= int(reshape(vY_I,[nn]),I2P),&
-                                                    varZ= int(reshape(vZ_I,[nn]),I2P)) ! vector, I2P
-      E_IO = VTK_VAR_XML(NC_NN=nn,varname='vect_I1',varX= int(reshape(vX_I,[nn]),I1P),&
-                                                    varY= int(reshape(vY_I,[nn]),I1P),&
-                                                    varZ= int(reshape(vZ_I,[nn]),I1P)) ! vector, I1P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='vect_R8',varX=     reshape(vX_R,[nn]),     &
+                                                          varY=     reshape(vY_R,[nn]),     &
+                                                          varZ=     reshape(vZ_R,[nn])     ) ! vector, R8P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='vect_R4',varX=real(reshape(vX_R,[nn]),R4P),&
+                                                          varY=real(reshape(vY_R,[nn]),R4P),&
+                                                          varZ=real(reshape(vZ_R,[nn]),R4P)) ! vector, R4P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='vect_I8',varX=     reshape(vX_I,[nn]),     &
+                                                          varY=     reshape(vY_I,[nn]),     &
+                                                          varZ=     reshape(vZ_I,[nn])     ) ! vector, I8P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='vect_I4',varX= int(reshape(vX_I,[nn]),I4P),&
+                                                          varY= int(reshape(vY_I,[nn]),I4P),&
+                                                          varZ= int(reshape(vZ_I,[nn]),I4P)) ! vector, I4P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='vect_I2',varX= int(reshape(vX_I,[nn]),I2P),&
+                                                          varY= int(reshape(vY_I,[nn]),I2P),&
+                                                          varZ= int(reshape(vZ_I,[nn]),I2P)) ! vector, I2P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='vect_I1',varX= int(reshape(vX_I,[nn]),I1P),&
+                                                          varY= int(reshape(vY_I,[nn]),I1P),&
+                                                          varZ= int(reshape(vZ_I,[nn]),I1P)) ! vector, I1P
 
-      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_R8',var=     reshape(vP_R,[4,nn])     ) ! packed 4D vector, R8P
-      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_R4',var=real(reshape(vP_R,[4,nn]),R4P)) ! packed 4D vector, R4P
-      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_I8',var=     reshape(vP_I,[4,nn])     ) ! packed 4D vector, I8P
-      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_I4',var= int(reshape(vP_I,[4,nn]),I4P)) ! packed 4D vector, I4P
-      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_I2',var= int(reshape(vP_I,[4,nn]),I2P)) ! packed 4D vector, I2P
-      E_IO = VTK_VAR_XML(NC_NN=nn,N_COL=4_I4P,varname='vectP_I1',var= int(reshape(vP_I,[4,nn]),I1P)) ! packed 4D vector, I1P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,N_COL=4_I4P,varname='vectP_R8',var=     reshape(vP_R,[4,nn])     ) ! packed 4D vector, R8P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,N_COL=4_I4P,varname='vectP_R4',var=real(reshape(vP_R,[4,nn]),R4P)) ! packed 4D vector, R4P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,N_COL=4_I4P,varname='vectP_I8',var=     reshape(vP_I,[4,nn])     ) ! packed 4D vector, I8P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,N_COL=4_I4P,varname='vectP_I4',var= int(reshape(vP_I,[4,nn]),I4P)) ! packed 4D vector, I4P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,N_COL=4_I4P,varname='vectP_I2',var= int(reshape(vP_I,[4,nn]),I2P)) ! packed 4D vector, I2P
+      E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,N_COL=4_I4P,varname='vectP_I1',var= int(reshape(vP_I,[4,nn]),I1P)) ! packed 4D vector, I1P
     endif
     E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
     return
@@ -264,7 +264,7 @@ contains
     endif
     E_IO = save_node_variables(threeD=threeD)
     E_IO = VTK_GEO_XML_WRITE()
-    E_IO = VTK_END_XML()
+    E_IO = VTK_END_XML_WRITE()
     return
     !-------------------------------------------------------------------------------------------------------------------------------
     endfunction save_strg
@@ -313,31 +313,31 @@ contains
   E_IO = VTK_GEO_XML_WRITE(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'opeN')
-  E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'scalars', var = v)
-  E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'vector', varX=v_X,varY=v_Y,varZ=v_Z)
+  E_IO = VTK_VAR_XML_WRITE(NC_NN = Nn, varname = 'scalars', var = v)
+  E_IO = VTK_VAR_XML_WRITE(NC_NN = Nn, varname = 'vector', varX=v_X,varY=v_Y,varZ=v_Z)
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'CLOSE')
   E_IO = VTK_GEO_XML_WRITE()
-  E_IO = VTK_END_XML()
+  E_IO = VTK_END_XML_WRITE()
   ! raw
   E_IO = VTK_INI_XML_WRITE(fformat = 'raw', filename = 'XML_UNST-raw.vtu', mesh_topology = 'UnstructuredGrid')
   E_IO = VTK_GEO_XML_WRITE(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'opeN')
-  E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'scalars', var = v)
-  E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'vector', varX=v_X,varY=v_Y,varZ=v_Z)
+  E_IO = VTK_VAR_XML_WRITE(NC_NN = Nn, varname = 'scalars', var = v)
+  E_IO = VTK_VAR_XML_WRITE(NC_NN = Nn, varname = 'vector', varX=v_X,varY=v_Y,varZ=v_Z)
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'CLOSE')
   E_IO = VTK_GEO_XML_WRITE()
-  E_IO = VTK_END_XML()
+  E_IO = VTK_END_XML_WRITE()
   ! binary
   E_IO = VTK_INI_XML_WRITE(fformat = 'binary', filename = 'XML_UNST-binary.vtu', mesh_topology = 'UnstructuredGrid')
   E_IO = VTK_GEO_XML_WRITE(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'opeN')
-  E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'scalars', var = v)
-  E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'vector', varX=v_X,varY=v_Y,varZ=v_Z)
+  E_IO = VTK_VAR_XML_WRITE(NC_NN = Nn, varname = 'scalars', var = v)
+  E_IO = VTK_VAR_XML_WRITE(NC_NN = Nn, varname = 'vector', varX=v_X,varY=v_Y,varZ=v_Z)
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'CLOSE')
   E_IO = VTK_GEO_XML_WRITE()
-  E_IO = VTK_END_XML()
+  E_IO = VTK_END_XML_WRITE()
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_unst
@@ -372,10 +372,10 @@ contains
                      nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
   E_IO = VTK_GEO_XML_WRITE(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, NN=nn, X=x, Y=y, Z=z)
   E_IO = VTK_DAT_XML(var_location='node', var_block_action='open')
-  E_IO = VTK_VAR_XML(NC_NN=nn, varname='scal_R8', var=v_R)
+  E_IO = VTK_VAR_XML_WRITE(NC_NN=nn, varname='scal_R8', var=v_R)
   E_IO = VTK_DAT_XML(var_location='node', var_block_action='close')
   E_IO = VTK_GEO_XML_WRITE()
-  E_IO = VTK_END_XML()
+  E_IO = VTK_END_XML_WRITE()
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_strg
@@ -428,10 +428,10 @@ contains
   E_IO = VTK_FLD_XML(fld_action='close')
   E_IO = VTK_GEO_XML_WRITE(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, X=x, Y=y, Z=z)
   E_IO = VTK_DAT_XML(var_location = 'cell', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'cell_value', var = v)
+  E_IO = VTK_VAR_XML_WRITE(NC_NN = nn, varname = 'cell_value', var = v)
   E_IO = VTK_DAT_XML(var_location = 'cell', var_block_action = 'close')
   E_IO = VTK_GEO_XML_WRITE()
-  E_IO = VTK_END_XML()
+  E_IO = VTK_END_XML_WRITE()
   ! raw
   E_IO = VTK_INI_XML_WRITE(fformat='raw', filename='XML_RECT-raw.vtr', &
                      mesh_topology='RectilinearGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
@@ -441,10 +441,10 @@ contains
   E_IO = VTK_FLD_XML(fld_action='close')
   E_IO = VTK_GEO_XML_WRITE(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, X=x, Y=y, Z=z)
   E_IO = VTK_DAT_XML(var_location = 'cell', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'cell_value', var = v)
+  E_IO = VTK_VAR_XML_WRITE(NC_NN = nn, varname = 'cell_value', var = v)
   E_IO = VTK_DAT_XML(var_location = 'cell', var_block_action = 'close')
   E_IO = VTK_GEO_XML_WRITE()
-  E_IO = VTK_END_XML()
+  E_IO = VTK_END_XML_WRITE()
   ! binary
   E_IO = VTK_INI_XML_WRITE(fformat='binary', filename='XML_RECT-binary.vtr', &
                      mesh_topology='RectilinearGrid', nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
@@ -454,10 +454,10 @@ contains
   E_IO = VTK_FLD_XML(fld_action='close')
   E_IO = VTK_GEO_XML_WRITE(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, X=x, Y=y, Z=z)
   E_IO = VTK_DAT_XML(var_location = 'cell', var_block_action = 'open')
-  E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'cell_value', var = v)
+  E_IO = VTK_VAR_XML_WRITE(NC_NN = nn, varname = 'cell_value', var = v)
   E_IO = VTK_DAT_XML(var_location = 'cell', var_block_action = 'close')
   E_IO = VTK_GEO_XML_WRITE()
-  E_IO = VTK_END_XML()
+  E_IO = VTK_END_XML_WRITE()
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine test_rect
@@ -508,22 +508,22 @@ contains
   E_IO = VTK_GEO_XML_WRITE(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'opeN')
-  E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'scalars', var = v)
-  E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'vector', varX=v_X,varY=v_Y,varZ=v_Z)
+  E_IO = VTK_VAR_XML_WRITE(NC_NN = Nn, varname = 'scalars', var = v)
+  E_IO = VTK_VAR_XML_WRITE(NC_NN = Nn, varname = 'vector', varX=v_X,varY=v_Y,varZ=v_Z)
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'CLOSE')
   E_IO = VTK_GEO_XML_WRITE()
-  E_IO = VTK_END_XML()
+  E_IO = VTK_END_XML_WRITE()
   ! second part
   x = x + 10._R4P
   E_IO = VTK_INI_XML_WRITE(fformat = 'raw', filename = 'XML_UNST_part1.vtu', mesh_topology = 'UnstructuredGrid')
   E_IO = VTK_GEO_XML_WRITE(NN = Nn, NC = Ne, X = x, Y = y, Z = z)
   E_IO = VTK_CON_XML(NC = Ne, connect = connect, offset = offset, cell_type = cell_type )
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'opeN')
-  E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'scalars', var = v)
-  E_IO = VTK_VAR_XML(NC_NN = Nn, varname = 'vector', varX=v_X,varY=v_Y,varZ=v_Z)
+  E_IO = VTK_VAR_XML_WRITE(NC_NN = Nn, varname = 'scalars', var = v)
+  E_IO = VTK_VAR_XML_WRITE(NC_NN = Nn, varname = 'vector', varX=v_X,varY=v_Y,varZ=v_Z)
   E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'CLOSE')
   E_IO = VTK_GEO_XML_WRITE()
-  E_IO = VTK_END_XML()
+  E_IO = VTK_END_XML_WRITE()
   ! pvtu
   E_IO = PVTK_INI_XML(filename = 'XML_UNST.pvtu', mesh_topology = 'PUnstructuredGrid', tp='Float32')
   E_IO = PVTK_GEO_XML(source='XML_UNST_part0.vtu')
@@ -587,10 +587,10 @@ contains
                        Y=reshape(y(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)),                                     &
                        Z=reshape(z(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)))
     E_IO = VTK_DAT_XML(cf=mf(p),var_location = 'node', var_block_action = 'open')
-    E_IO = VTK_VAR_XML(cf=mf(p),NC_NN = nn_p(p), varname = 'node_value', var = reshape(v(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)))
+    E_IO = VTK_VAR_XML_WRITE(cf=mf(p),NC_NN = nn_p(p), varname = 'node_value', var = reshape(v(nx1_p(p):nx2_p(p),:,:),(/nn_p(p)/)))
     E_IO = VTK_DAT_XML(cf=mf(p),var_location = 'node', var_block_action = 'close')
     E_IO = VTK_GEO_XML_WRITE(cf=mf(p))
-    E_IO = VTK_END_XML()
+    E_IO = VTK_END_XML_WRITE()
   enddo
   ! pvts
   E_IO = PVTK_INI_XML(filename = 'XML_STRG.pvts', mesh_topology = 'PStructuredGrid', &
@@ -646,10 +646,10 @@ contains
                        Y=reshape(y(nx1:nx2,:,:),(/nn/)),                                     &
                        Z=reshape(z(nx1:nx2,:,:),(/nn/)))
     E_IO = VTK_DAT_XML(cf=mf(b),var_location = 'node', var_block_action = 'open')
-    E_IO = VTK_VAR_XML(cf=mf(b),NC_NN = nn, varname = 'node_value', var = reshape(v(nx1:nx2,:,:),(/nn/)))
+    E_IO = VTK_VAR_XML_WRITE(cf=mf(b),NC_NN = nn, varname = 'node_value', var = reshape(v(nx1:nx2,:,:),(/nn/)))
     E_IO = VTK_DAT_XML(cf=mf(b),var_location = 'node', var_block_action = 'close')
     E_IO = VTK_GEO_XML_WRITE(cf=mf(b))
-    E_IO = VTK_END_XML()
+    E_IO = VTK_END_XML_WRITE()
   enddo
   ! vtm
   E_IO = VTM_INI_XML('XML_M-STRG.vtm')
@@ -764,7 +764,7 @@ contains
     vtk_start = OMP_GET_WTIME()
     E_IO = VTK_GEO_XML_WRITE(cf=mf(f),nx1=nxf-(nx2-nx1+1)+1,nx2=nxf,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=xf,Y=y,Z=z)
     E_IO = VTK_DAT_XML(cf=mf(f),var_location='node',var_block_action='open')
-    E_IO = VTK_VAR_XML(cf=mf(f),NC_NN=nn,varname='node_value',var=v(th,:,:,:))
+    E_IO = VTK_VAR_XML_WRITE(cf=mf(f),NC_NN=nn,varname='node_value',var=v(th,:,:,:))
     E_IO = VTK_DAT_XML(cf=mf(f),var_location='node',var_block_action='close')
     E_IO = VTK_GEO_XML_WRITE(cf=mf(f))
     vtk_stop = OMP_GET_WTIME()
@@ -773,7 +773,7 @@ contains
   !$OMP END PARALLEL
   ! closing files outside OpenMP framework
   do f=1,Nf_tot
-    E_IO = VTK_END_XML()
+    E_IO = VTK_END_XML_WRITE()
   enddo
   write(stdout,'(A)')' Maximum elapsed time of single thread '//trim(adjustl(str('(F9.4)',maxval(t))))
   write(stdout,'(A)')' Minimum elapsed time of single thread '//trim(adjustl(str('(F9.4)',minval(t))))
@@ -894,10 +894,10 @@ contains
     xf = x + real(foffset-1_I4P, R8P)
     E_IO = VTK_GEO_XML_WRITE(nx1=nxf-(nx2-nx1+1)+1,nx2=nxf,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2,NN=nn,X=xf,Y=y,Z=z)
     E_IO = VTK_DAT_XML(var_location='node',var_block_action='open')
-    E_IO = VTK_VAR_XML(NC_NN=nn,varname='node_value',var=v)
+    E_IO = VTK_VAR_XML_WRITE(NC_NN=nn,varname='node_value',var=v)
     E_IO = VTK_DAT_XML(var_location='node',var_block_action='close')
     E_IO = VTK_GEO_XML_WRITE()
-    E_IO = VTK_END_XML()
+    E_IO = VTK_END_XML_WRITE()
     vtk_stop = MPI_Wtime()
     t = t + vtk_stop-vtk_start
   enddo

@@ -29,8 +29,8 @@ public :: VTK_FLD_XML
 public :: VTK_GEO_XML_WRITE, VTK_GEO_XML_READ
 public :: VTK_CON_XML
 public :: VTK_DAT_XML
-public :: VTK_VAR_XML
-public :: VTK_END_XML
+public :: VTK_VAR_XML_WRITE, VTK_VAR_XML_READ
+public :: VTK_END_XML_WRITE, VTK_END_XML_READ
 
 public :: VTM_INI_XML
 public :: VTM_BLK_XML
