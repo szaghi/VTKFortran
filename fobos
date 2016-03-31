@@ -1,8 +1,8 @@
 [modes]
-modes = shared-gnu static-gnu test-driver-gnu
-        shared-gnu-debug static-gnu-debug test-driver-gnu-debug
-        shared-intel static-intel test-driver-intel
-        shared-intel-debug static-intel-debug test-driver-intel-debug
+modes = shared-gnu static-gnu tests-gnu
+        shared-gnu-debug static-gnu-debug tests-gnu-debug
+        shared-intel static-intel tests-intel
+        shared-intel-debug static-intel-debug tests-intel-debug
 
 [common-variables]
 $CSHARED_GNU = -cpp -c -fPIC -frealloc-lhs
@@ -10,7 +10,7 @@ $CSHARED_INT = -cpp -c -fpic -assume realloc_lhs
 $LSHARED     = -shared
 $CSTATIC_GNU = -cpp -c -frealloc-lhs
 $CSTATIC_INT = -cpp -c -assume realloc_lhs
-$DEBUG_GNU   = -O0 -g3 -Warray-bounds -Wcharacter-truncation -Wline-truncation -Wimplicit-interface -Wimplicit-procedure -Wunderflow -Wuninitialized -fcheck=all -fmodule-private -ffree-line-length-132 -fimplicit-none -fbacktrace -fdump-core -finit-real=nan -std=f2003 -fall-intrinsics
+$DEBUG_GNU   = -O0 -g3 -Warray-bounds -Wcharacter-truncation -Wline-truncation -Wimplicit-interface -Wimplicit-procedure -Wunderflow -Wuninitialized -fcheck=all -fmodule-private -ffree-line-length-132 -fimplicit-none -fbacktrace -fdump-core -finit-real=nan
 $DEBUG_INT   = -O0 -debug all -check all -warn all -extend-source 132 -traceback -gen-interfaces#-fpe-all=0 -fp-stack-check -fstack-protector-all -ftrapuv -no-ftz -std03
 $OPTIMIZE    = -O2
 $EXDIRS      = src/third_party/BeFoR64/src/tests/ src/third_party/PENF/src/tests/
@@ -30,11 +30,9 @@ build_dir = ./static/
 output    = Lib_VTK_IO.a
 mklib     = static
 
-[test-driver-gnu]
+[tests-gnu]
 template  = template-static-gnu
-target    = src/test/Test_Driver.f90
-build_dir = ./Test_Driver/
-output    = Test_Driver
+build_dir = ./tests
 
 [shared-gnu-debug]
 template  = template-shared-gnu-debug
@@ -50,11 +48,9 @@ build_dir = ./static/
 output    = Lib_VTK_IO.a
 mklib     = static
 
-[test-driver-gnu-debug]
+[tests-gnu-debug]
 template  = template-static-gnu-debug
-target    = src/test/Test_Driver.f90
-build_dir = ./Test_Driver/
-output    = Test_Driver
+build_dir = ./tests
 
 [shared-intel]
 template  = template-shared-intel
@@ -70,11 +66,9 @@ build_dir = ./static/
 output    = Lib_VTK_IO.a
 mklib     = static
 
-[test-driver-intel]
+[tests-intel]
 template  = template-static-intel
-target    = src/test/Test_Driver.f90
-build_dir = ./Test_Driver/
-output    = Test_Driver
+build_dir = ./tests
 
 [shared-intel-debug]
 template  = template-shared-intel-debug
@@ -90,11 +84,9 @@ build_dir = ./static/
 output    = Lib_VTK_IO.a
 mklib     = static
 
-[test-driver-intel-debug]
+[tests-intel-debug]
 template  = template-static-intel-debug
-target    = src/test/Test_Driver.f90
-build_dir = ./Test_Driver/
-output    = Test_Driver
+build_dir = ./tests
 
 #templates
 [template-shared-gnu]
@@ -217,16 +209,18 @@ rule = tar -czf Lib_VTK_IO.tar.gz *
 
 [rule-makecoverage]
 help   = Rule for performing coverage analysis
-rule_1 = FoBiS.py clean -mode test-driver-gnu
-rule_2 = FoBiS.py build -mode test-driver-gnu -coverage
-rule_3 = ./Test_Driver/Test_Driver -all
-rule_4 = gcov -o Test_Driver/obj/ src/lib/*
+rule_1 = FoBiS.py clean -mode tests-gnu
+rule_2 = FoBiS.py build -mode tests-gnu -coverage
+rule_3 = ./tests/Test_Driver -all
+rule_4 = ./tests/test_fs
+rule_5 = gcov -o tests/obj/ src/lib/*
 
 [rule-coverage-analysis]
 help   = Rule for performing coverage analysis and saving reports in markdown
-rule_1 = FoBiS.py clean -mode test-driver-gnu
-rule_2 = FoBiS.py build -mode test-driver-gnu -coverage
-rule_3 = ./Test_Driver/Test_Driver -all
-rule_4 = gcov -o Test_Driver/obj/ src/lib/*
-rule_5 = FoBiS.py rule -gcov_analyzer wiki/ Coverage-Analysis
-rule_6 = rm -f *.gcov XML_*vt?
+rule_1 = FoBiS.py clean -mode tests-gnu
+rule_2 = FoBiS.py build -mode tests-gnu -coverage
+rule_3 = ./tests/Test_Driver -all
+rule_4 = ./tests/test_fs
+rule_5 = gcov -o tests/obj/ src/lib/*
+rule_6 = FoBiS.py rule -gcov_analyzer wiki/ Coverage-Analysis
+rule_7 = rm -f *.gcov XML_*vt?
