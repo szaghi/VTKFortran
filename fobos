@@ -11,9 +11,9 @@ $LSHARED     = -shared
 $CSTATIC_GNU = -cpp -c -frealloc-lhs
 $CSTATIC_INT = -cpp -c -assume realloc_lhs
 $DEBUG_GNU   = -O0 -g3 -Warray-bounds -Wcharacter-truncation -Wline-truncation -Wimplicit-interface -Wimplicit-procedure -Wunderflow -Wuninitialized -fcheck=all -fmodule-private -ffree-line-length-132 -fimplicit-none -fbacktrace -fdump-core -finit-real=nan
-$DEBUG_INT   = -O0 -debug all -check all -warn all -extend-source 132 -traceback -gen-interfaces#-fpe-all=0 -fp-stack-check -fstack-protector-all -ftrapuv -no-ftz -std03
+$DEBUG_INT   = -O0 -debug all -check all -warn all -extend-source 132 -traceback -gen-interfaces#-fpe-all=0 -fp-stack-check -fstack-protector-all -ftrapuv -no-ftz -std08
 $OPTIMIZE    = -O2
-$EXDIRS      = src/third_party/BeFoR64/src/tests/ src/third_party/PENF/src/tests/
+$EXDIRS      = src/third_party/BeFoR64/ src/third_party/PENF/ src/third_party/StringiFor/
 
 # main modes
 [shared-gnu]
@@ -32,7 +32,7 @@ mklib     = static
 
 [tests-gnu]
 template  = template-static-gnu
-build_dir = ./tests
+build_dir = exe
 
 [shared-gnu-debug]
 template  = template-shared-gnu-debug
@@ -50,7 +50,7 @@ mklib     = static
 
 [tests-gnu-debug]
 template  = template-static-gnu-debug
-build_dir = ./tests
+build_dir = exe
 
 [shared-intel]
 template  = template-shared-intel
@@ -68,7 +68,7 @@ mklib     = static
 
 [tests-intel]
 template  = template-static-intel
-build_dir = ./tests
+build_dir = exe
 
 [shared-intel-debug]
 template  = template-shared-intel-debug
@@ -86,7 +86,7 @@ mklib     = static
 
 [tests-intel-debug]
 template  = template-static-intel-debug
-build_dir = ./tests
+build_dir = exe
 
 #templates
 [template-shared-gnu]
@@ -211,16 +211,16 @@ rule = tar -czf Lib_VTK_IO.tar.gz *
 help   = Rule for performing coverage analysis
 rule_1 = FoBiS.py clean -mode tests-gnu
 rule_2 = FoBiS.py build -mode tests-gnu -coverage
-rule_3 = ./tests/Test_Driver -all
-rule_4 = ./tests/test_fs
+rule_3 = ./exe/Test_Driver -all
+rule_4 = ./exe/test_fs
 rule_5 = gcov -o tests/obj/ src/lib/*
 
 [rule-coverage-analysis]
 help   = Rule for performing coverage analysis and saving reports in markdown
 rule_1 = FoBiS.py clean -mode tests-gnu
 rule_2 = FoBiS.py build -mode tests-gnu -coverage
-rule_3 = ./tests/Test_Driver -all
-rule_4 = ./tests/test_fs
+rule_3 = ./exe/Test_Driver -all
+rule_4 = ./exe/test_fs
 rule_5 = gcov -o tests/obj/ src/lib/*
 rule_6 = FoBiS.py rule -gcov_analyzer wiki/ Coverage-Analysis
 rule_7 = rm -f *.gcov XML_*vt?
