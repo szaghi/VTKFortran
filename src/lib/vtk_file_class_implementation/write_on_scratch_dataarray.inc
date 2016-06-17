@@ -1,4 +1,4 @@
-  !< Implementation of dataarray write on scratch of VTK file class.
+  ! Implementation of write on scratch dataarray of VTK file class.
   function write_on_scratch_dataarray1_rank1(self, x) result(n_byte)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write a dataarray with 1 components of rank 1.

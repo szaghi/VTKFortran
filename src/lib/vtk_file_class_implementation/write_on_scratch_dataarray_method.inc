@@ -1,5 +1,5 @@
-!< Write on scratch method of VTK file class.
-    generic, private               :: write_on_scratch_dataarray =>           &
+    ! Write on scratch dataarray method of VTK file class.
+    generic, private               :: write_on_scratch_dataarray =>      &
                                       write_on_scratch_dataarray1_rank1, &
                                       write_on_scratch_dataarray1_rank2, &
                                       write_on_scratch_dataarray1_rank3, &
