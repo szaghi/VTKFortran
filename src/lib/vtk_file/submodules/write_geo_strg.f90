@@ -1,5 +1,5 @@
 !< Implementation of geo-structured write of VTK file class.
-submodule (vtk_fortran_vtk_file) write_geo_strg
+submodule (vtk_file_class) write_geo_strg
 !-----------------------------------------------------------------------------------------------------------------------------------
 !< Implementation of geo-structured write of VTK file class.
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   call self%write_start_tag(tag_name='Points')
-  error = self%write_data(data_name='Points', x=xyz)
+  error = self%write_dataarray(data_name='Points', x=xyz)
   call self%write_end_tag(tag_name='Points')
   error = self%error
   return
@@ -49,7 +49,7 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   call self%write_start_tag(tag_name='Points')
-  error = self%write_data(data_name='Points', x=xyz)
+  error = self%write_dataarray(data_name='Points', x=xyz)
   call self%write_end_tag(tag_name='Points')
   error = self%error
   return
@@ -73,7 +73,7 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   call self%write_start_tag(tag_name='Points')
-  error = self%write_data(data_name='Points', x=xyz)
+  error = self%write_dataarray(data_name='Points', x=xyz)
   call self%write_end_tag(tag_name='Points')
   error = self%error
   return
@@ -97,7 +97,7 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   call self%write_start_tag(tag_name='Points')
-  error = self%write_data(data_name='Points', x=xyz)
+  error = self%write_dataarray(data_name='Points', x=xyz)
   call self%write_end_tag(tag_name='Points')
   error = self%error
   return
@@ -123,7 +123,7 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   call self%write_start_tag(tag_name='Points')
-  error = self%write_data(data_name='Points', x=x, y=y, z=z)
+  error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
   call self%write_end_tag(tag_name='Points')
   error = self%error
   return
@@ -149,7 +149,7 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   call self%write_start_tag(tag_name='Points')
-  error = self%write_data(data_name='Points', x=x, y=y, z=z)
+  error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
   call self%write_end_tag(tag_name='Points')
   error = self%error
   return
@@ -175,7 +175,7 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   call self%write_start_tag(tag_name='Points')
-  error = self%write_data(data_name='Points', x=x, y=y, z=z)
+  error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
   call self%write_end_tag(tag_name='Points')
   error = self%error
   return
@@ -201,7 +201,7 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   call self%write_start_tag(tag_name='Points')
-  error = self%write_data(data_name='Points', x=x, y=y, z=z)
+  error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
   call self%write_end_tag(tag_name='Points')
   error = self%error
   return

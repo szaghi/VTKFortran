@@ -1,5 +1,5 @@
 !< Implementation of dataarray Base64 encode of VTK file class.
-submodule (vtk_fortran_vtk_file) dataarray_encode_base64
+submodule (vtk_file_class) encode_base64_dataarray
 !-----------------------------------------------------------------------------------------------------------------------------------
 !< Implementation of dataarray Base64 encode of VTK file class.
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -8,7 +8,7 @@ submodule (vtk_fortran_vtk_file) dataarray_encode_base64
 implicit none
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
-  module function encode_b64_comp1_rank1_R8P(x) result(code)
+  module function encode_base64_dataarray1_rank1_R8P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 1 (R8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -24,9 +24,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank1_R8P
+  endfunction encode_base64_dataarray1_rank1_R8P
 
-  module function encode_b64_comp1_rank1_R4P(x) result(code)
+  module function encode_base64_dataarray1_rank1_R4P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 1 (R4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -42,9 +42,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank1_R4P
+  endfunction encode_base64_dataarray1_rank1_R4P
 
-  module function encode_b64_comp1_rank1_I8P(x) result(code)
+  module function encode_base64_dataarray1_rank1_I8P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 1 (I8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -60,9 +60,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank1_I8P
+  endfunction encode_base64_dataarray1_rank1_I8P
 
-  module function encode_b64_comp1_rank1_I4P(x) result(code)
+  module function encode_base64_dataarray1_rank1_I4P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 1 (I4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -78,9 +78,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank1_I4P
+  endfunction encode_base64_dataarray1_rank1_I4P
 
-  module function encode_b64_comp1_rank1_I2P(x) result(code)
+  module function encode_base64_dataarray1_rank1_I2P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 1 (I2P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -96,9 +96,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank1_I2P
+  endfunction encode_base64_dataarray1_rank1_I2P
 
-  module function encode_b64_comp1_rank1_I1P(x) result(code)
+  module function encode_base64_dataarray1_rank1_I1P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 1 (I1P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -114,9 +114,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank1_I1P
+  endfunction encode_base64_dataarray1_rank1_I1P
 
-  module function encode_b64_comp1_rank2_R8P(x) result(code)
+  module function encode_base64_dataarray1_rank2_R8P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 2 (R8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -132,9 +132,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank2_R8P
+  endfunction encode_base64_dataarray1_rank2_R8P
 
-  module function encode_b64_comp1_rank2_R4P(x) result(code)
+  module function encode_base64_dataarray1_rank2_R4P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 2 (R4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -150,9 +150,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank2_R4P
+  endfunction encode_base64_dataarray1_rank2_R4P
 
-  module function encode_b64_comp1_rank2_I8P(x) result(code)
+  module function encode_base64_dataarray1_rank2_I8P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 2 (I8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -168,9 +168,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank2_I8P
+  endfunction encode_base64_dataarray1_rank2_I8P
 
-  module function encode_b64_comp1_rank2_I4P(x) result(code)
+  module function encode_base64_dataarray1_rank2_I4P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 2 (I4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -186,9 +186,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank2_I4P
+  endfunction encode_base64_dataarray1_rank2_I4P
 
-  module function encode_b64_comp1_rank2_I2P(x) result(code)
+  module function encode_base64_dataarray1_rank2_I2P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 2 (I2P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -204,9 +204,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank2_I2P
+  endfunction encode_base64_dataarray1_rank2_I2P
 
-  module function encode_b64_comp1_rank2_I1P(x) result(code)
+  module function encode_base64_dataarray1_rank2_I1P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 2 (I1P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -222,9 +222,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank2_I1P
+  endfunction encode_base64_dataarray1_rank2_I1P
 
-  module function encode_b64_comp1_rank3_R8P(x) result(code)
+  module function encode_base64_dataarray1_rank3_R8P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 3 (R8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -240,9 +240,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank3_R8P
+  endfunction encode_base64_dataarray1_rank3_R8P
 
-  module function encode_b64_comp1_rank3_R4P(x) result(code)
+  module function encode_base64_dataarray1_rank3_R4P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 3 (R4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -258,9 +258,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank3_R4P
+  endfunction encode_base64_dataarray1_rank3_R4P
 
-  module function encode_b64_comp1_rank3_I8P(x) result(code)
+  module function encode_base64_dataarray1_rank3_I8P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 3 (I8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -276,9 +276,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank3_I8P
+  endfunction encode_base64_dataarray1_rank3_I8P
 
-  module function encode_b64_comp1_rank3_I4P(x) result(code)
+  module function encode_base64_dataarray1_rank3_I4P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 3 (I4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -294,9 +294,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank3_I4P
+  endfunction encode_base64_dataarray1_rank3_I4P
 
-  module function encode_b64_comp1_rank3_I2P(x) result(code)
+  module function encode_base64_dataarray1_rank3_I2P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 3 (I2P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -312,9 +312,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank3_I2P
+  endfunction encode_base64_dataarray1_rank3_I2P
 
-  module function encode_b64_comp1_rank3_I1P(x) result(code)
+  module function encode_base64_dataarray1_rank3_I1P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 3 (I1P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -330,9 +330,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank3_I1P
+  endfunction encode_base64_dataarray1_rank3_I1P
 
-  module function encode_b64_comp1_rank4_R8P(x) result(code)
+  module function encode_base64_dataarray1_rank4_R8P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 4 (R8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -348,9 +348,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank4_R8P
+  endfunction encode_base64_dataarray1_rank4_R8P
 
-  module function encode_b64_comp1_rank4_R4P(x) result(code)
+  module function encode_base64_dataarray1_rank4_R4P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 4 (R4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -366,9 +366,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank4_R4P
+  endfunction encode_base64_dataarray1_rank4_R4P
 
-  module function encode_b64_comp1_rank4_I8P(x) result(code)
+  module function encode_base64_dataarray1_rank4_I8P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 4 (I8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -384,9 +384,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank4_I8P
+  endfunction encode_base64_dataarray1_rank4_I8P
 
-  module function encode_b64_comp1_rank4_I4P(x) result(code)
+  module function encode_base64_dataarray1_rank4_I4P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 4 (I4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -402,9 +402,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank4_I4P
+  endfunction encode_base64_dataarray1_rank4_I4P
 
-  module function encode_b64_comp1_rank4_I2P(x) result(code)
+  module function encode_base64_dataarray1_rank4_I2P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 4 (I2P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -420,9 +420,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank4_I2P
+  endfunction encode_base64_dataarray1_rank4_I2P
 
-  module function encode_b64_comp1_rank4_I1P(x) result(code)
+  module function encode_base64_dataarray1_rank4_I1P(x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 4 (I1P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -438,9 +438,9 @@ contains
   call b64_encode(n=xp, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp1_rank4_I1P
+  endfunction encode_base64_dataarray1_rank4_I1P
 
-  module function encode_b64_comp3_rank1_R8P(x, y, z) result(code)
+  module function encode_base64_dataarray3_rank1_R8P(x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 1 (R8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -459,9 +459,9 @@ contains
   call b64_encode(n=xyz, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp3_rank1_R8P
+  endfunction encode_base64_dataarray3_rank1_R8P
 
-  module function encode_b64_comp3_rank1_R4P(x, y, z) result(code)
+  module function encode_base64_dataarray3_rank1_R4P(x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 1 (R4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -480,9 +480,9 @@ contains
   call b64_encode(n=xyz, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp3_rank1_R4P
+  endfunction encode_base64_dataarray3_rank1_R4P
 
-  module function encode_b64_comp3_rank1_I8P(x, y, z) result(code)
+  module function encode_base64_dataarray3_rank1_I8P(x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 1 (I8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -501,9 +501,9 @@ contains
   call b64_encode(n=xyz, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp3_rank1_I8P
+  endfunction encode_base64_dataarray3_rank1_I8P
 
-  module function encode_b64_comp3_rank1_I4P(x, y, z) result(code)
+  module function encode_base64_dataarray3_rank1_I4P(x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 1 (I4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -522,9 +522,9 @@ contains
   call b64_encode(n=xyz, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp3_rank1_I4P
+  endfunction encode_base64_dataarray3_rank1_I4P
 
-  module function encode_b64_comp3_rank1_I2P(x, y, z) result(code)
+  module function encode_base64_dataarray3_rank1_I2P(x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 1 (I2P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -543,9 +543,9 @@ contains
   call b64_encode(n=xyz, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp3_rank1_I2P
+  endfunction encode_base64_dataarray3_rank1_I2P
 
-  module function encode_b64_comp3_rank1_I1P(x, y, z) result(code)
+  module function encode_base64_dataarray3_rank1_I1P(x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 1 (I1P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -564,9 +564,9 @@ contains
   call b64_encode(n=xyz, code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp3_rank1_I1P
+  endfunction encode_base64_dataarray3_rank1_I1P
 
-  module function encode_b64_comp3_rank3_R8P(x, y, z) result(code)
+  module function encode_base64_dataarray3_rank3_R8P(x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 3 (R8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -596,9 +596,9 @@ contains
   call b64_encode(n=xyz,code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp3_rank3_R8P
+  endfunction encode_base64_dataarray3_rank3_R8P
 
-  module function encode_b64_comp3_rank3_R4P(x, y, z) result(code)
+  module function encode_base64_dataarray3_rank3_R4P(x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 3 (R4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -628,9 +628,9 @@ contains
   call b64_encode(n=xyz,code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp3_rank3_R4P
+  endfunction encode_base64_dataarray3_rank3_R4P
 
-  module function encode_b64_comp3_rank3_I8P(x, y, z) result(code)
+  module function encode_base64_dataarray3_rank3_I8P(x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 3 (I8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -660,9 +660,9 @@ contains
   call b64_encode(n=xyz,code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp3_rank3_I8P
+  endfunction encode_base64_dataarray3_rank3_I8P
 
-  module function encode_b64_comp3_rank3_I4P(x, y, z) result(code)
+  module function encode_base64_dataarray3_rank3_I4P(x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 3 (I4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -691,9 +691,9 @@ contains
   call b64_encode(n=xyz,code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp3_rank3_I4P
+  endfunction encode_base64_dataarray3_rank3_I4P
 
-  module function encode_b64_comp3_rank3_I2P(x, y, z) result(code)
+  module function encode_base64_dataarray3_rank3_I2P(x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 3 (I2P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -723,9 +723,9 @@ contains
   call b64_encode(n=xyz,code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp3_rank3_I2P
+  endfunction encode_base64_dataarray3_rank3_I2P
 
-  module function encode_b64_comp3_rank3_I1P(x, y, z) result(code)
+  module function encode_base64_dataarray3_rank3_I1P(x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 3 (I1P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -755,5 +755,5 @@ contains
   call b64_encode(n=xyz,code=code)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_b64_comp3_rank3_I1P
-endsubmodule dataarray_encode_base64
+  endfunction encode_base64_dataarray3_rank3_I1P
+endsubmodule encode_base64_dataarray

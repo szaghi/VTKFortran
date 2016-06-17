@@ -1,5 +1,5 @@
 !< Implementation of dataarray ascii encode of VTK file class.
-submodule (vtk_fortran_vtk_file) dataarray_encode_ascii
+submodule (vtk_file_class) encode_ascii_dataarray
 !-----------------------------------------------------------------------------------------------------------------------------------
 !< Implementation of dataarray ascii encode of VTK file class.
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -8,7 +8,7 @@ submodule (vtk_fortran_vtk_file) dataarray_encode_ascii
 implicit none
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
-  module function encode_ascii_comp1_rank1_R16P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank1_R16P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 1 (R8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -25,9 +25,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank1_R16P
+  endfunction encode_ascii_dataarray1_rank1_R16P
 
-  module function encode_ascii_comp1_rank1_R8P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank1_R8P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 1 (R8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -44,9 +44,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank1_R8P
+  endfunction encode_ascii_dataarray1_rank1_R8P
 
-  module function encode_ascii_comp1_rank1_R4P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank1_R4P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 1 (R4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -63,9 +63,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank1_R4P
+  endfunction encode_ascii_dataarray1_rank1_R4P
 
-  module function encode_ascii_comp1_rank1_I8P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank1_I8P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 1 (I8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -82,9 +82,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank1_I8P
+  endfunction encode_ascii_dataarray1_rank1_I8P
 
-  module function encode_ascii_comp1_rank1_I4P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank1_I4P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 1 (I4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -101,9 +101,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank1_I4P
+  endfunction encode_ascii_dataarray1_rank1_I4P
 
-  module function encode_ascii_comp1_rank1_I2P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank1_I2P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 1 (I2P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -120,9 +120,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank1_I2P
+  endfunction encode_ascii_dataarray1_rank1_I2P
 
-  module function encode_ascii_comp1_rank1_I1P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank1_I1P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 1 (I1P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -139,9 +139,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank1_I1P
+  endfunction encode_ascii_dataarray1_rank1_I1P
 
-  module function encode_ascii_comp1_rank2_R16P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank2_R16P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 2 (R16P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -163,9 +163,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank2_R16P
+  endfunction encode_ascii_dataarray1_rank2_R16P
 
-  module function encode_ascii_comp1_rank2_R8P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank2_R8P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 2 (R8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -187,9 +187,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank2_R8P
+  endfunction encode_ascii_dataarray1_rank2_R8P
 
-  module function encode_ascii_comp1_rank2_R4P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank2_R4P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 2 (R4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -211,9 +211,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank2_R4P
+  endfunction encode_ascii_dataarray1_rank2_R4P
 
-  module function encode_ascii_comp1_rank2_I8P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank2_I8P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 2 (I8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -235,9 +235,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank2_I8P
+  endfunction encode_ascii_dataarray1_rank2_I8P
 
-  module function encode_ascii_comp1_rank2_I4P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank2_I4P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 2 (I4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -259,9 +259,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank2_I4P
+  endfunction encode_ascii_dataarray1_rank2_I4P
 
-  module function encode_ascii_comp1_rank2_I2P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank2_I2P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 2 (I2P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -283,9 +283,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank2_I2P
+  endfunction encode_ascii_dataarray1_rank2_I2P
 
-  module function encode_ascii_comp1_rank2_I1P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank2_I1P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 2 (I2P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -307,9 +307,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank2_I1P
+  endfunction encode_ascii_dataarray1_rank2_I1P
 
-  module function encode_ascii_comp1_rank3_R16P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank3_R16P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 3 (R16P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -334,9 +334,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank3_R16P
+  endfunction encode_ascii_dataarray1_rank3_R16P
 
-  module function encode_ascii_comp1_rank3_R8P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank3_R8P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 3 (R8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -361,9 +361,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank3_R8P
+  endfunction encode_ascii_dataarray1_rank3_R8P
 
-  module function encode_ascii_comp1_rank3_R4P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank3_R4P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 3 (R4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -388,9 +388,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank3_R4P
+  endfunction encode_ascii_dataarray1_rank3_R4P
 
-  module function encode_ascii_comp1_rank3_I8P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank3_I8P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 3 (I8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -415,9 +415,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank3_I8P
+  endfunction encode_ascii_dataarray1_rank3_I8P
 
-  module function encode_ascii_comp1_rank3_I4P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank3_I4P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 3 (I4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -442,9 +442,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank3_I4P
+  endfunction encode_ascii_dataarray1_rank3_I4P
 
-  module function encode_ascii_comp1_rank3_I2P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank3_I2P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 3 (I2P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -469,9 +469,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank3_I2P
+  endfunction encode_ascii_dataarray1_rank3_I2P
 
-  module function encode_ascii_comp1_rank3_I1P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank3_I1P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 3 (I1P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -496,9 +496,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank3_I1P
+  endfunction encode_ascii_dataarray1_rank3_I1P
 
-  module function encode_ascii_comp1_rank4_R16P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank4_R16P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 4 (R16P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -526,9 +526,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank4_R16P
+  endfunction encode_ascii_dataarray1_rank4_R16P
 
-  module function encode_ascii_comp1_rank4_R8P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank4_R8P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 4 (R8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -556,9 +556,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank4_R8P
+  endfunction encode_ascii_dataarray1_rank4_R8P
 
-  module function encode_ascii_comp1_rank4_R4P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank4_R4P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 4 (R4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -586,9 +586,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank4_R4P
+  endfunction encode_ascii_dataarray1_rank4_R4P
 
-  module function encode_ascii_comp1_rank4_I8P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank4_I8P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 4 (I8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -616,9 +616,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank4_I8P
+  endfunction encode_ascii_dataarray1_rank4_I8P
 
-  module function encode_ascii_comp1_rank4_I4P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank4_I4P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 4 (I4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -646,9 +646,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank4_I4P
+  endfunction encode_ascii_dataarray1_rank4_I4P
 
-  module function encode_ascii_comp1_rank4_I2P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank4_I2P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 4 (I2P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -676,9 +676,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank4_I2P
+  endfunction encode_ascii_dataarray1_rank4_I2P
 
-  module function encode_ascii_comp1_rank4_I1P(self, x) result(code)
+  module function encode_ascii_dataarray1_rank4_I1P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 1 components of rank 4 (I1P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -706,9 +706,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp1_rank4_I1P
+  endfunction encode_ascii_dataarray1_rank4_I1P
 
-  module function encode_ascii_comp3_rank1_R16P(self, x, y, z) result(code)
+  module function encode_ascii_dataarray3_rank1_R16P(self, x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 1 (R16P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -727,9 +727,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp3_rank1_R16P
+  endfunction encode_ascii_dataarray3_rank1_R16P
 
-  module function encode_ascii_comp3_rank1_R8P(self, x, y, z) result(code)
+  module function encode_ascii_dataarray3_rank1_R8P(self, x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 1 (R8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -748,9 +748,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp3_rank1_R8P
+  endfunction encode_ascii_dataarray3_rank1_R8P
 
-  module function encode_ascii_comp3_rank1_R4P(self, x, y, z) result(code)
+  module function encode_ascii_dataarray3_rank1_R4P(self, x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 1 (R4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -769,9 +769,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp3_rank1_R4P
+  endfunction encode_ascii_dataarray3_rank1_R4P
 
-  module function encode_ascii_comp3_rank1_I8P(self, x, y, z) result(code)
+  module function encode_ascii_dataarray3_rank1_I8P(self, x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 1 (I8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -790,9 +790,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp3_rank1_I8P
+  endfunction encode_ascii_dataarray3_rank1_I8P
 
-  module function encode_ascii_comp3_rank1_I4P(self, x, y, z) result(code)
+  module function encode_ascii_dataarray3_rank1_I4P(self, x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 1 (I4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -811,9 +811,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp3_rank1_I4P
+  endfunction encode_ascii_dataarray3_rank1_I4P
 
-  module function encode_ascii_comp3_rank1_I2P(self, x, y, z) result(code)
+  module function encode_ascii_dataarray3_rank1_I2P(self, x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 1 (I2P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -832,9 +832,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp3_rank1_I2P
+  endfunction encode_ascii_dataarray3_rank1_I2P
 
-  module function encode_ascii_comp3_rank1_I1P(self, x, y, z) result(code)
+  module function encode_ascii_dataarray3_rank1_I1P(self, x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 1 (I1P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -853,9 +853,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp3_rank1_I1P
+  endfunction encode_ascii_dataarray3_rank1_I1P
 
-  module function encode_ascii_comp3_rank3_R16P(self, x, y, z) result(code)
+  module function encode_ascii_dataarray3_rank3_R16P(self, x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 3 (R8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -881,9 +881,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp3_rank3_R16P
+  endfunction encode_ascii_dataarray3_rank3_R16P
 
-  module function encode_ascii_comp3_rank3_R8P(self, x, y, z) result(code)
+  module function encode_ascii_dataarray3_rank3_R8P(self, x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 3 (R8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -909,9 +909,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp3_rank3_R8P
+  endfunction encode_ascii_dataarray3_rank3_R8P
 
-  module function encode_ascii_comp3_rank3_R4P(self, x, y, z) result(code)
+  module function encode_ascii_dataarray3_rank3_R4P(self, x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 3 (R4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -937,9 +937,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp3_rank3_R4P
+  endfunction encode_ascii_dataarray3_rank3_R4P
 
-  module function encode_ascii_comp3_rank3_I8P(self, x, y, z) result(code)
+  module function encode_ascii_dataarray3_rank3_I8P(self, x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 3 (I8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -965,9 +965,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp3_rank3_I8P
+  endfunction encode_ascii_dataarray3_rank3_I8P
 
-  module function encode_ascii_comp3_rank3_I4P(self, x, y, z) result(code)
+  module function encode_ascii_dataarray3_rank3_I4P(self, x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 3 (I4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -993,9 +993,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp3_rank3_I4P
+  endfunction encode_ascii_dataarray3_rank3_I4P
 
-  module function encode_ascii_comp3_rank3_I2P(self, x, y, z) result(code)
+  module function encode_ascii_dataarray3_rank3_I2P(self, x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 3 (I2P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1021,9 +1021,9 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp3_rank3_I2P
+  endfunction encode_ascii_dataarray3_rank3_I2P
 
-  module function encode_ascii_comp3_rank3_I1P(self, x, y, z) result(code)
+  module function encode_ascii_dataarray3_rank3_I1P(self, x, y, z) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Encode (Base64) a dataarray with 3 components of rank 3 (I1P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1049,5 +1049,5 @@ contains
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction encode_ascii_comp3_rank3_I1P
-endsubmodule dataarray_encode_ascii
+  endfunction encode_ascii_dataarray3_rank3_I1P
+endsubmodule encode_ascii_dataarray

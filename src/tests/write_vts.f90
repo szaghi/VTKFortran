@@ -43,9 +43,9 @@ error = a_vtk_file%initialize(format='binary', filename='XML_STRG.vts', mesh_top
                         nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
 error = a_vtk_file%write_piece(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
 error = a_vtk_file%write_geo(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, x=x, y=y, z=z)
-error = a_vtk_file%write_data(location='node', action='open')
-error = a_vtk_file%write_data(data_name='float64_scalar', x=v, one_component=.true.)
-error = a_vtk_file%write_data(location='node', action='close')
+error = a_vtk_file%write_dataarray(location='node', action='open')
+error = a_vtk_file%write_dataarray(data_name='float64_scalar', x=v, one_component=.true.)
+error = a_vtk_file%write_dataarray(location='node', action='close')
 error = a_vtk_file%write_piece()
 error = a_vtk_file%finalize()
 stop

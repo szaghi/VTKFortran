@@ -1,5 +1,5 @@
 !< Implementation of dataarray write on scratch of VTK file class.
-submodule (vtk_fortran_vtk_file) dataarray_write_on_scratch
+submodule (vtk_file_class) write_on_scratch_dataarray
 !-----------------------------------------------------------------------------------------------------------------------------------
 !< Implementation of dataarray write on scratch of VTK file class.
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -8,7 +8,7 @@ submodule (vtk_fortran_vtk_file) dataarray_write_on_scratch
 implicit none
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
-  module function write_on_scratch_comp1_rank1(self, x) result(n_byte)
+  module function write_on_scratch_dataarray1_rank1(self, x) result(n_byte)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write a dataarray with 1 components of rank 1.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -29,12 +29,28 @@ contains
     n_byte = nn*BYR4P
     write(unit=self%scratch, iostat=self%error)n_byte, 'R4', nn
     write(unit=self%scratch, iostat=self%error)x
+  type is(integer(I8P))
+    n_byte = nn*BYI8P
+    write(unit=self%scratch, iostat=self%error)n_byte, 'I8', nn
+    write(unit=self%scratch, iostat=self%error)x
+  type is(integer(I4P))
+    n_byte = nn*BYI4P
+    write(unit=self%scratch, iostat=self%error)n_byte, 'I4', nn
+    write(unit=self%scratch, iostat=self%error)x
+  type is(integer(I2P))
+    n_byte = nn*BYI2P
+    write(unit=self%scratch, iostat=self%error)n_byte, 'I2', nn
+    write(unit=self%scratch, iostat=self%error)x
+  type is(integer(I1P))
+    n_byte = nn*BYI1P
+    write(unit=self%scratch, iostat=self%error)n_byte, 'I1', nn
+    write(unit=self%scratch, iostat=self%error)x
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction write_on_scratch_comp1_rank1
+  endfunction write_on_scratch_dataarray1_rank1
 
-  module function write_on_scratch_comp1_rank2(self, x) result(n_byte)
+  module function write_on_scratch_dataarray1_rank2(self, x) result(n_byte)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write a dataarray with 1 components of rank 2.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -55,12 +71,28 @@ contains
     n_byte = nn*BYR4P
     write(unit=self%scratch, iostat=self%error)n_byte, 'R4', nn
     write(unit=self%scratch, iostat=self%error)x
+  type is(integer(I8P))
+    n_byte = nn*BYI8P
+    write(unit=self%scratch, iostat=self%error)n_byte, 'I8', nn
+    write(unit=self%scratch, iostat=self%error)x
+  type is(integer(I4P))
+    n_byte = nn*BYI4P
+    write(unit=self%scratch, iostat=self%error)n_byte, 'I4', nn
+    write(unit=self%scratch, iostat=self%error)x
+  type is(integer(I2P))
+    n_byte = nn*BYI2P
+    write(unit=self%scratch, iostat=self%error)n_byte, 'I2', nn
+    write(unit=self%scratch, iostat=self%error)x
+  type is(integer(I1P))
+    n_byte = nn*BYI1P
+    write(unit=self%scratch, iostat=self%error)n_byte, 'I1', nn
+    write(unit=self%scratch, iostat=self%error)x
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction write_on_scratch_comp1_rank2
+  endfunction write_on_scratch_dataarray1_rank2
 
-  module function write_on_scratch_comp1_rank3(self, x) result(n_byte)
+  module function write_on_scratch_dataarray1_rank3(self, x) result(n_byte)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write a dataarray with 1 components of rank 3.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -81,12 +113,28 @@ contains
     n_byte = nn*BYR4P
     write(unit=self%scratch, iostat=self%error)n_byte, 'R4', nn
     write(unit=self%scratch, iostat=self%error)x
+  type is(integer(I8P))
+    n_byte = nn*BYI8P
+    write(unit=self%scratch, iostat=self%error)n_byte, 'I8', nn
+    write(unit=self%scratch, iostat=self%error)x
+  type is(integer(I4P))
+    n_byte = nn*BYI4P
+    write(unit=self%scratch, iostat=self%error)n_byte, 'I4', nn
+    write(unit=self%scratch, iostat=self%error)x
+  type is(integer(I2P))
+    n_byte = nn*BYI2P
+    write(unit=self%scratch, iostat=self%error)n_byte, 'I2', nn
+    write(unit=self%scratch, iostat=self%error)x
+  type is(integer(I1P))
+    n_byte = nn*BYI1P
+    write(unit=self%scratch, iostat=self%error)n_byte, 'I1', nn
+    write(unit=self%scratch, iostat=self%error)x
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction write_on_scratch_comp1_rank3
+  endfunction write_on_scratch_dataarray1_rank3
 
-  module function write_on_scratch_comp1_rank4(self, x) result(n_byte)
+  module function write_on_scratch_dataarray1_rank4(self, x) result(n_byte)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write a dataarray with 1 components of rank 4.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -107,12 +155,28 @@ contains
     n_byte = nn*BYR4P
     write(unit=self%scratch, iostat=self%error)n_byte, 'R4', nn
     write(unit=self%scratch, iostat=self%error)x
+  type is(integer(I8P))
+    n_byte = nn*BYI8P
+    write(unit=self%scratch, iostat=self%error)n_byte, 'I8', nn
+    write(unit=self%scratch, iostat=self%error)x
+  type is(integer(I4P))
+    n_byte = nn*BYI4P
+    write(unit=self%scratch, iostat=self%error)n_byte, 'I4', nn
+    write(unit=self%scratch, iostat=self%error)x
+  type is(integer(I2P))
+    n_byte = nn*BYI2P
+    write(unit=self%scratch, iostat=self%error)n_byte, 'I2', nn
+    write(unit=self%scratch, iostat=self%error)x
+  type is(integer(I1P))
+    n_byte = nn*BYI1P
+    write(unit=self%scratch, iostat=self%error)n_byte, 'I1', nn
+    write(unit=self%scratch, iostat=self%error)x
   endselect
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction write_on_scratch_comp1_rank4
+  endfunction write_on_scratch_dataarray1_rank4
 
-  module function write_on_scratch_comp3_rank1(self, x, y, z) result(n_byte)
+  module function write_on_scratch_dataarray3_rank1(self, x, y, z) result(n_byte)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write a dataarray with 3 components of rank 1.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -124,12 +188,12 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  n_byte = self%write_on_scratch(x=x) + self%write_on_scratch(x=y) + self%write_on_scratch(x=z)
+  n_byte = self%write_on_scratch_dataarray(x=x) + self%write_on_scratch_dataarray(x=y) + self%write_on_scratch_dataarray(x=z)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction write_on_scratch_comp3_rank1
+  endfunction write_on_scratch_dataarray3_rank1
 
-  module function write_on_scratch_comp3_rank2(self, x, y, z) result(n_byte)
+  module function write_on_scratch_dataarray3_rank2(self, x, y, z) result(n_byte)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write a dataarray with 3 components of rank 2.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -141,12 +205,12 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  n_byte = self%write_on_scratch(x=x) + self%write_on_scratch(x=y) + self%write_on_scratch(x=z)
+  n_byte = self%write_on_scratch_dataarray(x=x) + self%write_on_scratch_dataarray(x=y) + self%write_on_scratch_dataarray(x=z)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction write_on_scratch_comp3_rank2
+  endfunction write_on_scratch_dataarray3_rank2
 
-  module function write_on_scratch_comp3_rank3(self, x, y, z) result(n_byte)
+  module function write_on_scratch_dataarray3_rank3(self, x, y, z) result(n_byte)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write a dataarray with 3 components of rank 3.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -158,8 +222,8 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  n_byte = self%write_on_scratch(x=x) + self%write_on_scratch(x=y) + self%write_on_scratch(x=z)
+  n_byte = self%write_on_scratch_dataarray(x=x) + self%write_on_scratch_dataarray(x=y) + self%write_on_scratch_dataarray(x=z)
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction write_on_scratch_comp3_rank3
-endsubmodule dataarray_write_on_scratch
+  endfunction write_on_scratch_dataarray3_rank3
+endsubmodule write_on_scratch_dataarray
