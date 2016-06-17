@@ -1,14 +1,5 @@
-!< Implementation of dataarray write on scratch of VTK file class.
-submodule (vtk_file_class) write_on_scratch_dataarray
-!-----------------------------------------------------------------------------------------------------------------------------------
-!< Implementation of dataarray write on scratch of VTK file class.
-!-----------------------------------------------------------------------------------------------------------------------------------
-
-!-----------------------------------------------------------------------------------------------------------------------------------
-implicit none
-!-----------------------------------------------------------------------------------------------------------------------------------
-contains
-  module function write_on_scratch_dataarray1_rank1(self, x) result(n_byte)
+  !< Implementation of dataarray write on scratch of VTK file class.
+  function write_on_scratch_dataarray1_rank1(self, x) result(n_byte)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write a dataarray with 1 components of rank 1.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -50,7 +41,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray1_rank1
 
-  module function write_on_scratch_dataarray1_rank2(self, x) result(n_byte)
+  function write_on_scratch_dataarray1_rank2(self, x) result(n_byte)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write a dataarray with 1 components of rank 2.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -92,7 +83,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray1_rank2
 
-  module function write_on_scratch_dataarray1_rank3(self, x) result(n_byte)
+  function write_on_scratch_dataarray1_rank3(self, x) result(n_byte)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write a dataarray with 1 components of rank 3.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -134,7 +125,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray1_rank3
 
-  module function write_on_scratch_dataarray1_rank4(self, x) result(n_byte)
+  function write_on_scratch_dataarray1_rank4(self, x) result(n_byte)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write a dataarray with 1 components of rank 4.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -176,7 +167,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray1_rank4
 
-  module function write_on_scratch_dataarray3_rank1(self, x, y, z) result(n_byte)
+  function write_on_scratch_dataarray3_rank1(self, x, y, z) result(n_byte)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write a dataarray with 3 components of rank 1.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -193,7 +184,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray3_rank1
 
-  module function write_on_scratch_dataarray3_rank2(self, x, y, z) result(n_byte)
+  function write_on_scratch_dataarray3_rank2(self, x, y, z) result(n_byte)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write a dataarray with 3 components of rank 2.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -210,7 +201,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray3_rank2
 
-  module function write_on_scratch_dataarray3_rank3(self, x, y, z) result(n_byte)
+  function write_on_scratch_dataarray3_rank3(self, x, y, z) result(n_byte)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write a dataarray with 3 components of rank 3.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -226,4 +217,3 @@ contains
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray3_rank3
-endsubmodule write_on_scratch_dataarray

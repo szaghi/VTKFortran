@@ -1,14 +1,5 @@
-!< Implementation of geo-structured write of VTK file class.
-submodule (vtk_file_class) write_geo_strg
-!-----------------------------------------------------------------------------------------------------------------------------------
-!< Implementation of geo-structured write of VTK file class.
-!-----------------------------------------------------------------------------------------------------------------------------------
-
-!-----------------------------------------------------------------------------------------------------------------------------------
-implicit none
-!-----------------------------------------------------------------------------------------------------------------------------------
-contains
-  module function write_geo_strg_data1_rank2_R8P(self, nx1, nx2, ny1, ny2, nz1, nz2, xyz) result(error)
+  !< Implementation of geo-structured write of VTK file class.
+  function write_geo_strg_data1_rank2_R8P(self, nx1, nx2, ny1, ny2, nz1, nz2, xyz) result(error)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write mesh with **StructuredGrid** topology (data 1, rank 2, R8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -32,7 +23,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data1_rank2_R8P
 
-  module function write_geo_strg_data1_rank2_R4P(self, nx1, nx2, ny1, ny2, nz1, nz2, xyz) result(error)
+  function write_geo_strg_data1_rank2_R4P(self, nx1, nx2, ny1, ny2, nz1, nz2, xyz) result(error)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write mesh with **StructuredGrid** topology (data 1, rank 2, R4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -56,7 +47,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data1_rank2_R4P
 
-  module function write_geo_strg_data1_rank4_R8P(self, nx1, nx2, ny1, ny2, nz1, nz2, xyz) result(error)
+  function write_geo_strg_data1_rank4_R8P(self, nx1, nx2, ny1, ny2, nz1, nz2, xyz) result(error)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write mesh with **StructuredGrid** topology (data 1, rank 4, R8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -80,7 +71,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data1_rank4_R8P
 
-  module function write_geo_strg_data1_rank4_R4P(self, nx1, nx2, ny1, ny2, nz1, nz2, xyz) result(error)
+  function write_geo_strg_data1_rank4_R4P(self, nx1, nx2, ny1, ny2, nz1, nz2, xyz) result(error)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write mesh with **StructuredGrid** topology (data 1, rank 4, R4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -104,7 +95,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data1_rank4_R4P
 
-  module function write_geo_strg_data3_rank1_R8P(self, nx1, nx2, ny1, ny2, nz1, nz2, x, y, z) result(error)
+  function write_geo_strg_data3_rank1_R8P(self, nx1, nx2, ny1, ny2, nz1, nz2, x, y, z) result(error)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write mesh with **StructuredGrid** topology (data 3, rank 1, R8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -130,7 +121,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data3_rank1_R8P
 
-  module function write_geo_strg_data3_rank1_R4P(self, nx1, nx2, ny1, ny2, nz1, nz2, x, y, z) result(error)
+  function write_geo_strg_data3_rank1_R4P(self, nx1, nx2, ny1, ny2, nz1, nz2, x, y, z) result(error)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write mesh with **StructuredGrid** topology (data 3, rank 1, R4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -156,7 +147,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data3_rank1_R4P
 
-  module function write_geo_strg_data3_rank3_R8P(self, nx1, nx2, ny1, ny2, nz1, nz2, x, y, z) result(error)
+  function write_geo_strg_data3_rank3_R8P(self, nx1, nx2, ny1, ny2, nz1, nz2, x, y, z) result(error)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write mesh with **StructuredGrid** topology (data 3, rank 3, R8P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -182,7 +173,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data3_rank3_R8P
 
-  module function write_geo_strg_data3_rank3_R4P(self, nx1, nx2, ny1, ny2, nz1, nz2, x, y, z) result(error)
+  function write_geo_strg_data3_rank3_R4P(self, nx1, nx2, ny1, ny2, nz1, nz2, x, y, z) result(error)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write mesh with **StructuredGrid** topology (data 3, rank 3, R4P).
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -207,4 +198,3 @@ contains
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data3_rank3_R4P
-endsubmodule write_geo_strg

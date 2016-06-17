@@ -64,10 +64,8 @@ type :: vtk_file
     include 'encode_ascii_dataarray_method.inc'
     include 'encode_base64_dataarray_method.inc'
 endtype vtk_file
-include 'submodules_interface.inc'
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
-  ! public methods
   function initialize_write(self, format, filename, mesh_topology, nx1, nx2, ny1, ny2, nz1, nz2) result(error)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Initialize file (exporter).
@@ -161,7 +159,6 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction finalize_write
 
-  ! private methods
   subroutine open_xml_file(self, filename)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Open XML file.
@@ -218,7 +215,6 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine ioffset_update
 
-  ! tags
   elemental function self_closing_tag(self, tag_name, tag_attributes) result(tag_)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Return `<tag_name.../>` self closing tag.
@@ -693,4 +689,14 @@ contains
     !-------------------------------------------------------------------------------------------------------------------------------
     endsubroutine write_dataarray_on_xml
   endsubroutine write_dataarray_appended
+
+  include 'write_geo_strg.inc'
+
+  include 'write_dataarray.inc'
+
+  include 'write_on_scratch_dataarray.inc'
+
+  include 'encode_ascii_dataarray.inc'
+
+  include 'encode_base64_dataarray.inc'
 endmodule vtk_file_class
