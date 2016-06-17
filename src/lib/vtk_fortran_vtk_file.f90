@@ -845,7 +845,6 @@ interface
   real(R8P),    intent(in)      :: y(1:,1:,1:) !< Y component.
   real(R8P),    intent(in)      :: z(1:,1:,1:) !< Z component.
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I1P),     allocatable :: xyz(:)      !< Packed data.
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_b64_comp3_rank3_R8P
 
@@ -1017,7 +1016,7 @@ interface
 
   module function encode_ascii_comp1_rank2_I1P(self, x) result(code)
   !---------------------------------------------------------------------------------------------------------------------------------
-  !< Encode (Base64) a dataarray with 1 components of rank 2 (I2P).
+  !< Encode (Base64) a dataarray with 1 components of rank 2 (I1P).
   !---------------------------------------------------------------------------------------------------------------------------------
   class(vtk_file), intent(in)   :: self     !< VTK file.
   integer(I1P),    intent(in)   :: x(1:,1:) !< Data variable
