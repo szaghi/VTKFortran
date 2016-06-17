@@ -40,25 +40,26 @@ type :: vtk_file
     include 'write_geo_method.inc'
     include 'write_dataarray_method.inc'
     ! private methods
-    procedure, pass(self), private :: initialize_write       !< Initialize file (exporter).
-    procedure, pass(self), private :: finalize_write         !< Finalize file (exporter).
-    procedure, pass(self), private :: open_xml_file          !< Open xml file.
-    procedure, pass(self), private :: open_scratch_file      !< Open scratch file.
-    procedure, pass(self), private :: ioffset_update         !< Update ioffset count.
-    procedure, pass(self), private :: self_closing_tag       !< Return `<tag_name.../>` self closing tag.
-    procedure, pass(self), private :: tag                    !< Return `<tag_name...>...</tag_name>` tag.
-    procedure, pass(self), private :: start_tag              !< Return `<tag_name...>` start tag.
-    procedure, pass(self), private :: end_tag                !< Return `</tag_name>` end tag.
-    procedure, pass(self), private :: write_self_closing_tag !< Write `<tag_name.../>` self closing tag.
-    procedure, pass(self), private :: write_tag              !< Write `<tag_name...>...</tag_name>` tag.
-    procedure, pass(self), private :: write_start_tag        !< Write `<tag_name...>` start tag.
-    procedure, pass(self), private :: write_end_tag          !< Write `</tag_name>` end tag.
-    procedure, pass(self), private :: write_header_tag       !< Write header tag.
-    procedure, pass(self), private :: write_topology_tag     !< Write topology tag.
-    procedure, pass(self), private :: write_piece_start_tag  !< Write `<Piece ...>` start tag.
-    procedure, pass(self), private :: write_piece_end_tag    !< Write `</Piece>` end tag.
+    procedure, pass(self), private :: initialize_write             !< Initialize file (exporter).
+    procedure, pass(self), private :: finalize_write               !< Finalize file (exporter).
+    procedure, pass(self), private :: open_xml_file                !< Open xml file.
+    procedure, pass(self), private :: open_scratch_file            !< Open scratch file.
+    procedure, pass(self), private :: ioffset_update               !< Update ioffset count.
+    procedure, pass(self), private :: self_closing_tag             !< Return `<tag_name.../>` self closing tag.
+    procedure, pass(self), private :: tag                          !< Return `<tag_name...>...</tag_name>` tag.
+    procedure, pass(self), private :: start_tag                    !< Return `<tag_name...>` start tag.
+    procedure, pass(self), private :: end_tag                      !< Return `</tag_name>` end tag.
+    procedure, pass(self), private :: write_self_closing_tag       !< Write `<tag_name.../>` self closing tag.
+    procedure, pass(self), private :: write_tag                    !< Write `<tag_name...>...</tag_name>` tag.
+    procedure, pass(self), private :: write_start_tag              !< Write `<tag_name...>` start tag.
+    procedure, pass(self), private :: write_end_tag                !< Write `</tag_name>` end tag.
+    procedure, pass(self), private :: write_header_tag             !< Write header tag.
+    procedure, pass(self), private :: write_topology_tag           !< Write topology tag.
+    procedure, pass(self), private :: write_piece_start_tag        !< Write `<Piece ...>` start tag.
+    procedure, pass(self), private :: write_piece_end_tag          !< Write `</Piece>` end tag.
     procedure, pass(self), private :: write_dataarray_tag          !< Write `<DataArray...>...</DataArray>` tag.
     procedure, pass(self), private :: write_dataarray_tag_appended !< Write `<DataArray.../>` appended tag.
+    procedure, pass(self), private :: write_dataarray_appended     !< Write `<AppendedData...>...</AppendedData>` tag.
     include 'write_on_scratch_dataarray_method.inc'
     include 'encode_ascii_dataarray_method.inc'
     include 'encode_base64_dataarray_method.inc'
@@ -153,6 +154,7 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   call self%write_end_tag(tag_name=self%topology%chars())
+  if (self%format==raw.or.self%format==bin_app) call self%write_dataarray_appended
   call self%write_end_tag(tag_name='VTKFile')
   error = self%error
   return
@@ -562,4 +564,133 @@ contains
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray_location_tag
+
+  subroutine write_dataarray_appended(self)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write `<AppendedData...>...</AppendedData>` tag.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(vtk_file), intent(inout) :: self              !< VTK file.
+  type(string)                   :: tag_attributes    !< Tag attributes.
+  integer(I4P)                   :: n_byte            !< Bytes count.
+  character(len=2)               :: dataarray_type    !< Dataarray type = R8,R4,I8,I4,I2,I1.
+  integer(I4P)                   :: dataarray_dim     !< Dataarray dimension.
+  real(R8P),    allocatable      :: dataarray_R8P(:)  !< Dataarray buffer of R8P.
+  real(R4P),    allocatable      :: dataarray_R4P(:)  !< Dataarray buffer of R4P.
+  integer(I8P), allocatable      :: dataarray_I8P(:)  !< Dataarray buffer of I8P.
+  integer(I4P), allocatable      :: dataarray_I4P(:)  !< Dataarray buffer of I4P.
+  integer(I2P), allocatable      :: dataarray_I2P(:)  !< Dataarray buffer of I2P.
+  integer(I1P), allocatable      :: dataarray_I1P(:)  !< Dataarray buffer of I1P.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  select case(self%format)
+  case(raw)
+    tag_attributes = 'encoding="raw"'
+  case(bin_app)
+    tag_attributes = 'encoding="base64"'
+  endselect
+  call self%write_start_tag(tag_name='AppendedData', tag_attributes=tag_attributes%chars())
+  write(unit=self%xml, iostat=self%error)'_'
+  endfile(unit=self%scratch, iostat=self%error)
+  rewind(unit=self%scratch, iostat=self%error)
+  do
+    call read_dataarray_from_scratch
+    if (self%error==0) call write_dataarray_on_xml
+  enddo
+  close(unit=self%scratch, iostat=self%error)
+  write(unit=self%xml, iostat=self%error)end_rec
+  call self%write_end_tag(tag_name='AppendedData')
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  contains
+    subroutine read_dataarray_from_scratch
+    !-------------------------------------------------------------------------------------------------------------------------------
+    !< Read the current dataaray from scratch file.
+    !-------------------------------------------------------------------------------------------------------------------------------
+
+    !-------------------------------------------------------------------------------------------------------------------------------
+    read(unit=self%scratch, iostat=self%error, end=10)n_byte, dataarray_type, dataarray_dim
+    select case(dataarray_type)
+    case('R8')
+      if (allocated(dataarray_R8P)) deallocate(dataarray_R8P) ; allocate(dataarray_R8P(1:dataarray_dim))
+      read(unit=self%scratch, iostat=self%error)dataarray_R8P
+    case('R4')
+      if (allocated(dataarray_R4P)) deallocate(dataarray_R4P) ; allocate(dataarray_R4P(1:dataarray_dim))
+      read(unit=self%scratch, iostat=self%error)dataarray_R4P
+    case('I8')
+      if (allocated(dataarray_I8P)) deallocate(dataarray_I8P) ; allocate(dataarray_I8P(1:dataarray_dim))
+      read(unit=self%scratch, iostat=self%error)dataarray_I8P
+    case('I4')
+      if (allocated(dataarray_I4P)) deallocate(dataarray_I4P) ; allocate(dataarray_I4P(1:dataarray_dim))
+      read(unit=self%scratch, iostat=self%error)dataarray_I4P
+    case('I2')
+      if (allocated(dataarray_I2P)) deallocate(dataarray_I2P) ; allocate(dataarray_I2P(1:dataarray_dim))
+      read(unit=self%scratch, iostat=self%error)dataarray_I2P
+    case('I1')
+      if (allocated(dataarray_I1P)) deallocate(dataarray_I1P) ; allocate(dataarray_I1P(1:dataarray_dim))
+      read(unit=self%scratch, iostat=self%error)dataarray_I1P
+    case default
+      self%error = 1
+      write (stderr,'(A)')' error: bad dataarray_type = '//dataarray_type
+      write (stderr,'(A)')' bytes = '//trim(str(n=n_byte))
+      write (stderr,'(A)')' dataarray dimension = '//trim(str(n=dataarray_dim))
+    endselect
+    10 return
+    !-------------------------------------------------------------------------------------------------------------------------------
+    endsubroutine read_dataarray_from_scratch
+
+    subroutine write_dataarray_on_xml
+    !-------------------------------------------------------------------------------------------------------------------------------
+    !< Write the current dataaray on xml file.
+    !-------------------------------------------------------------------------------------------------------------------------------
+    character(len=:), allocatable  :: code !< Dataarray encoded with Base64 codec.
+    !-------------------------------------------------------------------------------------------------------------------------------
+
+    !-------------------------------------------------------------------------------------------------------------------------------
+    if (self%format==raw) then
+      select case(dataarray_type)
+      case('R8')
+        write(unit=self%xml, iostat=self%error)n_byte, dataarray_R8P
+        deallocate(dataarray_R8P)
+      case('R4')
+        write(unit=self%xml, iostat=self%error)n_byte, dataarray_R4P
+        deallocate(dataarray_R4P)
+      case('I8')
+        write(unit=self%xml, iostat=self%error)n_byte, dataarray_I8P
+        deallocate(dataarray_I8P)
+      case('I4')
+        write(unit=self%xml, iostat=self%error)n_byte, dataarray_I4P
+        deallocate(dataarray_I4P)
+      case('I2')
+        write(unit=self%xml, iostat=self%error)n_byte, dataarray_I2P
+        deallocate(dataarray_I2P)
+      case('I1')
+        write(unit=self%xml, iostat=self%error)n_byte, dataarray_I1P
+        deallocate(dataarray_I1P)
+      endselect
+    else
+      select case(dataarray_type)
+      case('R8')
+        code = self%encode_base64_dataarray(x=dataarray_R8P)
+        write(unit=self%xml, iostat=self%error)code
+      case('R4')
+        code = self%encode_base64_dataarray(x=dataarray_R4P)
+        write(unit=self%xml, iostat=self%error)code
+      case('I8')
+        code = self%encode_base64_dataarray(x=dataarray_I8P)
+        write(unit=self%xml, iostat=self%error)code
+      case('I4')
+        code = self%encode_base64_dataarray(x=dataarray_I4P)
+        write(unit=self%xml, iostat=self%error)code
+      case('I2')
+        code = self%encode_base64_dataarray(x=dataarray_I2P)
+        write(unit=self%xml, iostat=self%error)code
+      case('I1')
+        code = self%encode_base64_dataarray(x=dataarray_I1P)
+        write(unit=self%xml, iostat=self%error)code
+      endselect
+    endif
+    !-------------------------------------------------------------------------------------------------------------------------------
+    endsubroutine write_dataarray_on_xml
+  endsubroutine write_dataarray_appended
 endmodule vtk_file_class
