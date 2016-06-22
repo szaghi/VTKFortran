@@ -74,3 +74,6 @@
     procedure, pass(self), private :: write_dataarray3_rank3_I4P   !< Write DataArray (data 3, rank 3, I4P).
     procedure, pass(self), private :: write_dataarray3_rank3_I2P   !< Write DataArray (data 3, rank 3, I2P).
     procedure, pass(self), private :: write_dataarray3_rank3_I1P   !< Write DataArray (data 3, rank 3, I1P).
+    procedure, pass(self), private :: write_dataarray_tag          !< Write `<DataArray...>...</DataArray>` tag.
+    procedure, pass(self), private :: write_dataarray_tag_appended !< Write `<DataArray.../>` appended tag.
+    procedure, pass(self), private :: write_dataarray_appended     !< Write `<AppendedData...>...</AppendedData>` tag.

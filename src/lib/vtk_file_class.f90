@@ -31,6 +31,7 @@ type :: vtk_file
   contains
     include 'vtk_file_initialize_method.inc'                 ! generic                        :: initialize
     include 'vtk_file_finalize_method.inc'                   ! generic                        :: finalize
+    include 'vtk_file_write_fielddata_method.inc'            ! generic                        :: write_fielddata
     include 'vtk_file_write_piece_method.inc'                ! generic                        :: write_piece
     include 'vtk_file_write_geo_method.inc'                  ! generic                        :: write_geo
     include 'vtk_file_write_dataarray_method.inc'            ! generic                        :: write_dataarray
@@ -61,6 +62,7 @@ endtype vtk_file
 contains
   include 'vtk_file_initialize.inc'
   include 'vtk_file_finalize.inc'
+  include 'vtk_file_write_fielddata.inc'
   include 'vtk_file_write_piece.inc'
   include 'vtk_file_write_geo_strg.inc'
   include 'vtk_file_write_geo_rect.inc'
