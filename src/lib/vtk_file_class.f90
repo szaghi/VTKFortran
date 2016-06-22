@@ -29,45 +29,47 @@ type :: vtk_file
   integer(I4P) :: scratch=0_I4P !< Scratch logical unit.
   integer(I4P) :: error=0_I4P   !< IO Error status.
   contains
-    include 'initialize_method.inc'                 ! generic                        :: initialize
-    include 'finalize_method.inc'                   ! generic                        :: finalize
-    include 'write_piece_method.inc'                ! generic                        :: write_piece
-    include 'write_geo_method.inc'                  ! generic                        :: write_geo
-    include 'write_dataarray_method.inc'            ! generic                        :: write_dataarray
-    include 'file_methods.inc'
-                                                    ! procedure, pass(self), private :: open_xml_file
-                                                    ! procedure, pass(self), private :: open_scratch_file
-                                                    ! procedure, pass(self), private :: ioffset_update
-    include 'tag_methods.inc'
-                                                    ! procedure, pass(self), private :: self_closing_tag
-                                                    ! procedure, pass(self), private :: tag
-                                                    ! procedure, pass(self), private :: start_tag
-                                                    ! procedure, pass(self), private :: end_tag
-    include 'write_tag_methods.inc'
-                                                    ! procedure, pass(self), private :: write_self_closing_tag
-                                                    ! procedure, pass(self), private :: write_tag
-                                                    ! procedure, pass(self), private :: write_start_tag
-                                                    ! procedure, pass(self), private :: write_end_tag
-                                                    ! procedure, pass(self), private :: write_header_tag
-                                                    ! procedure, pass(self), private :: write_topology_tag
-                                                    ! procedure, pass(self), private :: write_dataarray_tag
-                                                    ! procedure, pass(self), private :: write_dataarray_tag_appended
-                                                    ! procedure, pass(self), private :: write_dataarray_appended
-    include 'write_on_scratch_dataarray_method.inc' ! generic,               private :: write_on_scratch_dataarray
-    include 'encode_ascii_dataarray_method.inc'     ! generic,               private :: encode_ascii_dataarray
-    include 'encode_base64_dataarray_method.inc'    ! generic,               private :: encode_base64_dataarray
+    include 'vtk_file_initialize_method.inc'                 ! generic                        :: initialize
+    include 'vtk_file_finalize_method.inc'                   ! generic                        :: finalize
+    include 'vtk_file_write_piece_method.inc'                ! generic                        :: write_piece
+    include 'vtk_file_write_geo_method.inc'                  ! generic                        :: write_geo
+    include 'vtk_file_write_dataarray_method.inc'            ! generic                        :: write_dataarray
+    include 'vtk_file_file_methods.inc'
+                                                             ! procedure, pass(self), private :: open_xml_file
+                                                             ! procedure, pass(self), private :: open_scratch_file
+                                                             ! procedure, pass(self), private :: ioffset_update
+    include 'vtk_file_tag_methods.inc'
+                                                             ! procedure, pass(self), private :: self_closing_tag
+                                                             ! procedure, pass(self), private :: tag
+                                                             ! procedure, pass(self), private :: start_tag
+                                                             ! procedure, pass(self), private :: end_tag
+    include 'vtk_file_write_tag_methods.inc'
+                                                             ! procedure, pass(self), private :: write_self_closing_tag
+                                                             ! procedure, pass(self), private :: write_tag
+                                                             ! procedure, pass(self), private :: write_start_tag
+                                                             ! procedure, pass(self), private :: write_end_tag
+                                                             ! procedure, pass(self), private :: write_header_tag
+                                                             ! procedure, pass(self), private :: write_topology_tag
+                                                             ! procedure, pass(self), private :: write_dataarray_tag
+                                                             ! procedure, pass(self), private :: write_dataarray_tag_appended
+                                                             ! procedure, pass(self), private :: write_dataarray_appended
+    include 'vtk_file_write_on_scratch_dataarray_method.inc' ! generic,               private :: write_on_scratch_dataarray
+    include 'vtk_file_encode_ascii_dataarray_method.inc'     ! generic,               private :: encode_ascii_dataarray
+    include 'vtk_file_encode_base64_dataarray_method.inc'    ! generic,               private :: encode_base64_dataarray
 endtype vtk_file
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
-  include 'initialize.inc'
-  include 'finalize.inc'
-  include 'write_piece.inc'
-  include 'write_geo_strg.inc'
-  include 'write_dataarray.inc'
-  include 'file.inc'
-  include 'tag.inc'
-  include 'write_tag.inc'
-  include 'write_on_scratch_dataarray.inc'
-  include 'encode_ascii_dataarray.inc'
-  include 'encode_base64_dataarray.inc'
+  include 'vtk_file_initialize.inc'
+  include 'vtk_file_finalize.inc'
+  include 'vtk_file_write_piece.inc'
+  include 'vtk_file_write_geo_strg.inc'
+  include 'vtk_file_write_geo_rect.inc'
+  include 'vtk_file_write_geo_unst.inc'
+  include 'vtk_file_write_dataarray.inc'
+  include 'vtk_file_file.inc'
+  include 'vtk_file_tag.inc'
+  include 'vtk_file_write_tag.inc'
+  include 'vtk_file_write_on_scratch_dataarray.inc'
+  include 'vtk_file_encode_ascii_dataarray.inc'
+  include 'vtk_file_encode_base64_dataarray.inc'
 endmodule vtk_file_class

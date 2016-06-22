@@ -24,6 +24,25 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_piece_start_tag
 
+  function write_piece_start_tag_unst(self, np, nc) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write `<Piece ...>` start tag for unstructured topology.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(vtk_file), intent(inout) :: self           !< VTK file.
+  integer(I4P),    intent(in)    :: np             !< Number of points.
+  integer(I4P),    intent(in)    :: nc             !< Number of cells.
+  integer(I4P)                   :: error          !< Error status.
+  type(string)                   :: tag_attributes !< Tag attributes.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  tag_attributes = 'NumberOfPoints="'//trim(str(n=np))//'" NumberOfCells="'//trim(str(n=nc))//'"'
+  call self%write_start_tag(tag_name='Piece', tag_attributes=tag_attributes%chars())
+  error = self%error
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_piece_start_tag_unst
+
   function write_piece_end_tag(self) result(error)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write `</Piece>` end tag.

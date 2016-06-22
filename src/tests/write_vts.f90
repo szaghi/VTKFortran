@@ -28,7 +28,6 @@ integer(I4P)            :: k                                      !< Counter.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
-print '(A)', ' StructuredGrid test: output file XML_STRG.vts'
 do k=nz1, nz2
   do j=ny1, ny2
     do i=nx1, nx2
@@ -40,9 +39,9 @@ do k=nz1, nz2
   enddo
 enddo
 error = a_vtk_file%initialize(format='binary', filename='XML_STRG.vts', mesh_topology='StructuredGrid', &
-                        nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+                              nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
 error = a_vtk_file%write_piece(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
-error = a_vtk_file%write_geo(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, x=x, y=y, z=z)
+error = a_vtk_file%write_geo(n=nn, x=x, y=y, z=z)
 error = a_vtk_file%write_dataarray(location='node', action='open')
 error = a_vtk_file%write_dataarray(data_name='float64_scalar', x=v, one_component=.true.)
 error = a_vtk_file%write_dataarray(location='node', action='close')
