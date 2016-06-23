@@ -6,6 +6,7 @@ module vtk_file_class
 use befor64
 use penf
 use stringifor
+use vtk_file_xml_write
 use vtk_fortran_parameters
 !-----------------------------------------------------------------------------------------------------------------------------------
 
