@@ -12,7 +12,7 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   code = ''
   do n=1, size(x, dim=1)
-    code = code//new_line('a')//repeat(' ', self%indent)//str(n=x(n))//end_rec
+    code = code//str(n=x(n))
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -31,7 +31,7 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   code = ''
   do n=1, size(x, dim=1)
-    code = code//new_line('a')//repeat(' ', self%indent)//str(n=x(n))//end_rec
+    code = code//str(n=x(n))
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -50,7 +50,7 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   code = ''
   do n=1, size(x, dim=1)
-    code = code//new_line('a')//repeat(' ', self%indent)//str(n=x(n))//end_rec
+    code = code//str(n=x(n))
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -69,7 +69,7 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   code = ''
   do n=1, size(x, dim=1)
-    code = code//new_line('a')//repeat(' ', self%indent)//str(n=x(n))//end_rec
+    code = code//str(n=x(n))
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -88,7 +88,7 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   code = ''
   do n=1, size(x, dim=1)
-    code = code//new_line('a')//repeat(' ', self%indent)//str(n=x(n))//end_rec
+    code = code//str(n=x(n))
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -107,7 +107,7 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   code = ''
   do n=1, size(x, dim=1)
-    code = code//new_line('a')//repeat(' ', self%indent)//str(n=x(n))//end_rec
+    code = code//str(n=x(n))
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -126,7 +126,7 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   code = ''
   do n=1, size(x, dim=1)
-    code = code//new_line('a')//repeat(' ', self%indent)//str(n=x(n))//end_rec
+    code = code//str(n=x(n))
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -146,11 +146,10 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   code = ''
   do n2=1, size(x, dim=2)
-    code = code//new_line('a')//repeat(' ', self%indent)
     do n1=1, size(x, dim=1)-1
       code = code//str(n=x(n1, n2))//' '
     enddo
-    code = code//' '//str(n=x(size(x, dim=1), n2))//end_rec
+    code = code//' '//str(n=x(size(x, dim=1), n2))
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -170,11 +169,10 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   code = ''
   do n2=1, size(x, dim=2)
-    code = code//new_line('a')//repeat(' ', self%indent)
     do n1=1, size(x, dim=1)-1
       code = code//str(n=x(n1, n2))//' '
     enddo
-    code = code//' '//str(n=x(size(x, dim=1), n2))//end_rec
+    code = code//' '//str(n=x(size(x, dim=1), n2))
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -194,11 +192,9 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   code = ''
   do n2=1, size(x, dim=2)
-    code = code//new_line('a')//repeat(' ', self%indent)
     do n1=1, size(x, dim=1)
       code = code//str(n=x(n1, n2))//' '
     enddo
-    code = code//end_rec
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -218,11 +214,10 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   code = ''
   do n2=1, size(x, dim=2)
-    code = code//new_line('a')//repeat(' ', self%indent)
     do n1=1, size(x, dim=1)-1
       code = code//str(n=x(n1, n2))//' '
     enddo
-    code = code//' '//str(n=x(size(x, dim=1), n2))//end_rec
+    code = code//' '//str(n=x(size(x, dim=1), n2))
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -242,11 +237,10 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   code = ''
   do n2=1, size(x, dim=2)
-    code = code//new_line('a')//repeat(' ', self%indent)
     do n1=1, size(x, dim=1)-1
       code = code//str(n=x(n1, n2))//' '
     enddo
-    code = code//' '//str(n=x(size(x, dim=1), n2))//end_rec
+    code = code//' '//str(n=x(size(x, dim=1), n2))
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -266,11 +260,10 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   code = ''
   do n2=1, size(x, dim=2)
-    code = code//new_line('a')//repeat(' ', self%indent)
     do n1=1, size(x, dim=1)-1
       code = code//str(n=x(n1, n2))//' '
     enddo
-    code = code//' '//str(n=x(size(x, dim=1), n2))//end_rec
+    code = code//' '//str(n=x(size(x, dim=1), n2))
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -290,11 +283,10 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   code = ''
   do n2=1, size(x, dim=2)
-    code = code//new_line('a')//repeat(' ', self%indent)
     do n1=1, size(x, dim=1)-1
       code = code//str(n=x(n1, n2))//' '
     enddo
-    code = code//' '//str(n=x(size(x, dim=1), n2))//end_rec
+    code = code//' '//str(n=x(size(x, dim=1), n2))
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -316,11 +308,10 @@
   code = ''
   do n3=1, size(x, dim=3)
     do n2=1, size(x, dim=2)
-      code = code//new_line('a')//repeat(' ', self%indent)
       do n1=1, size(x, dim=1)-1
         code = code//str(n=x(n1, n2, n3))//' '
       enddo
-      code = code//' '//str(n=x(size(x, dim=1), n2, n3))//end_rec
+      code = code//' '//str(n=x(size(x, dim=1), n2, n3))
     enddo
   enddo
   return
@@ -343,11 +334,10 @@
   code = ''
   do n3=1, size(x, dim=3)
     do n2=1, size(x, dim=2)
-      code = code//new_line('a')//repeat(' ', self%indent)
       do n1=1, size(x, dim=1)-1
         code = code//str(n=x(n1, n2, n3))//' '
       enddo
-      code = code//' '//str(n=x(size(x, dim=1), n2, n3))//end_rec
+      code = code//' '//str(n=x(size(x, dim=1), n2, n3))
     enddo
   enddo
   return
@@ -370,11 +360,10 @@
   code = ''
   do n3=1, size(x, dim=3)
     do n2=1, size(x, dim=2)
-      code = code//new_line('a')//repeat(' ', self%indent)
       do n1=1, size(x, dim=1)-1
         code = code//str(n=x(n1, n2, n3))//' '
       enddo
-      code = code//' '//str(n=x(size(x, dim=1), n2, n3))//end_rec
+      code = code//' '//str(n=x(size(x, dim=1), n2, n3))
     enddo
   enddo
   return
@@ -397,11 +386,10 @@
   code = ''
   do n3=1, size(x, dim=3)
     do n2=1, size(x, dim=2)
-      code = code//new_line('a')//repeat(' ', self%indent)
       do n1=1, size(x, dim=1)-1
         code = code//str(n=x(n1, n2, n3))//' '
       enddo
-      code = code//' '//str(n=x(size(x, dim=1), n2, n3))//end_rec
+      code = code//' '//str(n=x(size(x, dim=1), n2, n3))
     enddo
   enddo
   return
@@ -424,11 +412,10 @@
   code = ''
   do n3=1, size(x, dim=3)
     do n2=1, size(x, dim=2)
-      code = code//new_line('a')//repeat(' ', self%indent)
       do n1=1, size(x, dim=1)-1
         code = code//str(n=x(n1, n2, n3))//' '
       enddo
-      code = code//' '//str(n=x(size(x, dim=1), n2, n3))//end_rec
+      code = code//' '//str(n=x(size(x, dim=1), n2, n3))
     enddo
   enddo
   return
@@ -451,11 +438,10 @@
   code = ''
   do n3=1, size(x, dim=3)
     do n2=1, size(x, dim=2)
-      code = code//new_line('a')//repeat(' ', self%indent)
       do n1=1, size(x, dim=1)-1
         code = code//str(n=x(n1, n2, n3))//' '
       enddo
-      code = code//' '//str(n=x(size(x, dim=1), n2, n3))//end_rec
+      code = code//' '//str(n=x(size(x, dim=1), n2, n3))
     enddo
   enddo
   return
@@ -478,11 +464,10 @@
   code = ''
   do n3=1, size(x, dim=3)
     do n2=1, size(x, dim=2)
-      code = code//new_line('a')//repeat(' ', self%indent)
       do n1=1, size(x, dim=1)-1
         code = code//str(n=x(n1, n2, n3))//' '
       enddo
-      code = code//' '//str(n=x(size(x, dim=1), n2, n3))//end_rec
+      code = code//' '//str(n=x(size(x, dim=1), n2, n3))
     enddo
   enddo
   return
@@ -507,11 +492,9 @@
   do n4=1, size(x, dim=4)
     do n3=1, size(x, dim=3)
       do n2=1, size(x, dim=2)
-        code = code//new_line('a')//repeat(' ', self%indent)
         do n1=1, size(x, dim=1)
           code = code//str(n=x(n1,n2,n3,n4))//' '
         enddo
-        code = code//end_rec
       enddo
     enddo
   enddo
@@ -537,11 +520,9 @@
   do n4=1, size(x, dim=4)
     do n3=1, size(x, dim=3)
       do n2=1, size(x, dim=2)
-        code = code//new_line('a')//repeat(' ', self%indent)
         do n1=1, size(x, dim=1)
           code = code//str(n=x(n1,n2,n3,n4))//' '
         enddo
-        code = code//end_rec
       enddo
     enddo
   enddo
@@ -567,11 +548,9 @@
   do n4=1, size(x, dim=4)
     do n3=1, size(x, dim=3)
       do n2=1, size(x, dim=2)
-        code = code//new_line('a')//repeat(' ', self%indent)
         do n1=1, size(x, dim=1)
           code = code//str(n=x(n1, n2, n3, n4))//' '
         enddo
-        code = code//end_rec
       enddo
     enddo
   enddo
@@ -597,11 +576,9 @@
   do n4=1, size(x, dim=4)
     do n3=1, size(x, dim=3)
       do n2=1, size(x, dim=2)
-        code = code//new_line('a')//repeat(' ', self%indent)
         do n1=1, size(x, dim=1)
           code = code//str(n=x(n1,n2,n3,n4))//' '
         enddo
-        code = code//end_rec
       enddo
     enddo
   enddo
@@ -627,11 +604,9 @@
   do n4=1, size(x, dim=4)
     do n3=1, size(x, dim=3)
       do n2=1, size(x, dim=2)
-        code = code//new_line('a')//repeat(' ', self%indent)
         do n1=1, size(x, dim=1)
           code = code//str(n=x(n1,n2,n3,n4))//' '
         enddo
-        code = code//end_rec
       enddo
     enddo
   enddo
@@ -657,11 +632,9 @@
   do n4=1, size(x, dim=4)
     do n3=1, size(x, dim=3)
       do n2=1, size(x, dim=2)
-        code = code//new_line('a')//repeat(' ', self%indent)
         do n1=1, size(x, dim=1)
           code = code//str(n=x(n1,n2,n3,n4))//' '
         enddo
-        code = code//end_rec
       enddo
     enddo
   enddo
@@ -687,11 +660,9 @@
   do n4=1, size(x, dim=4)
     do n3=1, size(x, dim=3)
       do n2=1, size(x, dim=2)
-        code = code//new_line('a')//repeat(' ', self%indent)
         do n1=1, size(x, dim=1)
           code = code//str(n=x(n1,n2,n3,n4))//' '
         enddo
-        code = code//end_rec
       enddo
     enddo
   enddo
@@ -714,7 +685,7 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   code = ''
   do n=1, size(x, dim=1)
-    code = code//new_line('a')//repeat(' ', self%indent)//str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))//end_rec
+    code = code//str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -735,7 +706,7 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   code = ''
   do n=1, size(x, dim=1)
-    code = code//new_line('a')//repeat(' ', self%indent)//str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))//end_rec
+    code = code//str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -756,7 +727,7 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   code = ''
   do n=1, size(x, dim=1)
-    code = code//new_line('a')//repeat(' ', self%indent)//str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))//end_rec
+    code = code//str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -777,7 +748,7 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   code = ''
   do n=1, size(x, dim=1)
-    code = code//new_line('a')//repeat(' ', self%indent)//str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))//end_rec
+    code = code//str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -798,7 +769,7 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   code = ''
   do n=1, size(x, dim=1)
-    code = code//new_line('a')//repeat(' ', self%indent)//str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))//end_rec
+    code = code//str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -819,7 +790,7 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   code = ''
   do n=1, size(x, dim=1)
-    code = code//new_line('a')//repeat(' ', self%indent)//str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))//end_rec
+    code = code//str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -840,7 +811,7 @@
   !---------------------------------------------------------------------------------------------------------------------------------
   code = ''
   do n=1, size(x, dim=1)
-    code = code//new_line('a')//repeat(' ', self%indent)//str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))//end_rec
+    code = code//str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))
   enddo
   return
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -865,8 +836,8 @@
   do n3=1, size(x, dim=3)
     do n2=1, size(x, dim=2)
       do n1=1, size(x, dim=1)
-        code = code//new_line('a')//repeat(' ', self%indent)//&
-          str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))//end_rec
+        code = code//&
+          str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))
       enddo
     enddo
   enddo
@@ -893,8 +864,8 @@
   do n3=1, size(x, dim=3)
     do n2=1, size(x, dim=2)
       do n1=1, size(x, dim=1)
-        code = code//new_line('a')//repeat(' ', self%indent)//&
-          str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))//end_rec
+        code = code//&
+          str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))
       enddo
     enddo
   enddo
@@ -921,8 +892,8 @@
   do n3=1, size(x, dim=3)
     do n2=1, size(x, dim=2)
       do n1=1, size(x, dim=1)
-        code = code//new_line('a')//repeat(' ', self%indent)//&
-          str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))//end_rec
+        code = code//&
+          str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))
       enddo
     enddo
   enddo
@@ -949,8 +920,8 @@
   do n3=1, size(x, dim=3)
     do n2=1, size(x, dim=2)
       do n1=1, size(x, dim=1)
-        code = code//new_line('a')//repeat(' ', self%indent)//&
-          str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))//end_rec
+        code = code//&
+          str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))
       enddo
     enddo
   enddo
@@ -977,8 +948,8 @@
   do n3=1, size(x, dim=3)
     do n2=1, size(x, dim=2)
       do n1=1, size(x, dim=1)
-        code = code//new_line('a')//repeat(' ', self%indent)//&
-          str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))//end_rec
+        code = code//&
+          str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))
       enddo
     enddo
   enddo
@@ -1005,8 +976,8 @@
   do n3=1, size(x, dim=3)
     do n2=1, size(x, dim=2)
       do n1=1, size(x, dim=1)
-        code = code//new_line('a')//repeat(' ', self%indent)//&
-          str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))//end_rec
+        code = code//&
+          str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))
       enddo
     enddo
   enddo
@@ -1033,8 +1004,8 @@
   do n3=1, size(x, dim=3)
     do n2=1, size(x, dim=2)
       do n1=1, size(x, dim=1)
-        code = code//new_line('a')//repeat(' ', self%indent)//&
-          str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))//end_rec
+        code = code//&
+          str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))
       enddo
     enddo
   enddo

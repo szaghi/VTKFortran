@@ -1444,13 +1444,13 @@
     tag_attributes =  'type="'//trim(adjustl(data_type))//            &
       '" NumberOfTuples="'//trim(str(number_of_components, .true.))// &
       '" Name="'//trim(adjustl(data_name))//                          &
-      '" format="'//self%format_ch//'"'//                             &
+      '" format="'//self%format_ch//                                  &
       '" offset="'//trim(str(self%ioffset, .true.))//'"'
   else
     tag_attributes = 'type="'//trim(adjustl(data_type))//                 &
       '" NumberOfComponents="'//trim(str(number_of_components, .true.))// &
       '" Name="'//trim(adjustl(data_name))//                              &
-      '" format="'//self%format_ch//'"'//                                 &
+      '" format="'//self%format_ch//                                      &
       '" offset="'//trim(str(self%ioffset, .true.))//'"'
   endif  
   call self%write_self_closing_tag(tag_name='DataArray', tag_attributes=tag_attributes%chars())
@@ -1553,6 +1553,7 @@
   do
     call read_dataarray_from_scratch
     if (self%error==0) call write_dataarray_on_xml
+    if (is_iostat_end(self%error)) exit
   enddo
   close(unit=self%scratch, iostat=self%error)
   write(unit=self%xml, iostat=self%error)end_rec

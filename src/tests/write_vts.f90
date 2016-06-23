@@ -38,15 +38,31 @@ do k=nz1, nz2
     enddo
   enddo
 enddo
-error = a_vtk_file%initialize(format='binary', filename='XML_STRG.vts', mesh_topology='StructuredGrid', &
+! binary
+error = a_vtk_file%initialize(format='binary', filename='XML_STRG-binary.vts', mesh_topology='StructuredGrid', &
                               nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
-error = a_vtk_file%write_piece(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
-error = a_vtk_file%write_geo(n=nn, x=x, y=y, z=z)
-error = a_vtk_file%write_dataarray(location='node', action='open')
-error = a_vtk_file%write_dataarray(data_name='float64_scalar', x=v, one_component=.true.)
-error = a_vtk_file%write_dataarray(location='node', action='close')
-error = a_vtk_file%write_piece()
+call write_data
+error = a_vtk_file%finalize()
+! binary
+error = a_vtk_file%initialize(format='raw', filename='XML_STRG-raw.vts', mesh_topology='StructuredGrid', &
+                              nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+call write_data
 error = a_vtk_file%finalize()
 stop
 !-----------------------------------------------------------------------------------------------------------------------------------
+contains
+  subroutine write_data
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write data.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  error = a_vtk_file%write_piece(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+  error = a_vtk_file%write_geo(n=nn, x=x, y=y, z=z)
+  error = a_vtk_file%write_dataarray(location='node', action='open')
+  error = a_vtk_file%write_dataarray(data_name='float64_scalar', x=v, one_component=.true.)
+  error = a_vtk_file%write_dataarray(location='node', action='close')
+  error = a_vtk_file%write_piece()
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endsubroutine write_data
 endprogram write_vts

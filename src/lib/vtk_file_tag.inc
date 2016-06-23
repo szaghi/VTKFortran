@@ -10,11 +10,10 @@
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  tag_ = new_line('a')
   if (present(tag_attributes)) then
-    tag_ = tag_//repeat(' ', self%indent)//'<'//trim(adjustl(tag_name))//' '//trim(adjustl(tag_attributes))//'/>'//end_rec
+    tag_ = repeat(' ', self%indent)//'<'//trim(adjustl(tag_name))//' '//trim(adjustl(tag_attributes))//'/>'//end_rec
   else
-    tag_ = tag_//repeat(' ', self%indent)//'<'//trim(adjustl(tag_name))//'/>'//end_rec
+    tag_ = repeat(' ', self%indent)//'<'//trim(adjustl(tag_name))//'/>'//end_rec
   endif
   return
   !---------------------------------------------------------------------------------------------------------------------------------
