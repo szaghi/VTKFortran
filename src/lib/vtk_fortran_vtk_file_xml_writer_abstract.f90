@@ -17,12 +17,13 @@ public :: xml_writer_abstract
 !-----------------------------------------------------------------------------------------------------------------------------------
 type, abstract :: xml_writer_abstract
   !< VTK file abstract XML writer.
-  type(string) :: format_ch     !< Output format, string code.
-  type(string) :: topology      !< Mesh topology.
-  integer(I4P) :: indent=0_I4P  !< Indent count.
-  integer(I8P) :: ioffset=0_I8P !< Offset count.
-  integer(I4P) :: xml=0_I4P     !< XML Logical unit.
-  integer(I4P) :: error=0_I4P   !< IO Error status.
+  type(string) :: format_ch                     !< Output format, string code.
+  type(string) :: topology                      !< Mesh topology.
+  integer(I4P) :: indent=0_I4P                  !< Indent count.
+  integer(I8P) :: ioffset=0_I8P                 !< Offset count.
+  integer(I4P) :: xml=0_I4P                     !< XML Logical unit.
+  integer(I4P) :: vtm_block(1:2)=[0_I4P, 0_I4P] !< Block indexes.
+  integer(I4P) :: error=0_I4P                   !< IO Error status.
   contains
     ! public methods (some deferred)
     procedure,                                 pass(self) :: end_tag                      !< Return `</tag_name>` end tag.
@@ -37,6 +38,8 @@ type, abstract :: xml_writer_abstract
     procedure,                                 pass(self) :: write_dataarray_tag_appended !< Write dataarray appended tag.
     procedure,                                 pass(self) :: write_end_tag                !< Write `</tag_name>` end tag.
     procedure,                                 pass(self) :: write_header_tag             !< Write header tag.
+    procedure,                                 pass(self) :: write_parallel_open_block    !< Write parallel open block.
+    procedure,                                 pass(self) :: write_parallel_close_block   !< Write parallel close block.
     procedure,                                 pass(self) :: write_parallel_dataarray     !< Write parallel dataarray.
     procedure,                                 pass(self) :: write_parallel_geo           !< Write parallel geo.
     procedure,                                 pass(self) :: write_self_closing_tag       !< Write self closing tag.
@@ -101,6 +104,9 @@ type, abstract :: xml_writer_abstract
                write_geo_unst_data1_rank2_R4P, &
                write_geo_unst_data3_rank1_R8P, &
                write_geo_unst_data3_rank1_R4P !< Write mesh.
+    generic :: write_parallel_block_files =>     &
+               write_parallel_block_files_array, &
+               write_parallel_block_files_string !< Write block list of files.
     generic :: write_piece =>              &
                write_piece_start_tag,      &
                write_piece_start_tag_unst, &
@@ -144,25 +150,27 @@ type, abstract :: xml_writer_abstract
     procedure(write_dataarray3_rank3_I1P_interface), deferred, pass(self) :: write_dataarray3_rank3_I1P !< Data 3, rank 3, I1P.
     procedure(write_dataarray_appended_interface),   deferred, pass(self) :: write_dataarray_appended   !< Write appended.
     ! private methods
-    procedure, pass(self), private :: write_fielddata1_rank0         !< Write FieldData tag (data 1, rank 0, R8P).
-    procedure, pass(self), private :: write_fielddata_tag            !< Write FieldData tag.
-    procedure, pass(self), private :: write_geo_strg_data1_rank2_R8P !< Write **StructuredGrid** mesh (data 1, rank 2, R8P).
-    procedure, pass(self), private :: write_geo_strg_data1_rank2_R4P !< Write **StructuredGrid** mesh (data 1, rank 2, R4P).
-    procedure, pass(self), private :: write_geo_strg_data1_rank4_R8P !< Write **StructuredGrid** mesh (data 1, rank 4, R8P).
-    procedure, pass(self), private :: write_geo_strg_data1_rank4_R4P !< Write **StructuredGrid** mesh (data 1, rank 4, R4P).
-    procedure, pass(self), private :: write_geo_strg_data3_rank1_R8P !< Write **StructuredGrid** mesh (data 3, rank 1, R8P).
-    procedure, pass(self), private :: write_geo_strg_data3_rank1_R4P !< Write **StructuredGrid** mesh (data 3, rank 1, R4P).
-    procedure, pass(self), private :: write_geo_strg_data3_rank3_R8P !< Write **StructuredGrid** mesh (data 3, rank 3, R8P).
-    procedure, pass(self), private :: write_geo_strg_data3_rank3_R4P !< Write **StructuredGrid** mesh (data 3, rank 3, R4P).
-    procedure, pass(self), private :: write_geo_rect_data3_rank1_R8P !< Write **RectilinearGrid** mesh (data 3, rank 1, R8P).
-    procedure, pass(self), private :: write_geo_rect_data3_rank1_R4P !< Write **RectilinearGrid** mesh (data 3, rank 1, R4P).
-    procedure, pass(self), private :: write_geo_unst_data1_rank2_R8P !< Write **UnstructuredGrid** mesh (data 1, rank 2, R8P).
-    procedure, pass(self), private :: write_geo_unst_data1_rank2_R4P !< Write **UnstructuredGrid** mesh (data 1, rank 2, R4P).
-    procedure, pass(self), private :: write_geo_unst_data3_rank1_R8P !< Write **UnstructuredGrid** mesh (data 3, rank 1, R8P).
-    procedure, pass(self), private :: write_geo_unst_data3_rank1_R4P !< Write **UnstructuredGrid** mesh (data 3, rank 1, R4P).
-    procedure, pass(self), private :: write_piece_start_tag          !< Write `<Piece ...>` start tag.
-    procedure, pass(self), private :: write_piece_start_tag_unst     !< Write `<Piece ...>` start tag for unstructured topology.
-    procedure, pass(self), private :: write_piece_end_tag            !< Write `</Piece>` end tag.
+    procedure, pass(self), private :: write_fielddata1_rank0            !< Write FieldData tag (data 1, rank 0, R8P).
+    procedure, pass(self), private :: write_fielddata_tag               !< Write FieldData tag.
+    procedure, pass(self), private :: write_geo_strg_data1_rank2_R8P    !< Write **StructuredGrid** mesh (data 1, rank 2, R8P).
+    procedure, pass(self), private :: write_geo_strg_data1_rank2_R4P    !< Write **StructuredGrid** mesh (data 1, rank 2, R4P).
+    procedure, pass(self), private :: write_geo_strg_data1_rank4_R8P    !< Write **StructuredGrid** mesh (data 1, rank 4, R8P).
+    procedure, pass(self), private :: write_geo_strg_data1_rank4_R4P    !< Write **StructuredGrid** mesh (data 1, rank 4, R4P).
+    procedure, pass(self), private :: write_geo_strg_data3_rank1_R8P    !< Write **StructuredGrid** mesh (data 3, rank 1, R8P).
+    procedure, pass(self), private :: write_geo_strg_data3_rank1_R4P    !< Write **StructuredGrid** mesh (data 3, rank 1, R4P).
+    procedure, pass(self), private :: write_geo_strg_data3_rank3_R8P    !< Write **StructuredGrid** mesh (data 3, rank 3, R8P).
+    procedure, pass(self), private :: write_geo_strg_data3_rank3_R4P    !< Write **StructuredGrid** mesh (data 3, rank 3, R4P).
+    procedure, pass(self), private :: write_geo_rect_data3_rank1_R8P    !< Write **RectilinearGrid** mesh (data 3, rank 1, R8P).
+    procedure, pass(self), private :: write_geo_rect_data3_rank1_R4P    !< Write **RectilinearGrid** mesh (data 3, rank 1, R4P).
+    procedure, pass(self), private :: write_geo_unst_data1_rank2_R8P    !< Write **UnstructuredGrid** mesh (data 1, rank 2, R8P).
+    procedure, pass(self), private :: write_geo_unst_data1_rank2_R4P    !< Write **UnstructuredGrid** mesh (data 1, rank 2, R4P).
+    procedure, pass(self), private :: write_geo_unst_data3_rank1_R8P    !< Write **UnstructuredGrid** mesh (data 3, rank 1, R8P).
+    procedure, pass(self), private :: write_geo_unst_data3_rank1_R4P    !< Write **UnstructuredGrid** mesh (data 3, rank 1, R4P).
+    procedure, pass(self), private :: write_piece_start_tag             !< Write `<Piece ...>` start tag.
+    procedure, pass(self), private :: write_piece_start_tag_unst        !< Write `<Piece ...>` start tag for unstructured topology.
+    procedure, pass(self), private :: write_piece_end_tag               !< Write `</Piece>` end tag.
+    procedure, pass(self), private :: write_parallel_block_files_array  !< Write block list of files (array input).
+    procedure, pass(self), private :: write_parallel_block_files_string !< Write block list of files (string input).
 endtype xml_writer_abstract
 !-----------------------------------------------------------------------------------------------------------------------------------
 
@@ -932,14 +940,13 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
+  buffer = ''
   select case(self%topology%chars())
   case('RectilinearGrid', 'StructuredGrid')
     buffer = 'WholeExtent="'//                             &
              trim(str(n=nx1))//' '//trim(str(n=nx2))//' '//&
              trim(str(n=ny1))//' '//trim(str(n=ny2))//' '//&
              trim(str(n=nz1))//' '//trim(str(n=nz2))//'"'
-  case('UnstructuredGrid')
-    buffer = ''
   case('PRectilinearGrid', 'PStructuredGrid')
     buffer = 'WholeExtent="'//                             &
              trim(str(n=nx1))//' '//trim(str(n=nx2))//' '//&
@@ -949,6 +956,7 @@ contains
     buffer = 'GhostLevel="0"'
   endselect
   call self%write_start_tag(tag_name=self%topology%chars(), tag_attributes=buffer%chars())
+  ! parallel topologies peculiars
   select case(self%topology%chars())
   case('PRectilinearGrid')
     if (.not.present(mesh_kind)) then
@@ -1608,7 +1616,45 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_connectivity
 
-  ! write_parallel_dataarray
+  ! write_parallel methods
+  function write_parallel_open_block(self, name) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write a block (open) container.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout)        :: self   !< Writer.
+  character(*),               intent(in), optional :: name   !< Block name.
+  integer(I4P)                                     :: error  !< Error status.
+  type(string)                                     :: buffer !< Buffer string.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  self%vtm_block = self%vtm_block + 1
+  if (present(name)) then
+    buffer = 'index="'//trim(str((self%vtm_block(1)+self%vtm_block(2)),.true.))//'" name="'//trim(adjustl(name))//'"'
+  else
+    buffer = 'index="'//trim(str((self%vtm_block(1)+self%vtm_block(2)),.true.))//'"'
+  endif
+  call self%write_start_tag(tag_name='Block', tag_attributes=buffer%chars())
+  error = self%error
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_parallel_open_block
+
+  function write_parallel_close_block(self, name) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Close a block container.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout)        :: self  !< Writer.
+  character(*),               intent(in), optional :: name  !< Block name.
+  integer(I4P)                                     :: error !< Error status.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  self%vtm_block(2) = -1
+  call self%write_end_tag(tag_name='Block')
+  error = self%error
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_parallel_close_block
+
   function write_parallel_dataarray(self, data_name, data_type, number_of_components) result(error)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write parallel (partitioned) VTK-XML dataarray info.
@@ -1633,7 +1679,6 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_parallel_dataarray
 
-  ! write_parallel_geo
   function write_parallel_geo(self, source, nx1, nx2, ny1, ny2, nz1, nz2) result(error)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write parallel (partitioned) VTK-XML geo source file.
@@ -1664,4 +1709,100 @@ contains
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_parallel_geo
+
+  function write_parallel_block_files_array(self, filenames, names) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write list of files that belong to the current block (list passed as rank 1 array).
+  !<
+  !<#### Example of usage: 3 files blocks
+  !<```fortran
+  !< error = vtm%write_files_list_of_block(filenames=['file_1.vts','file_2.vts','file_3.vtu'])
+  !<```
+  !<
+  !<#### Example of usage: 3 files blocks with custom name
+  !<```fortran
+  !< error = vtm%write_files_list_of_block(filenames=['file_1.vts','file_2.vts','file_3.vtu'],&
+  !<                                       names=['block-bar','block-foo','block-baz'])
+  !<```
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout)        :: self         !< Writer.
+  character(*),               intent(in)           :: filenames(:) !< List of VTK-XML wrapped file names.
+  character(*),               intent(in), optional :: names(:)     !< List names attributed to wrapped files.
+  integer(I4P)                                     :: error        !< Error status.
+  integer(I4P)                                     :: f            !< File counter.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  if (present(names)) then
+    if (size(names, dim=1)==size(filenames, dim=1)) then
+      do f=1, size(filenames, dim=1)
+        call self%write_self_closing_tag(tag_name='DataSet',                                     &
+                                         tag_attributes='index="'//trim(str(f-1, .true.))//      &
+                                                       '" file="'//trim(adjustl(filenames(f)))// &
+                                                       '" name="'//trim(adjustl(names(f)))//'"')
+      enddo
+    endif
+  else
+    do f=1,size(filenames, dim=1)
+      call self%write_self_closing_tag(tag_name='DataSet',                                &
+                                       tag_attributes='index="'//trim(str(f-1, .true.))// &
+                                                     '" file="'//trim(adjustl(filenames(f)))//'"')
+    enddo
+  endif
+  error = self%error
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_parallel_block_files_array
+
+  function write_parallel_block_files_string(self, filenames, names, delimiter) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write list of files that belong to the current block (list passed as single string).
+  !<
+  !<#### Example of usage: 3 files blocks
+  !<```fortran
+  !< error = vtm%write_files_list_of_block(filenames='file_1.vts file_2.vts file_3.vtu')
+  !<```
+  !<
+  !<#### Example of usage: 3 files blocks with custom name
+  !<```fortran
+  !< error = vtm%write_files_list_of_block(filenames='file_1.vts file_2.vts file_3.vtu',&
+  !<                                       names='block-bar block-foo block-baz')
+  !<```
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout)        :: self          !< Writer.
+  character(*),               intent(in)           :: filenames     !< List of VTK-XML wrapped file names.
+  character(*),               intent(in), optional :: names         !< List names attributed to wrapped files.
+  character(*),               intent(in), optional :: delimiter     !< Delimiter character.
+  integer(I4P)                                     :: error         !< Error status.
+  type(string), allocatable                        :: filenames_(:) !< List of VTK-XML wrapped file names.
+  type(string), allocatable                        :: names_(:)     !< List names attributed to wrapped files.
+  type(string)                                     :: delimiter_    !< Delimiter character.
+  type(string)                                     :: buffer        !< A string buffer.
+  integer(I4P)                                     :: f             !< File counter.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  delimiter_ = ' ' ; if (present(delimiter)) delimiter_ = delimiter
+  buffer = filenames
+  call buffer%split(tokens=filenames_, sep=delimiter_%chars())
+  if (present(names)) then
+    buffer = names
+    call buffer%split(tokens=names_, sep=delimiter_%chars())
+    if (size(names_, dim=1)==size(filenames_, dim=1)) then
+      do f=1, size(filenames_, dim=1)
+        call self%write_self_closing_tag(tag_name='DataSet',                                      &
+                                         tag_attributes='index="'//trim(str(f-1, .true.))//       &
+                                                       '" file="'//trim(adjustl(filenames_(f)))// &
+                                                       '" name="'//trim(adjustl(names_(f)))//'"')
+      enddo
+    endif
+  else
+    do f=1,size(filenames_, dim=1)
+      call self%write_self_closing_tag(tag_name='DataSet',                               &
+                                       tag_attributes='index="'//trim(str(f-1,.true.))// &
+                                                     '" file="'//trim(adjustl(filenames_(f)))//'"')
+    enddo
+  endif
+  error = self%error
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_parallel_block_files_string
 endmodule vtk_fortran_vtk_file_xml_writer_abstract

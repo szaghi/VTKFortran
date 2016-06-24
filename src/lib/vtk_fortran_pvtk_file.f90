@@ -5,7 +5,6 @@ module vtk_fortran_pvtk_file
 !-----------------------------------------------------------------------------------------------------------------------------------
 use befor64
 use penf
-use stringifor
 use vtk_fortran_vtk_file_xml_writer_abstract
 use vtk_fortran_vtk_file_xml_writer_ascii_local
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -32,13 +31,6 @@ contains
   !< Initialize file (writer).
   !<
   !< @note This function must be the first to be called.
-  !<
-  !<### Supported output formats are (the passed specifier value is case insensitive):
-  !<
-  !<- ASCII: data are saved in ASCII format;
-  !<- BINARY: data are saved in base64 encoded format;
-  !<- RAW: data are saved in raw-binary format in the appended tag of the XML file;
-  !<- BINARY-APPENDED: data are saved in base64 encoded format in the appended tag of the XML file.
   !<
   !<### Supported topologies are:
   !<
