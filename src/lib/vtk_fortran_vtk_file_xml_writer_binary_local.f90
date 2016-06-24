@@ -3,7 +3,6 @@ module vtk_fortran_vtk_file_xml_writer_binary_local
 !-----------------------------------------------------------------------------------------------------------------------------------
 !< VTK file XMl writer, binary local.
 !-----------------------------------------------------------------------------------------------------------------------------------
-use befor64
 use penf
 use stringifor
 use vtk_fortran_dataarray_encoder
@@ -81,8 +80,6 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  if (.not.is_initialized) call penf_init
-  if (.not.is_b64_initialized) call b64_init
   self%topology = trim(adjustl(mesh_topology))
   self%format_ch = format
   self%format_ch = self%format_ch%lower()
