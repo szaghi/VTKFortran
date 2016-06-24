@@ -110,7 +110,6 @@ contains
   do n=1, size(x, dim=1)
     code = code//str(n=x(n))
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank1_R16P
 
@@ -128,7 +127,6 @@ contains
   do n=1, size(x, dim=1)
     code = code//str(n=x(n))
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank1_R8P
 
@@ -146,7 +144,6 @@ contains
   do n=1, size(x, dim=1)
     code = code//str(n=x(n))
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank1_R4P
 
@@ -164,7 +161,6 @@ contains
   do n=1, size(x, dim=1)
     code = code//str(n=x(n))
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank1_I8P
 
@@ -182,7 +178,6 @@ contains
   do n=1, size(x, dim=1)
     code = code//str(n=x(n))
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank1_I4P
 
@@ -200,7 +195,6 @@ contains
   do n=1, size(x, dim=1)
     code = code//str(n=x(n))
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank1_I2P
 
@@ -218,7 +212,6 @@ contains
   do n=1, size(x, dim=1)
     code = code//str(n=x(n))
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank1_I1P
 
@@ -240,7 +233,6 @@ contains
     enddo
     code = code//' '//str(n=x(size(x, dim=1), n2))
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank2_R16P
 
@@ -262,7 +254,6 @@ contains
     enddo
     code = code//' '//str(n=x(size(x, dim=1), n2))
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank2_R8P
 
@@ -283,7 +274,6 @@ contains
       code = code//str(n=x(n1, n2))//' '
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank2_R4P
 
@@ -305,7 +295,6 @@ contains
     enddo
     code = code//' '//str(n=x(size(x, dim=1), n2))
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank2_I8P
 
@@ -327,7 +316,6 @@ contains
     enddo
     code = code//' '//str(n=x(size(x, dim=1), n2))
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank2_I4P
 
@@ -349,7 +337,6 @@ contains
     enddo
     code = code//' '//str(n=x(size(x, dim=1), n2))
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank2_I2P
 
@@ -371,7 +358,6 @@ contains
     enddo
     code = code//' '//str(n=x(size(x, dim=1), n2))
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank2_I1P
 
@@ -396,7 +382,6 @@ contains
       code = code//' '//str(n=x(size(x, dim=1), n2, n3))
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank3_R16P
 
@@ -421,7 +406,6 @@ contains
       code = code//' '//str(n=x(size(x, dim=1), n2, n3))
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank3_R8P
 
@@ -446,7 +430,6 @@ contains
       code = code//' '//str(n=x(size(x, dim=1), n2, n3))
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank3_R4P
 
@@ -471,7 +454,6 @@ contains
       code = code//' '//str(n=x(size(x, dim=1), n2, n3))
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank3_I8P
 
@@ -496,7 +478,6 @@ contains
       code = code//' '//str(n=x(size(x, dim=1), n2, n3))
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank3_I4P
 
@@ -521,7 +502,6 @@ contains
       code = code//' '//str(n=x(size(x, dim=1), n2, n3))
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank3_I2P
 
@@ -546,7 +526,6 @@ contains
       code = code//' '//str(n=x(size(x, dim=1), n2, n3))
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank3_I1P
 
@@ -573,7 +552,6 @@ contains
       enddo
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank4_R16P
 
@@ -600,7 +578,6 @@ contains
       enddo
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank4_R8P
 
@@ -627,7 +604,6 @@ contains
       enddo
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank4_R4P
 
@@ -654,7 +630,6 @@ contains
       enddo
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank4_I8P
 
@@ -681,7 +656,6 @@ contains
       enddo
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank4_I4P
 
@@ -708,7 +682,6 @@ contains
       enddo
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank4_I2P
 
@@ -735,7 +708,6 @@ contains
       enddo
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray1_rank4_I1P
 
@@ -755,7 +727,6 @@ contains
   do n=1, size(x, dim=1)
     code = code//str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray3_rank1_R16P
 
@@ -775,7 +746,6 @@ contains
   do n=1, size(x, dim=1)
     code = code//str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray3_rank1_R8P
 
@@ -795,7 +765,6 @@ contains
   do n=1, size(x, dim=1)
     code = code//str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray3_rank1_R4P
 
@@ -815,7 +784,6 @@ contains
   do n=1, size(x, dim=1)
     code = code//str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray3_rank1_I8P
 
@@ -835,7 +803,6 @@ contains
   do n=1, size(x, dim=1)
     code = code//str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray3_rank1_I4P
 
@@ -855,7 +822,6 @@ contains
   do n=1, size(x, dim=1)
     code = code//str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray3_rank1_I2P
 
@@ -875,7 +841,6 @@ contains
   do n=1, size(x, dim=1)
     code = code//str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray3_rank1_I1P
 
@@ -902,7 +867,6 @@ contains
       enddo
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray3_rank3_R16P
 
@@ -929,7 +893,6 @@ contains
       enddo
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray3_rank3_R8P
 
@@ -956,7 +919,6 @@ contains
       enddo
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray3_rank3_R4P
 
@@ -983,7 +945,6 @@ contains
       enddo
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray3_rank3_I8P
 
@@ -1010,7 +971,6 @@ contains
       enddo
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray3_rank3_I4P
 
@@ -1037,7 +997,6 @@ contains
       enddo
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray3_rank3_I2P
 
@@ -1064,7 +1023,6 @@ contains
       enddo
     enddo
   enddo
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_ascii_dataarray3_rank3_I1P
 
@@ -1083,7 +1041,6 @@ contains
   nn = size(x, dim=1)
   call pack_data(a1=[int(nn*BYR8P, I4P)], a2=reshape(x, [nn]), packed=xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank1_R8P
 
@@ -1101,7 +1058,6 @@ contains
   nn = size(x, dim=1)
   call pack_data(a1=[int(nn*BYR4P, I4P)], a2=reshape(x, [nn]), packed=xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank1_R4P
 
@@ -1119,7 +1075,6 @@ contains
   nn = size(x, dim=1)
   call pack_data(a1=[int(nn*BYI8P, I4P)], a2=reshape(x, [nn]), packed=xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank1_I8P
 
@@ -1137,7 +1092,6 @@ contains
   nn = size(x, dim=1)
   xp = transfer([int(nn*BYI4P, I4P), reshape(x, [nn])], xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank1_I4P
 
@@ -1155,7 +1109,6 @@ contains
   nn = size(x, dim=1)
   call pack_data(a1=[int(nn*BYI2P, I4P)], a2=reshape(x, [nn]), packed=xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank1_I2P
 
@@ -1173,7 +1126,6 @@ contains
   nn = size(x, dim=1)
   call pack_data(a1=[int(nn*BYI1P, I4P)], a2=reshape(x, [nn]), packed=xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank1_I1P
 
@@ -1191,7 +1143,6 @@ contains
   nn = size(x, dim=1)*size(x, dim=2)
   call pack_data(a1=[int(nn*BYR8P, I4P)], a2=reshape(x, [nn]), packed=xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank2_R8P
 
@@ -1209,7 +1160,6 @@ contains
   nn = size(x, dim=1)*size(x, dim=2)
   call pack_data(a1=[int(nn*BYR4P, I4P)], a2=reshape(x, [nn]), packed=xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank2_R4P
 
@@ -1227,7 +1177,6 @@ contains
   nn = size(x, dim=1)*size(x, dim=2)
   call pack_data(a1=[int(nn*BYI8P, I4P)], a2=reshape(x, [nn]), packed=xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank2_I8P
 
@@ -1245,7 +1194,6 @@ contains
   nn = size(x, dim=1)*size(x, dim=2)
   xp = transfer([int(nn*BYI4P, I4P), reshape(x, [nn])], xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank2_I4P
 
@@ -1263,7 +1211,6 @@ contains
   nn = size(x, dim=1)*size(x, dim=2)
   call pack_data(a1=[int(nn*BYI2P, I4P)], a2=reshape(x, [nn]), packed=xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank2_I2P
 
@@ -1281,7 +1228,6 @@ contains
   nn = size(x, dim=1)*size(x, dim=2)
   call pack_data(a1=[int(nn*BYI1P, I4P)], a2=reshape(x, [nn]), packed=xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank2_I1P
 
@@ -1299,7 +1245,6 @@ contains
   nn = size(x, dim=1)*size(x, dim=2)*size(x, dim=3)
   call pack_data(a1=[int(nn*BYR8P, I4P)], a2=reshape(x, [nn]), packed=xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank3_R8P
 
@@ -1317,7 +1262,6 @@ contains
   nn = size(x, dim=1)*size(x, dim=2)*size(x, dim=3)
   call pack_data(a1=[int(nn*BYR4P, I4P)], a2=reshape(x, [nn]), packed=xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank3_R4P
 
@@ -1335,7 +1279,6 @@ contains
   nn = size(x, dim=1)*size(x, dim=2)*size(x, dim=3)
   call pack_data(a1=[int(nn*BYI8P, I4P)], a2=reshape(x, [nn]), packed=xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank3_I8P
 
@@ -1353,7 +1296,6 @@ contains
   nn = size(x, dim=1)*size(x, dim=2)*size(x, dim=3)
   xp = transfer([int(nn*BYI4P, I4P), reshape(x, [nn])], xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank3_I4P
 
@@ -1371,7 +1313,6 @@ contains
   nn = size(x, dim=1)*size(x, dim=2)*size(x, dim=3)
   call pack_data(a1=[int(nn*BYI2P, I4P)], a2=reshape(x, [nn]), packed=xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank3_I2P
 
@@ -1389,7 +1330,6 @@ contains
   nn = size(x, dim=1)*size(x, dim=2)*size(x, dim=3)
   call pack_data(a1=[int(nn*BYI1P, I4P)], a2=reshape(x, [nn]), packed=xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank3_I1P
 
@@ -1407,7 +1347,6 @@ contains
   nn = size(x, dim=1)*size(x, dim=2)*size(x, dim=3)*size(x, dim=4)
   call pack_data(a1=[int(nn*BYR8P, I4P)], a2=reshape(x, [nn]), packed=xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank4_R8P
 
@@ -1425,7 +1364,6 @@ contains
   nn = size(x, dim=1)*size(x, dim=2)*size(x, dim=3)*size(x, dim=4)
   call pack_data(a1=[int(nn*BYR4P, I4P)], a2=reshape(x, [nn]), packed=xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank4_R4P
 
@@ -1443,7 +1381,6 @@ contains
   nn = size(x, dim=1)*size(x, dim=2)*size(x, dim=3)*size(x, dim=4)
   call pack_data(a1=[int(nn*BYI8P, I4P)], a2=reshape(x, [nn]), packed=xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank4_I8P
 
@@ -1461,7 +1398,6 @@ contains
   nn = size(x, dim=1)*size(x, dim=2)*size(x, dim=3)*size(x, dim=4)
   xp = transfer([int(nn*BYI4P, I4P), reshape(x, [nn])], xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank4_I4P
 
@@ -1479,7 +1415,6 @@ contains
   nn = size(x, dim=1)*size(x, dim=2)*size(x, dim=3)*size(x, dim=4)
   call pack_data(a1=[int(nn*BYI2P, I4P)], a2=reshape(x, [nn]), packed=xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank4_I2P
 
@@ -1497,7 +1432,6 @@ contains
   nn = size(x, dim=1)*size(x, dim=2)*size(x, dim=3)*size(x, dim=4)
   call pack_data(a1=[int(nn*BYI1P, I4P)], a2=reshape(x, [nn]), packed=xp)
   call b64_encode(n=xp, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray1_rank4_I1P
 
@@ -1518,7 +1452,6 @@ contains
   nn = size(x, dim=1)
   call pack_data(a1=[int(3*nn*BYR8P, I4P)], a2=[(x(n), y(n), z(n), n=1, nn)], packed=xyz)
   call b64_encode(n=xyz, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray3_rank1_R8P
 
@@ -1539,7 +1472,6 @@ contains
   nn = size(x, dim=1)
   call pack_data(a1=[int(3*nn*BYR4P, I4P)], a2=[(x(n), y(n), z(n), n=1, nn)], packed=xyz)
   call b64_encode(n=xyz, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray3_rank1_R4P
 
@@ -1560,7 +1492,6 @@ contains
   nn = size(x, dim=1)
   call pack_data(a1=[int(3*nn*BYI8P, I4P)], a2=[(x(n), y(n), z(n), n=1, nn)], packed=xyz)
   call b64_encode(n=xyz, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray3_rank1_I8P
 
@@ -1581,7 +1512,6 @@ contains
   nn = size(x, dim=1)
   xyz = transfer([int(3*nn*BYI4P, I4P), [(x(n), y(n), z(n), n=1, nn)]], xyz)
   call b64_encode(n=xyz, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray3_rank1_I4P
 
@@ -1602,7 +1532,6 @@ contains
   nn = size(x, dim=1)
   call pack_data(a1=[int(3*nn*BYI2P, I4P)], a2=[(x(n), y(n), z(n), n=1, nn)], packed=xyz)
   call b64_encode(n=xyz, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray3_rank1_I2P
 
@@ -1623,7 +1552,6 @@ contains
   nn = size(x, dim=1)
   call pack_data(a1=[int(3*nn*BYI1P, I4P)], a2=[(x(n), y(n), z(n), n=1, nn)], packed=xyz)
   call b64_encode(n=xyz, code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray3_rank1_I1P
 
@@ -1655,7 +1583,6 @@ contains
                                                                                                 n3=1, nn3)], &
                  packed=xyz)
   call b64_encode(n=xyz,code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray3_rank3_R8P
 
@@ -1687,7 +1614,6 @@ contains
                                                                                                 n3=1, nn3)], &
                  packed=xyz)
   call b64_encode(n=xyz,code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray3_rank3_R4P
 
@@ -1719,7 +1645,6 @@ contains
                                                                                                 n3=1, nn3)], &
                  packed=xyz)
   call b64_encode(n=xyz,code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray3_rank3_I8P
 
@@ -1750,7 +1675,6 @@ contains
                                                                                          n2=1, nn2),  &
                                                                                          n3=1, nn3)]], xyz)
   call b64_encode(n=xyz,code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray3_rank3_I4P
 
@@ -1782,7 +1706,6 @@ contains
                                                                                                 n3=1, nn3)], &
                  packed=xyz)
   call b64_encode(n=xyz,code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray3_rank3_I2P
 
@@ -1814,7 +1737,6 @@ contains
                                                                                                 n3=1, nn3)], &
                  packed=xyz)
   call b64_encode(n=xyz,code=code)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction encode_binary_dataarray3_rank3_I1P
 endmodule vtk_fortran_dataarray_encoder

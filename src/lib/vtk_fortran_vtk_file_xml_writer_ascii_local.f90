@@ -101,8 +101,8 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   call self%write_end_tag(tag_name=self%topology%chars())
   call self%write_end_tag(tag_name='VTKFile')
+  call self%close_xml_file
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction finalize
 

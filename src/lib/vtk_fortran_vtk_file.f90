@@ -92,7 +92,6 @@ contains
   endselect
   error = self%xml_writer%initialize(format=format, filename=filename, mesh_topology=mesh_topology, &
                                      nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction initialize
 

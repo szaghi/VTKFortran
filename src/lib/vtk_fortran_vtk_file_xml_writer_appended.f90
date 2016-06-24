@@ -63,8 +63,9 @@ type, extends(xml_writer_abstract) :: xml_writer_appended
     procedure, pass(self) :: write_dataarray3_rank3_I1P !< Write dataarray 3, rank 3, I1P.
     procedure, pass(self) :: write_dataarray_appended   !< Write appended.
     ! private methods
-    procedure, pass(self), private :: ioffset_update    !< Update ioffset count.
-    procedure, pass(self), private :: open_scratch_file !< Open scratch file.
+    procedure, pass(self), private :: ioffset_update     !< Update ioffset count.
+    procedure, pass(self), private :: open_scratch_file  !< Open scratch file.
+    procedure, pass(self), private :: close_scratch_file !< Close scratch file.
     generic, private :: write_on_scratch_dataarray =>          &
                         write_on_scratch_dataarray1_rank1,     &
                         write_on_scratch_dataarray1_rank2,     &
@@ -162,8 +163,9 @@ contains
   call self%write_end_tag(tag_name=self%topology%chars())
   call self%write_dataarray_appended
   call self%write_end_tag(tag_name='VTKFile')
+  call self%close_xml_file
+  call self%close_scratch_file
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction finalize
 
@@ -181,7 +183,6 @@ contains
   else
     self%ioffset = self%ioffset + ((n_byte + BYI4P + 2_I4P)/3_I4P)*4_I4P
   endif
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine ioffset_update
 
@@ -199,9 +200,20 @@ contains
        action='READWRITE',   &
        status='SCRATCH',     &
        iostat=self%error)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine open_scratch_file
+
+  subroutine close_scratch_file(self)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Close scratch file.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_appended), intent(inout) :: self  !< Writer.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  close(unit=self%scratch, iostat=self%error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endsubroutine close_scratch_file
 
   ! write_dataarray methods
   function write_dataarray1_rank1_R8P(self, data_name, x, is_tuples) result(error)
@@ -224,7 +236,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank1_R8P
 
@@ -248,7 +259,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank1_R4P
 
@@ -272,7 +282,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank1_I8P
 
@@ -296,7 +305,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank1_I4P
 
@@ -320,7 +328,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank1_I2P
 
@@ -344,7 +351,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank1_I1P
 
@@ -372,7 +378,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank2_R8P
 
@@ -400,7 +405,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank2_R4P
 
@@ -428,7 +432,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank2_I8P
 
@@ -456,7 +459,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank2_I4P
 
@@ -484,7 +486,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank2_I2P
 
@@ -512,7 +513,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank2_I1P
 
@@ -540,7 +540,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank3_R8P
 
@@ -568,7 +567,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank3_R4P
 
@@ -596,7 +594,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank3_I8P
 
@@ -624,7 +621,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank3_I4P
 
@@ -652,7 +648,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank3_I2P
 
@@ -680,7 +675,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank3_I1P
 
@@ -708,7 +702,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank4_R8P
 
@@ -736,7 +729,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank4_R4P
 
@@ -764,7 +756,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank4_I8P
 
@@ -792,7 +783,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank4_I4P
 
@@ -820,7 +810,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank4_I2P
 
@@ -848,7 +837,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray1_rank4_I1P
 
@@ -874,7 +862,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray3_rank1_R8P
 
@@ -900,7 +887,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray3_rank1_R4P
 
@@ -926,7 +912,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray3_rank1_I8P
 
@@ -952,7 +937,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray3_rank1_I4P
 
@@ -978,7 +962,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray3_rank1_I2P
 
@@ -1004,7 +987,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray3_rank1_I1P
 
@@ -1030,7 +1012,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray3_rank3_R8P
 
@@ -1056,7 +1037,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray3_rank3_R4P
 
@@ -1082,7 +1062,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray3_rank3_I8P
 
@@ -1108,7 +1087,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray3_rank3_I4P
 
@@ -1134,7 +1112,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray3_rank3_I2P
 
@@ -1160,7 +1137,6 @@ contains
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray3_rank3_I1P
 
@@ -1194,7 +1170,6 @@ contains
   close(unit=self%scratch, iostat=self%error)
   write(unit=self%xml, iostat=self%error)end_rec
   call self%write_end_tag(tag_name='AppendedData')
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   contains
     subroutine read_dataarray_from_scratch
@@ -1327,7 +1302,6 @@ contains
     write(unit=self%scratch, iostat=self%error)n_byte, 'I1', nn
     write(unit=self%scratch, iostat=self%error)x
   endselect
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray1_rank1
 
@@ -1369,7 +1343,6 @@ contains
     write(unit=self%scratch, iostat=self%error)n_byte, 'I1', nn
     write(unit=self%scratch, iostat=self%error)x
   endselect
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray1_rank2
 
@@ -1411,7 +1384,6 @@ contains
     write(unit=self%scratch, iostat=self%error)n_byte, 'I1', nn
     write(unit=self%scratch, iostat=self%error)x
   endselect
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray1_rank3
 
@@ -1453,7 +1425,6 @@ contains
     write(unit=self%scratch, iostat=self%error)n_byte, 'I1', nn
     write(unit=self%scratch, iostat=self%error)x
   endselect
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray1_rank4
 
@@ -1471,7 +1442,6 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   n_byte = self%write_on_scratch_dataarray(x=[(x(n), y(n), z(n), n=1,size(x, dim=1))])
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray3_rank1_R8P
 
@@ -1489,7 +1459,6 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   n_byte = self%write_on_scratch_dataarray(x=[(x(n), y(n), z(n), n=1,size(x, dim=1))])
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray3_rank1_R4P
 
@@ -1507,7 +1476,6 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   n_byte = self%write_on_scratch_dataarray(x=[(x(n), y(n), z(n), n=1,size(x, dim=1))])
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray3_rank1_I8P
 
@@ -1525,7 +1493,6 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   n_byte = self%write_on_scratch_dataarray(x=[(x(n), y(n), z(n), n=1,size(x, dim=1))])
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray3_rank1_I4P
 
@@ -1543,7 +1510,6 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   n_byte = self%write_on_scratch_dataarray(x=[(x(n), y(n), z(n), n=1,size(x, dim=1))])
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray3_rank1_I2P
 
@@ -1561,7 +1527,6 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   n_byte = self%write_on_scratch_dataarray(x=[(x(n), y(n), z(n), n=1,size(x, dim=1))])
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray3_rank1_I1P
 
@@ -1580,7 +1545,6 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   n_byte = self%write_on_scratch_dataarray(x=[((x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray3_rank2_R8P
 
@@ -1599,7 +1563,6 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   n_byte = self%write_on_scratch_dataarray(x=[((x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray3_rank2_R4P
 
@@ -1618,7 +1581,6 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   n_byte = self%write_on_scratch_dataarray(x=[((x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray3_rank2_I8P
 
@@ -1637,7 +1599,6 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   n_byte = self%write_on_scratch_dataarray(x=[((x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray3_rank2_I4P
 
@@ -1656,7 +1617,6 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   n_byte = self%write_on_scratch_dataarray(x=[((x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray3_rank2_I2P
 
@@ -1675,7 +1635,6 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   n_byte = self%write_on_scratch_dataarray(x=[((x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray3_rank2_I1P
 
@@ -1696,7 +1655,6 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   n_byte = self%write_on_scratch_dataarray(x=[(((x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
                                            n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray3_rank3_R8P
 
@@ -1717,7 +1675,6 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   n_byte = self%write_on_scratch_dataarray(x=[(((x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
                                            n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray3_rank3_R4P
 
@@ -1738,7 +1695,6 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   n_byte = self%write_on_scratch_dataarray(x=[(((x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
                                            n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray3_rank3_I8P
 
@@ -1759,7 +1715,6 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   n_byte = self%write_on_scratch_dataarray(x=[(((x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
                                            n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray3_rank3_I4P
 
@@ -1780,7 +1735,6 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   n_byte = self%write_on_scratch_dataarray(x=[(((x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
                                            n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray3_rank3_I2P
 
@@ -1801,7 +1755,6 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   n_byte = self%write_on_scratch_dataarray(x=[(((x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
                                            n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_on_scratch_dataarray3_rank3_I1P
 endmodule vtk_fortran_vtk_file_xml_writer_appended

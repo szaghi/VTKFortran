@@ -27,6 +27,7 @@ type, abstract :: xml_writer_abstract
     ! public methods (some deferred)
     procedure,                                 pass(self) :: end_tag                      !< Return `</tag_name>` end tag.
     procedure,                                 pass(self) :: open_xml_file                !< Open xml file.
+    procedure,                                 pass(self) :: close_xml_file               !< Close xml file.
     procedure,                                 pass(self) :: self_closing_tag             !< Return self closing tag.
     procedure,                                 pass(self) :: start_tag                    !< Return start tag.
     procedure,                                 pass(self) :: tag                          !< Return tag.
@@ -732,9 +733,20 @@ contains
        action='WRITE',               &
        status='REPLACE',             &
        iostat=self%error)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine open_xml_file
+
+  subroutine close_xml_file(self)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Close XML file.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout) :: self !< Writer.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  close(unit=self%xml, iostat=self%error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endsubroutine close_xml_file
 
   ! tag methods
   elemental function self_closing_tag(self, tag_name, tag_attributes) result(tag_)
@@ -753,7 +765,6 @@ contains
   else
     tag_ = repeat(' ', self%indent)//'<'//trim(adjustl(tag_name))//'/>'//end_rec
   endif
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction self_closing_tag
 
@@ -772,7 +783,6 @@ contains
   tag_ = self%start_tag(tag_name=tag_name, tag_attributes=tag_attributes)
   if (present(tag_content)) tag_ = tag_//repeat(' ', self%indent+2)//tag_content//end_rec
   tag_ = tag_//self%end_tag(tag_name=tag_name)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction tag
 
@@ -792,7 +802,6 @@ contains
   else
     tag_ = repeat(' ', self%indent)//'<'//trim(adjustl(tag_name))//'>'//end_rec
   endif
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction start_tag
 
@@ -807,7 +816,6 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   tag_ = repeat(' ', self%indent)//'</'//trim(adjustl(tag_name))//'>'//end_rec
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction end_tag
 
@@ -824,7 +832,6 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   tag = self%self_closing_tag(tag_name=tag_name, tag_attributes=tag_attributes)
   write(unit=self%xml, iostat=self%error)tag%chars()
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine write_self_closing_tag
 
@@ -842,7 +849,6 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   tag = self%tag(tag_name=tag_name, tag_attributes=tag_attributes, tag_content=tag_content)
   write(unit=self%xml, iostat=self%error)tag%chars()
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine write_tag
 
@@ -860,7 +866,6 @@ contains
   tag = self%start_tag(tag_name=tag_name, tag_attributes=tag_attributes)
   write(unit=self%xml, iostat=self%error)tag%chars()
   self%indent = self%indent + 2
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine write_start_tag
 
@@ -877,7 +882,6 @@ contains
   self%indent = self%indent - 2
   tag = self%end_tag(tag_name=tag_name)
   write(unit=self%xml, iostat=self%error)tag%chars()
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine write_end_tag
 
@@ -898,7 +902,6 @@ contains
   endif
   write(unit=self%xml, iostat=self%error)buffer//end_rec
   self%indent = 2
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine write_header_tag
 
@@ -928,7 +931,6 @@ contains
   endselect
   write(unit=self%xml, iostat=self%error)buffer//end_rec
   self%indent = self%indent + 2
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine write_topology_tag
 
@@ -962,7 +964,6 @@ contains
       '" format="'//self%format_ch//'"'
   endif
   call self%write_tag(tag_name='DataArray', tag_attributes=tag_attributes%chars(), tag_content=data_content)
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine write_dataarray_tag
 
@@ -996,7 +997,6 @@ contains
       '" offset="'//trim(str(self%ioffset, .true.))//'"'
   endif
   call self%write_self_closing_tag(tag_name='DataArray', tag_attributes=tag_attributes%chars())
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine write_dataarray_tag_appended
 
@@ -1060,7 +1060,6 @@ contains
     endselect
   endselect
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_dataarray_location_tag
 
@@ -1091,7 +1090,6 @@ contains
     self%error = self%write_dataarray(data_name=data_name, x=[x], is_tuples=.true.)
   endselect
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_fielddata1_rank0
 
@@ -1114,7 +1112,6 @@ contains
     call self%write_end_tag(tag_name='FieldData')
   endselect
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_fielddata_tag
 
@@ -1140,7 +1137,6 @@ contains
                                trim(str(n=nz1))//' '//trim(str(n=nz2))//'"'
   call self%write_start_tag(tag_name='Piece', tag_attributes=tag_attributes%chars())
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_piece_start_tag
 
@@ -1159,7 +1155,6 @@ contains
   tag_attributes = 'NumberOfPoints="'//trim(str(n=np))//'" NumberOfCells="'//trim(str(n=nc))//'"'
   call self%write_start_tag(tag_name='Piece', tag_attributes=tag_attributes%chars())
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_piece_start_tag_unst
 
@@ -1174,7 +1169,6 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   call self%write_end_tag(tag_name='Piece')
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_piece_end_tag
 
@@ -1197,7 +1191,6 @@ contains
   error = self%write_dataarray(data_name='Z', x=z)
   call self%write_end_tag(tag_name='Coordinates')
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_rect_data3_rank1_R8P
 
@@ -1219,7 +1212,6 @@ contains
   error = self%write_dataarray(data_name='Z', x=z)
   call self%write_end_tag(tag_name='Coordinates')
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_rect_data3_rank1_R4P
 
@@ -1238,7 +1230,6 @@ contains
   error = self%write_dataarray(data_name='Points', x=xyz)
   call self%write_end_tag(tag_name='Points')
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data1_rank2_R8P
 
@@ -1256,7 +1247,6 @@ contains
   error = self%write_dataarray(data_name='Points', x=xyz)
   call self%write_end_tag(tag_name='Points')
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data1_rank2_R4P
 
@@ -1274,7 +1264,6 @@ contains
   error = self%write_dataarray(data_name='Points', x=xyz)
   call self%write_end_tag(tag_name='Points')
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data1_rank4_R8P
 
@@ -1292,7 +1281,6 @@ contains
   error = self%write_dataarray(data_name='Points', x=xyz)
   call self%write_end_tag(tag_name='Points')
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data1_rank4_R4P
 
@@ -1317,7 +1305,6 @@ contains
   error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
   call self%write_end_tag(tag_name='Points')
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data3_rank1_R8P
 
@@ -1342,7 +1329,6 @@ contains
   error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
   call self%write_end_tag(tag_name='Points')
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data3_rank1_R4P
 
@@ -1369,7 +1355,6 @@ contains
   error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
   call self%write_end_tag(tag_name='Points')
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data3_rank3_R8P
 
@@ -1396,7 +1381,6 @@ contains
   error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
   call self%write_end_tag(tag_name='Points')
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data3_rank3_R4P
 
@@ -1425,7 +1409,6 @@ contains
   error = self%write_dataarray(data_name='Points', x=xyz)
   call self%write_end_tag(tag_name='Points')
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_unst_data1_rank2_R8P
 
@@ -1453,7 +1436,6 @@ contains
   error = self%write_dataarray(data_name='Points', x=xyz)
   call self%write_end_tag(tag_name='Points')
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_unst_data1_rank2_R4P
 
@@ -1483,7 +1465,6 @@ contains
   error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
   call self%write_end_tag(tag_name='Points')
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_unst_data3_rank1_R8P
 
@@ -1513,7 +1494,6 @@ contains
   error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
   call self%write_end_tag(tag_name='Points')
   error = self%error
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_unst_data3_rank1_R4P
 
@@ -1586,7 +1566,6 @@ contains
   error = self%write_dataarray(data_name='offsets', x=offset)
   error = self%write_dataarray(data_name='types', x=cell_type)
   call self%write_end_tag(tag_name='Cells')
-  return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_connectivity
 endmodule vtk_fortran_vtk_file_xml_writer_abstract
