@@ -8,6 +8,7 @@ use penf
 use stringifor
 use vtk_file_xml_writer_abstract
 use vtk_file_xml_writer_ascii_local
+use vtk_file_xml_writer_binary_local
 use vtk_fortran_parameters
 !-----------------------------------------------------------------------------------------------------------------------------------
 
@@ -114,13 +115,14 @@ contains
   if (.not.is_b64_initialized) call b64_init
   fformat = trim(adjustl(format))
   fformat = fformat%upper()
+  if (allocated(self%xml_writer)) deallocate(self%xml_writer)
   select case(fformat%chars())
   case('ASCII')
-    if (allocated(self%xml_writer)) deallocate(self%xml_writer)
     allocate(xml_writer_ascii_local :: self%xml_writer)
   case('RAW')
   case('BINARY-APPENDED')
   case('BINARY')
+    allocate(xml_writer_binary_local :: self%xml_writer)
   endselect
   error = self%xml_writer%initialize(format=format, filename=filename, mesh_topology=mesh_topology, &
                                      nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
