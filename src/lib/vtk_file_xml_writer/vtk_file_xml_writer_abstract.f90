@@ -25,46 +25,86 @@ type, abstract :: xml_writer_abstract
   integer(I4P) :: scratch=0_I4P !< Scratch logical unit.
   integer(I4P) :: error=0_I4P   !< IO Error status.
   contains
+    ! public methods (some deferred)
+    procedure,                                 pass(self) :: end_tag                      !< Return `</tag_name>` end tag.
+    procedure,                                 pass(self) :: open_xml_file                !< Open xml file.
+    procedure,                                 pass(self) :: open_scratch_file            !< Open scratch file.
+    procedure,                                 pass(self) :: self_closing_tag             !< Return self closing tag.
+    procedure,                                 pass(self) :: start_tag                    !< Return start tag.
+    procedure,                                 pass(self) :: tag                          !< Return tag.
+    procedure,                                 pass(self) :: write_connectivity           !< Write connectivity.
+    procedure,                                 pass(self) :: write_dataarray_location_tag !< Write dataarray location tag.
+    procedure,                                 pass(self) :: write_dataarray_tag          !< Write dataarray tag.
+    procedure,                                 pass(self) :: write_dataarray_tag_appended !< Write dataarray appended tag.
+    procedure,                                 pass(self) :: write_end_tag                !< Write `</tag_name>` end tag.
+    procedure,                                 pass(self) :: write_header_tag             !< Write header tag.
+    procedure,                                 pass(self) :: write_self_closing_tag       !< Write self closing tag.
+    procedure,                                 pass(self) :: write_start_tag              !< Write start tag.
+    procedure,                                 pass(self) :: write_tag                    !< Write tag.
+    procedure,                                 pass(self) :: write_topology_tag           !< Write topology tag.
+    procedure(initialize_interface), deferred, pass(self) :: initialize                   !< Initialize writer.
+    procedure(finalize_interface),   deferred, pass(self) :: finalize                     !< Finalize writer.
+    generic :: write_dataarray =>          &
+               write_dataarray1_rank1_R8P, &
+               write_dataarray1_rank1_R4P, &
+               write_dataarray1_rank1_I8P, &
+               write_dataarray1_rank1_I4P, &
+               write_dataarray1_rank1_I2P, &
+               write_dataarray1_rank1_I1P, &
+               write_dataarray1_rank2_R8P, &
+               write_dataarray1_rank2_R4P, &
+               write_dataarray1_rank2_I8P, &
+               write_dataarray1_rank2_I4P, &
+               write_dataarray1_rank2_I2P, &
+               write_dataarray1_rank2_I1P, &
+               write_dataarray1_rank3_R8P, &
+               write_dataarray1_rank3_R4P, &
+               write_dataarray1_rank3_I8P, &
+               write_dataarray1_rank3_I4P, &
+               write_dataarray1_rank3_I2P, &
+               write_dataarray1_rank3_I1P, &
+               write_dataarray1_rank4_R8P, &
+               write_dataarray1_rank4_R4P, &
+               write_dataarray1_rank4_I8P, &
+               write_dataarray1_rank4_I4P, &
+               write_dataarray1_rank4_I2P, &
+               write_dataarray1_rank4_I1P, &
+               write_dataarray3_rank1_R8P, &
+               write_dataarray3_rank1_R4P, &
+               write_dataarray3_rank1_I8P, &
+               write_dataarray3_rank1_I4P, &
+               write_dataarray3_rank1_I2P, &
+               write_dataarray3_rank1_I1P, &
+               write_dataarray3_rank3_R8P, &
+               write_dataarray3_rank3_R4P, &
+               write_dataarray3_rank3_I8P, &
+               write_dataarray3_rank3_I4P, &
+               write_dataarray3_rank3_I2P, &
+               write_dataarray3_rank3_I1P, &
+               write_dataarray_location_tag !< Write data (array).
+    generic :: write_fielddata =>      &
+               write_fielddata1_rank0, &
+               write_fielddata_tag !< Write FieldData tag.
+    generic :: write_geo =>                    &
+               write_geo_strg_data1_rank2_R8P, &
+               write_geo_strg_data1_rank2_R4P, &
+               write_geo_strg_data1_rank4_R8P, &
+               write_geo_strg_data1_rank4_R4P, &
+               write_geo_strg_data3_rank1_R8P, &
+               write_geo_strg_data3_rank1_R4P, &
+               write_geo_strg_data3_rank3_R8P, &
+               write_geo_strg_data3_rank3_R4P, &
+               write_geo_rect_data3_rank1_R8P, &
+               write_geo_rect_data3_rank1_R4P, &
+               write_geo_unst_data1_rank2_R8P, &
+               write_geo_unst_data1_rank2_R4P, &
+               write_geo_unst_data3_rank1_R8P, &
+               write_geo_unst_data3_rank1_R4P !< Write mesh.
+    generic :: write_piece =>              &
+               write_piece_start_tag,      &
+               write_piece_start_tag_unst, &
+               write_piece_end_tag !< Write Piece start/end tag.
     ! deferred methods
-    procedure(initialize_interface), deferred, pass(self) :: initialize !< Initialize writer.
-    generic                                               :: write_dataarray =>            &
-                                                             write_dataarray_location_tag, &
-                                                             write_dataarray1_rank1_R8P,   &
-                                                             write_dataarray1_rank1_R4P,   &
-                                                             write_dataarray1_rank1_I8P,   &
-                                                             write_dataarray1_rank1_I4P,   &
-                                                             write_dataarray1_rank1_I2P,   &
-                                                             write_dataarray1_rank1_I1P,   &
-                                                             write_dataarray1_rank2_R8P,   &
-                                                             write_dataarray1_rank2_R4P,   &
-                                                             write_dataarray1_rank2_I8P,   &
-                                                             write_dataarray1_rank2_I4P,   &
-                                                             write_dataarray1_rank2_I2P,   &
-                                                             write_dataarray1_rank2_I1P,   &
-                                                             write_dataarray1_rank3_R8P,   &
-                                                             write_dataarray1_rank3_R4P,   &
-                                                             write_dataarray1_rank3_I8P,   &
-                                                             write_dataarray1_rank3_I4P,   &
-                                                             write_dataarray1_rank3_I2P,   &
-                                                             write_dataarray1_rank3_I1P,   &
-                                                             write_dataarray1_rank4_R8P,   &
-                                                             write_dataarray1_rank4_R4P,   &
-                                                             write_dataarray1_rank4_I8P,   &
-                                                             write_dataarray1_rank4_I4P,   &
-                                                             write_dataarray1_rank4_I2P,   &
-                                                             write_dataarray1_rank4_I1P,   &
-                                                             write_dataarray3_rank1_R8P,   &
-                                                             write_dataarray3_rank1_R4P,   &
-                                                             write_dataarray3_rank1_I8P,   &
-                                                             write_dataarray3_rank1_I4P,   &
-                                                             write_dataarray3_rank1_I2P,   &
-                                                             write_dataarray3_rank1_I1P,   &
-                                                             write_dataarray3_rank3_R8P,   &
-                                                             write_dataarray3_rank3_R4P,   &
-                                                             write_dataarray3_rank3_I8P,   &
-                                                             write_dataarray3_rank3_I4P,   &
-                                                             write_dataarray3_rank3_I2P,   &
-                                                             write_dataarray3_rank3_I1P !< Write data (array).
     procedure(write_dataarray1_rank1_R8P_interface), deferred, pass(self) :: write_dataarray1_rank1_R8P !< Data 1, rank 1, R8P.
     procedure(write_dataarray1_rank1_R4P_interface), deferred, pass(self) :: write_dataarray1_rank1_R4P !< Data 1, rank 1, R4P.
     procedure(write_dataarray1_rank1_I8P_interface), deferred, pass(self) :: write_dataarray1_rank1_I8P !< Data 1, rank 1, I8P.
@@ -102,37 +142,26 @@ type, abstract :: xml_writer_abstract
     procedure(write_dataarray3_rank3_I2P_interface), deferred, pass(self) :: write_dataarray3_rank3_I2P !< Data 3, rank 3, I2P.
     procedure(write_dataarray3_rank3_I1P_interface), deferred, pass(self) :: write_dataarray3_rank3_I1P !< Data 3, rank 3, I1P.
     procedure(write_dataarray_appended_interface),   deferred, pass(self) :: write_dataarray_appended   !< Write appended.
-    ! implemented methods
-    procedure, pass(self)          :: write_dataarray_location_tag !< Write `<[/]PointData>` or `<[/]CellData>` open/close tag.
-    procedure, pass(self)          :: write_dataarray_tag          !< Write `<DataArray...>...</DataArray>` tag.
-    procedure, pass(self)          :: write_dataarray_tag_appended !< Write `<DataArray.../>` appended tag.
-    procedure, pass(self)          :: open_xml_file                !< Open xml file.
-    procedure, pass(self)          :: open_scratch_file            !< Open scratch file.
-    procedure, pass(self)          :: self_closing_tag             !< Return `<tag_name.../>` self closing tag.
-    procedure, pass(self)          :: tag                          !< Return `<tag_name...>...</tag_name>` tag.
-    procedure, pass(self)          :: start_tag                    !< Return `<tag_name...>` start tag.
-    procedure, pass(self)          :: end_tag                      !< Return `</tag_name>` end tag.
-    procedure, pass(self)          :: write_self_closing_tag       !< Write `<tag_name.../>` self closing tag.
-    procedure, pass(self)          :: write_tag                    !< Write `<tag_name...>...</tag_name>` tag.
-    procedure, pass(self)          :: write_start_tag              !< Write `<tag_name...>` start tag.
-    procedure, pass(self)          :: write_end_tag                !< Write `</tag_name>` end tag.
-    procedure, pass(self)          :: write_header_tag             !< Write header tag.
-    procedure, pass(self)          :: write_topology_tag           !< Write topology tag.
-    generic                        :: write_fielddata =>          &
-                                      write_fielddata1_rank0_R8P, &
-                                      write_fielddata1_rank0_R4P, &
-                                      write_fielddata1_rank0_I8P, &
-                                      write_fielddata1_rank0_I4P, &
-                                      write_fielddata1_rank0_I2P, &
-                                      write_fielddata1_rank0_I1P, &
-                                      write_fielddata_tag        !< Write FieldData tag.
-    procedure, pass(self), private :: write_fielddata1_rank0_R8P !< Write FieldData tag (data 1, rank 0, R8P).
-    procedure, pass(self), private :: write_fielddata1_rank0_R4P !< Write FieldData tag (data 1, rank 0, R4P).
-    procedure, pass(self), private :: write_fielddata1_rank0_I8P !< Write FieldData tag (data 1, rank 0, I8P).
-    procedure, pass(self), private :: write_fielddata1_rank0_I4P !< Write FieldData tag (data 1, rank 0, I4P).
-    procedure, pass(self), private :: write_fielddata1_rank0_I2P !< Write FieldData tag (data 1, rank 0, I2P).
-    procedure, pass(self), private :: write_fielddata1_rank0_I1P !< Write FieldData tag (data 1, rank 0, I1P).
-    procedure, pass(self), private :: write_fielddata_tag        !< Write FieldData tag.
+    ! private methods
+    procedure, pass(self), private :: write_fielddata1_rank0         !< Write FieldData tag (data 1, rank 0, R8P).
+    procedure, pass(self), private :: write_fielddata_tag            !< Write FieldData tag.
+    procedure, pass(self), private :: write_geo_strg_data1_rank2_R8P !< Write **StructuredGrid** mesh (data 1, rank 2, R8P).
+    procedure, pass(self), private :: write_geo_strg_data1_rank2_R4P !< Write **StructuredGrid** mesh (data 1, rank 2, R4P).
+    procedure, pass(self), private :: write_geo_strg_data1_rank4_R8P !< Write **StructuredGrid** mesh (data 1, rank 4, R8P).
+    procedure, pass(self), private :: write_geo_strg_data1_rank4_R4P !< Write **StructuredGrid** mesh (data 1, rank 4, R4P).
+    procedure, pass(self), private :: write_geo_strg_data3_rank1_R8P !< Write **StructuredGrid** mesh (data 3, rank 1, R8P).
+    procedure, pass(self), private :: write_geo_strg_data3_rank1_R4P !< Write **StructuredGrid** mesh (data 3, rank 1, R4P).
+    procedure, pass(self), private :: write_geo_strg_data3_rank3_R8P !< Write **StructuredGrid** mesh (data 3, rank 3, R8P).
+    procedure, pass(self), private :: write_geo_strg_data3_rank3_R4P !< Write **StructuredGrid** mesh (data 3, rank 3, R4P).
+    procedure, pass(self), private :: write_geo_rect_data3_rank1_R8P !< Write **RectilinearGrid** mesh (data 3, rank 1, R8P).
+    procedure, pass(self), private :: write_geo_rect_data3_rank1_R4P !< Write **RectilinearGrid** mesh (data 3, rank 1, R4P).
+    procedure, pass(self), private :: write_geo_unst_data1_rank2_R8P !< Write **UnstructuredGrid** mesh (data 1, rank 2, R8P).
+    procedure, pass(self), private :: write_geo_unst_data1_rank2_R4P !< Write **UnstructuredGrid** mesh (data 1, rank 2, R4P).
+    procedure, pass(self), private :: write_geo_unst_data3_rank1_R8P !< Write **UnstructuredGrid** mesh (data 3, rank 1, R8P).
+    procedure, pass(self), private :: write_geo_unst_data3_rank1_R4P !< Write **UnstructuredGrid** mesh (data 3, rank 1, R4P).
+    procedure, pass(self), private :: write_piece_start_tag          !< Write `<Piece ...>` start tag.
+    procedure, pass(self), private :: write_piece_start_tag_unst     !< Write `<Piece ...>` start tag for unstructured topology.
+    procedure, pass(self), private :: write_piece_end_tag            !< Write `</Piece>` end tag.
 endtype xml_writer_abstract
 !-----------------------------------------------------------------------------------------------------------------------------------
 
@@ -157,7 +186,16 @@ abstract interface
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction initialize_interface
 
-  ! dataarray
+  function finalize_interface(self) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Finalize writer.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  import :: xml_writer_abstract, I4P
+  class(xml_writer_abstract), intent(inout) :: self  !< Writer.
+  integer(I4P)                              :: error !< Error status.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction finalize_interface
+
   function write_dataarray1_rank1_R8P_interface(self, data_name, x, is_tuples) result(error)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write `<DataArray... NumberOfComponents="1"...>...</DataArray>` tag (R8P).
@@ -1047,107 +1085,35 @@ contains
   endfunction write_dataarray_location_tag
 
   ! write_fielddata methods
-  function write_fielddata1_rank0_R8P(self, data_name, x) result(error)
+  function write_fielddata1_rank0(self, data_name, x) result(error)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write `<DataArray... NumberOfTuples="..."...>...</DataArray>` tag (R8P).
   !---------------------------------------------------------------------------------------------------------------------------------
   class(xml_writer_abstract), intent(inout) :: self      !< Writer.
   character(*),               intent(in)    :: data_name !< Data name.
-  real(R8P),                  intent(in)    :: x         !< Data variable.
+  class(*),                   intent(in)    :: x         !< Data variable.
   integer(I4P)                              :: error     !< Error status.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  self%error = self%write_dataarray(data_name=data_name, x=[x], is_tuples=.true.)
+  select type(x)
+  type is(real(R8P))
+    self%error = self%write_dataarray(data_name=data_name, x=[x], is_tuples=.true.)
+  type is(real(R4P))
+    self%error = self%write_dataarray(data_name=data_name, x=[x], is_tuples=.true.)
+  type is(integer(I8P))
+    self%error = self%write_dataarray(data_name=data_name, x=[x], is_tuples=.true.)
+  type is(integer(I4P))
+    self%error = self%write_dataarray(data_name=data_name, x=[x], is_tuples=.true.)
+  type is(integer(I2P))
+    self%error = self%write_dataarray(data_name=data_name, x=[x], is_tuples=.true.)
+  type is(integer(I1P))
+    self%error = self%write_dataarray(data_name=data_name, x=[x], is_tuples=.true.)
+  endselect
   error = self%error
   return
   !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction write_fielddata1_rank0_R8P
-
-  function write_fielddata1_rank0_R4P(self, data_name, x) result(error)
-  !---------------------------------------------------------------------------------------------------------------------------------
-  !< Write `<DataArray... NumberOfTuples="..."...>...</DataArray>` tag (R4P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-  class(xml_writer_abstract), intent(inout) :: self      !< Writer.
-  character(*),               intent(in)    :: data_name !< Data name.
-  real(R4P),                  intent(in)    :: x         !< Data variable.
-  integer(I4P)                              :: error     !< Error status.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
-  self%error = self%write_dataarray(data_name=data_name, x=[x], is_tuples=.true.)
-  error = self%error
-  return
-  !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction write_fielddata1_rank0_R4P
-
-  function write_fielddata1_rank0_I8P(self, data_name, x) result(error)
-  !---------------------------------------------------------------------------------------------------------------------------------
-  !< Write `<DataArray... NumberOfTuples="..."...>...</DataArray>` tag (I8P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-  class(xml_writer_abstract), intent(inout) :: self      !< Writer.
-  character(*),               intent(in)    :: data_name !< Data name.
-  integer(I8P),               intent(in)    :: x         !< Data variable.
-  integer(I4P)                              :: error     !< Error status.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
-  self%error = self%write_dataarray(data_name=data_name, x=[x], is_tuples=.true.)
-  error = self%error
-  return
-  !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction write_fielddata1_rank0_I8P
-
-  function write_fielddata1_rank0_I4P(self, data_name, x) result(error)
-  !---------------------------------------------------------------------------------------------------------------------------------
-  !< Write `<DataArray... NumberOfTuples="..."...>...</DataArray>` tag (I4P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-  class(xml_writer_abstract), intent(inout) :: self      !< Writer.
-  character(*),               intent(in)    :: data_name !< Data name.
-  integer(I4P),               intent(in)    :: x         !< Data variable.
-  integer(I4P)                              :: error     !< Error status.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
-  self%error = self%write_dataarray(data_name=data_name, x=[x], is_tuples=.true.)
-  error = self%error
-  return
-  !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction write_fielddata1_rank0_I4P
-
-  function write_fielddata1_rank0_I2P(self, data_name, x) result(error)
-  !---------------------------------------------------------------------------------------------------------------------------------
-  !< Write `<DataArray... NumberOfTuples="..."...>...</DataArray>` tag (I2P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-  class(xml_writer_abstract), intent(inout) :: self      !< Writer.
-  character(*),               intent(in)    :: data_name !< Data name.
-  integer(I2P),               intent(in)    :: x         !< Data variable.
-  integer(I4P)                              :: error     !< Error status.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
-  self%error = self%write_dataarray(data_name=data_name, x=[x], is_tuples=.true.)
-  error = self%error
-  return
-  !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction write_fielddata1_rank0_I2P
-
-  function write_fielddata1_rank0_I1P(self, data_name, x) result(error)
-  !---------------------------------------------------------------------------------------------------------------------------------
-  !< Write `<DataArray... NumberOfTuples="..."...>...</DataArray>` tag (I1P).
-  !---------------------------------------------------------------------------------------------------------------------------------
-  class(xml_writer_abstract), intent(inout) :: self      !< Writer.
-  character(*),               intent(in)    :: data_name !< Data name.
-  integer(I1P),               intent(in)    :: x         !< Data variable.
-  integer(I4P)                              :: error     !< Error status.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
-  self%error = self%write_dataarray(data_name=data_name, x=[x], is_tuples=.true.)
-  error = self%error
-  return
-  !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction write_fielddata1_rank0_I1P
+  endfunction write_fielddata1_rank0
 
   function write_fielddata_tag(self, action) result(error)
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1171,4 +1137,476 @@ contains
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_fielddata_tag
+
+  ! write_piece methods
+  function write_piece_start_tag(self, nx1, nx2, ny1, ny2, nz1, nz2) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write `<Piece ...>` start tag.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout) :: self           !< Writer.
+  integer(I4P),               intent(in)    :: nx1            !< Initial node of x axis.
+  integer(I4P),               intent(in)    :: nx2            !< Final node of x axis.
+  integer(I4P),               intent(in)    :: ny1            !< Initial node of y axis.
+  integer(I4P),               intent(in)    :: ny2            !< Final node of y axis.
+  integer(I4P),               intent(in)    :: nz1            !< Initial node of z axis.
+  integer(I4P),               intent(in)    :: nz2            !< Final node of z axis.
+  integer(I4P)                              :: error          !< Error status.
+  type(string)                              :: tag_attributes !< Tag attributes.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  tag_attributes = 'Extent="'//trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
+                               trim(str(n=ny1))//' '//trim(str(n=ny2))//' '// &
+                               trim(str(n=nz1))//' '//trim(str(n=nz2))//'"'
+  call self%write_start_tag(tag_name='Piece', tag_attributes=tag_attributes%chars())
+  error = self%error
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_piece_start_tag
+
+  function write_piece_start_tag_unst(self, np, nc) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write `<Piece ...>` start tag for unstructured topology.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout) :: self           !< Writer.
+  integer(I4P),               intent(in)    :: np             !< Number of points.
+  integer(I4P),               intent(in)    :: nc             !< Number of cells.
+  integer(I4P)                              :: error          !< Error status.
+  type(string)                              :: tag_attributes !< Tag attributes.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  tag_attributes = 'NumberOfPoints="'//trim(str(n=np))//'" NumberOfCells="'//trim(str(n=nc))//'"'
+  call self%write_start_tag(tag_name='Piece', tag_attributes=tag_attributes%chars())
+  error = self%error
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_piece_start_tag_unst
+
+  function write_piece_end_tag(self) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write `</Piece>` end tag.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout) :: self  !< Writer.
+  integer(I4P)                              :: error !< Error status.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  call self%write_end_tag(tag_name='Piece')
+  error = self%error
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_piece_end_tag
+
+  ! write_geo_rect methods
+  function write_geo_rect_data3_rank1_R8P(self, x, y, z) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write mesh with **RectilinearGrid** topology (data 3, rank 1, R8P).
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout) :: self  !< Writer.
+  real(R8P),                  intent(in)    :: x(1:) !< X coordinates.
+  real(R8P),                  intent(in)    :: y(1:) !< Y coordinates.
+  real(R8P),                  intent(in)    :: z(1:) !< Z coordinates.
+  integer(I4P)                              :: error !< Error status.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  call self%write_start_tag(tag_name='Coordinates')
+  error = self%write_dataarray(data_name='X', x=x)
+  error = self%write_dataarray(data_name='Y', x=y)
+  error = self%write_dataarray(data_name='Z', x=z)
+  call self%write_end_tag(tag_name='Coordinates')
+  error = self%error
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_geo_rect_data3_rank1_R8P
+
+  function write_geo_rect_data3_rank1_R4P(self, x, y, z) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write mesh with **RectilinearGrid** topology (data 3, rank 1, R4P).
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout) :: self  !< Writer.
+  real(R4P),                  intent(in)    :: x(1:) !< X coordinates.
+  real(R4P),                  intent(in)    :: y(1:) !< Y coordinates.
+  real(R4P),                  intent(in)    :: z(1:) !< Z coordinates.
+  integer(I4P)                              :: error !< Error status.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  call self%write_start_tag(tag_name='Coordinates')
+  error = self%write_dataarray(data_name='X', x=x)
+  error = self%write_dataarray(data_name='Y', x=y)
+  error = self%write_dataarray(data_name='Z', x=z)
+  call self%write_end_tag(tag_name='Coordinates')
+  error = self%error
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_geo_rect_data3_rank1_R4P
+
+  ! write_geo_strg methods
+  function write_geo_strg_data1_rank2_R8P(self, xyz) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write mesh with **StructuredGrid** topology (data 1, rank 2, R8P).
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout) :: self       !< Writer.
+  real(R8P),                  intent(in)    :: xyz(1:,1:) !< X, y, z coordinates [1:3,1:n].
+  integer(I4P)                              :: error      !< Error status.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  call self%write_start_tag(tag_name='Points')
+  error = self%write_dataarray(data_name='Points', x=xyz)
+  call self%write_end_tag(tag_name='Points')
+  error = self%error
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_geo_strg_data1_rank2_R8P
+
+  function write_geo_strg_data1_rank2_R4P(self, xyz) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write mesh with **StructuredGrid** topology (data 1, rank 2, R4P).
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout) :: self       !< Writer.
+  real(R4P),                  intent(in)    :: xyz(1:,1:) !< X, y, z coordinates [1:3,:].
+  integer(I4P)                              :: error      !< Error status.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  call self%write_start_tag(tag_name='Points')
+  error = self%write_dataarray(data_name='Points', x=xyz)
+  call self%write_end_tag(tag_name='Points')
+  error = self%error
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_geo_strg_data1_rank2_R4P
+
+  function write_geo_strg_data1_rank4_R8P(self, xyz) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write mesh with **StructuredGrid** topology (data 1, rank 4, R8P).
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout) :: self             !< Writer.
+  real(R8P),                  intent(in)    :: xyz(1:,1:,1:,1:) !< X, y, z coordinates [1:3,:,:,:].
+  integer(I4P)                              :: error            !< Error status.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  call self%write_start_tag(tag_name='Points')
+  error = self%write_dataarray(data_name='Points', x=xyz)
+  call self%write_end_tag(tag_name='Points')
+  error = self%error
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_geo_strg_data1_rank4_R8P
+
+  function write_geo_strg_data1_rank4_R4P(self, xyz) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write mesh with **StructuredGrid** topology (data 1, rank 4, R4P).
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout) :: self             !< Writer.
+  real(R4P),                  intent(in)    :: xyz(1:,1:,1:,1:) !< X, y, z coordinates [1:3,:,:,:].
+  integer(I4P)                              :: error            !< Error status.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  call self%write_start_tag(tag_name='Points')
+  error = self%write_dataarray(data_name='Points', x=xyz)
+  call self%write_end_tag(tag_name='Points')
+  error = self%error
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_geo_strg_data1_rank4_R4P
+
+  function write_geo_strg_data3_rank1_R8P(self, n, x, y, z) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write mesh with **StructuredGrid** topology (data 3, rank 1, R8P).
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout) :: self  !< Writer.
+  integer(I4P),               intent(in)    :: n     !< Number of nodes.
+  real(R8P),                  intent(in)    :: x(1:) !< X coordinates.
+  real(R8P),                  intent(in)    :: y(1:) !< Y coordinates.
+  real(R8P),                  intent(in)    :: z(1:) !< Z coordinates.
+  integer(I4P)                              :: error !< Error status.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  if ((n/=size(x, dim=1)).or.(n/=size(y, dim=1)).or.(n/=size(z, dim=1))) then
+    self%error = 1
+    return
+  endif
+  call self%write_start_tag(tag_name='Points')
+  error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
+  call self%write_end_tag(tag_name='Points')
+  error = self%error
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_geo_strg_data3_rank1_R8P
+
+  function write_geo_strg_data3_rank1_R4P(self, n, x, y, z) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write mesh with **StructuredGrid** topology (data 3, rank 1, R4P).
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout) :: self  !< Writer.
+  integer(I4P),               intent(in)    :: n     !< Number of nodes.
+  real(R4P),                  intent(in)    :: x(1:) !< X coordinates.
+  real(R4P),                  intent(in)    :: y(1:) !< Y coordinates.
+  real(R4P),                  intent(in)    :: z(1:) !< Z coordinates.
+  integer(I4P)                              :: error !< Error status.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  if ((n/=size(x, dim=1)).or.(n/=size(y, dim=1)).or.(n/=size(z, dim=1))) then
+    self%error = 1
+    return
+  endif
+  call self%write_start_tag(tag_name='Points')
+  error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
+  call self%write_end_tag(tag_name='Points')
+  error = self%error
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_geo_strg_data3_rank1_R4P
+
+  function write_geo_strg_data3_rank3_R8P(self, n, x, y, z) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write mesh with **StructuredGrid** topology (data 3, rank 3, R8P).
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout) :: self        !< Writer.
+  integer(I4P),               intent(in)    :: n           !< Number of nodes.
+  real(R8P),                  intent(in)    :: x(1:,1:,1:) !< X coordinates.
+  real(R8P),                  intent(in)    :: y(1:,1:,1:) !< Y coordinates.
+  real(R8P),                  intent(in)    :: z(1:,1:,1:) !< Z coordinates.
+  integer(I4P)                              :: error       !< Error status.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  if ((n/=size(x, dim=1)*size(x, dim=2)*size(x, dim=3)).or.&
+      (n/=size(y, dim=1)*size(y, dim=2)*size(y, dim=3)).or.&
+      (n/=size(z, dim=1)*size(z, dim=2)*size(z, dim=3))) then
+    self%error = 1
+    return
+  endif
+  call self%write_start_tag(tag_name='Points')
+  error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
+  call self%write_end_tag(tag_name='Points')
+  error = self%error
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_geo_strg_data3_rank3_R8P
+
+  function write_geo_strg_data3_rank3_R4P(self, n, x, y, z) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write mesh with **StructuredGrid** topology (data 3, rank 3, R4P).
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout) :: self        !< Writer.
+  integer(I4P),               intent(in)    :: n           !< Number of nodes.
+  real(R4P),                  intent(in)    :: x(1:,1:,1:) !< X coordinates.
+  real(R4P),                  intent(in)    :: y(1:,1:,1:) !< Y coordinates.
+  real(R4P),                  intent(in)    :: z(1:,1:,1:) !< Z coordinates.
+  integer(I4P)                              :: error       !< Error status.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  if ((n/=size(x, dim=1)*size(x, dim=2)*size(x, dim=3)).or.&
+      (n/=size(y, dim=1)*size(y, dim=2)*size(y, dim=3)).or.&
+      (n/=size(z, dim=1)*size(z, dim=2)*size(z, dim=3))) then
+    self%error = 1
+    return
+  endif
+  call self%write_start_tag(tag_name='Points')
+  error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
+  call self%write_end_tag(tag_name='Points')
+  error = self%error
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_geo_strg_data3_rank3_R4P
+
+  ! write_geo_unst methods
+  function write_geo_unst_data1_rank2_R8P(self, np, nc, xyz) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write mesh with **UnstructuredGrid** topology (data 1, rank 2, R8P).
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout) :: self       !< Writer.
+  integer(I4P),               intent(in)    :: np         !< Number of points.
+  integer(I4P),               intent(in)    :: nc         !< Number of cells.
+  real(R8P),                  intent(in)    :: xyz(1:,1:) !< X, y, z coordinates [1:3,:].
+  integer(I4P)                              :: error      !< Error status.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  if (np/=size(xyz, dim=2)) then
+    self%error = 1
+    return
+  endif
+  if (nc>np) then
+    self%error = 2
+    return
+  endif
+  call self%write_start_tag(tag_name='Points')
+  error = self%write_dataarray(data_name='Points', x=xyz)
+  call self%write_end_tag(tag_name='Points')
+  error = self%error
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_geo_unst_data1_rank2_R8P
+
+  function write_geo_unst_data1_rank2_R4P(self, np, nc, xyz) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write mesh with **UnstructuredGrid** topology (data 1, rank 2, R4P).
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout) :: self       !< Writer.
+  integer(I4P),               intent(in)    :: np         !< Number of points.
+  integer(I4P),               intent(in)    :: nc         !< Number of cells.
+  real(R4P),                  intent(in)    :: xyz(1:,1:) !< X, y, z coordinates [1:3,:].
+  integer(I4P)                              :: error      !< Error status.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  if (np/=size(xyz, dim=2)) then
+    self%error = 1
+    return
+  endif
+  if (nc>np) then
+    self%error = 2
+    return
+  endif
+  call self%write_start_tag(tag_name='Points')
+  error = self%write_dataarray(data_name='Points', x=xyz)
+  call self%write_end_tag(tag_name='Points')
+  error = self%error
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_geo_unst_data1_rank2_R4P
+
+  function write_geo_unst_data3_rank1_R8P(self, np, nc, x, y, z) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write mesh with **UnstructuredGrid** topology (data 3, rank 1, R8P).
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout) :: self  !< Writer.
+  integer(I4P),               intent(in)    :: np    !< Number of points.
+  integer(I4P),               intent(in)    :: nc    !< Number of cells.
+  real(R8P),                  intent(in)    :: x(1:) !< X coordinates.
+  real(R8P),                  intent(in)    :: y(1:) !< Y coordinates.
+  real(R8P),                  intent(in)    :: z(1:) !< Z coordinates.
+  integer(I4P)                              :: error !< Error status.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  if ((np/=size(x, dim=1)).or.(np/=size(y, dim=1)).or.(np/=size(z, dim=1))) then
+    self%error = 1
+    return
+  endif
+  if (nc>np) then
+    self%error = 2
+    return
+  endif
+  call self%write_start_tag(tag_name='Points')
+  error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
+  call self%write_end_tag(tag_name='Points')
+  error = self%error
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_geo_unst_data3_rank1_R8P
+
+  function write_geo_unst_data3_rank1_R4P(self, np, nc, x, y, z) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write mesh with **UnstructuredGrid** topology (data 3, rank 1, R4P).
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout) :: self  !< Writer.
+  integer(I4P),               intent(in)    :: np    !< Number of points.
+  integer(I4P),               intent(in)    :: nc    !< Number of cells.
+  real(R4P),                  intent(in)    :: x(1:) !< X coordinates.
+  real(R4P),                  intent(in)    :: y(1:) !< Y coordinates.
+  real(R4P),                  intent(in)    :: z(1:) !< Z coordinates.
+  integer(I4P)                              :: error !< Error status.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  if ((np/=size(x, dim=1)).or.(np/=size(y, dim=1)).or.(np/=size(z, dim=1))) then
+    self%error = 1
+    return
+  endif
+  if (nc>np) then
+    self%error = 2
+    return
+  endif
+  call self%write_start_tag(tag_name='Points')
+  error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
+  call self%write_end_tag(tag_name='Points')
+  error = self%error
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_geo_unst_data3_rank1_R4P
+
+  function write_connectivity(self, nc, connectivity, offset, cell_type) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write mesh connectivity.
+  !<
+  !< **Must** be used when unstructured grid is used, it saves the connectivity of the unstructured gird.
+  !< @note The vector **connect** must follow the VTK-XML standard. It is passed as *assumed-shape array*
+  !< because its dimensions is related to the mesh dimensions in a complex way. Its dimensions can be calculated by the following
+  !< equation: \(dc = \sum\limits_{i = 1}^{NC} {nvertex_i }\).
+  !< Note that this equation is different from the legacy one. The XML connectivity convention is quite different from the
+  !< legacy standard.
+  !< As an example suppose we have a mesh composed by 2 cells, one hexahedron (8 vertices) and one pyramid with
+  !< square basis (5 vertices) and suppose that the basis of pyramid is constitute by a face of the hexahedron and so the two cells
+  !< share 4 vertices. The above equation gives \(dc=8+5=13\). The connectivity vector for this mesh can be:
+  !<
+  !<##### first cell
+  !<+ connect(1)  = 0 identification flag of \(1^\circ\) vertex of first cell
+  !<+ connect(2)  = 1 identification flag of \(2^\circ\) vertex of first cell
+  !<+ connect(3)  = 2 identification flag of \(3^\circ\) vertex of first cell
+  !<+ connect(4)  = 3 identification flag of \(4^\circ\) vertex of first cell
+  !<+ connect(5)  = 4 identification flag of \(5^\circ\) vertex of first cell
+  !<+ connect(6)  = 5 identification flag of \(6^\circ\) vertex of first cell
+  !<+ connect(7)  = 6 identification flag of \(7^\circ\) vertex of first cell
+  !<+ connect(8)  = 7 identification flag of \(8^\circ\) vertex of first cell
+  !<
+  !<##### second cell
+  !<+ connect(9 ) = 0 identification flag of \(1^\circ\) vertex of second cell
+  !<+ connect(10) = 1 identification flag of \(2^\circ\) vertex of second cell
+  !<+ connect(11) = 2 identification flag of \(3^\circ\) vertex of second cell
+  !<+ connect(12) = 3 identification flag of \(4^\circ\) vertex of second cell
+  !<+ connect(13) = 8 identification flag of \(5^\circ\) vertex of second cell
+  !<
+  !< Therefore this connectivity vector convention is more simple than the legacy convention, now we must create also the
+  !< *offset* vector that contains the data now missing in the *connect* vector. The offset
+  !< vector for this mesh can be:
+  !<
+  !<##### first cell
+  !<+ offset(1) = 8  => summ of nodes of \(1^\circ\) cell
+  !<
+  !<##### second cell
+  !<+ offset(2) = 13 => summ of nodes of \(1^\circ\) and \(2^\circ\) cells
+  !<
+  !< The value of every cell-offset can be calculated by the following equation: \(offset_c=\sum\limits_{i=1}^{c}{nvertex_i}\)
+  !< where \(offset_c\) is the value of \(c^{th}\) cell and \(nvertex_i\) is the number of vertices of \(i^{th}\) cell.
+  !< The function VTK_CON_XML does not calculate the connectivity and offset vectors: it writes the connectivity and offset
+  !< vectors conforming the VTK-XML standard, but does not calculate them.
+  !< The vector variable *cell\_type* must conform the VTK-XML standard (see the file VTK-Standard at the
+  !< Kitware homepage) that is the same of the legacy standard. It contains the
+  !< *type* of each cells. For the above example this vector is:
+  !<
+  !<##### first cell
+  !<+ cell\_type(1) = 12 hexahedron type of first cell
+  !<
+  !<##### second cell
+  !<+ cell\_type(2) = 14 pyramid type of second cell
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout) :: self             !< Writer.
+  integer(I4P),               intent(in)    :: nc               !< Number of cells.
+  integer(I4P),               intent(in)    :: connectivity(1:) !< Mesh connectivity.
+  integer(I4P),               intent(in)    :: offset(1:)       !< Cell offset.
+  integer(I1P),               intent(in)    :: cell_type(1:)    !< VTK cell type.
+  integer(I4P)                              :: error            !< Error status.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  call self%write_start_tag(tag_name='Cells')
+  error = self%write_dataarray(data_name='connectivity', x=connectivity)
+  error = self%write_dataarray(data_name='offsets', x=offset)
+  error = self%write_dataarray(data_name='types', x=cell_type)
+  call self%write_end_tag(tag_name='Cells')
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_connectivity
 endmodule vtk_file_xml_writer_abstract

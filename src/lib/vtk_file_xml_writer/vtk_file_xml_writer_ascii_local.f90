@@ -21,6 +21,7 @@ type, extends(xml_writer_abstract) :: xml_writer_ascii_local
   contains
     ! deferred methods
     procedure, pass(self) :: initialize                 !< Initialize writer.
+    procedure, pass(self) :: finalize                   !< Finalize writer.
     procedure, pass(self) :: write_dataarray1_rank1_R8P !< Write dataarray 1, rank 1, R8P.
     procedure, pass(self) :: write_dataarray1_rank1_R4P !< Write dataarray 1, rank 1, R4P.
     procedure, pass(self) :: write_dataarray1_rank1_I8P !< Write dataarray 1, rank 1, I8P.
@@ -163,6 +164,22 @@ contains
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction initialize
+
+  function finalize(self) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Finalize writer.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_ascii_local), intent(inout) :: self  !< Writer.
+  integer(I4P)                                 :: error !< Error status.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  call self%write_end_tag(tag_name=self%topology%chars())
+  call self%write_end_tag(tag_name='VTKFile')
+  error = self%error
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction finalize
 
   ! write_dataarray methods
   function write_dataarray1_rank1_R8P(self, data_name, x, is_tuples) result(error)

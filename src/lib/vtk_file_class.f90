@@ -30,9 +30,9 @@ type :: vtk_file
   integer(I4P)                            :: xml=0_I4P     !< XML Logical unit.
   integer(I4P)                            :: scratch=0_I4P !< Scratch logical unit.
   integer(I4P)                            :: error=0_I4P   !< IO Error status.
-  class(xml_writer_abstract), allocatable :: xml_writer    !< XML writer facility.
+  class(xml_writer_abstract), allocatable, public :: xml_writer    !< XML writer facility.
   contains
-    procedure, pass(self), private :: strategy_initialize !< Initialize file (exporter).
+    procedure, pass(self) :: strategy_initialize !< Initialize file (exporter).
     include 'vtk_file_initialize_method.inc'                 ! generic                        :: initialize
     include 'vtk_file_finalize_method.inc'                   ! generic                        :: finalize
     include 'vtk_file_write_fielddata_method.inc'            ! generic                        :: write_fielddata
