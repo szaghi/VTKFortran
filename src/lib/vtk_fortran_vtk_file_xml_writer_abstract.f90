@@ -37,6 +37,8 @@ type, abstract :: xml_writer_abstract
     procedure,                                 pass(self) :: write_dataarray_tag_appended !< Write dataarray appended tag.
     procedure,                                 pass(self) :: write_end_tag                !< Write `</tag_name>` end tag.
     procedure,                                 pass(self) :: write_header_tag             !< Write header tag.
+    procedure,                                 pass(self) :: write_parallel_dataarray     !< Write parallel dataarray.
+    procedure,                                 pass(self) :: write_parallel_geo           !< Write parallel geo.
     procedure,                                 pass(self) :: write_self_closing_tag       !< Write self closing tag.
     procedure,                                 pass(self) :: write_start_tag              !< Write start tag.
     procedure,                                 pass(self) :: write_tag                    !< Write tag.
@@ -166,7 +168,7 @@ endtype xml_writer_abstract
 
 !-----------------------------------------------------------------------------------------------------------------------------------
 abstract interface
-  function initialize_interface(self, format, filename, mesh_topology, nx1, nx2, ny1, ny2, nz1, nz2) result(error)
+  function initialize_interface(self, format, filename, mesh_topology, nx1, nx2, ny1, ny2, nz1, nz2, mesh_kind) result(error)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Initialize writer.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -181,6 +183,7 @@ abstract interface
   integer(I4P),               intent(in), optional :: ny2           !< Final node of y axis.
   integer(I4P),               intent(in), optional :: nz1           !< Initial node of z axis.
   integer(I4P),               intent(in), optional :: nz2           !< Final node of z axis.
+  character(*),               intent(in), optional :: mesh_kind     !< Kind of mesh data: Float64, Float32, ecc.
   integer(I4P)                                     :: error         !< Error status.
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction initialize_interface
@@ -761,7 +764,11 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   if (present(tag_attributes)) then
-    tag_ = repeat(' ', self%indent)//'<'//trim(adjustl(tag_name))//' '//trim(adjustl(tag_attributes))//'/>'//end_rec
+    if (trim(adjustl(tag_attributes))/='') then
+      tag_ = repeat(' ', self%indent)//'<'//trim(adjustl(tag_name))//' '//trim(adjustl(tag_attributes))//'/>'//end_rec
+    else
+      tag_ = repeat(' ', self%indent)//'<'//trim(adjustl(tag_name))//'/>'//end_rec
+    endif
   else
     tag_ = repeat(' ', self%indent)//'<'//trim(adjustl(tag_name))//'/>'//end_rec
   endif
@@ -798,7 +805,11 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   if (present(tag_attributes)) then
-    tag_ = repeat(' ', self%indent)//'<'//trim(adjustl(tag_name))//' '//trim(adjustl(tag_attributes))//'>'//end_rec
+    if (trim(adjustl(tag_attributes))/='') then
+      tag_ = repeat(' ', self%indent)//'<'//trim(adjustl(tag_name))//' '//trim(adjustl(tag_attributes))//'>'//end_rec
+    else
+      tag_ = repeat(' ', self%indent)//'<'//trim(adjustl(tag_name))//'>'//end_rec
+    endif
   else
     tag_ = repeat(' ', self%indent)//'<'//trim(adjustl(tag_name))//'>'//end_rec
   endif
@@ -905,32 +916,60 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine write_header_tag
 
-  subroutine write_topology_tag(self, nx1, nx2, ny1, ny2, nz1, nz2)
+  subroutine write_topology_tag(self, nx1, nx2, ny1, ny2, nz1, nz2, mesh_kind)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write XML topology tag.
   !---------------------------------------------------------------------------------------------------------------------------------
-  class(xml_writer_abstract), intent(inout)         :: self   !< Writer.
-  integer(I4P),               intent(in),  optional :: nx1    !< Initial node of x axis.
-  integer(I4P),               intent(in),  optional :: nx2    !< Final node of x axis.
-  integer(I4P),               intent(in),  optional :: ny1    !< Initial node of y axis.
-  integer(I4P),               intent(in),  optional :: ny2    !< Final node of y axis.
-  integer(I4P),               intent(in),  optional :: nz1    !< Initial node of z axis.
-  integer(I4P),               intent(in),  optional :: nz2    !< Final node of z axis.
-  type(string)                                      :: buffer !< Buffer string.
+  class(xml_writer_abstract), intent(inout)        :: self      !< Writer.
+  integer(I4P),               intent(in), optional :: nx1       !< Initial node of x axis.
+  integer(I4P),               intent(in), optional :: nx2       !< Final node of x axis.
+  integer(I4P),               intent(in), optional :: ny1       !< Initial node of y axis.
+  integer(I4P),               intent(in), optional :: ny2       !< Final node of y axis.
+  integer(I4P),               intent(in), optional :: nz1       !< Initial node of z axis.
+  integer(I4P),               intent(in), optional :: nz2       !< Final node of z axis.
+  character(*),               intent(in), optional :: mesh_kind !< Kind of mesh data: Float64, Float32, ecc.
+  type(string)                                     :: buffer    !< Buffer string.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
   select case(self%topology%chars())
   case('RectilinearGrid', 'StructuredGrid')
-    buffer = repeat(' ', self%indent)//'<'//self%topology//' WholeExtent="'//&
-             trim(str(n=nx1))//' '//trim(str(n=nx2))//' '//                  &
-             trim(str(n=ny1))//' '//trim(str(n=ny2))//' '//                  &
-             trim(str(n=nz1))//' '//trim(str(n=nz2))//'">'
+    buffer = 'WholeExtent="'//                             &
+             trim(str(n=nx1))//' '//trim(str(n=nx2))//' '//&
+             trim(str(n=ny1))//' '//trim(str(n=ny2))//' '//&
+             trim(str(n=nz1))//' '//trim(str(n=nz2))//'"'
   case('UnstructuredGrid')
-    buffer = repeat(' ', self%indent)//'<'//self%topology//'>'
+    buffer = ''
+  case('PRectilinearGrid', 'PStructuredGrid')
+    buffer = 'WholeExtent="'//                             &
+             trim(str(n=nx1))//' '//trim(str(n=nx2))//' '//&
+             trim(str(n=ny1))//' '//trim(str(n=ny2))//' '//&
+             trim(str(n=nz1))//' '//trim(str(n=nz2))//'" GhostLevel="#"'
+  case('PUnstructuredGrid')
+    buffer = 'GhostLevel="0"'
   endselect
-  write(unit=self%xml, iostat=self%error)buffer//end_rec
-  self%indent = self%indent + 2
+  call self%write_start_tag(tag_name=self%topology%chars(), tag_attributes=buffer%chars())
+  select case(self%topology%chars())
+  case('PRectilinearGrid')
+    if (.not.present(mesh_kind)) then
+      self%error = 1
+      return
+    endif
+    call self%write_start_tag(tag_name='PCoordinates')
+    call self%write_self_closing_tag(tag_name='PDataArray', tag_attributes='type="'//trim(mesh_kind)//'"')
+    call self%write_self_closing_tag(tag_name='PDataArray', tag_attributes='type="'//trim(mesh_kind)//'"')
+    call self%write_self_closing_tag(tag_name='PDataArray', tag_attributes='type="'//trim(mesh_kind)//'"')
+    call self%write_end_tag(tag_name='PCoordinates')
+  case('PStructuredGrid', 'PUnstructuredGrid')
+    if (.not.present(mesh_kind)) then
+      self%error = 1
+      return
+    endif
+    call self%write_start_tag(tag_name='PPoints')
+    call self%write_self_closing_tag(tag_name='PDataArray', &
+                                     tag_attributes='type="'//trim(mesh_kind)//'" NumberOfComponents="3" Name="Points"')
+    call self%write_end_tag(tag_name='PPoints')
+  endselect
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine write_topology_tag
 
@@ -1045,19 +1084,19 @@ contains
   action_ = trim(adjustl(action)) ; action_ = action_%upper()
   select case(location_%chars())
   case('CELL')
-    select case(action_%chars())
-    case('OPEN')
-      call self%write_start_tag(tag_name='CellData')
-    case('CLOSE')
-      call self%write_end_tag(tag_name='CellData')
-    endselect
+    location_ = 'CellData'
   case('NODE')
-    select case(action_%chars())
-    case('OPEN')
-      call self%write_start_tag(tag_name='PointData')
-    case('CLOSE')
-      call self%write_end_tag(tag_name='PointData')
-    endselect
+    location_ = 'PointData'
+  endselect
+  select case(self%topology%chars())
+  case('PRectilinearGrid', 'PStructuredGrid', 'PUnstructuredGrid')
+    location_ = 'P'//location_
+  endselect
+  select case(action_%chars())
+  case('OPEN')
+    call self%write_start_tag(tag_name=location_%chars())
+  case('CLOSE')
+    call self%write_end_tag(tag_name=location_%chars())
   endselect
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1568,4 +1607,61 @@ contains
   call self%write_end_tag(tag_name='Cells')
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_connectivity
+
+  ! write_parallel_dataarray
+  function write_parallel_dataarray(self, data_name, data_type, number_of_components) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write parallel (partitioned) VTK-XML dataarray info.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout)        :: self                 !< Writer.
+  character(*),               intent(in)           :: data_name            !< Data name.
+  character(*),               intent(in)           :: data_type            !< Type of dataarray.
+  integer(I4P),               intent(in), optional :: number_of_components !< Number of dataarray components.
+  integer(I4P)                                     :: error                !< Error status.
+  type(string)                                     :: buffer               !< Buffer string.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  if (present(number_of_components)) then
+    buffer = 'type="'//trim(adjustl(data_type))//'" Name="'//trim(adjustl(data_name))//&
+             '" NumberOfComponents="'//trim(str(number_of_components, .true.))//'"'
+  else
+    buffer = 'type="'//trim(adjustl(data_type))//'" Name="'//trim(adjustl(data_name))//'"'
+  endif
+  call self%write_self_closing_tag(tag_name='PDataArray', tag_attributes=buffer%chars())
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_parallel_dataarray
+
+  ! write_parallel_geo
+  function write_parallel_geo(self, source, nx1, nx2, ny1, ny2, nz1, nz2) result(error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write parallel (partitioned) VTK-XML geo source file.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout)        :: self   !< Writer.
+  character(*),               intent(in)           :: source !< Source file name containing the piece data.
+  integer(I4P),               intent(in), optional :: nx1    !< Initial node of x axis.
+  integer(I4P),               intent(in), optional :: nx2    !< Final node of x axis.
+  integer(I4P),               intent(in), optional :: ny1    !< Initial node of y axis.
+  integer(I4P),               intent(in), optional :: ny2    !< Final node of y axis.
+  integer(I4P),               intent(in), optional :: nz1    !< Initial node of z axis.
+  integer(I4P),               intent(in), optional :: nz2    !< Final node of z axis.
+  integer(I4P)                                     :: error  !< Error status.
+  type(string)                                     :: buffer !< Buffer string.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  select case (self%topology%chars())
+  case('PRectilinearGrid', 'PStructuredGrid')
+    buffer = 'Extent="'// &
+             trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
+             trim(str(n=ny1))//' '//trim(str(n=ny2))//' '// &
+             trim(str(n=nz1))//' '//trim(str(n=nz2))//'" Source="'//trim(adjustl(source))//'"'
+  case('PUnstructuredGrid')
+    buffer = 'Source="'//trim(adjustl(source))//'"'
+  endselect
+  call self%write_self_closing_tag(tag_name='Piece', tag_attributes=buffer%chars())
+  return
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endfunction write_parallel_geo
 endmodule vtk_fortran_vtk_file_xml_writer_abstract

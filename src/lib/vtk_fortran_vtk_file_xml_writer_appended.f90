@@ -114,7 +114,7 @@ type, extends(xml_writer_abstract) :: xml_writer_appended
 endtype xml_writer_appended
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
-  function initialize(self, format, filename, mesh_topology, nx1, nx2, ny1, ny2, nz1, nz2) result(error)
+  function initialize(self, format, filename, mesh_topology, nx1, nx2, ny1, ny2, nz1, nz2, mesh_kind) result(error)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Initialize writer.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -128,6 +128,7 @@ contains
   integer(I4P),               intent(in), optional :: ny2           !< Final node of y axis.
   integer(I4P),               intent(in), optional :: nz1           !< Initial node of z axis.
   integer(I4P),               intent(in), optional :: nz2           !< Final node of z axis.
+  character(*),               intent(in), optional :: mesh_kind     !< Kind of mesh data: Float64, Float32, ecc.
   integer(I4P)                                     :: error         !< Error status.
   !---------------------------------------------------------------------------------------------------------------------------------
 
@@ -144,7 +145,7 @@ contains
   endselect
   call self%open_xml_file(filename=filename)
   call self%write_header_tag
-  call self%write_topology_tag(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+  call self%write_topology_tag(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, mesh_kind=mesh_kind)
   self%ioffset = 0
   call self%open_scratch_file
   error = self%error
