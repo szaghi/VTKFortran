@@ -43,7 +43,7 @@ error = a_vtk_file%initialize(format='binary', filename='XML_STRG-binary.vts', m
                               nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
 call write_data
 error = a_vtk_file%finalize()
-! binary
+! raw
 error = a_vtk_file%initialize(format='raw', filename='XML_STRG-raw.vts', mesh_topology='StructuredGrid', &
                               nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
 call write_data
@@ -57,12 +57,12 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  error = a_vtk_file%write_piece(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
-  error = a_vtk_file%write_geo(n=nn, x=x, y=y, z=z)
-  error = a_vtk_file%write_dataarray(location='node', action='open')
-  error = a_vtk_file%write_dataarray(data_name='float64_scalar', x=v, one_component=.true.)
-  error = a_vtk_file%write_dataarray(location='node', action='close')
-  error = a_vtk_file%write_piece()
+  error = a_vtk_file%xml_writer%write_piece(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+  error = a_vtk_file%xml_writer%write_geo(n=nn, x=x, y=y, z=z)
+  error = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
+  error = a_vtk_file%xml_writer%write_dataarray(data_name='float64_scalar', x=v, one_component=.true.)
+  error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
+  error = a_vtk_file%xml_writer%write_piece()
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine write_data
 endprogram write_vts

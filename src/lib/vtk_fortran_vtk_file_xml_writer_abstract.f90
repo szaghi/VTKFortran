@@ -1,5 +1,5 @@
 !< VTK file abstract XML writer.
-module vtk_file_xml_writer_abstract
+module vtk_fortran_vtk_file_xml_writer_abstract
 !-----------------------------------------------------------------------------------------------------------------------------------
 !< VTK file abstract XML writer.
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -22,13 +22,11 @@ type, abstract :: xml_writer_abstract
   integer(I4P) :: indent=0_I4P  !< Indent count.
   integer(I8P) :: ioffset=0_I8P !< Offset count.
   integer(I4P) :: xml=0_I4P     !< XML Logical unit.
-  integer(I4P) :: scratch=0_I4P !< Scratch logical unit.
   integer(I4P) :: error=0_I4P   !< IO Error status.
   contains
     ! public methods (some deferred)
     procedure,                                 pass(self) :: end_tag                      !< Return `</tag_name>` end tag.
     procedure,                                 pass(self) :: open_xml_file                !< Open xml file.
-    procedure,                                 pass(self) :: open_scratch_file            !< Open scratch file.
     procedure,                                 pass(self) :: self_closing_tag             !< Return self closing tag.
     procedure,                                 pass(self) :: start_tag                    !< Return start tag.
     procedure,                                 pass(self) :: tag                          !< Return tag.
@@ -172,17 +170,17 @@ abstract interface
   !< Initialize writer.
   !---------------------------------------------------------------------------------------------------------------------------------
   import :: xml_writer_abstract, I4P
-  class(xml_writer_abstract), intent(inout)         :: self          !< Writer.
-  character(*),               intent(in)            :: format        !< File format: ASCII.
-  character(*),               intent(in)            :: filename      !< File name.
-  character(*),               intent(in)            :: mesh_topology !< Mesh topology.
-  integer(I4P),               intent(in),  optional :: nx1           !< Initial node of x axis.
-  integer(I4P),               intent(in),  optional :: nx2           !< Final node of x axis.
-  integer(I4P),               intent(in),  optional :: ny1           !< Initial node of y axis.
-  integer(I4P),               intent(in),  optional :: ny2           !< Final node of y axis.
-  integer(I4P),               intent(in),  optional :: nz1           !< Initial node of z axis.
-  integer(I4P),               intent(in),  optional :: nz2           !< Final node of z axis.
-  integer(I4P)                                      :: error         !< Error status.
+  class(xml_writer_abstract), intent(inout)        :: self          !< Writer.
+  character(*),               intent(in)           :: format        !< File format: ASCII.
+  character(*),               intent(in)           :: filename      !< File name.
+  character(*),               intent(in)           :: mesh_topology !< Mesh topology.
+  integer(I4P),               intent(in), optional :: nx1           !< Initial node of x axis.
+  integer(I4P),               intent(in), optional :: nx2           !< Final node of x axis.
+  integer(I4P),               intent(in), optional :: ny1           !< Initial node of y axis.
+  integer(I4P),               intent(in), optional :: ny2           !< Final node of y axis.
+  integer(I4P),               intent(in), optional :: nz1           !< Initial node of z axis.
+  integer(I4P),               intent(in), optional :: nz2           !< Final node of z axis.
+  integer(I4P)                                     :: error         !< Error status.
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction initialize_interface
 
@@ -737,24 +735,6 @@ contains
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine open_xml_file
-
-  subroutine open_scratch_file(self)
-  !---------------------------------------------------------------------------------------------------------------------------------
-  !< Open scratch file.
-  !---------------------------------------------------------------------------------------------------------------------------------
-  class(xml_writer_abstract), intent(inout) :: self !< Writer.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
-  open(newunit=self%scratch, &
-       form='UNFORMATTED',   &
-       access='STREAM',      &
-       action='READWRITE',   &
-       status='SCRATCH',     &
-       iostat=self%error)
-  return
-  !---------------------------------------------------------------------------------------------------------------------------------
-  endsubroutine open_scratch_file
 
   ! tag methods
   elemental function self_closing_tag(self, tag_name, tag_attributes) result(tag_)
@@ -1609,4 +1589,4 @@ contains
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_connectivity
-endmodule vtk_file_xml_writer_abstract
+endmodule vtk_fortran_vtk_file_xml_writer_abstract
