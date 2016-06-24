@@ -6,7 +6,6 @@ module vtk_fortran_vtk_file
 use befor64
 use penf
 use stringifor
-! use vtk_fortran_parameters
 use vtk_fortran_vtk_file_xml_writer_abstract
 use vtk_fortran_vtk_file_xml_writer_appended
 use vtk_fortran_vtk_file_xml_writer_ascii_local
