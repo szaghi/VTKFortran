@@ -18,16 +18,16 @@ $EXDIRS      = src/pre-lib/ src/third_party/BeFoR64/ src/third_party/PENF/ src/t
 # main modes
 [shared-gnu]
 template  = template-shared-gnu
-target    = src/Lib_VTK_IO.f90
+target    = src/lib/vtk_fortran.f90
 build_dir = ./shared/
-output    = Lib_VTK_IO.so
+output    = libvtk_fortran.so
 mklib     = shared
 
 [static-gnu]
 template  = template-static-gnu
-target    = src/Lib_VTK_IO.f90
+target    = src/lib/vtk_fortran.f90
 build_dir = ./static/
-output    = Lib_VTK_IO.a
+output    = libvtk_fortran.a
 mklib     = static
 
 [tests-gnu]
@@ -36,16 +36,16 @@ build_dir = exe
 
 [shared-gnu-debug]
 template  = template-shared-gnu-debug
-target    = src/Lib_VTK_IO.f90
+target    = src/lib/vtk_fortran.f90
 build_dir = ./shared/
-output    = Lib_VTK_IO.so
+output    = libvtk_fortran.so
 mklib     = shared
 
 [static-gnu-debug]
 template  = template-static-gnu-debug
-target    = src/Lib_VTK_IO.f90
+target    = src/lib/vtk_fortran.f90
 build_dir = ./static/
-output    = Lib_VTK_IO.a
+output    = libvtk_fortran.a
 mklib     = static
 
 [tests-gnu-debug]
@@ -54,16 +54,16 @@ build_dir = exe
 
 [shared-intel]
 template  = template-shared-intel
-target    = src/Lib_VTK_IO.f90
+target    = src/lib/vtk_fortran.f90
 build_dir = ./shared/
-output    = Lib_VTK_IO.so
+output    = libvtk_fortran.so
 mklib     = shared
 
 [static-intel]
 template  = template-static-intel
-target    = src/Lib_VTK_IO.f90
+target    = src/lib/vtk_fortran.f90
 build_dir = ./static/
-output    = Lib_VTK_IO.a
+output    = libvtk_fortran.a
 mklib     = static
 
 [tests-intel]
@@ -72,16 +72,16 @@ build_dir = exe
 
 [shared-intel-debug]
 template  = template-shared-intel-debug
-target    = src/Lib_VTK_IO.f90
+target    = src/lib/vtk_fortran.f90
 build_dir = ./shared/
-output    = Lib_VTK_IO.so
+output    = libvtk_fortran.so
 mklib     = shared
 
 [static-intel-debug]
 template  = template-static-intel-debug
-target    = src/Lib_VTK_IO.f90
+target    = src/lib/vtk_fortran.f90
 build_dir = ./static/
-output    = Lib_VTK_IO.a
+output    = libvtk_fortran.a
 mklib     = static
 
 [tests-intel-debug]
@@ -205,22 +205,20 @@ rule = rm -rf doc/html/*
 
 [rule-maketar]
 help = Rule for making tar archive of the project
-rule = tar -czf Lib_VTK_IO.tar.gz *
+rule = tar -czf vtk_fortran.tar.gz *
 
 [rule-makecoverage]
 help   = Rule for performing coverage analysis
 rule_1 = FoBiS.py clean -mode tests-gnu
 rule_2 = FoBiS.py build -mode tests-gnu -coverage
-rule_3 = ./exe/Test_Driver -all
-rule_4 = ./exe/test_fs
-rule_5 = gcov -o tests/obj/ src/lib/*
+rule_3 = ./run_tests.sh
+rule_4 = gcov -o exe/obj/ src/lib/vtk_fortran*.f90
 
 [rule-coverage-analysis]
 help   = Rule for performing coverage analysis and saving reports in markdown
 rule_1 = FoBiS.py clean -mode tests-gnu
 rule_2 = FoBiS.py build -mode tests-gnu -coverage
-rule_3 = ./exe/Test_Driver -all
-rule_4 = ./exe/test_fs
-rule_5 = gcov -o tests/obj/ src/lib/*
-rule_6 = FoBiS.py rule -gcov_analyzer wiki/ Coverage-Analysis
-rule_7 = rm -f *.gcov XML_*vt?
+rule_3 = ./run_tests.sh
+rule_4 = gcov -o exe/obj/ src/lib/vtk_fortran*.f90
+rule_5 = FoBiS.py rule -gcov_analyzer wiki/ Coverage-Analysis
+rule_6 = rm -f *.gcov XML_*vt?

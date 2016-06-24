@@ -25,6 +25,7 @@ integer(I4P), dimension(1:np) :: v_x                                            
 integer(I4P), dimension(1:np) :: v_y                                                          !< Y component points-variable.
 integer(I4P), dimension(1:np) :: v_z                                                          !< Z component points-variable.
 integer(I4P)                  :: error                                                        !< Status error.
+logical                       :: test_passed(1)                                               !< List of passed tests.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -56,6 +57,10 @@ error = a_vtk_file%finalize()
 error = a_vtk_file%initialize(format='binary', filename='XML_UNST-binary.vtu', mesh_topology='UnstructuredGrid')
 call write_data
 error = a_vtk_file%finalize()
+
+test_passed = .true. ! nothing to test yet
+
+print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 stop
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains

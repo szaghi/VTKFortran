@@ -32,6 +32,7 @@ real(R8P)               :: y1=-2._R8P                             !< Y lower ext
 real(R8P)               :: y2=0.25_R8P                            !< Y upper extent.
 real(R8P)               :: z1=-2._R8P                             !< Z lower extent.
 real(R8P)               :: z2=0.16_R8P                            !< Z upper extent.
+logical                 :: test_passed(1)                         !< List of passed tests.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -66,6 +67,10 @@ error = a_vtk_file%xml_writer%write_dataarray(data_name='cell_value', x=v)
 error = a_vtk_file%xml_writer%write_dataarray(location='cell', action='close')
 error = a_vtk_file%xml_writer%write_piece()
 error = a_vtk_file%finalize()
+
+test_passed = .true. ! nothing to test yet
+
+print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 stop
 !-----------------------------------------------------------------------------------------------------------------------------------
 endprogram write_vtr

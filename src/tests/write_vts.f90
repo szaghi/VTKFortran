@@ -25,6 +25,7 @@ integer(I4P)            :: error                                  !< Status erro
 integer(I4P)            :: i                                      !< Counter.
 integer(I4P)            :: j                                      !< Counter.
 integer(I4P)            :: k                                      !< Counter.
+logical                 :: test_passed(1)                         !< List of passed tests.
 !-----------------------------------------------------------------------------------------------------------------------------------
 
 !-----------------------------------------------------------------------------------------------------------------------------------
@@ -48,6 +49,10 @@ error = a_vtk_file%initialize(format='raw', filename='XML_STRG-raw.vts', mesh_to
                               nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
 call write_data
 error = a_vtk_file%finalize()
+
+test_passed = .true. ! nothing to test yet
+
+print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 stop
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
