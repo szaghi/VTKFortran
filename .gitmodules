@@ -10,3 +10,7 @@
 	path = src/third_party/StringiFor
 	url = https://github.com/szaghi/StringiFor
 	branch = master
+[submodule "src/third_party/FoXy"]
+	path = src/third_party/FoXy
+	url = https://github.com/Fortran-FOSS-Programmers/FoXy
+	branch = master
