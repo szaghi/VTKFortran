@@ -44,3 +44,4 @@ openmp_speedup.lay
 .doxygenconfig.bak
 diagnostic_messages
 error_messages
+run_diff

@@ -161,9 +161,9 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  call self%write_end_tag(tag_name=self%topology%chars())
+  call self%write_end_tag(name=self%topology%chars())
   call self%write_dataarray_appended
-  call self%write_end_tag(tag_name='VTKFile')
+  call self%write_end_tag(name='VTKFile')
   call self%close_xml_file
   call self%close_scratch_file
   error = self%error
@@ -1159,7 +1159,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  call self%write_start_tag(tag_name='AppendedData', tag_attributes='encoding="'//self%encoding%chars()//'"')
+  call self%write_start_tag(name='AppendedData', attributes='encoding="'//self%encoding%chars()//'"')
   write(unit=self%xml, iostat=self%error)'_'
   endfile(unit=self%scratch, iostat=self%error)
   rewind(unit=self%scratch, iostat=self%error)
@@ -1170,7 +1170,7 @@ contains
   enddo
   close(unit=self%scratch, iostat=self%error)
   write(unit=self%xml, iostat=self%error)end_rec
-  call self%write_end_tag(tag_name='AppendedData')
+  call self%write_end_tag(name='AppendedData')
   !---------------------------------------------------------------------------------------------------------------------------------
   contains
     subroutine read_dataarray_from_scratch

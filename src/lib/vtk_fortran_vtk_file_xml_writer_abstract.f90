@@ -3,6 +3,7 @@ module vtk_fortran_vtk_file_xml_writer_abstract
 !-----------------------------------------------------------------------------------------------------------------------------------
 !< VTK file abstract XML writer.
 !-----------------------------------------------------------------------------------------------------------------------------------
+use foxy
 use penf
 use stringifor
 use vtk_fortran_parameters
@@ -17,21 +18,18 @@ public :: xml_writer_abstract
 !-----------------------------------------------------------------------------------------------------------------------------------
 type, abstract :: xml_writer_abstract
   !< VTK file abstract XML writer.
-  type(string) :: format_ch                     !< Output format, string code.
-  type(string) :: topology                      !< Mesh topology.
-  integer(I4P) :: indent=0_I4P                  !< Indent count.
-  integer(I8P) :: ioffset=0_I8P                 !< Offset count.
-  integer(I4P) :: xml=0_I4P                     !< XML Logical unit.
-  integer(I4P) :: vtm_block(1:2)=[0_I4P, 0_I4P] !< Block indexes.
-  integer(I4P) :: error=0_I4P                   !< IO Error status.
+  type(string)  :: format_ch                     !< Output format, string code.
+  type(string)  :: topology                      !< Mesh topology.
+  integer(I4P)  :: indent=0_I4P                  !< Indent count.
+  integer(I8P)  :: ioffset=0_I8P                 !< Offset count.
+  integer(I4P)  :: xml=0_I4P                     !< XML Logical unit.
+  integer(I4P)  :: vtm_block(1:2)=[0_I4P, 0_I4P] !< Block indexes.
+  integer(I4P)  :: error=0_I4P                   !< IO Error status.
+  type(xml_tag) :: tag                           !< XML tags handler.
   contains
     ! public methods (some deferred)
-    procedure,                                 pass(self) :: end_tag                      !< Return `</tag_name>` end tag.
-    procedure,                                 pass(self) :: open_xml_file                !< Open xml file.
     procedure,                                 pass(self) :: close_xml_file               !< Close xml file.
-    procedure,                                 pass(self) :: self_closing_tag             !< Return self closing tag.
-    procedure,                                 pass(self) :: start_tag                    !< Return start tag.
-    procedure,                                 pass(self) :: tag                          !< Return tag.
+    procedure,                                 pass(self) :: open_xml_file                !< Open xml file.
     procedure,                                 pass(self) :: write_connectivity           !< Write connectivity.
     procedure,                                 pass(self) :: write_dataarray_location_tag !< Write dataarray location tag.
     procedure,                                 pass(self) :: write_dataarray_tag          !< Write dataarray tag.
@@ -728,6 +726,18 @@ endinterface
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
   ! files methods
+  subroutine close_xml_file(self)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Close XML file.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout) :: self !< Writer.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  close(unit=self%xml, iostat=self%error)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endsubroutine close_xml_file
+
   subroutine open_xml_file(self, filename)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Open XML file.
@@ -747,160 +757,19 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine open_xml_file
 
-  subroutine close_xml_file(self)
-  !---------------------------------------------------------------------------------------------------------------------------------
-  !< Close XML file.
-  !---------------------------------------------------------------------------------------------------------------------------------
-  class(xml_writer_abstract), intent(inout) :: self !< Writer.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
-  close(unit=self%xml, iostat=self%error)
-  !---------------------------------------------------------------------------------------------------------------------------------
-  endsubroutine close_xml_file
-
   ! tag methods
-  elemental function self_closing_tag(self, tag_name, tag_attributes) result(tag_)
-  !---------------------------------------------------------------------------------------------------------------------------------
-  !< Return `<tag_name.../>` self closing tag.
-  !---------------------------------------------------------------------------------------------------------------------------------
-  class(xml_writer_abstract), intent(in)           :: self           !< Writer.
-  character(*),               intent(in)           :: tag_name       !< Tag name.
-  character(*),               intent(in), optional :: tag_attributes !< Tag attributes.
-  type(string)                                     :: tag_           !< The tag.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
-  if (present(tag_attributes)) then
-    if (trim(adjustl(tag_attributes))/='') then
-      tag_ = repeat(' ', self%indent)//'<'//trim(adjustl(tag_name))//' '//trim(adjustl(tag_attributes))//'/>'//end_rec
-    else
-      tag_ = repeat(' ', self%indent)//'<'//trim(adjustl(tag_name))//'/>'//end_rec
-    endif
-  else
-    tag_ = repeat(' ', self%indent)//'<'//trim(adjustl(tag_name))//'/>'//end_rec
-  endif
-  !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction self_closing_tag
-
-  elemental function tag(self, tag_name, tag_attributes, tag_content) result(tag_)
-  !---------------------------------------------------------------------------------------------------------------------------------
-  !< Return `<tag_name...>...</tag_name>` tag.
-  !---------------------------------------------------------------------------------------------------------------------------------
-  class(xml_writer_abstract), intent(in)           :: self           !< Writer.
-  character(*),               intent(in)           :: tag_name       !< Tag name.
-  character(*),               intent(in), optional :: tag_attributes !< Tag attributes.
-  character(*),               intent(in), optional :: tag_content    !< Tag content.
-  type(string)                                     :: tag_           !< The tag.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
-  tag_ = self%start_tag(tag_name=tag_name, tag_attributes=tag_attributes)
-  if (present(tag_content)) tag_ = tag_//repeat(' ', self%indent+2)//tag_content//end_rec
-  tag_ = tag_//self%end_tag(tag_name=tag_name)
-  !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction tag
-
-  elemental function start_tag(self, tag_name, tag_attributes) result(tag_)
-  !---------------------------------------------------------------------------------------------------------------------------------
-  !< Return `<tag_name...>` start tag.
-  !---------------------------------------------------------------------------------------------------------------------------------
-  class(xml_writer_abstract), intent(in)           :: self           !< Writer.
-  character(*),               intent(in)           :: tag_name       !< Tag name.
-  character(*),               intent(in), optional :: tag_attributes !< Tag attributes.
-  type(string)                                     :: tag_           !< The tag.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
-  if (present(tag_attributes)) then
-    if (trim(adjustl(tag_attributes))/='') then
-      tag_ = repeat(' ', self%indent)//'<'//trim(adjustl(tag_name))//' '//trim(adjustl(tag_attributes))//'>'//end_rec
-    else
-      tag_ = repeat(' ', self%indent)//'<'//trim(adjustl(tag_name))//'>'//end_rec
-    endif
-  else
-    tag_ = repeat(' ', self%indent)//'<'//trim(adjustl(tag_name))//'>'//end_rec
-  endif
-  !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction start_tag
-
-  elemental function end_tag(self, tag_name) result(tag_)
-  !---------------------------------------------------------------------------------------------------------------------------------
-  !< Return `</tag_name>` end tag.
-  !---------------------------------------------------------------------------------------------------------------------------------
-  class(xml_writer_abstract), intent(in) :: self     !< Writer.
-  character(*),               intent(in) :: tag_name !< Tag name.
-  type(string)                           :: tag_     !< The tag.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
-  tag_ = repeat(' ', self%indent)//'</'//trim(adjustl(tag_name))//'>'//end_rec
-  !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction end_tag
-
-  subroutine write_self_closing_tag(self, tag_name, tag_attributes)
-  !---------------------------------------------------------------------------------------------------------------------------------
-  !< Write `<tag_name.../>` self closing tag.
-  !---------------------------------------------------------------------------------------------------------------------------------
-  class(xml_writer_abstract), intent(inout)        :: self           !< Writer.
-  character(*),               intent(in)           :: tag_name       !< Tag name.
-  character(*),               intent(in), optional :: tag_attributes !< Tag attributes.
-  type(string)                                     :: tag            !< The tag.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
-  tag = self%self_closing_tag(tag_name=tag_name, tag_attributes=tag_attributes)
-  write(unit=self%xml, iostat=self%error)tag%chars()
-  !---------------------------------------------------------------------------------------------------------------------------------
-  endsubroutine write_self_closing_tag
-
-  subroutine write_tag(self, tag_name, tag_attributes, tag_content)
-  !---------------------------------------------------------------------------------------------------------------------------------
-  !< Write `<tag_name...>...</tag_name>` tag.
-  !---------------------------------------------------------------------------------------------------------------------------------
-  class(xml_writer_abstract), intent(inout)        :: self           !< Writer.
-  character(*),               intent(in)           :: tag_name       !< Tag name.
-  character(*),               intent(in), optional :: tag_attributes !< Tag attributes.
-  character(*),               intent(in), optional :: tag_content    !< Tag content.
-  type(string)                                     :: tag            !< The tag.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
-  tag = self%tag(tag_name=tag_name, tag_attributes=tag_attributes, tag_content=tag_content)
-  write(unit=self%xml, iostat=self%error)tag%chars()
-  !---------------------------------------------------------------------------------------------------------------------------------
-  endsubroutine write_tag
-
-  subroutine write_start_tag(self, tag_name, tag_attributes)
-  !---------------------------------------------------------------------------------------------------------------------------------
-  !< Write `<tag_name...>` start tag.
-  !---------------------------------------------------------------------------------------------------------------------------------
-  class(xml_writer_abstract), intent(inout)        :: self           !< Writer.
-  character(*),               intent(in)           :: tag_name       !< Tag name.
-  character(*),               intent(in), optional :: tag_attributes !< Tag attributes.
-  type(string)                                     :: tag            !< The tag.
-  !---------------------------------------------------------------------------------------------------------------------------------
-
-  !---------------------------------------------------------------------------------------------------------------------------------
-  tag = self%start_tag(tag_name=tag_name, tag_attributes=tag_attributes)
-  write(unit=self%xml, iostat=self%error)tag%chars()
-  self%indent = self%indent + 2
-  !---------------------------------------------------------------------------------------------------------------------------------
-  endsubroutine write_start_tag
-
-  subroutine write_end_tag(self, tag_name)
+  subroutine write_end_tag(self, name)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Write `</tag_name>` end tag.
   !---------------------------------------------------------------------------------------------------------------------------------
-  class(xml_writer_abstract), intent(inout) :: self     !< Writer.
-  character(*),               intent(in)    :: tag_name !< Tag name.
-  type(string)                              :: tag      !< The tag.
+  class(xml_writer_abstract), intent(inout) :: self !< Writer.
+  character(*),               intent(in)    :: name !< Tag name.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
   self%indent = self%indent - 2
-  tag = self%end_tag(tag_name=tag_name)
-  write(unit=self%xml, iostat=self%error)tag%chars()
+  self%tag = xml_tag(name=name, indent=self%indent)
+  call self%tag%write(unit=self%xml, iostat=self%error, is_indented=.true., end_record=end_rec, only_end=.true.)
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine write_end_tag
 
@@ -923,6 +792,55 @@ contains
   self%indent = 2
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine write_header_tag
+
+  subroutine write_self_closing_tag(self, name, attributes)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write `<tag_name.../>` self closing tag.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout)        :: self       !< Writer.
+  character(*),               intent(in)           :: name       !< Tag name.
+  character(*),               intent(in), optional :: attributes !< Tag attributes.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  self%tag = xml_tag(name=name, attributes_stream=attributes, sanitize_attributes_value=.true., indent=self%indent, &
+                     is_self_closing=.true.)
+  call self%tag%write(unit=self%xml, iostat=self%error, is_indented=.true., end_record=end_rec)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endsubroutine write_self_closing_tag
+
+  subroutine write_start_tag(self, name, attributes)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write `<tag_name...>` start tag.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout)        :: self       !< Writer.
+  character(*),               intent(in)           :: name       !< Tag name.
+  character(*),               intent(in), optional :: attributes !< Tag attributes.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  self%tag = xml_tag(name=name, attributes_stream=attributes, sanitize_attributes_value=.true., indent=self%indent)
+  call self%tag%write(unit=self%xml, iostat=self%error, is_indented=.true., end_record=end_rec, only_start=.true.)
+  self%indent = self%indent + 2
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endsubroutine write_start_tag
+
+  subroutine write_tag(self, name, attributes, content)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  !< Write `<tag_name...>...</tag_name>` tag.
+  !---------------------------------------------------------------------------------------------------------------------------------
+  class(xml_writer_abstract), intent(inout)        :: self       !< Writer.
+  character(*),               intent(in)           :: name       !< Tag name.
+  character(*),               intent(in), optional :: attributes !< Tag attributes.
+  character(*),               intent(in), optional :: content    !< Tag content.
+  !---------------------------------------------------------------------------------------------------------------------------------
+
+  !---------------------------------------------------------------------------------------------------------------------------------
+  self%tag = xml_tag(name=name, attributes_stream=attributes, sanitize_attributes_value=.true., content=content, &
+                     indent=self%indent)
+  call self%tag%write(unit=self%xml, iostat=self%error, is_indented=.true., is_content_indented=.true., end_record=end_rec)
+  !---------------------------------------------------------------------------------------------------------------------------------
+  endsubroutine write_tag
 
   subroutine write_topology_tag(self, nx1, nx2, ny1, ny2, nz1, nz2, mesh_kind)
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -955,7 +873,7 @@ contains
   case('PUnstructuredGrid')
     buffer = 'GhostLevel="0"'
   endselect
-  call self%write_start_tag(tag_name=self%topology%chars(), tag_attributes=buffer%chars())
+  call self%write_start_tag(name=self%topology%chars(), attributes=buffer%chars())
   ! parallel topologies peculiars
   select case(self%topology%chars())
   case('PRectilinearGrid')
@@ -963,20 +881,20 @@ contains
       self%error = 1
       return
     endif
-    call self%write_start_tag(tag_name='PCoordinates')
-    call self%write_self_closing_tag(tag_name='PDataArray', tag_attributes='type="'//trim(mesh_kind)//'"')
-    call self%write_self_closing_tag(tag_name='PDataArray', tag_attributes='type="'//trim(mesh_kind)//'"')
-    call self%write_self_closing_tag(tag_name='PDataArray', tag_attributes='type="'//trim(mesh_kind)//'"')
-    call self%write_end_tag(tag_name='PCoordinates')
+    call self%write_start_tag(name='PCoordinates')
+    call self%write_self_closing_tag(name='PDataArray', attributes='type="'//trim(mesh_kind)//'"')
+    call self%write_self_closing_tag(name='PDataArray', attributes='type="'//trim(mesh_kind)//'"')
+    call self%write_self_closing_tag(name='PDataArray', attributes='type="'//trim(mesh_kind)//'"')
+    call self%write_end_tag(name='PCoordinates')
   case('PStructuredGrid', 'PUnstructuredGrid')
     if (.not.present(mesh_kind)) then
       self%error = 1
       return
     endif
-    call self%write_start_tag(tag_name='PPoints')
-    call self%write_self_closing_tag(tag_name='PDataArray', &
-                                     tag_attributes='type="'//trim(mesh_kind)//'" NumberOfComponents="3" Name="Points"')
-    call self%write_end_tag(tag_name='PPoints')
+    call self%write_start_tag(name='PPoints')
+    call self%write_self_closing_tag(name='PDataArray', &
+                                     attributes='type="'//trim(mesh_kind)//'" NumberOfComponents="3" Name="Points"')
+    call self%write_end_tag(name='PPoints')
   endselect
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine write_topology_tag
@@ -1010,7 +928,7 @@ contains
       '" Name="'//trim(adjustl(data_name))//                              &
       '" format="'//self%format_ch//'"'
   endif
-  call self%write_tag(tag_name='DataArray', tag_attributes=tag_attributes%chars(), tag_content=data_content)
+  call self%write_tag(name='DataArray', attributes=tag_attributes%chars(), content=data_content)
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine write_dataarray_tag
 
@@ -1043,7 +961,7 @@ contains
       '" format="'//self%format_ch//                                      &
       '" offset="'//trim(str(self%ioffset, .true.))//'"'
   endif
-  call self%write_self_closing_tag(tag_name='DataArray', tag_attributes=tag_attributes%chars())
+  call self%write_self_closing_tag(name='DataArray', attributes=tag_attributes%chars())
   !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine write_dataarray_tag_appended
 
@@ -1102,9 +1020,9 @@ contains
   endselect
   select case(action_%chars())
   case('OPEN')
-    call self%write_start_tag(tag_name=location_%chars())
+    call self%write_start_tag(name=location_%chars())
   case('CLOSE')
-    call self%write_end_tag(tag_name=location_%chars())
+    call self%write_end_tag(name=location_%chars())
   endselect
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1154,9 +1072,9 @@ contains
   action_ = trim(adjustl(action)) ; action_ = action_%upper()
   select case(action_%chars())
   case('OPEN')
-    call self%write_start_tag(tag_name='FieldData')
+    call self%write_start_tag(name='FieldData')
   case('CLOSE')
-    call self%write_end_tag(tag_name='FieldData')
+    call self%write_end_tag(name='FieldData')
   endselect
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -1182,7 +1100,7 @@ contains
   tag_attributes = 'Extent="'//trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
                                trim(str(n=ny1))//' '//trim(str(n=ny2))//' '// &
                                trim(str(n=nz1))//' '//trim(str(n=nz2))//'"'
-  call self%write_start_tag(tag_name='Piece', tag_attributes=tag_attributes%chars())
+  call self%write_start_tag(name='Piece', attributes=tag_attributes%chars())
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_piece_start_tag
@@ -1200,7 +1118,7 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   tag_attributes = 'NumberOfPoints="'//trim(str(n=np))//'" NumberOfCells="'//trim(str(n=nc))//'"'
-  call self%write_start_tag(tag_name='Piece', tag_attributes=tag_attributes%chars())
+  call self%write_start_tag(name='Piece', attributes=tag_attributes%chars())
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_piece_start_tag_unst
@@ -1214,7 +1132,7 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  call self%write_end_tag(tag_name='Piece')
+  call self%write_end_tag(name='Piece')
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_piece_end_tag
@@ -1232,11 +1150,11 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  call self%write_start_tag(tag_name='Coordinates')
+  call self%write_start_tag(name='Coordinates')
   error = self%write_dataarray(data_name='X', x=x)
   error = self%write_dataarray(data_name='Y', x=y)
   error = self%write_dataarray(data_name='Z', x=z)
-  call self%write_end_tag(tag_name='Coordinates')
+  call self%write_end_tag(name='Coordinates')
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_rect_data3_rank1_R8P
@@ -1253,11 +1171,11 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  call self%write_start_tag(tag_name='Coordinates')
+  call self%write_start_tag(name='Coordinates')
   error = self%write_dataarray(data_name='X', x=x)
   error = self%write_dataarray(data_name='Y', x=y)
   error = self%write_dataarray(data_name='Z', x=z)
-  call self%write_end_tag(tag_name='Coordinates')
+  call self%write_end_tag(name='Coordinates')
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_rect_data3_rank1_R4P
@@ -1273,9 +1191,9 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  call self%write_start_tag(tag_name='Points')
+  call self%write_start_tag(name='Points')
   error = self%write_dataarray(data_name='Points', x=xyz)
-  call self%write_end_tag(tag_name='Points')
+  call self%write_end_tag(name='Points')
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data1_rank2_R8P
@@ -1290,9 +1208,9 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  call self%write_start_tag(tag_name='Points')
+  call self%write_start_tag(name='Points')
   error = self%write_dataarray(data_name='Points', x=xyz)
-  call self%write_end_tag(tag_name='Points')
+  call self%write_end_tag(name='Points')
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data1_rank2_R4P
@@ -1307,9 +1225,9 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  call self%write_start_tag(tag_name='Points')
+  call self%write_start_tag(name='Points')
   error = self%write_dataarray(data_name='Points', x=xyz)
-  call self%write_end_tag(tag_name='Points')
+  call self%write_end_tag(name='Points')
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data1_rank4_R8P
@@ -1324,9 +1242,9 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  call self%write_start_tag(tag_name='Points')
+  call self%write_start_tag(name='Points')
   error = self%write_dataarray(data_name='Points', x=xyz)
-  call self%write_end_tag(tag_name='Points')
+  call self%write_end_tag(name='Points')
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data1_rank4_R4P
@@ -1348,9 +1266,9 @@ contains
     self%error = 1
     return
   endif
-  call self%write_start_tag(tag_name='Points')
+  call self%write_start_tag(name='Points')
   error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
-  call self%write_end_tag(tag_name='Points')
+  call self%write_end_tag(name='Points')
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data3_rank1_R8P
@@ -1372,9 +1290,9 @@ contains
     self%error = 1
     return
   endif
-  call self%write_start_tag(tag_name='Points')
+  call self%write_start_tag(name='Points')
   error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
-  call self%write_end_tag(tag_name='Points')
+  call self%write_end_tag(name='Points')
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data3_rank1_R4P
@@ -1398,9 +1316,9 @@ contains
     self%error = 1
     return
   endif
-  call self%write_start_tag(tag_name='Points')
+  call self%write_start_tag(name='Points')
   error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
-  call self%write_end_tag(tag_name='Points')
+  call self%write_end_tag(name='Points')
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data3_rank3_R8P
@@ -1424,9 +1342,9 @@ contains
     self%error = 1
     return
   endif
-  call self%write_start_tag(tag_name='Points')
+  call self%write_start_tag(name='Points')
   error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
-  call self%write_end_tag(tag_name='Points')
+  call self%write_end_tag(name='Points')
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_strg_data3_rank3_R4P
@@ -1452,9 +1370,9 @@ contains
     self%error = 2
     return
   endif
-  call self%write_start_tag(tag_name='Points')
+  call self%write_start_tag(name='Points')
   error = self%write_dataarray(data_name='Points', x=xyz)
-  call self%write_end_tag(tag_name='Points')
+  call self%write_end_tag(name='Points')
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_unst_data1_rank2_R8P
@@ -1479,9 +1397,9 @@ contains
     self%error = 2
     return
   endif
-  call self%write_start_tag(tag_name='Points')
+  call self%write_start_tag(name='Points')
   error = self%write_dataarray(data_name='Points', x=xyz)
-  call self%write_end_tag(tag_name='Points')
+  call self%write_end_tag(name='Points')
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_unst_data1_rank2_R4P
@@ -1508,9 +1426,9 @@ contains
     self%error = 2
     return
   endif
-  call self%write_start_tag(tag_name='Points')
+  call self%write_start_tag(name='Points')
   error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
-  call self%write_end_tag(tag_name='Points')
+  call self%write_end_tag(name='Points')
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_unst_data3_rank1_R8P
@@ -1537,9 +1455,9 @@ contains
     self%error = 2
     return
   endif
-  call self%write_start_tag(tag_name='Points')
+  call self%write_start_tag(name='Points')
   error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
-  call self%write_end_tag(tag_name='Points')
+  call self%write_end_tag(name='Points')
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_geo_unst_data3_rank1_R4P
@@ -1608,11 +1526,11 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
-  call self%write_start_tag(tag_name='Cells')
+  call self%write_start_tag(name='Cells')
   error = self%write_dataarray(data_name='connectivity', x=connectivity)
   error = self%write_dataarray(data_name='offsets', x=offset)
   error = self%write_dataarray(data_name='types', x=cell_type)
-  call self%write_end_tag(tag_name='Cells')
+  call self%write_end_tag(name='Cells')
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_connectivity
 
@@ -1634,7 +1552,7 @@ contains
   else
     buffer = 'index="'//trim(str((self%vtm_block(1)+self%vtm_block(2)),.true.))//'"'
   endif
-  call self%write_start_tag(tag_name='Block', tag_attributes=buffer%chars())
+  call self%write_start_tag(name='Block', attributes=buffer%chars())
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_parallel_open_block
@@ -1650,7 +1568,7 @@ contains
 
   !---------------------------------------------------------------------------------------------------------------------------------
   self%vtm_block(2) = -1
-  call self%write_end_tag(tag_name='Block')
+  call self%write_end_tag(name='Block')
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_parallel_close_block
@@ -1674,7 +1592,7 @@ contains
   else
     buffer = 'type="'//trim(adjustl(data_type))//'" Name="'//trim(adjustl(data_name))//'"'
   endif
-  call self%write_self_closing_tag(tag_name='PDataArray', tag_attributes=buffer%chars())
+  call self%write_self_closing_tag(name='PDataArray', attributes=buffer%chars())
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_parallel_dataarray
@@ -1705,7 +1623,7 @@ contains
   case('PUnstructuredGrid')
     buffer = 'Source="'//trim(adjustl(source))//'"'
   endselect
-  call self%write_self_closing_tag(tag_name='Piece', tag_attributes=buffer%chars())
+  call self%write_self_closing_tag(name='Piece', attributes=buffer%chars())
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_parallel_geo
@@ -1736,17 +1654,17 @@ contains
   if (present(names)) then
     if (size(names, dim=1)==size(filenames, dim=1)) then
       do f=1, size(filenames, dim=1)
-        call self%write_self_closing_tag(tag_name='DataSet',                                     &
-                                         tag_attributes='index="'//trim(str(f-1, .true.))//      &
-                                                       '" file="'//trim(adjustl(filenames(f)))// &
-                                                       '" name="'//trim(adjustl(names(f)))//'"')
+        call self%write_self_closing_tag(name='DataSet',                                     &
+                                         attributes='index="'//trim(str(f-1, .true.))//      &
+                                                   '" file="'//trim(adjustl(filenames(f)))// &
+                                                   '" name="'//trim(adjustl(names(f)))//'"')
       enddo
     endif
   else
     do f=1,size(filenames, dim=1)
-      call self%write_self_closing_tag(tag_name='DataSet',                                &
-                                       tag_attributes='index="'//trim(str(f-1, .true.))// &
-                                                     '" file="'//trim(adjustl(filenames(f)))//'"')
+      call self%write_self_closing_tag(name='DataSet',                                &
+                                       attributes='index="'//trim(str(f-1, .true.))// &
+                                                 '" file="'//trim(adjustl(filenames(f)))//'"')
     enddo
   endif
   error = self%error
@@ -1789,17 +1707,17 @@ contains
     call buffer%split(tokens=names_, sep=delimiter_%chars())
     if (size(names_, dim=1)==size(filenames_, dim=1)) then
       do f=1, size(filenames_, dim=1)
-        call self%write_self_closing_tag(tag_name='DataSet',                                      &
-                                         tag_attributes='index="'//trim(str(f-1, .true.))//       &
-                                                       '" file="'//trim(adjustl(filenames_(f)))// &
-                                                       '" name="'//trim(adjustl(names_(f)))//'"')
+        call self%write_self_closing_tag(name='DataSet',                                      &
+                                         attributes='index="'//trim(str(f-1, .true.))//       &
+                                                   '" file="'//trim(adjustl(filenames_(f)))// &
+                                                   '" name="'//trim(adjustl(names_(f)))//'"')
       enddo
     endif
   else
     do f=1,size(filenames_, dim=1)
-      call self%write_self_closing_tag(tag_name='DataSet',                               &
-                                       tag_attributes='index="'//trim(str(f-1,.true.))// &
-                                                     '" file="'//trim(adjustl(filenames_(f)))//'"')
+      call self%write_self_closing_tag(name='DataSet',                               &
+                                       attributes='index="'//trim(str(f-1,.true.))// &
+                                                 '" file="'//trim(adjustl(filenames_(f)))//'"')
     enddo
   endif
   error = self%error
