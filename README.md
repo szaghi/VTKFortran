@@ -11,7 +11,7 @@
 
 [![Status](https://img.shields.io/badge/status-stable-brightgreen.svg)]()
 [![Build Status](https://travis-ci.org/szaghi/VTKFortran.svg?branch=master)](https://travis-ci.org/szaghi/VTKFortran)
-[![Coverage Status](https://img.shields.io/codecov/c/github/szaghi/VTKFortran.svg)](http://codecov.io/github/szaghi/VTKFortran?branch=master)
+[![Coverage Status](https://codecov.io/gh/szaghi/VTKFortran/branch/master/graph/badge.svg)](https://codecov.io/gh/szaghi/VTKFortran)
 
 ### VTKFortran, pure Fortran VTK (XML) API
 
