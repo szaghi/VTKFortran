@@ -22,7 +22,7 @@ addons:
 env:
   global:
     - MAKECOVERAGE="FoBiS.py rule -ex makecoverage"
-    - MAKEDOC="./makedoc.sh szaghi/Lib_VTK_IO"
+    - MAKEDOC="./makedoc.sh szaghi/VTKFortran"
 
 before_install:
   - git submodule update --init --recursive
