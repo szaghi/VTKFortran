@@ -1,6 +1,16 @@
 [submodule "src/third_party/PENF"]
 	path = src/third_party/PENF
 	url = https://github.com/szaghi/PENF
+	branch = master
 [submodule "src/third_party/BeFoR64"]
 	path = src/third_party/BeFoR64
 	url = https://github.com/szaghi/BeFoR64
+	branch = master
+[submodule "src/third_party/StringiFor"]
+	path = src/third_party/StringiFor
+	url = https://github.com/szaghi/StringiFor
+	branch = master
+[submodule "src/third_party/FoXy"]
+	path = src/third_party/FoXy
+	url = https://github.com/Fortran-FOSS-Programmers/FoXy
+	branch = master
