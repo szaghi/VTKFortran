@@ -1593,6 +1593,7 @@ contains
     buffer = 'type="'//trim(adjustl(data_type))//'" Name="'//trim(adjustl(data_name))//'"'
   endif
   call self%write_self_closing_tag(name='PDataArray', attributes=buffer%chars())
+  error = self%error
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_parallel_dataarray
@@ -1624,6 +1625,7 @@ contains
     buffer = 'Source="'//trim(adjustl(source))//'"'
   endselect
   call self%write_self_closing_tag(name='Piece', attributes=buffer%chars())
+  error = self%error
   return
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_parallel_geo
