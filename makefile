@@ -1,6 +1,7 @@
 #!/usr/bin/make
 #----------------------------------------------------------------------------------------------------------------------------------
 # make init
+MAKEFLAGS = -j 1
 
 # shell
 SHELL = /bin/bash
@@ -10,7 +11,9 @@ $(VERBOSE).SILENT:
 
 #----------------------------------------------------------------------------------------------------------------------------------
 # User options
+TESTS    = no
 SHARED   = no
+STATIC   = yes
 COMPILER = gnu
 DEBUG    = no
 F03STD   = no
@@ -18,6 +21,14 @@ OPTIMIZE = no
 OPENMP   = no
 MPI      = no
 R16P     = no
+ifeq "$(TESTS)" "yes"
+  RULE   = ALLTESTS
+  DEXE   = exe/
+  SHARED = no
+  STATIC = no
+else
+  RULE = VTKFortran
+endif
 #----------------------------------------------------------------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -32,7 +43,7 @@ OPT_GNU = -O3
 PRF_GNU =
 # Intel
 WRN_INT = -warn all
-CHK_INT = -check all
+CHK_INT = -check arg_temp_created -check format -check assume -check format -check output_conversion -check pointers -check stack -check uninit
 DEB_INT = -debug all -extend-source 132 -fpe-all=0 -fp-stack-check -fstack-protector-all -ftrapuv -no-ftz -traceback -gen-interfaces
 STD_INT = -std03
 OMP_INT = -openmp
@@ -41,19 +52,19 @@ PRF_INT = #-p
 #----------------------------------------------------------------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------------------------------------------------------------
-.PHONY : DEFAULTRULE
-DEFAULTRULE: Lib_VTK_IO
+firstrule : $(RULE)
 
 .PHONY : help
 help:
 	@echo
-	@echo -e '\033[1;31m Make options of Lib_VTK_IO code\033[0m'
+	@echo -e '\033[1;31m Make options of VTKFortran code\033[0m'
 	@echo
 	@echo -e '\033[1;31m Compiler choice: COMPILER=$(COMPILER)\033[0m\033[1m => default\033[0m'
 	@echo -e '\033[1;31m  COMPILER=gnu  \033[0m\033[1m => GNU gfortran          \033[0m'
 	@echo -e '\033[1;31m  COMPILER=intel\033[0m\033[1m => Intel Fortran         \033[0m'
 	@echo
 	@echo -e '\033[1;31m Compiling options\033[0m'
+	@echo -e '\033[1;31m  TESTS=yes(no)   \033[0m\033[1m => on(off) tests build            (default $(TESTS))\033[0m'
 	@echo -e '\033[1;31m  SHARED=yes(no)  \033[0m\033[1m => on(off) shared library         (default $(SHARED))\033[0m'
 	@echo -e '\033[1;31m  DEBUG=yes(no)   \033[0m\033[1m => on(off) debug                  (default $(DEBUG))\033[0m'
 	@echo -e '\033[1;31m  F03STD=yes(no)  \033[0m\033[1m => on(off) check standard fortran (default $(F03STD))\033[0m'
@@ -64,10 +75,10 @@ help:
 	@echo -e '\033[1;31m Preprocessing options\033[0m'
 	@echo -e '\033[1;31m  R16P=yes(no)\033[0m\033[1m => on(off) definition of real with "128 bit" (default $(R16P))\033[0m'
 	@echo
-	@echo -e '\033[1;31m Provided Rules: default=Lib_VTK_IO\033[0m\033[1m => compile the library\033[0m'
+	@echo -e '\033[1;31m Provided Rules: default=VTKFortran\033[0m\033[1m => compile the library\033[0m'
 	@echo -e '\033[1;31m  Defualt rule =>\033[0m\033[1m Lib_VRK_IO \033[0m'
 	@echo -e '\033[1;31m  help         =>\033[0m\033[1m printing this help message\033[0m'
-	@echo -e '\033[1;31m  Lib_VTK_IO   =>\033[0m\033[1m compile the library\033[0m'
+	@echo -e '\033[1;31m  VTKFortran   =>\033[0m\033[1m compile the library\033[0m'
 	@echo -e '\033[1;31m  Test_Driver  =>\033[0m\033[1m compile Test_Driver program\033[0m'
 	@echo -e '\033[1;31m  cleanobj     =>\033[0m\033[1m cleaning compiled object\033[0m'
 	@echo -e '\033[1;31m  cleanmod     =>\033[0m\033[1m cleaning .mod files\033[0m'
@@ -82,23 +93,24 @@ help:
 
 #----------------------------------------------------------------------------------------------------------------------------------
 # directory & file
-DSRC  = ./src/lib/ ./src/test/ ./src/third_party/BeFoR64/src/lib/ ./src/third_party/PENF/src/lib/
-DEXE  = ./
+DSRC  = src/
 ifeq "$(SHARED)" "yes"
-  DLIB    = ./shared/
-  DOBJ    = $(DLIB)obj/
-  DMOD    = $(DLIB)mod/
-  MAIN    = $(DLIB)Lib_VTK_IO.so
-  MAKELIB = $(FC) $(OPTSL) $(DOBJ)lib_vtk_io.o -o $(MAIN)
-else
-  DLIB    = ./static/
-  DOBJ    = $(DLIB)obj/
-  DMOD    = $(DLIB)mod/
-  MAIN    = $(DLIB)Lib_VTK_IO.a
+  DEXE    = ./shared/
+  MAIN    = $(DEXE)libvtkfortran.so
+  MAKELIB = $(FC) $(OPTSL) $(DOBJ)vtkfortran.o -o $(MAIN)
+endif
+ifeq "$(STATIC)" "yes"
+  DEXE    = ./static/
+  MAIN    = $(DEXE)libvtkfortran.a
   MAKELIB = ar -rcs $(MAIN) $(DOBJ)*.o ; ranlib $(MAIN)
 endif
-MKDIRS = $(DOBJ) $(DMOD) $(DLIB)
-VPATH = $(DSRC) $(DOBJ) $(DMOD)
+DOBJ    = $(DEXE)obj/
+DMOD    = $(DEXE)mod/
+MKDIRS  = $(DOBJ) $(DMOD) $(DEXE)
+VPATH   = $(DSRC) $(DOBJ) $(DMOD)
+LCEXES  = $(shell echo $(EXES) | tr '[:upper:]' '[:lower:]')
+EXESPO  = $(addsuffix .o,$(LCEXES))
+EXESOBJ = $(addprefix $(DOBJ),$(EXESPO))
 #----------------------------------------------------------------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -177,7 +189,7 @@ WHICHFC = $(shell which $(FC))
 
 PRINTCHK = "\\033[1;31m Compiler used \\033[0m\\033[1m $(COMPILER) => $(WHICHFC)\\033[0m \n\
             \\033[1;31mSource dir    \\033[0m\\033[1m $(DSRC)\\033[0m \n\
-            \\033[1;31m Lib dir       \\033[0m\\033[1m $(DLIB)\\033[0m \n\
+            \\033[1;31m Lib dir       \\033[0m\\033[1m $(DEXE)\\033[0m \n\
             \\033[1;31m Libray        \\033[0m\\033[1m $(MAIN)\\033[0m \n\
             \\033[1;31m Shared lib    \\033[0m\\033[1m $(SHARED)\\033[0m \n\
             \\033[1;31m Debug         \\033[0m\\033[1m $(DEBUG)\\033[0m \n\
@@ -192,15 +204,15 @@ PRINTCHK = "\\033[1;31m Compiler used \\033[0m\\033[1m $(COMPILER) => $(WHICHFC)
 .PHONY : PRINTINFO
 .NOTPARALLEL : PRINTINFO
 PRINTINFO:
-	@echo | tee make.log
-	@echo -e $(PRINTCHK) | tee -a make.log
-	@echo | tee -a make.log
-	@echo -e "\033[1;31m Compiling options\033[0m" | tee -a make.log
-	@echo -e "\033[1m [$(OPTSC)]\033[0m" | tee -a make.log
-	@echo | tee -a make.log
-	@echo -e "\033[1;31m Linking options \033[0m" | tee -a make.log
-	@echo -e "\033[1m [$(OPTSL)]\033[0m" | tee -a make.log
-	@echo | tee -a make.log
+	@echo
+	@echo -e $(PRINTCHK)
+	@echo
+	@echo -e "\033[1;31m Compile options\033[0m"
+	@echo -e "\033[1m [$(OPTSC)]\033[0m"
+	@echo
+	@echo -e "\033[1;31m Link options \033[0m"
+	@echo -e "\033[1m [$(OPTSL)]\033[0m"
+	@echo
 
 .PHONY : $(MKDIRS)
 $(MKDIRS):
@@ -208,18 +220,18 @@ $(MKDIRS):
 
 .PHONY : cleanobj
 cleanobj:
-	@echo -e "\033[1;31m deleting objects \033[0m" | tee make.log
+	@echo -e "\033[1;31m deleting objects \033[0m"
 	@rm -fr $(DOBJ)
 
 .PHONY : cleanmod
 cleanmod:
-	@echo -e "\033[1;31m deleting mods \033[0m" | tee -a make.log
+	@echo -e "\033[1;31m deleting mods \033[0m"
 	@rm -fr $(DMOD)
 
 .PHONY : cleanlib
 cleanlib:
-	@echo -e "\033[1;31m deleting library \033[0m" | tee -a make.log
-	@rm -rf $(DLIB)
+	@echo -e "\033[1;31m deleting library \033[0m"
+	@rm -rf $(DEXE)
 
 .PHONY : cleanmsg
 cleanmsg:
@@ -235,171 +247,215 @@ cleanall: clean cleanlib
 
 .PHONY : tar
 tar: cleanall
-	@echo -e "\033[1;31m Creating tar archive of the code \033[0m" | tee make.log
-	@mkdir -p VTK_IO
-	@cp -rL src makefile VTK_IO/
-	@tar czf VTK_IO.tgz VTK_IO
-	@rm -rf VTK_IO
+	@echo -e "\033[1;31m Create tar archive of the code \033[0m"
+	@tar --xform="s%^%VTKFortran/%" -czf VTKFortran.tar.gz *
 
 .PHONY : doc
 doc:
-	@echo -e "\033[1;31m Building documentation\033[0m" | tee make.log
+	@echo -e "\033[1;31m Build documentation\033[0m"
 	@doxygen .doxygenconfig
 #----------------------------------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------------------------------
-COTEXT  = -e "\033[1;31m Compiling\033[0m\033[1m $(<F)\033[0m"
-LITEXT  = -e "\033[1;31m Linking library\033[0m\033[1m $@\033[0m"
+COTEXT  = -e "\033[1;31m Compile\033[0m\033[1m $(<F)\033[0m"
+LITEXT  = -e "\033[1;31m Assemble\033[0m\033[1m $@\033[0m"
 
 # linking rules
-Lib_VTK_IO : PRINTINFO $(MKDIRS) $(DOBJ)penf.o $(DOBJ)lib_vtk_io.o
-	@echo $(LITEXT) | tee -a make.log
-	@$(MAKELIB) 1>> diagnostic_messages 2>> error_messages
+.NOTPARALLEL : ALLTESTS
+ALLTESTS : $(DEXE)USE_MODULE_BASIC $(DEXE)WRITE_VTS $(DEXE)WRITE_VTR $(DEXE)WRITE_VTU
 
-$(DEXE)Test_Driver : PRINTINFO $(MKDIRS) $(DOBJ)Test_Driver.o
-	@echo | tee -a make.log
-	@echo $(LITEXT) | tee -a make.log
-	@$(FC) $(OPTSL) $(DOBJ)*.o $(LIBS) -o $@ 1>> diagnostic_messages 2>> error_messages
+VTKFortran : PRINTINFO $(MKDIRS) $(DOBJ)vtk_fortran.o
+	@echo $(LITEXT)
+	@$(MAKELIB)
+
+$(DEXE)USE_MODULE_BASIC : PRINTINFO $(MKDIRS) $(DOBJ)use_module_basic.o
+	@rm -f $(filter-out $(DOBJ)use_module_basic.o,$(EXESOBJ))
+	@echo $(LITEXT)
+	@$(FC) $(OPTSL) $(DOBJ)*.o $(LIBS) -o $@
+EXES := $(EXES) USE_MODULE_BASIC
+
+$(DEXE)WRITE_VTS : PRINTINFO $(MKDIRS) $(DOBJ)write_vts.o
+	@rm -f $(filter-out $(DOBJ)write_vts.o,$(EXESOBJ))
+	@echo $(LITEXT)
+	@$(FC) $(OPTSL) $(DOBJ)*.o $(LIBS) -o $@
+EXES := $(EXES) WRITE_VTS
+
+$(DEXE)WRITE_VTR : PRINTINFO $(MKDIRS) $(DOBJ)write_vtr.o
+	@rm -f $(filter-out $(DOBJ)write_vtr.o,$(EXESOBJ))
+	@echo $(LITEXT)
+	@$(FC) $(OPTSL) $(DOBJ)*.o $(LIBS) -o $@
+EXES := $(EXES) WRITE_VTR
+
+$(DEXE)WRITE_VTU : PRINTINFO $(MKDIRS) $(DOBJ)write_vtu.o
+	@rm -f $(filter-out $(DOBJ)write_vtu.o,$(EXESOBJ))
+	@echo $(LITEXT)
+	@$(FC) $(OPTSL) $(DOBJ)*.o $(LIBS) -o $@
+EXES := $(EXES) WRITE_VTU
 
 # compiling rules
-$(DOBJ)penf.o : penf.F90
-	@echo $(COTEXT) | tee -a make.log
-	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+$(DOBJ)vtk_fortran.o: src/lib/vtk_fortran.f90 \
+	$(DOBJ)vtk_fortran_pvtk_file.o \
+	$(DOBJ)vtk_fortran_vtk_file.o \
+	$(DOBJ)vtk_fortran_vtm_file.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
 
-$(DOBJ)lib_pack_data.o : Lib_Pack_Data.f90 \
+$(DOBJ)vtk_fortran_vtm_file.o: src/lib/vtk_fortran_vtm_file.F90 \
+	$(DOBJ)befor64.o \
+	$(DOBJ)penf.o \
+	$(DOBJ)vtk_fortran_vtk_file_xml_writer_abstract.o \
+	$(DOBJ)vtk_fortran_vtk_file_xml_writer_ascii_local.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)vtk_fortran_vtk_file_xml_writer_ascii_local.o: src/lib/vtk_fortran_vtk_file_xml_writer_ascii_local.f90 \
+	$(DOBJ)penf.o \
+	$(DOBJ)stringifor.o \
+	$(DOBJ)vtk_fortran_dataarray_encoder.o \
+	$(DOBJ)vtk_fortran_vtk_file_xml_writer_abstract.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)vtk_fortran_dataarray_encoder.o: src/lib/vtk_fortran_dataarray_encoder.f90 \
+	$(DOBJ)befor64.o \
 	$(DOBJ)penf.o
-	@echo $(COTEXT) | tee -a make.log
-	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
 
-$(DOBJ)befor64.o : befor64.F90 \
-	$(DOBJ)penf.o\
-	$(DOBJ)lib_pack_data.o
-	@echo $(COTEXT) | tee -a make.log
-	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
-
-$(DOBJ)lib_vtk_io_pvtk_xml.o: Lib_VTK_IO_PVTK_XML.f90 \
-	$(DOBJ)penf.o \
+$(DOBJ)vtk_fortran_pvtk_file.o: src/lib/vtk_fortran_pvtk_file.f90 \
 	$(DOBJ)befor64.o \
-	$(DOBJ)lib_vtk_io_back_end.o
-	@echo $(COTEXT) | tee -a make.log
-	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
-
-$(DOBJ)lib_vtk_io_end_xml.o: Lib_VTK_IO_END_XML.f90 \
 	$(DOBJ)penf.o \
+	$(DOBJ)vtk_fortran_vtk_file_xml_writer_abstract.o \
+	$(DOBJ)vtk_fortran_vtk_file_xml_writer_ascii_local.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)vtk_fortran_vtk_file_xml_writer_binary_local.o: src/lib/vtk_fortran_vtk_file_xml_writer_binary_local.f90 \
+	$(DOBJ)penf.o \
+	$(DOBJ)stringifor.o \
+	$(DOBJ)vtk_fortran_dataarray_encoder.o \
+	$(DOBJ)vtk_fortran_vtk_file_xml_writer_abstract.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)vtk_fortran_vtk_file_xml_writer_abstract.o: src/lib/vtk_fortran_vtk_file_xml_writer_abstract.f90 \
+	$(DOBJ)foxy.o \
+	$(DOBJ)penf.o \
+	$(DOBJ)stringifor.o \
+	$(DOBJ)vtk_fortran_parameters.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)vtk_fortran_vtk_file_xml_writer_appended.o: src/lib/vtk_fortran_vtk_file_xml_writer_appended.f90 \
+	$(DOBJ)penf.o \
+	$(DOBJ)stringifor.o \
+	$(DOBJ)vtk_fortran_dataarray_encoder.o \
+	$(DOBJ)vtk_fortran_parameters.o \
+	$(DOBJ)vtk_fortran_vtk_file_xml_writer_abstract.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)vtk_fortran_vtk_file.o: src/lib/vtk_fortran_vtk_file.f90 \
 	$(DOBJ)befor64.o \
-	$(DOBJ)lib_vtk_io_back_end.o
-	@echo $(COTEXT) | tee -a make.log
-	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
-
-$(DOBJ)lib_vtk_io_geo.o: Lib_VTK_IO_GEO.f90 \
 	$(DOBJ)penf.o \
-	$(DOBJ)lib_vtk_io_back_end.o
-	@echo $(COTEXT) | tee -a make.log
-	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+	$(DOBJ)stringifor.o \
+	$(DOBJ)vtk_fortran_vtk_file_xml_writer_abstract.o \
+	$(DOBJ)vtk_fortran_vtk_file_xml_writer_appended.o \
+	$(DOBJ)vtk_fortran_vtk_file_xml_writer_ascii_local.o \
+	$(DOBJ)vtk_fortran_vtk_file_xml_writer_binary_local.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
 
-$(DOBJ)lib_vtk_io_ini_xml.o: Lib_VTK_IO_INI_XML.f90 \
-	$(DOBJ)penf.o \
-	$(DOBJ)befor64.o \
-	$(DOBJ)lib_vtk_io_back_end.o
-	@echo $(COTEXT) | tee -a make.log
-	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
-
-$(DOBJ)lib_vtk_io_fld_xml.o: Lib_VTK_IO_FLD_XML.f90 \
-	$(DOBJ)penf.o \
-	$(DOBJ)befor64.o \
-	$(DOBJ)lib_vtk_io_back_end.o
-	@echo $(COTEXT) | tee -a make.log
-	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
-
-$(DOBJ)lib_vtk_io_dat_var_xml.o: Lib_VTK_IO_DAT_VAR_XML.f90 \
-	$(DOBJ)penf.o \
-	$(DOBJ)befor64.o \
-	$(DOBJ)lib_vtk_io_back_end.o
-	@echo $(COTEXT) | tee -a make.log
-	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
-
-$(DOBJ)lib_vtk_io_con_xml.o: Lib_VTK_IO_CON_XML.f90 \
-	$(DOBJ)penf.o \
-	$(DOBJ)befor64.o \
-	$(DOBJ)lib_vtk_io_back_end.o
-	@echo $(COTEXT) | tee -a make.log
-	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
-
-$(DOBJ)lib_vtk_io_back_end.o: Lib_VTK_IO_Back_End.f90 \
+$(DOBJ)vtk_fortran_parameters.o: src/lib/vtk_fortran_parameters.f90 \
 	$(DOBJ)penf.o
-	@echo $(COTEXT) | tee -a make.log
-	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
 
-$(DOBJ)lib_vtk_io_ini.o: Lib_VTK_IO_INI.f90 \
+$(DOBJ)stringifor.o: src/third_party/StringiFor/src/lib/stringifor.F90 \
 	$(DOBJ)penf.o \
+	$(DOBJ)stringifor_string_t.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)stringifor_string_t.o: src/third_party/StringiFor/src/lib/stringifor_string_t.F90 \
 	$(DOBJ)befor64.o \
-	$(DOBJ)lib_vtk_io_back_end.o
-	@echo $(COTEXT) | tee -a make.log
-	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+	$(DOBJ)penf.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
 
-$(DOBJ)lib_vtk_io_pvd_xml.o: Lib_VTK_IO_PVD_XML.f90 \
-	$(DOBJ)penf.o \
-	$(DOBJ)befor64.o \
-	$(DOBJ)lib_vtk_io_back_end.o
-	@echo $(COTEXT) | tee -a make.log
-	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+$(DOBJ)penf.o: src/third_party/BeFoR64/src/lib/penf.F90 \
+	$(DOBJ)penf_global_parameters_variables.o \
+	$(DOBJ)penf_b_size.o \
+	$(DOBJ)penf_stringify.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+	@rm -f $(DOBJ)penf_global_parameters_variables.o $(DOBJ)penf_b_size.o $(DOBJ)penf_stringify.o
 
-$(DOBJ)lib_vtk_io_geo_xml.o: Lib_VTK_IO_GEO_XML.f90 \
-	$(DOBJ)penf.o \
-	$(DOBJ)befor64.o \
-	$(DOBJ)lib_vtk_io_back_end.o
-	@echo $(COTEXT) | tee -a make.log
-	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+$(DOBJ)befor64_pack_data_m.o: src/third_party/BeFoR64/src/lib/befor64_pack_data_m.F90 \
+	$(DOBJ)penf.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
 
-$(DOBJ)lib_vtk_io_end.o: Lib_VTK_IO_END.f90 \
+$(DOBJ)befor64.o: src/third_party/BeFoR64/src/lib/befor64.F90 \
 	$(DOBJ)penf.o \
-	$(DOBJ)lib_vtk_io_back_end.o
-	@echo $(COTEXT) | tee -a make.log
-	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+	$(DOBJ)befor64_pack_data_m.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
 
-$(DOBJ)lib_vtk_io_con.o: Lib_VTK_IO_CON.f90 \
-	$(DOBJ)penf.o \
-	$(DOBJ)lib_vtk_io_back_end.o
-	@echo $(COTEXT) | tee -a make.log
-	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+$(DOBJ)penf_b_size.o: src/third_party/PENF/src/lib/penf_b_size.F90 \
+	$(DOBJ)penf_global_parameters_variables.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
 
-$(DOBJ)lib_vtk_io_dat_var.o: Lib_VTK_IO_DAT_VAR.f90 \
-	$(DOBJ)penf.o \
-	$(DOBJ)lib_vtk_io_back_end.o
-	@echo $(COTEXT) | tee -a make.log
-	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+$(DOBJ)penf_stringify.o: src/third_party/PENF/src/lib/penf_stringify.F90 \
+	$(DOBJ)penf_b_size.o \
+	$(DOBJ)penf_global_parameters_variables.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
 
-$(DOBJ)lib_vtk_io_vtm_xml.o: Lib_VTK_IO_VTM_XML.f90 \
-	$(DOBJ)penf.o \
-	$(DOBJ)befor64.o \
-	$(DOBJ)lib_vtk_io_back_end.o
-	@echo $(COTEXT) | tee -a make.log
-	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+$(DOBJ)penf_global_parameters_variables.o: src/third_party/PENF/src/lib/penf_global_parameters_variables.F90
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
 
-$(DOBJ)lib_vtk_io.o : Lib_VTK_IO.f90 \
-	$(DOBJ)penf.o \
-	$(DOBJ)befor64.o \
-	$(DOBJ)lib_vtk_io_back_end.o \
-	$(DOBJ)lib_vtk_io_ini_xml.o \
-	$(DOBJ)lib_vtk_io_fld_xml.o \
-	$(DOBJ)lib_vtk_io_geo_xml.o \
-	$(DOBJ)lib_vtk_io_con_xml.o \
-	$(DOBJ)lib_vtk_io_dat_var_xml.o \
-	$(DOBJ)lib_vtk_io_end_xml.o \
-	$(DOBJ)lib_vtk_io_vtm_xml.o \
-	$(DOBJ)lib_vtk_io_pvtk_xml.o \
-	$(DOBJ)lib_vtk_io_pvd_xml.o \
-	$(DOBJ)lib_vtk_io_ini.o \
-	$(DOBJ)lib_vtk_io_geo.o \
-	$(DOBJ)lib_vtk_io_con.o \
-	$(DOBJ)lib_vtk_io_dat_var.o \
-	$(DOBJ)lib_vtk_io_end.o
-	@echo $(COTEXT) | tee -a make.log
-	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+$(DOBJ)foxy_xml_file.o: src/third_party/FoXy/src/lib/foxy_xml_file.f90 \
+	$(DOBJ)foxy_xml_tag.o \
+	$(DOBJ)penf.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
 
-$(DOBJ)Test_Driver.o : Test_Driver.f90 \
+$(DOBJ)foxy_xml_tag.o: src/third_party/FoXy/src/lib/foxy_xml_tag.f90 \
 	$(DOBJ)penf.o \
-	$(DOBJ)lib_vtk_io.o
-	@echo $(COTEXT) | tee -a make.log
-	@$(FC) $(OPTSC) $< -o $@ 1>> diagnostic_messages 2>> error_messages
+	$(DOBJ)stringifor.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)foxy.o: src/third_party/FoXy/src/lib/foxy.f90 \
+	$(DOBJ)foxy_xml_file.o \
+	$(DOBJ)foxy_xml_tag.o \
+	$(DOBJ)penf.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)use_module_basic.o: src/tests/use_module_basic.f90 \
+	$(DOBJ)vtk_fortran.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)write_vts.o: src/tests/write_vts.f90 \
+	$(DOBJ)penf.o \
+	$(DOBJ)vtk_fortran.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)write_vtr.o: src/tests/write_vtr.f90 \
+	$(DOBJ)penf.o \
+	$(DOBJ)vtk_fortran.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)write_vtu.o: src/tests/write_vtu.f90 \
+	$(DOBJ)penf.o \
+	$(DOBJ)vtk_fortran.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
 #-----------------------------------------------------------------------------------------------------------------------------------
