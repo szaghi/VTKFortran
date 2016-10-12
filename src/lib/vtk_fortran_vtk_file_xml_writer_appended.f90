@@ -850,7 +850,7 @@ contains
   real(R8P),                  intent(in)           :: x(1:)        !< X component of data variable.
   real(R8P),                  intent(in)           :: y(1:)        !< Y component of data variable.
   real(R8P),                  intent(in)           :: z(1:)        !< Z component of data variable.
-  logical,                    intent(in), optional :: is_tuples    !< Use "NumberOfTuples" instead of "NumberOfComponents" attribute.
+  logical,                    intent(in), optional :: is_tuples    !< Use "NumberOfTuples" instead "NumberOfComponents" attribute.
   integer(I4P)                                     :: error        !< Error status.
   character(len=:), allocatable                    :: data_type    !< Data type.
   integer(I4P)                                     :: n_components !< Number of components.
