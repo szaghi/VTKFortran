@@ -18,14 +18,14 @@ public :: xml_writer_abstract
 !-----------------------------------------------------------------------------------------------------------------------------------
 type, abstract :: xml_writer_abstract
   !< VTK file abstract XML writer.
-  type(string)  :: format_ch                     !< Output format, string code.
-  type(string)  :: topology                      !< Mesh topology.
-  integer(I4P)  :: indent=0_I4P                  !< Indent count.
-  integer(I8P)  :: ioffset=0_I8P                 !< Offset count.
-  integer(I4P)  :: xml=0_I4P                     !< XML Logical unit.
-  integer(I4P)  :: vtm_block(1:2)=[0_I4P, 0_I4P] !< Block indexes.
-  integer(I4P)  :: error=0_I4P                   !< IO Error status.
-  type(xml_tag) :: tag                           !< XML tags handler.
+  type(string)  :: format_ch                       !< Output format, string code.
+  type(string)  :: topology                        !< Mesh topology.
+  integer(I4P)  :: indent=0_I4P                    !< Indent count.
+  integer(I8P)  :: ioffset=0_I8P                   !< Offset count.
+  integer(I4P)  :: xml=0_I4P                       !< XML Logical unit.
+  integer(I4P)  :: vtm_block(1:2)=[-1_I4P, -1_I4P] !< Block indexes.
+  integer(I4P)  :: error=0_I4P                     !< IO Error status.
+  type(xml_tag) :: tag                             !< XML tags handler.
   contains
     ! public methods (some deferred)
     procedure,                                 pass(self) :: close_xml_file               !< Close xml file.
@@ -784,9 +784,9 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   buffer = '<?xml version="1.0"?>'//end_rec
   if (endian==endianL) then
-    buffer = buffer//'<VTKFile type="'//self%topology//'" version="0.1" byte_order="LittleEndian">'
+    buffer = buffer//'<VTKFile type="'//self%topology//'" version="1.0" byte_order="LittleEndian">'
   else
-    buffer = buffer//'<VTKFile type="'//self%topology//'" version="0.1" byte_order="BigEndian">'
+    buffer = buffer//'<VTKFile type="'//self%topology//'" version="1.0" byte_order="BigEndian">'
   endif
   write(unit=self%xml, iostat=self%error)buffer//end_rec
   self%indent = 2
@@ -1548,22 +1548,21 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   self%vtm_block = self%vtm_block + 1
   if (present(name)) then
-    buffer = 'index="'//trim(str((self%vtm_block(1)+self%vtm_block(2)),.true.))//'" name="'//trim(adjustl(name))//'"'
+    buffer = 'index="'//trim(str((self%vtm_block(1) + self%vtm_block(2)),.true.))//'" name="'//trim(adjustl(name))//'"'
   else
-    buffer = 'index="'//trim(str((self%vtm_block(1)+self%vtm_block(2)),.true.))//'"'
+    buffer = 'index="'//trim(str((self%vtm_block(1) + self%vtm_block(2)),.true.))//'"'
   endif
   call self%write_start_tag(name='Block', attributes=buffer%chars())
   error = self%error
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction write_parallel_open_block
 
-  function write_parallel_close_block(self, name) result(error)
+  function write_parallel_close_block(self) result(error)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Close a block container.
   !---------------------------------------------------------------------------------------------------------------------------------
-  class(xml_writer_abstract), intent(inout)        :: self  !< Writer.
-  character(*),               intent(in), optional :: name  !< Block name.
-  integer(I4P)                                     :: error !< Error status.
+  class(xml_writer_abstract), intent(inout) :: self  !< Writer.
+  integer(I4P)                              :: error !< Error status.
   !---------------------------------------------------------------------------------------------------------------------------------
 
   !---------------------------------------------------------------------------------------------------------------------------------
