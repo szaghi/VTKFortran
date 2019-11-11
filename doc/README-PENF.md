@@ -1,1 +1,1 @@
-../src/third_party/PENF/doc/README-PENF.md
+../src/third_party/PENF/README.md

@@ -20,7 +20,6 @@ F03STD   = no
 OPTIMIZE = no
 OPENMP   = no
 MPI      = no
-R16P     = no
 ifeq "$(TESTS)" "yes"
   RULE   = ALLTESTS
   DEXE   = exe/
@@ -73,7 +72,6 @@ help:
 	@echo -e '\033[1;31m  MPI=yes(no)     \033[0m\033[1m => on(off) MPI library            (default $(MPI))\033[0m'
 	@echo
 	@echo -e '\033[1;31m Preprocessing options\033[0m'
-	@echo -e '\033[1;31m  R16P=yes(no)\033[0m\033[1m => on(off) definition of real with "128 bit" (default $(R16P))\033[0m'
 	@echo
 	@echo -e '\033[1;31m Provided Rules: default=VTKFortran\033[0m\033[1m => compile the library\033[0m'
 	@echo -e '\033[1;31m  Defualt rule =>\033[0m\033[1m Lib_VRK_IO \033[0m'
@@ -87,7 +85,6 @@ help:
 	@echo -e '\033[1;31m  clean        =>\033[0m\033[1m running cleanobj, cleanmod and cleanmsg\033[0m'
 	@echo -e '\033[1;31m  cleanall     =>\033[0m\033[1m running clean and cleanexe\033[0m'
 	@echo -e '\033[1;31m  tar          =>\033[0m\033[1m creating a tar archive of the project\033[0m'
-	@echo -e '\033[1;31m  doc          =>\033[0m\033[1m building the documentation\033[0m'
 	@echo
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -171,16 +168,6 @@ ifeq "$(MPI)" "yes"
   PREPROC := $(PREPROC) -DMPI2
   FC = mpif90
 endif
-# pre-processing options
-# R16 precision
-R16PCHK = (Unknown R16P switch) Used default R16P=no
-ifeq "$(R16P)" "no"
-  R16PCHK = (Known R16P switch) Used R16P=$(R16P)
-endif
-ifeq "$(R16P)" "yes"
-  R16PCHK = (Known R16P switch) Used R16P=$(R16P)
-  PREPROC := $(PREPROC) -Dr16p
-endif
 
 OPTSC := $(OPTSC) $(PREPROC)
 OPTSL := $(OPTSL) $(PREPROC)
@@ -196,8 +183,7 @@ PRINTCHK = "\\033[1;31m Compiler used \\033[0m\\033[1m $(COMPILER) => $(WHICHFC)
             \\033[1;31m F-standard    \\033[0m\\033[1m $(F03STD)\\033[0m \n\
             \\033[1;31m Optimize      \\033[0m\\033[1m $(OPTIMIZE)\\033[0m \n\
             \\033[1;31m OpenMP        \\033[0m\\033[1m $(OPENMP)\\033[0m \n\
-            \\033[1;31m MPI           \\033[0m\\033[1m $(MPI)\\033[0m \n\
-            \\033[1;31m R16P          \\033[0m\\033[1m $(R16PCHK)\\033[0m"
+            \\033[1;31m MPI           \\033[0m\\033[1m $(MPI)\\033[0m "
 #----------------------------------------------------------------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -249,11 +235,6 @@ cleanall: clean cleanlib
 tar: cleanall
 	@echo -e "\033[1;31m Create tar archive of the code \033[0m"
 	@tar --xform="s%^%VTKFortran/%" -czf VTKFortran.tar.gz *
-
-.PHONY : doc
-doc:
-	@echo -e "\033[1;31m Build documentation\033[0m"
-	@doxygen .doxygenconfig
 #----------------------------------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------------------------------
@@ -383,7 +364,7 @@ $(DOBJ)stringifor_string_t.o: src/third_party/StringiFor/src/lib/stringifor_stri
 	@echo $(COTEXT)
 	@$(FC) $(OPTSC)  $< -o $@
 
-$(DOBJ)penf.o: src/third_party/BeFoR64/src/lib/penf.F90 \
+$(DOBJ)penf.o: src/third_party/PENF/src/lib/penf.F90 \
 	$(DOBJ)penf_global_parameters_variables.o \
 	$(DOBJ)penf_b_size.o \
 	$(DOBJ)penf_stringify.o
@@ -423,7 +404,7 @@ $(DOBJ)foxy_xml_file.o: src/third_party/FoXy/src/lib/foxy_xml_file.f90 \
 	@echo $(COTEXT)
 	@$(FC) $(OPTSC)  $< -o $@
 
-$(DOBJ)foxy_xml_tag.o: src/third_party/FoXy/src/lib/foxy_xml_tag.f90 \
+$(DOBJ)foxy_xml_tag.o: src/third_party/FoXy/src/lib/foxy_xml_tag.F90 \
 	$(DOBJ)penf.o \
 	$(DOBJ)stringifor.o
 	@echo $(COTEXT)

@@ -1,1 +1,1 @@
-../src/third_party/BeFoR64/doc/README-BeFoR64.md
+../src/third_party/BeFoR64/README.md
