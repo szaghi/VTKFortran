@@ -1,0 +1,2005 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	 
+	 <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
+    
+    <meta name="author" content="Stefano Zaghi" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>delete_tag.f90 &ndash; Lib_VTK_IO</title>
+
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+    
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+    <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+
+    
+    <script src="../tipuesearch/tipuesearch_content.js"></script>
+    <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+    <script src="../tipuesearch/tipuesearch_set.js"></script>
+    <script src="../tipuesearch/tipuesearch.js"></script>
+    
+
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="../index.html">Lib_VTK_IO </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+				
+            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
+              <a href="#" class="dropdown-toggle"
+              data-toggle="dropdown" role="button"
+              aria-haspopup="true"
+		 aria-expanded="false">Contents <span class="caret"></span></a>
+	      <ul class="dropdown-menu">
+              
+            <li><a href="../lists/files.html">Source Files</a></li>
+				
+				
+            <li><a href="../lists/modules.html">Modules</a></li>
+				
+            
+                                
+            <li><a href="../lists/procedures.html">Procedures</a></li>
+				
+				
+            <li><a href="../lists/absint.html">Abstract Interfaces</a></li>
+								
+            <li><a href="../lists/types.html">Derived Types</a></li>
+				
+				
+            <li><a href="../lists/programs.html">Programs</a></li>
+				
+            </ul>
+            </li>
+
+<li class="visible-xs hidden-sm visible-lg"><a href="../lists/files.html">Source Files</a></li>
+
+
+<li class="visible-xs hidden-sm visible-lg"><a href="../lists/modules.html">Modules</a></li>
+
+
+
+<li class="visible-xs hidden-sm visible-lg"><a href="../lists/procedures.html">Procedures</a></li>
+
+
+<li class="visible-xs hidden-sm visible-lg"><a href="../lists/absint.html">Abstract Interfaces</a></li>
+                             
+<li class="visible-xs hidden-sm visible-lg"><a href="../lists/types.html">Derived Types</a></li>
+
+
+<li class="visible-xs hidden-sm visible-lg"><a href="../lists/programs.html">Programs</a></li>
+
+          </ul>
+        
+        <form action="../search.html" class="navbar-form navbar-right" role="search">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+        </div>
+<!--
+        <button type="submit" class="btn btn-default">Submit</button>
+-->
+        </form>
+        
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container">
+    
+  
+  <div class="row">
+    <h1>delete_tag.f90
+    <small>Source File</small>
+    
+    </h1>
+    
+<div class="row">
+  <div class="col-lg-12">
+<div class="well well-sm">
+  <ul class="list-inline" style="margin-bottom:0px;display:inline">
+     
+     
+     
+     
+    
+    
+     <li><i class="fa fa-list-ol"></i>
+       <a data-toggle="tooltip"
+	  data-placement="bottom" data-html="true"
+	  title=" 0.2% of total for source files.">30 statements</a>
+     </li> 
+     
+     
+    <li><i class="fa fa-code"></i><a href="../src/delete_tag.f90"> Source File</a></li>
+     
+  </ul>
+  <ol class="breadcrumb in-well text-right">
+  
+     <li class="active">delete_tag.f90</li>
+  </ol>
+</div>
+</div>
+</div>
+<script>
+  $(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+  })
+</script>
+
+  </div>
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+    
+<div id="sidebar">
+  
+
+
+
+
+
+<div class="panel panel-primary">
+  <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#progs-0">Programs</a></h3></div>
+  <div id="progs-0" class="panel-collapse collapse">
+    <div class="list-group">
+      
+      <a class="list-group-item" href="../program/delete_tag.html">delete_tag</a>
+      
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="panel panel-primary">
+  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
+  <div class="list-group">
+    <a class="list-group-item" href="../sourcefile/delete_tag.f90.html#src">delete_tag.f90</a>
+  </div>
+</div>
+
+
+  <hr>
+  
+
+<div class="panel panel-default">
+  <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#allfiles-0">All Source Files</a></h3></div>
+  <div id="allfiles-0" class="panel-collapse collapse">
+    <div class="list-group">
+      
+      <a class="list-group-item" href="../sourcefile/add_attributes.f90.html">add_attributes.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/add_tag.f90.html">add_tag.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-1.f90.html">befor64-doctest-1.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-10.f90.html">befor64-doctest-10.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-11.f90.html">befor64-doctest-11.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-12.f90.html">befor64-doctest-12.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-13.f90.html">befor64-doctest-13.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-14.f90.html">befor64-doctest-14.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-15.f90.html">befor64-doctest-15.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-16.f90.html">befor64-doctest-16.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-17.f90.html">befor64-doctest-17.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-18.f90.html">befor64-doctest-18.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-19.f90.html">befor64-doctest-19.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-2.f90.html">befor64-doctest-2.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-20.f90.html">befor64-doctest-20.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-21.f90.html">befor64-doctest-21.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-22.f90.html">befor64-doctest-22.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-23.f90.html">befor64-doctest-23.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-24.f90.html">befor64-doctest-24.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-25.f90.html">befor64-doctest-25.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-26.f90.html">befor64-doctest-26.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-27.f90.html">befor64-doctest-27.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-28.f90.html">befor64-doctest-28.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-29.f90.html">befor64-doctest-29.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-3.f90.html">befor64-doctest-3.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-30.f90.html">befor64-doctest-30.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-31.f90.html">befor64-doctest-31.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-32.f90.html">befor64-doctest-32.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-33.f90.html">befor64-doctest-33.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-34.f90.html">befor64-doctest-34.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-35.f90.html">befor64-doctest-35.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-36.f90.html">befor64-doctest-36.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-37.f90.html">befor64-doctest-37.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-4.f90.html">befor64-doctest-4.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-5.f90.html">befor64-doctest-5.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-6.f90.html">befor64-doctest-6.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-7.f90.html">befor64-doctest-7.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-8.f90.html">befor64-doctest-8.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-9.f90.html">befor64-doctest-9.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64.f90.html">befor64.F90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-1.f90.html">befor64_pack_data_m-doctest-1.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-10.f90.html">befor64_pack_data_m-doctest-10.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-11.f90.html">befor64_pack_data_m-doctest-11.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-12.f90.html">befor64_pack_data_m-doctest-12.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-13.f90.html">befor64_pack_data_m-doctest-13.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-14.f90.html">befor64_pack_data_m-doctest-14.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-15.f90.html">befor64_pack_data_m-doctest-15.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-16.f90.html">befor64_pack_data_m-doctest-16.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-17.f90.html">befor64_pack_data_m-doctest-17.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-18.f90.html">befor64_pack_data_m-doctest-18.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-19.f90.html">befor64_pack_data_m-doctest-19.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-2.f90.html">befor64_pack_data_m-doctest-2.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-20.f90.html">befor64_pack_data_m-doctest-20.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-21.f90.html">befor64_pack_data_m-doctest-21.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-22.f90.html">befor64_pack_data_m-doctest-22.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-23.f90.html">befor64_pack_data_m-doctest-23.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-24.f90.html">befor64_pack_data_m-doctest-24.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-25.f90.html">befor64_pack_data_m-doctest-25.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-26.f90.html">befor64_pack_data_m-doctest-26.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-27.f90.html">befor64_pack_data_m-doctest-27.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-28.f90.html">befor64_pack_data_m-doctest-28.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-29.f90.html">befor64_pack_data_m-doctest-29.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-3.f90.html">befor64_pack_data_m-doctest-3.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-30.f90.html">befor64_pack_data_m-doctest-30.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-4.f90.html">befor64_pack_data_m-doctest-4.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-5.f90.html">befor64_pack_data_m-doctest-5.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-6.f90.html">befor64_pack_data_m-doctest-6.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-7.f90.html">befor64_pack_data_m-doctest-7.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-8.f90.html">befor64_pack_data_m-doctest-8.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-9.f90.html">befor64_pack_data_m-doctest-9.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m.f90.html">befor64_pack_data_m.F90</a>
+      
+      <a class="list-group-item" href="../sourcefile/create_tag.f90.html">create_tag.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/delete_attributes.f90.html">delete_attributes.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/delete_content.f90.html">delete_content.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/delete_tag.f90.html">delete_tag.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/foxy.f90.html">foxy.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/foxy_xml_file.f90.html">foxy_xml_file.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/foxy_xml_tag.f90.html">foxy_xml_tag.F90</a>
+      
+      <a class="list-group-item" href="../sourcefile/indent_tag.f90.html">indent_tag.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/parse_file_simple.f90.html">parse_file_simple.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/parse_string_simple.f90.html">parse_string_simple.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf-doctest-1.f90.html">penf-doctest-1.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf-doctest-2.f90.html">penf-doctest-2.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf-doctest-3.f90.html">penf-doctest-3.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf-doctest-4.f90.html">penf-doctest-4.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf-doctest-5.f90.html">penf-doctest-5.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf-doctest-6.f90.html">penf-doctest-6.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf-doctest-7.f90.html">penf-doctest-7.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf.f90.html">penf.F90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-1.f90.html">penf_b_size-doctest-1.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-10.f90.html">penf_b_size-doctest-10.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-11.f90.html">penf_b_size-doctest-11.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-12.f90.html">penf_b_size-doctest-12.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-2.f90.html">penf_b_size-doctest-2.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-3.f90.html">penf_b_size-doctest-3.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-4.f90.html">penf_b_size-doctest-4.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-5.f90.html">penf_b_size-doctest-5.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-6.f90.html">penf_b_size-doctest-6.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-7.f90.html">penf_b_size-doctest-7.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-8.f90.html">penf_b_size-doctest-8.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-9.f90.html">penf_b_size-doctest-9.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size.f90.html">penf_b_size.F90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_global_parameters_variables.f90.html">penf_global_parameters_variables.F90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-1.f90.html">penf_stringify-doctest-1.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-10.f90.html">penf_stringify-doctest-10.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-11.f90.html">penf_stringify-doctest-11.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-12.f90.html">penf_stringify-doctest-12.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-13.f90.html">penf_stringify-doctest-13.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-14.f90.html">penf_stringify-doctest-14.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-15.f90.html">penf_stringify-doctest-15.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-16.f90.html">penf_stringify-doctest-16.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-17.f90.html">penf_stringify-doctest-17.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-18.f90.html">penf_stringify-doctest-18.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-19.f90.html">penf_stringify-doctest-19.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-2.f90.html">penf_stringify-doctest-2.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-20.f90.html">penf_stringify-doctest-20.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-21.f90.html">penf_stringify-doctest-21.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-22.f90.html">penf_stringify-doctest-22.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-23.f90.html">penf_stringify-doctest-23.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-24.f90.html">penf_stringify-doctest-24.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-25.f90.html">penf_stringify-doctest-25.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-26.f90.html">penf_stringify-doctest-26.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-27.f90.html">penf_stringify-doctest-27.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-28.f90.html">penf_stringify-doctest-28.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-29.f90.html">penf_stringify-doctest-29.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-3.f90.html">penf_stringify-doctest-3.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-30.f90.html">penf_stringify-doctest-30.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-31.f90.html">penf_stringify-doctest-31.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-32.f90.html">penf_stringify-doctest-32.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-33.f90.html">penf_stringify-doctest-33.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-34.f90.html">penf_stringify-doctest-34.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-35.f90.html">penf_stringify-doctest-35.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-36.f90.html">penf_stringify-doctest-36.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-37.f90.html">penf_stringify-doctest-37.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-38.f90.html">penf_stringify-doctest-38.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-39.f90.html">penf_stringify-doctest-39.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-4.f90.html">penf_stringify-doctest-4.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-40.f90.html">penf_stringify-doctest-40.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-41.f90.html">penf_stringify-doctest-41.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-42.f90.html">penf_stringify-doctest-42.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-43.f90.html">penf_stringify-doctest-43.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-44.f90.html">penf_stringify-doctest-44.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-45.f90.html">penf_stringify-doctest-45.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-46.f90.html">penf_stringify-doctest-46.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-47.f90.html">penf_stringify-doctest-47.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-48.f90.html">penf_stringify-doctest-48.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-49.f90.html">penf_stringify-doctest-49.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-5.f90.html">penf_stringify-doctest-5.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-50.f90.html">penf_stringify-doctest-50.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-51.f90.html">penf_stringify-doctest-51.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-52.f90.html">penf_stringify-doctest-52.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-53.f90.html">penf_stringify-doctest-53.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-54.f90.html">penf_stringify-doctest-54.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-55.f90.html">penf_stringify-doctest-55.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-56.f90.html">penf_stringify-doctest-56.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-57.f90.html">penf_stringify-doctest-57.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-58.f90.html">penf_stringify-doctest-58.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-59.f90.html">penf_stringify-doctest-59.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-6.f90.html">penf_stringify-doctest-6.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-60.f90.html">penf_stringify-doctest-60.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-61.f90.html">penf_stringify-doctest-61.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-62.f90.html">penf_stringify-doctest-62.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-63.f90.html">penf_stringify-doctest-63.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-64.f90.html">penf_stringify-doctest-64.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-65.f90.html">penf_stringify-doctest-65.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-66.f90.html">penf_stringify-doctest-66.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-67.f90.html">penf_stringify-doctest-67.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-68.f90.html">penf_stringify-doctest-68.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-69.f90.html">penf_stringify-doctest-69.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-7.f90.html">penf_stringify-doctest-7.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-70.f90.html">penf_stringify-doctest-70.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-71.f90.html">penf_stringify-doctest-71.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-72.f90.html">penf_stringify-doctest-72.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-73.f90.html">penf_stringify-doctest-73.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-74.f90.html">penf_stringify-doctest-74.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-75.f90.html">penf_stringify-doctest-75.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-76.f90.html">penf_stringify-doctest-76.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-77.f90.html">penf_stringify-doctest-77.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-78.f90.html">penf_stringify-doctest-78.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-79.f90.html">penf_stringify-doctest-79.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-8.f90.html">penf_stringify-doctest-8.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-80.f90.html">penf_stringify-doctest-80.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-81.f90.html">penf_stringify-doctest-81.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-82.f90.html">penf_stringify-doctest-82.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-83.f90.html">penf_stringify-doctest-83.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-84.f90.html">penf_stringify-doctest-84.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-85.f90.html">penf_stringify-doctest-85.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-86.f90.html">penf_stringify-doctest-86.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-87.f90.html">penf_stringify-doctest-87.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-88.f90.html">penf_stringify-doctest-88.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-89.f90.html">penf_stringify-doctest-89.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-9.f90.html">penf_stringify-doctest-9.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-90.f90.html">penf_stringify-doctest-90.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-91.f90.html">penf_stringify-doctest-91.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify.f90.html">penf_stringify.F90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor-doctest-1.f90.html">stringifor-doctest-1.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor-doctest-2.f90.html">stringifor-doctest-2.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor.f90.html">stringifor.F90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-1.f90.html">stringifor_string_t-doctest-1.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-10.f90.html">stringifor_string_t-doctest-10.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-100.f90.html">stringifor_string_t-doctest-100.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-101.f90.html">stringifor_string_t-doctest-101.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-102.f90.html">stringifor_string_t-doctest-102.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-103.f90.html">stringifor_string_t-doctest-103.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-104.f90.html">stringifor_string_t-doctest-104.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-105.f90.html">stringifor_string_t-doctest-105.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-106.f90.html">stringifor_string_t-doctest-106.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-11.f90.html">stringifor_string_t-doctest-11.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-12.f90.html">stringifor_string_t-doctest-12.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-13.f90.html">stringifor_string_t-doctest-13.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-14.f90.html">stringifor_string_t-doctest-14.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-15.f90.html">stringifor_string_t-doctest-15.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-16.f90.html">stringifor_string_t-doctest-16.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-17.f90.html">stringifor_string_t-doctest-17.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-18.f90.html">stringifor_string_t-doctest-18.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-19.f90.html">stringifor_string_t-doctest-19.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-2.f90.html">stringifor_string_t-doctest-2.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-20.f90.html">stringifor_string_t-doctest-20.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-21.f90.html">stringifor_string_t-doctest-21.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-22.f90.html">stringifor_string_t-doctest-22.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-23.f90.html">stringifor_string_t-doctest-23.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-24.f90.html">stringifor_string_t-doctest-24.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-25.f90.html">stringifor_string_t-doctest-25.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-26.f90.html">stringifor_string_t-doctest-26.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-27.f90.html">stringifor_string_t-doctest-27.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-28.f90.html">stringifor_string_t-doctest-28.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-29.f90.html">stringifor_string_t-doctest-29.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-3.f90.html">stringifor_string_t-doctest-3.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-30.f90.html">stringifor_string_t-doctest-30.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-31.f90.html">stringifor_string_t-doctest-31.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-32.f90.html">stringifor_string_t-doctest-32.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-33.f90.html">stringifor_string_t-doctest-33.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-34.f90.html">stringifor_string_t-doctest-34.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-35.f90.html">stringifor_string_t-doctest-35.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-36.f90.html">stringifor_string_t-doctest-36.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-37.f90.html">stringifor_string_t-doctest-37.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-38.f90.html">stringifor_string_t-doctest-38.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-39.f90.html">stringifor_string_t-doctest-39.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-4.f90.html">stringifor_string_t-doctest-4.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-40.f90.html">stringifor_string_t-doctest-40.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-41.f90.html">stringifor_string_t-doctest-41.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-42.f90.html">stringifor_string_t-doctest-42.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-43.f90.html">stringifor_string_t-doctest-43.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-44.f90.html">stringifor_string_t-doctest-44.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-45.f90.html">stringifor_string_t-doctest-45.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-46.f90.html">stringifor_string_t-doctest-46.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-47.f90.html">stringifor_string_t-doctest-47.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-48.f90.html">stringifor_string_t-doctest-48.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-49.f90.html">stringifor_string_t-doctest-49.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-5.f90.html">stringifor_string_t-doctest-5.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-50.f90.html">stringifor_string_t-doctest-50.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-51.f90.html">stringifor_string_t-doctest-51.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-52.f90.html">stringifor_string_t-doctest-52.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-53.f90.html">stringifor_string_t-doctest-53.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-54.f90.html">stringifor_string_t-doctest-54.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-55.f90.html">stringifor_string_t-doctest-55.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-56.f90.html">stringifor_string_t-doctest-56.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-57.f90.html">stringifor_string_t-doctest-57.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-58.f90.html">stringifor_string_t-doctest-58.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-59.f90.html">stringifor_string_t-doctest-59.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-6.f90.html">stringifor_string_t-doctest-6.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-60.f90.html">stringifor_string_t-doctest-60.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-61.f90.html">stringifor_string_t-doctest-61.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-62.f90.html">stringifor_string_t-doctest-62.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-63.f90.html">stringifor_string_t-doctest-63.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-64.f90.html">stringifor_string_t-doctest-64.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-65.f90.html">stringifor_string_t-doctest-65.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-66.f90.html">stringifor_string_t-doctest-66.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-67.f90.html">stringifor_string_t-doctest-67.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-68.f90.html">stringifor_string_t-doctest-68.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-69.f90.html">stringifor_string_t-doctest-69.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-7.f90.html">stringifor_string_t-doctest-7.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-70.f90.html">stringifor_string_t-doctest-70.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-71.f90.html">stringifor_string_t-doctest-71.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-72.f90.html">stringifor_string_t-doctest-72.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-73.f90.html">stringifor_string_t-doctest-73.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-74.f90.html">stringifor_string_t-doctest-74.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-75.f90.html">stringifor_string_t-doctest-75.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-76.f90.html">stringifor_string_t-doctest-76.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-77.f90.html">stringifor_string_t-doctest-77.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-78.f90.html">stringifor_string_t-doctest-78.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-79.f90.html">stringifor_string_t-doctest-79.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-8.f90.html">stringifor_string_t-doctest-8.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-80.f90.html">stringifor_string_t-doctest-80.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-81.f90.html">stringifor_string_t-doctest-81.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-82.f90.html">stringifor_string_t-doctest-82.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-83.f90.html">stringifor_string_t-doctest-83.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-84.f90.html">stringifor_string_t-doctest-84.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-85.f90.html">stringifor_string_t-doctest-85.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-86.f90.html">stringifor_string_t-doctest-86.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-87.f90.html">stringifor_string_t-doctest-87.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-88.f90.html">stringifor_string_t-doctest-88.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-89.f90.html">stringifor_string_t-doctest-89.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-9.f90.html">stringifor_string_t-doctest-9.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-90.f90.html">stringifor_string_t-doctest-90.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-91.f90.html">stringifor_string_t-doctest-91.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-92.f90.html">stringifor_string_t-doctest-92.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-93.f90.html">stringifor_string_t-doctest-93.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-94.f90.html">stringifor_string_t-doctest-94.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-95.f90.html">stringifor_string_t-doctest-95.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-96.f90.html">stringifor_string_t-doctest-96.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-97.f90.html">stringifor_string_t-doctest-97.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-98.f90.html">stringifor_string_t-doctest-98.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-99.f90.html">stringifor_string_t-doctest-99.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t.f90.html">stringifor_string_t.F90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_test_csv_naive_parser.f90.html">stringifor_test_csv_naive_parser.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_test_parse_large_csv.f90.html">stringifor_test_parse_large_csv.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/test.f90.html">test.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/use_module_basic.f90.html">use_module_basic.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran.f90.html">vtk_fortran.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_dataarray_encoder.f90.html">vtk_fortran_dataarray_encoder.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_parameters.f90.html">vtk_fortran_parameters.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_pvtk_file.f90.html">vtk_fortran_pvtk_file.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtk_file.f90.html">vtk_fortran_vtk_file.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtk_file_dataarray_encode_ascii.f90.html">vtk_fortran_vtk_file_dataarray_encode_ascii.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtk_file_dataarray_encode_base64.f90.html">vtk_fortran_vtk_file_dataarray_encode_base64.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtk_file_dataarray_write.f90.html">vtk_fortran_vtk_file_dataarray_write.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtk_file_dataarray_write_on_scratch.f90.html">vtk_fortran_vtk_file_dataarray_write_on_scratch.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtk_file_write_geo_strg.f90.html">vtk_fortran_vtk_file_write_geo_strg.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtk_file_xml_writer_abstract.f90.html">vtk_fortran_vtk_file_xml_writer_abstract.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtk_file_xml_writer_appended.f90.html">vtk_fortran_vtk_file_xml_writer_appended.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtk_file_xml_writer_ascii_local.f90.html">vtk_fortran_vtk_file_xml_writer_ascii_local.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtk_file_xml_writer_binary_local.f90.html">vtk_fortran_vtk_file_xml_writer_binary_local.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtm_file.f90.html">vtk_fortran_vtm_file.F90</a>
+      
+      <a class="list-group-item" href="../sourcefile/write_tag.f90.html">write_tag.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/write_vtm.f90.html">write_vtm.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/write_vtr.f90.html">write_vtr.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/write_vts.f90.html">write_vts.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/write_vtu.f90.html">write_vtu.f90</a>
+      
+    </div>
+  </div>
+</div>
+
+
+</div>  
+
+    </div>
+    <div class="col-md-9" id='text'>
+    
+    
+    <h3>This File Depends On</h3>
+    
+                <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.20190912.0211 (20190912.0211)
+ -->
+<!-- Title: sourcefile~~delete_tag.f90~~EfferentGraph Pages: 1 -->
+<svg id="sourcefiledelete_tagf90EfferentGraph" width="641pt" height="47pt"
+ viewBox="0.00 0.00 641.00 47.32" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph" class="graph" transform="scale(2.46 2.46) rotate(0) translate(4 112.35)">
+<title>sourcefile~~delete_tag.f90~~EfferentGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-112.35 1572,-112.35 1572,4 -4,4"/>
+<!-- sourcefile~delete_tag.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_node1" class="node">
+<title>sourcefile~delete_tag.f90</title>
+<polygon fill="none" stroke="black" points="1568,-75.97 1487,-75.97 1487,-51.97 1568,-51.97 1568,-75.97"/>
+<text text-anchor="middle" x="1527.5" y="-61.57" font-family="Helvetica,sans-Serif" font-size="10.50">delete_tag.f90</text>
+</g>
+<!-- sourcefile~foxy.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_node2" class="node">
+<title>sourcefile~foxy.f90</title>
+<g id="a_sourcefile~~delete_tag.f90~~EfferentGraph_node2"><a xlink:href="../sourcefile/foxy.f90.html" xlink:title="foxy.f90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1451,-75.97 1397,-75.97 1397,-51.97 1451,-51.97 1451,-75.97"/>
+<text text-anchor="middle" x="1424" y="-61.57" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">foxy.f90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~foxy.f90&#45;&gt;sourcefile~delete_tag.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_edge21" class="edge">
+<title>sourcefile~foxy.f90&#45;&gt;sourcefile~delete_tag.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1451.14,-63.97C1458.91,-63.97 1467.69,-63.97 1476.45,-63.97"/>
+<polygon fill="#000000" stroke="#000000" points="1476.65,-67.47 1486.65,-63.97 1476.65,-60.47 1476.65,-67.47"/>
+</g>
+<!-- sourcefile~foxy_xml_tag.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_node3" class="node">
+<title>sourcefile~foxy_xml_tag.f90</title>
+<g id="a_sourcefile~~delete_tag.f90~~EfferentGraph_node3"><a xlink:href="../sourcefile/foxy_xml_tag.f90.html" xlink:title="foxy_xml_tag.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1233,-35.97 1136,-35.97 1136,-11.97 1233,-11.97 1233,-35.97"/>
+<text text-anchor="middle" x="1184.5" y="-21.57" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">foxy_xml_tag.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~foxy_xml_tag.f90&#45;&gt;sourcefile~foxy.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_edge18" class="edge">
+<title>sourcefile~foxy_xml_tag.f90&#45;&gt;sourcefile~foxy.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1233.25,-26.31C1268.81,-28.73 1318.35,-33.56 1361,-42.97 1369.61,-44.87 1378.71,-47.55 1387.19,-50.36"/>
+<polygon fill="#000000" stroke="#000000" points="1386.22,-53.72 1396.81,-53.68 1388.5,-47.11 1386.22,-53.72"/>
+</g>
+<!-- sourcefile~foxy_xml_file.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_node4" class="node">
+<title>sourcefile~foxy_xml_file.f90</title>
+<g id="a_sourcefile~~delete_tag.f90~~EfferentGraph_node4"><a xlink:href="../sourcefile/foxy_xml_file.f90.html" xlink:title="foxy_xml_file.f90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1361,-75.97 1269,-75.97 1269,-51.97 1361,-51.97 1361,-75.97"/>
+<text text-anchor="middle" x="1315" y="-61.57" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">foxy_xml_file.f90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~foxy_xml_tag.f90&#45;&gt;sourcefile~foxy_xml_file.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_edge10" class="edge">
+<title>sourcefile~foxy_xml_tag.f90&#45;&gt;sourcefile~foxy_xml_file.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1224.05,-35.97C1237.02,-40 1251.66,-44.56 1265.31,-48.81"/>
+<polygon fill="#000000" stroke="#000000" points="1264.44,-52.21 1275.03,-51.84 1266.52,-45.52 1264.44,-52.21"/>
+</g>
+<!-- sourcefile~foxy_xml_file.f90&#45;&gt;sourcefile~foxy.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_edge19" class="edge">
+<title>sourcefile~foxy_xml_file.f90&#45;&gt;sourcefile~foxy.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1361.07,-63.97C1369.66,-63.97 1378.55,-63.97 1386.83,-63.97"/>
+<polygon fill="#000000" stroke="#000000" points="1386.9,-67.47 1396.9,-63.97 1386.9,-60.47 1386.9,-67.47"/>
+</g>
+<!-- sourcefile~penf.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_node5" class="node">
+<title>sourcefile~penf.f90</title>
+<g id="a_sourcefile~~delete_tag.f90~~EfferentGraph_node5"><a xlink:href="../sourcefile/penf.f90.html" xlink:title="penf.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="551,-75.97 496,-75.97 496,-51.97 551,-51.97 551,-75.97"/>
+<text text-anchor="middle" x="523.5" y="-61.57" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~penf.f90&#45;&gt;sourcefile~foxy.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_edge20" class="edge">
+<title>sourcefile~penf.f90&#45;&gt;sourcefile~foxy.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1185.5,-103.97C1263.65,-97.05 1284.39,-101.87 1361,-84.97 1369.61,-83.07 1378.71,-80.39 1387.19,-77.58"/>
+<polygon fill="#000000" stroke="#000000" points="1388.5,-80.83 1396.81,-74.26 1386.22,-74.21 1388.5,-80.83"/>
+</g>
+<!-- sourcefile~penf.f90&#45;&gt;sourcefile~foxy_xml_tag.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_edge8" class="edge">
+<title>sourcefile~penf.f90&#45;&gt;sourcefile~foxy_xml_tag.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M551.24,-52.12C577.54,-41.38 619.14,-26.8 657,-23.97"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M659,-23.97C778.89,-14.98 809.62,-33 929.5,-23.97"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M931.5,-23.97C973.96,-20.6 982.67,-7.66 1025,-2.97 1058.13,0.71 1066.92,1.13 1100,-2.97 1111.13,-4.34 1122.91,-6.72 1134,-9.39"/>
+<polygon fill="#000000" stroke="#000000" points="1133.4,-12.85 1143.95,-11.9 1135.12,-6.06 1133.4,-12.85"/>
+</g>
+<!-- sourcefile~penf.f90&#45;&gt;sourcefile~foxy_xml_file.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_edge11" class="edge">
+<title>sourcefile~penf.f90&#45;&gt;sourcefile~foxy_xml_file.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M801.5,-103.97C971.11,-96.37 1014.21,-116.86 1183.5,-103.97"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1185.5,-103.97C1217.55,-101.13 1252.31,-89.77 1277.58,-79.88"/>
+<polygon fill="#000000" stroke="#000000" points="1279.15,-83.02 1287.12,-76.04 1276.53,-76.52 1279.15,-83.02"/>
+</g>
+<!-- sourcefile~stringifor.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_node6" class="node">
+<title>sourcefile~stringifor.f90</title>
+<g id="a_sourcefile~~delete_tag.f90~~EfferentGraph_node6"><a xlink:href="../sourcefile/stringifor.f90.html" xlink:title="stringifor.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1100,-35.97 1025,-35.97 1025,-11.97 1100,-11.97 1100,-35.97"/>
+<text text-anchor="middle" x="1062.5" y="-21.57" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">stringifor.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~penf.f90&#45;&gt;sourcefile~stringifor.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_edge7" class="edge">
+<title>sourcefile~penf.f90&#45;&gt;sourcefile~stringifor.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M931.5,-23.97C958.97,-21.9 989.8,-21.8 1014.54,-22.27"/>
+<polygon fill="#000000" stroke="#000000" points="1014.67,-25.77 1024.74,-22.5 1014.82,-18.77 1014.67,-25.77"/>
+</g>
+<!-- sourcefile~stringifor_string_t.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_node7" class="node">
+<title>sourcefile~stringifor_string_t.f90</title>
+<g id="a_sourcefile~~delete_tag.f90~~EfferentGraph_node7"><a xlink:href="../sourcefile/stringifor_string_t.f90.html" xlink:title="stringifor_string_t.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="989,-75.97 872,-75.97 872,-51.97 989,-51.97 989,-75.97"/>
+<text text-anchor="middle" x="930.5" y="-61.57" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">stringifor_string_t.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~penf.f90&#45;&gt;sourcefile~stringifor_string_t.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_edge5" class="edge">
+<title>sourcefile~penf.f90&#45;&gt;sourcefile~stringifor_string_t.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M551.19,-74.47C562.13,-78.37 575.01,-82.45 587,-84.97 679.8,-104.42 704.95,-111.2 799.5,-103.97"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M801.5,-103.97C834.15,-102.5 869.48,-90.62 894.73,-80.18"/>
+<polygon fill="#000000" stroke="#000000" points="896.4,-83.27 904.22,-76.13 893.65,-76.84 896.4,-83.27"/>
+</g>
+<!-- sourcefile~befor64.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_node8" class="node">
+<title>sourcefile~befor64.f90</title>
+<g id="a_sourcefile~~delete_tag.f90~~EfferentGraph_node8"><a xlink:href="../sourcefile/befor64.f90.html" xlink:title="befor64.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="836,-75.97 765,-75.97 765,-51.97 836,-51.97 836,-75.97"/>
+<text text-anchor="middle" x="800.5" y="-61.57" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">befor64.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~penf.f90&#45;&gt;sourcefile~befor64.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_edge2" class="edge">
+<title>sourcefile~penf.f90&#45;&gt;sourcefile~befor64.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M659,-23.97C697.01,-21.12 738.81,-35.4 766.85,-47.68"/>
+<polygon fill="#000000" stroke="#000000" points="765.62,-50.96 776.17,-51.91 768.51,-44.59 765.62,-50.96"/>
+</g>
+<!-- sourcefile~befor64_pack_data_m.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_node9" class="node">
+<title>sourcefile~befor64_pack_data_m.f90</title>
+<g id="a_sourcefile~~delete_tag.f90~~EfferentGraph_node9"><a xlink:href="../sourcefile/befor64_pack_data_m.f90.html" xlink:title="befor64_pack_data_m.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="729,-75.97 587,-75.97 587,-51.97 729,-51.97 729,-75.97"/>
+<text text-anchor="middle" x="658" y="-61.57" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">befor64_pack_data_m.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~penf.f90&#45;&gt;sourcefile~befor64_pack_data_m.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_edge1" class="edge">
+<title>sourcefile~penf.f90&#45;&gt;sourcefile~befor64_pack_data_m.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M551.31,-63.97C558.98,-63.97 567.75,-63.97 576.89,-63.97"/>
+<polygon fill="#000000" stroke="#000000" points="576.91,-67.47 586.91,-63.97 576.91,-60.47 576.91,-67.47"/>
+</g>
+<!-- sourcefile~stringifor.f90&#45;&gt;sourcefile~foxy_xml_tag.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_edge9" class="edge">
+<title>sourcefile~stringifor.f90&#45;&gt;sourcefile~foxy_xml_tag.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1100.16,-23.97C1108.28,-23.97 1117.08,-23.97 1125.82,-23.97"/>
+<polygon fill="#000000" stroke="#000000" points="1126,-27.47 1136,-23.97 1126,-20.47 1126,-27.47"/>
+</g>
+<!-- sourcefile~stringifor_string_t.f90&#45;&gt;sourcefile~stringifor.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_edge6" class="edge">
+<title>sourcefile~stringifor_string_t.f90&#45;&gt;sourcefile~stringifor.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M970.5,-51.97C984.48,-47.66 1000.38,-42.77 1014.93,-38.3"/>
+<polygon fill="#000000" stroke="#000000" points="1016.22,-41.56 1024.75,-35.27 1014.16,-34.87 1016.22,-41.56"/>
+</g>
+<!-- sourcefile~befor64.f90&#45;&gt;sourcefile~stringifor_string_t.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_edge4" class="edge">
+<title>sourcefile~befor64.f90&#45;&gt;sourcefile~stringifor_string_t.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M836.14,-63.97C844.01,-63.97 852.65,-63.97 861.38,-63.97"/>
+<polygon fill="#000000" stroke="#000000" points="861.65,-67.47 871.65,-63.97 861.65,-60.47 861.65,-67.47"/>
+</g>
+<!-- sourcefile~befor64_pack_data_m.f90&#45;&gt;sourcefile~befor64.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_edge3" class="edge">
+<title>sourcefile~befor64_pack_data_m.f90&#45;&gt;sourcefile~befor64.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M729.25,-63.97C737.93,-63.97 746.62,-63.97 754.77,-63.97"/>
+<polygon fill="#000000" stroke="#000000" points="754.77,-67.47 764.77,-63.97 754.77,-60.47 754.77,-67.47"/>
+</g>
+<!-- sourcefile~penf_b_size.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_node10" class="node">
+<title>sourcefile~penf_b_size.f90</title>
+<g id="a_sourcefile~~delete_tag.f90~~EfferentGraph_node10"><a xlink:href="../sourcefile/penf_b_size.f90.html" xlink:title="penf_b_size.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="327,-55.97 235,-55.97 235,-31.97 327,-31.97 327,-55.97"/>
+<text text-anchor="middle" x="281" y="-41.57" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf_b_size.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~penf_b_size.f90&#45;&gt;sourcefile~penf.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_edge15" class="edge">
+<title>sourcefile~penf_b_size.f90&#45;&gt;sourcefile~penf.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M305.48,-56.15C330.74,-68.09 372.42,-84.44 410.5,-83.97"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M412.5,-83.97C437.19,-83.66 464.49,-78.72 485.73,-73.83"/>
+<polygon fill="#000000" stroke="#000000" points="486.72,-77.19 495.62,-71.45 485.08,-70.39 486.72,-77.19"/>
+</g>
+<!-- sourcefile~penf_stringify.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_node12" class="node">
+<title>sourcefile~penf_stringify.f90</title>
+<g id="a_sourcefile~~delete_tag.f90~~EfferentGraph_node12"><a xlink:href="../sourcefile/penf_stringify.f90.html" xlink:title="penf_stringify.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="460,-55.97 363,-55.97 363,-31.97 460,-31.97 460,-55.97"/>
+<text text-anchor="middle" x="411.5" y="-41.57" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf_stringify.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~penf_b_size.f90&#45;&gt;sourcefile~penf_stringify.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_edge13" class="edge">
+<title>sourcefile~penf_b_size.f90&#45;&gt;sourcefile~penf_stringify.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M327.3,-43.97C335.52,-43.97 344.2,-43.97 352.72,-43.97"/>
+<polygon fill="#000000" stroke="#000000" points="352.99,-47.47 362.99,-43.97 352.99,-40.47 352.99,-47.47"/>
+</g>
+<!-- sourcefile~penf_global_parameters_variables.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_node11" class="node">
+<title>sourcefile~penf_global_parameters_variables.f90</title>
+<g id="a_sourcefile~~delete_tag.f90~~EfferentGraph_node11"><a xlink:href="../sourcefile/penf_global_parameters_variables.f90.html" xlink:title="penf_global_parameters_variables.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="199,-55.97 0,-55.97 0,-31.97 199,-31.97 199,-55.97"/>
+<text text-anchor="middle" x="99.5" y="-41.57" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf_global_parameters_variables.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~penf_global_parameters_variables.f90&#45;&gt;sourcefile~penf.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_edge16" class="edge">
+<title>sourcefile~penf_global_parameters_variables.f90&#45;&gt;sourcefile~penf.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M156.51,-56.01C218.38,-68.19 321.1,-85.07 410.5,-83.97"/>
+</g>
+<!-- sourcefile~penf_global_parameters_variables.f90&#45;&gt;sourcefile~penf_b_size.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_edge12" class="edge">
+<title>sourcefile~penf_global_parameters_variables.f90&#45;&gt;sourcefile~penf_b_size.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M199.18,-43.97C207.88,-43.97 216.48,-43.97 224.62,-43.97"/>
+<polygon fill="#000000" stroke="#000000" points="224.68,-47.47 234.68,-43.97 224.68,-40.47 224.68,-47.47"/>
+</g>
+<!-- sourcefile~penf_global_parameters_variables.f90&#45;&gt;sourcefile~penf_stringify.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_edge14" class="edge">
+<title>sourcefile~penf_global_parameters_variables.f90&#45;&gt;sourcefile~penf_stringify.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M157.39,-31.91C203.26,-23.82 269.39,-15.83 327,-22.97 338.13,-24.34 349.91,-26.72 361,-29.39"/>
+<polygon fill="#000000" stroke="#000000" points="360.4,-32.85 370.95,-31.9 362.12,-26.06 360.4,-32.85"/>
+</g>
+<!-- sourcefile~penf_stringify.f90&#45;&gt;sourcefile~penf.f90 -->
+<g id="sourcefile~~delete_tag.f90~~EfferentGraph_edge17" class="edge">
+<title>sourcefile~penf_stringify.f90&#45;&gt;sourcefile~penf.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M460.11,-52.62C468.68,-54.18 477.5,-55.78 485.71,-57.28"/>
+<polygon fill="#000000" stroke="#000000" points="485.25,-60.75 495.71,-59.1 486.5,-53.86 485.25,-60.75"/>
+</g>
+</g>
+</svg>
+</div>
+                <script>var pansourcefiledelete_tagf90EfferentGraph = svgPanZoom('#sourcefiledelete_tagf90EfferentGraph', {
+                    zoomEnabled: true,
+                    controlIconsEnabled: true,
+                    fit: true,
+                    center: true,});
+                    </script>
+                <div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div>
+                <div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog">
+                  <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                      </div>
+                      <div class="modal-body">
+                        
+    <p>Nodes of different colours represent the following: </p>
+    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.20190912.0211 (20190912.0211)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="190pt" height="32pt"
+ viewBox="0.00 0.00 190.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 186,-28 186,4 -4,4"/>
+<!-- Source File -->
+<g id="node1" class="node">
+<title>Source File</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="67,-24 0,-24 0,0 67,0 67,-24"/>
+<text text-anchor="middle" x="33.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Source File</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node2" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="182,-24 85,-24 85,0 182,0 182,-24"/>
+<text text-anchor="middle" x="133.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+    
+    <p>Solid arrows point from a file to a file which depends upon it. A file 
+    is dependent upon another if the latter must be compiled before the former
+    can be.
+    </p>
+    
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+    
+      
+      <br>
+
+    <section class="visible-xs visible-sm hidden-md">
+      
+
+
+
+
+
+<div class="panel panel-primary">
+  <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#progs-1">Programs</a></h3></div>
+  <div id="progs-1" class="panel-collapse collapse">
+    <div class="list-group">
+      
+      <a class="list-group-item" href="../program/delete_tag.html">delete_tag</a>
+      
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="panel panel-primary">
+  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
+  <div class="list-group">
+    <a class="list-group-item" href="../sourcefile/delete_tag.f90.html#src">delete_tag.f90</a>
+  </div>
+</div>
+
+
+    </section>
+    <br class="visible-xs visible-sm hidden-md">
+
+    <section>
+      <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="hl"><pre><span></span><a name="ln-1"></a><span class="c">!&lt; FoXy test.</span>
+<a name="ln-2"></a><span class="k">program </span><span class="n">delete_tag</span>
+<a name="ln-3"></a><span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="ln-4"></a><span class="c">!&lt; FoXy test.</span>
+<a name="ln-5"></a><span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="ln-6"></a><span class="k">use </span><span class="n">foxy</span><span class="p">,</span> <span class="n">only</span><span class="p">:</span> <span class="n">xml_file</span><span class="p">,</span> <span class="n">xml_tag</span>
+<a name="ln-7"></a><span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="ln-8"></a>
+<a name="ln-9"></a><span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="ln-10"></a><span class="k">implicit none</span>
+<a name="ln-11"></a><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span> <span class="k">allocatable</span> <span class="kd">::</span> <span class="n">source</span>         <span class="c">!&lt; String containing the source XML data.</span>
+<a name="ln-12"></a><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span> <span class="k">allocatable</span> <span class="kd">::</span> <span class="n">parsed</span>         <span class="c">!&lt; String containing the parsed XML data.</span>
+<a name="ln-13"></a><span class="k">type</span><span class="p">(</span><span class="n">xml_file</span><span class="p">)</span>                <span class="kd">::</span> <span class="n">a_file</span>         <span class="c">!&lt; XML tag handler.</span>
+<a name="ln-14"></a><span class="k">type</span><span class="p">(</span><span class="n">xml_tag</span><span class="p">)</span>                 <span class="kd">::</span> <span class="n">a_tag</span>          <span class="c">!&lt; XML tag handler.</span>
+<a name="ln-15"></a><span class="k">type</span><span class="p">(</span><span class="n">xml_tag</span><span class="p">)</span>                 <span class="kd">::</span> <span class="n">another_tag</span>    <span class="c">!&lt; XML tag handler.</span>
+<a name="ln-16"></a><span class="kt">logical</span>                       <span class="kd">::</span> <span class="n">test_passed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="c">!&lt; List of passed tests.</span>
+<a name="ln-17"></a><span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="ln-18"></a>
+<a name="ln-19"></a><span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="ln-20"></a><span class="n">test_passed</span> <span class="o">=</span> <span class="p">.</span><span class="n">false</span><span class="p">.</span>
+<a name="ln-21"></a>
+<a name="ln-22"></a><span class="k">print</span> <span class="s2">&quot;(A)&quot;</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span>
+<a name="ln-23"></a><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;&lt;first x=&quot;1&quot; y=&quot;c&quot; z=&quot;2&quot;&gt;lorem ipsum...&lt;/first&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span>
+<a name="ln-24"></a>         <span class="s1">&#39;&lt;third&gt;bye&lt;/third&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span>
+<a name="ln-25"></a>         <span class="s1">&#39;&lt;fourth a=&quot;3&quot;&gt;bye bye Mrs. Robinson&lt;/fourth&gt;&#39;</span>
+<a name="ln-26"></a><span class="k">print</span> <span class="s2">&quot;(A)&quot;</span><span class="p">,</span> <span class="n">source</span>
+<a name="ln-27"></a><span class="k">print</span> <span class="s2">&quot;(A)&quot;</span><span class="p">,</span> <span class="s1">&#39;parsed&#39;</span>
+<a name="ln-28"></a><span class="k">call </span><span class="n">a_file</span><span class="p">%</span><span class="n">parse</span><span class="p">(</span><span class="n">string</span><span class="o">=</span><span class="n">source</span><span class="p">)</span>
+<a name="ln-29"></a><span class="k">print</span> <span class="s2">&quot;(A)&quot;</span><span class="p">,</span> <span class="s1">&#39;remove &quot;third&quot; tag&#39;</span>
+<a name="ln-30"></a><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;&lt;first x=&quot;1&quot; y=&quot;c&quot; z=&quot;2&quot;&gt;lorem ipsum...&lt;/first&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span>
+<a name="ln-31"></a>         <span class="s1">&#39;&lt;fourth a=&quot;3&quot;&gt;bye bye Mrs. Robinson&lt;/fourth&gt;&#39;</span>
+<a name="ln-32"></a><span class="k">call </span><span class="n">a_file</span><span class="p">%</span><span class="n">delete_tag</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;third&quot;</span><span class="p">)</span>
+<a name="ln-33"></a><span class="n">parsed</span> <span class="o">=</span> <span class="n">a_file</span><span class="p">%</span><span class="n">stringify</span><span class="p">()</span>
+<a name="ln-34"></a><span class="n">test_passed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">source</span><span class="p">))</span><span class="o">==</span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">parsed</span><span class="p">))</span>
+<a name="ln-35"></a><span class="k">print</span> <span class="s2">&quot;(A,L1)&quot;</span><span class="p">,</span> <span class="n">parsed</span><span class="o">//</span><span class="s1">&#39; Is correct? &#39;</span><span class="p">,</span> <span class="n">test_passed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<a name="ln-36"></a>
+<a name="ln-37"></a><span class="k">print</span> <span class="s2">&quot;(A)&quot;</span><span class="p">,</span> <span class="s1">&#39;remove &quot;first&quot; tag&#39;</span>
+<a name="ln-38"></a><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;&lt;fourth a=&quot;3&quot;&gt;bye bye Mrs. Robinson&lt;/fourth&gt;&#39;</span>
+<a name="ln-39"></a><span class="k">call </span><span class="n">a_file</span><span class="p">%</span><span class="n">delete_tag</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;first&quot;</span><span class="p">)</span>
+<a name="ln-40"></a><span class="n">parsed</span> <span class="o">=</span> <span class="n">a_file</span><span class="p">%</span><span class="n">stringify</span><span class="p">()</span>
+<a name="ln-41"></a><span class="n">test_passed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">source</span><span class="p">))</span><span class="o">==</span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">parsed</span><span class="p">))</span>
+<a name="ln-42"></a><span class="k">print</span> <span class="s2">&quot;(A,L1)&quot;</span><span class="p">,</span> <span class="n">parsed</span><span class="o">//</span><span class="s1">&#39; Is correct? &#39;</span><span class="p">,</span> <span class="n">test_passed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<a name="ln-43"></a>
+<a name="ln-44"></a><span class="k">print</span> <span class="s2">&quot;(A,L1)&quot;</span><span class="p">,</span> <span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39;Are all tests passed? &#39;</span><span class="p">,</span> <span class="k">all</span><span class="p">(</span><span class="n">test_passed</span><span class="p">)</span>
+<a name="ln-45"></a><span class="k">stop</span>
+<a name="ln-46"></a><span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
+<a name="ln-47"></a><span class="n">endprogram</span> <span class="n">delete_tag</span>
+</pre></div>
+
+    </section>
+    </div>
+  </div>
+
+  <section class="visible-xs visible-sm hidden-md">
+    <hr>
+    
+
+<div class="panel panel-default">
+  <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#allfiles-1">All Source Files</a></h3></div>
+  <div id="allfiles-1" class="panel-collapse collapse">
+    <div class="list-group">
+      
+      <a class="list-group-item" href="../sourcefile/add_attributes.f90.html">add_attributes.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/add_tag.f90.html">add_tag.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-1.f90.html">befor64-doctest-1.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-10.f90.html">befor64-doctest-10.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-11.f90.html">befor64-doctest-11.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-12.f90.html">befor64-doctest-12.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-13.f90.html">befor64-doctest-13.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-14.f90.html">befor64-doctest-14.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-15.f90.html">befor64-doctest-15.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-16.f90.html">befor64-doctest-16.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-17.f90.html">befor64-doctest-17.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-18.f90.html">befor64-doctest-18.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-19.f90.html">befor64-doctest-19.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-2.f90.html">befor64-doctest-2.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-20.f90.html">befor64-doctest-20.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-21.f90.html">befor64-doctest-21.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-22.f90.html">befor64-doctest-22.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-23.f90.html">befor64-doctest-23.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-24.f90.html">befor64-doctest-24.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-25.f90.html">befor64-doctest-25.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-26.f90.html">befor64-doctest-26.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-27.f90.html">befor64-doctest-27.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-28.f90.html">befor64-doctest-28.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-29.f90.html">befor64-doctest-29.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-3.f90.html">befor64-doctest-3.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-30.f90.html">befor64-doctest-30.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-31.f90.html">befor64-doctest-31.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-32.f90.html">befor64-doctest-32.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-33.f90.html">befor64-doctest-33.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-34.f90.html">befor64-doctest-34.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-35.f90.html">befor64-doctest-35.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-36.f90.html">befor64-doctest-36.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-37.f90.html">befor64-doctest-37.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-4.f90.html">befor64-doctest-4.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-5.f90.html">befor64-doctest-5.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-6.f90.html">befor64-doctest-6.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-7.f90.html">befor64-doctest-7.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-8.f90.html">befor64-doctest-8.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64-doctest-9.f90.html">befor64-doctest-9.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64.f90.html">befor64.F90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-1.f90.html">befor64_pack_data_m-doctest-1.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-10.f90.html">befor64_pack_data_m-doctest-10.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-11.f90.html">befor64_pack_data_m-doctest-11.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-12.f90.html">befor64_pack_data_m-doctest-12.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-13.f90.html">befor64_pack_data_m-doctest-13.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-14.f90.html">befor64_pack_data_m-doctest-14.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-15.f90.html">befor64_pack_data_m-doctest-15.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-16.f90.html">befor64_pack_data_m-doctest-16.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-17.f90.html">befor64_pack_data_m-doctest-17.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-18.f90.html">befor64_pack_data_m-doctest-18.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-19.f90.html">befor64_pack_data_m-doctest-19.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-2.f90.html">befor64_pack_data_m-doctest-2.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-20.f90.html">befor64_pack_data_m-doctest-20.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-21.f90.html">befor64_pack_data_m-doctest-21.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-22.f90.html">befor64_pack_data_m-doctest-22.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-23.f90.html">befor64_pack_data_m-doctest-23.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-24.f90.html">befor64_pack_data_m-doctest-24.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-25.f90.html">befor64_pack_data_m-doctest-25.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-26.f90.html">befor64_pack_data_m-doctest-26.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-27.f90.html">befor64_pack_data_m-doctest-27.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-28.f90.html">befor64_pack_data_m-doctest-28.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-29.f90.html">befor64_pack_data_m-doctest-29.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-3.f90.html">befor64_pack_data_m-doctest-3.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-30.f90.html">befor64_pack_data_m-doctest-30.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-4.f90.html">befor64_pack_data_m-doctest-4.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-5.f90.html">befor64_pack_data_m-doctest-5.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-6.f90.html">befor64_pack_data_m-doctest-6.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-7.f90.html">befor64_pack_data_m-doctest-7.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-8.f90.html">befor64_pack_data_m-doctest-8.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m-doctest-9.f90.html">befor64_pack_data_m-doctest-9.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/befor64_pack_data_m.f90.html">befor64_pack_data_m.F90</a>
+      
+      <a class="list-group-item" href="../sourcefile/create_tag.f90.html">create_tag.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/delete_attributes.f90.html">delete_attributes.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/delete_content.f90.html">delete_content.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/delete_tag.f90.html">delete_tag.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/foxy.f90.html">foxy.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/foxy_xml_file.f90.html">foxy_xml_file.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/foxy_xml_tag.f90.html">foxy_xml_tag.F90</a>
+      
+      <a class="list-group-item" href="../sourcefile/indent_tag.f90.html">indent_tag.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/parse_file_simple.f90.html">parse_file_simple.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/parse_string_simple.f90.html">parse_string_simple.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf-doctest-1.f90.html">penf-doctest-1.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf-doctest-2.f90.html">penf-doctest-2.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf-doctest-3.f90.html">penf-doctest-3.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf-doctest-4.f90.html">penf-doctest-4.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf-doctest-5.f90.html">penf-doctest-5.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf-doctest-6.f90.html">penf-doctest-6.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf-doctest-7.f90.html">penf-doctest-7.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf.f90.html">penf.F90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-1.f90.html">penf_b_size-doctest-1.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-10.f90.html">penf_b_size-doctest-10.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-11.f90.html">penf_b_size-doctest-11.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-12.f90.html">penf_b_size-doctest-12.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-2.f90.html">penf_b_size-doctest-2.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-3.f90.html">penf_b_size-doctest-3.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-4.f90.html">penf_b_size-doctest-4.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-5.f90.html">penf_b_size-doctest-5.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-6.f90.html">penf_b_size-doctest-6.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-7.f90.html">penf_b_size-doctest-7.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-8.f90.html">penf_b_size-doctest-8.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size-doctest-9.f90.html">penf_b_size-doctest-9.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_b_size.f90.html">penf_b_size.F90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_global_parameters_variables.f90.html">penf_global_parameters_variables.F90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-1.f90.html">penf_stringify-doctest-1.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-10.f90.html">penf_stringify-doctest-10.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-11.f90.html">penf_stringify-doctest-11.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-12.f90.html">penf_stringify-doctest-12.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-13.f90.html">penf_stringify-doctest-13.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-14.f90.html">penf_stringify-doctest-14.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-15.f90.html">penf_stringify-doctest-15.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-16.f90.html">penf_stringify-doctest-16.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-17.f90.html">penf_stringify-doctest-17.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-18.f90.html">penf_stringify-doctest-18.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-19.f90.html">penf_stringify-doctest-19.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-2.f90.html">penf_stringify-doctest-2.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-20.f90.html">penf_stringify-doctest-20.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-21.f90.html">penf_stringify-doctest-21.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-22.f90.html">penf_stringify-doctest-22.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-23.f90.html">penf_stringify-doctest-23.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-24.f90.html">penf_stringify-doctest-24.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-25.f90.html">penf_stringify-doctest-25.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-26.f90.html">penf_stringify-doctest-26.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-27.f90.html">penf_stringify-doctest-27.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-28.f90.html">penf_stringify-doctest-28.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-29.f90.html">penf_stringify-doctest-29.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-3.f90.html">penf_stringify-doctest-3.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-30.f90.html">penf_stringify-doctest-30.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-31.f90.html">penf_stringify-doctest-31.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-32.f90.html">penf_stringify-doctest-32.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-33.f90.html">penf_stringify-doctest-33.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-34.f90.html">penf_stringify-doctest-34.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-35.f90.html">penf_stringify-doctest-35.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-36.f90.html">penf_stringify-doctest-36.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-37.f90.html">penf_stringify-doctest-37.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-38.f90.html">penf_stringify-doctest-38.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-39.f90.html">penf_stringify-doctest-39.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-4.f90.html">penf_stringify-doctest-4.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-40.f90.html">penf_stringify-doctest-40.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-41.f90.html">penf_stringify-doctest-41.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-42.f90.html">penf_stringify-doctest-42.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-43.f90.html">penf_stringify-doctest-43.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-44.f90.html">penf_stringify-doctest-44.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-45.f90.html">penf_stringify-doctest-45.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-46.f90.html">penf_stringify-doctest-46.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-47.f90.html">penf_stringify-doctest-47.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-48.f90.html">penf_stringify-doctest-48.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-49.f90.html">penf_stringify-doctest-49.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-5.f90.html">penf_stringify-doctest-5.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-50.f90.html">penf_stringify-doctest-50.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-51.f90.html">penf_stringify-doctest-51.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-52.f90.html">penf_stringify-doctest-52.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-53.f90.html">penf_stringify-doctest-53.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-54.f90.html">penf_stringify-doctest-54.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-55.f90.html">penf_stringify-doctest-55.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-56.f90.html">penf_stringify-doctest-56.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-57.f90.html">penf_stringify-doctest-57.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-58.f90.html">penf_stringify-doctest-58.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-59.f90.html">penf_stringify-doctest-59.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-6.f90.html">penf_stringify-doctest-6.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-60.f90.html">penf_stringify-doctest-60.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-61.f90.html">penf_stringify-doctest-61.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-62.f90.html">penf_stringify-doctest-62.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-63.f90.html">penf_stringify-doctest-63.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-64.f90.html">penf_stringify-doctest-64.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-65.f90.html">penf_stringify-doctest-65.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-66.f90.html">penf_stringify-doctest-66.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-67.f90.html">penf_stringify-doctest-67.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-68.f90.html">penf_stringify-doctest-68.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-69.f90.html">penf_stringify-doctest-69.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-7.f90.html">penf_stringify-doctest-7.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-70.f90.html">penf_stringify-doctest-70.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-71.f90.html">penf_stringify-doctest-71.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-72.f90.html">penf_stringify-doctest-72.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-73.f90.html">penf_stringify-doctest-73.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-74.f90.html">penf_stringify-doctest-74.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-75.f90.html">penf_stringify-doctest-75.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-76.f90.html">penf_stringify-doctest-76.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-77.f90.html">penf_stringify-doctest-77.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-78.f90.html">penf_stringify-doctest-78.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-79.f90.html">penf_stringify-doctest-79.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-8.f90.html">penf_stringify-doctest-8.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-80.f90.html">penf_stringify-doctest-80.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-81.f90.html">penf_stringify-doctest-81.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-82.f90.html">penf_stringify-doctest-82.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-83.f90.html">penf_stringify-doctest-83.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-84.f90.html">penf_stringify-doctest-84.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-85.f90.html">penf_stringify-doctest-85.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-86.f90.html">penf_stringify-doctest-86.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-87.f90.html">penf_stringify-doctest-87.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-88.f90.html">penf_stringify-doctest-88.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-89.f90.html">penf_stringify-doctest-89.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-9.f90.html">penf_stringify-doctest-9.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-90.f90.html">penf_stringify-doctest-90.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify-doctest-91.f90.html">penf_stringify-doctest-91.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/penf_stringify.f90.html">penf_stringify.F90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor-doctest-1.f90.html">stringifor-doctest-1.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor-doctest-2.f90.html">stringifor-doctest-2.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor.f90.html">stringifor.F90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-1.f90.html">stringifor_string_t-doctest-1.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-10.f90.html">stringifor_string_t-doctest-10.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-100.f90.html">stringifor_string_t-doctest-100.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-101.f90.html">stringifor_string_t-doctest-101.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-102.f90.html">stringifor_string_t-doctest-102.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-103.f90.html">stringifor_string_t-doctest-103.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-104.f90.html">stringifor_string_t-doctest-104.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-105.f90.html">stringifor_string_t-doctest-105.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-106.f90.html">stringifor_string_t-doctest-106.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-11.f90.html">stringifor_string_t-doctest-11.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-12.f90.html">stringifor_string_t-doctest-12.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-13.f90.html">stringifor_string_t-doctest-13.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-14.f90.html">stringifor_string_t-doctest-14.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-15.f90.html">stringifor_string_t-doctest-15.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-16.f90.html">stringifor_string_t-doctest-16.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-17.f90.html">stringifor_string_t-doctest-17.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-18.f90.html">stringifor_string_t-doctest-18.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-19.f90.html">stringifor_string_t-doctest-19.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-2.f90.html">stringifor_string_t-doctest-2.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-20.f90.html">stringifor_string_t-doctest-20.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-21.f90.html">stringifor_string_t-doctest-21.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-22.f90.html">stringifor_string_t-doctest-22.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-23.f90.html">stringifor_string_t-doctest-23.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-24.f90.html">stringifor_string_t-doctest-24.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-25.f90.html">stringifor_string_t-doctest-25.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-26.f90.html">stringifor_string_t-doctest-26.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-27.f90.html">stringifor_string_t-doctest-27.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-28.f90.html">stringifor_string_t-doctest-28.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-29.f90.html">stringifor_string_t-doctest-29.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-3.f90.html">stringifor_string_t-doctest-3.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-30.f90.html">stringifor_string_t-doctest-30.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-31.f90.html">stringifor_string_t-doctest-31.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-32.f90.html">stringifor_string_t-doctest-32.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-33.f90.html">stringifor_string_t-doctest-33.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-34.f90.html">stringifor_string_t-doctest-34.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-35.f90.html">stringifor_string_t-doctest-35.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-36.f90.html">stringifor_string_t-doctest-36.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-37.f90.html">stringifor_string_t-doctest-37.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-38.f90.html">stringifor_string_t-doctest-38.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-39.f90.html">stringifor_string_t-doctest-39.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-4.f90.html">stringifor_string_t-doctest-4.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-40.f90.html">stringifor_string_t-doctest-40.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-41.f90.html">stringifor_string_t-doctest-41.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-42.f90.html">stringifor_string_t-doctest-42.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-43.f90.html">stringifor_string_t-doctest-43.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-44.f90.html">stringifor_string_t-doctest-44.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-45.f90.html">stringifor_string_t-doctest-45.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-46.f90.html">stringifor_string_t-doctest-46.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-47.f90.html">stringifor_string_t-doctest-47.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-48.f90.html">stringifor_string_t-doctest-48.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-49.f90.html">stringifor_string_t-doctest-49.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-5.f90.html">stringifor_string_t-doctest-5.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-50.f90.html">stringifor_string_t-doctest-50.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-51.f90.html">stringifor_string_t-doctest-51.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-52.f90.html">stringifor_string_t-doctest-52.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-53.f90.html">stringifor_string_t-doctest-53.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-54.f90.html">stringifor_string_t-doctest-54.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-55.f90.html">stringifor_string_t-doctest-55.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-56.f90.html">stringifor_string_t-doctest-56.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-57.f90.html">stringifor_string_t-doctest-57.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-58.f90.html">stringifor_string_t-doctest-58.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-59.f90.html">stringifor_string_t-doctest-59.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-6.f90.html">stringifor_string_t-doctest-6.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-60.f90.html">stringifor_string_t-doctest-60.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-61.f90.html">stringifor_string_t-doctest-61.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-62.f90.html">stringifor_string_t-doctest-62.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-63.f90.html">stringifor_string_t-doctest-63.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-64.f90.html">stringifor_string_t-doctest-64.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-65.f90.html">stringifor_string_t-doctest-65.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-66.f90.html">stringifor_string_t-doctest-66.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-67.f90.html">stringifor_string_t-doctest-67.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-68.f90.html">stringifor_string_t-doctest-68.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-69.f90.html">stringifor_string_t-doctest-69.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-7.f90.html">stringifor_string_t-doctest-7.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-70.f90.html">stringifor_string_t-doctest-70.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-71.f90.html">stringifor_string_t-doctest-71.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-72.f90.html">stringifor_string_t-doctest-72.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-73.f90.html">stringifor_string_t-doctest-73.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-74.f90.html">stringifor_string_t-doctest-74.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-75.f90.html">stringifor_string_t-doctest-75.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-76.f90.html">stringifor_string_t-doctest-76.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-77.f90.html">stringifor_string_t-doctest-77.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-78.f90.html">stringifor_string_t-doctest-78.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-79.f90.html">stringifor_string_t-doctest-79.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-8.f90.html">stringifor_string_t-doctest-8.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-80.f90.html">stringifor_string_t-doctest-80.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-81.f90.html">stringifor_string_t-doctest-81.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-82.f90.html">stringifor_string_t-doctest-82.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-83.f90.html">stringifor_string_t-doctest-83.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-84.f90.html">stringifor_string_t-doctest-84.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-85.f90.html">stringifor_string_t-doctest-85.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-86.f90.html">stringifor_string_t-doctest-86.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-87.f90.html">stringifor_string_t-doctest-87.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-88.f90.html">stringifor_string_t-doctest-88.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-89.f90.html">stringifor_string_t-doctest-89.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-9.f90.html">stringifor_string_t-doctest-9.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-90.f90.html">stringifor_string_t-doctest-90.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-91.f90.html">stringifor_string_t-doctest-91.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-92.f90.html">stringifor_string_t-doctest-92.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-93.f90.html">stringifor_string_t-doctest-93.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-94.f90.html">stringifor_string_t-doctest-94.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-95.f90.html">stringifor_string_t-doctest-95.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-96.f90.html">stringifor_string_t-doctest-96.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-97.f90.html">stringifor_string_t-doctest-97.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-98.f90.html">stringifor_string_t-doctest-98.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t-doctest-99.f90.html">stringifor_string_t-doctest-99.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_string_t.f90.html">stringifor_string_t.F90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_test_csv_naive_parser.f90.html">stringifor_test_csv_naive_parser.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/stringifor_test_parse_large_csv.f90.html">stringifor_test_parse_large_csv.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/test.f90.html">test.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/use_module_basic.f90.html">use_module_basic.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran.f90.html">vtk_fortran.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_dataarray_encoder.f90.html">vtk_fortran_dataarray_encoder.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_parameters.f90.html">vtk_fortran_parameters.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_pvtk_file.f90.html">vtk_fortran_pvtk_file.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtk_file.f90.html">vtk_fortran_vtk_file.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtk_file_dataarray_encode_ascii.f90.html">vtk_fortran_vtk_file_dataarray_encode_ascii.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtk_file_dataarray_encode_base64.f90.html">vtk_fortran_vtk_file_dataarray_encode_base64.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtk_file_dataarray_write.f90.html">vtk_fortran_vtk_file_dataarray_write.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtk_file_dataarray_write_on_scratch.f90.html">vtk_fortran_vtk_file_dataarray_write_on_scratch.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtk_file_write_geo_strg.f90.html">vtk_fortran_vtk_file_write_geo_strg.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtk_file_xml_writer_abstract.f90.html">vtk_fortran_vtk_file_xml_writer_abstract.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtk_file_xml_writer_appended.f90.html">vtk_fortran_vtk_file_xml_writer_appended.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtk_file_xml_writer_ascii_local.f90.html">vtk_fortran_vtk_file_xml_writer_ascii_local.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtk_file_xml_writer_binary_local.f90.html">vtk_fortran_vtk_file_xml_writer_binary_local.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/vtk_fortran_vtm_file.f90.html">vtk_fortran_vtm_file.F90</a>
+      
+      <a class="list-group-item" href="../sourcefile/write_tag.f90.html">write_tag.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/write_vtm.f90.html">write_vtm.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/write_vtr.f90.html">write_vtr.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/write_vts.f90.html">write_vts.f90</a>
+      
+      <a class="list-group-item" href="../sourcefile/write_vtu.f90.html">write_vtu.f90</a>
+      
+    </div>
+  </div>
+</div>
+
+
+  </section>
+  
+    <hr>    
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+      <div class="row">
+        <div class="col-xs-6 col-md-4"><p>&copy; 2019 </p></div>
+        <div class="col-xs-6 col-md-4 col-md-push-4">
+          <p class="text-right">
+            Documentation generated by 
+            <a href="https://github.com/cmacmackin/ford">FORD</a>
+            
+          </p>
+        </div>
+        <div class="col-xs-12 col-md-4 col-md-pull-4"><p class="text-center"> Lib_VTK_IO was developed by Stefano Zaghi</p></div>
+      </div>
+      <br>
+      </div> <!-- /container -->    
+    </footer>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+<!--
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+-->
+    <script src="../js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../js/ie10-viewport-bug-workaround.js"></script>
+
+    <!-- MathJax JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+        jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+        extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js'],
+        'HTML-CSS': { 
+           styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: '#000000 ! important'} }
+        }
+      });
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  </body>
+</html>
