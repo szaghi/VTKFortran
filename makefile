@@ -360,7 +360,12 @@ $(DOBJ)stringifor.o: src/third_party/StringiFor/src/lib/stringifor.F90 \
 
 $(DOBJ)stringifor_string_t.o: src/third_party/StringiFor/src/lib/stringifor_string_t.F90 \
 	$(DOBJ)befor64.o \
-	$(DOBJ)penf.o
+	$(DOBJ)penf.o \
+	$(DOBJ)face.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)face.o: src/third_party/StringiFor/src/third_party/FACE/src/lib/face.F90
 	@echo $(COTEXT)
 	@$(FC) $(OPTSC)  $< -o $@
 
