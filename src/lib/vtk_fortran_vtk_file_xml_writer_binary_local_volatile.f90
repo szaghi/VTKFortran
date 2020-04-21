@@ -3,7 +3,8 @@ module vtk_fortran_vtk_file_xml_writer_binary_local_volatile
 !< VTK file XMl writer, binary local, volatile.
 !< Instead of saving data into a real file on system, this writer saves data into a volatile characters string that can be used also
 !< on (slave) processes that have not access to filesystem: the volatile string can easily sent to other (master) processes having
-!< access to filesytem. This writer is designed to facilitate the use of the library in parallel envinroments.
+!< access to filesytem. This writer is designed to facilitate the use of the library in parallel envinroments wehere not all
+!< processes/threads have access to filesystem.
 
 use penf
 use stringifor
@@ -21,6 +22,7 @@ type, extends(xml_writer_abstract) :: xml_writer_binary_local_volatile
     procedure, pass(self) :: initialize                 !< Initialize writer.
     procedure, pass(self) :: finalize                   !< Finalize writer.
     procedure, pass(self) :: write_dataarray1_rank1_R8P !< Write dataarray 1, rank 1, R8P.
+           iostat=self%error)
     procedure, pass(self) :: write_dataarray1_rank1_R4P !< Write dataarray 1, rank 1, R4P.
     procedure, pass(self) :: write_dataarray1_rank1_I8P !< Write dataarray 1, rank 1, I8P.
     procedure, pass(self) :: write_dataarray1_rank1_I4P !< Write dataarray 1, rank 1, I4P.
@@ -61,19 +63,20 @@ endtype xml_writer_binary_local_volatile
 contains
   function initialize(self, format, filename, mesh_topology, nx1, nx2, ny1, ny2, nz1, nz2, mesh_kind) result(error)
   !< Initialize writer.
-  class(xml_writer_binary_local), intent(inout)        :: self          !< Writer.
-  character(*),                   intent(in)           :: format        !< File format: binary.
-  character(*),                   intent(in)           :: filename      !< File name.
-  character(*),                   intent(in)           :: mesh_topology !< Mesh topology.
-  integer(I4P),                   intent(in), optional :: nx1           !< Initial node of x axis.
-  integer(I4P),                   intent(in), optional :: nx2           !< Final node of x axis.
-  integer(I4P),                   intent(in), optional :: ny1           !< Initial node of y axis.
-  integer(I4P),                   intent(in), optional :: ny2           !< Final node of y axis.
-  integer(I4P),                   intent(in), optional :: nz1           !< Initial node of z axis.
-  integer(I4P),                   intent(in), optional :: nz2           !< Final node of z axis.
-  character(*),                   intent(in), optional :: mesh_kind     !< Kind of mesh data: Float64, Float32, ecc.
-  integer(I4P)                                         :: error         !< Error status.
+  class(xml_writer_binary_local_volatile), intent(inout)        :: self          !< Writer.
+  character(*),                            intent(in)           :: format        !< File format: binary.
+  character(*),                            intent(in)           :: filename      !< File name.
+  character(*),                            intent(in)           :: mesh_topology !< Mesh topology.
+  integer(I4P),                            intent(in), optional :: nx1           !< Initial node of x axis.
+  integer(I4P),                            intent(in), optional :: nx2           !< Final node of x axis.
+  integer(I4P),                            intent(in), optional :: ny1           !< Initial node of y axis.
+  integer(I4P),                            intent(in), optional :: ny2           !< Final node of y axis.
+  integer(I4P),                            intent(in), optional :: nz1           !< Initial node of z axis.
+  integer(I4P),                            intent(in), optional :: nz2           !< Final node of z axis.
+  character(*),                            intent(in), optional :: mesh_kind     !< Kind of mesh data: Float64, Float32, ecc.
+  integer(I4P)                                                  :: error         !< Error status.
 
+  self%is_volatile = .true.
   self%topology = trim(adjustl(mesh_topology))
   self%format_ch = format
   self%format_ch = self%format_ch%lower()

@@ -20,7 +20,7 @@ type, abstract :: xml_writer_abstract
   integer(I4P)  :: vtm_block(1:2)=[-1_I4P, -1_I4P] !< Block indexes.
   integer(I4P)  :: error=0_I4P                     !< IO Error status.
   type(xml_tag) :: tag                             !< XML tags handler.
-  logical       :: is_volatile=.false.             !< Flag to check if is volatile write.
+  logical       :: is_volatile=.false.             !< Flag to check volatile writer.
   type(string)  :: xml_volatile                    !< XML file volatile (not a physical file).
   contains
     ! public methods (some deferred)
@@ -168,7 +168,8 @@ type, abstract :: xml_writer_abstract
 endtype xml_writer_abstract
 
 abstract interface
-  function initialize_interface(self, format, filename, mesh_topology, nx1, nx2, ny1, ny2, nz1, nz2, mesh_kind) result(error)
+  function initialize_interface(self, format, filename, mesh_topology, nx1, nx2, ny1, ny2, nz1, nz2, &
+                                is_volatile, mesh_kind) result(error)
   !< Initialize writer.
   import :: xml_writer_abstract, I4P
   class(xml_writer_abstract), intent(inout)        :: self          !< Writer.
@@ -182,6 +183,7 @@ abstract interface
   integer(I4P),               intent(in), optional :: nz1           !< Initial node of z axis.
   integer(I4P),               intent(in), optional :: nz2           !< Final node of z axis.
   character(*),               intent(in), optional :: mesh_kind     !< Kind of mesh data: Float64, Float32, ecc.
+  logical,                    intent(in), optional :: is_volatile   !< Flag to check volatile writer.
   integer(I4P)                                     :: error         !< Error status.
   endfunction initialize_interface
 
