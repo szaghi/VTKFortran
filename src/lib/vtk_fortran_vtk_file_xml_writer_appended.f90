@@ -154,23 +154,18 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction initialize
 
-  function finalize(self) result(error)
-  !---------------------------------------------------------------------------------------------------------------------------------
-  !< Finalize writer.
-  !---------------------------------------------------------------------------------------------------------------------------------
-  class(xml_writer_appended), intent(inout) :: self  !< Writer.
-  integer(I4P)                              :: error !< Error status.
-  !---------------------------------------------------------------------------------------------------------------------------------
+   function finalize(self) result(error)
+   !< Finalize writer.
+   class(xml_writer_appended), intent(inout) :: self  !< Writer.
+   integer(I4P)                              :: error !< Error status.
 
-  !---------------------------------------------------------------------------------------------------------------------------------
-  call self%write_end_tag(name=self%topology%chars())
-  call self%write_dataarray_appended
-  call self%write_end_tag(name='VTKFile')
-  call self%close_xml_file
-  call self%close_scratch_file
-  error = self%error
-  !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction finalize
+   call self%write_end_tag(name=self%topology%chars())
+   call self%write_dataarray_appended
+   call self%write_end_tag(name='VTKFile')
+   call self%close_xml_file
+   call self%close_scratch_file
+   error = self%error
+   endfunction finalize
 
   elemental subroutine ioffset_update(self, n_byte)
   !---------------------------------------------------------------------------------------------------------------------------------

@@ -93,21 +93,16 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction initialize
 
-  function finalize(self) result(error)
-  !---------------------------------------------------------------------------------------------------------------------------------
-  !< Finalize writer.
-  !---------------------------------------------------------------------------------------------------------------------------------
-  class(xml_writer_ascii_local), intent(inout) :: self  !< Writer.
-  integer(I4P)                                 :: error !< Error status.
-  !---------------------------------------------------------------------------------------------------------------------------------
+   function finalize(self) result(error)
+   !< Finalize writer.
+   class(xml_writer_ascii_local), intent(inout) :: self  !< Writer.
+   integer(I4P)                                 :: error !< Error status.
 
-  !---------------------------------------------------------------------------------------------------------------------------------
-  call self%write_end_tag(name=self%topology%chars())
-  call self%write_end_tag(name='VTKFile')
-  call self%close_xml_file
-  error = self%error
-  !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction finalize
+   call self%write_end_tag(name=self%topology%chars())
+   call self%write_end_tag(name='VTKFile')
+   call self%close_xml_file
+   error = self%error
+   endfunction finalize
 
   ! write_dataarray methods
   function write_dataarray1_rank1_R8P(self, data_name, x, is_tuples) result(error)

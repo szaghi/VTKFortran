@@ -26,6 +26,8 @@ type, abstract :: xml_writer_abstract
     ! public methods (some deferred)
     procedure,                                 pass(self) :: close_xml_file               !< Close xml file.
     procedure,                                 pass(self) :: open_xml_file                !< Open xml file.
+    procedure,                                 pass(self) :: free                         !< Free allocated memory.
+    procedure,                                 pass(self) :: get_xml_volatile             !< Return the XML volatile string file.
     procedure,                                 pass(self) :: write_connectivity           !< Write connectivity.
     procedure,                                 pass(self) :: write_dataarray_location_tag !< Write dataarray location tag.
     procedure,                                 pass(self) :: write_dataarray_tag          !< Write dataarray tag.
@@ -187,12 +189,12 @@ abstract interface
   integer(I4P)                                     :: error         !< Error status.
   endfunction initialize_interface
 
-  function finalize_interface(self) result(error)
-  !< Finalize writer.
-  import :: xml_writer_abstract, I4P
-  class(xml_writer_abstract), intent(inout) :: self  !< Writer.
-  integer(I4P)                              :: error !< Error status.
-  endfunction finalize_interface
+   function finalize_interface(self) result(error)
+   !< Finalize writer.
+   import :: xml_writer_abstract, I4P
+   class(xml_writer_abstract), intent(inout) :: self  !< Writer.
+   integer(I4P)                              :: error !< Error status.
+   endfunction finalize_interface
 
   function write_dataarray1_rank1_R8P_interface(self, data_name, x, is_tuples) result(error)
   !< Write `<DataArray... NumberOfComponents="1"...>...</DataArray>` tag (R8P).
@@ -628,6 +630,34 @@ contains
       self%xml_volatile = ''
    endif
    endsubroutine open_xml_file
+
+   elemental subroutine free(self, error)
+   !< Free allocated memory.
+   class(xml_writer_abstract), intent(inout)         :: self  !< Writer.
+   integer(I4P),               intent(out), optional :: error !< Error status.
+
+   call self%format_ch%free
+   call self%topology%free
+   self%indent=0_I4P
+   self%ioffset=0_I8P
+   self%xml=0_I4P
+   self%vtm_block(1:2)=[-1_I4P, -1_I4P]
+   self%error=0_I4P
+   call self%tag%free
+   self%is_volatile=.false.
+   call self%xml_volatile%free
+   endsubroutine free
+
+   pure subroutine get_xml_volatile(self, xml_volatile, error)
+   !< Return the eventual XML volatile string file.
+   class(xml_writer_abstract), intent(in)               :: self         !< Writer.
+   character(len=:),           intent(out), allocatable :: xml_volatile !< XML volatile file.
+   integer(I4P),               intent(out), optional    :: error        !< Error status.
+
+   if (self%is_volatile) then
+      xml_volatile = self%xml_volatile%raw
+   endif
+   endsubroutine get_xml_volatile
 
    ! tag methods
    subroutine write_end_tag(self, name)
