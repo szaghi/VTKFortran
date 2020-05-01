@@ -14,3 +14,7 @@
   path = src/third_party/FoXy
   url = https://github.com/Fortran-FOSS-Programmers/FoXy
   branch = master
+[submodule "src/third_party/FACE"]
+  path = src/third_party/FACE
+  url = https://github.com/szaghi/FACE
+  branch = master

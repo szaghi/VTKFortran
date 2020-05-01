@@ -243,41 +243,148 @@ LITEXT  = -e "\033[1;31m Assemble\033[0m\033[1m $@\033[0m"
 
 # linking rules
 .NOTPARALLEL : ALLTESTS
-ALLTESTS : $(DEXE)USE_MODULE_BASIC $(DEXE)WRITE_VTS $(DEXE)WRITE_VTR $(DEXE)WRITE_VTU
+ALLTESTS : $(DEXE)VTK_FORTRAN_WRITE_VTU \
+	        $(DEXE)VTK_FORTRAN_WRITE_VTS \
+	        $(DEXE)VTK_FORTRAN_WRITE_VOLATILE \
+	        $(DEXE)VTK_FORTRAN_USE_MODULE_BASIC \
+	        $(DEXE)VTK_FORTRAN_WRITE_PVTS \
+	        $(DEXE)VTK_FORTRAN_WRITE_VTR \
+	        $(DEXE)VTK_FORTRAN_WRITE_VTM
 
 VTKFortran : PRINTINFO $(MKDIRS) $(DOBJ)vtk_fortran.o
 	@echo $(LITEXT)
 	@$(MAKELIB)
 
-$(DEXE)USE_MODULE_BASIC : PRINTINFO $(MKDIRS) $(DOBJ)use_module_basic.o
-	@rm -f $(filter-out $(DOBJ)use_module_basic.o,$(EXESOBJ))
+$(DEXE)VTK_FORTRAN_WRITE_VTU: PRINTINFO $(MKDIRS) $(DOBJ)vtk_fortran_write_vtu.o
+	@rm -f $(filter-out $(DOBJ)vtk_fortran_write_vtu.o,$(EXESOBJ))
 	@echo $(LITEXT)
 	@$(FC) $(OPTSL) $(DOBJ)*.o $(LIBS) -o $@
-EXES := $(EXES) USE_MODULE_BASIC
+EXES := $(EXES) VTK_FORTRAN_WRITE_VTU
 
-$(DEXE)WRITE_VTS : PRINTINFO $(MKDIRS) $(DOBJ)write_vts.o
-	@rm -f $(filter-out $(DOBJ)write_vts.o,$(EXESOBJ))
+$(DEXE)VTK_FORTRAN_WRITE_VTS: PRINTINFO $(MKDIRS) $(DOBJ)vtk_fortran_write_vts.o
+	@rm -f $(filter-out $(DOBJ)vtk_fortran_write_vts.o,$(EXESOBJ))
 	@echo $(LITEXT)
 	@$(FC) $(OPTSL) $(DOBJ)*.o $(LIBS) -o $@
-EXES := $(EXES) WRITE_VTS
+EXES := $(EXES) VTK_FORTRAN_WRITE_VTS
 
-$(DEXE)WRITE_VTR : PRINTINFO $(MKDIRS) $(DOBJ)write_vtr.o
-	@rm -f $(filter-out $(DOBJ)write_vtr.o,$(EXESOBJ))
+$(DEXE)VTK_FORTRAN_WRITE_VOLATILE: PRINTINFO $(MKDIRS) $(DOBJ)vtk_fortran_write_volatile.o
+	@rm -f $(filter-out $(DOBJ)vtk_fortran_write_volatile.o,$(EXESOBJ))
 	@echo $(LITEXT)
 	@$(FC) $(OPTSL) $(DOBJ)*.o $(LIBS) -o $@
-EXES := $(EXES) WRITE_VTR
+EXES := $(EXES) VTK_FORTRAN_WRITE_VOLATILE
 
-$(DEXE)WRITE_VTU : PRINTINFO $(MKDIRS) $(DOBJ)write_vtu.o
-	@rm -f $(filter-out $(DOBJ)write_vtu.o,$(EXESOBJ))
+$(DEXE)VTK_FORTRAN_USE_MODULE_BASIC: PRINTINFO $(MKDIRS) $(DOBJ)vtk_fortran_use_module_basic.o
+	@rm -f $(filter-out $(DOBJ)vtk_fortran_use_module_basic.o,$(EXESOBJ))
 	@echo $(LITEXT)
 	@$(FC) $(OPTSL) $(DOBJ)*.o $(LIBS) -o $@
-EXES := $(EXES) WRITE_VTU
+EXES := $(EXES) VTK_FORTRAN_USE_MODULE_BASIC
+
+$(DEXE)VTK_FORTRAN_WRITE_PVTS: PRINTINFO $(MKDIRS) $(DOBJ)vtk_fortran_write_pvts.o
+	@rm -f $(filter-out $(DOBJ)vtk_fortran_write_pvts.o,$(EXESOBJ))
+	@echo $(LITEXT)
+	@$(FC) $(OPTSL) $(DOBJ)*.o $(LIBS) -o $@
+EXES := $(EXES) VTK_FORTRAN_WRITE_PVTS
+
+$(DEXE)VTK_FORTRAN_WRITE_VTR: PRINTINFO $(MKDIRS) $(DOBJ)vtk_fortran_write_vtr.o
+	@rm -f $(filter-out $(DOBJ)vtk_fortran_write_vtr.o,$(EXESOBJ))
+	@echo $(LITEXT)
+	@$(FC) $(OPTSL) $(DOBJ)*.o $(LIBS) -o $@
+EXES := $(EXES) VTK_FORTRAN_WRITE_VTR
+
+$(DEXE)VTK_FORTRAN_WRITE_VTM: PRINTINFO $(MKDIRS) $(DOBJ)vtk_fortran_write_vtm.o
+	@rm -f $(filter-out $(DOBJ)vtk_fortran_write_vtm.o,$(EXESOBJ))
+	@echo $(LITEXT)
+	@$(FC) $(OPTSL) $(DOBJ)*.o $(LIBS) -o $@
+EXES := $(EXES) VTK_FORTRAN_WRITE_VTM
 
 # compiling rules
+$(DOBJ)befor64.o: src/third_party/BeFoR64/src/lib/befor64.F90 \
+	$(DOBJ)penf.o \
+	$(DOBJ)befor64_pack_data_m.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)befor64_pack_data_m.o: src/third_party/BeFoR64/src/lib/befor64_pack_data_m.F90 \
+	$(DOBJ)penf.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)foxy_xml_file.o: src/third_party/FoXy/src/lib/foxy_xml_file.f90 \
+	$(DOBJ)foxy_xml_tag.o \
+	$(DOBJ)penf.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)foxy.o: src/third_party/FoXy/src/lib/foxy.f90 \
+	$(DOBJ)foxy_xml_file.o \
+	$(DOBJ)foxy_xml_tag.o \
+	$(DOBJ)penf.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)foxy_xml_tag.o: src/third_party/FoXy/src/lib/foxy_xml_tag.F90 \
+	$(DOBJ)penf.o \
+	$(DOBJ)stringifor.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)face.o: src/third_party/FACE/src/lib/face.F90
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)stringifor_string_t.o: src/third_party/StringiFor/src/lib/stringifor_string_t.F90 \
+	$(DOBJ)befor64.o \
+	$(DOBJ)face.o \
+	$(DOBJ)penf.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)stringifor.o: src/third_party/StringiFor/src/lib/stringifor.F90 \
+	$(DOBJ)penf.o \
+	$(DOBJ)stringifor_string_t.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)penf_global_parameters_variables.o: src/third_party/PENF/src/lib/penf_global_parameters_variables.F90
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)penf_b_size.o: src/third_party/PENF/src/lib/penf_b_size.F90 \
+	$(DOBJ)penf_global_parameters_variables.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)penf_stringify.o: src/third_party/PENF/src/lib/penf_stringify.F90 \
+	$(DOBJ)penf_b_size.o \
+	$(DOBJ)penf_global_parameters_variables.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)penf.o: src/third_party/PENF/src/lib/penf.F90 \
+	$(DOBJ)penf_global_parameters_variables.o \
+	$(DOBJ)penf_b_size.o \
+	$(DOBJ)penf_stringify.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)vtk_fortran_parameters.o: src/lib/vtk_fortran_parameters.f90 \
+	$(DOBJ)penf.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
 $(DOBJ)vtk_fortran.o: src/lib/vtk_fortran.f90 \
+	$(DOBJ)penf.o \
 	$(DOBJ)vtk_fortran_pvtk_file.o \
 	$(DOBJ)vtk_fortran_vtk_file.o \
 	$(DOBJ)vtk_fortran_vtm_file.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)vtk_fortran_pvtk_file.o: src/lib/vtk_fortran_pvtk_file.f90 \
+	$(DOBJ)befor64.o \
+	$(DOBJ)penf.o \
+	$(DOBJ)vtk_fortran_vtk_file_xml_writer_abstract.o \
+	$(DOBJ)vtk_fortran_vtk_file_xml_writer_ascii_local.o
 	@echo $(COTEXT)
 	@$(FC) $(OPTSC)  $< -o $@
 
@@ -297,25 +404,14 @@ $(DOBJ)vtk_fortran_vtk_file_xml_writer_ascii_local.o: src/lib/vtk_fortran_vtk_fi
 	@echo $(COTEXT)
 	@$(FC) $(OPTSC)  $< -o $@
 
-$(DOBJ)vtk_fortran_dataarray_encoder.o: src/lib/vtk_fortran_dataarray_encoder.f90 \
+$(DOBJ)vtk_fortran_vtk_file.o: src/lib/vtk_fortran_vtk_file.f90 \
 	$(DOBJ)befor64.o \
-	$(DOBJ)penf.o
-	@echo $(COTEXT)
-	@$(FC) $(OPTSC)  $< -o $@
-
-$(DOBJ)vtk_fortran_pvtk_file.o: src/lib/vtk_fortran_pvtk_file.f90 \
-	$(DOBJ)befor64.o \
-	$(DOBJ)penf.o \
-	$(DOBJ)vtk_fortran_vtk_file_xml_writer_abstract.o \
-	$(DOBJ)vtk_fortran_vtk_file_xml_writer_ascii_local.o
-	@echo $(COTEXT)
-	@$(FC) $(OPTSC)  $< -o $@
-
-$(DOBJ)vtk_fortran_vtk_file_xml_writer_binary_local.o: src/lib/vtk_fortran_vtk_file_xml_writer_binary_local.f90 \
 	$(DOBJ)penf.o \
 	$(DOBJ)stringifor.o \
-	$(DOBJ)vtk_fortran_dataarray_encoder.o \
-	$(DOBJ)vtk_fortran_vtk_file_xml_writer_abstract.o
+	$(DOBJ)vtk_fortran_vtk_file_xml_writer_abstract.o \
+	$(DOBJ)vtk_fortran_vtk_file_xml_writer_appended.o \
+	$(DOBJ)vtk_fortran_vtk_file_xml_writer_ascii_local.o \
+	$(DOBJ)vtk_fortran_vtk_file_xml_writer_binary_local.o
 	@echo $(COTEXT)
 	@$(FC) $(OPTSC)  $< -o $@
 
@@ -336,110 +432,56 @@ $(DOBJ)vtk_fortran_vtk_file_xml_writer_appended.o: src/lib/vtk_fortran_vtk_file_
 	@echo $(COTEXT)
 	@$(FC) $(OPTSC)  $< -o $@
 
-$(DOBJ)vtk_fortran_vtk_file.o: src/lib/vtk_fortran_vtk_file.f90 \
-	$(DOBJ)befor64.o \
+$(DOBJ)vtk_fortran_vtk_file_xml_writer_binary_local.o: src/lib/vtk_fortran_vtk_file_xml_writer_binary_local.f90 \
 	$(DOBJ)penf.o \
 	$(DOBJ)stringifor.o \
-	$(DOBJ)vtk_fortran_vtk_file_xml_writer_abstract.o \
-	$(DOBJ)vtk_fortran_vtk_file_xml_writer_appended.o \
-	$(DOBJ)vtk_fortran_vtk_file_xml_writer_ascii_local.o \
-	$(DOBJ)vtk_fortran_vtk_file_xml_writer_binary_local.o
+	$(DOBJ)vtk_fortran_dataarray_encoder.o \
+	$(DOBJ)vtk_fortran_vtk_file_xml_writer_abstract.o
 	@echo $(COTEXT)
 	@$(FC) $(OPTSC)  $< -o $@
 
-$(DOBJ)vtk_fortran_parameters.o: src/lib/vtk_fortran_parameters.f90 \
-	$(DOBJ)penf.o
-	@echo $(COTEXT)
-	@$(FC) $(OPTSC)  $< -o $@
-
-$(DOBJ)stringifor.o: src/third_party/StringiFor/src/lib/stringifor.F90 \
-	$(DOBJ)penf.o \
-	$(DOBJ)stringifor_string_t.o
-	@echo $(COTEXT)
-	@$(FC) $(OPTSC)  $< -o $@
-
-$(DOBJ)stringifor_string_t.o: src/third_party/StringiFor/src/lib/stringifor_string_t.F90 \
+$(DOBJ)vtk_fortran_dataarray_encoder.o: src/lib/vtk_fortran_dataarray_encoder.f90 \
 	$(DOBJ)befor64.o \
-	$(DOBJ)penf.o \
-	$(DOBJ)face.o
-	@echo $(COTEXT)
-	@$(FC) $(OPTSC)  $< -o $@
-
-$(DOBJ)face.o: src/third_party/StringiFor/src/third_party/FACE/src/lib/face.F90
-	@echo $(COTEXT)
-	@$(FC) $(OPTSC)  $< -o $@
-
-$(DOBJ)penf.o: src/third_party/PENF/src/lib/penf.F90 \
-	$(DOBJ)penf_global_parameters_variables.o \
-	$(DOBJ)penf_b_size.o \
-	$(DOBJ)penf_stringify.o
-	@echo $(COTEXT)
-	@$(FC) $(OPTSC)  $< -o $@
-	@rm -f $(DOBJ)penf_global_parameters_variables.o $(DOBJ)penf_b_size.o $(DOBJ)penf_stringify.o
-
-$(DOBJ)befor64_pack_data_m.o: src/third_party/BeFoR64/src/lib/befor64_pack_data_m.F90 \
 	$(DOBJ)penf.o
 	@echo $(COTEXT)
 	@$(FC) $(OPTSC)  $< -o $@
 
-$(DOBJ)befor64.o: src/third_party/BeFoR64/src/lib/befor64.F90 \
-	$(DOBJ)penf.o \
-	$(DOBJ)befor64_pack_data_m.o
-	@echo $(COTEXT)
-	@$(FC) $(OPTSC)  $< -o $@
-
-$(DOBJ)penf_b_size.o: src/third_party/PENF/src/lib/penf_b_size.F90 \
-	$(DOBJ)penf_global_parameters_variables.o
-	@echo $(COTEXT)
-	@$(FC) $(OPTSC)  $< -o $@
-
-$(DOBJ)penf_stringify.o: src/third_party/PENF/src/lib/penf_stringify.F90 \
-	$(DOBJ)penf_b_size.o \
-	$(DOBJ)penf_global_parameters_variables.o
-	@echo $(COTEXT)
-	@$(FC) $(OPTSC)  $< -o $@
-
-$(DOBJ)penf_global_parameters_variables.o: src/third_party/PENF/src/lib/penf_global_parameters_variables.F90
-	@echo $(COTEXT)
-	@$(FC) $(OPTSC)  $< -o $@
-
-$(DOBJ)foxy_xml_file.o: src/third_party/FoXy/src/lib/foxy_xml_file.f90 \
-	$(DOBJ)foxy_xml_tag.o \
-	$(DOBJ)penf.o
-	@echo $(COTEXT)
-	@$(FC) $(OPTSC)  $< -o $@
-
-$(DOBJ)foxy_xml_tag.o: src/third_party/FoXy/src/lib/foxy_xml_tag.F90 \
-	$(DOBJ)penf.o \
-	$(DOBJ)stringifor.o
-	@echo $(COTEXT)
-	@$(FC) $(OPTSC)  $< -o $@
-
-$(DOBJ)foxy.o: src/third_party/FoXy/src/lib/foxy.f90 \
-	$(DOBJ)foxy_xml_file.o \
-	$(DOBJ)foxy_xml_tag.o \
-	$(DOBJ)penf.o
-	@echo $(COTEXT)
-	@$(FC) $(OPTSC)  $< -o $@
-
-$(DOBJ)use_module_basic.o: src/tests/use_module_basic.f90 \
-	$(DOBJ)vtk_fortran.o
-	@echo $(COTEXT)
-	@$(FC) $(OPTSC)  $< -o $@
-
-$(DOBJ)write_vts.o: src/tests/write_vts.f90 \
+$(DOBJ)vtk_fortran_write_vtu.o: src/tests/vtk_fortran_write_vtu.f90 \
 	$(DOBJ)penf.o \
 	$(DOBJ)vtk_fortran.o
 	@echo $(COTEXT)
 	@$(FC) $(OPTSC)  $< -o $@
 
-$(DOBJ)write_vtr.o: src/tests/write_vtr.f90 \
+$(DOBJ)vtk_fortran_write_vts.o: src/tests/vtk_fortran_write_vts.f90 \
 	$(DOBJ)penf.o \
 	$(DOBJ)vtk_fortran.o
 	@echo $(COTEXT)
 	@$(FC) $(OPTSC)  $< -o $@
 
-$(DOBJ)write_vtu.o: src/tests/write_vtu.f90 \
+$(DOBJ)vtk_fortran_write_volatile.o: src/tests/vtk_fortran_write_volatile.f90 \
+	$(DOBJ)penf.o \
+	$(DOBJ)vtk_fortran.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)vtk_fortran_use_module_basic.o: src/tests/vtk_fortran_use_module_basic.f90 \
+	$(DOBJ)vtk_fortran.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)vtk_fortran_write_pvts.o: src/tests/vtk_fortran_write_pvts.f90 \
+	$(DOBJ)penf.o \
+	$(DOBJ)vtk_fortran.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)vtk_fortran_write_vtr.o: src/tests/vtk_fortran_write_vtr.f90 \
+	$(DOBJ)penf.o \
+	$(DOBJ)vtk_fortran.o
+	@echo $(COTEXT)
+	@$(FC) $(OPTSC)  $< -o $@
+
+$(DOBJ)vtk_fortran_write_vtm.o: src/tests/vtk_fortran_write_vtm.f90 \
 	$(DOBJ)penf.o \
 	$(DOBJ)vtk_fortran.o
 	@echo $(COTEXT)

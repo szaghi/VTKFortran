@@ -1,13 +1,9 @@
-!< VTK_Fortran test.
-program write_vtu
-!-----------------------------------------------------------------------------------------------------------------------------------
-!< VTK_Fortran test.
-!-----------------------------------------------------------------------------------------------------------------------------------
+!< VTK_Fortran test: write VTU file.
+program vtk_fortran_write_vtu
+!< VTK_Fortran test: write VTU file.
 use penf
 use vtk_fortran, only : vtk_file
-!-----------------------------------------------------------------------------------------------------------------------------------
 
-!-----------------------------------------------------------------------------------------------------------------------------------
 implicit none
 type(vtk_file)                :: a_vtk_file                                                   !< A VTK file.
 integer(I4P), parameter       :: np = 27_I4P                                                  !< Number of points.
@@ -26,9 +22,7 @@ integer(I4P), dimension(1:np) :: v_y                                            
 integer(I4P), dimension(1:np) :: v_z                                                          !< Z component points-variable.
 integer(I4P)                  :: error                                                        !< Status error.
 logical                       :: test_passed(1)                                               !< List of passed tests.
-!-----------------------------------------------------------------------------------------------------------------------------------
 
-!-----------------------------------------------------------------------------------------------------------------------------------
 connect = [0 ,1 ,4 ,3 ,6 ,7 ,10,9 , &
            1 ,2 ,5 ,4 ,7 ,8 ,11,10, &
            6 ,10,9 ,12,             &
@@ -62,14 +56,10 @@ test_passed = .true. ! nothing to test yet
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 stop
-!-----------------------------------------------------------------------------------------------------------------------------------
 contains
   subroutine write_data
-  !---------------------------------------------------------------------------------------------------------------------------------
   !< Write data.
-  !---------------------------------------------------------------------------------------------------------------------------------
 
-  !---------------------------------------------------------------------------------------------------------------------------------
   error = a_vtk_file%xml_writer%write_piece(np=np, nc=nc)
   error = a_vtk_file%xml_writer%write_geo(np=np, nc=nc, x=x, y=y, z=z)
   error = a_vtk_file%xml_writer%write_connectivity(nc=nc, connectivity=connect, offset=offset, cell_type=cell_type)
@@ -78,6 +68,5 @@ contains
   error = a_vtk_file%xml_writer%write_dataarray(data_name='vector', x=v_x, y=v_y, z=v_z)
   error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
   error = a_vtk_file%xml_writer%write_piece()
-  !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine write_data
-endprogram write_vtu
+endprogram vtk_fortran_write_vtu
