@@ -114,7 +114,8 @@ type, extends(xml_writer_abstract) :: xml_writer_appended
 endtype xml_writer_appended
 !-----------------------------------------------------------------------------------------------------------------------------------
 contains
-  function initialize(self, format, filename, mesh_topology, nx1, nx2, ny1, ny2, nz1, nz2, mesh_kind) result(error)
+  function initialize(self, format, filename, mesh_topology, nx1, nx2, ny1, ny2, nz1, nz2, &
+                      is_volatile, mesh_kind) result(error)
   !---------------------------------------------------------------------------------------------------------------------------------
   !< Initialize writer.
   !---------------------------------------------------------------------------------------------------------------------------------
@@ -129,6 +130,7 @@ contains
   integer(I4P),               intent(in), optional :: nz1           !< Initial node of z axis.
   integer(I4P),               intent(in), optional :: nz2           !< Final node of z axis.
   character(*),               intent(in), optional :: mesh_kind     !< Kind of mesh data: Float64, Float32, ecc.
+  logical,                    intent(in), optional :: is_volatile   !< Flag to check volatile writer.
   integer(I4P)                                     :: error         !< Error status.
   !---------------------------------------------------------------------------------------------------------------------------------
 
@@ -152,23 +154,18 @@ contains
   !---------------------------------------------------------------------------------------------------------------------------------
   endfunction initialize
 
-  function finalize(self) result(error)
-  !---------------------------------------------------------------------------------------------------------------------------------
-  !< Finalize writer.
-  !---------------------------------------------------------------------------------------------------------------------------------
-  class(xml_writer_appended), intent(inout) :: self  !< Writer.
-  integer(I4P)                              :: error !< Error status.
-  !---------------------------------------------------------------------------------------------------------------------------------
+   function finalize(self) result(error)
+   !< Finalize writer.
+   class(xml_writer_appended), intent(inout) :: self  !< Writer.
+   integer(I4P)                              :: error !< Error status.
 
-  !---------------------------------------------------------------------------------------------------------------------------------
-  call self%write_end_tag(name=self%topology%chars())
-  call self%write_dataarray_appended
-  call self%write_end_tag(name='VTKFile')
-  call self%close_xml_file
-  call self%close_scratch_file
-  error = self%error
-  !---------------------------------------------------------------------------------------------------------------------------------
-  endfunction finalize
+   call self%write_end_tag(name=self%topology%chars())
+   call self%write_dataarray_appended
+   call self%write_end_tag(name='VTKFile')
+   call self%close_xml_file
+   call self%close_scratch_file
+   error = self%error
+   endfunction finalize
 
   elemental subroutine ioffset_update(self, n_byte)
   !---------------------------------------------------------------------------------------------------------------------------------
