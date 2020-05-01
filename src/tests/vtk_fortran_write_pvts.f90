@@ -1,5 +1,5 @@
 !< VTK_Fortran test for Parallel (partioned) Structured Grid.
-program vtkfortran_write_pvts
+program vtk_fortran_write_pvts
 !< VTK_Fortran test for Parallel (partioned) Structured Grid.
 use penf
 use vtk_fortran, only : vtk_file, pvtk_file
@@ -88,4 +88,4 @@ contains
                                                      nx1=nx2_p(1), nx2=nx2_p(2), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
    error = a_pvtk_file%finalize()
    endsubroutine write_pvts
-endprogram vtkfortran_write_pvts
+endprogram vtk_fortran_write_pvts

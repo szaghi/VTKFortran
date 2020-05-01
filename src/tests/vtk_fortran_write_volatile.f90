@@ -1,6 +1,6 @@
-!< VTK_Fortran test for *volatile* writing.
-program write_volatile
-!< VTK_Fortran test for *volatile* writing.
+!< VTK_Fortran test: write *volatile* file.
+program vtk_fortran_write_volatile
+!< VTK_Fortran test: write *volatile* file.
 
 !< Test the writing of *volatile* XML file for enabling some parallel environments where only one process
 !< (master process) has access to the filestyem, whereas other processes cannot.
@@ -171,4 +171,4 @@ contains
    error = a_vtk_file%finalize()
    call a_vtk_file%free
    endsubroutine write_check
-endprogram write_volatile
+endprogram vtk_fortran_write_volatile

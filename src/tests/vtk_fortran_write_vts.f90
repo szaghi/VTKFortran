@@ -1,13 +1,9 @@
-!< VTK_Fortran test.
-program write_vts
-!-----------------------------------------------------------------------------------------------------------------------------------
-!< VTK_Fortran test.
-!-----------------------------------------------------------------------------------------------------------------------------------
+!< VTK_Fortran test: write VTS file.
+program vtk_fortran_write_vts
+!< VTK_Fortran test: write VTS file.
 use penf
 use vtk_fortran, only : vtk_file
-!-----------------------------------------------------------------------------------------------------------------------------------
 
-!-----------------------------------------------------------------------------------------------------------------------------------
 implicit none
 type(vtk_file)          :: a_vtk_file                             !< A VTK file.
 integer(I4P), parameter :: nx1=0_I4P                              !< X lower bound extent.
@@ -26,9 +22,7 @@ integer(I4P)            :: i                                      !< Counter.
 integer(I4P)            :: j                                      !< Counter.
 integer(I4P)            :: k                                      !< Counter.
 logical                 :: test_passed(1)                         !< List of passed tests.
-!-----------------------------------------------------------------------------------------------------------------------------------
 
-!-----------------------------------------------------------------------------------------------------------------------------------
 do k=nz1, nz2
   do j=ny1, ny2
     do i=nx1, nx2
@@ -54,20 +48,15 @@ test_passed = .true. ! nothing to test yet
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 stop
-!-----------------------------------------------------------------------------------------------------------------------------------
 contains
   subroutine write_data
-  !---------------------------------------------------------------------------------------------------------------------------------
   !< Write data.
-  !---------------------------------------------------------------------------------------------------------------------------------
 
-  !---------------------------------------------------------------------------------------------------------------------------------
   error = a_vtk_file%xml_writer%write_piece(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
   error = a_vtk_file%xml_writer%write_geo(n=nn, x=x, y=y, z=z)
   error = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
   error = a_vtk_file%xml_writer%write_dataarray(data_name='float64_scalar', x=v, one_component=.true.)
   error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
   error = a_vtk_file%xml_writer%write_piece()
-  !---------------------------------------------------------------------------------------------------------------------------------
   endsubroutine write_data
-endprogram write_vts
+endprogram vtk_fortran_write_vts
