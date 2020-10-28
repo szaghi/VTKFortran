@@ -132,20 +132,23 @@ contains
    integer(I4P)                   :: error    !< Error status.
    character(9999)                :: filename !< File name of VTK file grouped into current block.
    character(9999)                :: name     !< Block name
-   integer(I4P)                   :: s        !< Counter.
+   integer(I4P)                   :: s, f     !< Counter.
 
    if (allocated(self%scratch_unit)) then
       do s=1, size(self%scratch_unit, dim=1)
          ! rewind scratch file
          rewind(self%scratch_unit(s))
          ! write group name
+         f = 0_I4P
          read(self%scratch_unit(s), iostat=error, fmt=*) name
          error = self%write_block(action='open', name=trim(adjustl(name)))
          ! write group filenames
          parse_file_loop : do
             read(self%scratch_unit(s), iostat=error, fmt=*) filename
             if (is_iostat_end(error)) exit parse_file_loop
-            error = self%write_block(filenames=trim(adjustl(filename)))
+            error = self%xml_writer%write_parallel_block_files(file_index=f, &
+                                                               filename=trim(adjustl(filename)))
+            f = f + 1_I4P
          enddo parse_file_loop
          ! close group
          error = self%write_block(action='close')

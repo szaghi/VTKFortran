@@ -101,6 +101,7 @@ type, abstract :: xml_writer_abstract
                write_geo_unst_data3_rank1_R8P, &
                write_geo_unst_data3_rank1_R4P !< Write mesh.
     generic :: write_parallel_block_files =>     &
+               write_parallel_block_file,        &
                write_parallel_block_files_array, &
                write_parallel_block_files_string !< Write block list of files.
     generic :: write_piece =>              &
@@ -165,6 +166,7 @@ type, abstract :: xml_writer_abstract
     procedure, pass(self), private :: write_piece_start_tag             !< Write `<Piece ...>` start tag.
     procedure, pass(self), private :: write_piece_start_tag_unst        !< Write `<Piece ...>` start tag for unstructured topology.
     procedure, pass(self), private :: write_piece_end_tag               !< Write `</Piece>` end tag.
+    procedure, pass(self), private :: write_parallel_block_file         !< Write single file that belong to the current block.
     procedure, pass(self), private :: write_parallel_block_files_array  !< Write block list of files (array input).
     procedure, pass(self), private :: write_parallel_block_files_string !< Write block list of files (string input).
 endtype xml_writer_abstract
@@ -1367,6 +1369,27 @@ contains
    call self%write_self_closing_tag(name='Piece', attributes=buffer%chars())
    error = self%error
    endfunction write_parallel_geo
+
+   function write_parallel_block_file(self, file_index, filename, name) result(error)
+   !< Write single file that belong to the current block.
+   class(xml_writer_abstract), intent(inout)        :: self       !< Writer.
+   integer(I4P),               intent(in)           :: file_index !< Index of file in the list.
+   character(*),               intent(in)           :: filename   !< Wrapped file names.
+   character(*),               intent(in), optional :: name       !< Names attributed to wrapped file.
+   integer(I4P)                                     :: error      !< Error status.
+
+   if (present(name)) then
+      call self%write_self_closing_tag(name='DataSet',                                      &
+                                       attributes='index="'//trim(str(file_index, .true.))//&
+                                                 '" file="'//trim(adjustl(filename))//      &
+                                                 '" name="'//trim(adjustl(name))//'"')
+   else
+      call self%write_self_closing_tag(name='DataSet',                                       &
+                                       attributes='index="'//trim(str(file_index, .true.))// &
+                                                 '" file="'//trim(adjustl(filename))//'"')
+   endif
+   error = self%error
+   endfunction write_parallel_block_file
 
    function write_parallel_block_files_array(self, filenames, names) result(error)
    !< Write list of files that belong to the current block (list passed as rank 1 array).
