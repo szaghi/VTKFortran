@@ -146,8 +146,9 @@ contains
          parse_file_loop : do
             read(self%scratch_unit(s), iostat=error, fmt=*) filename
             if (is_iostat_end(error)) exit parse_file_loop
-            error = self%xml_writer%write_parallel_block_files(file_index=f, &
-                                                               filename=trim(adjustl(filename)))
+            error = self%xml_writer%write_parallel_block_files(file_index=f,                     &
+                                                               filename=trim(adjustl(filename)), &
+                                                               name=trim(adjustl(filename)))
             f = f + 1_I4P
          enddo parse_file_loop
          ! close group
