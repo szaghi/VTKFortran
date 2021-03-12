@@ -94,7 +94,7 @@ DSRC  = src/
 ifeq "$(SHARED)" "yes"
   DEXE    = ./shared/
   MAIN    = $(DEXE)libvtkfortran.so
-  MAKELIB = $(FC) $(OPTSL) $(DOBJ)vtkfortran.o -o $(MAIN)
+  MAKELIB = $(FC) $(OPTSL) $(DOBJ)*.o -o $(MAIN)
 endif
 ifeq "$(STATIC)" "yes"
   DEXE    = ./static/
