@@ -1230,7 +1230,7 @@ contains
    error = self%error
    endfunction write_geo_unst_data3_rank1_R4P
 
-   function write_connectivity(self, nc, connectivity, offset, cell_type) result(error)
+   function write_connectivity(self, nc, connectivity, offset, cell_type, face, faceoffset) result(error)
    !< Write mesh connectivity.
    !<
    !< **Must** be used when unstructured grid is used, it saves the connectivity of the unstructured gird.
@@ -1287,6 +1287,8 @@ contains
    integer(I4P),               intent(in)    :: nc               !< Number of cells.
    integer(I4P),               intent(in)    :: connectivity(1:) !< Mesh connectivity.
    integer(I4P),               intent(in)    :: offset(1:)       !< Cell offset.
+   integer(I4P),   optional,   intent(in)    :: face(1:)         !< face composing the polyhedra.
+   integer(I4P),   optional,   intent(in)    :: faceoffset(1:)   !< face offset.
    integer(I1P),               intent(in)    :: cell_type(1:)    !< VTK cell type.
    integer(I4P)                              :: error            !< Error status.
 
@@ -1295,6 +1297,12 @@ contains
    error = self%write_dataarray(data_name='offsets', x=offset)
    error = self%write_dataarray(data_name='types', x=cell_type)
    call self%write_end_tag(name='Cells')
+
+   !< Add faces and faceoffsets to the cell block for polyhedra. If the cell is not a polyhedron, its offset must be set to -1.
+   if(present(face).and. present(faceoffset)) then
+        error = self%write_dataarray(data_name='faces', x=face)
+        error = self%write_dataarray(data_name='faceoffsets', x=faceoffset)
+   endif
    endfunction write_connectivity
 
    ! write_parallel methods
