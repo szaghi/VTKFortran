@@ -1,7 +1,7 @@
 Simplified BSD License
 ======================
 
-Copyright © 2016, Stefano Zaghi
+Copyright © 2022, Stefano Zaghi
 
 All rights reserved.
 
