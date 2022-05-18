@@ -81,6 +81,18 @@ type, abstract :: xml_writer_abstract
                write_dataarray3_rank3_I4P, &
                write_dataarray3_rank3_I2P, &
                write_dataarray3_rank3_I1P, &
+               write_dataarray6_rank1_R8P, &
+               write_dataarray6_rank1_R4P, &
+               write_dataarray6_rank1_I8P, &
+               write_dataarray6_rank1_I4P, &
+               write_dataarray6_rank1_I2P, &
+               write_dataarray6_rank1_I1P, &
+               write_dataarray6_rank3_R8P, &
+               write_dataarray6_rank3_R4P, &
+               write_dataarray6_rank3_I8P, &
+               write_dataarray6_rank3_I4P, &
+               write_dataarray6_rank3_I2P, &
+               write_dataarray6_rank3_I1P, &
                write_dataarray_location_tag !< Write data (array).
     generic :: write_fielddata =>      &
                write_fielddata1_rank0, &
@@ -145,6 +157,17 @@ type, abstract :: xml_writer_abstract
     procedure(write_dataarray3_rank3_I4P_interface), deferred, pass(self) :: write_dataarray3_rank3_I4P !< Data 3, rank 3, I4P.
     procedure(write_dataarray3_rank3_I2P_interface), deferred, pass(self) :: write_dataarray3_rank3_I2P !< Data 3, rank 3, I2P.
     procedure(write_dataarray3_rank3_I1P_interface), deferred, pass(self) :: write_dataarray3_rank3_I1P !< Data 3, rank 3, I1P.
+    procedure(write_dataarray6_rank1_R4P_interface), deferred, pass(self) :: write_dataarray6_rank1_R4P !< Data 3, rank 1, R4P.
+    procedure(write_dataarray6_rank1_I8P_interface), deferred, pass(self) :: write_dataarray6_rank1_I8P !< Data 3, rank 1, I8P.
+    procedure(write_dataarray6_rank1_I4P_interface), deferred, pass(self) :: write_dataarray6_rank1_I4P !< Data 3, rank 1, I4P.
+    procedure(write_dataarray6_rank1_I2P_interface), deferred, pass(self) :: write_dataarray6_rank1_I2P !< Data 3, rank 1, I2P.
+    procedure(write_dataarray6_rank1_I1P_interface), deferred, pass(self) :: write_dataarray6_rank1_I1P !< Data 3, rank 1, I1P.
+    procedure(write_dataarray6_rank3_R8P_interface), deferred, pass(self) :: write_dataarray6_rank3_R8P !< Data 3, rank 3, R8P.
+    procedure(write_dataarray6_rank3_R4P_interface), deferred, pass(self) :: write_dataarray6_rank3_R4P !< Data 3, rank 3, R4P.
+    procedure(write_dataarray6_rank3_I8P_interface), deferred, pass(self) :: write_dataarray6_rank3_I8P !< Data 3, rank 3, I8P.
+    procedure(write_dataarray6_rank3_I4P_interface), deferred, pass(self) :: write_dataarray6_rank3_I4P !< Data 3, rank 3, I4P.
+    procedure(write_dataarray6_rank3_I2P_interface), deferred, pass(self) :: write_dataarray6_rank3_I2P !< Data 3, rank 3, I2P.
+    procedure(write_dataarray6_rank3_I1P_interface), deferred, pass(self) :: write_dataarray6_rank3_I1P !< Data 3, rank 3, I1P.
     procedure(write_dataarray_appended_interface),   deferred, pass(self) :: write_dataarray_appended   !< Write appended.
     ! private methods
     procedure, pass(self), private :: write_fielddata1_rank0            !< Write FieldData tag (data 1, rank 0, R8P).
@@ -593,6 +616,186 @@ abstract interface
   import :: xml_writer_abstract, I1P, I4P
   class(xml_writer_abstract), intent(inout)        :: self         !< Writer.
   character(*),               intent(in)           :: data_name    !< Data name.
+  integer(I1P),               intent(in)           :: x(1:,1:,1:)  !< X component of data variable.
+  integer(I1P),               intent(in)           :: y(1:,1:,1:)  !< Y component of data variable.
+  integer(I1P),               intent(in)           :: z(1:,1:,1:)  !< Z component of data variable.
+  logical,                    intent(in), optional :: is_tuples    !< Use "NumberOfTuples" instead of "NumberOfComponents".
+  integer(I4P)                                     :: error        !< Error status.
+  endfunction write_dataarray3_rank3_I1P_interface
+  
+  function write_dataarray6_rank1_R8P_interface(self, data_name, u, v, w, x, y, z, is_tuples) result(error)
+  !< Write `<DataArray... NumberOfComponents="6"...>...</DataArray>` tag (R8P).
+  import :: xml_writer_abstract, I4P, R8P
+  class(xml_writer_abstract), intent(inout)        :: self         !< Writer.
+  character(*),               intent(in)           :: data_name    !< Data name.
+  real(R8P),                  intent(in)           :: u(1:)        !< U component of data variable.
+  real(R8P),                  intent(in)           :: v(1:)        !< V component of data variable.
+  real(R8P),                  intent(in)           :: w(1:)        !< W component of data variable.
+  real(R8P),                  intent(in)           :: x(1:)        !< X component of data variable.
+  real(R8P),                  intent(in)           :: y(1:)        !< Y component of data variable.
+  real(R8P),                  intent(in)           :: z(1:)        !< Z component of data variable.
+  logical,                    intent(in), optional :: is_tuples    !< Use "NumberOfTuples" instead of "NumberOfComponents".
+  integer(I4P)                                     :: error        !< Error status.
+  endfunction write_dataarray6_rank1_R8P_interface
+
+  function write_dataarray6_rank1_R4P_interface(self, data_name, u, v, w, x, y, z, is_tuples) result(error)
+  !< Write `<DataArray... NumberOfComponents="6"...>...</DataArray>` tag (R4P).
+  import :: xml_writer_abstract, I4P, R4P
+  class(xml_writer_abstract), intent(inout)        :: self         !< Writer.
+  character(*),               intent(in)           :: data_name    !< Data name.
+  real(R4P),                  intent(in)           :: u(1:)        !< U component of data variable.
+  real(R4P),                  intent(in)           :: v(1:)        !< V component of data variable.
+  real(R4P),                  intent(in)           :: w(1:)        !< W component of data variable.
+  real(R4P),                  intent(in)           :: x(1:)        !< X component of data variable.
+  real(R4P),                  intent(in)           :: y(1:)        !< Y component of data variable.
+  real(R4P),                  intent(in)           :: z(1:)        !< Z component of data variable.
+  logical,                    intent(in), optional :: is_tuples    !< Use "NumberOfTuples" instead of "NumberOfComponents".
+  integer(I4P)                                     :: error        !< Error status.
+  endfunction write_dataarray6_rank1_R4P_interface
+
+  function write_dataarray6_rank1_I8P_interface(self, data_name, u, v, w, x, y, z, is_tuples) result(error)
+  !< Write `<DataArray... NumberOfComponents="6"...>...</DataArray>` tag (I8P).
+  import :: xml_writer_abstract, I4P, I8P
+  class(xml_writer_abstract), intent(inout)        :: self         !< Writer.
+  character(*),               intent(in)           :: data_name    !< Data name.
+  integer(I8P),               intent(in)           :: u(1:)        !< U component of data variable.
+  integer(I8P),               intent(in)           :: v(1:)        !< V component of data variable.
+  integer(I8P),               intent(in)           :: w(1:)        !< W component of data variable.
+  integer(I8P),               intent(in)           :: x(1:)        !< X component of data variable.
+  integer(I8P),               intent(in)           :: y(1:)        !< Y component of data variable.
+  integer(I8P),               intent(in)           :: z(1:)        !< Z component of data variable.
+  logical,                    intent(in), optional :: is_tuples    !< Use "NumberOfTuples" instead of "NumberOfComponents".
+  integer(I4P)                                     :: error        !< Error status.
+  endfunction write_dataarray6_rank1_I8P_interface
+
+  function write_dataarray6_rank1_I4P_interface(self, data_name, u, v, w, x, y, z, is_tuples) result(error)
+  !< Write `<DataArray... NumberOfComponents="6"...>...</DataArray>` tag (I4P).
+  import :: xml_writer_abstract, I4P
+  class(xml_writer_abstract), intent(inout)        :: self         !< Writer.
+  character(*),               intent(in)           :: data_name    !< Data name.
+  integer(I4P),               intent(in)           :: u(1:)        !< U component of data variable.
+  integer(I4P),               intent(in)           :: v(1:)        !< V component of data variable.
+  integer(I4P),               intent(in)           :: w(1:)        !< W component of data variable.
+  integer(I4P),               intent(in)           :: x(1:)        !< X component of data variable.
+  integer(I4P),               intent(in)           :: y(1:)        !< Y component of data variable.
+  integer(I4P),               intent(in)           :: z(1:)        !< Z component of data variable.
+  logical,                    intent(in), optional :: is_tuples    !< Use "NumberOfTuples" instead of "NumberOfComponents".
+  integer(I4P)                                     :: error        !< Error status.
+  endfunction write_dataarray6_rank1_I4P_interface
+
+  function write_dataarray6_rank1_I2P_interface(self, data_name, u, v, w, x, y, z, is_tuples) result(error)
+  !< Write `<DataArray... NumberOfComponents="6"...>...</DataArray>` tag (I2P).
+  import :: xml_writer_abstract, I2P, I4P
+  class(xml_writer_abstract), intent(inout)        :: self         !< Writer.
+  character(*),               intent(in)           :: data_name    !< Data name.
+  integer(I2P),               intent(in)           :: u(1:)        !< U component of data variable.
+  integer(I2P),               intent(in)           :: v(1:)        !< V component of data variable.
+  integer(I2P),               intent(in)           :: w(1:)        !< W component of data variable.
+  integer(I2P),               intent(in)           :: x(1:)        !< X component of data variable.
+  integer(I2P),               intent(in)           :: y(1:)        !< Y component of data variable.
+  integer(I2P),               intent(in)           :: z(1:)        !< Z component of data variable.
+  logical,                    intent(in), optional :: is_tuples    !< Use "NumberOfTuples" instead of "NumberOfComponents".
+  integer(I4P)                                     :: error        !< Error status.
+  endfunction write_dataarray6_rank1_I2P_interface
+
+  function write_dataarray6_rank1_I1P_interface(self, data_name, u, v, w, x, y, z, is_tuples) result(error)
+  !< Write `<DataArray... NumberOfComponents="6"...>...</DataArray>` tag (I1P).
+  import :: xml_writer_abstract, I1P, I4P
+  class(xml_writer_abstract), intent(inout)        :: self         !< Writer.
+  character(*),               intent(in)           :: data_name    !< Data name.
+  integer(I1P),               intent(in)           :: u(1:)        !< U component of data variable.
+  integer(I1P),               intent(in)           :: v(1:)        !< V component of data variable.
+  integer(I1P),               intent(in)           :: w(1:)        !< W component of data variable.
+  integer(I1P),               intent(in)           :: x(1:)        !< X component of data variable.
+  integer(I1P),               intent(in)           :: y(1:)        !< Y component of data variable.
+  integer(I1P),               intent(in)           :: z(1:)        !< Z component of data variable.
+  logical,                    intent(in), optional :: is_tuples    !< Use "NumberOfTuples" instead of "NumberOfComponents".
+  integer(I4P)                                     :: error        !< Error status.
+  endfunction write_dataarray6_rank1_I1P_interface
+
+  function write_dataarray6_rank3_R8P_interface(self, data_name, u, v, w, x, y, z, is_tuples) result(error)
+  !< Write `<DataArray... NumberOfComponents="6"...>...</DataArray>` tag (R8P).
+  import :: xml_writer_abstract, I4P, R8P
+  class(xml_writer_abstract), intent(inout)        :: self         !< Writer.
+  character(*),               intent(in)           :: data_name    !< Data name.
+  real(R8P),                  intent(in)           :: u(1:,1:,1:)  !< U component of data variable.
+  real(R8P),                  intent(in)           :: v(1:,1:,1:)  !< V component of data variable.
+  real(R8P),                  intent(in)           :: w(1:,1:,1:)  !< W component of data variable.
+  real(R8P),                  intent(in)           :: x(1:,1:,1:)  !< X component of data variable.
+  real(R8P),                  intent(in)           :: y(1:,1:,1:)  !< Y component of data variable.
+  real(R8P),                  intent(in)           :: z(1:,1:,1:)  !< Z component of data variable.
+  logical,                    intent(in), optional :: is_tuples    !< Use "NumberOfTuples" instead of "NumberOfComponents".
+  integer(I4P)                                     :: error        !< Error status.
+  endfunction write_dataarray6_rank3_R8P_interface
+
+  function write_dataarray6_rank3_R4P_interface(self, data_name, u, v, w, x, y, z, is_tuples) result(error)
+  !< Write `<DataArray... NumberOfComponents="6"...>...</DataArray>` tag (R4P).
+  import :: xml_writer_abstract, I4P, R4P
+  class(xml_writer_abstract), intent(inout)        :: self         !< Writer.
+  character(*),               intent(in)           :: data_name    !< Data name.
+  real(R4P),                  intent(in)           :: u(1:,1:,1:)  !< U component of data variable.
+  real(R4P),                  intent(in)           :: v(1:,1:,1:)  !< V component of data variable.
+  real(R4P),                  intent(in)           :: w(1:,1:,1:)  !< W component of data variable.
+  real(R4P),                  intent(in)           :: x(1:,1:,1:)  !< X component of data variable.
+  real(R4P),                  intent(in)           :: y(1:,1:,1:)  !< Y component of data variable.
+  real(R4P),                  intent(in)           :: z(1:,1:,1:)  !< Z component of data variable.
+  logical,                    intent(in), optional :: is_tuples    !< Use "NumberOfTuples" instead of "NumberOfComponents".
+  integer(I4P)                                     :: error        !< Error status.
+  endfunction write_dataarray6_rank3_R4P_interface
+
+  function write_dataarray6_rank3_I8P_interface(self, data_name, u, v, w, x, y, z, is_tuples) result(error)
+  !< Write `<DataArray... NumberOfComponents="6"...>...</DataArray>` tag (I8P).
+  import :: xml_writer_abstract, I4P, I8P
+  class(xml_writer_abstract), intent(inout)        :: self         !< Writer.
+  character(*),               intent(in)           :: data_name    !< Data name.
+  integer(I8P),               intent(in)           :: u(1:,1:,1:)  !< U component of data variable.
+  integer(I8P),               intent(in)           :: v(1:,1:,1:)  !< V component of data variable.
+  integer(I8P),               intent(in)           :: w(1:,1:,1:)  !< W component of data variable.
+  integer(I8P),               intent(in)           :: x(1:,1:,1:)  !< X component of data variable.
+  integer(I8P),               intent(in)           :: y(1:,1:,1:)  !< Y component of data variable.
+  integer(I8P),               intent(in)           :: z(1:,1:,1:)  !< Z component of data variable.
+  logical,                    intent(in), optional :: is_tuples    !< Use "NumberOfTuples" instead of "NumberOfComponents".
+  integer(I4P)                                     :: error        !< Error status.
+  endfunction write_dataarray6_rank3_I8P_interface
+
+  function write_dataarray6_rank3_I4P_interface(self, data_name, u, v, w, x, y, z, is_tuples) result(error)
+  !< Write `<DataArray... NumberOfComponents="6"...>...</DataArray>` tag (I4P).
+  import :: xml_writer_abstract, I4P
+  class(xml_writer_abstract), intent(inout)        :: self         !< Writer.
+  character(*),               intent(in)           :: data_name    !< Data name.
+  integer(I4P),               intent(in)           :: u(1:,1:,1:)  !< U component of data variable.
+  integer(I4P),               intent(in)           :: v(1:,1:,1:)  !< V component of data variable.
+  integer(I4P),               intent(in)           :: w(1:,1:,1:)  !< W component of data variable.
+  integer(I4P),               intent(in)           :: x(1:,1:,1:)  !< X component of data variable.
+  integer(I4P),               intent(in)           :: y(1:,1:,1:)  !< Y component of data variable.
+  integer(I4P),               intent(in)           :: z(1:,1:,1:)  !< Z component of data variable.
+  logical,                    intent(in), optional :: is_tuples    !< Use "NumberOfTuples" instead of "NumberOfComponents".
+  integer(I4P)                                     :: error        !< Error status.
+  endfunction write_dataarray6_rank3_I4P_interface
+
+  function write_dataarray6_rank3_I2P_interface(self, data_name, u, v, w, x, y, z, is_tuples) result(error)
+  !< Write `<DataArray... NumberOfComponents="6"...>...</DataArray>` tag (I2P).
+  import :: xml_writer_abstract, I2P, I4P
+  class(xml_writer_abstract), intent(inout)        :: self         !< Writer.
+  character(*),               intent(in)           :: data_name    !< Data name.
+  integer(I2P),               intent(in)           :: u(1:,1:,1:)  !< U component of data variable.
+  integer(I2P),               intent(in)           :: v(1:,1:,1:)  !< V component of data variable.
+  integer(I2P),               intent(in)           :: w(1:,1:,1:)  !< W component of data variable.
+  integer(I2P),               intent(in)           :: x(1:,1:,1:)  !< X component of data variable.
+  integer(I2P),               intent(in)           :: y(1:,1:,1:)  !< Y component of data variable.
+  integer(I2P),               intent(in)           :: z(1:,1:,1:)  !< Z component of data variable.
+  logical,                    intent(in), optional :: is_tuples    !< Use "NumberOfTuples" instead of "NumberOfComponents".
+  integer(I4P)                                     :: error        !< Error status.
+  endfunction write_dataarray6_rank3_I2P_interface
+
+  function write_dataarray6_rank3_I1P_interface(self, data_name, u, v, w, x, y, z, is_tuples) result(error)
+  !< Write `<DataArray... NumberOfComponents="6"...>...</DataArray>` tag (I1P).
+  import :: xml_writer_abstract, I1P, I4P
+  class(xml_writer_abstract), intent(inout)        :: self         !< Writer.
+  character(*),               intent(in)           :: data_name    !< Data name.
+  integer(I1P),               intent(in)           :: u(1:,1:,1:)  !< U component of data variable.
+  integer(I1P),               intent(in)           :: v(1:,1:,1:)  !< V component of data variable.
+  integer(I1P),               intent(in)           :: w(1:,1:,1:)  !< W component of data variable.
   integer(I1P),               intent(in)           :: x(1:,1:,1:)  !< X component of data variable.
   integer(I1P),               intent(in)           :: y(1:,1:,1:)  !< Y component of data variable.
   integer(I1P),               intent(in)           :: z(1:,1:,1:)  !< Z component of data variable.
