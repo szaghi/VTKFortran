@@ -157,6 +157,7 @@ type, abstract :: xml_writer_abstract
     procedure(write_dataarray3_rank3_I4P_interface), deferred, pass(self) :: write_dataarray3_rank3_I4P !< Data 3, rank 3, I4P.
     procedure(write_dataarray3_rank3_I2P_interface), deferred, pass(self) :: write_dataarray3_rank3_I2P !< Data 3, rank 3, I2P.
     procedure(write_dataarray3_rank3_I1P_interface), deferred, pass(self) :: write_dataarray3_rank3_I1P !< Data 3, rank 3, I1P.
+    procedure(write_dataarray6_rank1_R8P_interface), deferred, pass(self) :: write_dataarray6_rank1_R8P !< Data 3, rank 1, R8P.
     procedure(write_dataarray6_rank1_R4P_interface), deferred, pass(self) :: write_dataarray6_rank1_R4P !< Data 3, rank 1, R4P.
     procedure(write_dataarray6_rank1_I8P_interface), deferred, pass(self) :: write_dataarray6_rank1_I8P !< Data 3, rank 1, I8P.
     procedure(write_dataarray6_rank1_I4P_interface), deferred, pass(self) :: write_dataarray6_rank1_I4P !< Data 3, rank 1, I4P.
@@ -801,7 +802,7 @@ abstract interface
   integer(I1P),               intent(in)           :: z(1:,1:,1:)  !< Z component of data variable.
   logical,                    intent(in), optional :: is_tuples    !< Use "NumberOfTuples" instead of "NumberOfComponents".
   integer(I4P)                                     :: error        !< Error status.
-  endfunction write_dataarray3_rank3_I1P_interface
+  endfunction write_dataarray6_rank3_I1P_interface
 
   subroutine write_dataarray_appended_interface(self)
   !< Write `<AppendedData...>...</AppendedData>` tag.

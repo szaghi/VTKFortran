@@ -94,7 +94,25 @@ type, extends(xml_writer_abstract) :: xml_writer_appended
                         write_on_scratch_dataarray3_rank3_I8P, &
                         write_on_scratch_dataarray3_rank3_I4P, &
                         write_on_scratch_dataarray3_rank3_I2P, &
-                        write_on_scratch_dataarray3_rank3_I1P !< Write dataarray.
+                        write_on_scratch_dataarray3_rank3_I1P, &
+                        write_on_scratch_dataarray6_rank1_R8P, &
+                        write_on_scratch_dataarray6_rank1_R4P, &
+                        write_on_scratch_dataarray6_rank1_I8P, &
+                        write_on_scratch_dataarray6_rank1_I4P, &
+                        write_on_scratch_dataarray6_rank1_I2P, &
+                        write_on_scratch_dataarray6_rank1_I1P, &
+                        write_on_scratch_dataarray6_rank2_R8P, &
+                        write_on_scratch_dataarray6_rank2_R4P, &
+                        write_on_scratch_dataarray6_rank2_I8P, &
+                        write_on_scratch_dataarray6_rank2_I4P, &
+                        write_on_scratch_dataarray6_rank2_I2P, &
+                        write_on_scratch_dataarray6_rank2_I1P, &
+                        write_on_scratch_dataarray6_rank3_R8P, &
+                        write_on_scratch_dataarray6_rank3_R4P, &
+                        write_on_scratch_dataarray6_rank3_I8P, &
+                        write_on_scratch_dataarray6_rank3_I4P, &
+                        write_on_scratch_dataarray6_rank3_I2P, &
+                        write_on_scratch_dataarray6_rank3_I1P !< Write dataarray.
     procedure, pass(self), private :: write_on_scratch_dataarray1_rank1     !< Write dataarray, data 1 rank 1.
     procedure, pass(self), private :: write_on_scratch_dataarray1_rank2     !< Write dataarray, data 1 rank 2.
     procedure, pass(self), private :: write_on_scratch_dataarray1_rank3     !< Write dataarray, data 1 rank 3.
@@ -117,6 +135,24 @@ type, extends(xml_writer_abstract) :: xml_writer_appended
     procedure, pass(self), private :: write_on_scratch_dataarray3_rank3_I4P !< Write dataarray, comp 3 rank 3, I4P.
     procedure, pass(self), private :: write_on_scratch_dataarray3_rank3_I2P !< Write dataarray, comp 3 rank 3, I2P.
     procedure, pass(self), private :: write_on_scratch_dataarray3_rank3_I1P !< Write dataarray, comp 3 rank 3, I1P.
+    procedure, pass(self), private :: write_on_scratch_dataarray6_rank1_R8P !< Write dataarray, comp 6 rank 1, R8P.
+    procedure, pass(self), private :: write_on_scratch_dataarray6_rank1_R4P !< Write dataarray, comp 6 rank 1, R4P.
+    procedure, pass(self), private :: write_on_scratch_dataarray6_rank1_I8P !< Write dataarray, comp 6 rank 1, I8P.
+    procedure, pass(self), private :: write_on_scratch_dataarray6_rank1_I4P !< Write dataarray, comp 6 rank 1, I4P.
+    procedure, pass(self), private :: write_on_scratch_dataarray6_rank1_I2P !< Write dataarray, comp 6 rank 1, I2P.
+    procedure, pass(self), private :: write_on_scratch_dataarray6_rank1_I1P !< Write dataarray, comp 6 rank 1, I1P.
+    procedure, pass(self), private :: write_on_scratch_dataarray6_rank2_R8P !< Write dataarray, comp 6 rank 2, R8P.
+    procedure, pass(self), private :: write_on_scratch_dataarray6_rank2_R4P !< Write dataarray, comp 6 rank 2, R4P.
+    procedure, pass(self), private :: write_on_scratch_dataarray6_rank2_I8P !< Write dataarray, comp 6 rank 2, I8P.
+    procedure, pass(self), private :: write_on_scratch_dataarray6_rank2_I4P !< Write dataarray, comp 6 rank 2, I4P.
+    procedure, pass(self), private :: write_on_scratch_dataarray6_rank2_I2P !< Write dataarray, comp 6 rank 2, I2P.
+    procedure, pass(self), private :: write_on_scratch_dataarray6_rank2_I1P !< Write dataarray, comp 6 rank 2, I1P.
+    procedure, pass(self), private :: write_on_scratch_dataarray6_rank3_R8P !< Write dataarray, comp 6 rank 3, R8P.
+    procedure, pass(self), private :: write_on_scratch_dataarray6_rank3_R4P !< Write dataarray, comp 6 rank 3, R4P.
+    procedure, pass(self), private :: write_on_scratch_dataarray6_rank3_I8P !< Write dataarray, comp 6 rank 3, I8P.
+    procedure, pass(self), private :: write_on_scratch_dataarray6_rank3_I4P !< Write dataarray, comp 6 rank 3, I4P.
+    procedure, pass(self), private :: write_on_scratch_dataarray6_rank3_I2P !< Write dataarray, comp 6 rank 3, I2P.
+    procedure, pass(self), private :: write_on_scratch_dataarray6_rank3_I1P !< Write dataarray, comp 6 rank 3, I1P.
 endtype xml_writer_appended
 contains
   function initialize(self, format, filename, mesh_topology, nx1, nx2, ny1, ny2, nz1, nz2, &
@@ -1150,7 +1186,7 @@ contains
   error = self%error
   endfunction write_dataarray6_rank3_I8P
 
-  function write_dataarray6_rank3_I4P(self, data_name, u=u, v=v, w=w, x, y, z, is_tuples) result(error)
+  function write_dataarray6_rank3_I4P(self, data_name, u, v, w, x, y, z, is_tuples) result(error)
   !< Write `<DataArray... NumberOfComponents="6"...>...</DataArray>` tag (I4P).
   class(xml_writer_appended), intent(inout)        :: self         !< Writer.
   character(*),               intent(in)           :: data_name    !< Data name.
@@ -1712,4 +1748,305 @@ contains
   n_byte = self%write_on_scratch_dataarray(x=[(((x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
                                            n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
   endfunction write_on_scratch_dataarray3_rank3_I1P
+  
+  function write_on_scratch_dataarray6_rank1_R8P(self, u, v, w, x, y, z) result(n_byte)
+  !< Write a dataarray with 6 components of rank 1 (R8P).
+  class(xml_writer_appended), intent(inout) :: self   !< Writer.
+  real(R8P),                  intent(in)    :: u(1:)  !< U component.
+  real(R8P),                  intent(in)    :: v(1:)  !< V component.
+  real(R8P),                  intent(in)    :: w(1:)  !< W component.
+  real(R8P),                  intent(in)    :: x(1:)  !< X component.
+  real(R8P),                  intent(in)    :: y(1:)  !< Y component.
+  real(R8P),                  intent(in)    :: z(1:)  !< Z component.
+  integer(I4P)                              :: n_byte !< Number of bytes
+  integer(I4P)                              :: n      !< Counter.
+
+  n_byte = self%write_on_scratch_dataarray(x=[(u(n), v(n), w(n), x(n), y(n), z(n), n=1,size(x, dim=1))])
+  endfunction write_on_scratch_dataarray6_rank1_R8P
+
+  function write_on_scratch_dataarray6_rank1_R4P(self, u, v, w, x, y, z) result(n_byte)
+  !< Write a dataarray with 6 components of rank 1 (R4P).
+  class(xml_writer_appended), intent(inout) :: self   !< Writer.
+  real(R4P),                  intent(in)    :: u(1:)  !< U component.
+  real(R4P),                  intent(in)    :: v(1:)  !< V component.
+  real(R4P),                  intent(in)    :: w(1:)  !< W component.
+  real(R4P),                  intent(in)    :: x(1:)  !< X component.
+  real(R4P),                  intent(in)    :: y(1:)  !< Y component.
+  real(R4P),                  intent(in)    :: z(1:)  !< Z component.
+  integer(I4P)                              :: n_byte !< Number of bytes
+  integer(I4P)                              :: n      !< Counter.
+
+  n_byte = self%write_on_scratch_dataarray(x=[(u(n), v(n), w(n), x(n), y(n), z(n), n=1,size(x, dim=1))])
+  endfunction write_on_scratch_dataarray6_rank1_R4P
+
+  function write_on_scratch_dataarray6_rank1_I8P(self, u, v, w, x, y, z) result(n_byte)
+  !< Write a dataarray with 3 components of rank 1 (I8P).
+  class(xml_writer_appended), intent(inout) :: self   !< Writer.
+  integer(I8P),               intent(in)    :: u(1:)  !< U component.
+  integer(I8P),               intent(in)    :: v(1:)  !< V component.
+  integer(I8P),               intent(in)    :: w(1:)  !< W component.
+  integer(I8P),               intent(in)    :: x(1:)  !< X component.
+  integer(I8P),               intent(in)    :: y(1:)  !< Y component.
+  integer(I8P),               intent(in)    :: z(1:)  !< Z component.
+  integer(I4P)                              :: n_byte !< Number of bytes
+  integer(I4P)                              :: n      !< Counter.
+
+  n_byte = self%write_on_scratch_dataarray(x=[(u(n), v(n), w(n), x(n), y(n), z(n), n=1,size(x, dim=1))])
+  endfunction write_on_scratch_dataarray6_rank1_I8P
+
+  function write_on_scratch_dataarray6_rank1_I4P(self, u, v, w, x, y, z) result(n_byte)
+  !< Write a dataarray with 6 components of rank 1 (I4P).
+  class(xml_writer_appended), intent(inout) :: self   !< Writer.
+  integer(I4P),               intent(in)    :: u(1:)  !< U component.
+  integer(I4P),               intent(in)    :: v(1:)  !< V component.
+  integer(I4P),               intent(in)    :: w(1:)  !< W component.
+  integer(I4P),               intent(in)    :: x(1:)  !< X component.
+  integer(I4P),               intent(in)    :: y(1:)  !< Y component.
+  integer(I4P),               intent(in)    :: z(1:)  !< Z component.
+  integer(I4P)                              :: n_byte !< Number of bytes
+  integer(I4P)                              :: n      !< Counter.
+
+  n_byte = self%write_on_scratch_dataarray(x=[(u(n), v(n), w(n), x(n), y(n), z(n), n=1,size(x, dim=1))])
+  endfunction write_on_scratch_dataarray6_rank1_I4P
+
+  function write_on_scratch_dataarray6_rank1_I2P(self, u, v, w, x, y, z) result(n_byte)
+  !< Write a dataarray with 6 components of rank 1 (I2P).
+  class(xml_writer_appended), intent(inout) :: self   !< Writer.
+  integer(I2P),               intent(in)    :: u(1:)  !< U component.
+  integer(I2P),               intent(in)    :: v(1:)  !< V component.
+  integer(I2P),               intent(in)    :: w(1:)  !< W component.
+  integer(I2P),               intent(in)    :: x(1:)  !< X component.
+  integer(I2P),               intent(in)    :: y(1:)  !< Y component.
+  integer(I2P),               intent(in)    :: z(1:)  !< Z component.
+  integer(I4P)                              :: n_byte !< Number of bytes
+  integer(I4P)                              :: n      !< Counter.
+
+  n_byte = self%write_on_scratch_dataarray(x=[(u(n), v(n), w(n), x(n), y(n), z(n), n=1,size(x, dim=1))])
+  endfunction write_on_scratch_dataarray6_rank1_I2P
+
+  function write_on_scratch_dataarray6_rank1_I1P(self, u, v, w, x, y, z) result(n_byte)
+  !< Write a dataarray with 6 components of rank 1 (I1P).
+  class(xml_writer_appended), intent(inout) :: self   !< Writer.
+  integer(I1P),               intent(in)    :: u(1:)  !< U component.
+  integer(I1P),               intent(in)    :: v(1:)  !< V component.
+  integer(I1P),               intent(in)    :: w(1:)  !< W component.
+  integer(I1P),               intent(in)    :: x(1:)  !< X component.
+  integer(I1P),               intent(in)    :: y(1:)  !< Y component.
+  integer(I1P),               intent(in)    :: z(1:)  !< Z component.
+  integer(I4P)                              :: n_byte !< Number of bytes
+  integer(I4P)                              :: n      !< Counter.
+
+  n_byte = self%write_on_scratch_dataarray(x=[(u(n), v(n), w(n), x(n), y(n), z(n), n=1,size(x, dim=1))])
+  endfunction write_on_scratch_dataarray6_rank1_I1P
+
+  function write_on_scratch_dataarray6_rank2_R8P(self, u, v, w, x, y, z) result(n_byte)
+  !< Write a dataarray with 6 components of rank 2 (R8P).
+  class(xml_writer_appended), intent(inout) :: self     !< Writer.
+  real(R8P),                  intent(in)    :: u(1:,1:) !< U component.
+  real(R8P),                  intent(in)    :: v(1:,1:) !< V component.
+  real(R8P),                  intent(in)    :: w(1:,1:) !< W component.
+  real(R8P),                  intent(in)    :: x(1:,1:) !< X component.
+  real(R8P),                  intent(in)    :: y(1:,1:) !< Y component.
+  real(R8P),                  intent(in)    :: z(1:,1:) !< Z component.
+  integer(I4P)                              :: n_byte   !< Number of bytes
+  integer(I4P)                              :: n1       !< Counter.
+  integer(I4P)                              :: n2       !< Counter.
+
+  n_byte = self%write_on_scratch_dataarray(x=[((u(n1,n2), v(n1,n2), w(n1,n2), &
+                                                x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
+  endfunction write_on_scratch_dataarray6_rank2_R8P
+
+  function write_on_scratch_dataarray6_rank2_R4P(self, u, v, w, x, y, z) result(n_byte)
+  !< Write a dataarray with 6 components of rank 2 (R4P).
+  class(xml_writer_appended), intent(inout) :: self     !< Writer.
+  real(R4P),                  intent(in)    :: u(1:,1:) !< U component.
+  real(R4P),                  intent(in)    :: v(1:,1:) !< V component.
+  real(R4P),                  intent(in)    :: w(1:,1:) !< W component.
+  real(R4P),                  intent(in)    :: x(1:,1:) !< X component.
+  real(R4P),                  intent(in)    :: y(1:,1:) !< Y component.
+  real(R4P),                  intent(in)    :: z(1:,1:) !< Z component.
+  integer(I4P)                              :: n_byte   !< Number of bytes
+  integer(I4P)                              :: n1       !< Counter.
+  integer(I4P)                              :: n2       !< Counter.
+
+  n_byte = self%write_on_scratch_dataarray(x=[((u(n1,n2), v(n1,n2), w(n1,n2), &
+                                                x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
+  endfunction write_on_scratch_dataarray6_rank2_R4P
+
+  function write_on_scratch_dataarray6_rank2_I8P(self, u, v, w, x, y, z) result(n_byte)
+  !< Write a dataarray with 6 components of rank 2 (I8P).
+  class(xml_writer_appended), intent(inout) :: self     !< Writer.
+  integer(I8P),               intent(in)    :: u(1:,1:) !< U component.
+  integer(I8P),               intent(in)    :: v(1:,1:) !< V component.
+  integer(I8P),               intent(in)    :: w(1:,1:) !< W component.
+  integer(I8P),               intent(in)    :: x(1:,1:) !< X component.
+  integer(I8P),               intent(in)    :: y(1:,1:) !< Y component.
+  integer(I8P),               intent(in)    :: z(1:,1:) !< Z component.
+  integer(I4P)                              :: n_byte   !< Number of bytes
+  integer(I4P)                              :: n1       !< Counter.
+  integer(I4P)                              :: n2       !< Counter.
+
+  n_byte = self%write_on_scratch_dataarray(x=[((u(n1,n2), v(n1,n2), w(n1,n2), &
+                                                x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
+  endfunction write_on_scratch_dataarray6_rank2_I8P
+
+  function write_on_scratch_dataarray6_rank2_I4P(self, u, v, w, x, y, z) result(n_byte)
+  !< Write a dataarray with 6 components of rank 2 (I4P).
+  class(xml_writer_appended), intent(inout) :: self     !< Writer.
+  integer(I4P),               intent(in)    :: u(1:,1:) !< U component.
+  integer(I4P),               intent(in)    :: v(1:,1:) !< V component.
+  integer(I4P),               intent(in)    :: w(1:,1:) !< W component.
+  integer(I4P),               intent(in)    :: x(1:,1:) !< X component.
+  integer(I4P),               intent(in)    :: y(1:,1:) !< Y component.
+  integer(I4P),               intent(in)    :: z(1:,1:) !< Z component.
+  integer(I4P)                              :: n_byte   !< Number of bytes
+  integer(I4P)                              :: n1       !< Counter.
+  integer(I4P)                              :: n2       !< Counter.
+
+  n_byte = self%write_on_scratch_dataarray(x=[((u(n1,n2), v(n1,n2), w(n1,n2), &
+                                                x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
+  endfunction write_on_scratch_dataarray6_rank2_I4P
+
+  function write_on_scratch_dataarray6_rank2_I2P(self, u, v, w, x, y, z) result(n_byte)
+  !< Write a dataarray with 6 components of rank 2 (I2P).
+  class(xml_writer_appended), intent(inout) :: self     !< Writer.
+  integer(I2P),               intent(in)    :: u(1:,1:) !< U component.
+  integer(I2P),               intent(in)    :: v(1:,1:) !< V component.
+  integer(I2P),               intent(in)    :: w(1:,1:) !< W component.
+  integer(I2P),               intent(in)    :: x(1:,1:) !< X component.
+  integer(I2P),               intent(in)    :: y(1:,1:) !< Y component.
+  integer(I2P),               intent(in)    :: z(1:,1:) !< Z component.
+  integer(I4P)                              :: n_byte   !< Number of bytes
+  integer(I4P)                              :: n1       !< Counter.
+  integer(I4P)                              :: n2       !< Counter.
+
+  n_byte = self%write_on_scratch_dataarray(x=[((u(n1,n2), v(n1,n2), w(n1,n2), &
+                                                x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
+  endfunction write_on_scratch_dataarray6_rank2_I2P
+
+  function write_on_scratch_dataarray6_rank2_I1P(self, u, v, w, x, y, z) result(n_byte)
+  !< Write a dataarray with 6 components of rank 2 (I1P).
+  class(xml_writer_appended), intent(inout) :: self     !< Writer.
+  integer(I1P),               intent(in)    :: u(1:,1:) !< U component.
+  integer(I1P),               intent(in)    :: v(1:,1:) !< V component.
+  integer(I1P),               intent(in)    :: w(1:,1:) !< W component.
+  integer(I1P),               intent(in)    :: x(1:,1:) !< X component.
+  integer(I1P),               intent(in)    :: y(1:,1:) !< Y component.
+  integer(I1P),               intent(in)    :: z(1:,1:) !< Z component.
+  integer(I4P)                              :: n_byte   !< Number of bytes
+  integer(I4P)                              :: n1       !< Counter.
+  integer(I4P)                              :: n2       !< Counter.
+
+  n_byte = self%write_on_scratch_dataarray(x=[((u(n1,n2), v(n1,n2), w(n1,n2), &
+                                                x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
+  endfunction write_on_scratch_dataarray6_rank2_I1P
+
+  function write_on_scratch_dataarray6_rank3_R8P(self, u, v, w, x, y, z) result(n_byte)
+  !< Write a dataarray with 6 components of rank 3 (R8P).
+  class(xml_writer_appended), intent(inout) :: self        !< Writer.
+  real(R8P),                  intent(in)    :: u(1:,1:,1:) !< U component.
+  real(R8P),                  intent(in)    :: v(1:,1:,1:) !< V component.
+  real(R8P),                  intent(in)    :: w(1:,1:,1:) !< W component.
+  real(R8P),                  intent(in)    :: x(1:,1:,1:) !< X component.
+  real(R8P),                  intent(in)    :: y(1:,1:,1:) !< Y component.
+  real(R8P),                  intent(in)    :: z(1:,1:,1:) !< Z component.
+  integer(I4P)                              :: n_byte      !< Number of bytes
+  integer(I4P)                              :: n1          !< Counter.
+  integer(I4P)                              :: n2          !< Counter.
+  integer(I4P)                              :: n3          !< Counter.
+
+  n_byte = self%write_on_scratch_dataarray(x=[(((u(n1,n2,n3), v(n1,n2,n3), w(n1,n2,n3), &
+                                                  x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
+                                           n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
+  endfunction write_on_scratch_dataarray6_rank3_R8P
+
+  function write_on_scratch_dataarray6_rank3_R4P(self, u, v, w, x, y, z) result(n_byte)
+  !< Write a dataarray with 6 components of rank 3 (R4P).
+  class(xml_writer_appended), intent(inout) :: self        !< Writer.
+  real(R4P),                  intent(in)    :: u(1:,1:,1:) !< U component.
+  real(R4P),                  intent(in)    :: v(1:,1:,1:) !< V component.
+  real(R4P),                  intent(in)    :: w(1:,1:,1:) !< W component.
+  real(R4P),                  intent(in)    :: x(1:,1:,1:) !< X component.
+  real(R4P),                  intent(in)    :: y(1:,1:,1:) !< Y component.
+  real(R4P),                  intent(in)    :: z(1:,1:,1:) !< Z component.
+  integer(I4P)                              :: n_byte      !< Number of bytes
+  integer(I4P)                              :: n1          !< Counter.
+  integer(I4P)                              :: n2          !< Counter.
+  integer(I4P)                              :: n3          !< Counter.
+
+  n_byte = self%write_on_scratch_dataarray(x=[(((u(n1,n2,n3), v(n1,n2,n3), w(n1,n2,n3), x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
+                                           n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
+  endfunction write_on_scratch_dataarray6_rank3_R4P
+
+  function write_on_scratch_dataarray6_rank3_I8P(self, u, v, w, x, y, z) result(n_byte)
+  !< Write a dataarray with 6 components of rank 3 (I8P).
+  class(xml_writer_appended), intent(inout) :: self        !< Writer.
+  integer(I8P),               intent(in)    :: u(1:,1:,1:) !< U component.
+  integer(I8P),               intent(in)    :: v(1:,1:,1:) !< V component.
+  integer(I8P),               intent(in)    :: w(1:,1:,1:) !< W component.
+  integer(I8P),               intent(in)    :: x(1:,1:,1:) !< X component.
+  integer(I8P),               intent(in)    :: y(1:,1:,1:) !< Y component.
+  integer(I8P),               intent(in)    :: z(1:,1:,1:) !< Z component.
+  integer(I4P)                              :: n_byte      !< Number of bytes
+  integer(I4P)                              :: n1          !< Counter.
+  integer(I4P)                              :: n2          !< Counter.
+  integer(I4P)                              :: n3          !< Counter.
+
+  n_byte = self%write_on_scratch_dataarray(x=[(((u(n1,n2,n3), v(n1,n2,n3), w(n1,n2,n3), x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
+                                           n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
+  endfunction write_on_scratch_dataarray6_rank3_I8P
+
+  function write_on_scratch_dataarray6_rank3_I4P(self, u, v, w, x, y, z) result(n_byte)
+  !< Write a dataarray with 6 components of rank 3 (I4P).
+  class(xml_writer_appended), intent(inout) :: self        !< Writer.
+  integer(I4P),               intent(in)    :: u(1:,1:,1:) !< U component.
+  integer(I4P),               intent(in)    :: v(1:,1:,1:) !< V component.
+  integer(I4P),               intent(in)    :: w(1:,1:,1:) !< W component.
+  integer(I4P),               intent(in)    :: x(1:,1:,1:) !< X component.
+  integer(I4P),               intent(in)    :: y(1:,1:,1:) !< Y component.
+  integer(I4P),               intent(in)    :: z(1:,1:,1:) !< Z component.
+  integer(I4P)                              :: n_byte      !< Number of bytes
+  integer(I4P)                              :: n1          !< Counter.
+  integer(I4P)                              :: n2          !< Counter.
+  integer(I4P)                              :: n3          !< Counter.
+
+  n_byte = self%write_on_scratch_dataarray(x=[(((u(n1,n2,n3), v(n1,n2,n3), w(n1,n2,n3), x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
+                                           n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
+  endfunction write_on_scratch_dataarray6_rank3_I4P
+
+  function write_on_scratch_dataarray6_rank3_I2P(self, u, v, w, x, y, z) result(n_byte)
+  !< Write a dataarray with 6 components of rank 3 (I2P).
+  class(xml_writer_appended), intent(inout) :: self        !< Writer.
+  integer(I2P),               intent(in)    :: u(1:,1:,1:) !< U component.
+  integer(I2P),               intent(in)    :: v(1:,1:,1:) !< V component.
+  integer(I2P),               intent(in)    :: w(1:,1:,1:) !< W component.
+  integer(I2P),               intent(in)    :: x(1:,1:,1:) !< X component.
+  integer(I2P),               intent(in)    :: y(1:,1:,1:) !< Y component.
+  integer(I2P),               intent(in)    :: z(1:,1:,1:) !< Z component.
+  integer(I4P)                              :: n_byte      !< Number of bytes
+  integer(I4P)                              :: n1          !< Counter.
+  integer(I4P)                              :: n2          !< Counter.
+  integer(I4P)                              :: n3          !< Counter.
+
+  n_byte = self%write_on_scratch_dataarray(x=[(((u(n1,n2,n3), v(n1,n2,n3), w(n1,n2,n3), x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
+                                           n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
+  endfunction write_on_scratch_dataarray6_rank3_I2P
+
+  function write_on_scratch_dataarray6_rank3_I1P(self, u, v, w, x, y, z) result(n_byte)
+  !< Write a dataarray with 6 components of rank 3 (I1P).
+  class(xml_writer_appended), intent(inout) :: self        !< Writer.
+  integer(I1P),               intent(in)    :: u(1:,1:,1:) !< U component.
+  integer(I1P),               intent(in)    :: v(1:,1:,1:) !< V component.
+  integer(I1P),               intent(in)    :: w(1:,1:,1:) !< W component.
+  integer(I1P),               intent(in)    :: x(1:,1:,1:) !< X component.
+  integer(I1P),               intent(in)    :: y(1:,1:,1:) !< Y component.
+  integer(I1P),               intent(in)    :: z(1:,1:,1:) !< Z component.
+  integer(I4P)                              :: n_byte      !< Number of bytes
+  integer(I4P)                              :: n1          !< Counter.
+  integer(I4P)                              :: n2          !< Counter.
+  integer(I4P)                              :: n3          !< Counter.
+
+  n_byte = self%write_on_scratch_dataarray(x=[(((u(n1,n2,n3), v(n1,n2,n3), w(n1,n2,n3), x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
+                                           n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
+  endfunction write_on_scratch_dataarray6_rank3_I1P
 endmodule vtk_fortran_vtk_file_xml_writer_appended

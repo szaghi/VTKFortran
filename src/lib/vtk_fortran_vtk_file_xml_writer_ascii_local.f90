@@ -909,7 +909,7 @@ contains
   error = self%error
   endfunction write_dataarray6_rank1_R8P
 
-  function write_dataarray6_rank1_R4P(self, data_name, x, y, z, is_tuples) result(error)
+  function write_dataarray6_rank1_R4P(self, data_name, u, v, w,x, y, z, is_tuples) result(error)
   !< Write `<DataArray... NumberOfComponents="6"...>...</DataArray>` tag (R4P).
   class(xml_writer_ascii_local), intent(inout)        :: self         !< Writer.
   character(*),                  intent(in)           :: data_name    !< Data name.
