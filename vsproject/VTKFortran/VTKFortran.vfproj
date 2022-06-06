@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualStudioProject ProjectType="typeStaticLibrary" ProjectCreator="Intel Fortran" Keyword="Static Library" Version="11.0" ProjectIdGuid="{4E5876E3-07BB-4442-8E23-F92D05259246}">
+	<Platforms>
+		<Platform Name="Win32"/>
+		<Platform Name="x64"/></Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="typeStaticLibrary">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" WarnInterfaces="true" Traceback="true" BoundsCheck="true" StackFrameCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
+				<Tool Name="VFLibrarianTool"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/></Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="typeStaticLibrary">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" Preprocess="preprocessYes" WarnInterfaces="true" Traceback="true" BoundsCheck="true" StackFrameCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
+				<Tool Name="VFLibrarianTool"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/></Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="typeStaticLibrary">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" RuntimeLibrary="rtMultiThreadedDLL"/>
+				<Tool Name="VFLibrarianTool"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/></Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="typeStaticLibrary">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" Preprocess="preprocessYes" RuntimeLibrary="rtMultiThreadedDLL"/>
+				<Tool Name="VFLibrarianTool"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/></Configuration></Configurations>
+	<Files>
+		<Filter Name="Header Files" Filter="fi;fd"/>
+		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
+		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
+		<Filter Name="BeFoR64">
+		<File RelativePath="..\..\src\third_party\BeFoR64\src\lib\befor64.F90"/>
+		<File RelativePath="..\..\src\third_party\BeFoR64\src\lib\befor64_pack_data_m.F90"/></Filter>
+		<Filter Name="FACE">
+		<File RelativePath="..\..\src\third_party\FACE\src\lib\face.F90"/></Filter>
+		<Filter Name="FoXy">
+		<File RelativePath="..\..\src\third_party\FoXy\src\lib\foxy.f90"/>
+		<File RelativePath="..\..\src\third_party\FoXy\src\lib\foxy_xml_file.f90"/>
+		<File RelativePath="..\..\src\third_party\FoXy\src\lib\foxy_xml_tag.F90"/></Filter>
+		<Filter Name="StringiFor">
+		<File RelativePath="..\..\src\third_party\StringiFor\src\lib\stringifor.F90"/>
+		<File RelativePath="..\..\src\third_party\StringiFor\src\lib\stringifor_string_t.F90"/></Filter>
+		<Filter Name="PENF">
+		<File RelativePath="..\..\src\third_party\PENF\src\lib\penf.F90"/>
+		<File RelativePath="..\..\src\third_party\PENF\src\lib\penf_b_size.F90"/>
+		<File RelativePath="..\..\src\third_party\PENF\src\lib\penf_global_parameters_variables.F90"/>
+		<File RelativePath="..\..\src\third_party\PENF\src\lib\penf_stringify.F90"/></Filter>
+		<File RelativePath="..\..\src\lib\vtk_fortran.f90"/>
+		<File RelativePath="..\..\src\lib\vtk_fortran_dataarray_encoder.f90"/>
+		<File RelativePath="..\..\src\lib\vtk_fortran_parameters.f90"/>
+		<File RelativePath="..\..\src\lib\vtk_fortran_pvtk_file.f90"/>
+		<File RelativePath="..\..\src\lib\vtk_fortran_vtk_file.f90"/>
+		<File RelativePath="..\..\src\lib\vtk_fortran_vtk_file_xml_writer_abstract.f90"/>
+		<File RelativePath="..\..\src\lib\vtk_fortran_vtk_file_xml_writer_appended.f90"/>
+		<File RelativePath="..\..\src\lib\vtk_fortran_vtk_file_xml_writer_ascii_local.f90"/>
+		<File RelativePath="..\..\src\lib\vtk_fortran_vtk_file_xml_writer_binary_local.f90"/>
+		<File RelativePath="..\..\src\lib\vtk_fortran_vtm_file.F90"/></Filter></Files>
+	<Globals/></VisualStudioProject>
