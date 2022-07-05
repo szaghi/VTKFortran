@@ -1,6 +1,6 @@
 <a name="top"></a>
 
-# VTKFortran [![GitHub tag](https://img.shields.io/github/tag/szaghi/VTKFortran.svg)]()
+# VTKFortran [![GitHub tag](https://img.shields.io/github/tag/szaghi/VTKFortran.svg)](https://github.com/szaghi/VTKFortran/releases)
 
 [![Join the chat at https://gitter.im/szaghi/VTKFortran](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/szaghi/VTKFortran?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -10,8 +10,8 @@
 [![License](https://img.shields.io/badge/license-MIT-red.svg)]()
 
 [![Status](https://img.shields.io/badge/status-stable-brightgreen.svg)]()
-[![Build Status](https://travis-ci.org/szaghi/VTKFortran.svg?branch=master)](https://travis-ci.org/szaghi/VTKFortran)
-[![Coverage Status](https://codecov.io/gh/szaghi/VTKFortran/branch/master/graph/badge.svg)](https://codecov.io/gh/szaghi/VTKFortran)
+[![CI Status](https://github.com/szaghi/VTKFortran/actions/workflows/ci.yml/badge.svg)](https://github.com/szaghi/VTKFortran/actions)
+[![Coverage Status](https://img.shields.io/codecov/c/github/szaghi/VTKFortran.svg)](https://app.codecov.io/gh/szaghi/VTKFortran)
 
 ### VTKFortran, pure Fortran VTK (XML) API
 
@@ -26,9 +26,6 @@ A KISS pure Fortran Library to parse and emit files conforming VTK (XML) standar
 #### Issues
 
 [![GitHub issues](https://img.shields.io/github/issues/szaghi/VTKFortran.svg)]()
-[![Ready in backlog](https://badge.waffle.io/szaghi/VTKFortran.png?label=ready&title=Ready)](https://waffle.io/szaghi/VTKFortran)
-[![In Progress](https://badge.waffle.io/szaghi/VTKFortran.png?label=in%20progress&title=In%20Progress)](https://waffle.io/szaghi/VTKFortran)
-[![Open bugs](https://badge.waffle.io/szaghi/VTKFortran.png?label=bug&title=Open%20Bugs)](https://waffle.io/szaghi/VTKFortran)
 
 #### Compiler Support
 
