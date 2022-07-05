@@ -16,10 +16,3 @@ jobs:
         chmod +x install.sh
         ./install.sh --download wget --build make
         rm -rf *
-
-    - name: INSTALL SCRIPT + cmake
-      run: |
-        wget $(curl -s https://api.github.com/repos/$GITHUB_REPOSITORY/releases/latest | grep 'browser_' | cut -d\" -f4 | grep -i install.sh)
-        chmod +x install.sh
-        ./install.sh --download wget --build cmake
-        rm -rf *
