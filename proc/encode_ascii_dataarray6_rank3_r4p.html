@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+   <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
+    <meta name="author" content="Stefano Zaghi" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>encode_ascii_dataarray6_rank3_R4P &ndash; Lib_VTK_IO</title>
+
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+    <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+    <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="../index.html">Lib_VTK_IO </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
+              <a href="#" class="dropdown-toggle"
+              data-toggle="dropdown" role="button"
+              aria-haspopup="true"
+     aria-expanded="false">Contents <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+            <li><a href="../lists/files.html">Source Files</a></li>
+            <li><a href="../lists/modules.html">Modules</a></li>
+            <li><a href="../lists/procedures.html">Procedures</a></li>
+            <li><a href="../lists/absint.html">Abstract Interfaces</a></li>
+                   <li><a href="../lists/types.html">Derived Types</a></li>
+            <li><a href="../lists/programs.html">Programs</a></li>
+       
+            </ul>
+        
+            </li>
+<li class="visible-xs hidden-sm visible-lg"><a href="../lists/files.html">Source Files</a></li>
+<li class="visible-xs hidden-sm visible-lg"><a href="../lists/modules.html">Modules</a></li>
+<li class="visible-xs hidden-sm visible-lg"><a href="../lists/procedures.html">Procedures</a></li>
+<li class="visible-xs hidden-sm visible-lg"><a href="../lists/absint.html">Abstract Interfaces</a></li>
+                             <li class="visible-xs hidden-sm visible-lg"><a href="../lists/types.html">Derived Types</a></li>
+<li class="visible-xs hidden-sm visible-lg"><a href="../lists/programs.html">Programs</a></li>
+          </ul>
+        <form action="../search.html" class="navbar-form navbar-right" role="search">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+        </div>
+<!--
+        <button type="submit" class="btn btn-default">Submit</button>
+-->
+        </form>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container">
+  <div class="row">
+    <h1>encode_ascii_dataarray6_rank3_R4P
+      <small>Function</small>
+    </h1>
+    <div class="row">
+  <div class="col-lg-12">
+<div class="well well-sm">
+  <ul class="list-inline" style="margin-bottom:0px;display:inline">
+     <li><i class="fa fa-list-ol"></i>
+       <a data-toggle="tooltip"
+    data-placement="bottom" data-html="true"
+    title=" 0.1% of total for procedures.">31 statements</a>
+     </li> 
+    <li><i class="fa fa-code"></i><a href="../src/vtk_fortran_dataarray_encoder.f90"> Source File</a></li>
+  </ul>
+  <ol class="breadcrumb in-well text-right">
+     <li><a href='../sourcefile/vtk_fortran_dataarray_encoder.f90.html'>vtk_fortran_dataarray_encoder.f90</a></li>
+     <li><a href='../module/vtk_fortran_dataarray_encoder.html'>vtk_fortran_dataarray_encoder</a></li>
+     <li class="active">encode_ascii_dataarray6_rank3_R4P</li>
+  </ol>
+</div>
+</div>
+</div>
+<script>
+  $(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+  })
+</script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+    <div id="sidebar">
+  <h3>Contents</h3>
+ 
+<div class="panel panel-primary">
+  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
+  <div class="list-group">
+    <a class="list-group-item" href="../proc/encode_ascii_dataarray6_rank3_r4p.html#src">encode_ascii_dataarray6_rank3_R4P</a>
+  </div>
+</div>
+
+</div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private function encode_ascii_dataarray6_rank3_R4P(u, v, w, x, y, z) result(code)</h2>
+    
+
+
+    <h3>Arguments</h3>
+      <table class="table table-striped varlist">
+<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
+<tbody>
+<tr>
+  <td><span class="anchor" id="variable-u~64"></span>real(kind=R4P),</td>
+<td>intent(in)</td>
+  <td></td>  <td></td><td>::</td>
+  <td><strong>u</strong>(1:,1:,1:)</td><td></td>
+</tr>
+<tr>
+  <td><span class="anchor" id="variable-v~64"></span>real(kind=R4P),</td>
+<td>intent(in)</td>
+  <td></td>  <td></td><td>::</td>
+  <td><strong>v</strong>(1:,1:,1:)</td><td></td>
+</tr>
+<tr>
+  <td><span class="anchor" id="variable-w~64"></span>real(kind=R4P),</td>
+<td>intent(in)</td>
+  <td></td>  <td></td><td>::</td>
+  <td><strong>w</strong>(1:,1:,1:)</td><td></td>
+</tr>
+<tr>
+  <td><span class="anchor" id="variable-x~245"></span>real(kind=R4P),</td>
+<td>intent(in)</td>
+  <td></td>  <td></td><td>::</td>
+  <td><strong>x</strong>(1:,1:,1:)</td><td></td>
+</tr>
+<tr>
+  <td><span class="anchor" id="variable-y~140"></span>real(kind=R4P),</td>
+<td>intent(in)</td>
+  <td></td>  <td></td><td>::</td>
+  <td><strong>y</strong>(1:,1:,1:)</td><td></td>
+</tr>
+<tr>
+  <td><span class="anchor" id="variable-z~140"></span>real(kind=R4P),</td>
+<td>intent(in)</td>
+  <td></td>  <td></td><td>::</td>
+  <td><strong>z</strong>(1:,1:,1:)</td><td></td>
+</tr>
+</tbody>
+</table>
+
+   <h3>Return Value <small><span class="anchor" id="variable-code~204"></span>character(len=:),allocatable</small></h3>
+    
+    <br>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+  <h3 class="panel-title">Calls</h3>
+      </div>
+      <div class="panel-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph Pages: 1 -->
+<svg id="procencode_ascii_dataarray6_rank3_r4pCallsGraph" width="641pt" height="738pt"
+ viewBox="0.00 0.00 641.00 738.33" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph" class="graph" transform="scale(1.02 1.02) rotate(0) translate(4 747)">
+<title>proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-747 648,-747 648,4 -4,4"/>
+<!-- proc~encode_ascii_dataarray6_rank3_r4p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node1" class="node">
+<title>proc~encode_ascii_dataarray6_rank3_r4p</title>
+<polygon fill="none" stroke="black" points="208,-377 0,-377 0,-353 208,-353 208,-377"/>
+<text text-anchor="middle" x="104" y="-362.6" font-family="Helvetica,sans-Serif" font-size="10.50">encode_ascii_dataarray6_rank3_R4P</text>
+</g>
+<!-- interface~str -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node2" class="node">
+<title>interface~str</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node2"><a xlink:href=".././interface/str.html" xlink:title="str">
+<polygon fill="#a7506f" stroke="#a7506f" points="298,-377 244,-377 244,-353 298,-353 298,-377"/>
+<text text-anchor="middle" x="271" y="-362.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str</text>
+</a>
+</g>
+</g>
+<!-- proc~encode_ascii_dataarray6_rank3_r4p&#45;&gt;interface~str -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge1" class="edge">
+<title>proc~encode_ascii_dataarray6_rank3_r4p&#45;&gt;interface~str</title>
+<path fill="none" stroke="#000000" d="M208.09,-365C217.14,-365 225.83,-365 233.7,-365"/>
+<polygon fill="#000000" stroke="#000000" points="233.87,-368.5 243.87,-365 233.87,-361.5 233.87,-368.5"/>
+</g>
+<!-- proc~str_r8p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node3" class="node">
+<title>proc~str_r8p</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node3"><a xlink:href=".././proc/str_r8p.html" xlink:title="str_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="488,-539 434,-539 434,-515 488,-515 488,-539"/>
+<text text-anchor="middle" x="461" y="-524.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_R8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_r8p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge2" class="edge">
+<title>interface~str&#45;&gt;proc~str_r8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M274.72,-377.11C280.88,-401.71 298.21,-457.73 334,-488 359.43,-509.5 396.62,-519.16 424.01,-523.49"/>
+<polygon fill="#000000" stroke="#000000" points="423.59,-526.97 433.99,-524.9 424.58,-520.04 423.59,-526.97"/>
+</g>
+<!-- proc~strf_i8p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node4" class="node">
+<title>proc~strf_i8p</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node4"><a xlink:href=".././proc/strf_i8p.html" xlink:title="strf_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="393,-701 339,-701 339,-677 393,-677 393,-701"/>
+<text text-anchor="middle" x="366" y="-686.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_i8p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge3" class="edge">
+<title>interface~str&#45;&gt;proc~strf_i8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M271.78,-377.08C271.53,-419.56 275.28,-564.81 334,-663 335.49,-665.48 337.3,-667.84 339.29,-670.06"/>
+<polygon fill="#000000" stroke="#000000" points="336.91,-672.61 346.57,-676.96 341.72,-667.53 336.91,-672.61"/>
+</g>
+<!-- proc~str_i8p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node5" class="node">
+<title>proc~str_i8p</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node5"><a xlink:href=".././proc/str_i8p.html" xlink:title="str_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="488,-702 434,-702 434,-678 488,-678 488,-702"/>
+<text text-anchor="middle" x="461" y="-687.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_i8p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge4" class="edge">
+<title>interface~str&#45;&gt;proc~str_i8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M271.36,-377.12C269.86,-417.74 270.27,-550.89 334,-630 346.02,-644.92 391.27,-664.3 424.11,-676.94"/>
+<polygon fill="#000000" stroke="#000000" points="423.26,-680.36 433.85,-680.63 425.74,-673.81 423.26,-680.36"/>
+</g>
+<!-- proc~str_a_i8p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node6" class="node">
+<title>proc~str_a_i8p</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node6"><a xlink:href=".././proc/str_a_i8p.html" xlink:title="str_a_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="395.5,-743 336.5,-743 336.5,-719 395.5,-719 395.5,-743"/>
+<text text-anchor="middle" x="366" y="-728.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_a_i8p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge5" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_i8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M272.92,-377.14C277.24,-431.57 296.84,-652.86 334,-710 334.34,-710.53 334.71,-711.04 335.08,-711.55"/>
+<polygon fill="#000000" stroke="#000000" points="332.84,-714.26 342.36,-718.92 337.82,-709.34 332.84,-714.26"/>
+</g>
+<!-- proc~strf_i1p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node7" class="node">
+<title>proc~strf_i1p</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node7"><a xlink:href=".././proc/strf_i1p.html" xlink:title="strf_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="393,-579 339,-579 339,-555 393,-555 393,-579"/>
+<text text-anchor="middle" x="366" y="-564.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I1P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_i1p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge6" class="edge">
+<title>interface~str&#45;&gt;proc~strf_i1p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M273.98,-377.11C279.34,-407.17 296.37,-486.67 334,-541 335.69,-543.43 337.66,-545.77 339.78,-547.98"/>
+<polygon fill="#000000" stroke="#000000" points="337.61,-550.74 347.34,-554.93 342.35,-545.59 337.61,-550.74"/>
+</g>
+<!-- proc~str_i1p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node8" class="node">
+<title>proc~str_i1p</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node8"><a xlink:href=".././proc/str_i1p.html" xlink:title="str_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="488,-458 434,-458 434,-434 488,-434 488,-458"/>
+<text text-anchor="middle" x="461" y="-443.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I1P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_i1p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge7" class="edge">
+<title>interface~str&#45;&gt;proc~str_i1p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M274.97,-377.26C281.3,-400.35 298.52,-449.74 334,-470 363.63,-486.91 402.91,-474.99 429.69,-462.68"/>
+<polygon fill="#000000" stroke="#000000" points="431.48,-465.7 438.95,-458.19 428.42,-459.41 431.48,-465.7"/>
+</g>
+<!-- proc~str_a_i1p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node9" class="node">
+<title>proc~str_a_i1p</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node9"><a xlink:href=".././proc/str_a_i1p.html" xlink:title="str_a_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="395.5,-419 336.5,-419 336.5,-395 395.5,-395 395.5,-419"/>
+<text text-anchor="middle" x="366" y="-404.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I1P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_a_i1p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge8" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_i1p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M298.4,-376.92C307.94,-381.23 318.88,-386.17 329.09,-390.78"/>
+<polygon fill="#000000" stroke="#000000" points="327.66,-393.97 338.21,-394.9 330.54,-387.59 327.66,-393.97"/>
+</g>
+<!-- proc~strf_r8p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node10" class="node">
+<title>proc~strf_r8p</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node10"><a xlink:href=".././proc/strf_r8p.html" xlink:title="strf_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="393.5,-461 338.5,-461 338.5,-437 393.5,-437 393.5,-461"/>
+<text text-anchor="middle" x="366" y="-446.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_R8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_r8p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge9" class="edge">
+<title>interface~str&#45;&gt;proc~strf_r8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M282.77,-377.32C294.66,-390.57 314.66,-411.89 334,-428 335.16,-428.96 336.35,-429.92 337.58,-430.87"/>
+<polygon fill="#000000" stroke="#000000" points="335.74,-433.85 345.88,-436.92 339.86,-428.2 335.74,-433.85"/>
+</g>
+<!-- proc~str_a_r8p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node11" class="node">
+<title>proc~str_a_r8p</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node11"><a xlink:href=".././proc/str_a_r8p.html" xlink:title="str_a_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="398,-621 334,-621 334,-597 398,-597 398,-621"/>
+<text text-anchor="middle" x="366" y="-606.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_R8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_a_r8p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge10" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_r8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M272.5,-377.12C274.53,-412.81 284.63,-519.32 334,-588 334.46,-588.63 334.94,-589.25 335.44,-589.86"/>
+<polygon fill="#000000" stroke="#000000" points="333.28,-592.63 342.94,-596.98 338.1,-587.56 333.28,-592.63"/>
+</g>
+<!-- proc~strf_i4p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node12" class="node">
+<title>proc~strf_i4p</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node12"><a xlink:href=".././proc/strf_i4p.html" xlink:title="strf_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="393,-377 339,-377 339,-353 393,-353 393,-377"/>
+<text text-anchor="middle" x="366" y="-362.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_i4p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge11" class="edge">
+<title>interface~str&#45;&gt;proc~strf_i4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M298.4,-365C307.81,-365 318.57,-365 328.66,-365"/>
+<polygon fill="#000000" stroke="#000000" points="328.85,-368.5 338.85,-365 328.85,-361.5 328.85,-368.5"/>
+</g>
+<!-- proc~str_i4p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node13" class="node">
+<title>proc~str_i4p</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node13"><a xlink:href=".././proc/str_i4p.html" xlink:title="str_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="488,-315 434,-315 434,-291 488,-291 488,-315"/>
+<text text-anchor="middle" x="461" y="-300.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_i4p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge12" class="edge">
+<title>interface~str&#45;&gt;proc~str_i4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M279.43,-352.92C289.58,-337.71 309.37,-312.31 334,-302 362.37,-290.11 397.6,-291.59 423.58,-295.33"/>
+<polygon fill="#000000" stroke="#000000" points="423.32,-298.83 433.75,-296.98 424.44,-291.92 423.32,-298.83"/>
+</g>
+<!-- proc~str_a_i4p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node14" class="node">
+<title>proc~str_a_i4p</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node14"><a xlink:href=".././proc/str_a_i4p.html" xlink:title="str_a_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="395.5,-335 336.5,-335 336.5,-311 395.5,-311 395.5,-335"/>
+<text text-anchor="middle" x="366" y="-320.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_a_i4p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge13" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_i4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M298.4,-353.07C307.94,-348.77 318.88,-343.83 329.09,-339.21"/>
+<polygon fill="#000000" stroke="#000000" points="330.54,-342.4 338.21,-335.1 327.66,-336.02 330.54,-342.4"/>
+</g>
+<!-- proc~str_bol -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node15" class="node">
+<title>proc~str_bol</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node15"><a xlink:href=".././proc/str_bol.html" xlink:title="str_bol">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="393,-255 339,-255 339,-231 393,-231 393,-255"/>
+<text text-anchor="middle" x="366" y="-240.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_bol</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_bol -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge14" class="edge">
+<title>interface~str&#45;&gt;proc~str_bol</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M278.22,-352.98C288.38,-333.99 309.84,-296.37 334,-269 336.18,-266.52 338.61,-264.08 341.12,-261.74"/>
+<polygon fill="#000000" stroke="#000000" points="343.49,-264.32 348.72,-255.11 338.88,-259.05 343.49,-264.32"/>
+</g>
+<!-- proc~strf_r4p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node16" class="node">
+<title>proc~strf_r4p</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node16"><a xlink:href=".././proc/strf_r4p.html" xlink:title="strf_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="393.5,-213 338.5,-213 338.5,-189 393.5,-189 393.5,-213"/>
+<text text-anchor="middle" x="366" y="-198.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_R4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_r4p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge15" class="edge">
+<title>interface~str&#45;&gt;proc~strf_r4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M274.84,-352.65C281.42,-326.23 299.8,-263.24 334,-222 334.6,-221.28 335.23,-220.57 335.88,-219.88"/>
+<polygon fill="#000000" stroke="#000000" points="338.43,-222.3 343.64,-213.07 333.82,-217.03 338.43,-222.3"/>
+</g>
+<!-- proc~str_r4p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node17" class="node">
+<title>proc~str_r4p</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node17"><a xlink:href=".././proc/str_r4p.html" xlink:title="str_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="488,-171 434,-171 434,-147 488,-147 488,-171"/>
+<text text-anchor="middle" x="461" y="-156.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_R4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_r4p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge16" class="edge">
+<title>interface~str&#45;&gt;proc~str_r4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M273.39,-352.97C278.62,-309.96 298.69,-164.96 334,-138 361.59,-116.93 402.55,-129.48 430.22,-142.41"/>
+<polygon fill="#000000" stroke="#000000" points="428.89,-145.66 439.4,-146.95 431.99,-139.38 428.89,-145.66"/>
+</g>
+<!-- proc~str_a_r4p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node18" class="node">
+<title>proc~str_a_r4p</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node18"><a xlink:href=".././proc/str_a_r4p.html" xlink:title="str_a_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="398,-171 334,-171 334,-147 398,-147 398,-171"/>
+<text text-anchor="middle" x="366" y="-156.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_R4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_a_r4p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge17" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_r4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M273.34,-352.94C277.37,-321.5 291.8,-235.57 334,-180 334.47,-179.38 334.97,-178.77 335.48,-178.17"/>
+<polygon fill="#000000" stroke="#000000" points="338.13,-180.49 343.09,-171.12 333.37,-175.35 338.13,-180.49"/>
+</g>
+<!-- proc~strf_i2p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node19" class="node">
+<title>proc~strf_i2p</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node19"><a xlink:href=".././proc/strf_i2p.html" xlink:title="strf_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="393,-91 339,-91 339,-67 393,-67 393,-91"/>
+<text text-anchor="middle" x="366" y="-76.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I2P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_i2p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge18" class="edge">
+<title>interface~str&#45;&gt;proc~strf_i2p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M272.25,-352.85C273.59,-313.82 281.92,-189.28 334,-105 335.52,-102.53 337.36,-100.19 339.37,-97.99"/>
+<polygon fill="#000000" stroke="#000000" points="341.8,-100.51 346.67,-91.1 336.99,-95.42 341.8,-100.51"/>
+</g>
+<!-- proc~str_i2p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node20" class="node">
+<title>proc~str_i2p</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node20"><a xlink:href=".././proc/str_i2p.html" xlink:title="str_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="488,-29 434,-29 434,-5 488,-5 488,-29"/>
+<text text-anchor="middle" x="461" y="-14.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I2P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_i2p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge19" class="edge">
+<title>interface~str&#45;&gt;proc~str_i2p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M272.17,-352.84C273.26,-296.36 280.94,-60.46 334,-16 358.56,4.59 396.28,1.28 424.05,-5.31"/>
+<polygon fill="#000000" stroke="#000000" points="423.23,-8.71 433.79,-7.85 424.99,-1.94 423.23,-8.71"/>
+</g>
+<!-- proc~str_a_i2p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node21" class="node">
+<title>proc~str_a_i2p</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node21"><a xlink:href=".././proc/str_a_i2p.html" xlink:title="str_a_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="395.5,-49 336.5,-49 336.5,-25 395.5,-25 395.5,-49"/>
+<text text-anchor="middle" x="366" y="-34.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I2P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_a_i2p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge20" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_i2p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M273.22,-352.85C278.49,-302.21 300.55,-108.24 334,-58 334.35,-57.47 334.72,-56.96 335.1,-56.45"/>
+<polygon fill="#000000" stroke="#000000" points="337.83,-58.67 342.42,-49.12 332.88,-53.72 337.83,-58.67"/>
+</g>
+<!-- proc~compact_real_string -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node22" class="node">
+<title>proc~compact_real_string</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_node22"><a xlink:href=".././proc/compact_real_string.html" xlink:title="compact_real_string">
+<polygon fill="#d9534f" stroke="#d9534f" points="644,-355 524,-355 524,-331 644,-331 644,-355"/>
+<text text-anchor="middle" x="584" y="-340.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compact_real_string</text>
+</a>
+</g>
+</g>
+<!-- proc~str_r8p&#45;&gt;proc~compact_real_string -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge21" class="edge">
+<title>proc~str_r8p&#45;&gt;proc~compact_real_string</title>
+<path fill="none" stroke="#000000" d="M469.94,-514.92C490.19,-484.13 543.94,-402.39 569.34,-363.77"/>
+<polygon fill="#000000" stroke="#000000" points="572.3,-365.63 574.87,-355.36 566.45,-361.79 572.3,-365.63"/>
+</g>
+<!-- proc~str_a_i8p&#45;&gt;proc~str_i8p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge22" class="edge">
+<title>proc~str_a_i8p&#45;&gt;proc~str_i8p</title>
+<path fill="none" stroke="#000000" d="M394.4,-718.92C403.82,-714.77 414.51,-710.05 424.48,-705.66"/>
+<polygon fill="#000000" stroke="#000000" points="426.02,-708.81 433.75,-701.57 423.19,-702.4 426.02,-708.81"/>
+</g>
+<!-- proc~str_a_i1p&#45;&gt;proc~str_i1p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge23" class="edge">
+<title>proc~str_a_i1p&#45;&gt;proc~str_i1p</title>
+<path fill="none" stroke="#000000" d="M395.66,-419.02C404.79,-422.84 415,-427.12 424.54,-431.13"/>
+<polygon fill="#000000" stroke="#000000" points="423.23,-434.37 433.81,-435.01 425.94,-427.92 423.23,-434.37"/>
+</g>
+<!-- proc~str_a_r8p&#45;&gt;proc~str_r8p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge24" class="edge">
+<title>proc~str_a_r8p&#45;&gt;proc~str_r8p</title>
+<path fill="none" stroke="#000000" d="M386.08,-596.87C390.12,-594.09 394.28,-591.05 398,-588 413.52,-575.28 429.64,-559.33 441.55,-546.93"/>
+<polygon fill="#000000" stroke="#000000" points="444.38,-549.03 448.72,-539.36 439.3,-544.21 444.38,-549.03"/>
+</g>
+<!-- proc~str_a_i4p&#45;&gt;proc~str_i4p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge25" class="edge">
+<title>proc~str_a_i4p&#45;&gt;proc~str_i4p</title>
+<path fill="none" stroke="#000000" d="M395.66,-316.83C404.6,-314.91 414.57,-312.77 423.95,-310.75"/>
+<polygon fill="#000000" stroke="#000000" points="424.77,-314.16 433.81,-308.63 423.29,-307.31 424.77,-314.16"/>
+</g>
+<!-- proc~str_r4p&#45;&gt;proc~compact_real_string -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge26" class="edge">
+<title>proc~str_r4p&#45;&gt;proc~compact_real_string</title>
+<path fill="none" stroke="#000000" d="M469.94,-171.07C490.19,-201.86 543.94,-283.61 569.34,-322.23"/>
+<polygon fill="#000000" stroke="#000000" points="566.45,-324.21 574.87,-330.64 572.3,-320.36 566.45,-324.21"/>
+</g>
+<!-- proc~str_a_r4p&#45;&gt;proc~str_r4p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge27" class="edge">
+<title>proc~str_a_r4p&#45;&gt;proc~str_r4p</title>
+<path fill="none" stroke="#000000" d="M398.23,-159C406.48,-159 415.46,-159 423.94,-159"/>
+<polygon fill="#000000" stroke="#000000" points="423.97,-162.5 433.97,-159 423.97,-155.5 423.97,-162.5"/>
+</g>
+<!-- proc~str_a_i2p&#45;&gt;proc~str_i2p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CallsGraph_edge28" class="edge">
+<title>proc~str_a_i2p&#45;&gt;proc~str_i2p</title>
+<path fill="none" stroke="#000000" d="M395.66,-30.83C404.6,-28.91 414.57,-26.77 423.95,-24.75"/>
+<polygon fill="#000000" stroke="#000000" points="424.77,-28.16 433.81,-22.63 423.29,-21.31 424.77,-28.16"/>
+</g>
+</g>
+</svg>
+</div><script>var panprocencode_ascii_dataarray6_rank3_r4pCallsGraph = svgPanZoom('#procencode_ascii_dataarray6_rank3_r4pCallsGraph', {zoomEnabled: true,controlIconsEnabled: true, fit: true, center: true,}); </script><div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div><div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog"><div class="modal-dialog modal-lg" role="document"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="-graph-help-label">Graph Key</h4></div><div class="modal-body">
+    <p>Nodes of different colours represent the following: </p>
+    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="597pt" height="32pt"
+ viewBox="0.00 0.00 596.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 592.5,-28 592.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node4" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="388.5,-24 243.5,-24 243.5,0 388.5,0 388.5,-24"/>
+<text text-anchor="middle" x="316" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="465,-24 407,-24 407,0 465,0 465,-24"/>
+<text text-anchor="middle" x="436" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="588.5,-24 483.5,-24 483.5,0 588.5,0 588.5,-24"/>
+<text text-anchor="middle" x="536" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+    
+    <p>Solid arrows point from a procedure to one which it calls. Dashed 
+    arrows point from an interface to procedures which implement that interface.
+    This could include the module procedures in a generic interface or the
+    implementation in a submodule of an interface in a parent module.
+    </p>
+    </div></div></div></div>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+  <h3 class="panel-title">Called by</h3>
+      </div>
+      <div class="panel-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph Pages: 1 -->
+<svg id="procencode_ascii_dataarray6_rank3_r4pCalledByGraph" width="592pt" height="2006pt"
+ viewBox="0.00 0.00 592.00 2006.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 2002)">
+<title>proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-2002 588,-2002 588,4 -4,4"/>
+<!-- proc~encode_ascii_dataarray6_rank3_r4p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node1" class="node">
+<title>proc~encode_ascii_dataarray6_rank3_r4p</title>
+<polygon fill="none" stroke="black" points="584,-1011 376,-1011 376,-987 584,-987 584,-1011"/>
+<text text-anchor="middle" x="480" y="-996.6" font-family="Helvetica,sans-Serif" font-size="10.50">encode_ascii_dataarray6_rank3_R4P</text>
+</g>
+<!-- interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node2" class="node">
+<title>interface~encode_ascii_dataarray</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node2"><a xlink:href=".././interface/encode_ascii_dataarray.html" xlink:title="encode_ascii_dataarray">
+<polygon fill="#a7506f" stroke="#a7506f" points="340,-1011 201,-1011 201,-987 340,-987 340,-1011"/>
+<text text-anchor="middle" x="270.5" y="-996.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">encode_ascii_dataarray</text>
+</a>
+</g>
+</g>
+<!-- interface~encode_ascii_dataarray&#45;&gt;proc~encode_ascii_dataarray6_rank3_r4p -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge1" class="edge">
+<title>interface~encode_ascii_dataarray&#45;&gt;proc~encode_ascii_dataarray6_rank3_r4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M340.02,-999C348.25,-999 356.81,-999 365.47,-999"/>
+<polygon fill="#000000" stroke="#000000" points="365.66,-1002.5 375.66,-999 365.66,-995.5 365.66,-1002.5"/>
+</g>
+<!-- proc~write_dataarray1_rank2_r8p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node3" class="node">
+<title>proc~write_dataarray1_rank2_r8p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node3"><a xlink:href=".././proc/write_dataarray1_rank2_r8p~3.html" xlink:title="write_dataarray1_rank2_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="165,-1998 0,-1998 0,-1974 165,-1974 165,-1998"/>
+<text text-anchor="middle" x="82.5" y="-1983.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank2_R8P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank2_r8p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge2" class="edge">
+<title>proc~write_dataarray1_rank2_r8p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M154.84,-1973.79C158.6,-1971.33 162.04,-1968.43 165,-1965 228.94,-1891.09 262.75,-1159.43 268.58,-1021.4"/>
+<polygon fill="#000000" stroke="#000000" points="272.09,-1021.33 269.01,-1011.19 265.1,-1021.04 272.09,-1021.33"/>
+</g>
+<!-- proc~write_dataarray1_rank4_i2p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node4" class="node">
+<title>proc~write_dataarray1_rank4_i2p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node4"><a xlink:href=".././proc/write_dataarray1_rank4_i2p~3.html" xlink:title="write_dataarray1_rank4_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-1956 2.5,-1956 2.5,-1932 162.5,-1932 162.5,-1956"/>
+<text text-anchor="middle" x="82.5" y="-1941.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank4_I2P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank4_i2p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge4" class="edge">
+<title>proc~write_dataarray1_rank4_i2p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M154.82,-1931.77C158.58,-1929.32 162.03,-1926.42 165,-1923 226.17,-1852.63 262.04,-1156.81 268.46,-1021.67"/>
+<polygon fill="#000000" stroke="#000000" points="271.97,-1021.47 268.94,-1011.31 264.98,-1021.14 271.97,-1021.47"/>
+</g>
+<!-- proc~write_dataarray6_rank1_i8p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node5" class="node">
+<title>proc~write_dataarray6_rank1_i8p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node5"><a xlink:href=".././proc/write_dataarray6_rank1_i8p~3.html" xlink:title="write_dataarray6_rank1_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-1914 2.5,-1914 2.5,-1890 162.5,-1890 162.5,-1914"/>
+<text text-anchor="middle" x="82.5" y="-1899.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray6_rank1_I8P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray6_rank1_i8p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge6" class="edge">
+<title>proc~write_dataarray6_rank1_i8p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M154.43,-1889.99C158.34,-1887.49 161.92,-1884.52 165,-1881 223.49,-1814.08 261.38,-1152.39 268.34,-1021.45"/>
+<polygon fill="#000000" stroke="#000000" points="271.86,-1021.24 268.89,-1011.07 264.87,-1020.88 271.86,-1021.24"/>
+</g>
+<!-- proc~write_dataarray1_rank3_i8p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node6" class="node">
+<title>proc~write_dataarray1_rank3_i8p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node6"><a xlink:href=".././proc/write_dataarray1_rank3_i8p~3.html" xlink:title="write_dataarray1_rank3_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-1872 2.5,-1872 2.5,-1848 162.5,-1848 162.5,-1872"/>
+<text text-anchor="middle" x="82.5" y="-1857.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank3_I8P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank3_i8p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge3" class="edge">
+<title>proc~write_dataarray1_rank3_i8p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M154.41,-1847.97C158.32,-1845.47 161.91,-1842.51 165,-1839 220.81,-1775.52 260.7,-1147.76 268.22,-1021.18"/>
+<polygon fill="#000000" stroke="#000000" points="271.72,-1021.3 268.81,-1011.11 264.73,-1020.89 271.72,-1021.3"/>
+</g>
+<!-- proc~write_dataarray3_rank3_r8p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node7" class="node">
+<title>proc~write_dataarray3_rank3_r8p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node7"><a xlink:href=".././proc/write_dataarray3_rank3_r8p~3.html" xlink:title="write_dataarray3_rank3_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="165,-1830 0,-1830 0,-1806 165,-1806 165,-1830"/>
+<text text-anchor="middle" x="82.5" y="-1815.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray3_rank3_R8P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray3_rank3_r8p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge5" class="edge">
+<title>proc~write_dataarray3_rank3_r8p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M154.38,-1805.94C158.3,-1803.46 161.9,-1800.5 165,-1797 270.52,-1677.76 270.98,-1138.35 269.81,-1021.41"/>
+<polygon fill="#000000" stroke="#000000" points="273.31,-1021.12 269.69,-1011.16 266.31,-1021.2 273.31,-1021.12"/>
+</g>
+<!-- proc~write_dataarray6_rank3_i2p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node8" class="node">
+<title>proc~write_dataarray6_rank3_i2p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node8"><a xlink:href=".././proc/write_dataarray6_rank3_i2p~3.html" xlink:title="write_dataarray6_rank3_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-1788 2.5,-1788 2.5,-1764 162.5,-1764 162.5,-1788"/>
+<text text-anchor="middle" x="82.5" y="-1773.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray6_rank3_I2P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray6_rank3_i2p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge7" class="edge">
+<title>proc~write_dataarray6_rank3_i2p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M154.35,-1763.92C158.28,-1761.44 161.89,-1758.49 165,-1755 265.15,-1642.64 269.84,-1134.26 269.63,-1021.29"/>
+<polygon fill="#000000" stroke="#000000" points="273.13,-1021.07 269.6,-1011.08 266.13,-1021.09 273.13,-1021.07"/>
+</g>
+<!-- proc~write_dataarray1_rank2_i4p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node9" class="node">
+<title>proc~write_dataarray1_rank2_i4p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node9"><a xlink:href=".././proc/write_dataarray1_rank2_i4p~3.html" xlink:title="write_dataarray1_rank2_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-1746 2.5,-1746 2.5,-1722 162.5,-1722 162.5,-1746"/>
+<text text-anchor="middle" x="82.5" y="-1731.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank2_I4P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank2_i4p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge8" class="edge">
+<title>proc~write_dataarray1_rank2_i4p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M154.32,-1721.89C158.26,-1719.41 161.88,-1716.48 165,-1713 259.72,-1607.58 268.64,-1130.83 269.43,-1021.42"/>
+<polygon fill="#000000" stroke="#000000" points="272.93,-1021.24 269.49,-1011.22 265.93,-1021.2 272.93,-1021.24"/>
+</g>
+<!-- proc~write_dataarray1_rank3_i1p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node10" class="node">
+<title>proc~write_dataarray1_rank3_i1p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node10"><a xlink:href=".././proc/write_dataarray1_rank3_i1p~3.html" xlink:title="write_dataarray1_rank3_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-1704 2.5,-1704 2.5,-1680 162.5,-1680 162.5,-1704"/>
+<text text-anchor="middle" x="82.5" y="-1689.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank3_I1P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank3_i1p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge9" class="edge">
+<title>proc~write_dataarray1_rank3_i1p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M154.28,-1679.86C158.23,-1677.39 161.86,-1674.46 165,-1671 254.43,-1572.36 267.39,-1125.96 269.21,-1021.1"/>
+<polygon fill="#000000" stroke="#000000" points="272.71,-1021.08 269.37,-1011.03 265.71,-1020.97 272.71,-1021.08"/>
+</g>
+<!-- proc~write_dataarray3_rank1_r4p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node11" class="node">
+<title>proc~write_dataarray3_rank1_r4p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node11"><a xlink:href=".././proc/write_dataarray3_rank1_r4p~3.html" xlink:title="write_dataarray3_rank1_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="165,-1662 0,-1662 0,-1638 165,-1638 165,-1662"/>
+<text text-anchor="middle" x="82.5" y="-1647.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray3_rank1_R4P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray3_rank1_r4p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge10" class="edge">
+<title>proc~write_dataarray3_rank1_r4p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M154.24,-1637.82C158.2,-1635.36 161.84,-1632.45 165,-1629 249,-1537.28 266.03,-1122.46 268.95,-1021.3"/>
+<polygon fill="#000000" stroke="#000000" points="272.46,-1021.13 269.23,-1011.04 265.46,-1020.94 272.46,-1021.13"/>
+</g>
+<!-- proc~write_dataarray3_rank3_i4p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node12" class="node">
+<title>proc~write_dataarray3_rank3_i4p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node12"><a xlink:href=".././proc/write_dataarray3_rank3_i4p~3.html" xlink:title="write_dataarray3_rank3_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-1620 2.5,-1620 2.5,-1596 162.5,-1596 162.5,-1620"/>
+<text text-anchor="middle" x="82.5" y="-1605.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray3_rank3_I4P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray3_rank3_i4p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge11" class="edge">
+<title>proc~write_dataarray3_rank3_i4p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M154.2,-1595.78C158.17,-1593.33 161.82,-1590.43 165,-1587 243.63,-1502.13 264.58,-1118.4 268.66,-1021.35"/>
+<polygon fill="#000000" stroke="#000000" points="272.17,-1021.34 269.07,-1011.21 265.17,-1021.06 272.17,-1021.34"/>
+</g>
+<!-- proc~write_dataarray6_rank1_i1p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node13" class="node">
+<title>proc~write_dataarray6_rank1_i1p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node13"><a xlink:href=".././proc/write_dataarray6_rank1_i1p~3.html" xlink:title="write_dataarray6_rank1_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-1578 2.5,-1578 2.5,-1554 162.5,-1554 162.5,-1578"/>
+<text text-anchor="middle" x="82.5" y="-1563.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray6_rank1_I1P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray6_rank1_i1p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge12" class="edge">
+<title>proc~write_dataarray6_rank1_i1p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M153.77,-1553.96C157.9,-1551.47 161.7,-1548.52 165,-1545 238.24,-1466.99 263.01,-1114.45 268.32,-1021.51"/>
+<polygon fill="#000000" stroke="#000000" points="271.83,-1021.46 268.89,-1011.28 264.84,-1021.07 271.83,-1021.46"/>
+</g>
+<!-- proc~write_dataarray1_rank1_r8p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node14" class="node">
+<title>proc~write_dataarray1_rank1_r8p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node14"><a xlink:href=".././proc/write_dataarray1_rank1_r8p~3.html" xlink:title="write_dataarray1_rank1_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="165,-1536 0,-1536 0,-1512 165,-1512 165,-1536"/>
+<text text-anchor="middle" x="82.5" y="-1521.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank1_R8P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank1_r8p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge13" class="edge">
+<title>proc~write_dataarray1_rank1_r8p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M153.71,-1511.9C157.85,-1509.43 161.67,-1506.49 165,-1503 232.93,-1431.74 261.34,-1109.78 267.94,-1021.46"/>
+<polygon fill="#000000" stroke="#000000" points="271.45,-1021.47 268.68,-1011.24 264.46,-1020.96 271.45,-1021.47"/>
+</g>
+<!-- proc~write_dataarray1_rank1_i2p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node15" class="node">
+<title>proc~write_dataarray1_rank1_i2p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node15"><a xlink:href=".././proc/write_dataarray1_rank1_i2p~3.html" xlink:title="write_dataarray1_rank1_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-1494 2.5,-1494 2.5,-1470 162.5,-1470 162.5,-1494"/>
+<text text-anchor="middle" x="82.5" y="-1479.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank1_I2P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank1_i2p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge14" class="edge">
+<title>proc~write_dataarray1_rank1_i2p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M153.64,-1469.83C157.79,-1467.38 161.64,-1464.46 165,-1461 227.7,-1396.41 259.59,-1104.39 267.51,-1021.19"/>
+<polygon fill="#000000" stroke="#000000" points="271,-1021.36 268.45,-1011.08 264.03,-1020.71 271,-1021.36"/>
+</g>
+<!-- proc~write_dataarray1_rank3_r8p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node16" class="node">
+<title>proc~write_dataarray1_rank3_r8p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node16"><a xlink:href=".././proc/write_dataarray1_rank3_r8p~3.html" xlink:title="write_dataarray1_rank3_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="165,-1452 0,-1452 0,-1428 165,-1428 165,-1452"/>
+<text text-anchor="middle" x="82.5" y="-1437.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank3_R8P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank3_r8p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge15" class="edge">
+<title>proc~write_dataarray1_rank3_r8p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M153.18,-1427.97C157.5,-1425.49 161.5,-1422.53 165,-1419 222.36,-1361.16 257.52,-1099.98 266.94,-1021.42"/>
+<polygon fill="#000000" stroke="#000000" points="270.45,-1021.54 268.14,-1011.2 263.5,-1020.72 270.45,-1021.54"/>
+</g>
+<!-- proc~write_dataarray1_rank4_i8p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node17" class="node">
+<title>proc~write_dataarray1_rank4_i8p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node17"><a xlink:href=".././proc/write_dataarray1_rank4_i8p~3.html" xlink:title="write_dataarray1_rank4_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-1410 2.5,-1410 2.5,-1386 162.5,-1386 162.5,-1410"/>
+<text text-anchor="middle" x="82.5" y="-1395.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank4_I8P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank4_i8p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge16" class="edge">
+<title>proc~write_dataarray1_rank4_i8p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M153.07,-1385.87C157.42,-1383.41 161.46,-1380.48 165,-1377 217.2,-1325.71 255.42,-1094.03 266.33,-1021.07"/>
+<polygon fill="#000000" stroke="#000000" points="269.8,-1021.54 267.79,-1011.13 262.87,-1020.52 269.8,-1021.54"/>
+</g>
+<!-- proc~write_dataarray3_rank1_i2p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node18" class="node">
+<title>proc~write_dataarray3_rank1_i2p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node18"><a xlink:href=".././proc/write_dataarray3_rank1_i2p~3.html" xlink:title="write_dataarray3_rank1_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-1368 2.5,-1368 2.5,-1344 162.5,-1344 162.5,-1368"/>
+<text text-anchor="middle" x="82.5" y="-1353.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray3_rank1_I2P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray3_rank1_i2p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge17" class="edge">
+<title>proc~write_dataarray3_rank1_i2p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M152.56,-1343.95C157.08,-1341.48 161.3,-1338.53 165,-1335 256.66,-1247.75 268.41,-1081.7 269.55,-1021.5"/>
+<polygon fill="#000000" stroke="#000000" points="273.05,-1021.27 269.66,-1011.23 266.05,-1021.2 273.05,-1021.27"/>
+</g>
+<!-- proc~write_dataarray6_rank3_i8p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node19" class="node">
+<title>proc~write_dataarray6_rank3_i8p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node19"><a xlink:href=".././proc/write_dataarray6_rank3_i8p~3.html" xlink:title="write_dataarray6_rank3_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-1326 2.5,-1326 2.5,-1302 162.5,-1302 162.5,-1326"/>
+<text text-anchor="middle" x="82.5" y="-1311.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray6_rank3_I8P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray6_rank3_i8p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge19" class="edge">
+<title>proc~write_dataarray6_rank3_i8p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M152.02,-1301.99C156.72,-1299.52 161.12,-1296.55 165,-1293 246.53,-1218.45 264.48,-1076.08 268.41,-1021.27"/>
+<polygon fill="#000000" stroke="#000000" points="271.9,-1021.44 269.04,-1011.24 264.92,-1021 271.9,-1021.44"/>
+</g>
+<!-- proc~write_dataarray6_rank1_r8p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node20" class="node">
+<title>proc~write_dataarray6_rank1_r8p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node20"><a xlink:href=".././proc/write_dataarray6_rank1_r8p~3.html" xlink:title="write_dataarray6_rank1_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="165,-1284 0,-1284 0,-1260 165,-1260 165,-1284"/>
+<text text-anchor="middle" x="82.5" y="-1269.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray6_rank1_R8P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray6_rank1_r8p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge18" class="edge">
+<title>proc~write_dataarray6_rank1_r8p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M151.42,-1259.97C156.31,-1257.5 160.92,-1254.54 165,-1251 236.34,-1189.07 259.95,-1070.66 266.9,-1021.38"/>
+<polygon fill="#000000" stroke="#000000" points="270.41,-1021.55 268.23,-1011.18 263.47,-1020.64 270.41,-1021.55"/>
+</g>
+<!-- proc~write_dataarray1_rank2_r4p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node21" class="node">
+<title>proc~write_dataarray1_rank2_r4p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node21"><a xlink:href=".././proc/write_dataarray1_rank2_r4p~3.html" xlink:title="write_dataarray1_rank2_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="165,-1242 0,-1242 0,-1218 165,-1218 165,-1242"/>
+<text text-anchor="middle" x="82.5" y="-1227.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank2_R4P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank2_r4p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge20" class="edge">
+<title>proc~write_dataarray1_rank2_r4p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M150.76,-1217.85C155.85,-1215.41 160.68,-1212.49 165,-1209 226.43,-1159.26 254.78,-1064.22 264.9,-1021.17"/>
+<polygon fill="#000000" stroke="#000000" points="268.37,-1021.7 267.14,-1011.17 261.54,-1020.17 268.37,-1021.7"/>
+</g>
+<!-- proc~write_dataarray1_rank3_i4p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node22" class="node">
+<title>proc~write_dataarray1_rank3_i4p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node22"><a xlink:href=".././proc/write_dataarray1_rank3_i4p~3.html" xlink:title="write_dataarray1_rank3_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-1200 2.5,-1200 2.5,-1176 162.5,-1176 162.5,-1200"/>
+<text text-anchor="middle" x="82.5" y="-1185.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank3_I4P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank3_i4p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge21" class="edge">
+<title>proc~write_dataarray1_rank3_i4p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M149.18,-1175.95C154.8,-1173.49 160.17,-1170.55 165,-1167 216.66,-1129.07 248.53,-1057.19 262.01,-1020.99"/>
+<polygon fill="#000000" stroke="#000000" points="265.38,-1021.98 265.47,-1011.38 258.79,-1019.61 265.38,-1021.98"/>
+</g>
+<!-- proc~write_dataarray1_rank4_i1p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node23" class="node">
+<title>proc~write_dataarray1_rank4_i1p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node23"><a xlink:href=".././proc/write_dataarray1_rank4_i1p~3.html" xlink:title="write_dataarray1_rank4_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-1158 2.5,-1158 2.5,-1134 162.5,-1134 162.5,-1158"/>
+<text text-anchor="middle" x="82.5" y="-1143.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank4_I1P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank4_i1p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge22" class="edge">
+<title>proc~write_dataarray1_rank4_i1p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M147.01,-1133.9C153.33,-1131.45 159.45,-1128.52 165,-1125 207.47,-1098.06 241.17,-1048.14 257.92,-1019.9"/>
+<polygon fill="#000000" stroke="#000000" points="260.97,-1021.62 262.94,-1011.21 254.9,-1018.12 260.97,-1021.62"/>
+</g>
+<!-- proc~write_dataarray3_rank3_r4p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node24" class="node">
+<title>proc~write_dataarray3_rank3_r4p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node24"><a xlink:href=".././proc/write_dataarray3_rank3_r4p~3.html" xlink:title="write_dataarray3_rank3_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="165,-1116 0,-1116 0,-1092 165,-1092 165,-1116"/>
+<text text-anchor="middle" x="82.5" y="-1101.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray3_rank3_R4P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray3_rank3_r4p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge23" class="edge">
+<title>proc~write_dataarray3_rank3_r4p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M142.91,-1091.87C150.53,-1089.4 158.08,-1086.47 165,-1083 198.43,-1066.24 231.06,-1037.43 250.73,-1018.3"/>
+<polygon fill="#000000" stroke="#000000" points="253.21,-1020.77 257.85,-1011.24 248.28,-1015.8 253.21,-1020.77"/>
+</g>
+<!-- proc~write_dataarray6_rank1_i4p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node25" class="node">
+<title>proc~write_dataarray6_rank1_i4p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node25"><a xlink:href=".././proc/write_dataarray6_rank1_i4p~3.html" xlink:title="write_dataarray6_rank1_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-1074 2.5,-1074 2.5,-1050 162.5,-1050 162.5,-1074"/>
+<text text-anchor="middle" x="82.5" y="-1059.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray6_rank1_I4P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray6_rank1_i4p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge24" class="edge">
+<title>proc~write_dataarray6_rank1_i4p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M134.66,-1049.9C144.79,-1047.21 155.28,-1044.19 165,-1041 187.99,-1033.45 213.17,-1023.39 233.05,-1015"/>
+<polygon fill="#000000" stroke="#000000" points="234.53,-1018.18 242.36,-1011.04 231.79,-1011.74 234.53,-1018.18"/>
+</g>
+<!-- proc~write_dataarray6_rank3_i1p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node26" class="node">
+<title>proc~write_dataarray6_rank3_i1p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node26"><a xlink:href=".././proc/write_dataarray6_rank3_i1p~3.html" xlink:title="write_dataarray6_rank3_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-1032 2.5,-1032 2.5,-1008 162.5,-1008 162.5,-1032"/>
+<text text-anchor="middle" x="82.5" y="-1017.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray6_rank3_I1P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray6_rank3_i1p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge25" class="edge">
+<title>proc~write_dataarray6_rank3_i1p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M162.65,-1011.06C172.02,-1010.01 181.58,-1008.93 190.93,-1007.87"/>
+<polygon fill="#000000" stroke="#000000" points="191.45,-1011.33 200.99,-1006.73 190.66,-1004.38 191.45,-1011.33"/>
+</g>
+<!-- proc~write_dataarray1_rank1_i8p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node27" class="node">
+<title>proc~write_dataarray1_rank1_i8p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node27"><a xlink:href=".././proc/write_dataarray1_rank1_i8p~3.html" xlink:title="write_dataarray1_rank1_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-990 2.5,-990 2.5,-966 162.5,-966 162.5,-990"/>
+<text text-anchor="middle" x="82.5" y="-975.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank1_I8P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank1_i8p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge26" class="edge">
+<title>proc~write_dataarray1_rank1_i8p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M162.65,-986.94C172.02,-987.99 181.58,-989.07 190.93,-990.13"/>
+<polygon fill="#000000" stroke="#000000" points="190.66,-993.62 200.99,-991.27 191.45,-986.67 190.66,-993.62"/>
+</g>
+<!-- proc~write_dataarray1_rank2_i2p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node28" class="node">
+<title>proc~write_dataarray1_rank2_i2p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node28"><a xlink:href=".././proc/write_dataarray1_rank2_i2p~3.html" xlink:title="write_dataarray1_rank2_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-948 2.5,-948 2.5,-924 162.5,-924 162.5,-948"/>
+<text text-anchor="middle" x="82.5" y="-933.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank2_I2P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank2_i2p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge27" class="edge">
+<title>proc~write_dataarray1_rank2_i2p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M134.66,-948.1C144.79,-950.79 155.28,-953.81 165,-957 187.99,-964.55 213.17,-974.61 233.05,-983"/>
+<polygon fill="#000000" stroke="#000000" points="231.79,-986.26 242.36,-986.96 234.53,-979.82 231.79,-986.26"/>
+</g>
+<!-- proc~write_dataarray1_rank4_r8p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node29" class="node">
+<title>proc~write_dataarray1_rank4_r8p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node29"><a xlink:href=".././proc/write_dataarray1_rank4_r8p~3.html" xlink:title="write_dataarray1_rank4_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="165,-906 0,-906 0,-882 165,-882 165,-906"/>
+<text text-anchor="middle" x="82.5" y="-891.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank4_R8P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank4_r8p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge28" class="edge">
+<title>proc~write_dataarray1_rank4_r8p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M142.91,-906.13C150.53,-908.6 158.08,-911.53 165,-915 198.43,-931.76 231.06,-960.57 250.73,-979.7"/>
+<polygon fill="#000000" stroke="#000000" points="248.28,-982.2 257.85,-986.76 253.21,-977.23 248.28,-982.2"/>
+</g>
+<!-- proc~write_dataarray3_rank1_i8p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node30" class="node">
+<title>proc~write_dataarray3_rank1_i8p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node30"><a xlink:href=".././proc/write_dataarray3_rank1_i8p~3.html" xlink:title="write_dataarray3_rank1_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-864 2.5,-864 2.5,-840 162.5,-840 162.5,-864"/>
+<text text-anchor="middle" x="82.5" y="-849.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray3_rank1_I8P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray3_rank1_i8p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge29" class="edge">
+<title>proc~write_dataarray3_rank1_i8p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M147.01,-864.1C153.33,-866.55 159.45,-869.48 165,-873 207.47,-899.94 241.17,-949.86 257.92,-978.1"/>
+<polygon fill="#000000" stroke="#000000" points="254.9,-979.88 262.94,-986.79 260.97,-976.38 254.9,-979.88"/>
+</g>
+<!-- proc~write_dataarray3_rank3_i2p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node31" class="node">
+<title>proc~write_dataarray3_rank3_i2p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node31"><a xlink:href=".././proc/write_dataarray3_rank3_i2p~3.html" xlink:title="write_dataarray3_rank3_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-822 2.5,-822 2.5,-798 162.5,-798 162.5,-822"/>
+<text text-anchor="middle" x="82.5" y="-807.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray3_rank3_I2P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray3_rank3_i2p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge30" class="edge">
+<title>proc~write_dataarray3_rank3_i2p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M149.18,-822.05C154.8,-824.51 160.17,-827.45 165,-831 216.66,-868.93 248.53,-940.81 262.01,-977.01"/>
+<polygon fill="#000000" stroke="#000000" points="258.79,-978.39 265.47,-986.62 265.38,-976.02 258.79,-978.39"/>
+</g>
+<!-- proc~write_dataarray6_rank3_r8p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node32" class="node">
+<title>proc~write_dataarray6_rank3_r8p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node32"><a xlink:href=".././proc/write_dataarray6_rank3_r8p~3.html" xlink:title="write_dataarray6_rank3_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="165,-780 0,-780 0,-756 165,-756 165,-780"/>
+<text text-anchor="middle" x="82.5" y="-765.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray6_rank3_R8P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray6_rank3_r8p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge31" class="edge">
+<title>proc~write_dataarray6_rank3_r8p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M150.76,-780.15C155.85,-782.59 160.68,-785.51 165,-789 226.43,-838.74 254.78,-933.78 264.9,-976.83"/>
+<polygon fill="#000000" stroke="#000000" points="261.54,-977.83 267.14,-986.83 268.37,-976.3 261.54,-977.83"/>
+</g>
+<!-- proc~write_dataarray1_rank1_r4p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node33" class="node">
+<title>proc~write_dataarray1_rank1_r4p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node33"><a xlink:href=".././proc/write_dataarray1_rank1_r4p~3.html" xlink:title="write_dataarray1_rank1_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="165,-738 0,-738 0,-714 165,-714 165,-738"/>
+<text text-anchor="middle" x="82.5" y="-723.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank1_R4P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank1_r4p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge32" class="edge">
+<title>proc~write_dataarray1_rank1_r4p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M151.42,-738.03C156.31,-740.5 160.92,-743.46 165,-747 236.34,-808.93 259.95,-927.34 266.9,-976.62"/>
+<polygon fill="#000000" stroke="#000000" points="263.47,-977.36 268.23,-986.82 270.41,-976.45 263.47,-977.36"/>
+</g>
+<!-- proc~write_dataarray1_rank1_i1p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node34" class="node">
+<title>proc~write_dataarray1_rank1_i1p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node34"><a xlink:href=".././proc/write_dataarray1_rank1_i1p~3.html" xlink:title="write_dataarray1_rank1_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-696 2.5,-696 2.5,-672 162.5,-672 162.5,-696"/>
+<text text-anchor="middle" x="82.5" y="-681.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank1_I1P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank1_i1p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge33" class="edge">
+<title>proc~write_dataarray1_rank1_i1p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M152.02,-696.01C156.72,-698.48 161.12,-701.45 165,-705 246.53,-779.55 264.48,-921.92 268.41,-976.73"/>
+<polygon fill="#000000" stroke="#000000" points="264.92,-977 269.04,-986.76 271.9,-976.56 264.92,-977"/>
+</g>
+<!-- proc~write_dataarray1_rank3_r4p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node35" class="node">
+<title>proc~write_dataarray1_rank3_r4p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node35"><a xlink:href=".././proc/write_dataarray1_rank3_r4p~3.html" xlink:title="write_dataarray1_rank3_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="165,-654 0,-654 0,-630 165,-630 165,-654"/>
+<text text-anchor="middle" x="82.5" y="-639.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank3_R4P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank3_r4p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge34" class="edge">
+<title>proc~write_dataarray1_rank3_r4p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M152.56,-654.05C157.08,-656.52 161.3,-659.47 165,-663 256.66,-750.25 268.41,-916.3 269.55,-976.5"/>
+<polygon fill="#000000" stroke="#000000" points="266.05,-976.8 269.66,-986.77 273.05,-976.73 266.05,-976.8"/>
+</g>
+<!-- proc~write_dataarray1_rank4_i4p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node36" class="node">
+<title>proc~write_dataarray1_rank4_i4p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node36"><a xlink:href=".././proc/write_dataarray1_rank4_i4p~3.html" xlink:title="write_dataarray1_rank4_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-612 2.5,-612 2.5,-588 162.5,-588 162.5,-612"/>
+<text text-anchor="middle" x="82.5" y="-597.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank4_I4P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank4_i4p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge35" class="edge">
+<title>proc~write_dataarray1_rank4_i4p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M153.07,-612.13C157.42,-614.59 161.46,-617.52 165,-621 217.2,-672.29 255.42,-903.97 266.33,-976.93"/>
+<polygon fill="#000000" stroke="#000000" points="262.87,-977.48 267.79,-986.87 269.8,-976.46 262.87,-977.48"/>
+</g>
+<!-- proc~write_dataarray3_rank1_i1p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node37" class="node">
+<title>proc~write_dataarray3_rank1_i1p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node37"><a xlink:href=".././proc/write_dataarray3_rank1_i1p~3.html" xlink:title="write_dataarray3_rank1_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-570 2.5,-570 2.5,-546 162.5,-546 162.5,-570"/>
+<text text-anchor="middle" x="82.5" y="-555.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray3_rank1_I1P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray3_rank1_i1p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge36" class="edge">
+<title>proc~write_dataarray3_rank1_i1p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M153.18,-570.03C157.5,-572.51 161.5,-575.47 165,-579 222.36,-636.84 257.52,-898.02 266.94,-976.58"/>
+<polygon fill="#000000" stroke="#000000" points="263.5,-977.28 268.14,-986.8 270.45,-976.46 263.5,-977.28"/>
+</g>
+<!-- proc~write_dataarray6_rank1_r4p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node38" class="node">
+<title>proc~write_dataarray6_rank1_r4p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node38"><a xlink:href=".././proc/write_dataarray6_rank1_r4p~3.html" xlink:title="write_dataarray6_rank1_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="165,-528 0,-528 0,-504 165,-504 165,-528"/>
+<text text-anchor="middle" x="82.5" y="-513.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray6_rank1_R4P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray6_rank1_r4p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge37" class="edge">
+<title>proc~write_dataarray6_rank1_r4p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M153.64,-528.17C157.79,-530.62 161.64,-533.54 165,-537 227.7,-601.59 259.59,-893.61 267.51,-976.81"/>
+<polygon fill="#000000" stroke="#000000" points="264.03,-977.29 268.45,-986.92 271,-976.64 264.03,-977.29"/>
+</g>
+<!-- proc~write_dataarray6_rank3_i4p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node39" class="node">
+<title>proc~write_dataarray6_rank3_i4p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node39"><a xlink:href=".././proc/write_dataarray6_rank3_i4p~3.html" xlink:title="write_dataarray6_rank3_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-486 2.5,-486 2.5,-462 162.5,-462 162.5,-486"/>
+<text text-anchor="middle" x="82.5" y="-471.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray6_rank3_I4P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray6_rank3_i4p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge38" class="edge">
+<title>proc~write_dataarray6_rank3_i4p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M153.71,-486.1C157.85,-488.57 161.67,-491.51 165,-495 232.93,-566.26 261.34,-888.22 267.94,-976.54"/>
+<polygon fill="#000000" stroke="#000000" points="264.46,-977.04 268.68,-986.76 271.45,-976.53 264.46,-977.04"/>
+</g>
+<!-- proc~write_dataarray1_rank2_i8p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node40" class="node">
+<title>proc~write_dataarray1_rank2_i8p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node40"><a xlink:href=".././proc/write_dataarray1_rank2_i8p~3.html" xlink:title="write_dataarray1_rank2_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-444 2.5,-444 2.5,-420 162.5,-420 162.5,-444"/>
+<text text-anchor="middle" x="82.5" y="-429.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank2_I8P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank2_i8p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge39" class="edge">
+<title>proc~write_dataarray1_rank2_i8p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M153.77,-444.04C157.9,-446.53 161.7,-449.48 165,-453 238.24,-531.01 263.01,-883.55 268.32,-976.49"/>
+<polygon fill="#000000" stroke="#000000" points="264.84,-976.93 268.89,-986.72 271.83,-976.54 264.84,-976.93"/>
+</g>
+<!-- proc~write_dataarray1_rank3_i2p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node41" class="node">
+<title>proc~write_dataarray1_rank3_i2p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node41"><a xlink:href=".././proc/write_dataarray1_rank3_i2p~3.html" xlink:title="write_dataarray1_rank3_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-402 2.5,-402 2.5,-378 162.5,-378 162.5,-402"/>
+<text text-anchor="middle" x="82.5" y="-387.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank3_I2P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank3_i2p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge40" class="edge">
+<title>proc~write_dataarray1_rank3_i2p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M154.2,-402.22C158.17,-404.67 161.82,-407.57 165,-411 243.63,-495.87 264.58,-879.6 268.66,-976.65"/>
+<polygon fill="#000000" stroke="#000000" points="265.17,-976.94 269.07,-986.79 272.17,-976.66 265.17,-976.94"/>
+</g>
+<!-- proc~write_dataarray3_rank1_r8p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node42" class="node">
+<title>proc~write_dataarray3_rank1_r8p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node42"><a xlink:href=".././proc/write_dataarray3_rank1_r8p~3.html" xlink:title="write_dataarray3_rank1_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="165,-360 0,-360 0,-336 165,-336 165,-360"/>
+<text text-anchor="middle" x="82.5" y="-345.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray3_rank1_R8P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray3_rank1_r8p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge41" class="edge">
+<title>proc~write_dataarray3_rank1_r8p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M154.24,-360.18C158.2,-362.64 161.84,-365.55 165,-369 249,-460.72 266.03,-875.54 268.95,-976.7"/>
+<polygon fill="#000000" stroke="#000000" points="265.46,-977.06 269.23,-986.96 272.46,-976.87 265.46,-977.06"/>
+</g>
+<!-- proc~write_dataarray3_rank3_i8p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node43" class="node">
+<title>proc~write_dataarray3_rank3_i8p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node43"><a xlink:href=".././proc/write_dataarray3_rank3_i8p~3.html" xlink:title="write_dataarray3_rank3_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-318 2.5,-318 2.5,-294 162.5,-294 162.5,-318"/>
+<text text-anchor="middle" x="82.5" y="-303.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray3_rank3_I8P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray3_rank3_i8p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge42" class="edge">
+<title>proc~write_dataarray3_rank3_i8p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M154.28,-318.14C158.23,-320.61 161.86,-323.54 165,-327 254.43,-425.64 267.39,-872.04 269.21,-976.9"/>
+<polygon fill="#000000" stroke="#000000" points="265.71,-977.03 269.37,-986.97 272.71,-976.92 265.71,-977.03"/>
+</g>
+<!-- proc~write_dataarray6_rank1_i2p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node44" class="node">
+<title>proc~write_dataarray6_rank1_i2p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node44"><a xlink:href=".././proc/write_dataarray6_rank1_i2p~3.html" xlink:title="write_dataarray6_rank1_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-276 2.5,-276 2.5,-252 162.5,-252 162.5,-276"/>
+<text text-anchor="middle" x="82.5" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray6_rank1_I2P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray6_rank1_i2p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge43" class="edge">
+<title>proc~write_dataarray6_rank1_i2p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M154.32,-276.11C158.26,-278.59 161.88,-281.52 165,-285 259.72,-390.42 268.64,-867.17 269.43,-976.58"/>
+<polygon fill="#000000" stroke="#000000" points="265.93,-976.8 269.49,-986.78 272.93,-976.76 265.93,-976.8"/>
+</g>
+<!-- proc~write_dataarray1_rank1_i4p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node45" class="node">
+<title>proc~write_dataarray1_rank1_i4p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node45"><a xlink:href=".././proc/write_dataarray1_rank1_i4p~3.html" xlink:title="write_dataarray1_rank1_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-234 2.5,-234 2.5,-210 162.5,-210 162.5,-234"/>
+<text text-anchor="middle" x="82.5" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank1_I4P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank1_i4p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge44" class="edge">
+<title>proc~write_dataarray1_rank1_i4p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M154.35,-234.08C158.28,-236.56 161.89,-239.51 165,-243 265.15,-355.36 269.84,-863.74 269.63,-976.71"/>
+<polygon fill="#000000" stroke="#000000" points="266.13,-976.91 269.6,-986.92 273.13,-976.93 266.13,-976.91"/>
+</g>
+<!-- proc~write_dataarray1_rank2_i1p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node46" class="node">
+<title>proc~write_dataarray1_rank2_i1p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node46"><a xlink:href=".././proc/write_dataarray1_rank2_i1p~3.html" xlink:title="write_dataarray1_rank2_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-192 2.5,-192 2.5,-168 162.5,-168 162.5,-192"/>
+<text text-anchor="middle" x="82.5" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank2_I1P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank2_i1p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge45" class="edge">
+<title>proc~write_dataarray1_rank2_i1p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M154.38,-192.06C158.3,-194.54 161.9,-197.5 165,-201 270.52,-320.24 270.98,-859.65 269.81,-976.59"/>
+<polygon fill="#000000" stroke="#000000" points="266.31,-976.8 269.69,-986.84 273.31,-976.88 266.31,-976.8"/>
+</g>
+<!-- proc~write_dataarray1_rank4_r4p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node47" class="node">
+<title>proc~write_dataarray1_rank4_r4p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node47"><a xlink:href=".././proc/write_dataarray1_rank4_r4p~3.html" xlink:title="write_dataarray1_rank4_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="165,-150 0,-150 0,-126 165,-126 165,-150"/>
+<text text-anchor="middle" x="82.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray1_rank4_R4P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray1_rank4_r4p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge46" class="edge">
+<title>proc~write_dataarray1_rank4_r4p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M154.41,-150.03C158.32,-152.53 161.91,-155.49 165,-159 220.81,-222.48 260.7,-850.24 268.22,-976.82"/>
+<polygon fill="#000000" stroke="#000000" points="264.73,-977.11 268.81,-986.89 271.72,-976.7 264.73,-977.11"/>
+</g>
+<!-- proc~write_dataarray3_rank1_i4p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node48" class="node">
+<title>proc~write_dataarray3_rank1_i4p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node48"><a xlink:href=".././proc/write_dataarray3_rank1_i4p~3.html" xlink:title="write_dataarray3_rank1_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-108 2.5,-108 2.5,-84 162.5,-84 162.5,-108"/>
+<text text-anchor="middle" x="82.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray3_rank1_I4P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray3_rank1_i4p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge47" class="edge">
+<title>proc~write_dataarray3_rank1_i4p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M154.43,-108.01C158.34,-110.51 161.92,-113.48 165,-117 223.49,-183.92 261.38,-845.61 268.34,-976.55"/>
+<polygon fill="#000000" stroke="#000000" points="264.87,-977.12 268.89,-986.93 271.86,-976.76 264.87,-977.12"/>
+</g>
+<!-- proc~write_dataarray3_rank3_i1p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node49" class="node">
+<title>proc~write_dataarray3_rank3_i1p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node49"><a xlink:href=".././proc/write_dataarray3_rank3_i1p~3.html" xlink:title="write_dataarray3_rank3_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="162.5,-66 2.5,-66 2.5,-42 162.5,-42 162.5,-66"/>
+<text text-anchor="middle" x="82.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray3_rank3_I1P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray3_rank3_i1p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge48" class="edge">
+<title>proc~write_dataarray3_rank3_i1p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M154.82,-66.23C158.58,-68.68 162.03,-71.58 165,-75 226.17,-145.37 262.04,-841.19 268.46,-976.33"/>
+<polygon fill="#000000" stroke="#000000" points="264.98,-976.86 268.94,-986.69 271.97,-976.53 264.98,-976.86"/>
+</g>
+<!-- proc~write_dataarray6_rank3_r4p~3 -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node50" class="node">
+<title>proc~write_dataarray6_rank3_r4p~3</title>
+<g id="a_proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_node50"><a xlink:href=".././proc/write_dataarray6_rank3_r4p~3.html" xlink:title="write_dataarray6_rank3_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="165,-24 0,-24 0,0 165,0 165,-24"/>
+<text text-anchor="middle" x="82.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_dataarray6_rank3_R4P</text>
+</a>
+</g>
+</g>
+<!-- proc~write_dataarray6_rank3_r4p~3&#45;&gt;interface~encode_ascii_dataarray -->
+<g id="proc~~encode_ascii_dataarray6_rank3_r4p~~CalledByGraph_edge49" class="edge">
+<title>proc~write_dataarray6_rank3_r4p~3&#45;&gt;interface~encode_ascii_dataarray</title>
+<path fill="none" stroke="#000000" d="M154.84,-24.21C158.6,-26.67 162.04,-29.57 165,-33 228.94,-106.91 262.75,-838.57 268.58,-976.6"/>
+<polygon fill="#000000" stroke="#000000" points="265.1,-976.96 269.01,-986.81 272.09,-976.67 265.1,-976.96"/>
+</g>
+</g>
+</svg>
+</div><div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div><div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog"><div class="modal-dialog modal-lg" role="document"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="-graph-help-label">Graph Key</h4></div><div class="modal-body">
+    <p>Nodes of different colours represent the following: </p>
+    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="597pt" height="32pt"
+ viewBox="0.00 0.00 596.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 592.5,-28 592.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node4" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="388.5,-24 243.5,-24 243.5,0 388.5,0 388.5,-24"/>
+<text text-anchor="middle" x="316" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="465,-24 407,-24 407,0 465,0 465,-24"/>
+<text text-anchor="middle" x="436" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="588.5,-24 483.5,-24 483.5,0 588.5,0 588.5,-24"/>
+<text text-anchor="middle" x="536" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+    
+    <p>Solid arrows point from a procedure to one which it calls. Dashed 
+    arrows point from an interface to procedures which implement that interface.
+    This could include the module procedures in a generic interface or the
+    implementation in a submodule of an interface in a parent module.
+    </p>
+    </div></div></div></div>
+      </div>
+    </div>
+    <br>
+
+    <section class="visible-xs visible-sm hidden-md">
+      <h3>Contents</h3>
+ 
+<div class="panel panel-primary">
+  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
+  <div class="list-group">
+    <a class="list-group-item" href="../proc/encode_ascii_dataarray6_rank3_r4p.html#src">encode_ascii_dataarray6_rank3_R4P</a>
+  </div>
+</div>
+
+    </section>
+    <br class="visible-xs visible-sm hidden-md">
+
+
+    
+    
+
+    
+    
+
+
+    
+    <section>
+    <h2><span class="anchor" id="src"></span>Source Code</h2>
+    <div class="highlight"><pre><span></span><span class="w">  </span><span class="k">function </span><span class="n">encode_ascii_dataarray6_rank3_R4P</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">code</span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span><span class="c">!&lt; Encode (Base64) a dataarray with 3 components of rank 3 (R4P).</span>
+<span class="w">  </span><span class="kt">real</span><span class="p">(</span><span class="n">R4P</span><span class="p">),</span><span class="w">       </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">   </span><span class="kd">::</span><span class="w"> </span><span class="n">u</span><span class="p">(</span><span class="mi">1</span><span class="p">:,</span><span class="mi">1</span><span class="p">:,</span><span class="mi">1</span><span class="p">:)</span><span class="w"> </span><span class="c">!&lt; U component.</span>
+<span class="w">  </span><span class="kt">real</span><span class="p">(</span><span class="n">R4P</span><span class="p">),</span><span class="w">       </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">   </span><span class="kd">::</span><span class="w"> </span><span class="n">v</span><span class="p">(</span><span class="mi">1</span><span class="p">:,</span><span class="mi">1</span><span class="p">:,</span><span class="mi">1</span><span class="p">:)</span><span class="w"> </span><span class="c">!&lt; V component.</span>
+<span class="w">  </span><span class="kt">real</span><span class="p">(</span><span class="n">R4P</span><span class="p">),</span><span class="w">       </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">   </span><span class="kd">::</span><span class="w"> </span><span class="n">w</span><span class="p">(</span><span class="mi">1</span><span class="p">:,</span><span class="mi">1</span><span class="p">:,</span><span class="mi">1</span><span class="p">:)</span><span class="w"> </span><span class="c">!&lt; W component.</span>
+<span class="w">  </span><span class="kt">real</span><span class="p">(</span><span class="n">R4P</span><span class="p">),</span><span class="w">       </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">   </span><span class="kd">::</span><span class="w"> </span><span class="n">x</span><span class="p">(</span><span class="mi">1</span><span class="p">:,</span><span class="mi">1</span><span class="p">:,</span><span class="mi">1</span><span class="p">:)</span><span class="w"> </span><span class="c">!&lt; X component.</span>
+<span class="w">  </span><span class="kt">real</span><span class="p">(</span><span class="n">R4P</span><span class="p">),</span><span class="w">       </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">   </span><span class="kd">::</span><span class="w"> </span><span class="n">y</span><span class="p">(</span><span class="mi">1</span><span class="p">:,</span><span class="mi">1</span><span class="p">:,</span><span class="mi">1</span><span class="p">:)</span><span class="w"> </span><span class="c">!&lt; Y component.</span>
+<span class="w">  </span><span class="kt">real</span><span class="p">(</span><span class="n">R4P</span><span class="p">),</span><span class="w">       </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">   </span><span class="kd">::</span><span class="w"> </span><span class="n">z</span><span class="p">(</span><span class="mi">1</span><span class="p">:,</span><span class="mi">1</span><span class="p">:,</span><span class="mi">1</span><span class="p">:)</span><span class="w"> </span><span class="c">!&lt; Z component.</span>
+<span class="w">  </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">code</span><span class="w">        </span><span class="c">!&lt; Encoded base64 dataarray.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                  </span><span class="kd">::</span><span class="w"> </span><span class="n">n1</span><span class="w">          </span><span class="c">!&lt; Counter.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                  </span><span class="kd">::</span><span class="w"> </span><span class="n">n2</span><span class="w">          </span><span class="c">!&lt; Counter.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                  </span><span class="kd">::</span><span class="w"> </span><span class="n">n3</span><span class="w">          </span><span class="c">!&lt; Counter.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                  </span><span class="kd">::</span><span class="w"> </span><span class="n">l</span><span class="w">           </span><span class="c">!&lt; Length</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                  </span><span class="kd">::</span><span class="w"> </span><span class="n">sp</span><span class="w">          </span><span class="c">!&lt; String pointer</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                  </span><span class="kd">::</span><span class="w"> </span><span class="n">size_n1</span><span class="w">     </span><span class="c">!&lt; Dimension 1 size</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                  </span><span class="kd">::</span><span class="w"> </span><span class="n">size_n2</span><span class="w">     </span><span class="c">!&lt; Dimension 2 size</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                  </span><span class="kd">::</span><span class="w"> </span><span class="n">size_n3</span><span class="w">     </span><span class="c">!&lt; Dimension 3 size</span>
+
+<span class="w">  </span><span class="n">size_n1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="nb">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span><span class="n">size_n2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="nb">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span><span class="n">size_n3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="nb">dim</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span>
+<span class="w">  </span><span class="n">l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DR4P</span><span class="o">*</span><span class="mi">6</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">5</span><span class="w"></span>
+<span class="w">  </span><span class="n">sp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"></span>
+<span class="w">  </span><span class="n">code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">repeat</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="n">l</span><span class="o">*</span><span class="n">size_n1</span><span class="o">*</span><span class="n">size_n2</span><span class="o">*</span><span class="n">size_n3</span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span><span class="k">do </span><span class="n">n3</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">size_n3</span><span class="w"></span>
+<span class="w">    </span><span class="k">do </span><span class="n">n2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">size_n2</span><span class="w"></span>
+<span class="w">      </span><span class="k">do </span><span class="n">n1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">size_n1</span><span class="w"></span>
+<span class="w">        </span><span class="n">code</span><span class="p">(</span><span class="n">sp</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">sp</span><span class="o">+</span><span class="n">l</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">str</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">u</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span><span class="w"> </span><span class="n">n2</span><span class="p">,</span><span class="w"> </span><span class="n">n3</span><span class="p">))</span><span class="o">//</span><span class="s1">&#39; &#39;</span><span class="o">//</span><span class="n">str</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">v</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span><span class="w"> </span><span class="n">n2</span><span class="p">,</span><span class="w"> </span><span class="n">n3</span><span class="p">))</span><span class="o">//</span><span class="s1">&#39; &#39;</span><span class="o">//</span><span class="n">str</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">w</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span><span class="w"> </span><span class="n">n2</span><span class="p">,</span><span class="w"> </span><span class="n">n3</span><span class="p">))</span><span class="o">//</span><span class="w"> </span><span class="p">&amp;</span><span class="w"></span>
+<span class="w">          </span><span class="n">str</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">x</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span><span class="w"> </span><span class="n">n2</span><span class="p">,</span><span class="w"> </span><span class="n">n3</span><span class="p">))</span><span class="o">//</span><span class="s1">&#39; &#39;</span><span class="o">//</span><span class="n">str</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">y</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span><span class="w"> </span><span class="n">n2</span><span class="p">,</span><span class="w"> </span><span class="n">n3</span><span class="p">))</span><span class="o">//</span><span class="s1">&#39; &#39;</span><span class="o">//</span><span class="n">str</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">z</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span><span class="w"> </span><span class="n">n2</span><span class="p">,</span><span class="w"> </span><span class="n">n3</span><span class="p">))</span><span class="w"></span>
+<span class="w">        </span><span class="n">sp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sp</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">l</span><span class="w"></span>
+<span class="w">      </span><span class="k">enddo</span>
+<span class="k">    enddo</span>
+<span class="k">  enddo</span>
+<span class="k">  endfunction </span><span class="n">encode_ascii_dataarray6_rank3_R4P</span><span class="w"></span>
+</pre></div>
+
+    </section>
+    <br>
+    
+    </div>
+  </div>
+
+    <hr>    
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+      <div class="row">
+        <div class="col-xs-6 col-md-6"><p>Lib_VTK_IO was developed by Stefano Zaghi<br>&copy; 2022 
+</p>
+        </div>
+        <div class="col-xs-6 col-md-6">
+          <p class="text-right">
+            Documentation generated by 
+            <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+          </p>
+        </div>
+      </div>
+      <br>
+      </div> <!-- /container -->    
+    </footer>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+<!--
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+-->
+    <script src="../js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../js/ie10-viewport-bug-workaround.js"></script>
+
+    <!-- MathJax JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+        jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+        extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+      });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script src="../tipuesearch/tipuesearch_content.js"></script>
+    <script src="../tipuesearch/tipuesearch_set.js"></script>
+    <script src="../tipuesearch/tipuesearch.js"></script>
+    
+  </body>
+</html>
