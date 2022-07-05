@@ -210,7 +210,7 @@ rule = rm -rf doc/html/*
 
 [rule-maketar]
 help = Rule for making tar archive of the project
-rule = tar -czf VTKFortran.tar.gz *
+rule = tar --xform="s%^%VTKFortran/%" -czf VTKFortran.tar.gz *
 
 [rule-makecoverage]
 help   = Rule for performing coverage analysis
