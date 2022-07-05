@@ -8,10 +8,9 @@ summary: Pure Fortran (2003+) library to write and read data conforming the VTK 
 author: Stefano Zaghi
 github: https://github.com/szaghi
 email: stefano.zaghi@gmail.com
-md_extensions: markdown.extensions.toc(anchorlink=True)
-               markdown.extensions.smarty(smart_quotes=False)
+md_extensions: markdown.extensions.toc
+               markdown.extensions.smarty
                markdown.extensions.extra
-               markdown_checklist.extension
 display: public
          protected
          private
