@@ -1,0 +1,31 @@
+name = "VTKFortran"
+version = "2.0.3"
+author = "Stefano Zaghi"
+copyright = "Copyright © 2022, Stefano Zaghi"
+license = "Multiple licenses"
+description = "pure Fortran VTK (XML) API"
+maintainer = "Stefano Zaghi"
+homepage = "https://github.com/szaghi/VTKFortran"
+
+[library]
+source-dir = "src/lib"
+
+[install]
+library = true
+
+[dependencies]
+[dependencies.FoXy]
+git = "https://github.com/Fortran-FOSS-Programmers/FoXy"
+rev = "06f8ff513c6ff86898f825981d166f406397e958"
+
+[dependencies.PENF]
+git = "https://github.com/szaghi/PENF"
+rev = "65061235982495b158412b70c05b228af4320d94"
+
+[dependencies.BeFoR64]
+git = "https://github.com/szaghi/BeFoR64"
+rev = "09b95c08a2ee8995d19cf8551c22b783193f6246"
+
+[dependencies.StringiFor]
+git = "https://github.com/szaghi/StringiFor"
+rev = "25570c36964ef49942537af942603962c3f26b68"
