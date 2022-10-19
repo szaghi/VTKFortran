@@ -90,13 +90,13 @@
      <li><i class="fa fa-list-ol"></i>
        <a data-toggle="tooltip"
     data-placement="bottom" data-html="true"
-    title=" 0.1% of total for procedures.">31 statements</a>
+    title=" 0.1% of total for procedures.">18 statements</a>
      </li> 
-    <li><i class="fa fa-code"></i><a href="../src/vtk_fortran_vtk_file.f90"> Source File</a></li>
+    <li><i class="fa fa-code"></i><a href="../src/vtk_fortran_pvtk_file.f90"> Source File</a></li>
   </ul>
   <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/vtk_fortran_vtk_file.f90.html'>vtk_fortran_vtk_file.f90</a></li>
-     <li><a href='../module/vtk_fortran_vtk_file.html'>vtk_fortran_vtk_file</a></li>
+     <li><a href='../sourcefile/vtk_fortran_pvtk_file.f90.html'>vtk_fortran_pvtk_file.f90</a></li>
+     <li><a href='../module/vtk_fortran_pvtk_file.html'>vtk_fortran_pvtk_file</a></li>
      <li class="active">initialize</li>
   </ol>
 </div>
@@ -127,7 +127,7 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private function initialize(self, format, filename, mesh_topology, is_volatile, nx1, nx2, ny1, ny2, nz1, nz2) result(error)</h2>
+    <h2>private function initialize(self, filename, mesh_topology, mesh_kind, nx1, nx2, ny1, ny2, nz1, nz2) result(error)</h2>
     
 
 
@@ -136,19 +136,13 @@
 <thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
 <tbody>
 <tr>
-  <td><span class="anchor" id="variable-self~316"></span>class(<a href='../type/vtk_file.html'>vtk_file</a>),</td>
+  <td><span class="anchor" id="variable-self~56"></span>class(<a href='../type/pvtk_file.html'>pvtk_file</a>),</td>
 <td>intent(inout)</td>
   <td></td>  <td></td><td>::</td>
   <td><strong>self</strong></td><td></td>
 </tr>
 <tr>
-  <td><span class="anchor" id="variable-format~3"></span>character,</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>format</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-filename~11"></span>character,</td>
+  <td><span class="anchor" id="variable-filename~7"></span>character,</td>
 <td>intent(in)</td>
   <td></td>  <td></td><td>::</td>
   <td><strong>filename</strong></td><td></td>
@@ -160,43 +154,43 @@
   <td><strong>mesh_topology</strong></td><td></td>
 </tr>
 <tr>
-  <td><span class="anchor" id="variable-is_volatile~4"></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>is_volatile</strong></td><td></td>
+  <td><span class="anchor" id="variable-mesh_kind~2"></span>character,</td>
+<td>intent(in)</td>
+  <td></td>  <td></td><td>::</td>
+  <td><strong>mesh_kind</strong></td><td></td>
 </tr>
 <tr>
-  <td><span class="anchor" id="variable-nx1~6"></span>integer(kind=I4P),</td>
+  <td><span class="anchor" id="variable-nx1~3"></span>integer(kind=I4P),</td>
 <td>intent(in),</td>
   <td>optional</td>  <td></td><td>::</td>
   <td><strong>nx1</strong></td><td></td>
 </tr>
 <tr>
-  <td><span class="anchor" id="variable-nx2~6"></span>integer(kind=I4P),</td>
+  <td><span class="anchor" id="variable-nx2~3"></span>integer(kind=I4P),</td>
 <td>intent(in),</td>
   <td>optional</td>  <td></td><td>::</td>
   <td><strong>nx2</strong></td><td></td>
 </tr>
 <tr>
-  <td><span class="anchor" id="variable-ny1~6"></span>integer(kind=I4P),</td>
+  <td><span class="anchor" id="variable-ny1~3"></span>integer(kind=I4P),</td>
 <td>intent(in),</td>
   <td>optional</td>  <td></td><td>::</td>
   <td><strong>ny1</strong></td><td></td>
 </tr>
 <tr>
-  <td><span class="anchor" id="variable-ny2~6"></span>integer(kind=I4P),</td>
+  <td><span class="anchor" id="variable-ny2~3"></span>integer(kind=I4P),</td>
 <td>intent(in),</td>
   <td>optional</td>  <td></td><td>::</td>
   <td><strong>ny2</strong></td><td></td>
 </tr>
 <tr>
-  <td><span class="anchor" id="variable-nz1~6"></span>integer(kind=I4P),</td>
+  <td><span class="anchor" id="variable-nz1~3"></span>integer(kind=I4P),</td>
 <td>intent(in),</td>
   <td>optional</td>  <td></td><td>::</td>
   <td><strong>nz1</strong></td><td></td>
 </tr>
 <tr>
-  <td><span class="anchor" id="variable-nz2~6"></span>integer(kind=I4P),</td>
+  <td><span class="anchor" id="variable-nz2~3"></span>integer(kind=I4P),</td>
 <td>intent(in),</td>
   <td>optional</td>  <td></td><td>::</td>
   <td><strong>nz2</strong></td><td></td>
@@ -204,7 +198,7 @@
 </tbody>
 </table>
 
-   <h3>Return Value <small><span class="anchor" id="variable-error~182"></span>integer(kind=I4P)</small></h3>
+   <h3>Return Value <small><span class="anchor" id="variable-error~57"></span>integer(kind=I4P)</small></h3>
     
     <br>
     <div class="panel panel-default">
@@ -369,68 +363,47 @@
     
     <section>
     <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="highlight"><pre><span></span><span class="w">   </span><span class="k">function </span><span class="n">initialize</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="k">format</span><span class="p">,</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">mesh_topology</span><span class="p">,</span><span class="w"> </span><span class="n">is_volatile</span><span class="p">,</span><span class="w"> </span><span class="n">nx1</span><span class="p">,</span><span class="w"> </span><span class="n">nx2</span><span class="p">,</span><span class="w"> </span><span class="n">ny1</span><span class="p">,</span><span class="w"> </span><span class="n">ny2</span><span class="p">,</span><span class="w"> </span><span class="n">nz1</span><span class="p">,</span><span class="w"> </span><span class="n">nz2</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="w"></span>
-<span class="w">   </span><span class="c">!&lt; Initialize file (writer).</span>
-<span class="w">   </span><span class="c">!&lt;</span>
-<span class="w">   </span><span class="c">!&lt; @note This function must be the first to be called.</span>
-<span class="w">   </span><span class="c">!&lt;</span>
-<span class="w">   </span><span class="c">!&lt;### Supported output formats are (the passed specifier value is case insensitive):</span>
-<span class="w">   </span><span class="c">!&lt;</span>
-<span class="w">   </span><span class="c">!&lt;- ASCII: data are saved in ASCII format;</span>
-<span class="w">   </span><span class="c">!&lt;- BINARY: data are saved in base64 encoded format;</span>
-<span class="w">   </span><span class="c">!&lt;- RAW: data are saved in raw-binary format in the appended tag of the XML file;</span>
-<span class="w">   </span><span class="c">!&lt;- BINARY-APPENDED: data are saved in base64 encoded format in the appended tag of the XML file.</span>
-<span class="w">   </span><span class="c">!&lt;</span>
-<span class="w">   </span><span class="c">!&lt;### Supported topologies are:</span>
-<span class="w">   </span><span class="c">!&lt;</span>
-<span class="w">   </span><span class="c">!&lt;- RectilinearGrid;</span>
-<span class="w">   </span><span class="c">!&lt;- StructuredGrid;</span>
-<span class="w">   </span><span class="c">!&lt;- UnstructuredGrid.</span>
-<span class="w">   </span><span class="c">!&lt;</span>
-<span class="w">   </span><span class="c">!&lt;### Example of usage</span>
-<span class="w">   </span><span class="c">!&lt;</span>
-<span class="w">   </span><span class="c">!&lt;```fortran</span>
-<span class="w">   </span><span class="c">!&lt; type(vtk_file) :: vtk</span>
-<span class="w">   </span><span class="c">!&lt; integer(I4P)   :: nx1, nx2, ny1, ny2, nz1, nz2</span>
-<span class="w">   </span><span class="c">!&lt; ...</span>
-<span class="w">   </span><span class="c">!&lt; error = vtk%initialize(&#39;BINARY&#39;,&#39;XML_RECT_BINARY.vtr&#39;,&#39;RectilinearGrid&#39;,nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)</span>
-<span class="w">   </span><span class="c">!&lt; ...</span>
-<span class="w">   </span><span class="c">!&lt;```</span>
-<span class="w">   </span><span class="c">!&lt; @note The file extension is necessary in the file name. The XML standard has different extensions for each</span>
-<span class="w">   </span><span class="c">!&lt; different topologies (e.g. *vtr* for rectilinear topology). See the VTK-standard file for more information.</span>
-<span class="w">   </span><span class="k">class</span><span class="p">(</span><span class="n">vtk_file</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w">        </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w">          </span><span class="c">!&lt; VTK file.</span>
-<span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">           </span><span class="kd">::</span><span class="w"> </span><span class="k">format</span><span class="w">        </span><span class="c">!&lt; File format: ASCII, BINARY, RAW or BINARY-APPENDED.</span>
-<span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">           </span><span class="kd">::</span><span class="w"> </span><span class="n">filename</span><span class="w">      </span><span class="c">!&lt; File name.</span>
-<span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">           </span><span class="kd">::</span><span class="w"> </span><span class="n">mesh_topology</span><span class="w"> </span><span class="c">!&lt; Mesh topology.</span>
-<span class="w">   </span><span class="kt">logical</span><span class="p">,</span><span class="w">         </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">is_volatile</span><span class="w">   </span><span class="c">!&lt; Flag to check volatile writer.</span>
-<span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nx1</span><span class="w">           </span><span class="c">!&lt; Initial node of x axis.</span>
-<span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nx2</span><span class="w">           </span><span class="c">!&lt; Final node of x axis.</span>
-<span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ny1</span><span class="w">           </span><span class="c">!&lt; Initial node of y axis.</span>
-<span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ny2</span><span class="w">           </span><span class="c">!&lt; Final node of y axis.</span>
-<span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nz1</span><span class="w">           </span><span class="c">!&lt; Initial node of z axis.</span>
-<span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nz2</span><span class="w">           </span><span class="c">!&lt; Final node of z axis.</span>
-<span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                          </span><span class="kd">::</span><span class="w"> </span><span class="n">error</span><span class="w">         </span><span class="c">!&lt; Error status.</span>
-<span class="w">   </span><span class="k">type</span><span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="w">                          </span><span class="kd">::</span><span class="w"> </span><span class="n">fformat</span><span class="w">       </span><span class="c">!&lt; File format.</span>
+    <div class="highlight"><pre><span></span><span class="w">  </span><span class="k">function </span><span class="n">initialize</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">mesh_topology</span><span class="p">,</span><span class="w"> </span><span class="n">mesh_kind</span><span class="p">,</span><span class="w"> </span><span class="n">nx1</span><span class="p">,</span><span class="w"> </span><span class="n">nx2</span><span class="p">,</span><span class="w"> </span><span class="n">ny1</span><span class="p">,</span><span class="w"> </span><span class="n">ny2</span><span class="p">,</span><span class="w"> </span><span class="n">nz1</span><span class="p">,</span><span class="w"> </span><span class="n">nz2</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span><span class="c">!&lt; Initialize file (writer).</span>
+<span class="w">  </span><span class="c">!&lt;</span>
+<span class="w">  </span><span class="c">!&lt; @note This function must be the first to be called.</span>
+<span class="w">  </span><span class="c">!&lt;</span>
+<span class="w">  </span><span class="c">!&lt;### Supported topologies are:</span>
+<span class="w">  </span><span class="c">!&lt;</span>
+<span class="w">  </span><span class="c">!&lt;- PRectilinearGrid;</span>
+<span class="w">  </span><span class="c">!&lt;- PStructuredGrid;</span>
+<span class="w">  </span><span class="c">!&lt;- PUnstructuredGrid.</span>
+<span class="w">  </span><span class="c">!&lt;</span>
+<span class="w">  </span><span class="c">!&lt;### Example of usage</span>
+<span class="w">  </span><span class="c">!&lt;</span>
+<span class="w">  </span><span class="c">!&lt;```fortran</span>
+<span class="w">  </span><span class="c">!&lt; type(pvtk_file) :: pvtk</span>
+<span class="w">  </span><span class="c">!&lt; integer(I4P)    :: nx1, nx2, ny1, ny2, nz1, nz2</span>
+<span class="w">  </span><span class="c">!&lt; ...</span>
+<span class="w">  </span><span class="c">!&lt; error = pvtk%initialize(&#39;XML_RECT_BINARY.pvtr&#39;,&#39;PRectilinearGrid&#39;,nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)</span>
+<span class="w">  </span><span class="c">!&lt; ...</span>
+<span class="w">  </span><span class="c">!&lt;```</span>
+<span class="w">  </span><span class="c">!&lt; @note The file extension is necessary in the file name. The XML standard has different extensions for each</span>
+<span class="w">  </span><span class="c">!&lt; different topologies (e.g. *pvtr* for rectilinear topology). See the VTK-standard file for more information.</span>
+<span class="w">  </span><span class="k">class</span><span class="p">(</span><span class="n">pvtk_file</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w">         </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w">          </span><span class="c">!&lt; VTK file.</span>
+<span class="w">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">     </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">            </span><span class="kd">::</span><span class="w"> </span><span class="n">filename</span><span class="w">      </span><span class="c">!&lt; File name.</span>
+<span class="w">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">     </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">            </span><span class="kd">::</span><span class="w"> </span><span class="n">mesh_topology</span><span class="w"> </span><span class="c">!&lt; Mesh topology.</span>
+<span class="w">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">     </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">            </span><span class="kd">::</span><span class="w"> </span><span class="n">mesh_kind</span><span class="w">     </span><span class="c">!&lt; Kind of mesh data: Float64, Float32, ecc.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">     </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w">  </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nx1</span><span class="w">           </span><span class="c">!&lt; Initial node of x axis.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">     </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w">  </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nx2</span><span class="w">           </span><span class="c">!&lt; Final node of x axis.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">     </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w">  </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ny1</span><span class="w">           </span><span class="c">!&lt; Initial node of y axis.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">     </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w">  </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ny2</span><span class="w">           </span><span class="c">!&lt; Final node of y axis.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">     </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w">  </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nz1</span><span class="w">           </span><span class="c">!&lt; Initial node of z axis.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">     </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w">  </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nz2</span><span class="w">           </span><span class="c">!&lt; Final node of z axis.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                            </span><span class="kd">::</span><span class="w"> </span><span class="n">error</span><span class="w">         </span><span class="c">!&lt; Error status.</span>
 
-<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">is_initialized</span><span class="p">)</span><span class="w"> </span><span class="k">call </span><span class="n">penf_init</span><span class="w"></span>
-<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">is_b64_initialized</span><span class="p">)</span><span class="w"> </span><span class="k">call </span><span class="n">b64_init</span><span class="w"></span>
-<span class="w">   </span><span class="n">fformat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="k">format</span><span class="p">))</span><span class="w"></span>
-<span class="w">   </span><span class="n">fformat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fformat</span><span class="p">%</span><span class="n">upper</span><span class="p">()</span><span class="w"></span>
-<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">)</span><span class="w"></span>
-<span class="w">   </span><span class="k">select case</span><span class="p">(</span><span class="n">fformat</span><span class="p">%</span><span class="n">chars</span><span class="p">())</span><span class="w"></span>
-<span class="w">   </span><span class="k">case</span><span class="p">(</span><span class="s1">&#39;ASCII&#39;</span><span class="p">)</span><span class="w"></span>
-<span class="w">      </span><span class="k">allocate</span><span class="p">(</span><span class="n">xml_writer_ascii_local</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">)</span><span class="w"></span>
-<span class="w">   </span><span class="k">case</span><span class="p">(</span><span class="s1">&#39;BINARY-APPENDED&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;RAW&#39;</span><span class="p">)</span><span class="w"></span>
-<span class="w">      </span><span class="k">allocate</span><span class="p">(</span><span class="n">xml_writer_appended</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">)</span><span class="w"></span>
-<span class="w">   </span><span class="k">case</span><span class="p">(</span><span class="s1">&#39;BINARY&#39;</span><span class="p">)</span><span class="w"></span>
-<span class="w">      </span><span class="k">allocate</span><span class="p">(</span><span class="n">xml_writer_binary_local</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">)</span><span class="w"></span>
-<span class="w">   </span><span class="k">case </span><span class="n">default</span><span class="w"></span>
-<span class="w">      </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
-<span class="w">   </span><span class="k">endselect</span>
-<span class="k">   </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">%</span><span class="n">initialize</span><span class="p">(</span><span class="k">format</span><span class="o">=</span><span class="k">format</span><span class="p">,</span><span class="w"> </span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">mesh_topology</span><span class="o">=</span><span class="n">mesh_topology</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span><span class="w"></span>
-<span class="w">                                      </span><span class="n">is_volatile</span><span class="o">=</span><span class="n">is_volatile</span><span class="p">,</span><span class="w">                                       </span><span class="p">&amp;</span><span class="w"></span>
-<span class="w">                                      </span><span class="n">nx1</span><span class="o">=</span><span class="n">nx1</span><span class="p">,</span><span class="w"> </span><span class="n">nx2</span><span class="o">=</span><span class="n">nx2</span><span class="p">,</span><span class="w"> </span><span class="n">ny1</span><span class="o">=</span><span class="n">ny1</span><span class="p">,</span><span class="w"> </span><span class="n">ny2</span><span class="o">=</span><span class="n">ny2</span><span class="p">,</span><span class="w"> </span><span class="n">nz1</span><span class="o">=</span><span class="n">nz1</span><span class="p">,</span><span class="w"> </span><span class="n">nz2</span><span class="o">=</span><span class="n">nz2</span><span class="p">)</span><span class="w"></span>
-<span class="w">   </span><span class="k">endfunction </span><span class="n">initialize</span><span class="w"></span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">is_initialized</span><span class="p">)</span><span class="w"> </span><span class="k">call </span><span class="n">penf_init</span><span class="w"></span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">is_b64_initialized</span><span class="p">)</span><span class="w"> </span><span class="k">call </span><span class="n">b64_init</span><span class="w"></span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span><span class="k">allocate</span><span class="p">(</span><span class="n">xml_writer_ascii_local</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">%</span><span class="n">initialize</span><span class="p">(</span><span class="k">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">mesh_topology</span><span class="o">=</span><span class="n">mesh_topology</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span><span class="w"></span>
+<span class="w">                                     </span><span class="n">nx1</span><span class="o">=</span><span class="n">nx1</span><span class="p">,</span><span class="w"> </span><span class="n">nx2</span><span class="o">=</span><span class="n">nx2</span><span class="p">,</span><span class="w"> </span><span class="n">ny1</span><span class="o">=</span><span class="n">ny1</span><span class="p">,</span><span class="w"> </span><span class="n">ny2</span><span class="o">=</span><span class="n">ny2</span><span class="p">,</span><span class="w"> </span><span class="n">nz1</span><span class="o">=</span><span class="n">nz1</span><span class="p">,</span><span class="w"> </span><span class="n">nz2</span><span class="o">=</span><span class="n">nz2</span><span class="p">,</span><span class="w"> </span><span class="n">mesh_kind</span><span class="o">=</span><span class="n">mesh_kind</span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span><span class="k">endfunction </span><span class="n">initialize</span><span class="w"></span>
 </pre></div>
 
     </section>

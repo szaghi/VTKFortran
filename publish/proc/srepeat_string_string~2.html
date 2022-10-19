@@ -96,7 +96,7 @@
   </ul>
   <ol class="breadcrumb in-well text-right">
      <li><a href='../sourcefile/stringifor_string_t.f90~2.html'>stringifor_string_t.F90</a></li>
-     <li><a href='../module/stringifor_string_t.html'>stringifor_string_t</a></li>
+     <li><a href='../module/stringifor_string_t~2.html'>stringifor_string_t</a></li>
      <li class="active">srepeat_string_string</li>
   </ol>
 </div>
@@ -136,7 +136,7 @@
 <thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
 <tbody>
 <tr>
-  <td><span class="anchor" id="variable-self~129"></span>class(<a href='../type/string~2.html'>string</a>),</td>
+  <td><span class="anchor" id="variable-self~410"></span>class(<a href='../type/string~2.html'>string</a>),</td>
 <td>intent(in)</td>
   <td></td>  <td></td><td>::</td>
   <td><strong>self</strong></td><td></td>
@@ -291,8 +291,16 @@
 <span class="w">   </span><span class="k">class</span><span class="p">(</span><span class="n">string</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w">     </span><span class="c">!&lt; String to be repeated.</span>
 <span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w">       </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ncopies</span><span class="w">  </span><span class="c">!&lt; Number of string copies.</span>
 <span class="w">   </span><span class="k">type</span><span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="w">              </span><span class="kd">::</span><span class="w"> </span><span class="n">repeated</span><span class="w"> </span><span class="c">!&lt; Repeated string.</span>
+<span class="cp">#ifdef _NVF</span>
+<span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="mi">9999</span><span class="p">)</span><span class="w">           </span><span class="kd">::</span><span class="w"> </span><span class="n">nvf_bug</span><span class="w">  </span><span class="c">!&lt; Work around for NVFortran bug.</span>
+<span class="cp">#endif</span>
 
+<span class="cp">#ifdef _NVF</span>
+<span class="w">   </span><span class="n">nvf_bug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="w"></span>
+<span class="w">   </span><span class="n">repeated</span><span class="p">%</span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">repeat</span><span class="p">(</span><span class="n">string</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="n">nvf_bug</span><span class="p">),</span><span class="w"> </span><span class="n">ncopies</span><span class="o">=</span><span class="n">ncopies</span><span class="p">)</span><span class="w"></span>
+<span class="cp">#else</span>
 <span class="w">   </span><span class="n">repeated</span><span class="p">%</span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">repeat</span><span class="p">(</span><span class="n">string</span><span class="o">=</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">,</span><span class="w"> </span><span class="n">ncopies</span><span class="o">=</span><span class="n">ncopies</span><span class="p">)</span><span class="w"></span>
+<span class="cp">#endif</span>
 <span class="w">   </span><span class="k">endfunction </span><span class="n">srepeat_string_string</span><span class="w"></span>
 </pre></div>
 

@@ -90,13 +90,13 @@
      <li><i class="fa fa-list-ol"></i>
        <a data-toggle="tooltip"
     data-placement="bottom" data-html="true"
-    title=" 0.0% of total for procedures.">8 statements</a>
+    title=" 0.0% of total for procedures.">6 statements</a>
      </li> 
-    <li><i class="fa fa-code"></i><a href="../src/vtk_fortran_vtk_file_xml_writer_abstract.f90"> Source File</a></li>
+    <li><i class="fa fa-code"></i><a href="../src/vtk_fortran_vtk_file.f90"> Source File</a></li>
   </ul>
   <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/vtk_fortran_vtk_file_xml_writer_abstract.f90.html'>vtk_fortran_vtk_file_xml_writer_abstract.f90</a></li>
-     <li><a href='../module/vtk_fortran_vtk_file_xml_writer_abstract.html'>vtk_fortran_vtk_file_xml_writer_abstract</a></li>
+     <li><a href='../sourcefile/vtk_fortran_vtk_file.f90.html'>vtk_fortran_vtk_file.f90</a></li>
+     <li><a href='../module/vtk_fortran_vtk_file.html'>vtk_fortran_vtk_file</a></li>
      <li class="active">get_xml_volatile</li>
   </ol>
 </div>
@@ -136,7 +136,7 @@
 <thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
 <tbody>
 <tr>
-  <td><span class="anchor" id="variable-self~256"></span>class(<a href='../type/xml_writer_abstract.html'>xml_writer_abstract</a>),</td>
+  <td><span class="anchor" id="variable-self~54"></span>class(<a href='../type/vtk_file.html'>vtk_file</a>),</td>
 <td>intent(in)</td>
   <td></td>  <td></td><td>::</td>
   <td><strong>self</strong></td><td></td>
@@ -148,7 +148,7 @@
   <td><strong>xml_volatile</strong></td><td></td>
 </tr>
 <tr>
-  <td><span class="anchor" id="variable-error~130"></span>integer(kind=I4P),</td>
+  <td><span class="anchor" id="variable-error~54"></span>integer(kind=I4P),</td>
 <td>intent(out),</td>
   <td>optional</td>  <td></td><td>::</td>
   <td><strong>error</strong></td><td></td>
@@ -184,14 +184,12 @@
     <h2><span class="anchor" id="src"></span>Source Code</h2>
     <div class="highlight"><pre><span></span><span class="w">   </span><span class="k">pure subroutine </span><span class="n">get_xml_volatile</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">xml_volatile</span><span class="p">,</span><span class="w"> </span><span class="n">error</span><span class="p">)</span><span class="w"></span>
 <span class="w">   </span><span class="c">!&lt; Return the eventual XML volatile string file.</span>
-<span class="w">   </span><span class="k">class</span><span class="p">(</span><span class="n">xml_writer_abstract</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">               </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w">         </span><span class="c">!&lt; Writer.</span>
-<span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span><span class="w">           </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">xml_volatile</span><span class="w"> </span><span class="c">!&lt; XML volatile file.</span>
-<span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">               </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w">    </span><span class="kd">::</span><span class="w"> </span><span class="n">error</span><span class="w">        </span><span class="c">!&lt; Error status.</span>
+<span class="w">   </span><span class="k">class</span><span class="p">(</span><span class="n">vtk_file</span><span class="p">),</span><span class="w">  </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">               </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w">         </span><span class="c">!&lt; VTK file.</span>
+<span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">xml_volatile</span><span class="w"> </span><span class="c">!&lt; XML volatile file.</span>
+<span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">     </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w">    </span><span class="kd">::</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="c">!&lt; Error status.</span>
 
-<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">is_volatile</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
-<span class="k">      </span><span class="n">xml_volatile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">xml_volatile</span><span class="p">%</span><span class="n">raw</span><span class="w"></span>
-<span class="w">   </span><span class="k">endif</span>
-<span class="k">   endsubroutine </span><span class="n">get_xml_volatile</span><span class="w"></span>
+<span class="w">   </span><span class="k">call </span><span class="n">self</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">%</span><span class="n">get_xml_volatile</span><span class="p">(</span><span class="n">xml_volatile</span><span class="o">=</span><span class="n">xml_volatile</span><span class="p">,</span><span class="w"> </span><span class="n">error</span><span class="o">=</span><span class="n">error</span><span class="p">)</span><span class="w"></span>
+<span class="w">   </span><span class="k">endsubroutine </span><span class="n">get_xml_volatile</span><span class="w"></span>
 </pre></div>
 
     </section>

@@ -81,7 +81,7 @@
     <div class="container">
   <div class="row">
     <h1>search
-      <small>Subroutine</small>
+      <small>Function</small>
     </h1>
     <div class="row">
   <div class="col-lg-12">
@@ -90,13 +90,13 @@
      <li><i class="fa fa-list-ol"></i>
        <a data-toggle="tooltip"
     data-placement="bottom" data-html="true"
-    title=" 0.2% of total for procedures.">43 statements</a>
+    title=" 0.2% of total for procedures.">42 statements</a>
      </li> 
-    <li><i class="fa fa-code"></i><a href="../src/foxy_xml_tag.F90"> Source File</a></li>
+    <li><i class="fa fa-code"></i><a href="../src/stringifor_string_t.F90"> Source File</a></li>
   </ul>
   <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/foxy_xml_tag.f90.html'>foxy_xml_tag.F90</a></li>
-     <li><a href='../module/foxy_xml_tag.html'>foxy_xml_tag</a></li>
+     <li><a href='../sourcefile/stringifor_string_t.f90~2.html'>stringifor_string_t.F90</a></li>
+     <li><a href='../module/stringifor_string_t~2.html'>stringifor_string_t</a></li>
      <li class="active">search</li>
   </ol>
 </div>
@@ -127,7 +127,7 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private elemental subroutine search(self, tag_name, source, tstart, tend)</h2>
+    <h2>private function search(self, tag_start, tag_end, in_string, in_character, istart, iend) result(tag)</h2>
     
 
 
@@ -136,38 +136,52 @@
 <thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
 <tbody>
 <tr>
-  <td><span class="anchor" id="variable-self~224"></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(inout)</td>
+  <td><span class="anchor" id="variable-self~435"></span>class(<a href='../type/string~2.html'>string</a>),</td>
+<td>intent(in)</td>
   <td></td>  <td></td><td>::</td>
   <td><strong>self</strong></td><td></td>
 </tr>
 <tr>
-  <td><span class="anchor" id="variable-tag_name~2"></span>character,</td>
+  <td><span class="anchor" id="variable-tag_start~2"></span>character(kind=CK,len=*),</td>
 <td>intent(in)</td>
   <td></td>  <td></td><td>::</td>
-  <td><strong>tag_name</strong></td><td></td>
+  <td><strong>tag_start</strong></td><td></td>
 </tr>
 <tr>
-  <td><span class="anchor" id="variable-source~7"></span>character,</td>
+  <td><span class="anchor" id="variable-tag_end~2"></span>character(kind=CK,len=*),</td>
 <td>intent(in)</td>
   <td></td>  <td></td><td>::</td>
-  <td><strong>source</strong></td><td></td>
+  <td><strong>tag_end</strong></td><td></td>
 </tr>
 <tr>
-  <td><span class="anchor" id="variable-tstart~3"></span>integer(kind=I4P),</td>
-<td>intent(out),</td>
+  <td><span class="anchor" id="variable-in_string~2"></span>type(<a href='../type/string~2.html'>string</a>),</td>
+<td>intent(in),</td>
   <td>optional</td>  <td></td><td>::</td>
-  <td><strong>tstart</strong></td><td></td>
+  <td><strong>in_string</strong></td><td></td>
 </tr>
 <tr>
-  <td><span class="anchor" id="variable-tend~3"></span>integer(kind=I4P),</td>
+  <td><span class="anchor" id="variable-in_character~2"></span>character(kind=CK,len=*),</td>
+<td>intent(in),</td>
+  <td>optional</td>  <td></td><td>::</td>
+  <td><strong>in_character</strong></td><td></td>
+</tr>
+<tr>
+  <td><span class="anchor" id="variable-istart~3"></span>integer,</td>
 <td>intent(out),</td>
   <td>optional</td>  <td></td><td>::</td>
-  <td><strong>tend</strong></td><td></td>
+  <td><strong>istart</strong></td><td></td>
+</tr>
+<tr>
+  <td><span class="anchor" id="variable-iend~3"></span>integer,</td>
+<td>intent(out),</td>
+  <td>optional</td>  <td></td><td>::</td>
+  <td><strong>iend</strong></td><td></td>
 </tr>
 </tbody>
 </table>
 
+   <h3>Return Value <small><span class="anchor" id="variable-tag~8"></span>type(<a href='../type/string~2.html'>string</a>)</small></h3>
+    
     <br>
 
     <section class="visible-xs visible-sm hidden-md">
@@ -194,53 +208,84 @@
     
     <section>
     <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="highlight"><pre><span></span><span class="w">  </span><span class="k">elemental subroutine </span><span class="n">search</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">tag_name</span><span class="p">,</span><span class="w"> </span><span class="n">source</span><span class="p">,</span><span class="w"> </span><span class="n">tstart</span><span class="p">,</span><span class="w"> </span><span class="n">tend</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="c">!&lt; Search tag named *tag_name* into a string and, in case it is found, store into self.</span>
-<span class="w">  </span><span class="c">!&lt;</span>
-<span class="w">  </span><span class="c">!&lt; @note If *tag_name* is not found, self is returned empty.</span>
-<span class="w">  </span><span class="k">class</span><span class="p">(</span><span class="n">xml_tag</span><span class="p">),</span><span class="w">         </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w">     </span><span class="c">!&lt; XML tag.</span>
-<span class="w">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">           </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">    </span><span class="kd">::</span><span class="w"> </span><span class="n">tag_name</span><span class="w"> </span><span class="c">!&lt; Searched tag name.</span>
-<span class="w">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">           </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">    </span><span class="kd">::</span><span class="w"> </span><span class="n">source</span><span class="w">   </span><span class="c">!&lt; String containing the input.</span>
-<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w">   </span><span class="kd">::</span><span class="w"> </span><span class="n">tstart</span><span class="w">   </span><span class="c">!&lt; Starting index of tag inside the source.</span>
-<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w">   </span><span class="kd">::</span><span class="w"> </span><span class="n">tend</span><span class="w">     </span><span class="c">!&lt; Ending index of tag inside the source.</span>
-<span class="w">  </span><span class="k">type</span><span class="p">(</span><span class="n">xml_tag</span><span class="p">)</span><span class="w">                         </span><span class="kd">::</span><span class="w"> </span><span class="n">tag</span><span class="w">      </span><span class="c">!&lt; Dummy XML tag.</span>
-<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                          </span><span class="kd">::</span><span class="w"> </span><span class="n">tstart_</span><span class="w">  </span><span class="c">!&lt; Starting index of tag inside the source, local variable.</span>
-<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                          </span><span class="kd">::</span><span class="w"> </span><span class="n">tend_</span><span class="w">    </span><span class="c">!&lt; Ending index of tag inside the source, local variable.</span>
-<span class="w">  </span><span class="kt">logical</span><span class="w">                               </span><span class="kd">::</span><span class="w"> </span><span class="n">found</span><span class="w">    </span><span class="c">!&lt; Flag for inquiring search result.</span>
-<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                          </span><span class="kd">::</span><span class="w"> </span><span class="n">tstart_c</span><span class="w"> </span><span class="c">!&lt; Starting index of tag inside the current slice of source.</span>
-<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                          </span><span class="kd">::</span><span class="w"> </span><span class="n">tend_c</span><span class="w">   </span><span class="c">!&lt; Starting index of tag inside the current slice of source.</span>
-<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                          </span><span class="kd">::</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
+    <div class="highlight"><pre><span></span><span class="w">   </span><span class="k">function </span><span class="n">search</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">tag_start</span><span class="p">,</span><span class="w"> </span><span class="n">tag_end</span><span class="p">,</span><span class="w"> </span><span class="n">in_string</span><span class="p">,</span><span class="w"> </span><span class="n">in_character</span><span class="p">,</span><span class="w"> </span><span class="n">istart</span><span class="p">,</span><span class="w"> </span><span class="n">iend</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span><span class="w"></span>
+<span class="w">   </span><span class="c">!&lt; Search for *tagged* record into string, return the first record found (if any) matching the tags.</span>
+<span class="w">   </span><span class="c">!&lt;</span>
+<span class="w">   </span><span class="c">!&lt; Optionally, returns the indexes of tag start/end, thus this is not an `elemental` function.</span>
+<span class="w">   </span><span class="c">!&lt;</span>
+<span class="w">   </span><span class="c">!&lt; @note The tagged record is searched into self if allocated otherwise into `in_string` if passed or, eventually, into</span>
+<span class="w">   </span><span class="c">!&lt; `in_character` is passed. If tag is not found the return string is not allocated and the start/end indexes (if requested) are</span>
+<span class="w">   </span><span class="c">!&lt; zero.</span>
+<span class="w">   </span><span class="c">!&lt;</span>
+<span class="w">   </span><span class="c">!&lt;```fortran</span>
+<span class="w">   </span><span class="c">!&lt; type(string)                  :: astring</span>
+<span class="w">   </span><span class="c">!&lt; type(string)                  :: anotherstring</span>
+<span class="w">   </span><span class="c">!&lt; character(len=:), allocatable :: acharacter</span>
+<span class="w">   </span><span class="c">!&lt; integer                       :: istart</span>
+<span class="w">   </span><span class="c">!&lt; integer                       :: iend</span>
+<span class="w">   </span><span class="c">!&lt; logical                       :: test_passed(5)</span>
+<span class="w">   </span><span class="c">!&lt; astring = &#39;&lt;test&gt; &lt;first&gt; hello &lt;/first&gt; &lt;first&gt; not the first &lt;/first&gt; &lt;/test&gt;&#39;</span>
+<span class="w">   </span><span class="c">!&lt; anotherstring = astring%search(tag_start=&#39;&lt;first&gt;&#39;, tag_end=&#39;&lt;/first&gt;&#39;)</span>
+<span class="w">   </span><span class="c">!&lt; test_passed(1) = anotherstring//&#39;&#39;==&#39;&lt;first&gt; hello &lt;/first&gt;&#39;</span>
+<span class="w">   </span><span class="c">!&lt; astring = &#39;&lt;test&gt; &lt;a&gt; &lt;a&gt; &lt;a&gt; the nested a &lt;/a&gt; &lt;/a&gt; &lt;/a&gt; &lt;/test&gt;&#39;</span>
+<span class="w">   </span><span class="c">!&lt; anotherstring = astring%search(tag_start=&#39;&lt;a&gt;&#39;, tag_end=&#39;&lt;/a&gt;&#39;)</span>
+<span class="w">   </span><span class="c">!&lt; test_passed(2) = anotherstring//&#39;&#39;==&#39;&lt;a&gt; &lt;a&gt; &lt;a&gt; the nested a &lt;/a&gt; &lt;/a&gt; &lt;/a&gt;&#39;</span>
+<span class="w">   </span><span class="c">!&lt; call astring%free</span>
+<span class="w">   </span><span class="c">!&lt; anotherstring = &#39;&lt;test&gt; &lt;a&gt; &lt;a&gt; &lt;a&gt; the nested a &lt;/a&gt; &lt;/a&gt; &lt;/a&gt; &lt;/test&gt;&#39;</span>
+<span class="w">   </span><span class="c">!&lt; astring = astring%search(in_string=anotherstring, tag_start=&#39;&lt;a&gt;&#39;, tag_end=&#39;&lt;/a&gt;&#39;)</span>
+<span class="w">   </span><span class="c">!&lt; test_passed(3) = astring//&#39;&#39;==&#39;&lt;a&gt; &lt;a&gt; &lt;a&gt; the nested a &lt;/a&gt; &lt;/a&gt; &lt;/a&gt;&#39;</span>
+<span class="w">   </span><span class="c">!&lt; call astring%free</span>
+<span class="w">   </span><span class="c">!&lt; acharacter = &#39;&lt;test&gt; &lt;a&gt; &lt;a&gt; &lt;a&gt; the nested a &lt;/a&gt; &lt;/a&gt; &lt;/a&gt; &lt;/test&gt;&#39;</span>
+<span class="w">   </span><span class="c">!&lt; astring = astring%search(in_character=acharacter, tag_start=&#39;&lt;a&gt;&#39;, tag_end=&#39;&lt;/a&gt;&#39;)</span>
+<span class="w">   </span><span class="c">!&lt; test_passed(4) = astring//&#39;&#39;==&#39;&lt;a&gt; &lt;a&gt; &lt;a&gt; the nested a &lt;/a&gt; &lt;/a&gt; &lt;/a&gt;&#39;</span>
+<span class="w">   </span><span class="c">!&lt; acharacter = &#39;&lt;test&gt; &lt;first&gt; hello &lt;/first&gt; &lt;sec&gt; &lt;sec&gt;not the first&lt;/sec&gt; &lt;/sec&gt; &lt;/test&gt;&#39;</span>
+<span class="w">   </span><span class="c">!&lt; astring = astring%search(in_character=acharacter, tag_start=&#39;&lt;sec&gt;&#39;, tag_end=&#39;&lt;/sec&gt;&#39;, istart=istart, iend=iend)</span>
+<span class="w">   </span><span class="c">!&lt; test_passed(5) = astring//&#39;&#39;==acharacter(31:67)</span>
+<span class="w">   </span><span class="c">!&lt; print &#39;(L1)&#39;, all(test_passed)</span>
+<span class="w">   </span><span class="c">!&lt;```</span>
+<span class="w">   </span><span class="c">!=&gt; T &lt;&lt;&lt;</span>
+<span class="w">   </span><span class="k">class</span><span class="p">(</span><span class="n">string</span><span class="p">),</span><span class="w">             </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">            </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w">         </span><span class="c">!&lt; The string.</span>
+<span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="n">CK</span><span class="p">,</span><span class="w"> </span><span class="nb">len</span><span class="o">=*</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">            </span><span class="kd">::</span><span class="w"> </span><span class="n">tag_start</span><span class="w">    </span><span class="c">!&lt; Start tag.</span>
+<span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="n">CK</span><span class="p">,</span><span class="w"> </span><span class="nb">len</span><span class="o">=*</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">            </span><span class="kd">::</span><span class="w"> </span><span class="n">tag_end</span><span class="w">      </span><span class="c">!&lt; End tag.</span>
+<span class="w">   </span><span class="k">type</span><span class="p">(</span><span class="n">string</span><span class="p">),</span><span class="w">              </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w">  </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">in_string</span><span class="w">    </span><span class="c">!&lt; Search into this string.</span>
+<span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="n">CK</span><span class="p">,</span><span class="w"> </span><span class="nb">len</span><span class="o">=*</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w">  </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">in_character</span><span class="w"> </span><span class="c">!&lt; Search into this character string.</span>
+<span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w">                   </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">istart</span><span class="w">       </span><span class="c">!&lt; Starting index of tag inside the string.</span>
+<span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w">                   </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">iend</span><span class="w">         </span><span class="c">!&lt; Ending index of tag inside the string.</span>
+<span class="w">   </span><span class="k">type</span><span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="w">                                     </span><span class="kd">::</span><span class="w"> </span><span class="n">tag</span><span class="w">          </span><span class="c">!&lt; First tag found.</span>
+<span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="n">CK</span><span class="p">,</span><span class="w"> </span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">           </span><span class="kd">::</span><span class="w"> </span><span class="n">raw</span><span class="w">          </span><span class="c">!&lt; Raw string into which search the tag.</span>
+<span class="w">   </span><span class="kt">integer</span><span class="w">                                          </span><span class="kd">::</span><span class="w"> </span><span class="n">istart_</span><span class="w">      </span><span class="c">!&lt; Starting index of tag inside the string, local variable.</span>
+<span class="w">   </span><span class="kt">integer</span><span class="w">                                          </span><span class="kd">::</span><span class="w"> </span><span class="n">iend_</span><span class="w">        </span><span class="c">!&lt; Ending index of tag inside the string, local variable.</span>
+<span class="w">   </span><span class="kt">integer</span><span class="w">                                          </span><span class="kd">::</span><span class="w"> </span><span class="n">nested_tags</span><span class="w">  </span><span class="c">!&lt; Number of nested tags inside tag.</span>
+<span class="w">   </span><span class="kt">integer</span><span class="w">                                          </span><span class="kd">::</span><span class="w"> </span><span class="n">t</span><span class="w">            </span><span class="c">!&lt; Counter.</span>
 
-<span class="w">  </span><span class="k">call </span><span class="n">self</span><span class="p">%</span><span class="n">free</span><span class="w"></span>
-<span class="w">  </span><span class="n">self</span><span class="p">%</span><span class="n">tag_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tag_name</span><span class="w"></span>
-<span class="w">  </span><span class="n">tstart_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
-<span class="w">  </span><span class="n">tend_</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"></span>
-<span class="w">  </span><span class="n">found</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span><span class="w"></span>
-<span class="w">  </span><span class="n">tstart_c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"></span>
-<span class="w">  </span><span class="n">tend_c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"></span>
-<span class="w">  </span><span class="n">Tag_Search</span><span class="p">:</span><span class="w"> </span><span class="k">do</span>
-<span class="k">    call </span><span class="n">tag</span><span class="p">%</span><span class="n">parse</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">(</span><span class="n">tend_</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:),</span><span class="w"> </span><span class="n">tstart</span><span class="o">=</span><span class="n">tstart_c</span><span class="p">,</span><span class="w"> </span><span class="n">tend</span><span class="o">=</span><span class="n">tend_c</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="n">tstart_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tstart_</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">tend_</span><span class="w"></span>
-<span class="w">    </span><span class="n">tend_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tend_</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">tend_c</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">tstart_c</span><span class="o">==</span><span class="mf">0.</span><span class="nb">and</span><span class="p">.</span><span class="n">tend_c</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
-<span class="k">      exit </span><span class="n">Tag_Search</span><span class="w"> </span><span class="c">! no tag found</span>
-<span class="w">    </span><span class="k">else</span>
-<span class="k">      if</span><span class="w"> </span><span class="p">(</span><span class="n">tag</span><span class="p">%</span><span class="n">tag_name</span><span class="p">%</span><span class="n">is_allocated</span><span class="p">())</span><span class="w"> </span><span class="k">then</span>
-<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="n">tag</span><span class="p">%</span><span class="n">tag_name</span><span class="o">==</span><span class="n">self</span><span class="p">%</span><span class="n">tag_name</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
-<span class="k">          </span><span class="n">found</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span><span class="w"></span>
-<span class="w">        </span><span class="k">endif</span>
+<span class="w">   </span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"></span>
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">in_string</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">      </span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">in_string</span><span class="p">%</span><span class="n">raw</span><span class="w"></span>
+<span class="w">   </span><span class="n">elseif</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">in_character</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">      </span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">in_character</span><span class="w"></span>
+<span class="w">   </span><span class="k">else</span>
+<span class="k">      if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">))</span><span class="w"> </span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="w"></span>
+<span class="w">   </span><span class="k">endif</span>
+<span class="k">   </span><span class="n">istart_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"></span>
+<span class="w">   </span><span class="n">iend_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"></span>
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">raw</span><span class="o">/=</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">      </span><span class="n">istart_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">index</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span><span class="w"> </span><span class="n">tag_start</span><span class="p">)</span><span class="w"></span>
+<span class="w">      </span><span class="n">iend_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">index</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span><span class="w"> </span><span class="n">tag_end</span><span class="p">)</span><span class="w"></span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">istart_</span><span class="o">&gt;</span><span class="mf">0.</span><span class="nb">and</span><span class="p">.</span><span class="n">iend_</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">iend_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iend_</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">tag_end</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
+<span class="w">         </span><span class="n">tag</span><span class="p">%</span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">raw</span><span class="p">(</span><span class="n">istart_</span><span class="p">:</span><span class="n">iend_</span><span class="p">)</span><span class="w"></span>
+<span class="w">         </span><span class="n">nested_tags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tag</span><span class="p">%</span><span class="nb">count</span><span class="p">(</span><span class="n">tag_start</span><span class="p">)</span><span class="w"></span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">nested_tags</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            do </span><span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">nested_tags</span><span class="w"></span>
+<span class="w">               </span><span class="n">iend_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iend_</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">tag_end</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">index</span><span class="p">(</span><span class="n">raw</span><span class="p">(</span><span class="n">iend_</span><span class="o">+</span><span class="mi">1</span><span class="p">:),</span><span class="w"> </span><span class="n">tag_end</span><span class="p">)</span><span class="w"></span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">            </span><span class="n">tag</span><span class="p">%</span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">raw</span><span class="p">(</span><span class="n">istart_</span><span class="p">:</span><span class="n">iend_</span><span class="p">)</span><span class="w"></span>
+<span class="w">         </span><span class="k">endif</span>
 <span class="k">      endif</span>
-<span class="k">    endif</span>
-<span class="k">    if</span><span class="w"> </span><span class="p">(</span><span class="n">found</span><span class="p">)</span><span class="w"> </span><span class="k">exit </span><span class="n">Tag_Search</span><span class="w"></span>
-<span class="w">  </span><span class="k">enddo </span><span class="n">Tag_Search</span><span class="w"></span>
-<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">found</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
-<span class="k">    </span><span class="n">self</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tag</span><span class="w"></span>
-<span class="w">  </span><span class="k">else</span>
-<span class="k">    call </span><span class="n">self</span><span class="p">%</span><span class="n">free</span><span class="w"></span>
-<span class="w">  </span><span class="k">endif</span>
-<span class="k">  if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">tstart</span><span class="p">))</span><span class="w"> </span><span class="n">tstart</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tstart_</span><span class="w"></span>
-<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">tend</span><span class="w">  </span><span class="p">))</span><span class="w"> </span><span class="n">tend</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">tend_</span><span class="w"></span>
-<span class="w">  </span><span class="k">endsubroutine </span><span class="n">search</span><span class="w"></span>
+<span class="k">   endif</span>
+<span class="k">   if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">istart</span><span class="p">))</span><span class="w"> </span><span class="n">istart</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">istart_</span><span class="w"></span>
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">iend</span><span class="p">))</span><span class="w"> </span><span class="n">iend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iend_</span><span class="w"></span>
+<span class="w">   </span><span class="k">endfunction </span><span class="n">search</span><span class="w"></span>
 </pre></div>
 
     </section>

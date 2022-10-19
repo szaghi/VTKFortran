@@ -92,11 +92,11 @@
     data-placement="bottom" data-html="true"
     title=" 0.0% of total for procedures.">3 statements</a>
      </li> 
-    <li><i class="fa fa-code"></i><a href="../src/vtk_fortran_vtk_file_xml_writer_binary_local.f90"> Source File</a></li>
+    <li><i class="fa fa-code"></i><a href="../src/vtk_fortran_vtk_file_xml_writer_ascii_local.f90"> Source File</a></li>
   </ul>
   <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/vtk_fortran_vtk_file_xml_writer_binary_local.f90.html'>vtk_fortran_vtk_file_xml_writer_binary_local.f90</a></li>
-     <li><a href='../module/vtk_fortran_vtk_file_xml_writer_binary_local.html'>vtk_fortran_vtk_file_xml_writer_binary_local</a></li>
+     <li><a href='../sourcefile/vtk_fortran_vtk_file_xml_writer_ascii_local.f90.html'>vtk_fortran_vtk_file_xml_writer_ascii_local.f90</a></li>
+     <li><a href='../module/vtk_fortran_vtk_file_xml_writer_ascii_local.html'>vtk_fortran_vtk_file_xml_writer_ascii_local</a></li>
      <li class="active">write_dataarray_appended</li>
   </ol>
 </div>
@@ -136,7 +136,7 @@
 <thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
 <tbody>
 <tr>
-  <td><span class="anchor" id="variable-self~315"></span>class(<a href='../type/xml_writer_binary_local.html'>xml_writer_binary_local</a>),</td>
+  <td><span class="anchor" id="variable-self~148"></span>class(<a href='../type/xml_writer_ascii_local.html'>xml_writer_ascii_local</a>),</td>
 <td>intent(inout)</td>
   <td></td>  <td></td><td>::</td>
   <td><strong>self</strong></td><td></td>
@@ -170,10 +170,10 @@
     
     <section>
     <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="highlight"><pre><span></span><span class="w">   </span><span class="k">subroutine </span><span class="n">write_dataarray_appended</span><span class="p">(</span><span class="n">self</span><span class="p">)</span><span class="w"></span>
-<span class="w">   </span><span class="c">!&lt; Do nothing, binary local is not appended.</span>
-<span class="w">   </span><span class="k">class</span><span class="p">(</span><span class="n">xml_writer_binary_local</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w"> </span><span class="c">!&lt; Writer.</span>
-<span class="w">   </span><span class="k">endsubroutine </span><span class="n">write_dataarray_appended</span><span class="w"></span>
+    <div class="highlight"><pre><span></span><span class="w">  </span><span class="k">subroutine </span><span class="n">write_dataarray_appended</span><span class="p">(</span><span class="n">self</span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span><span class="c">!&lt; Do nothing, ascii data cannot be appended.</span>
+<span class="w">  </span><span class="k">class</span><span class="p">(</span><span class="n">xml_writer_ascii_local</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w"> </span><span class="c">!&lt; Writer.</span>
+<span class="w">  </span><span class="k">endsubroutine </span><span class="n">write_dataarray_appended</span><span class="w"></span>
 </pre></div>
 
     </section>

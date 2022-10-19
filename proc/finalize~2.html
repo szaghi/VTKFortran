@@ -81,7 +81,7 @@
     <div class="container">
   <div class="row">
     <h1>finalize
-      <small>Subroutine</small>
+      <small>Function</small>
     </h1>
     <div class="row">
   <div class="col-lg-12">
@@ -90,13 +90,13 @@
      <li><i class="fa fa-list-ol"></i>
        <a data-toggle="tooltip"
     data-placement="bottom" data-html="true"
-    title=" 0.0% of total for procedures.">4 statements</a>
+    title=" 0.0% of total for procedures.">6 statements</a>
      </li> 
-    <li><i class="fa fa-code"></i><a href="../src/foxy_xml_tag.F90"> Source File</a></li>
+    <li><i class="fa fa-code"></i><a href="../src/vtk_fortran_pvtk_file.f90"> Source File</a></li>
   </ul>
   <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/foxy_xml_tag.f90.html'>foxy_xml_tag.F90</a></li>
-     <li><a href='../module/foxy_xml_tag.html'>foxy_xml_tag</a></li>
+     <li><a href='../sourcefile/vtk_fortran_pvtk_file.f90.html'>vtk_fortran_pvtk_file.f90</a></li>
+     <li><a href='../module/vtk_fortran_pvtk_file.html'>vtk_fortran_pvtk_file</a></li>
      <li class="active">finalize</li>
   </ol>
 </div>
@@ -127,7 +127,7 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private elemental subroutine finalize(tag)</h2>
+    <h2>private function finalize(self) result(error)</h2>
     
 
 
@@ -136,14 +136,16 @@
 <thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
 <tbody>
 <tr>
-  <td><span class="anchor" id="variable-tag~8"></span>type(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
+  <td><span class="anchor" id="variable-self~57"></span>class(<a href='../type/pvtk_file.html'>pvtk_file</a>),</td>
 <td>intent(inout)</td>
   <td></td>  <td></td><td>::</td>
-  <td><strong>tag</strong></td><td></td>
+  <td><strong>self</strong></td><td></td>
 </tr>
 </tbody>
 </table>
 
+   <h3>Return Value <small><span class="anchor" id="variable-error~58"></span>integer(kind=I4P)</small></h3>
+    
     <br>
 
     <section class="visible-xs visible-sm hidden-md">
@@ -170,12 +172,14 @@
     
     <section>
     <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="highlight"><pre><span></span><span class="w">  </span><span class="k">elemental subroutine </span><span class="n">finalize</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="c">!&lt; Free dynamic memory when finalizing.</span>
-<span class="w">  </span><span class="k">type</span><span class="p">(</span><span class="n">xml_tag</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">tag</span><span class="w"> </span><span class="c">!&lt; XML tag.</span>
+    <div class="highlight"><pre><span></span><span class="w">  </span><span class="k">function </span><span class="n">finalize</span><span class="p">(</span><span class="n">self</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span><span class="c">!&lt; Finalize file (writer).</span>
+<span class="w">  </span><span class="k">class</span><span class="p">(</span><span class="n">pvtk_file</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w">  </span><span class="c">!&lt; VTK file.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                    </span><span class="kd">::</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="c">!&lt; Error status.</span>
 
-<span class="w">  </span><span class="k">call </span><span class="n">tag</span><span class="p">%</span><span class="n">free</span><span class="w"></span>
-<span class="w">  </span><span class="k">endsubroutine </span><span class="n">finalize</span><span class="w"></span>
+<span class="w">  </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">))</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">%</span><span class="n">finalize</span><span class="p">()</span><span class="w"></span>
+<span class="w">  </span><span class="k">endfunction </span><span class="n">finalize</span><span class="w"></span>
 </pre></div>
 
     </section>

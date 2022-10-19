@@ -81,7 +81,7 @@
     <div class="container">
   <div class="row">
     <h1>finalize
-      <small>Function</small>
+      <small>Subroutine</small>
     </h1>
     <div class="row">
   <div class="col-lg-12">
@@ -90,13 +90,13 @@
      <li><i class="fa fa-list-ol"></i>
        <a data-toggle="tooltip"
     data-placement="bottom" data-html="true"
-    title=" 0.0% of total for procedures.">10 statements</a>
+    title=" 0.0% of total for procedures.">4 statements</a>
      </li> 
-    <li><i class="fa fa-code"></i><a href="../src/vtk_fortran_vtk_file_xml_writer_appended.f90"> Source File</a></li>
+    <li><i class="fa fa-code"></i><a href="../src/foxy_xml_file.f90"> Source File</a></li>
   </ul>
   <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/vtk_fortran_vtk_file_xml_writer_appended.f90.html'>vtk_fortran_vtk_file_xml_writer_appended.f90</a></li>
-     <li><a href='../module/vtk_fortran_vtk_file_xml_writer_appended.html'>vtk_fortran_vtk_file_xml_writer_appended</a></li>
+     <li><a href='../sourcefile/foxy_xml_file.f90.html'>foxy_xml_file.f90</a></li>
+     <li><a href='../module/foxy_xml_file.html'>foxy_xml_file</a></li>
      <li class="active">finalize</li>
   </ol>
 </div>
@@ -127,7 +127,7 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private function finalize(self) result(error)</h2>
+    <h2>private subroutine finalize(file)</h2>
     
 
 
@@ -136,16 +136,14 @@
 <thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
 <tbody>
 <tr>
-  <td><span class="anchor" id="variable-self~329"></span>class(<a href='../type/xml_writer_appended.html'>xml_writer_appended</a>),</td>
+  <td><span class="anchor" id="variable-file"></span>type(<a href='../type/xml_file.html'>xml_file</a>),</td>
 <td>intent(inout)</td>
   <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
+  <td><strong>file</strong></td><td></td>
 </tr>
 </tbody>
 </table>
 
-   <h3>Return Value <small><span class="anchor" id="variable-error~195"></span>integer(kind=I4P)</small></h3>
-    
     <br>
 
     <section class="visible-xs visible-sm hidden-md">
@@ -172,18 +170,12 @@
     
     <section>
     <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="highlight"><pre><span></span><span class="w">   </span><span class="k">function </span><span class="n">finalize</span><span class="p">(</span><span class="n">self</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="w"></span>
-<span class="w">   </span><span class="c">!&lt; Finalize writer.</span>
-<span class="w">   </span><span class="k">class</span><span class="p">(</span><span class="n">xml_writer_appended</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w">  </span><span class="c">!&lt; Writer.</span>
-<span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                              </span><span class="kd">::</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="c">!&lt; Error status.</span>
+    <div class="highlight"><pre><span></span><span class="w">  </span><span class="k">subroutine </span><span class="n">finalize</span><span class="p">(</span><span class="k">file</span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span><span class="c">!&lt; Free dynamic memory when finalizing.</span>
+<span class="w">  </span><span class="k">type</span><span class="p">(</span><span class="n">xml_file</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="k">file</span><span class="w"> </span><span class="c">!&lt; XML file.</span>
 
-<span class="w">   </span><span class="k">call </span><span class="n">self</span><span class="p">%</span><span class="n">write_end_tag</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">self</span><span class="p">%</span><span class="n">topology</span><span class="p">%</span><span class="n">chars</span><span class="p">())</span><span class="w"></span>
-<span class="w">   </span><span class="k">call </span><span class="n">self</span><span class="p">%</span><span class="n">write_dataarray_appended</span><span class="w"></span>
-<span class="w">   </span><span class="k">call </span><span class="n">self</span><span class="p">%</span><span class="n">write_end_tag</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;VTKFile&#39;</span><span class="p">)</span><span class="w"></span>
-<span class="w">   </span><span class="k">call </span><span class="n">self</span><span class="p">%</span><span class="n">close_xml_file</span><span class="w"></span>
-<span class="w">   </span><span class="k">call </span><span class="n">self</span><span class="p">%</span><span class="n">close_scratch_file</span><span class="w"></span>
-<span class="w">   </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">error</span><span class="w"></span>
-<span class="w">   </span><span class="k">endfunction </span><span class="n">finalize</span><span class="w"></span>
+<span class="w">  </span><span class="k">call file</span><span class="p">%</span><span class="n">free</span><span class="w"></span>
+<span class="w">  </span><span class="k">endsubroutine </span><span class="n">finalize</span><span class="w"></span>
 </pre></div>
 
     </section>

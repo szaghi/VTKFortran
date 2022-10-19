@@ -90,13 +90,13 @@
      <li><i class="fa fa-list-ol"></i>
        <a data-toggle="tooltip"
     data-placement="bottom" data-html="true"
-    title=" 0.0% of total for procedures.">4 statements</a>
+    title=" 0.1% of total for procedures.">14 statements</a>
      </li> 
-    <li><i class="fa fa-code"></i><a href="../src/stringifor_string_t.F90"> Source File</a></li>
+    <li><i class="fa fa-code"></i><a href="../src/vtk_fortran_vtk_file_xml_writer_abstract.f90"> Source File</a></li>
   </ul>
   <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/stringifor_string_t.f90~2.html'>stringifor_string_t.F90</a></li>
-     <li><a href='../module/stringifor_string_t.html'>stringifor_string_t</a></li>
+     <li><a href='../sourcefile/vtk_fortran_vtk_file_xml_writer_abstract.f90.html'>vtk_fortran_vtk_file_xml_writer_abstract.f90</a></li>
+     <li><a href='../module/vtk_fortran_vtk_file_xml_writer_abstract.html'>vtk_fortran_vtk_file_xml_writer_abstract</a></li>
      <li class="active">free</li>
   </ol>
 </div>
@@ -127,7 +127,7 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private elemental subroutine free(self)</h2>
+    <h2>private elemental subroutine free(self, error)</h2>
     
 
 
@@ -136,10 +136,16 @@
 <thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
 <tbody>
 <tr>
-  <td><span class="anchor" id="variable-self~181"></span>class(<a href='../type/string~2.html'>string</a>),</td>
+  <td><span class="anchor" id="variable-self~88"></span>class(<a href='../type/xml_writer_abstract.html'>xml_writer_abstract</a>),</td>
 <td>intent(inout)</td>
   <td></td>  <td></td><td>::</td>
   <td><strong>self</strong></td><td></td>
+</tr>
+<tr>
+  <td><span class="anchor" id="variable-error~87"></span>integer(kind=I4P),</td>
+<td>intent(out),</td>
+  <td>optional</td>  <td></td><td>::</td>
+  <td><strong>error</strong></td><td></td>
 </tr>
 </tbody>
 </table>
@@ -170,19 +176,21 @@
     
     <section>
     <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="highlight"><pre><span></span><span class="w">   </span><span class="k">elemental subroutine </span><span class="n">free</span><span class="p">(</span><span class="n">self</span><span class="p">)</span><span class="w"></span>
-<span class="w">   </span><span class="c">!&lt; Free dynamic memory.</span>
-<span class="w">   </span><span class="c">!&lt;</span>
-<span class="w">   </span><span class="c">!&lt;```fortran</span>
-<span class="w">   </span><span class="c">!&lt; type(string) :: astring</span>
-<span class="w">   </span><span class="c">!&lt; astring = &#39;this is string example....wow!!!&#39;</span>
-<span class="w">   </span><span class="c">!&lt; call astring%free</span>
-<span class="w">   </span><span class="c">!&lt; print &#39;(L1)&#39;, astring%is_allocated().eqv..false.</span>
-<span class="w">   </span><span class="c">!&lt;```</span>
-<span class="w">   </span><span class="c">!=&gt; T &lt;&lt;&lt;</span>
-<span class="w">   </span><span class="k">class</span><span class="p">(</span><span class="n">string</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w"> </span><span class="c">!&lt; The string.</span>
+    <div class="highlight"><pre><span></span><span class="w">   </span><span class="k">elemental subroutine </span><span class="n">free</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">error</span><span class="p">)</span><span class="w"></span>
+<span class="w">   </span><span class="c">!&lt; Free allocated memory.</span>
+<span class="w">   </span><span class="k">class</span><span class="p">(</span><span class="n">xml_writer_abstract</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w">         </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w">  </span><span class="c">!&lt; Writer.</span>
+<span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">               </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="c">!&lt; Error status.</span>
 
-<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">)</span><span class="w"></span>
+<span class="w">   </span><span class="k">call </span><span class="n">self</span><span class="p">%</span><span class="n">format_ch</span><span class="p">%</span><span class="n">free</span><span class="w"></span>
+<span class="w">   </span><span class="k">call </span><span class="n">self</span><span class="p">%</span><span class="n">topology</span><span class="p">%</span><span class="n">free</span><span class="w"></span>
+<span class="w">   </span><span class="n">self</span><span class="p">%</span><span class="n">indent</span><span class="o">=</span><span class="mi">0_I4P</span><span class="w"></span>
+<span class="w">   </span><span class="n">self</span><span class="p">%</span><span class="n">ioffset</span><span class="o">=</span><span class="mi">0_I8P</span><span class="w"></span>
+<span class="w">   </span><span class="n">self</span><span class="p">%</span><span class="n">xml</span><span class="o">=</span><span class="mi">0_I4P</span><span class="w"></span>
+<span class="w">   </span><span class="n">self</span><span class="p">%</span><span class="n">vtm_block</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">)</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1_I4P</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1_I4P</span><span class="p">]</span><span class="w"></span>
+<span class="w">   </span><span class="n">self</span><span class="p">%</span><span class="n">error</span><span class="o">=</span><span class="mi">0_I4P</span><span class="w"></span>
+<span class="w">   </span><span class="k">call </span><span class="n">self</span><span class="p">%</span><span class="n">tag</span><span class="p">%</span><span class="n">free</span><span class="w"></span>
+<span class="w">   </span><span class="n">self</span><span class="p">%</span><span class="n">is_volatile</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.</span><span class="w"></span>
+<span class="w">   </span><span class="k">call </span><span class="n">self</span><span class="p">%</span><span class="n">xml_volatile</span><span class="p">%</span><span class="n">free</span><span class="w"></span>
 <span class="w">   </span><span class="k">endsubroutine </span><span class="n">free</span><span class="w"></span>
 </pre></div>
 
