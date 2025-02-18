@@ -79,20 +79,20 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 0.0% of total for procedures.">4 statements</a>
+                 title=" 0.0% of total for procedures.">8 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
               <i class="fa fa-code"></i>
-              <a href="../src/stringifor_string_t.F90"> Source File</a>
+              <a href="../src/foxy_xml_file.f90"> Source File</a>
             </li>
         </ul>
       </div>
       <div class="col">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb justify-content-end mb-0">
-                <li class="breadcrumb-item"><a href='../sourcefile/stringifor_string_t.f90~2.html'>stringifor_string_t.F90</a></li>
-                <li class="breadcrumb-item"><a href='../module/stringifor_string_t~2.html'>stringifor_string_t</a></li>
+                <li class="breadcrumb-item"><a href='../sourcefile/foxy_xml_file.f90.html'>foxy_xml_file.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/foxy_xml_file.html'>foxy_xml_file</a></li>
             <li class="breadcrumb-item active" aria-current="page">free</li>
           </ol>
         </nav>
@@ -150,7 +150,7 @@
 
 
     <h3>Type Bound</h3>
-    <p><a href='../type/string~2.html'>string</a></p>
+    <p><a href='../type/xml_file.html'>xml_file</a></p>
 
     <h3>Arguments</h3>
         <table class="table table-striped varlist">
@@ -165,8 +165,8 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-self~330"></span>
-              class(<a href='../type/string~2.html'>string</a>),
+              <span class="anchor" id="variable-self~324"></span>
+              class(<a href='../type/xml_file.html'>xml_file</a>),
             </td>
 <td>intent(inout)</td>
               <td></td>            <td>
@@ -195,20 +195,16 @@
     
     <section>
     <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">elemental subroutine </span><span class="n">free</span><span class="p">(</span><span class="n">self</span><span class="p">)</span>
-<span class="w">   </span><span class="c">!&lt; Free dynamic memory.</span>
-<span class="w">   </span><span class="c">!&lt;</span>
-<span class="w">   </span><span class="c">!&lt;```fortran</span>
-<span class="w">   </span><span class="c">!&lt; type(string) :: astring</span>
-<span class="w">   </span><span class="c">!&lt; astring = &#39;this is string example....wow!!!&#39;</span>
-<span class="w">   </span><span class="c">!&lt; call astring%free</span>
-<span class="w">   </span><span class="c">!&lt; print &#39;(L1)&#39;, astring%is_allocated().eqv..false.</span>
-<span class="w">   </span><span class="c">!&lt;```</span>
-<span class="w">   </span><span class="c">!=&gt; T &lt;&lt;&lt;</span>
-<span class="w">   </span><span class="k">class</span><span class="p">(</span><span class="n">string</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w"> </span><span class="c">!&lt; The string.</span>
+    <div class="hl codehilite"><pre><span></span><span class="w">  </span><span class="k">elemental subroutine </span><span class="n">free</span><span class="p">(</span><span class="n">self</span><span class="p">)</span>
+<span class="w">  </span><span class="c">!&lt; Free dynamic memory.</span>
+<span class="w">  </span><span class="k">class</span><span class="p">(</span><span class="n">xml_file</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w"> </span><span class="c">!&lt; XML file.</span>
 
-<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">)</span>
-<span class="w">   </span><span class="k">endsubroutine </span><span class="n">free</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">tag</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">    call </span><span class="n">self</span><span class="p">%</span><span class="n">tag</span><span class="p">%</span><span class="n">free</span>
+<span class="w">    </span><span class="k">deallocate</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">tag</span><span class="p">)</span>
+<span class="w">    </span><span class="n">self</span><span class="p">%</span><span class="n">Nt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="k">endif</span>
+<span class="k">  endsubroutine </span><span class="n">free</span>
 </pre></div>
 
     </section>

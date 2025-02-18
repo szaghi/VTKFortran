@@ -79,20 +79,20 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 0.0% of total for procedures.">8 statements</a>
+                 title=" 0.0% of total for procedures.">5 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
               <i class="fa fa-code"></i>
-              <a href="../src/foxy_xml_file.f90"> Source File</a>
+              <a href="../src/vtk_fortran_vtk_file.f90"> Source File</a>
             </li>
         </ul>
       </div>
       <div class="col">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb justify-content-end mb-0">
-                <li class="breadcrumb-item"><a href='../sourcefile/foxy_xml_file.f90.html'>foxy_xml_file.f90</a></li>
-                <li class="breadcrumb-item"><a href='../module/foxy_xml_file.html'>foxy_xml_file</a></li>
+                <li class="breadcrumb-item"><a href='../sourcefile/vtk_fortran_vtk_file.f90.html'>vtk_fortran_vtk_file.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/vtk_fortran_vtk_file.html'>vtk_fortran_vtk_file</a></li>
             <li class="breadcrumb-item active" aria-current="page">free</li>
           </ol>
         </nav>
@@ -144,13 +144,13 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private elemental subroutine free(self)  
+    <h2>private elemental subroutine free(self, error)  
 </h2>
     
 
 
     <h3>Type Bound</h3>
-    <p><a href='../type/xml_file.html'>xml_file</a></p>
+    <p><a href='../type/vtk_file.html'>vtk_file</a></p>
 
     <h3>Arguments</h3>
         <table class="table table-striped varlist">
@@ -165,8 +165,8 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-self~299"></span>
-              class(<a href='../type/xml_file.html'>xml_file</a>),
+              <span class="anchor" id="variable-self~323"></span>
+              class(<a href='../type/vtk_file.html'>vtk_file</a>),
             </td>
 <td>intent(inout)</td>
               <td></td>            <td>
@@ -174,6 +174,21 @@
             </td>
             <td>::</td>
             <td><strong>self</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-error~169"></span>
+              integer(kind=I4P),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>error</strong></td>
             <td>
                 
             </td>
@@ -195,16 +210,13 @@
     
     <section>
     <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="hl codehilite"><pre><span></span><span class="w">  </span><span class="k">elemental subroutine </span><span class="n">free</span><span class="p">(</span><span class="n">self</span><span class="p">)</span>
-<span class="w">  </span><span class="c">!&lt; Free dynamic memory.</span>
-<span class="w">  </span><span class="k">class</span><span class="p">(</span><span class="n">xml_file</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w"> </span><span class="c">!&lt; XML file.</span>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">elemental subroutine </span><span class="n">free</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">error</span><span class="p">)</span>
+<span class="w">   </span><span class="c">!&lt; Free allocated memory.</span>
+<span class="w">   </span><span class="k">class</span><span class="p">(</span><span class="n">vtk_file</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w">         </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w">  </span><span class="c">!&lt; VTK file.</span>
+<span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="c">!&lt; Error status.</span>
 
-<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">tag</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
-<span class="k">    call </span><span class="n">self</span><span class="p">%</span><span class="n">tag</span><span class="p">%</span><span class="n">free</span>
-<span class="w">    </span><span class="k">deallocate</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">tag</span><span class="p">)</span>
-<span class="w">    </span><span class="n">self</span><span class="p">%</span><span class="n">Nt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">  </span><span class="k">endif</span>
-<span class="k">  endsubroutine </span><span class="n">free</span>
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">))</span><span class="w"> </span><span class="k">call </span><span class="n">self</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">%</span><span class="n">free</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="n">error</span><span class="p">)</span>
+<span class="w">   </span><span class="k">endsubroutine </span><span class="n">free</span>
 </pre></div>
 
     </section>

@@ -118,10 +118,10 @@
       </a>
       <div id="vars-0" class="collapse">
         <div class="list-group list-group-flush">
-            <a class="list-group-item" href="../module/face~2.html#variable-ascii~8">ASCII</a>
-            <a class="list-group-item" href="../module/face~2.html#variable-ucs4~8">UCS4</a>
-            <a class="list-group-item" href="../module/face~2.html#variable-upper_alphabet~4">UPPER_ALPHABET</a>
-            <a class="list-group-item" href="../module/face~2.html#variable-lower_alphabet~4">LOWER_ALPHABET</a>
+            <a class="list-group-item" href="../module/face~2.html#variable-ascii~10">ASCII</a>
+            <a class="list-group-item" href="../module/face~2.html#variable-ucs4~10">UCS4</a>
+            <a class="list-group-item" href="../module/face~2.html#variable-upper_alphabet~5">UPPER_ALPHABET</a>
+            <a class="list-group-item" href="../module/face~2.html#variable-lower_alphabet~5">LOWER_ALPHABET</a>
             <a class="list-group-item" href="../module/face~2.html#variable-nl~3">NL</a>
             <a class="list-group-item" href="../module/face~2.html#variable-escape~3">ESCAPE</a>
             <a class="list-group-item" href="../module/face~2.html#variable-code_start~3">CODE_START</a>
@@ -166,7 +166,7 @@
             <a class="list-group-item" href="../module/face~2.html#proc-colorize_ucs4~3">colorize_ucs4</a>
             <a class="list-group-item" href="../module/face~2.html#proc-color_index~3">color_index</a>
             <a class="list-group-item" href="../module/face~2.html#proc-style_index~3">style_index</a>
-            <a class="list-group-item" href="../module/face~2.html#proc-upper~4">upper</a>
+            <a class="list-group-item" href="../module/face~2.html#proc-upper~5">upper</a>
         </div>
       </div>
     </div>
@@ -336,7 +336,7 @@ modules which it uses.
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-ascii~8"></span>
+              <span class="anchor" id="variable-ascii~10"></span>
               integer,
             </td>
               <td>public,</td>
@@ -353,7 +353,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-ucs4~8"></span>
+              <span class="anchor" id="variable-ucs4~10"></span>
               integer,
             </td>
               <td>public,</td>
@@ -370,7 +370,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-upper_alphabet~4"></span>
+              <span class="anchor" id="variable-upper_alphabet~5"></span>
               character(len=26),
             </td>
               <td>private,</td>
@@ -387,7 +387,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-lower_alphabet~4"></span>
+              <span class="anchor" id="variable-lower_alphabet~5"></span>
               character(len=26),
             </td>
               <td>private,</td>
@@ -575,7 +575,7 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-string~37"></span>
+              <span class="anchor" id="variable-string~49"></span>
               character(len=*),
             </td>
 <td>intent(in)</td>
@@ -590,7 +590,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-color_fg~9"></span>
+              <span class="anchor" id="variable-color_fg~10"></span>
               character(len=*),
             </td>
 <td>intent(in),</td>
@@ -605,7 +605,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-color_bg~9"></span>
+              <span class="anchor" id="variable-color_bg~10"></span>
               character(len=*),
             </td>
 <td>intent(in),</td>
@@ -620,7 +620,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-style~11"></span>
+              <span class="anchor" id="variable-style~12"></span>
               character(len=*),
             </td>
 <td>intent(in),</td>
@@ -673,98 +673,8 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-string~36"></span>
+              <span class="anchor" id="variable-string~48"></span>
               character(kind=ASCII, len=*),
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>string</strong></td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-color_fg~8"></span>
-              character(len=*),
-            </td>
-<td>intent(in),</td>
-              <td>optional</td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>color_fg</strong></td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-color_bg~8"></span>
-              character(len=*),
-            </td>
-<td>intent(in),</td>
-              <td>optional</td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>color_bg</strong></td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-style~10"></span>
-              character(len=*),
-            </td>
-<td>intent(in),</td>
-              <td>optional</td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>style</strong></td>
-            <td>
-
-            </td>
-        </tr>
-    </tbody>
-  </table>
-
-    <h4>
-    Return Value
-    <small>character(kind=ASCII, len=:), allocatable</small>
-    </h4>
-    
-
-    </div>
-  </div>
-
-              <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-colorize_default~3"></span> <h3>private pure function <a href='../proc/colorize_default~3.html'>colorize_default</a>(string, color_fg, color_bg, style) result(colorized)  
-</h3></div>
-    <div class="card-body">
-          
-  
-
-  <h4>Arguments</h4>
-      <table class="table table-striped varlist">
-    <thead>
-      <tr>
-        <th scope="col">Type</th>
-<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
-        <th scope="col"></th>
-        <th scope="col">Name</th>
-        <th scope="col"></th>
-    </thead>
-    <tbody>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-string~37"></span>
-              character(len=*),
             </td>
 <td>intent(in)</td>
               <td></td>            <td>
@@ -826,7 +736,7 @@ parameter
 
     <h4>
     Return Value
-    <small>character(len=:), allocatable</small>
+    <small>character(kind=ASCII, len=:), allocatable</small>
     </h4>
     
 
@@ -834,7 +744,7 @@ parameter
   </div>
 
               <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-colorize_ucs4~3"></span> <h3>private pure function <a href='../proc/colorize_ucs4~3.html'>colorize_ucs4</a>(string, color_fg, color_bg, style) result(colorized)  
+    <div class="card-header codesum"><span class="anchor" id="proc-colorize_default~3"></span> <h3>private pure function <a href='../proc/colorize_default~3.html'>colorize_default</a>(string, color_fg, color_bg, style) result(colorized)  
 </h3></div>
     <div class="card-body">
           
@@ -853,8 +763,8 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-string~38"></span>
-              character(kind=UCS4, len=*),
+              <span class="anchor" id="variable-string~49"></span>
+              character(len=*),
             </td>
 <td>intent(in)</td>
               <td></td>            <td>
@@ -899,6 +809,96 @@ parameter
         <tr>
             <td>
               <span class="anchor" id="variable-style~12"></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>style</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>character(len=:), allocatable</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-colorize_ucs4~3"></span> <h3>private pure function <a href='../proc/colorize_ucs4~3.html'>colorize_ucs4</a>(string, color_fg, color_bg, style) result(colorized)  
+</h3></div>
+    <div class="card-body">
+          
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-string~50"></span>
+              character(kind=UCS4, len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>string</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-color_fg~11"></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>color_fg</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-color_bg~11"></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>color_bg</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-style~13"></span>
               character(len=*),
             </td>
 <td>intent(in),</td>
@@ -988,7 +988,7 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-style~13"></span>
+              <span class="anchor" id="variable-style~14"></span>
               character(len=*),
             </td>
 <td>intent(in)</td>
@@ -1014,7 +1014,7 @@ parameter
   </div>
 
               <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-upper~4"></span> <h3>private elemental function <a href='../proc/upper~4.html'>upper</a>(string)  
+    <div class="card-header codesum"><span class="anchor" id="proc-upper~5"></span> <h3>private elemental function <a href='../proc/upper~5.html'>upper</a>(string)  
 </h3></div>
     <div class="card-body">
           
@@ -1033,7 +1033,7 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-string~39"></span>
+              <span class="anchor" id="variable-string~51"></span>
               character(len=*),
             </td>
 <td>intent(in)</td>

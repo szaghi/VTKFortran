@@ -2079,7 +2079,7 @@ contains
    !<
    !<```fortran
    !< type(string) :: astring
-   !< logical      :: test_passed(3)
+   !< logical      :: test_passed(4)
    !< astring = 'When YOU are sad YOU should think to me :-)'
    !< test_passed(1) = (astring%replace(old='YOU', new='THEY')//''=='When THEY are sad THEY should think to me :-)')
    !< test_passed(2) = (astring%replace(old='YOU', new='THEY', count=1)//''=='When THEY are sad YOU should think to me :-)')
@@ -2087,6 +2087,9 @@ contains
    !< astring = astring%replace(old=new_line('a'), new='|cr|')
    !< astring = astring%replace(old='|cr|', new=new_line('a')//'    ')
    !< test_passed(3) = (astring//''==repeat(new_line('a')//'    '//'abcd', 20))
+   !< astring = 'abcd  efg    hlmn'
+   !< astring = astring%replace(old='', new='-')
+   !< test_passed(4) = (astring//''=='abcd  efg    hlmn')
    !< print '(L1)', all(test_passed)
    !<```
    !=> T <<<
@@ -2099,6 +2102,7 @@ contains
 
    if (allocated(self%raw)) then
       replaced = self
+      if (len(old)==0) return ! avoid infite loop for null substring replacement
       r = 0
       do
          if (index(replaced%raw, old)>0) then

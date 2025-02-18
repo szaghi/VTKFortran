@@ -69,7 +69,7 @@
     <div class="container">
   <div class="row">
     <h1>search
-      <small>Subroutine</small>
+      <small>Function</small>
       
     </h1>
       <div class="container p-2 mb-4 bg-light border rounded-3">
@@ -79,20 +79,20 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 0.2% of total for procedures.">43 statements</a>
+                 title=" 0.2% of total for procedures.">42 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
               <i class="fa fa-code"></i>
-              <a href="../src/foxy_xml_tag.F90"> Source File</a>
+              <a href="../src/stringifor_string_t.F90"> Source File</a>
             </li>
         </ul>
       </div>
       <div class="col">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb justify-content-end mb-0">
-                <li class="breadcrumb-item"><a href='../sourcefile/foxy_xml_tag.f90.html'>foxy_xml_tag.F90</a></li>
-                <li class="breadcrumb-item"><a href='../module/foxy_xml_tag.html'>foxy_xml_tag</a></li>
+                <li class="breadcrumb-item"><a href='../sourcefile/stringifor_string_t.f90.html'>stringifor_string_t.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/stringifor_string_t.html'>stringifor_string_t</a></li>
             <li class="breadcrumb-item active" aria-current="page">search</li>
           </ol>
         </nav>
@@ -144,13 +144,13 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private elemental subroutine search(self, tag_name, source, tstart, tend)  
+    <h2>private  function search(self, tag_start, tag_end, in_string, in_character, istart, iend) result(tag)  
 </h2>
     
 
 
     <h3>Type Bound</h3>
-    <p><a href='../type/xml_tag.html'>xml_tag</a></p>
+    <p><a href='../type/string.html'>string</a></p>
 
     <h3>Arguments</h3>
         <table class="table table-striped varlist">
@@ -165,10 +165,10 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-self~298"></span>
-              class(<a href='../type/xml_tag.html'>xml_tag</a>),
+              <span class="anchor" id="variable-self~159"></span>
+              class(<a href='../type/string.html'>string</a>),
             </td>
-<td>intent(inout)</td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
@@ -180,60 +180,90 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-tag_name~2"></span>
-              character(len=*),
+              <span class="anchor" id="variable-tag_start"></span>
+              character(kind=CK, len=*),
             </td>
 <td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
-            <td><strong>tag_name</strong></td>
+            <td><strong>tag_start</strong></td>
             <td>
                 
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-source~12"></span>
-              character(len=*),
+              <span class="anchor" id="variable-tag_end"></span>
+              character(kind=CK, len=*),
             </td>
 <td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
-            <td><strong>source</strong></td>
+            <td><strong>tag_end</strong></td>
             <td>
                 
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-tstart~3"></span>
-              integer(kind=I4P),
+              <span class="anchor" id="variable-in_string"></span>
+              type(<a href='../type/string.html'>string</a>),
             </td>
-<td>intent(out),</td>
+<td>intent(in),</td>
               <td>optional</td>            <td>
               
             </td>
             <td>::</td>
-            <td><strong>tstart</strong></td>
+            <td><strong>in_string</strong></td>
             <td>
                 
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-tend~3"></span>
-              integer(kind=I4P),
+              <span class="anchor" id="variable-in_character"></span>
+              character(kind=CK, len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>in_character</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-istart~2"></span>
+              integer,
             </td>
 <td>intent(out),</td>
               <td>optional</td>            <td>
               
             </td>
             <td>::</td>
-            <td><strong>tend</strong></td>
+            <td><strong>istart</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-iend~2"></span>
+              integer,
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iend</strong></td>
             <td>
                 
             </td>
@@ -241,240 +271,14 @@
     </tbody>
   </table>
 
+      <h3>Return Value
+        <small>
+          <span class="anchor" id="variable-tag~6"></span>
+          type(<a href='../type/string.html'>string</a>)
+        </small>
+      </h3>
+      
     <br>
-    <div class="card">
-      <div class="card-header">
-  <h3 class="card-title">Calls</h3>
-      </div>
-      <div class="card-body">
-  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
- "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Generated by graphviz version 2.43.0 (0)
- -->
-<!-- Title: proc~~search~2~~CallsGraph Pages: 1 -->
-<svg id="procsearch2CallsGraph" width="641pt" height="156pt"
- viewBox="0.00 0.00 641.00 156.29" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="proc~~search~2~~CallsGraph" class="graph" transform="scale(0.99 0.99) rotate(0) translate(4 154)">
-<title>proc~~search~2~~CallsGraph</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-154 644,-154 644,4 -4,4"/>
-<!-- proc~search~2 -->
-<g id="proc~~search~2~~CallsGraph_node1" class="node">
-<title>proc~search~2</title>
-<polygon fill="none" stroke="black" points="100,-128 0,-128 0,-104 100,-104 100,-128"/>
-<text text-anchor="middle" x="50" y="-113.6" font-family="Helvetica,sans-Serif" font-size="10.50">xml_tag%search</text>
-</g>
-<!-- proc~is_allocated -->
-<g id="proc~~search~2~~CallsGraph_node2" class="node">
-<title>proc~is_allocated</title>
-<g id="a_proc~~search~2~~CallsGraph_node2"><a xlink:href="../proc/is_allocated.html" xlink:title="string%is_allocated">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="419.5,-150 304.5,-150 304.5,-126 419.5,-126 419.5,-150"/>
-<text text-anchor="middle" x="362" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%is_allocated</text>
-</a>
-</g>
-</g>
-<!-- proc~search~2&#45;&gt;proc~is_allocated -->
-<g id="proc~~search~2~~CallsGraph_edge1" class="edge">
-<title>proc~search~2&#45;&gt;proc~is_allocated</title>
-<path fill="none" stroke="#000000" d="M100.12,-119.49C152.54,-123.21 235.92,-129.12 294.27,-133.26"/>
-<polygon fill="#000000" stroke="#000000" points="294.27,-136.77 304.49,-133.99 294.77,-129.79 294.27,-136.77"/>
-</g>
-<!-- proc~parse -->
-<g id="proc~~search~2~~CallsGraph_node3" class="node">
-<title>proc~parse</title>
-<g id="a_proc~~search~2~~CallsGraph_node3"><a xlink:href="../proc/parse.html" xlink:title="xml_tag%parse">
-<polygon fill="#d9534f" stroke="#d9534f" points="230,-108 136,-108 136,-84 230,-84 230,-108"/>
-<text text-anchor="middle" x="183" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%parse</text>
-</a>
-</g>
-</g>
-<!-- proc~search~2&#45;&gt;proc~parse -->
-<g id="proc~~search~2~~CallsGraph_edge2" class="edge">
-<title>proc~search~2&#45;&gt;proc~parse</title>
-<path fill="none" stroke="#000000" d="M100.15,-108.5C108.41,-107.24 117.04,-105.92 125.47,-104.63"/>
-<polygon fill="#000000" stroke="#000000" points="126.25,-108.05 135.61,-103.08 125.19,-101.13 126.25,-108.05"/>
-</g>
-<!-- proc~parse&#45;&gt;proc~is_allocated -->
-<g id="proc~~search~2~~CallsGraph_edge4" class="edge">
-<title>proc~parse&#45;&gt;proc~is_allocated</title>
-<path fill="none" stroke="#000000" d="M229.9,-108.04C241.65,-111.05 254.28,-114.2 266,-117 275.49,-119.26 285.53,-121.57 295.39,-123.8"/>
-<polygon fill="#000000" stroke="#000000" points="294.65,-127.21 305.17,-125.98 296.17,-120.38 294.65,-127.21"/>
-</g>
-<!-- proc~get -->
-<g id="proc~~search~2~~CallsGraph_node4" class="node">
-<title>proc~get</title>
-<g id="a_proc~~search~2~~CallsGraph_node4"><a xlink:href="../proc/get.html" xlink:title="xml_tag%get">
-<polygon fill="#d9534f" stroke="#d9534f" points="403,-108 321,-108 321,-84 403,-84 403,-108"/>
-<text text-anchor="middle" x="362" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%get</text>
-</a>
-</g>
-</g>
-<!-- proc~parse&#45;&gt;proc~get -->
-<g id="proc~~search~2~~CallsGraph_edge3" class="edge">
-<title>proc~parse&#45;&gt;proc~get</title>
-<path fill="none" stroke="#000000" d="M230.04,-96C254.8,-96 285.37,-96 310.74,-96"/>
-<polygon fill="#000000" stroke="#000000" points="310.9,-99.5 320.9,-96 310.9,-92.5 310.9,-99.5"/>
-</g>
-<!-- proc~parse_attributes_names -->
-<g id="proc~~search~2~~CallsGraph_node5" class="node">
-<title>proc~parse_attributes_names</title>
-<g id="a_proc~~search~2~~CallsGraph_node5"><a xlink:href="../proc/parse_attributes_names.html" xlink:title="xml_tag%parse_attributes_names">
-<polygon fill="#d9534f" stroke="#d9534f" points="458,-66 266,-66 266,-42 458,-42 458,-66"/>
-<text text-anchor="middle" x="362" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%parse_attributes_names</text>
-</a>
-</g>
-</g>
-<!-- proc~parse&#45;&gt;proc~parse_attributes_names -->
-<g id="proc~~search~2~~CallsGraph_edge5" class="edge">
-<title>proc~parse&#45;&gt;proc~parse_attributes_names</title>
-<path fill="none" stroke="#000000" d="M229.9,-83.96C241.65,-80.95 254.28,-77.8 266,-75 275.49,-72.74 285.53,-70.43 295.39,-68.2"/>
-<polygon fill="#000000" stroke="#000000" points="296.17,-71.62 305.17,-66.02 294.65,-64.79 296.17,-71.62"/>
-</g>
-<!-- proc~parse_tag_name -->
-<g id="proc~~search~2~~CallsGraph_node6" class="node">
-<title>proc~parse_tag_name</title>
-<g id="a_proc~~search~2~~CallsGraph_node6"><a xlink:href="../proc/parse_tag_name.html" xlink:title="xml_tag%parse_tag_name">
-<polygon fill="#d9534f" stroke="#d9534f" points="438.5,-24 285.5,-24 285.5,0 438.5,0 438.5,-24"/>
-<text text-anchor="middle" x="362" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%parse_tag_name</text>
-</a>
-</g>
-</g>
-<!-- proc~parse&#45;&gt;proc~parse_tag_name -->
-<g id="proc~~search~2~~CallsGraph_edge6" class="edge">
-<title>proc~parse&#45;&gt;proc~parse_tag_name</title>
-<path fill="none" stroke="#000000" d="M196.18,-83.81C211.26,-69.45 238.34,-45.9 266,-33 270.62,-30.85 275.47,-28.91 280.43,-27.17"/>
-<polygon fill="#000000" stroke="#000000" points="281.63,-30.46 290.07,-24.05 279.48,-23.79 281.63,-30.46"/>
-</g>
-<!-- proc~get_attributes -->
-<g id="proc~~search~2~~CallsGraph_node8" class="node">
-<title>proc~get_attributes</title>
-<g id="a_proc~~search~2~~CallsGraph_node8"><a xlink:href="../proc/get_attributes.html" xlink:title="xml_tag%get_attributes">
-<polygon fill="#d9534f" stroke="#d9534f" points="636,-150 498,-150 498,-126 636,-126 636,-150"/>
-<text text-anchor="middle" x="567" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%get_attributes</text>
-</a>
-</g>
-</g>
-<!-- proc~get&#45;&gt;proc~get_attributes -->
-<g id="proc~~search~2~~CallsGraph_edge7" class="edge">
-<title>proc~get&#45;&gt;proc~get_attributes</title>
-<path fill="none" stroke="#000000" d="M403.11,-104.3C430.11,-109.88 466.4,-117.39 497.88,-123.91"/>
-<polygon fill="#000000" stroke="#000000" points="497.41,-127.38 507.91,-125.98 498.82,-120.53 497.41,-127.38"/>
-</g>
-<!-- proc~get_value -->
-<g id="proc~~search~2~~CallsGraph_node9" class="node">
-<title>proc~get_value</title>
-<g id="a_proc~~search~2~~CallsGraph_node9"><a xlink:href="../proc/get_value.html" xlink:title="xml_tag%get_value">
-<polygon fill="#d9534f" stroke="#d9534f" points="625,-108 509,-108 509,-84 625,-84 625,-108"/>
-<text text-anchor="middle" x="567" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%get_value</text>
-</a>
-</g>
-</g>
-<!-- proc~get&#45;&gt;proc~get_value -->
-<g id="proc~~search~2~~CallsGraph_edge8" class="edge">
-<title>proc~get&#45;&gt;proc~get_value</title>
-<path fill="none" stroke="#000000" d="M403.11,-96C430.32,-96 466.96,-96 498.6,-96"/>
-<polygon fill="#000000" stroke="#000000" points="498.68,-99.5 508.68,-96 498.68,-92.5 498.68,-99.5"/>
-</g>
-<!-- proc~alloc_attributes -->
-<g id="proc~~search~2~~CallsGraph_node7" class="node">
-<title>proc~alloc_attributes</title>
-<g id="a_proc~~search~2~~CallsGraph_node7"><a xlink:href="../proc/alloc_attributes.html" xlink:title="xml_tag%alloc_attributes">
-<polygon fill="#d9534f" stroke="#d9534f" points="640,-66 494,-66 494,-42 640,-42 640,-66"/>
-<text text-anchor="middle" x="567" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%alloc_attributes</text>
-</a>
-</g>
-</g>
-<!-- proc~parse_attributes_names&#45;&gt;proc~alloc_attributes -->
-<g id="proc~~search~2~~CallsGraph_edge9" class="edge">
-<title>proc~parse_attributes_names&#45;&gt;proc~alloc_attributes</title>
-<path fill="none" stroke="#000000" d="M458.26,-54C466.75,-54 475.31,-54 483.68,-54"/>
-<polygon fill="#000000" stroke="#000000" points="483.79,-57.5 493.79,-54 483.79,-50.5 483.79,-57.5"/>
-</g>
-</g>
-</svg>
-</div>                <script>
-                  var panprocsearch2CallsGraph = svgPanZoom('#procsearch2CallsGraph',
-                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
-                  );
-                </script>          <div>
-            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
-          </div>
-          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-lg" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-<p>Nodes of different colours represent the following: </p>
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
- "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Generated by graphviz version 2.43.0 (0)
- -->
-<!-- Title: Graph Key Pages: 1 -->
-<svg width="641pt" height="28pt"
- viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
-<title>Graph Key</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
-<!-- Subroutine -->
-<g id="node1" class="node">
-<title>Subroutine</title>
-<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
-<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
-</g>
-<!-- Function -->
-<g id="node2" class="node">
-<title>Function</title>
-<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
-<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
-</g>
-<!-- Interface -->
-<g id="node3" class="node">
-<title>Interface</title>
-<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
-<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
-</g>
-<!-- Type Bound Procedure -->
-<g id="node4" class="node">
-<title>Type Bound Procedure</title>
-<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
-<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
-</g>
-<!-- Unknown Procedure Type -->
-<g id="node5" class="node">
-<title>Unknown Procedure Type</title>
-<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
-<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
-</g>
-<!-- Program -->
-<g id="node6" class="node">
-<title>Program</title>
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
-<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
-</g>
-<!-- This Page&#39;s Entity -->
-<g id="node7" class="node">
-<title>This Page&#39;s Entity</title>
-<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
-<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
-</g>
-</g>
-</svg>
-
-<p>Solid arrows point from a procedure to one which it calls. Dashed 
-arrows point from an interface to procedures which implement that interface.
-This could include the module procedures in a generic interface or the
-implementation in a submodule of an interface in a parent module.
-</p>
- </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
     <div class="card">
       <div class="card-header">
   <h3 class="card-title">Called by</h3>
@@ -486,46 +290,46 @@ implementation in a submodule of an interface in a parent module.
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: proc~~search~2~~CalledByGraph Pages: 1 -->
-<svg id="procsearch2CalledByGraph" width="411pt" height="32pt"
- viewBox="0.00 0.00 411.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="proc~~search~2~~CalledByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<svg id="procsearch2CalledByGraph" width="228pt" height="74pt"
+ viewBox="0.00 0.00 228.00 74.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~search~2~~CalledByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 70)">
 <title>proc~~search~2~~CalledByGraph</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 407,-28 407,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-70 224,-70 224,4 -4,4"/>
 <!-- proc~search~2 -->
 <g id="proc~~search~2~~CalledByGraph_node1" class="node">
 <title>proc~search~2</title>
-<polygon fill="none" stroke="black" points="403,-24 303,-24 303,0 403,0 403,-24"/>
-<text text-anchor="middle" x="353" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">xml_tag%search</text>
+<polygon fill="none" stroke="black" points="220,-45 132,-45 132,-21 220,-21 220,-45"/>
+<text text-anchor="middle" x="176" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50">string%search</text>
 </g>
-<!-- proc~get_content -->
+<!-- program~volatile_doctest~204 -->
 <g id="proc~~search~2~~CalledByGraph_node2" class="node">
-<title>proc~get_content</title>
-<g id="a_proc~~search~2~~CalledByGraph_node2"><a xlink:href="../proc/get_content.html" xlink:title="xml_tag%get_content">
-<polygon fill="#d9534f" stroke="#d9534f" points="267,-24 140,-24 140,0 267,0 267,-24"/>
-<text text-anchor="middle" x="203.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%get_content</text>
+<title>program~volatile_doctest~204</title>
+<g id="a_proc~~search~2~~CalledByGraph_node2"><a xlink:href="../program/volatile_doctest~204.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-66 0,-66 0,-42 96,-42 96,-66"/>
+<text text-anchor="middle" x="48" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- proc~get_content&#45;&gt;proc~search~2 -->
+<!-- program~volatile_doctest~204&#45;&gt;proc~search~2 -->
 <g id="proc~~search~2~~CalledByGraph_edge1" class="edge">
-<title>proc~get_content&#45;&gt;proc~search~2</title>
-<path fill="none" stroke="#000000" d="M267.05,-12C275.54,-12 284.23,-12 292.65,-12"/>
-<polygon fill="#000000" stroke="#000000" points="292.77,-15.5 302.77,-12 292.77,-8.5 292.77,-15.5"/>
+<title>program~volatile_doctest~204&#45;&gt;proc~search~2</title>
+<path fill="none" stroke="#000000" d="M96.28,-46.12C104.52,-44.75 113.14,-43.31 121.54,-41.91"/>
+<polygon fill="#000000" stroke="#000000" points="122.33,-45.33 131.62,-40.23 121.18,-38.42 122.33,-45.33"/>
 </g>
-<!-- proc~content -->
+<!-- program~volatile_doctest~670 -->
 <g id="proc~~search~2~~CalledByGraph_node3" class="node">
-<title>proc~content</title>
-<g id="a_proc~~search~2~~CalledByGraph_node3"><a xlink:href="../proc/content.html" xlink:title="xml_file%content">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="104,-24 0,-24 0,0 104,0 104,-24"/>
-<text text-anchor="middle" x="52" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_file%content</text>
+<title>program~volatile_doctest~670</title>
+<g id="a_proc~~search~2~~CalledByGraph_node3"><a xlink:href="../program/volatile_doctest~670.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-24 0,-24 0,0 96,0 96,-24"/>
+<text text-anchor="middle" x="48" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- proc~content&#45;&gt;proc~get_content -->
+<!-- program~volatile_doctest~670&#45;&gt;proc~search~2 -->
 <g id="proc~~search~2~~CalledByGraph_edge2" class="edge">
-<title>proc~content&#45;&gt;proc~get_content</title>
-<path fill="none" stroke="#000000" d="M104.03,-12C112.3,-12 121,-12 129.67,-12"/>
-<polygon fill="#000000" stroke="#000000" points="129.8,-15.5 139.8,-12 129.8,-8.5 129.8,-15.5"/>
+<title>program~volatile_doctest~670&#45;&gt;proc~search~2</title>
+<path fill="none" stroke="#000000" d="M96.28,-19.88C104.52,-21.25 113.14,-22.69 121.54,-24.09"/>
+<polygon fill="#000000" stroke="#000000" points="121.18,-27.58 131.62,-25.77 122.33,-20.67 121.18,-27.58"/>
 </g>
 </g>
 </svg>
@@ -622,53 +426,84 @@ implementation in a submodule of an interface in a parent module.
     
     <section>
     <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="hl codehilite"><pre><span></span><span class="w">  </span><span class="k">elemental subroutine </span><span class="n">search</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">tag_name</span><span class="p">,</span><span class="w"> </span><span class="n">source</span><span class="p">,</span><span class="w"> </span><span class="n">tstart</span><span class="p">,</span><span class="w"> </span><span class="n">tend</span><span class="p">)</span>
-<span class="w">  </span><span class="c">!&lt; Search tag named *tag_name* into a string and, in case it is found, store into self.</span>
-<span class="w">  </span><span class="c">!&lt;</span>
-<span class="w">  </span><span class="c">!&lt; @note If *tag_name* is not found, self is returned empty.</span>
-<span class="w">  </span><span class="k">class</span><span class="p">(</span><span class="n">xml_tag</span><span class="p">),</span><span class="w">         </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w">     </span><span class="c">!&lt; XML tag.</span>
-<span class="w">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">           </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">    </span><span class="kd">::</span><span class="w"> </span><span class="n">tag_name</span><span class="w"> </span><span class="c">!&lt; Searched tag name.</span>
-<span class="w">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">           </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">    </span><span class="kd">::</span><span class="w"> </span><span class="n">source</span><span class="w">   </span><span class="c">!&lt; String containing the input.</span>
-<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w">   </span><span class="kd">::</span><span class="w"> </span><span class="n">tstart</span><span class="w">   </span><span class="c">!&lt; Starting index of tag inside the source.</span>
-<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w">   </span><span class="kd">::</span><span class="w"> </span><span class="n">tend</span><span class="w">     </span><span class="c">!&lt; Ending index of tag inside the source.</span>
-<span class="w">  </span><span class="k">type</span><span class="p">(</span><span class="n">xml_tag</span><span class="p">)</span><span class="w">                         </span><span class="kd">::</span><span class="w"> </span><span class="n">tag</span><span class="w">      </span><span class="c">!&lt; Dummy XML tag.</span>
-<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                          </span><span class="kd">::</span><span class="w"> </span><span class="n">tstart_</span><span class="w">  </span><span class="c">!&lt; Starting index of tag inside the source, local variable.</span>
-<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                          </span><span class="kd">::</span><span class="w"> </span><span class="n">tend_</span><span class="w">    </span><span class="c">!&lt; Ending index of tag inside the source, local variable.</span>
-<span class="w">  </span><span class="kt">logical</span><span class="w">                               </span><span class="kd">::</span><span class="w"> </span><span class="n">found</span><span class="w">    </span><span class="c">!&lt; Flag for inquiring search result.</span>
-<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                          </span><span class="kd">::</span><span class="w"> </span><span class="n">tstart_c</span><span class="w"> </span><span class="c">!&lt; Starting index of tag inside the current slice of source.</span>
-<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                          </span><span class="kd">::</span><span class="w"> </span><span class="n">tend_c</span><span class="w">   </span><span class="c">!&lt; Starting index of tag inside the current slice of source.</span>
-<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                          </span><span class="kd">::</span><span class="w"> </span><span class="n">i</span>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">function </span><span class="n">search</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">tag_start</span><span class="p">,</span><span class="w"> </span><span class="n">tag_end</span><span class="p">,</span><span class="w"> </span><span class="n">in_string</span><span class="p">,</span><span class="w"> </span><span class="n">in_character</span><span class="p">,</span><span class="w"> </span><span class="n">istart</span><span class="p">,</span><span class="w"> </span><span class="n">iend</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+<span class="w">   </span><span class="c">!&lt; Search for *tagged* record into string, return the first record found (if any) matching the tags.</span>
+<span class="w">   </span><span class="c">!&lt;</span>
+<span class="w">   </span><span class="c">!&lt; Optionally, returns the indexes of tag start/end, thus this is not an `elemental` function.</span>
+<span class="w">   </span><span class="c">!&lt;</span>
+<span class="w">   </span><span class="c">!&lt; @note The tagged record is searched into self if allocated otherwise into `in_string` if passed or, eventually, into</span>
+<span class="w">   </span><span class="c">!&lt; `in_character` is passed. If tag is not found the return string is not allocated and the start/end indexes (if requested) are</span>
+<span class="w">   </span><span class="c">!&lt; zero.</span>
+<span class="w">   </span><span class="c">!&lt;</span>
+<span class="w">   </span><span class="c">!&lt;```fortran</span>
+<span class="w">   </span><span class="c">!&lt; type(string)                  :: astring</span>
+<span class="w">   </span><span class="c">!&lt; type(string)                  :: anotherstring</span>
+<span class="w">   </span><span class="c">!&lt; character(len=:), allocatable :: acharacter</span>
+<span class="w">   </span><span class="c">!&lt; integer                       :: istart</span>
+<span class="w">   </span><span class="c">!&lt; integer                       :: iend</span>
+<span class="w">   </span><span class="c">!&lt; logical                       :: test_passed(5)</span>
+<span class="w">   </span><span class="c">!&lt; astring = &#39;&lt;test&gt; &lt;first&gt; hello &lt;/first&gt; &lt;first&gt; not the first &lt;/first&gt; &lt;/test&gt;&#39;</span>
+<span class="w">   </span><span class="c">!&lt; anotherstring = astring%search(tag_start=&#39;&lt;first&gt;&#39;, tag_end=&#39;&lt;/first&gt;&#39;)</span>
+<span class="w">   </span><span class="c">!&lt; test_passed(1) = anotherstring//&#39;&#39;==&#39;&lt;first&gt; hello &lt;/first&gt;&#39;</span>
+<span class="w">   </span><span class="c">!&lt; astring = &#39;&lt;test&gt; &lt;a&gt; &lt;a&gt; &lt;a&gt; the nested a &lt;/a&gt; &lt;/a&gt; &lt;/a&gt; &lt;/test&gt;&#39;</span>
+<span class="w">   </span><span class="c">!&lt; anotherstring = astring%search(tag_start=&#39;&lt;a&gt;&#39;, tag_end=&#39;&lt;/a&gt;&#39;)</span>
+<span class="w">   </span><span class="c">!&lt; test_passed(2) = anotherstring//&#39;&#39;==&#39;&lt;a&gt; &lt;a&gt; &lt;a&gt; the nested a &lt;/a&gt; &lt;/a&gt; &lt;/a&gt;&#39;</span>
+<span class="w">   </span><span class="c">!&lt; call astring%free</span>
+<span class="w">   </span><span class="c">!&lt; anotherstring = &#39;&lt;test&gt; &lt;a&gt; &lt;a&gt; &lt;a&gt; the nested a &lt;/a&gt; &lt;/a&gt; &lt;/a&gt; &lt;/test&gt;&#39;</span>
+<span class="w">   </span><span class="c">!&lt; astring = astring%search(in_string=anotherstring, tag_start=&#39;&lt;a&gt;&#39;, tag_end=&#39;&lt;/a&gt;&#39;)</span>
+<span class="w">   </span><span class="c">!&lt; test_passed(3) = astring//&#39;&#39;==&#39;&lt;a&gt; &lt;a&gt; &lt;a&gt; the nested a &lt;/a&gt; &lt;/a&gt; &lt;/a&gt;&#39;</span>
+<span class="w">   </span><span class="c">!&lt; call astring%free</span>
+<span class="w">   </span><span class="c">!&lt; acharacter = &#39;&lt;test&gt; &lt;a&gt; &lt;a&gt; &lt;a&gt; the nested a &lt;/a&gt; &lt;/a&gt; &lt;/a&gt; &lt;/test&gt;&#39;</span>
+<span class="w">   </span><span class="c">!&lt; astring = astring%search(in_character=acharacter, tag_start=&#39;&lt;a&gt;&#39;, tag_end=&#39;&lt;/a&gt;&#39;)</span>
+<span class="w">   </span><span class="c">!&lt; test_passed(4) = astring//&#39;&#39;==&#39;&lt;a&gt; &lt;a&gt; &lt;a&gt; the nested a &lt;/a&gt; &lt;/a&gt; &lt;/a&gt;&#39;</span>
+<span class="w">   </span><span class="c">!&lt; acharacter = &#39;&lt;test&gt; &lt;first&gt; hello &lt;/first&gt; &lt;sec&gt; &lt;sec&gt;not the first&lt;/sec&gt; &lt;/sec&gt; &lt;/test&gt;&#39;</span>
+<span class="w">   </span><span class="c">!&lt; astring = astring%search(in_character=acharacter, tag_start=&#39;&lt;sec&gt;&#39;, tag_end=&#39;&lt;/sec&gt;&#39;, istart=istart, iend=iend)</span>
+<span class="w">   </span><span class="c">!&lt; test_passed(5) = astring//&#39;&#39;==acharacter(31:67)</span>
+<span class="w">   </span><span class="c">!&lt; print &#39;(L1)&#39;, all(test_passed)</span>
+<span class="w">   </span><span class="c">!&lt;```</span>
+<span class="w">   </span><span class="c">!=&gt; T &lt;&lt;&lt;</span>
+<span class="w">   </span><span class="k">class</span><span class="p">(</span><span class="n">string</span><span class="p">),</span><span class="w">             </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">            </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w">         </span><span class="c">!&lt; The string.</span>
+<span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="n">CK</span><span class="p">,</span><span class="w"> </span><span class="nb">len</span><span class="o">=*</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">            </span><span class="kd">::</span><span class="w"> </span><span class="n">tag_start</span><span class="w">    </span><span class="c">!&lt; Start tag.</span>
+<span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="n">CK</span><span class="p">,</span><span class="w"> </span><span class="nb">len</span><span class="o">=*</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">            </span><span class="kd">::</span><span class="w"> </span><span class="n">tag_end</span><span class="w">      </span><span class="c">!&lt; End tag.</span>
+<span class="w">   </span><span class="k">type</span><span class="p">(</span><span class="n">string</span><span class="p">),</span><span class="w">              </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w">  </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">in_string</span><span class="w">    </span><span class="c">!&lt; Search into this string.</span>
+<span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="n">CK</span><span class="p">,</span><span class="w"> </span><span class="nb">len</span><span class="o">=*</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w">  </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">in_character</span><span class="w"> </span><span class="c">!&lt; Search into this character string.</span>
+<span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w">                   </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">istart</span><span class="w">       </span><span class="c">!&lt; Starting index of tag inside the string.</span>
+<span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w">                   </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">iend</span><span class="w">         </span><span class="c">!&lt; Ending index of tag inside the string.</span>
+<span class="w">   </span><span class="k">type</span><span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="w">                                     </span><span class="kd">::</span><span class="w"> </span><span class="n">tag</span><span class="w">          </span><span class="c">!&lt; First tag found.</span>
+<span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="n">CK</span><span class="p">,</span><span class="w"> </span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">           </span><span class="kd">::</span><span class="w"> </span><span class="n">raw</span><span class="w">          </span><span class="c">!&lt; Raw string into which search the tag.</span>
+<span class="w">   </span><span class="kt">integer</span><span class="w">                                          </span><span class="kd">::</span><span class="w"> </span><span class="n">istart_</span><span class="w">      </span><span class="c">!&lt; Starting index of tag inside the string, local variable.</span>
+<span class="w">   </span><span class="kt">integer</span><span class="w">                                          </span><span class="kd">::</span><span class="w"> </span><span class="n">iend_</span><span class="w">        </span><span class="c">!&lt; Ending index of tag inside the string, local variable.</span>
+<span class="w">   </span><span class="kt">integer</span><span class="w">                                          </span><span class="kd">::</span><span class="w"> </span><span class="n">nested_tags</span><span class="w">  </span><span class="c">!&lt; Number of nested tags inside tag.</span>
+<span class="w">   </span><span class="kt">integer</span><span class="w">                                          </span><span class="kd">::</span><span class="w"> </span><span class="n">t</span><span class="w">            </span><span class="c">!&lt; Counter.</span>
 
-<span class="w">  </span><span class="k">call </span><span class="n">self</span><span class="p">%</span><span class="n">free</span>
-<span class="w">  </span><span class="n">self</span><span class="p">%</span><span class="n">tag_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tag_name</span>
-<span class="w">  </span><span class="n">tstart_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">  </span><span class="n">tend_</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">  </span><span class="n">found</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
-<span class="w">  </span><span class="n">tstart_c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">  </span><span class="n">tend_c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">  </span><span class="n">Tag_Search</span><span class="p">:</span><span class="w"> </span><span class="k">do</span>
-<span class="k">    call </span><span class="n">tag</span><span class="p">%</span><span class="n">parse</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">(</span><span class="n">tend_</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">:),</span><span class="w"> </span><span class="n">tstart</span><span class="o">=</span><span class="n">tstart_c</span><span class="p">,</span><span class="w"> </span><span class="n">tend</span><span class="o">=</span><span class="n">tend_c</span><span class="p">)</span>
-<span class="w">    </span><span class="n">tstart_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tstart_</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">tend_</span>
-<span class="w">    </span><span class="n">tend_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tend_</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">tend_c</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">tstart_c</span><span class="o">==</span><span class="mf">0.</span><span class="nb">and</span><span class="p">.</span><span class="n">tend_c</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
-<span class="k">      exit </span><span class="n">Tag_Search</span><span class="w"> </span><span class="c">! no tag found</span>
-<span class="w">    </span><span class="k">else</span>
-<span class="k">      if</span><span class="w"> </span><span class="p">(</span><span class="n">tag</span><span class="p">%</span><span class="n">tag_name</span><span class="p">%</span><span class="n">is_allocated</span><span class="p">())</span><span class="w"> </span><span class="k">then</span>
-<span class="k">        if</span><span class="w"> </span><span class="p">(</span><span class="n">tag</span><span class="p">%</span><span class="n">tag_name</span><span class="o">==</span><span class="n">self</span><span class="p">%</span><span class="n">tag_name</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
-<span class="k">          </span><span class="n">found</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
-<span class="w">        </span><span class="k">endif</span>
+<span class="w">   </span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">in_string</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">      </span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">in_string</span><span class="p">%</span><span class="n">raw</span>
+<span class="w">   </span><span class="k">elseif</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">in_character</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">      </span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">in_character</span>
+<span class="w">   </span><span class="k">else</span>
+<span class="k">      if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">))</span><span class="w"> </span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">raw</span>
+<span class="w">   </span><span class="k">endif</span>
+<span class="k">   </span><span class="n">istart_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">   </span><span class="n">iend_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">raw</span><span class="o">/=</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">      </span><span class="n">istart_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">index</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span><span class="w"> </span><span class="n">tag_start</span><span class="p">)</span>
+<span class="w">      </span><span class="n">iend_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">index</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span><span class="w"> </span><span class="n">tag_end</span><span class="p">)</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">istart_</span><span class="o">&gt;</span><span class="mf">0.</span><span class="nb">and</span><span class="p">.</span><span class="n">iend_</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">         </span><span class="n">iend_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iend_</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">tag_end</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">         </span><span class="n">tag</span><span class="p">%</span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">raw</span><span class="p">(</span><span class="n">istart_</span><span class="p">:</span><span class="n">iend_</span><span class="p">)</span>
+<span class="w">         </span><span class="n">nested_tags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tag</span><span class="p">%</span><span class="nb">count</span><span class="p">(</span><span class="n">tag_start</span><span class="p">)</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">nested_tags</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="k">            do </span><span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">nested_tags</span>
+<span class="w">               </span><span class="n">iend_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iend_</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">tag_end</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">index</span><span class="p">(</span><span class="n">raw</span><span class="p">(</span><span class="n">iend_</span><span class="o">+</span><span class="mi">1</span><span class="p">:),</span><span class="w"> </span><span class="n">tag_end</span><span class="p">)</span>
+<span class="w">            </span><span class="k">enddo</span>
+<span class="k">            </span><span class="n">tag</span><span class="p">%</span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">raw</span><span class="p">(</span><span class="n">istart_</span><span class="p">:</span><span class="n">iend_</span><span class="p">)</span>
+<span class="w">         </span><span class="k">endif</span>
 <span class="k">      endif</span>
-<span class="k">    endif</span>
-<span class="k">    if</span><span class="w"> </span><span class="p">(</span><span class="n">found</span><span class="p">)</span><span class="w"> </span><span class="k">exit </span><span class="n">Tag_Search</span>
-<span class="w">  </span><span class="k">enddo </span><span class="n">Tag_Search</span>
-<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">found</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
-<span class="k">    </span><span class="n">self</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tag</span>
-<span class="w">  </span><span class="k">else</span>
-<span class="k">    call </span><span class="n">self</span><span class="p">%</span><span class="n">free</span>
-<span class="w">  </span><span class="k">endif</span>
-<span class="k">  if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">tstart</span><span class="p">))</span><span class="w"> </span><span class="n">tstart</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tstart_</span>
-<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">tend</span><span class="w">  </span><span class="p">))</span><span class="w"> </span><span class="n">tend</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">tend_</span>
-<span class="w">  </span><span class="k">endsubroutine </span><span class="n">search</span>
+<span class="k">   endif</span>
+<span class="k">   if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">istart</span><span class="p">))</span><span class="w"> </span><span class="n">istart</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">istart_</span>
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">iend</span><span class="p">))</span><span class="w"> </span><span class="n">iend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iend_</span>
+<span class="w">   </span><span class="k">endfunction </span><span class="n">search</span>
 </pre></div>
 
     </section>

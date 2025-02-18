@@ -79,7 +79,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 0.1% of total for procedures.">23 statements</a>
+                 title=" 0.1% of total for procedures.">24 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
@@ -165,7 +165,7 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-self~342"></span>
+              <span class="anchor" id="variable-self~227"></span>
               class(<a href='../type/string~2.html'>string</a>),
             </td>
 <td>intent(in)</td>
@@ -479,18 +479,18 @@ implementation in a submodule of an interface in a parent module.
 <path fill="none" stroke="#000000" d="M497.67,-66.07C505.19,-68.75 512.92,-71.76 520,-75 535.4,-82.04 551.76,-91.41 564.99,-99.52"/>
 <polygon fill="#000000" stroke="#000000" points="563.26,-102.57 573.6,-104.89 566.96,-96.63 563.26,-102.57"/>
 </g>
-<!-- proc~write_lines~4 -->
+<!-- proc~write_lines~2 -->
 <g id="proc~~replace~2~~CalledByGraph_node9" class="node">
-<title>proc~write_lines~4</title>
-<g id="a_proc~~replace~2~~CalledByGraph_node9"><a xlink:href="../proc/write_lines~4.html" xlink:title="string%write_lines">
+<title>proc~write_lines~2</title>
+<g id="a_proc~~replace~2~~CalledByGraph_node9"><a xlink:href="../proc/write_lines~2.html" xlink:title="string%write_lines">
 <polygon fill="#d9534f" stroke="#d9534f" points="512,-24 403,-24 403,0 512,0 512,-24"/>
 <text text-anchor="middle" x="457.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%write_lines</text>
 </a>
 </g>
 </g>
-<!-- proc~write_lines~4&#45;&gt;proc~split~2 -->
+<!-- proc~write_lines~2&#45;&gt;proc~split~2 -->
 <g id="proc~~replace~2~~CalledByGraph_edge8" class="edge">
-<title>proc~write_lines~4&#45;&gt;proc~split~2</title>
+<title>proc~write_lines~2&#45;&gt;proc~split~2</title>
 <path fill="none" stroke="#000000" d="M503.2,-24.07C509.09,-26.56 514.86,-29.52 520,-33 544.87,-49.85 566.23,-77.47 579.08,-96.4"/>
 <polygon fill="#000000" stroke="#000000" points="576.26,-98.49 584.68,-104.92 582.11,-94.64 576.26,-98.49"/>
 </g>
@@ -545,18 +545,18 @@ implementation in a submodule of an interface in a parent module.
 <path fill="none" stroke="#000000" d="M270.74,-165.92C259.37,-166.46 246.42,-166.74 233.45,-166.75"/>
 <polygon fill="#000000" stroke="#000000" points="233.09,-163.25 223.07,-166.7 233.06,-170.25 233.09,-163.25"/>
 </g>
-<!-- proc~write_file~4 -->
+<!-- proc~write_file~2 -->
 <g id="proc~~replace~2~~CalledByGraph_node12" class="node">
-<title>proc~write_file~4</title>
-<g id="a_proc~~replace~2~~CalledByGraph_node12"><a xlink:href="../proc/write_file~4.html" xlink:title="string%write_file">
+<title>proc~write_file~2</title>
+<g id="a_proc~~replace~2~~CalledByGraph_node12"><a xlink:href="../proc/write_file~2.html" xlink:title="string%write_file">
 <polygon fill="#d9534f" stroke="#d9534f" points="359,-24 259,-24 259,0 359,0 359,-24"/>
 <text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%write_file</text>
 </a>
 </g>
 </g>
-<!-- proc~write_file~4&#45;&gt;proc~write_lines~4 -->
+<!-- proc~write_file~2&#45;&gt;proc~write_lines~2 -->
 <g id="proc~~replace~2~~CalledByGraph_edge11" class="edge">
-<title>proc~write_file~4&#45;&gt;proc~write_lines~4</title>
+<title>proc~write_file~2&#45;&gt;proc~write_lines~2</title>
 <path fill="none" stroke="#000000" d="M359.19,-12C369.95,-12 381.48,-12 392.71,-12"/>
 <polygon fill="#000000" stroke="#000000" points="392.91,-15.5 402.91,-12 392.91,-8.5 392.91,-15.5"/>
 </g>
@@ -670,7 +670,7 @@ implementation in a submodule of an interface in a parent module.
 <span class="w">   </span><span class="c">!&lt;</span>
 <span class="w">   </span><span class="c">!&lt;```fortran</span>
 <span class="w">   </span><span class="c">!&lt; type(string) :: astring</span>
-<span class="w">   </span><span class="c">!&lt; logical      :: test_passed(3)</span>
+<span class="w">   </span><span class="c">!&lt; logical      :: test_passed(4)</span>
 <span class="w">   </span><span class="c">!&lt; astring = &#39;When YOU are sad YOU should think to me :-)&#39;</span>
 <span class="w">   </span><span class="c">!&lt; test_passed(1) = (astring%replace(old=&#39;YOU&#39;, new=&#39;THEY&#39;)//&#39;&#39;==&#39;When THEY are sad THEY should think to me :-)&#39;)</span>
 <span class="w">   </span><span class="c">!&lt; test_passed(2) = (astring%replace(old=&#39;YOU&#39;, new=&#39;THEY&#39;, count=1)//&#39;&#39;==&#39;When THEY are sad YOU should think to me :-)&#39;)</span>
@@ -678,6 +678,9 @@ implementation in a submodule of an interface in a parent module.
 <span class="w">   </span><span class="c">!&lt; astring = astring%replace(old=new_line(&#39;a&#39;), new=&#39;|cr|&#39;)</span>
 <span class="w">   </span><span class="c">!&lt; astring = astring%replace(old=&#39;|cr|&#39;, new=new_line(&#39;a&#39;)//&#39;    &#39;)</span>
 <span class="w">   </span><span class="c">!&lt; test_passed(3) = (astring//&#39;&#39;==repeat(new_line(&#39;a&#39;)//&#39;    &#39;//&#39;abcd&#39;, 20))</span>
+<span class="w">   </span><span class="c">!&lt; astring = &#39;abcd  efg    hlmn&#39;</span>
+<span class="w">   </span><span class="c">!&lt; astring = astring%replace(old=&#39;&#39;, new=&#39;-&#39;)</span>
+<span class="w">   </span><span class="c">!&lt; test_passed(4) = (astring//&#39;&#39;==&#39;abcd  efg    hlmn&#39;)</span>
 <span class="w">   </span><span class="c">!&lt; print &#39;(L1)&#39;, all(test_passed)</span>
 <span class="w">   </span><span class="c">!&lt;```</span>
 <span class="w">   </span><span class="c">!=&gt; T &lt;&lt;&lt;</span>
@@ -690,6 +693,7 @@ implementation in a submodule of an interface in a parent module.
 
 <span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
 <span class="k">      </span><span class="n">replaced</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">self</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">old</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="c">! avoid infite loop for null substring replacement</span>
 <span class="w">      </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
 <span class="w">      </span><span class="k">do</span>
 <span class="k">         if</span><span class="w"> </span><span class="p">(</span><span class="nb">index</span><span class="p">(</span><span class="n">replaced</span><span class="p">%</span><span class="n">raw</span><span class="p">,</span><span class="w"> </span><span class="n">old</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
