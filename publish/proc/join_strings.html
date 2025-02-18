@@ -1,190 +1,672 @@
+<!-- -*- mode: jinja2 -*- -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-   <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
+      <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
     <meta name="author" content="Stefano Zaghi" >
     <link rel="icon" href="../favicon.png">
 
     <title>join_strings &ndash; Lib_VTK_IO</title>
 
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="../css/pygments.css" rel="stylesheet">
     <link href="../css/font-awesome.min.css" rel="stylesheet">
     <link href="../css/local.css" rel="stylesheet">
-    <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    
-    <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="../js/svg-pan-zoom.min.js"></script>
-
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
           <a class="navbar-brand" href="../index.html">Lib_VTK_IO </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
-              <a href="#" class="dropdown-toggle"
-              data-toggle="dropdown" role="button"
-              aria-haspopup="true"
-     aria-expanded="false">Contents <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-            <li><a href="../lists/files.html">Source Files</a></li>
-            <li><a href="../lists/modules.html">Modules</a></li>
-            <li><a href="../lists/procedures.html">Procedures</a></li>
-            <li><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                   <li><a href="../lists/types.html">Derived Types</a></li>
-            <li><a href="../lists/programs.html">Programs</a></li>
-       
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
             </ul>
-        
-            </li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/files.html">Source Files</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/modules.html">Modules</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/procedures.html">Procedures</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                             <li class="visible-xs hidden-sm visible-lg"><a href="../lists/types.html">Derived Types</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/programs.html">Programs</a></li>
-          </ul>
-        <form action="../search.html" class="navbar-form navbar-right" role="search">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
         </div>
-<!--
-        <button type="submit" class="btn btn-default">Submit</button>
--->
-        </form>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+      </nav>
+    </div>
 
     <div class="container">
   <div class="row">
     <h1>join_strings
       <small>Function</small>
+      
     </h1>
-    <div class="row">
-  <div class="col-lg-12">
-<div class="well well-sm">
-  <ul class="list-inline" style="margin-bottom:0px;display:inline">
-     <li><i class="fa fa-list-ol"></i>
-       <a data-toggle="tooltip"
-    data-placement="bottom" data-html="true"
-    title=" 0.1% of total for procedures.">23 statements</a>
-     </li> 
-    <li><i class="fa fa-code"></i><a href="../src/stringifor_string_t.F90"> Source File</a></li>
-  </ul>
-  <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/stringifor_string_t.f90.html'>stringifor_string_t.F90</a></li>
-     <li><a href='../module/stringifor_string_t.html'>stringifor_string_t</a></li>
-     <li class="active">join_strings</li>
-  </ol>
-</div>
-</div>
-</div>
-<script>
-  $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-  })
-</script>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.1% of total for procedures.">23 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/stringifor_string_t.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/stringifor_string_t.f90.html'>stringifor_string_t.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/stringifor_string_t.html'>stringifor_string_t</a></li>
+            <li class="breadcrumb-item active" aria-current="page">join_strings</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
 
   </div>
   
   <div class="row">
     <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
-    <div id="sidebar">
-  <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../proc/join_strings.html#src">join_strings</a>
-  </div>
-</div>
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/join_strings.html#src">join_strings</a>
+      </div>
+    </div>
 
-</div>
+
+  </div>
 
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private pure function join_strings(self, array, sep) result(join)</h2>
+    <h2>private pure function join_strings(self, array, sep) result(join)  
+</h2>
     
 
+
+    <h3>Type Bound</h3>
+    <p><a href='../type/string.html'>string</a></p>
 
     <h3>Arguments</h3>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" id="variable-self~359"></span>class(<a href='../type/string.html'>string</a>),</td>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-self~181"></span>
+              class(<a href='../type/string.html'>string</a>),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-array"></span>type(<a href='../type/string.html'>string</a>),</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-array"></span>
+              type(<a href='../type/string.html'>string</a>),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>array</strong>(1:)</td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-sep~4"></span>character(kind=CK,len=*),</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>array</strong>(1:)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sep~18"></span>
+              character(kind=CK, len=*),
+            </td>
 <td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>sep</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sep</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
-   <h3>Return Value <small><span class="anchor" id="variable-join~3"></span>type(<a href='../type/string.html'>string</a>)</small></h3>
-    
+      <h3>Return Value
+        <small>
+          <span class="anchor" id="variable-join~2"></span>
+          type(<a href='../type/string.html'>string</a>)
+        </small>
+      </h3>
+      
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~join_strings~~CalledByGraph Pages: 1 -->
+<svg id="procjoin_stringsCalledByGraph" width="578pt" height="704pt"
+ viewBox="0.00 0.00 578.00 704.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~join_strings~~CalledByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 700)">
+<title>proc~~join_strings~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-700 574,-700 574,4 -4,4"/>
+<!-- proc~join_strings -->
+<g id="proc~~join_strings~~CalledByGraph_node1" class="node">
+<title>proc~join_strings</title>
+<polygon fill="none" stroke="black" points="570,-318 458,-318 458,-294 570,-294 570,-318"/>
+<text text-anchor="middle" x="514" y="-303.6" font-family="Helvetica,sans-Serif" font-size="10.50">string%join_strings</text>
+</g>
+<!-- none~join -->
+<g id="proc~~join_strings~~CalledByGraph_node2" class="node">
+<title>none~join</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node2"><a xlink:href="../type/string.html#boundprocedure-join" xlink:title="string%join">
+<polygon fill="#a7506f" stroke="#a7506f" points="422,-318 350,-318 350,-294 422,-294 422,-318"/>
+<text text-anchor="middle" x="386" y="-303.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%join</text>
+</a>
+</g>
+</g>
+<!-- none~join&#45;&gt;proc~join_strings -->
+<g id="proc~~join_strings~~CalledByGraph_edge1" class="edge">
+<title>none~join&#45;&gt;proc~join_strings</title>
+<path fill="none" stroke="#000000" d="M422.1,-306C430.05,-306 438.75,-306 447.52,-306"/>
+<polygon fill="#000000" stroke="#000000" points="447.79,-309.5 457.79,-306 447.79,-302.5 447.79,-309.5"/>
+</g>
+<!-- proc~camelcase -->
+<g id="proc~~join_strings~~CalledByGraph_node3" class="node">
+<title>proc~camelcase</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node3"><a xlink:href="../proc/camelcase.html" xlink:title="string%camelcase">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="278,-654 168,-654 168,-630 278,-630 278,-654"/>
+<text text-anchor="middle" x="223" y="-639.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%camelcase</text>
+</a>
+</g>
+</g>
+<!-- proc~camelcase&#45;&gt;none~join -->
+<g id="proc~~join_strings~~CalledByGraph_edge2" class="edge">
+<title>proc~camelcase&#45;&gt;none~join</title>
+<path fill="none" stroke="#000000" d="M250.35,-629.98C270.7,-619.38 298,-602.02 314,-579 369.74,-498.78 381.72,-377.84 384.3,-328.33"/>
+<polygon fill="#000000" stroke="#000000" points="387.8,-328.25 384.74,-318.11 380.81,-327.95 387.8,-328.25"/>
+</g>
+<!-- proc~snakecase -->
+<g id="proc~~join_strings~~CalledByGraph_node4" class="node">
+<title>proc~snakecase</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node4"><a xlink:href="../proc/snakecase.html" xlink:title="string%snakecase">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="277.5,-570 168.5,-570 168.5,-546 277.5,-546 277.5,-570"/>
+<text text-anchor="middle" x="223" y="-555.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%snakecase</text>
+</a>
+</g>
+</g>
+<!-- proc~snakecase&#45;&gt;none~join -->
+<g id="proc~~join_strings~~CalledByGraph_edge3" class="edge">
+<title>proc~snakecase&#45;&gt;none~join</title>
+<path fill="none" stroke="#000000" d="M277.95,-554.75C291.07,-551.62 304.15,-546.2 314,-537 374.36,-480.67 383.87,-374.45 385.05,-328.33"/>
+<polygon fill="#000000" stroke="#000000" points="388.55,-328.25 385.19,-318.2 381.55,-328.15 388.55,-328.25"/>
+</g>
+<!-- proc~startcase -->
+<g id="proc~~join_strings~~CalledByGraph_node5" class="node">
+<title>proc~startcase</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node5"><a xlink:href="../proc/startcase.html" xlink:title="string%startcase">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="273.5,-528 172.5,-528 172.5,-504 273.5,-504 273.5,-528"/>
+<text text-anchor="middle" x="223" y="-513.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%startcase</text>
+</a>
+</g>
+</g>
+<!-- proc~startcase&#45;&gt;none~join -->
+<g id="proc~~join_strings~~CalledByGraph_edge4" class="edge">
+<title>proc~startcase&#45;&gt;none~join</title>
+<path fill="none" stroke="#000000" d="M273.82,-513.18C288.16,-510.19 302.91,-504.74 314,-495 364.09,-451.04 378.94,-368.13 383.27,-328.37"/>
+<polygon fill="#000000" stroke="#000000" points="386.75,-328.66 384.23,-318.37 379.79,-327.99 386.75,-328.66"/>
+</g>
+<!-- program~stringifor_test_csv_naive_parser -->
+<g id="proc~~join_strings~~CalledByGraph_node6" class="node">
+<title>program~stringifor_test_csv_naive_parser</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node6"><a xlink:href="../program/stringifor_test_csv_naive_parser.html" xlink:title="stringifor_test_csv_naive_parser">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="314,-486 132,-486 132,-462 314,-462 314,-486"/>
+<text text-anchor="middle" x="223" y="-471.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">stringifor_test_csv_naive_parser</text>
+</a>
+</g>
+</g>
+<!-- program~stringifor_test_csv_naive_parser&#45;&gt;none~join -->
+<g id="proc~~join_strings~~CalledByGraph_edge5" class="edge">
+<title>program~stringifor_test_csv_naive_parser&#45;&gt;none~join</title>
+<path fill="none" stroke="#000000" d="M299.61,-461.92C304.75,-459.45 309.62,-456.51 314,-453 354.16,-420.86 373.06,-360.41 380.66,-327.94"/>
+<polygon fill="#000000" stroke="#000000" points="384.1,-328.6 382.82,-318.09 377.26,-327.11 384.1,-328.6"/>
+</g>
+<!-- program~stringifor_test_csv_naive_parser~2 -->
+<g id="proc~~join_strings~~CalledByGraph_node7" class="node">
+<title>program~stringifor_test_csv_naive_parser~2</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node7"><a xlink:href="../program/stringifor_test_csv_naive_parser~2.html" xlink:title="stringifor_test_csv_naive_parser">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="314,-444 132,-444 132,-420 314,-420 314,-444"/>
+<text text-anchor="middle" x="223" y="-429.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">stringifor_test_csv_naive_parser</text>
+</a>
+</g>
+</g>
+<!-- program~stringifor_test_csv_naive_parser~2&#45;&gt;none~join -->
+<g id="proc~~join_strings~~CalledByGraph_edge6" class="edge">
+<title>program~stringifor_test_csv_naive_parser~2&#45;&gt;none~join</title>
+<path fill="none" stroke="#000000" d="M297.26,-419.96C303.17,-417.5 308.85,-414.55 314,-411 344.3,-390.15 365.3,-351.77 376.22,-327.64"/>
+<polygon fill="#000000" stroke="#000000" points="379.52,-328.83 380.29,-318.26 373.1,-326.05 379.52,-328.83"/>
+</g>
+<!-- program~stringifor_test_parse_large_csv -->
+<g id="proc~~join_strings~~CalledByGraph_node8" class="node">
+<title>program~stringifor_test_parse_large_csv</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node8"><a xlink:href="../program/stringifor_test_parse_large_csv.html" xlink:title="stringifor_test_parse_large_csv">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="311,-402 135,-402 135,-378 311,-378 311,-402"/>
+<text text-anchor="middle" x="223" y="-387.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">stringifor_test_parse_large_csv</text>
+</a>
+</g>
+</g>
+<!-- program~stringifor_test_parse_large_csv&#45;&gt;none~join -->
+<g id="proc~~join_strings~~CalledByGraph_edge7" class="edge">
+<title>program~stringifor_test_parse_large_csv&#45;&gt;none~join</title>
+<path fill="none" stroke="#000000" d="M292.15,-377.95C299.72,-375.49 307.16,-372.54 314,-369 334.8,-358.24 354.39,-340.01 367.7,-325.92"/>
+<polygon fill="#000000" stroke="#000000" points="370.6,-327.93 374.77,-318.19 365.44,-323.21 370.6,-327.93"/>
+</g>
+<!-- program~stringifor_test_parse_large_csv~2 -->
+<g id="proc~~join_strings~~CalledByGraph_node9" class="node">
+<title>program~stringifor_test_parse_large_csv~2</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node9"><a xlink:href="../program/stringifor_test_parse_large_csv~2.html" xlink:title="stringifor_test_parse_large_csv">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="311,-360 135,-360 135,-336 311,-336 311,-360"/>
+<text text-anchor="middle" x="223" y="-345.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">stringifor_test_parse_large_csv</text>
+</a>
+</g>
+</g>
+<!-- program~stringifor_test_parse_large_csv~2&#45;&gt;none~join -->
+<g id="proc~~join_strings~~CalledByGraph_edge8" class="edge">
+<title>program~stringifor_test_parse_large_csv~2&#45;&gt;none~join</title>
+<path fill="none" stroke="#000000" d="M277.9,-335.96C289.82,-333.15 302.37,-330.08 314,-327 322.4,-324.78 331.31,-322.27 339.87,-319.78"/>
+<polygon fill="#000000" stroke="#000000" points="341.12,-323.06 349.72,-316.88 339.14,-316.34 341.12,-323.06"/>
+</g>
+<!-- program~volatile_doctest~10 -->
+<g id="proc~~join_strings~~CalledByGraph_node10" class="node">
+<title>program~volatile_doctest~10</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node10"><a xlink:href="../program/volatile_doctest~10.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="271,-318 175,-318 175,-294 271,-294 271,-318"/>
+<text text-anchor="middle" x="223" y="-303.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~10&#45;&gt;none~join -->
+<g id="proc~~join_strings~~CalledByGraph_edge9" class="edge">
+<title>program~volatile_doctest~10&#45;&gt;none~join</title>
+<path fill="none" stroke="#000000" d="M271,-306C292.7,-306 318.34,-306 339.81,-306"/>
+<polygon fill="#000000" stroke="#000000" points="339.98,-309.5 349.98,-306 339.98,-302.5 339.98,-309.5"/>
+</g>
+<!-- program~volatile_doctest~135 -->
+<g id="proc~~join_strings~~CalledByGraph_node11" class="node">
+<title>program~volatile_doctest~135</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node11"><a xlink:href="../program/volatile_doctest~135.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="271,-276 175,-276 175,-252 271,-252 271,-276"/>
+<text text-anchor="middle" x="223" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~135&#45;&gt;none~join -->
+<g id="proc~~join_strings~~CalledByGraph_edge10" class="edge">
+<title>program~volatile_doctest~135&#45;&gt;none~join</title>
+<path fill="none" stroke="#000000" d="M271.3,-274.49C285.11,-277.7 300.19,-281.35 314,-285 322.4,-287.22 331.31,-289.73 339.87,-292.22"/>
+<polygon fill="#000000" stroke="#000000" points="339.14,-295.66 349.72,-295.12 341.12,-288.94 339.14,-295.66"/>
+</g>
+<!-- program~volatile_doctest~369 -->
+<g id="proc~~join_strings~~CalledByGraph_node12" class="node">
+<title>program~volatile_doctest~369</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node12"><a xlink:href="../program/volatile_doctest~369.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="271,-234 175,-234 175,-210 271,-210 271,-234"/>
+<text text-anchor="middle" x="223" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~369&#45;&gt;none~join -->
+<g id="proc~~join_strings~~CalledByGraph_edge11" class="edge">
+<title>program~volatile_doctest~369&#45;&gt;none~join</title>
+<path fill="none" stroke="#000000" d="M271.34,-228.46C285.58,-231.6 300.89,-236.22 314,-243 334.8,-253.76 354.39,-271.99 367.7,-286.08"/>
+<polygon fill="#000000" stroke="#000000" points="365.44,-288.79 374.77,-293.81 370.6,-284.07 365.44,-288.79"/>
+</g>
+<!-- program~volatile_doctest~575 -->
+<g id="proc~~join_strings~~CalledByGraph_node13" class="node">
+<title>program~volatile_doctest~575</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node13"><a xlink:href="../program/volatile_doctest~575.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="271,-192 175,-192 175,-168 271,-168 271,-192"/>
+<text text-anchor="middle" x="223" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~575&#45;&gt;none~join -->
+<g id="proc~~join_strings~~CalledByGraph_edge12" class="edge">
+<title>program~volatile_doctest~575&#45;&gt;none~join</title>
+<path fill="none" stroke="#000000" d="M271.12,-184.22C285.81,-187.24 301.44,-192.36 314,-201 344.3,-221.85 365.3,-260.23 376.22,-284.36"/>
+<polygon fill="#000000" stroke="#000000" points="373.1,-285.95 380.29,-293.74 379.52,-283.17 373.1,-285.95"/>
+</g>
+<!-- program~volatile_doctest~621 -->
+<g id="proc~~join_strings~~CalledByGraph_node14" class="node">
+<title>program~volatile_doctest~621</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node14"><a xlink:href="../program/volatile_doctest~621.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="271,-150 175,-150 175,-126 271,-126 271,-150"/>
+<text text-anchor="middle" x="223" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~621&#45;&gt;none~join -->
+<g id="proc~~join_strings~~CalledByGraph_edge13" class="edge">
+<title>program~volatile_doctest~621&#45;&gt;none~join</title>
+<path fill="none" stroke="#000000" d="M271.43,-141.08C286.31,-144.01 301.98,-149.37 314,-159 354.16,-191.14 373.06,-251.59 380.66,-284.06"/>
+<polygon fill="#000000" stroke="#000000" points="377.26,-284.89 382.82,-293.91 384.1,-283.4 377.26,-284.89"/>
+</g>
+<!-- program~volatile_doctest~756 -->
+<g id="proc~~join_strings~~CalledByGraph_node15" class="node">
+<title>program~volatile_doctest~756</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node15"><a xlink:href="../program/volatile_doctest~756.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="271,-108 175,-108 175,-84 271,-84 271,-108"/>
+<text text-anchor="middle" x="223" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~756&#45;&gt;none~join -->
+<g id="proc~~join_strings~~CalledByGraph_edge14" class="edge">
+<title>program~volatile_doctest~756&#45;&gt;none~join</title>
+<path fill="none" stroke="#000000" d="M271.03,-98.27C286.22,-101.12 302.18,-106.63 314,-117 364.09,-160.96 378.94,-243.87 383.27,-283.63"/>
+<polygon fill="#000000" stroke="#000000" points="379.79,-284.01 384.23,-293.63 386.75,-283.34 379.79,-284.01"/>
+</g>
+<!-- program~volatile_doctest~777 -->
+<g id="proc~~join_strings~~CalledByGraph_node16" class="node">
+<title>program~volatile_doctest~777</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node16"><a xlink:href="../program/volatile_doctest~777.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="271,-66 175,-66 175,-42 271,-42 271,-66"/>
+<text text-anchor="middle" x="223" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~777&#45;&gt;none~join -->
+<g id="proc~~join_strings~~CalledByGraph_edge15" class="edge">
+<title>program~volatile_doctest~777&#45;&gt;none~join</title>
+<path fill="none" stroke="#000000" d="M271.39,-55.86C286.62,-58.68 302.5,-64.27 314,-75 374.36,-131.33 383.87,-237.55 385.05,-283.67"/>
+<polygon fill="#000000" stroke="#000000" points="381.55,-283.85 385.19,-293.8 388.55,-283.75 381.55,-283.85"/>
+</g>
+<!-- program~volatile_doctest~820 -->
+<g id="proc~~join_strings~~CalledByGraph_node17" class="node">
+<title>program~volatile_doctest~820</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node17"><a xlink:href="../program/volatile_doctest~820.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="271,-24 175,-24 175,0 271,0 271,-24"/>
+<text text-anchor="middle" x="223" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~820&#45;&gt;none~join -->
+<g id="proc~~join_strings~~CalledByGraph_edge16" class="edge">
+<title>program~volatile_doctest~820&#45;&gt;none~join</title>
+<path fill="none" stroke="#000000" d="M271.2,-13.49C286.59,-16.26 302.63,-21.91 314,-33 350.32,-68.41 374.35,-225.27 382.2,-283.84"/>
+<polygon fill="#000000" stroke="#000000" points="378.74,-284.42 383.51,-293.88 385.68,-283.51 378.74,-284.42"/>
+</g>
+<!-- program~volatile_doctest~154 -->
+<g id="proc~~join_strings~~CalledByGraph_node18" class="node">
+<title>program~volatile_doctest~154</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node18"><a xlink:href="../program/volatile_doctest~154.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-528 0,-528 0,-504 96,-504 96,-528"/>
+<text text-anchor="middle" x="48" y="-513.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~154&#45;&gt;proc~startcase -->
+<g id="proc~~join_strings~~CalledByGraph_edge21" class="edge">
+<title>program~volatile_doctest~154&#45;&gt;proc~startcase</title>
+<path fill="none" stroke="#000000" d="M96.27,-516C116.66,-516 140.72,-516 162.32,-516"/>
+<polygon fill="#000000" stroke="#000000" points="162.37,-519.5 172.37,-516 162.37,-512.5 162.37,-519.5"/>
+</g>
+<!-- program~volatile_doctest~694 -->
+<g id="proc~~join_strings~~CalledByGraph_node19" class="node">
+<title>program~volatile_doctest~694</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node19"><a xlink:href="../program/volatile_doctest~694.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-696 0,-696 0,-672 96,-672 96,-696"/>
+<text text-anchor="middle" x="48" y="-681.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~694&#45;&gt;proc~camelcase -->
+<g id="proc~~join_strings~~CalledByGraph_edge17" class="edge">
+<title>program~volatile_doctest~694&#45;&gt;proc~camelcase</title>
+<path fill="none" stroke="#000000" d="M96.27,-672.52C116.75,-667.55 140.94,-661.68 162.61,-656.42"/>
+<polygon fill="#000000" stroke="#000000" points="163.48,-659.81 172.37,-654.05 161.82,-653.01 163.48,-659.81"/>
+</g>
+<!-- program~volatile_doctest~708 -->
+<g id="proc~~join_strings~~CalledByGraph_node20" class="node">
+<title>program~volatile_doctest~708</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node20"><a xlink:href="../program/volatile_doctest~708.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-654 0,-654 0,-630 96,-630 96,-654"/>
+<text text-anchor="middle" x="48" y="-639.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~708&#45;&gt;proc~camelcase -->
+<g id="proc~~join_strings~~CalledByGraph_edge18" class="edge">
+<title>program~volatile_doctest~708&#45;&gt;proc~camelcase</title>
+<path fill="none" stroke="#000000" d="M96.27,-642C115.19,-642 137.28,-642 157.62,-642"/>
+<polygon fill="#000000" stroke="#000000" points="157.75,-645.5 167.75,-642 157.75,-638.5 157.75,-645.5"/>
+</g>
+<!-- program~volatile_doctest~882 -->
+<g id="proc~~join_strings~~CalledByGraph_node21" class="node">
+<title>program~volatile_doctest~882</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node21"><a xlink:href="../program/volatile_doctest~882.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-612 0,-612 0,-588 96,-588 96,-612"/>
+<text text-anchor="middle" x="48" y="-597.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~882&#45;&gt;proc~snakecase -->
+<g id="proc~~join_strings~~CalledByGraph_edge19" class="edge">
+<title>program~volatile_doctest~882&#45;&gt;proc~snakecase</title>
+<path fill="none" stroke="#000000" d="M96.27,-588.52C116.75,-583.55 140.94,-577.68 162.61,-572.42"/>
+<polygon fill="#000000" stroke="#000000" points="163.48,-575.81 172.37,-570.05 161.82,-569.01 163.48,-575.81"/>
+</g>
+<!-- program~volatile_doctest~967 -->
+<g id="proc~~join_strings~~CalledByGraph_node22" class="node">
+<title>program~volatile_doctest~967</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node22"><a xlink:href="../program/volatile_doctest~967.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-486 0,-486 0,-462 96,-462 96,-486"/>
+<text text-anchor="middle" x="48" y="-471.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~967&#45;&gt;proc~startcase -->
+<g id="proc~~join_strings~~CalledByGraph_edge22" class="edge">
+<title>program~volatile_doctest~967&#45;&gt;proc~startcase</title>
+<path fill="none" stroke="#000000" d="M95.93,-486.04C107.7,-489.01 120.3,-492.16 132,-495 141.82,-497.39 152.26,-499.87 162.42,-502.26"/>
+<polygon fill="#000000" stroke="#000000" points="161.91,-505.74 172.45,-504.61 163.51,-498.92 161.91,-505.74"/>
+</g>
+<!-- program~volatile_doctest~98 -->
+<g id="proc~~join_strings~~CalledByGraph_node23" class="node">
+<title>program~volatile_doctest~98</title>
+<g id="a_proc~~join_strings~~CalledByGraph_node23"><a xlink:href="../program/volatile_doctest~98.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-570 0,-570 0,-546 96,-546 96,-570"/>
+<text text-anchor="middle" x="48" y="-555.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~98&#45;&gt;proc~snakecase -->
+<g id="proc~~join_strings~~CalledByGraph_edge20" class="edge">
+<title>program~volatile_doctest~98&#45;&gt;proc~snakecase</title>
+<path fill="none" stroke="#000000" d="M96.27,-558C115.36,-558 137.68,-558 158.17,-558"/>
+<polygon fill="#000000" stroke="#000000" points="158.37,-561.5 168.37,-558 158.37,-554.5 158.37,-561.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <br>
 
-    <section class="visible-xs visible-sm hidden-md">
-      <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../proc/join_strings.html#src">join_strings</a>
-  </div>
-</div>
-
-    </section>
-    <br class="visible-xs visible-sm hidden-md">
-
 
     
     
 
     
     
+
 
 
     
     <section>
     <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="highlight"><pre><span></span><span class="w">   </span><span class="k">pure function </span><span class="n">join_strings</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="k">array</span><span class="p">,</span><span class="w"> </span><span class="n">sep</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">join</span><span class="p">)</span><span class="w"></span>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">pure function </span><span class="n">join_strings</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="k">array</span><span class="p">,</span><span class="w"> </span><span class="n">sep</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">join</span><span class="p">)</span>
 <span class="w">   </span><span class="c">!&lt; Return a string that is a join of an array of strings.</span>
 <span class="w">   </span><span class="c">!&lt;</span>
 <span class="w">   </span><span class="c">!&lt; The join-separator is set equals to self if self has a value or it is set to a null string &#39;&#39;. This value can be overridden</span>
@@ -222,21 +704,21 @@
 <span class="w">   </span><span class="kt">integer</span><span class="w">                                         </span><span class="kd">::</span><span class="w"> </span><span class="n">a</span><span class="w">         </span><span class="c">!&lt; Counter.</span>
 
 <span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
-<span class="k">      </span><span class="n">sep_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="w"></span>
+<span class="k">      </span><span class="n">sep_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">raw</span>
 <span class="w">   </span><span class="k">else</span>
-<span class="k">      </span><span class="n">sep_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"></span>
+<span class="k">      </span><span class="n">sep_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
 <span class="w">   </span><span class="k">endif</span>
-<span class="k">   if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">sep</span><span class="p">))</span><span class="w"> </span><span class="n">sep_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sep</span><span class="w"></span>
-<span class="w">   </span><span class="n">join</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"></span>
-<span class="w">   </span><span class="k">do </span><span class="n">a</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="k">array</span><span class="p">,</span><span class="w"> </span><span class="nb">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="w"></span>
-<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="n">a</span><span class="p">)%</span><span class="n">raw</span><span class="p">))</span><span class="w"> </span><span class="n">join</span><span class="p">%</span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">join</span><span class="p">%</span><span class="n">raw</span><span class="o">//</span><span class="n">sep_</span><span class="o">//</span><span class="k">array</span><span class="p">(</span><span class="n">a</span><span class="p">)%</span><span class="n">raw</span><span class="w"></span>
+<span class="k">   if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">sep</span><span class="p">))</span><span class="w"> </span><span class="n">sep_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sep</span>
+<span class="w">   </span><span class="n">join</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="w">   </span><span class="k">do </span><span class="n">a</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="k">array</span><span class="p">,</span><span class="w"> </span><span class="nb">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="n">a</span><span class="p">)%</span><span class="n">raw</span><span class="p">))</span><span class="w"> </span><span class="n">join</span><span class="p">%</span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">join</span><span class="p">%</span><span class="n">raw</span><span class="o">//</span><span class="n">sep_</span><span class="o">//</span><span class="k">array</span><span class="p">(</span><span class="n">a</span><span class="p">)%</span><span class="n">raw</span>
 <span class="w">   </span><span class="k">enddo</span>
 <span class="k">   if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="mi">1</span><span class="p">)%</span><span class="n">raw</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
-<span class="k">      </span><span class="n">join</span><span class="p">%</span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">array</span><span class="p">(</span><span class="mi">1</span><span class="p">)%</span><span class="n">raw</span><span class="o">//</span><span class="n">join</span><span class="p">%</span><span class="n">raw</span><span class="w"></span>
+<span class="k">      </span><span class="n">join</span><span class="p">%</span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">array</span><span class="p">(</span><span class="mi">1</span><span class="p">)%</span><span class="n">raw</span><span class="o">//</span><span class="n">join</span><span class="p">%</span><span class="n">raw</span>
 <span class="w">   </span><span class="k">else</span>
-<span class="k">      </span><span class="n">join</span><span class="p">%</span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">join</span><span class="p">%</span><span class="n">raw</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sep_</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">join</span><span class="p">%</span><span class="n">raw</span><span class="p">))</span><span class="w"></span>
+<span class="k">      </span><span class="n">join</span><span class="p">%</span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">join</span><span class="p">%</span><span class="n">raw</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sep_</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">join</span><span class="p">%</span><span class="n">raw</span><span class="p">))</span>
 <span class="w">   </span><span class="k">endif</span>
-<span class="k">   endfunction </span><span class="n">join_strings</span><span class="w"></span>
+<span class="k">   endfunction </span><span class="n">join_strings</span>
 </pre></div>
 
     </section>
@@ -245,50 +727,48 @@
     </div>
   </div>
 
-    <hr>    
+      <hr>
     </div> <!-- /container -->
     <footer>
       <div class="container">
-      <div class="row">
-        <div class="col-xs-6 col-md-6"><p>Lib_VTK_IO was developed by Stefano Zaghi<br>&copy; 2022 
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Lib_VTK_IO
+ was developed by Stefano Zaghi<br>              &copy; 2025 
 </p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
         </div>
-        <div class="col-xs-6 col-md-6">
-          <p class="text-right">
-            Documentation generated by 
-            <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
-          </p>
-        </div>
-      </div>
-      <br>
-      </div> <!-- /container -->    
+        <br>
+      </div> <!-- /container -->
     </footer>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
+    <!-- Bootstrap core JavaScript -->
     <!-- Placed at the end of the document so the pages load faster -->
-<!--
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
--->
-    <script src="../js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
 
     <!-- MathJax JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
-        jax: ['input/TeX','input/MathML','output/HTML-CSS'],
-        extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
-      });
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script src="../tipuesearch/tipuesearch_content.js"></script>
-    <script src="../tipuesearch/tipuesearch_set.js"></script>
-    <script src="../tipuesearch/tipuesearch.js"></script>
-    
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
   </body>
 </html>

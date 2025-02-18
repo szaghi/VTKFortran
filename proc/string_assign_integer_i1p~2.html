@@ -1,550 +1,606 @@
+<!-- -*- mode: jinja2 -*- -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-   <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
+      <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
     <meta name="author" content="Stefano Zaghi" >
     <link rel="icon" href="../favicon.png">
 
     <title>string_assign_integer_I1P &ndash; Lib_VTK_IO</title>
 
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="../css/pygments.css" rel="stylesheet">
     <link href="../css/font-awesome.min.css" rel="stylesheet">
     <link href="../css/local.css" rel="stylesheet">
-    <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    
-    <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="../js/svg-pan-zoom.min.js"></script>
-
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
           <a class="navbar-brand" href="../index.html">Lib_VTK_IO </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
-              <a href="#" class="dropdown-toggle"
-              data-toggle="dropdown" role="button"
-              aria-haspopup="true"
-     aria-expanded="false">Contents <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-            <li><a href="../lists/files.html">Source Files</a></li>
-            <li><a href="../lists/modules.html">Modules</a></li>
-            <li><a href="../lists/procedures.html">Procedures</a></li>
-            <li><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                   <li><a href="../lists/types.html">Derived Types</a></li>
-            <li><a href="../lists/programs.html">Programs</a></li>
-       
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
             </ul>
-        
-            </li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/files.html">Source Files</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/modules.html">Modules</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/procedures.html">Procedures</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                             <li class="visible-xs hidden-sm visible-lg"><a href="../lists/types.html">Derived Types</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/programs.html">Programs</a></li>
-          </ul>
-        <form action="../search.html" class="navbar-form navbar-right" role="search">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
         </div>
-<!--
-        <button type="submit" class="btn btn-default">Submit</button>
--->
-        </form>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+      </nav>
+    </div>
 
     <div class="container">
   <div class="row">
     <h1>string_assign_integer_I1P
       <small>Subroutine</small>
+      
     </h1>
-    <div class="row">
-  <div class="col-lg-12">
-<div class="well well-sm">
-  <ul class="list-inline" style="margin-bottom:0px;display:inline">
-     <li><i class="fa fa-list-ol"></i>
-       <a data-toggle="tooltip"
-    data-placement="bottom" data-html="true"
-    title=" 0.0% of total for procedures.">5 statements</a>
-     </li> 
-    <li><i class="fa fa-code"></i><a href="../src/stringifor_string_t.F90"> Source File</a></li>
-  </ul>
-  <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/stringifor_string_t.f90~2.html'>stringifor_string_t.F90</a></li>
-     <li><a href='../module/stringifor_string_t~2.html'>stringifor_string_t</a></li>
-     <li class="active">string_assign_integer_I1P</li>
-  </ol>
-</div>
-</div>
-</div>
-<script>
-  $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-  })
-</script>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.0% of total for procedures.">5 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/stringifor_string_t.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/stringifor_string_t.f90~2.html'>stringifor_string_t.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/stringifor_string_t~2.html'>stringifor_string_t</a></li>
+            <li class="breadcrumb-item active" aria-current="page">string_assign_integer_I1P</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
 
   </div>
   
   <div class="row">
     <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
-    <div id="sidebar">
-  <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../proc/string_assign_integer_i1p~2.html#src">string_assign_integer_I1P</a>
-  </div>
-</div>
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/string_assign_integer_i1p~2.html#src">string_assign_integer_I1P</a>
+      </div>
+    </div>
 
-</div>
+
+  </div>
 
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private pure subroutine string_assign_integer_I1P(lhs, rhs)</h2>
+    <h2>private pure subroutine string_assign_integer_I1P(lhs, rhs)  
+</h2>
     
 
 
+    <h3>Type Bound</h3>
+    <p><a href='../type/string~2.html'>string</a></p>
+
     <h3>Arguments</h3>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" id="variable-lhs~61"></span>class(<a href='../type/string~2.html'>string</a>),</td>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-lhs~37"></span>
+              class(<a href='../type/string~2.html'>string</a>),
+            </td>
 <td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>lhs</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-rhs~61"></span>integer(kind=I1P),</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>lhs</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rhs~37"></span>
+              integer(kind=I1P),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>rhs</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rhs</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
     <br>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-  <h3 class="panel-title">Calls</h3>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
       </div>
-      <div class="panel-body">
+      <div class="card-body">
   <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: proc~~string_assign_integer_i1p~2~~CallsGraph Pages: 1 -->
-<svg id="procstring_assign_integer_i1p2CallsGraph" width="590pt" height="747pt"
- viewBox="0.00 0.00 590.00 747.47" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 743.47)">
+<svg id="procstring_assign_integer_i1p2CallsGraph" width="630pt" height="749pt"
+ viewBox="0.00 0.00 630.00 748.70" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 744.7)">
 <title>proc~~string_assign_integer_i1p~2~~CallsGraph</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-743.47 586,-743.47 586,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-744.7 626,-744.7 626,4 -4,4"/>
 <!-- proc~string_assign_integer_i1p~2 -->
 <g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node1" class="node">
 <title>proc~string_assign_integer_i1p~2</title>
-<polygon fill="none" stroke="black" points="146,-390 0,-390 0,-366 146,-366 146,-390"/>
-<text text-anchor="middle" x="73" y="-375.6" font-family="Helvetica,sans-Serif" font-size="10.50">string_assign_integer_I1P</text>
+<polygon fill="none" stroke="black" points="186,-396 0,-396 0,-372 186,-372 186,-396"/>
+<text text-anchor="middle" x="93" y="-381.6" font-family="Helvetica,sans-Serif" font-size="10.50">string%string_assign_integer_I1P</text>
 </g>
 <!-- interface~str -->
 <g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node2" class="node">
 <title>interface~str</title>
-<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node2"><a xlink:href=".././interface/str.html" xlink:title="str">
-<polygon fill="#a7506f" stroke="#a7506f" points="236,-390 182,-390 182,-366 236,-366 236,-390"/>
-<text text-anchor="middle" x="209" y="-375.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str</text>
+<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node2"><a xlink:href="../interface/str.html" xlink:title="str">
+<polygon fill="#a7506f" stroke="#a7506f" points="276,-396 222,-396 222,-372 276,-372 276,-396"/>
+<text text-anchor="middle" x="249" y="-381.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str</text>
 </a>
 </g>
 </g>
 <!-- proc~string_assign_integer_i1p~2&#45;&gt;interface~str -->
 <g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge1" class="edge">
 <title>proc~string_assign_integer_i1p~2&#45;&gt;interface~str</title>
-<path fill="none" stroke="#000000" d="M146.1,-378C154.97,-378 163.73,-378 171.73,-378"/>
-<polygon fill="#000000" stroke="#000000" points="171.77,-381.5 181.77,-378 171.77,-374.5 171.77,-381.5"/>
-</g>
-<!-- proc~str_i8p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node3" class="node">
-<title>proc~str_i8p</title>
-<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node3"><a xlink:href=".././proc/str_i8p.html" xlink:title="str_I8P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="426,-534 372,-534 372,-510 426,-510 426,-534"/>
-<text text-anchor="middle" x="399" y="-519.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I8P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_i8p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge2" class="edge">
-<title>interface~str&#45;&gt;proc~str_i8p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M213.83,-390.02C221.38,-411.82 240.28,-457.93 272,-483 297.85,-503.43 334.45,-513.22 361.55,-517.87"/>
-<polygon fill="#000000" stroke="#000000" points="361.37,-521.38 371.79,-519.46 362.45,-514.47 361.37,-521.38"/>
-</g>
-<!-- proc~str_a_r8p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node4" class="node">
-<title>proc~str_a_r8p</title>
-<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node4"><a xlink:href=".././proc/str_a_r8p.html" xlink:title="str_a_R8P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="336,-718 272,-718 272,-694 336,-694 336,-718"/>
-<text text-anchor="middle" x="304" y="-703.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_R8P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_a_r8p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge3" class="edge">
-<title>interface~str&#45;&gt;proc~str_a_r8p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M211.22,-390.15C216.49,-440.79 238.55,-634.76 272,-685 272.35,-685.52 272.72,-686.04 273.1,-686.54"/>
-<polygon fill="#000000" stroke="#000000" points="270.88,-689.27 280.42,-693.88 275.83,-684.33 270.88,-689.27"/>
-</g>
-<!-- proc~str_r8p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node5" class="node">
-<title>proc~str_r8p</title>
-<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node5"><a xlink:href=".././proc/str_r8p.html" xlink:title="str_R8P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="426,-718 372,-718 372,-694 426,-694 426,-718"/>
-<text text-anchor="middle" x="399" y="-703.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_R8P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_r8p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge4" class="edge">
-<title>interface~str&#45;&gt;proc~str_r8p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M210.17,-390.16C211.26,-446.64 218.94,-682.53 272,-727 298.88,-749.52 340.62,-736.21 368.62,-722.74"/>
-<polygon fill="#000000" stroke="#000000" points="370.2,-725.86 377.54,-718.22 367.04,-719.61 370.2,-725.86"/>
-</g>
-<!-- proc~str_a_i4p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node6" class="node">
-<title>proc~str_a_i4p</title>
-<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node6"><a xlink:href=".././proc/str_a_i4p.html" xlink:title="str_a_I4P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="333.5,-432 274.5,-432 274.5,-408 333.5,-408 333.5,-432"/>
-<text text-anchor="middle" x="304" y="-417.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I4P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_a_i4p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge6" class="edge">
-<title>interface~str&#45;&gt;proc~str_a_i4p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M236.4,-389.92C245.94,-394.23 256.88,-399.17 267.09,-403.78"/>
-<polygon fill="#000000" stroke="#000000" points="265.66,-406.98 276.21,-407.9 268.54,-400.6 265.66,-406.98"/>
-</g>
-<!-- proc~strf_i2p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node7" class="node">
-<title>proc~strf_i2p</title>
-<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node7"><a xlink:href=".././proc/strf_i2p.html" xlink:title="strf_I2P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="331,-596 277,-596 277,-572 331,-572 331,-596"/>
-<text text-anchor="middle" x="304" y="-581.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I2P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~strf_i2p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge5" class="edge">
-<title>interface~str&#45;&gt;proc~strf_i2p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M211.34,-390.05C215.37,-421.5 229.8,-507.42 272,-563 272.47,-563.62 272.97,-564.23 273.48,-564.83"/>
-<polygon fill="#000000" stroke="#000000" points="271.37,-567.64 281.09,-571.87 276.13,-562.51 271.37,-567.64"/>
-</g>
-<!-- proc~str_r4p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node8" class="node">
-<title>proc~str_r4p</title>
-<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node8"><a xlink:href=".././proc/str_r4p.html" xlink:title="str_R4P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="426,-676 372,-676 372,-652 426,-652 426,-676"/>
-<text text-anchor="middle" x="399" y="-661.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_R4P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_r4p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge7" class="edge">
-<title>interface~str&#45;&gt;proc~str_r4p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M209.92,-390.2C210.34,-427.08 216.35,-538.9 272,-605 284.3,-619.61 329.49,-638.68 362.23,-651.13"/>
-<polygon fill="#000000" stroke="#000000" points="361.35,-654.54 371.95,-654.77 363.81,-647.99 361.35,-654.54"/>
-</g>
-<!-- proc~str_i1p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node9" class="node">
-<title>proc~str_i1p</title>
-<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node9"><a xlink:href=".././proc/str_i1p.html" xlink:title="str_I1P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="426,-65 372,-65 372,-41 426,-41 426,-65"/>
-<text text-anchor="middle" x="399" y="-50.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I1P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_i1p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge8" class="edge">
-<title>interface~str&#45;&gt;proc~str_i1p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M210.16,-365.97C211.22,-328.5 218.86,-211.86 272,-137 294.76,-104.93 333.95,-81.66 362.59,-67.85"/>
-<polygon fill="#000000" stroke="#000000" points="364.27,-70.93 371.86,-63.53 361.31,-64.58 364.27,-70.93"/>
-</g>
-<!-- proc~strf_i4p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node10" class="node">
-<title>proc~strf_i4p</title>
-<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node10"><a xlink:href=".././proc/strf_i4p.html" xlink:title="strf_I4P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="331,-474 277,-474 277,-450 331,-450 331,-474"/>
-<text text-anchor="middle" x="304" y="-459.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I4P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~strf_i4p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge9" class="edge">
-<title>interface~str&#45;&gt;proc~strf_i4p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M220.77,-390.32C232.66,-403.57 252.66,-424.89 272,-441 273.16,-441.96 274.35,-442.92 275.58,-443.87"/>
-<polygon fill="#000000" stroke="#000000" points="273.74,-446.86 283.88,-449.92 277.86,-441.2 273.74,-446.86"/>
-</g>
-<!-- proc~str_a_r4p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node11" class="node">
-<title>proc~str_a_r4p</title>
-<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node11"><a xlink:href=".././proc/str_a_r4p.html" xlink:title="str_a_R4P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="336,-676 272,-676 272,-652 336,-652 336,-676"/>
-<text text-anchor="middle" x="304" y="-661.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_R4P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_a_r4p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge10" class="edge">
-<title>interface~str&#45;&gt;proc~str_a_r4p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M210.25,-390.15C211.59,-429.18 219.92,-553.72 272,-638 273.52,-640.46 275.36,-642.81 277.37,-645.01"/>
-<polygon fill="#000000" stroke="#000000" points="274.99,-647.58 284.67,-651.9 279.8,-642.49 274.99,-647.58"/>
-</g>
-<!-- proc~strf_r4p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node12" class="node">
-<title>proc~strf_r4p</title>
-<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node12"><a xlink:href=".././proc/strf_r4p.html" xlink:title="strf_R4P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="331.5,-390 276.5,-390 276.5,-366 331.5,-366 331.5,-390"/>
-<text text-anchor="middle" x="304" y="-375.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_R4P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~strf_r4p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge11" class="edge">
-<title>interface~str&#45;&gt;proc~strf_r4p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M236.4,-378C245.65,-378 256.21,-378 266.15,-378"/>
-<polygon fill="#000000" stroke="#000000" points="266.21,-381.5 276.21,-378 266.21,-374.5 266.21,-381.5"/>
-</g>
-<!-- proc~str_i2p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node13" class="node">
-<title>proc~str_i2p</title>
-<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node13"><a xlink:href=".././proc/str_i2p.html" xlink:title="str_I2P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="426,-227 372,-227 372,-203 426,-203 426,-227"/>
-<text text-anchor="middle" x="399" y="-212.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I2P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_i2p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge12" class="edge">
-<title>interface~str&#45;&gt;proc~str_i2p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M211.39,-365.97C216.62,-322.97 236.69,-177.96 272,-151 294.61,-133.74 309.81,-139.91 336,-151 356.72,-159.78 373.91,-179.24 384.89,-194.41"/>
-<polygon fill="#000000" stroke="#000000" points="382.07,-196.48 390.62,-202.74 387.84,-192.52 382.07,-196.48"/>
-</g>
-<!-- proc~str_a_i2p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node14" class="node">
-<title>proc~str_a_i2p</title>
-<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node14"><a xlink:href=".././proc/str_a_i2p.html" xlink:title="str_a_I2P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="333.5,-310 274.5,-310 274.5,-286 333.5,-286 333.5,-310"/>
-<text text-anchor="middle" x="304" y="-295.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I2P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_a_i2p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge13" class="edge">
-<title>interface~str&#45;&gt;proc~str_a_i2p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M223.73,-365.92C236.25,-354.92 255.29,-338.28 272,-324 274.75,-321.65 277.66,-319.19 280.53,-316.76"/>
-<polygon fill="#000000" stroke="#000000" points="283.04,-319.23 288.44,-310.11 278.54,-313.87 283.04,-319.23"/>
-</g>
-<!-- proc~strf_i8p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node15" class="node">
-<title>proc~strf_i8p</title>
-<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node15"><a xlink:href=".././proc/strf_i8p.html" xlink:title="strf_I8P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="331,-268 277,-268 277,-244 331,-244 331,-268"/>
-<text text-anchor="middle" x="304" y="-253.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I8P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~strf_i8p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge14" class="edge">
-<title>interface~str&#45;&gt;proc~strf_i8p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M215.44,-365.68C224.81,-345.44 245.55,-304.66 272,-277 272.76,-276.2 273.56,-275.42 274.39,-274.65"/>
-<polygon fill="#000000" stroke="#000000" points="276.8,-277.2 282.34,-268.17 272.38,-271.77 276.8,-277.2"/>
-</g>
-<!-- proc~str_bol -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node16" class="node">
-<title>proc~str_bol</title>
-<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node16"><a xlink:href=".././proc/str_bol.html" xlink:title="str_bol">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="331,-226 277,-226 277,-202 331,-202 331,-226"/>
-<text text-anchor="middle" x="304" y="-211.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_bol</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_bol -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge15" class="edge">
-<title>interface~str&#45;&gt;proc~str_bol</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M212.84,-365.66C219.42,-339.23 237.8,-276.24 272,-235 272.6,-234.28 273.23,-233.57 273.88,-232.88"/>
-<polygon fill="#000000" stroke="#000000" points="276.43,-235.3 281.64,-226.07 271.82,-230.03 276.43,-235.3"/>
-</g>
-<!-- proc~strf_r8p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node17" class="node">
-<title>proc~strf_r8p</title>
-<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node17"><a xlink:href=".././proc/strf_r8p.html" xlink:title="strf_R8P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="331.5,-184 276.5,-184 276.5,-160 331.5,-160 331.5,-184"/>
-<text text-anchor="middle" x="304" y="-169.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_R8P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~strf_r8p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge16" class="edge">
-<title>interface~str&#45;&gt;proc~strf_r8p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M211.34,-365.95C215.37,-334.5 229.8,-248.58 272,-193 272.47,-192.38 272.97,-191.77 273.48,-191.17"/>
-<polygon fill="#000000" stroke="#000000" points="276.13,-193.49 281.09,-184.13 271.37,-188.36 276.13,-193.49"/>
-</g>
-<!-- proc~str_i4p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node18" class="node">
-<title>proc~str_i4p</title>
-<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node18"><a xlink:href=".././proc/str_i4p.html" xlink:title="str_I4P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="426,-392 372,-392 372,-368 426,-368 426,-392"/>
-<text text-anchor="middle" x="399" y="-377.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I4P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_i4p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge17" class="edge">
-<title>interface~str&#45;&gt;proc~str_i4p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M236.06,-367.06C246.96,-363.04 259.89,-359 272,-357 300.07,-352.38 308,-351.97 336,-357 344.69,-358.56 353.75,-361.26 362.18,-364.27"/>
-<polygon fill="#000000" stroke="#000000" points="361.14,-367.62 371.73,-367.9 363.63,-361.07 361.14,-367.62"/>
-</g>
-<!-- proc~str_a_i8p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node19" class="node">
-<title>proc~str_a_i8p</title>
-<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node19"><a xlink:href=".././proc/str_a_i8p.html" xlink:title="str_a_I8P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="333.5,-554 274.5,-554 274.5,-530 333.5,-530 333.5,-554"/>
-<text text-anchor="middle" x="304" y="-539.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I8P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_a_i8p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge18" class="edge">
-<title>interface~str&#45;&gt;proc~str_a_i8p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M213.39,-390.04C220.9,-415.26 240.79,-474.73 272,-516 273.79,-518.36 275.83,-520.65 277.99,-522.83"/>
-<polygon fill="#000000" stroke="#000000" points="275.85,-525.62 285.61,-529.74 280.55,-520.43 275.85,-525.62"/>
-</g>
-<!-- proc~strf_i1p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node20" class="node">
-<title>proc~strf_i1p</title>
-<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node20"><a xlink:href=".././proc/strf_i1p.html" xlink:title="strf_I1P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="331,-66 277,-66 277,-42 331,-42 331,-66"/>
-<text text-anchor="middle" x="304" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I1P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~strf_i1p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge19" class="edge">
-<title>interface~str&#45;&gt;proc~strf_i1p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M209.78,-365.92C209.53,-323.43 213.28,-178.19 272,-80 273.49,-77.51 275.3,-75.15 277.29,-72.94"/>
-<polygon fill="#000000" stroke="#000000" points="279.72,-75.46 284.57,-66.04 274.91,-70.38 279.72,-75.46"/>
+<path fill="none" stroke="#000000" d="M186.25,-384C195.15,-384 203.76,-384 211.59,-384"/>
+<polygon fill="#000000" stroke="#000000" points="211.73,-387.5 221.73,-384 211.73,-380.5 211.73,-387.5"/>
 </g>
 <!-- proc~str_a_i1p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node21" class="node">
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node3" class="node">
 <title>proc~str_a_i1p</title>
-<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node21"><a xlink:href=".././proc/str_a_i1p.html" xlink:title="str_a_I1P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="333.5,-24 274.5,-24 274.5,0 333.5,0 333.5,-24"/>
-<text text-anchor="middle" x="304" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I1P</text>
+<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node3"><a xlink:href="../proc/str_a_i1p.html" xlink:title="str_a_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="373.5,-718 314.5,-718 314.5,-694 373.5,-694 373.5,-718"/>
+<text text-anchor="middle" x="344" y="-703.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I1P</text>
 </a>
 </g>
 </g>
 <!-- interface~str&#45;&gt;proc~str_a_i1p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge20" class="edge">
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge2" class="edge">
 <title>interface~str&#45;&gt;proc~str_a_i1p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M210.92,-365.85C215.24,-311.43 234.84,-90.14 272,-33 272.34,-32.47 272.71,-31.95 273.08,-31.45"/>
-<polygon fill="#000000" stroke="#000000" points="275.82,-33.65 280.36,-24.08 270.84,-28.73 275.82,-33.65"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M251.29,-396.25C256.73,-446.42 279.16,-635.88 312,-685 312.35,-685.52 312.72,-686.04 313.1,-686.54"/>
+<polygon fill="#000000" stroke="#000000" points="310.89,-689.28 320.43,-693.87 315.84,-684.33 310.89,-689.28"/>
 </g>
-<!-- proc~str_a_r8p&#45;&gt;proc~str_r8p -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge21" class="edge">
-<title>proc~str_a_r8p&#45;&gt;proc~str_r8p</title>
-<path fill="none" stroke="#000000" d="M336.23,-706C344.48,-706 353.46,-706 361.94,-706"/>
-<polygon fill="#000000" stroke="#000000" points="361.97,-709.5 371.97,-706 361.97,-702.5 361.97,-709.5"/>
-</g>
-<!-- proc~compact_real_string -->
-<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node22" class="node">
-<title>proc~compact_real_string</title>
-<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node22"><a xlink:href=".././proc/compact_real_string.html" xlink:title="compact_real_string">
-<polygon fill="#d9534f" stroke="#d9534f" points="582,-697 462,-697 462,-673 582,-673 582,-697"/>
-<text text-anchor="middle" x="522" y="-682.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compact_real_string</text>
+<!-- proc~str_a_i2p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node4" class="node">
+<title>proc~str_a_i2p</title>
+<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node4"><a xlink:href="../proc/str_a_i2p.html" xlink:title="str_a_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="373.5,-676 314.5,-676 314.5,-652 373.5,-652 373.5,-676"/>
+<text text-anchor="middle" x="344" y="-661.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I2P</text>
 </a>
 </g>
 </g>
-<!-- proc~str_r8p&#45;&gt;proc~compact_real_string -->
+<!-- interface~str&#45;&gt;proc~str_a_i2p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge3" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_i2p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M250.34,-396.14C251.93,-434.58 260.96,-555.89 312,-638 313.53,-640.46 315.37,-642.8 317.38,-645"/>
+<polygon fill="#000000" stroke="#000000" points="315.01,-647.57 324.69,-651.89 319.81,-642.48 315.01,-647.57"/>
+</g>
+<!-- proc~str_a_i4p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node5" class="node">
+<title>proc~str_a_i4p</title>
+<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node5"><a xlink:href="../proc/str_a_i4p.html" xlink:title="str_a_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="373.5,-558 314.5,-558 314.5,-534 373.5,-534 373.5,-558"/>
+<text text-anchor="middle" x="344" y="-543.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_a_i4p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge4" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_i4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M252.89,-396.17C259.55,-422.22 278.1,-484.33 312,-525 312.6,-525.72 313.23,-526.43 313.89,-527.12"/>
+<polygon fill="#000000" stroke="#000000" points="311.83,-529.96 321.66,-533.91 316.44,-524.7 311.83,-529.96"/>
+</g>
+<!-- proc~str_a_i8p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node6" class="node">
+<title>proc~str_a_i8p</title>
+<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node6"><a xlink:href="../proc/str_a_i8p.html" xlink:title="str_a_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="373.5,-474 314.5,-474 314.5,-450 373.5,-450 373.5,-474"/>
+<text text-anchor="middle" x="344" y="-459.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_a_i8p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge5" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_i8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M264.53,-396.19C279.55,-408.78 303.18,-428.6 320.59,-443.2"/>
+<polygon fill="#000000" stroke="#000000" points="318.66,-446.15 328.57,-449.9 323.16,-440.79 318.66,-446.15"/>
+</g>
+<!-- proc~str_a_r4p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node7" class="node">
+<title>proc~str_a_r4p</title>
+<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node7"><a xlink:href="../proc/str_a_r4p.html" xlink:title="str_a_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="376,-356 312,-356 312,-332 376,-332 376,-356"/>
+<text text-anchor="middle" x="344" y="-341.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_R4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_a_r4p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge6" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_r4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M276.4,-372.64C285.42,-368.76 295.69,-364.35 305.42,-360.16"/>
+<polygon fill="#000000" stroke="#000000" points="307.1,-363.25 314.91,-356.08 304.34,-356.82 307.1,-363.25"/>
+</g>
+<!-- proc~str_a_r8p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node8" class="node">
+<title>proc~str_a_r8p</title>
+<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node8"><a xlink:href="../proc/str_a_r8p.html" xlink:title="str_a_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="376,-314 312,-314 312,-290 376,-290 376,-314"/>
+<text text-anchor="middle" x="344" y="-299.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_R8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_a_r8p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge7" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_r8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M261.28,-371.64C273.28,-358.81 293.08,-338.5 312,-323 313.16,-322.05 314.37,-321.1 315.6,-320.15"/>
+<polygon fill="#000000" stroke="#000000" points="317.87,-322.83 323.92,-314.13 313.76,-317.16 317.87,-322.83"/>
+</g>
+<!-- proc~str_bol -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node9" class="node">
+<title>proc~str_bol</title>
+<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node9"><a xlink:href="../proc/str_bol.html" xlink:title="str_bol">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="371,-516 317,-516 317,-492 371,-492 371,-516"/>
+<text text-anchor="middle" x="344" y="-501.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_bol</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_bol -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge8" class="edge">
+<title>interface~str&#45;&gt;proc~str_bol</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M255.5,-396.07C264.95,-415.89 285.81,-455.85 312,-483 312.77,-483.8 313.57,-484.58 314.4,-485.35"/>
+<polygon fill="#000000" stroke="#000000" points="312.39,-488.23 322.37,-491.8 316.8,-482.79 312.39,-488.23"/>
+</g>
+<!-- proc~str_i1p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node10" class="node">
+<title>proc~str_i1p</title>
+<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node10"><a xlink:href="../proc/str_i1p.html" xlink:title="str_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="466,-728 412,-728 412,-704 466,-704 466,-728"/>
+<text text-anchor="middle" x="439" y="-713.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I1P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_i1p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge9" class="edge">
+<title>interface~str&#45;&gt;proc~str_i1p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M250.22,-396.32C251.49,-452.5 259.87,-683.45 312,-727 336.69,-747.63 374.39,-741.04 402.12,-731.63"/>
+<polygon fill="#000000" stroke="#000000" points="403.65,-734.8 411.84,-728.09 401.25,-728.23 403.65,-734.8"/>
+</g>
+<!-- proc~str_i2p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node11" class="node">
+<title>proc~str_i2p</title>
+<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node11"><a xlink:href="../proc/str_i2p.html" xlink:title="str_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="466,-666 412,-666 412,-642 466,-642 466,-666"/>
+<text text-anchor="middle" x="439" y="-651.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I2P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_i2p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge10" class="edge">
+<title>interface~str&#45;&gt;proc~str_i2p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M250.51,-396.08C252.56,-430.15 262.66,-528.42 312,-588 335.39,-616.24 374.04,-633.93 402.37,-643.8"/>
+<polygon fill="#000000" stroke="#000000" points="401.33,-647.14 411.93,-646.97 403.54,-640.5 401.33,-647.14"/>
+</g>
+<!-- proc~str_i4p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node12" class="node">
+<title>proc~str_i4p</title>
+<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node12"><a xlink:href="../proc/str_i4p.html" xlink:title="str_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="466,-578 412,-578 412,-554 466,-554 466,-578"/>
+<text text-anchor="middle" x="439" y="-563.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_i4p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge11" class="edge">
+<title>interface~str&#45;&gt;proc~str_i4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M249.74,-396.11C249.76,-430.03 255.02,-526.15 312,-567 337.77,-585.48 374.77,-582.71 402,-576.83"/>
+<polygon fill="#000000" stroke="#000000" points="403.01,-580.19 411.92,-574.46 401.38,-573.38 403.01,-580.19"/>
+</g>
+<!-- proc~str_i8p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node13" class="node">
+<title>proc~str_i8p</title>
+<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node13"><a xlink:href="../proc/str_i8p.html" xlink:title="str_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="466,-454 412,-454 412,-430 466,-430 466,-454"/>
+<text text-anchor="middle" x="439" y="-439.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_i8p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge12" class="edge">
+<title>interface~str&#45;&gt;proc~str_i8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M276.14,-392.06C308.88,-402.16 365.13,-419.52 401.95,-430.88"/>
+<polygon fill="#000000" stroke="#000000" points="401.19,-434.31 411.78,-433.91 403.26,-427.62 401.19,-434.31"/>
+</g>
+<!-- proc~str_r4p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node14" class="node">
+<title>proc~str_r4p</title>
+<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node14"><a xlink:href="../proc/str_r4p.html" xlink:title="str_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="466,-356 412,-356 412,-332 466,-332 466,-356"/>
+<text text-anchor="middle" x="439" y="-341.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_R4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_r4p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge13" class="edge">
+<title>interface~str&#45;&gt;proc~str_r4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M276.32,-381.4C302,-378.55 342.03,-373.24 376,-365 384.57,-362.92 393.65,-360.17 402.13,-357.35"/>
+<polygon fill="#000000" stroke="#000000" points="403.44,-360.6 411.75,-354.04 401.16,-353.98 403.44,-360.6"/>
+</g>
+<!-- proc~str_r8p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node15" class="node">
+<title>proc~str_r8p</title>
+<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node15"><a xlink:href="../proc/str_r8p.html" xlink:title="str_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="466,-314 412,-314 412,-290 466,-290 466,-314"/>
+<text text-anchor="middle" x="439" y="-299.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_R8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_r8p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge14" class="edge">
+<title>interface~str&#45;&gt;proc~str_r8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M253.05,-371.96C259.5,-349.3 276.93,-300.82 312,-281 341.06,-264.57 379.5,-274.72 406.25,-285.88"/>
+<polygon fill="#000000" stroke="#000000" points="404.98,-289.14 415.54,-289.98 407.81,-282.74 404.98,-289.14"/>
+</g>
+<!-- proc~strf_i1p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node16" class="node">
+<title>proc~strf_i1p</title>
+<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node16"><a xlink:href="../proc/strf_i1p.html" xlink:title="strf_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="371,-234 317,-234 317,-210 371,-210 371,-234"/>
+<text text-anchor="middle" x="344" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I1P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_i1p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge15" class="edge">
+<title>interface~str&#45;&gt;proc~strf_i1p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M253.55,-371.76C261.22,-346.7 281.21,-288.48 312,-248 313.83,-245.59 315.93,-243.25 318.15,-241.03"/>
+<polygon fill="#000000" stroke="#000000" points="320.86,-243.3 325.95,-234.01 316.18,-238.1 320.86,-243.3"/>
+</g>
+<!-- proc~strf_i2p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node17" class="node">
+<title>proc~strf_i2p</title>
+<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node17"><a xlink:href="../proc/strf_i2p.html" xlink:title="strf_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="371,-192 317,-192 317,-168 371,-168 371,-192"/>
+<text text-anchor="middle" x="344" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I2P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_i2p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge16" class="edge">
+<title>interface~str&#45;&gt;proc~strf_i2p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M251.44,-371.62C255.64,-340.14 270.33,-255.7 312,-201 312.47,-200.38 312.97,-199.77 313.49,-199.17"/>
+<polygon fill="#000000" stroke="#000000" points="316.13,-201.49 321.1,-192.13 311.38,-196.35 316.13,-201.49"/>
+</g>
+<!-- proc~strf_i4p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node18" class="node">
+<title>proc~strf_i4p</title>
+<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node18"><a xlink:href="../proc/strf_i4p.html" xlink:title="strf_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="371,-150 317,-150 317,-126 371,-126 371,-150"/>
+<text text-anchor="middle" x="344" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_i4p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge17" class="edge">
+<title>interface~str&#45;&gt;proc~strf_i4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M250.47,-371.77C252.41,-335.76 262.29,-228.31 312,-159 312.45,-158.37 312.93,-157.75 313.44,-157.14"/>
+<polygon fill="#000000" stroke="#000000" points="316.1,-159.44 320.94,-150.01 311.27,-154.36 316.1,-159.44"/>
+</g>
+<!-- proc~strf_i8p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node19" class="node">
+<title>proc~strf_i8p</title>
+<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node19"><a xlink:href="../proc/strf_i8p.html" xlink:title="strf_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="371,-108 317,-108 317,-84 371,-84 371,-108"/>
+<text text-anchor="middle" x="344" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_i8p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge18" class="edge">
+<title>interface~str&#45;&gt;proc~strf_i8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M249.8,-371.86C249.74,-331.73 254.21,-201.14 312,-117 312.43,-116.38 312.88,-115.77 313.36,-115.17"/>
+<polygon fill="#000000" stroke="#000000" points="315.8,-117.67 320.51,-108.18 310.91,-112.67 315.8,-117.67"/>
+</g>
+<!-- proc~strf_r4p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node20" class="node">
+<title>proc~strf_r4p</title>
+<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node20"><a xlink:href="../proc/strf_r4p.html" xlink:title="strf_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="371.5,-66 316.5,-66 316.5,-42 371.5,-42 371.5,-66"/>
+<text text-anchor="middle" x="344" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_R4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_r4p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge19" class="edge">
+<title>interface~str&#45;&gt;proc~strf_r4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M251.21,-371.77C256.44,-320.81 278.38,-125.58 312,-75 312.35,-74.48 312.72,-73.96 313.1,-73.46"/>
+<polygon fill="#000000" stroke="#000000" points="315.83,-75.67 320.42,-66.12 310.88,-70.73 315.83,-75.67"/>
+</g>
+<!-- proc~strf_r8p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node21" class="node">
+<title>proc~strf_r8p</title>
+<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node21"><a xlink:href="../proc/strf_r8p.html" xlink:title="strf_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="371.5,-24 316.5,-24 316.5,0 371.5,0 371.5,-24"/>
+<text text-anchor="middle" x="344" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_R8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_r8p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge20" class="edge">
+<title>interface~str&#45;&gt;proc~strf_r8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M250.9,-371.64C255.11,-316.27 274.3,-91.16 312,-33 312.34,-32.47 312.7,-31.95 313.08,-31.44"/>
+<polygon fill="#000000" stroke="#000000" points="315.82,-33.65 320.35,-24.07 310.84,-28.74 315.82,-33.65"/>
+</g>
+<!-- proc~str_a_i1p&#45;&gt;proc~str_i1p -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge21" class="edge">
+<title>proc~str_a_i1p&#45;&gt;proc~str_i1p</title>
+<path fill="none" stroke="#000000" d="M373.66,-709.08C382.5,-710.03 392.36,-711.09 401.65,-712.09"/>
+<polygon fill="#000000" stroke="#000000" points="401.49,-715.59 411.81,-713.18 402.24,-708.63 401.49,-715.59"/>
+</g>
+<!-- proc~str_a_i2p&#45;&gt;proc~str_i2p -->
 <g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge22" class="edge">
-<title>proc~str_r8p&#45;&gt;proc~compact_real_string</title>
-<path fill="none" stroke="#000000" d="M426.26,-701.44C433.83,-700.13 442.47,-698.63 451.39,-697.08"/>
-<polygon fill="#000000" stroke="#000000" points="452.27,-700.48 461.52,-695.32 451.07,-693.58 452.27,-700.48"/>
+<title>proc~str_a_i2p&#45;&gt;proc~str_i2p</title>
+<path fill="none" stroke="#000000" d="M373.66,-660.92C382.5,-659.97 392.36,-658.91 401.65,-657.91"/>
+<polygon fill="#000000" stroke="#000000" points="402.24,-661.37 411.81,-656.82 401.49,-654.41 402.24,-661.37"/>
 </g>
 <!-- proc~str_a_i4p&#45;&gt;proc~str_i4p -->
 <g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge23" class="edge">
 <title>proc~str_a_i4p&#45;&gt;proc~str_i4p</title>
-<path fill="none" stroke="#000000" d="M332.9,-408C342.13,-404.03 352.53,-399.56 362.27,-395.37"/>
-<polygon fill="#000000" stroke="#000000" points="363.91,-398.47 371.71,-391.31 361.14,-392.04 363.91,-398.47"/>
+<path fill="none" stroke="#000000" d="M373.66,-552.16C382.6,-554.09 392.57,-556.23 401.95,-558.25"/>
+<polygon fill="#000000" stroke="#000000" points="401.29,-561.69 411.81,-560.37 402.77,-554.84 401.29,-561.69"/>
 </g>
-<!-- proc~str_r4p&#45;&gt;proc~compact_real_string -->
+<!-- proc~str_a_i8p&#45;&gt;proc~str_i8p -->
 <g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge24" class="edge">
-<title>proc~str_r4p&#45;&gt;proc~compact_real_string</title>
-<path fill="none" stroke="#000000" d="M426.26,-668.56C433.83,-669.87 442.47,-671.37 451.39,-672.92"/>
-<polygon fill="#000000" stroke="#000000" points="451.07,-676.42 461.52,-674.68 452.27,-669.52 451.07,-676.42"/>
+<title>proc~str_a_i8p&#45;&gt;proc~str_i8p</title>
+<path fill="none" stroke="#000000" d="M373.66,-455.84C382.6,-453.91 392.57,-451.77 401.95,-449.75"/>
+<polygon fill="#000000" stroke="#000000" points="402.77,-453.16 411.81,-447.63 401.29,-446.31 402.77,-453.16"/>
 </g>
 <!-- proc~str_a_r4p&#45;&gt;proc~str_r4p -->
 <g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge25" class="edge">
 <title>proc~str_a_r4p&#45;&gt;proc~str_r4p</title>
-<path fill="none" stroke="#000000" d="M336.23,-664C344.48,-664 353.46,-664 361.94,-664"/>
-<polygon fill="#000000" stroke="#000000" points="361.97,-667.5 371.97,-664 361.97,-660.5 361.97,-667.5"/>
+<path fill="none" stroke="#000000" d="M376.23,-344C384.48,-344 393.46,-344 401.94,-344"/>
+<polygon fill="#000000" stroke="#000000" points="401.97,-347.5 411.97,-344 401.97,-340.5 401.97,-347.5"/>
 </g>
-<!-- proc~str_a_i2p&#45;&gt;proc~str_i2p -->
+<!-- proc~str_a_r8p&#45;&gt;proc~str_r8p -->
 <g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge26" class="edge">
-<title>proc~str_a_i2p&#45;&gt;proc~str_i2p</title>
-<path fill="none" stroke="#000000" d="M324.1,-285.89C328.14,-283.11 332.29,-280.06 336,-277 351.94,-263.83 368.42,-247.19 380.37,-234.46"/>
-<polygon fill="#000000" stroke="#000000" points="382.96,-236.82 387.19,-227.11 377.83,-232.06 382.96,-236.82"/>
+<title>proc~str_a_r8p&#45;&gt;proc~str_r8p</title>
+<path fill="none" stroke="#000000" d="M376.23,-302C384.48,-302 393.46,-302 401.94,-302"/>
+<polygon fill="#000000" stroke="#000000" points="401.97,-305.5 411.97,-302 401.97,-298.5 401.97,-305.5"/>
 </g>
-<!-- proc~str_a_i8p&#45;&gt;proc~str_i8p -->
+<!-- proc~compact_real_string -->
+<g id="proc~~string_assign_integer_i1p~2~~CallsGraph_node22" class="node">
+<title>proc~compact_real_string</title>
+<g id="a_proc~~string_assign_integer_i1p~2~~CallsGraph_node22"><a xlink:href="../proc/compact_real_string.html" xlink:title="compact_real_string">
+<polygon fill="#d9534f" stroke="#d9534f" points="622,-335 502,-335 502,-311 622,-311 622,-335"/>
+<text text-anchor="middle" x="562" y="-320.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compact_real_string</text>
+</a>
+</g>
+</g>
+<!-- proc~str_r4p&#45;&gt;proc~compact_real_string -->
 <g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge27" class="edge">
-<title>proc~str_a_i8p&#45;&gt;proc~str_i8p</title>
-<path fill="none" stroke="#000000" d="M333.66,-535.84C342.6,-533.91 352.57,-531.77 361.95,-529.75"/>
-<polygon fill="#000000" stroke="#000000" points="362.77,-533.16 371.81,-527.63 361.29,-526.31 362.77,-533.16"/>
+<title>proc~str_r4p&#45;&gt;proc~compact_real_string</title>
+<path fill="none" stroke="#000000" d="M466.26,-339.44C473.83,-338.13 482.47,-336.63 491.39,-335.08"/>
+<polygon fill="#000000" stroke="#000000" points="492.27,-338.48 501.52,-333.32 491.07,-331.58 492.27,-338.48"/>
 </g>
-<!-- proc~str_a_i1p&#45;&gt;proc~str_i1p -->
+<!-- proc~str_r8p&#45;&gt;proc~compact_real_string -->
 <g id="proc~~string_assign_integer_i1p~2~~CallsGraph_edge28" class="edge">
-<title>proc~str_a_i1p&#45;&gt;proc~str_i1p</title>
-<path fill="none" stroke="#000000" d="M332.4,-24.08C341.82,-28.23 352.51,-32.94 362.48,-37.34"/>
-<polygon fill="#000000" stroke="#000000" points="361.19,-40.6 371.75,-41.43 364.02,-34.19 361.19,-40.6"/>
+<title>proc~str_r8p&#45;&gt;proc~compact_real_string</title>
+<path fill="none" stroke="#000000" d="M466.26,-306.56C473.83,-307.87 482.47,-309.37 491.39,-310.92"/>
+<polygon fill="#000000" stroke="#000000" points="491.07,-314.42 501.52,-312.68 492.27,-307.52 491.07,-314.42"/>
 </g>
 </g>
 </svg>
-</div><div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div><div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog"><div class="modal-dialog modal-lg" role="document"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="-graph-help-label">Graph Key</h4></div><div class="modal-body">
-    <p>Nodes of different colours represent the following: </p>
-    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: Graph Key Pages: 1 -->
-<svg width="597pt" height="32pt"
- viewBox="0.00 0.00 596.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
 <title>Graph Key</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 592.5,-28 592.5,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
 <!-- Subroutine -->
 <g id="node1" class="node">
 <title>Subroutine</title>
@@ -563,63 +619,59 @@
 <polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
 <text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
 </g>
-<!-- Unknown Procedure Type -->
+<!-- Type Bound Procedure -->
 <g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
 <title>Unknown Procedure Type</title>
-<polygon fill="#777777" stroke="#777777" points="388.5,-24 243.5,-24 243.5,0 388.5,0 388.5,-24"/>
-<text text-anchor="middle" x="316" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
 </g>
 <!-- Program -->
-<g id="node5" class="node">
+<g id="node6" class="node">
 <title>Program</title>
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="465,-24 407,-24 407,0 465,0 465,-24"/>
-<text text-anchor="middle" x="436" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
 </g>
 <!-- This Page&#39;s Entity -->
-<g id="node6" class="node">
+<g id="node7" class="node">
 <title>This Page&#39;s Entity</title>
-<polygon fill="none" stroke="black" points="588.5,-24 483.5,-24 483.5,0 588.5,0 588.5,-24"/>
-<text text-anchor="middle" x="536" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
 </g>
 </g>
 </svg>
 
-    
-    <p>Solid arrows point from a procedure to one which it calls. Dashed 
-    arrows point from an interface to procedures which implement that interface.
-    This could include the module procedures in a generic interface or the
-    implementation in a submodule of an interface in a parent module.
-    </p>
-    </div></div></div></div>
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <br>
 
-    <section class="visible-xs visible-sm hidden-md">
-      <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../proc/string_assign_integer_i1p~2.html#src">string_assign_integer_I1P</a>
-  </div>
-</div>
-
-    </section>
-    <br class="visible-xs visible-sm hidden-md">
-
 
     
     
 
     
     
+
 
 
     
     <section>
     <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="highlight"><pre><span></span><span class="w">   </span><span class="k">pure subroutine </span><span class="n">string_assign_integer_I1P</span><span class="p">(</span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span><span class="w"></span>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">pure subroutine </span><span class="n">string_assign_integer_I1P</span><span class="p">(</span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span>
 <span class="w">   </span><span class="c">!&lt; Assignment operator from integer input.</span>
 <span class="w">   </span><span class="c">!&lt;</span>
 <span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -634,8 +686,8 @@
 <span class="w">   </span><span class="k">class</span><span class="p">(</span><span class="n">string</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">lhs</span><span class="w"> </span><span class="c">!&lt; Left hand side.</span>
 <span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w">  </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">    </span><span class="kd">::</span><span class="w"> </span><span class="n">rhs</span><span class="w"> </span><span class="c">!&lt; Right hand side.</span>
 
-<span class="w">   </span><span class="n">lhs</span><span class="p">%</span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">str</span><span class="p">(</span><span class="n">rhs</span><span class="p">))</span><span class="w"></span>
-<span class="w">   </span><span class="k">endsubroutine </span><span class="n">string_assign_integer_I1P</span><span class="w"></span>
+<span class="w">   </span><span class="n">lhs</span><span class="p">%</span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">str</span><span class="p">(</span><span class="n">rhs</span><span class="p">))</span>
+<span class="w">   </span><span class="k">endsubroutine </span><span class="n">string_assign_integer_I1P</span>
 </pre></div>
 
     </section>
@@ -644,50 +696,48 @@
     </div>
   </div>
 
-    <hr>    
+      <hr>
     </div> <!-- /container -->
     <footer>
       <div class="container">
-      <div class="row">
-        <div class="col-xs-6 col-md-6"><p>Lib_VTK_IO was developed by Stefano Zaghi<br>&copy; 2022 
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Lib_VTK_IO
+ was developed by Stefano Zaghi<br>              &copy; 2025 
 </p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
         </div>
-        <div class="col-xs-6 col-md-6">
-          <p class="text-right">
-            Documentation generated by 
-            <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
-          </p>
-        </div>
-      </div>
-      <br>
-      </div> <!-- /container -->    
+        <br>
+      </div> <!-- /container -->
     </footer>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
+    <!-- Bootstrap core JavaScript -->
     <!-- Placed at the end of the document so the pages load faster -->
-<!--
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
--->
-    <script src="../js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
 
     <!-- MathJax JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
-        jax: ['input/TeX','input/MathML','output/HTML-CSS'],
-        extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
-      });
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script src="../tipuesearch/tipuesearch_content.js"></script>
-    <script src="../tipuesearch/tipuesearch_set.js"></script>
-    <script src="../tipuesearch/tipuesearch.js"></script>
-    
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
   </body>
 </html>

@@ -1,144 +1,164 @@
+<!-- -*- mode: jinja2 -*- -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-   <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
+      <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
     <meta name="author" content="Stefano Zaghi" >
     <link rel="icon" href="../favicon.png">
 
     <title>befor64_pack_data_m.F90 &ndash; Lib_VTK_IO</title>
 
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="../css/pygments.css" rel="stylesheet">
     <link href="../css/font-awesome.min.css" rel="stylesheet">
     <link href="../css/local.css" rel="stylesheet">
-    <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    
-    <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="../js/svg-pan-zoom.min.js"></script>
-
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
           <a class="navbar-brand" href="../index.html">Lib_VTK_IO </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
-              <a href="#" class="dropdown-toggle"
-              data-toggle="dropdown" role="button"
-              aria-haspopup="true"
-     aria-expanded="false">Contents <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-            <li><a href="../lists/files.html">Source Files</a></li>
-            <li><a href="../lists/modules.html">Modules</a></li>
-            <li><a href="../lists/procedures.html">Procedures</a></li>
-            <li><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                   <li><a href="../lists/types.html">Derived Types</a></li>
-            <li><a href="../lists/programs.html">Programs</a></li>
-       
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
             </ul>
-        
-            </li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/files.html">Source Files</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/modules.html">Modules</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/procedures.html">Procedures</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                             <li class="visible-xs hidden-sm visible-lg"><a href="../lists/types.html">Derived Types</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/programs.html">Programs</a></li>
-          </ul>
-        <form action="../search.html" class="navbar-form navbar-right" role="search">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
         </div>
-<!--
-        <button type="submit" class="btn btn-default">Submit</button>
--->
-        </form>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+      </nav>
+    </div>
 
     <div class="container">
   <div class="row">
     <h1>befor64_pack_data_m.F90
-    <small>Source File</small>
+      <small>Source File</small>
+      
     </h1>
-    <div class="row">
-  <div class="col-lg-12">
-<div class="well well-sm">
-  <ul class="list-inline" style="margin-bottom:0px;display:inline">
-     <li><i class="fa fa-list-ol"></i>
-       <a data-toggle="tooltip"
-    data-placement="bottom" data-html="true"
-    title=" 0.9% of total for source files.">310 statements</a>
-     </li> 
-    <li><i class="fa fa-code"></i><a href="../src/befor64_pack_data_m.F90"> Source File</a></li>
-  </ul>
-  <ol class="breadcrumb in-well text-right">
-     <li class="active">befor64_pack_data_m.F90</li>
-  </ol>
-</div>
-</div>
-</div>
-<script>
-  $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-  })
-</script>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.9% of total for source files.">310 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/befor64_pack_data_m.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+            <li class="breadcrumb-item active" aria-current="page">befor64_pack_data_m.F90</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
 
   </div>
   <div class="row">
     <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
-    <div id="sidebar">
-  <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#mods-0">Modules</a></h3></div>
-  <div id="mods-0" class="panel-collapse collapse">
-    <div class="list-group">
-      <a class="list-group-item" href="../module/befor64_pack_data_m.html">befor64_pack_data_m</a>
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#mods-0"
+         aria-expanded="false" aria-controls="mods-0">
+         <h4 class="card-header bg-primary text-white">Modules</h4>
+      </a>
+      <div id="mods-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/befor64_pack_data_m~2.html">befor64_pack_data_m</a>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../sourcefile/befor64_pack_data_m.f90~4.html#src">befor64_pack_data_m.F90</a>
-  </div>
-</div>
 
-</div>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../sourcefile/befor64_pack_data_m.f90~4.html#src">befor64_pack_data_m.F90</a>
+      </div>
+    </div>
+
+
+  </div>
 
     </div>
     <div class="col-md-9" id='text'>
       
       <br>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-  <h3 class="panel-title">This file depends on</h3>
-      </div>
-      <div class="panel-body">
-  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">This file depends on</h3>
+          </div>
+          <div class="card-body">
+            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
@@ -146,7 +166,7 @@
 <!-- Title: sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph Pages: 1 -->
 <svg id="sourcefilebefor64_pack_data_mf904EfferentGraph" width="641pt" height="59pt"
  viewBox="0.00 0.00 641.00 59.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph" class="graph" transform="scale(1.22 1.22) rotate(0) translate(4 68.25)">
+<g id="sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph" class="graph" transform="scale(0.82 0.82) rotate(0) translate(4 68.25)">
 <title>sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph</title>
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-68.25 781,-68.25 781,4 -4,4"/>
 <!-- sourcefile~befor64_pack_data_m.f90~4 -->
@@ -158,7 +178,7 @@
 <!-- sourcefile~penf.f90 -->
 <g id="sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph_node2" class="node">
 <title>sourcefile~penf.f90</title>
-<g id="a_sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph_node2"><a xlink:href=".././sourcefile/penf.f90.html" xlink:title="penf.F90">
+<g id="a_sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph_node2"><a xlink:href="../sourcefile/penf.f90.html" xlink:title="penf.F90">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="588,-55.98 530,-55.98 530,-31.98 588,-31.98 588,-55.98"/>
 <text text-anchor="middle" x="559" y="-41.58" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf.F90</text>
 </a>
@@ -170,41 +190,41 @@
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M623.63,-43.98C614.83,-43.98 606.16,-43.98 598.19,-43.98"/>
 <polygon fill="#000000" stroke="#000000" points="598.16,-40.48 588.16,-43.98 598.16,-47.48 598.16,-40.48"/>
 </g>
-<!-- sourcefile~penf_global_parameters_variables.f90 -->
-<g id="sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph_node3" class="node">
-<title>sourcefile~penf_global_parameters_variables.f90</title>
-<g id="a_sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph_node3"><a xlink:href=".././sourcefile/penf_global_parameters_variables.f90.html" xlink:title="penf_global_parameters_variables.F90">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="219,-35.98 0,-35.98 0,-11.98 219,-11.98 219,-35.98"/>
-<text text-anchor="middle" x="109.5" y="-21.58" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf_global_parameters_variables.F90</text>
-</a>
-</g>
-</g>
-<!-- sourcefile~penf.f90&#45;&gt;sourcefile~penf_global_parameters_variables.f90 -->
-<g id="sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph_edge2" class="edge">
-<title>sourcefile~penf.f90&#45;&gt;sourcefile~penf_global_parameters_variables.f90</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M440,-63.98C349.7,-65.04 246.49,-49.82 180.01,-37.85"/>
-<polygon fill="#000000" stroke="#000000" points="180.53,-34.39 170.06,-36.03 179.27,-41.27 180.53,-34.39"/>
-</g>
 <!-- sourcefile~penf_b_size.f90 -->
-<g id="sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph_node4" class="node">
+<g id="sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph_node3" class="node">
 <title>sourcefile~penf_b_size.f90</title>
-<g id="a_sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph_node4"><a xlink:href=".././sourcefile/penf_b_size.f90.html" xlink:title="penf_b_size.F90">
+<g id="a_sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph_node3"><a xlink:href="../sourcefile/penf_b_size.f90.html" xlink:title="penf_b_size.F90">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="352,-35.98 255,-35.98 255,-11.98 352,-11.98 352,-35.98"/>
 <text text-anchor="middle" x="303.5" y="-21.58" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf_b_size.F90</text>
 </a>
 </g>
 </g>
 <!-- sourcefile~penf.f90&#45;&gt;sourcefile~penf_b_size.f90 -->
-<g id="sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph_edge3" class="edge">
+<g id="sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph_edge2" class="edge">
 <title>sourcefile~penf.f90&#45;&gt;sourcefile~penf_b_size.f90</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M529.63,-51.47C506.29,-57 472.24,-63.63 442,-63.98"/>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M440,-63.98C404.39,-64.4 365.6,-51.48 338.68,-40.22"/>
 <polygon fill="#000000" stroke="#000000" points="339.89,-36.93 329.33,-36.17 337.11,-43.36 339.89,-36.93"/>
 </g>
+<!-- sourcefile~penf_global_parameters_variables.f90 -->
+<g id="sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph_node4" class="node">
+<title>sourcefile~penf_global_parameters_variables.f90</title>
+<g id="a_sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph_node4"><a xlink:href="../sourcefile/penf_global_parameters_variables.f90.html" xlink:title="penf_global_parameters_variables.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="219,-35.98 0,-35.98 0,-11.98 219,-11.98 219,-35.98"/>
+<text text-anchor="middle" x="109.5" y="-21.58" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf_global_parameters_variables.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~penf.f90&#45;&gt;sourcefile~penf_global_parameters_variables.f90 -->
+<g id="sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph_edge3" class="edge">
+<title>sourcefile~penf.f90&#45;&gt;sourcefile~penf_global_parameters_variables.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M440,-63.98C349.7,-65.04 246.49,-49.82 180.01,-37.85"/>
+<polygon fill="#000000" stroke="#000000" points="180.53,-34.39 170.06,-36.03 179.27,-41.27 180.53,-34.39"/>
+</g>
 <!-- sourcefile~penf_stringify.f90 -->
 <g id="sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph_node5" class="node">
 <title>sourcefile~penf_stringify.f90</title>
-<g id="a_sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph_node5"><a xlink:href=".././sourcefile/penf_stringify.f90.html" xlink:title="penf_stringify.F90">
+<g id="a_sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph_node5"><a xlink:href="../sourcefile/penf_stringify.f90.html" xlink:title="penf_stringify.F90">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="494,-35.98 388,-35.98 388,-11.98 494,-11.98 494,-35.98"/>
 <text text-anchor="middle" x="441" y="-21.58" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf_stringify.F90</text>
 </a>
@@ -222,23 +242,37 @@
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M254.55,-23.98C246.56,-23.98 237.97,-23.98 229.11,-23.98"/>
 <polygon fill="#000000" stroke="#000000" points="229.01,-20.48 219.01,-23.98 229.01,-27.48 229.01,-20.48"/>
 </g>
-<!-- sourcefile~penf_stringify.f90&#45;&gt;sourcefile~penf_global_parameters_variables.f90 -->
-<g id="sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph_edge7" class="edge">
-<title>sourcefile~penf_stringify.f90&#45;&gt;sourcefile~penf_global_parameters_variables.f90</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M398.28,-11.92C383.77,-8.28 367.29,-4.78 352,-2.98 294.44,3.79 228.93,-2.8 180.67,-10.34"/>
-<polygon fill="#000000" stroke="#000000" points="179.96,-6.91 170.65,-11.96 181.08,-13.82 179.96,-6.91"/>
-</g>
 <!-- sourcefile~penf_stringify.f90&#45;&gt;sourcefile~penf_b_size.f90 -->
 <g id="sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph_edge6" class="edge">
 <title>sourcefile~penf_stringify.f90&#45;&gt;sourcefile~penf_b_size.f90</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M388,-23.98C379.62,-23.98 370.89,-23.98 362.38,-23.98"/>
 <polygon fill="#000000" stroke="#000000" points="362.14,-20.48 352.14,-23.98 362.14,-27.48 362.14,-20.48"/>
 </g>
+<!-- sourcefile~penf_stringify.f90&#45;&gt;sourcefile~penf_global_parameters_variables.f90 -->
+<g id="sourcefile~~befor64_pack_data_m.f90~4~~EfferentGraph_edge7" class="edge">
+<title>sourcefile~penf_stringify.f90&#45;&gt;sourcefile~penf_global_parameters_variables.f90</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M398.28,-11.92C383.77,-8.28 367.29,-4.78 352,-2.98 294.44,3.79 228.93,-2.8 180.67,-10.34"/>
+<polygon fill="#000000" stroke="#000000" points="179.96,-6.91 170.65,-11.96 181.08,-13.82 179.96,-6.91"/>
+</g>
 </g>
 </svg>
-</div><script>var pansourcefilebefor64_pack_data_mf904EfferentGraph = svgPanZoom('#sourcefilebefor64_pack_data_mf904EfferentGraph', {zoomEnabled: true,controlIconsEnabled: true, fit: true, center: true,}); </script><div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div><div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog"><div class="modal-dialog modal-lg" role="document"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="-graph-help-label">Graph Key</h4></div><div class="modal-body">
-    <p>Nodes of different colours represent the following: </p>
-    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+</div>                <script>
+                  var pansourcefilebefor64_pack_data_mf904EfferentGraph = svgPanZoom('#sourcefilebefor64_pack_data_mf904EfferentGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#EfferentGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="EfferentGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
@@ -264,49 +298,30 @@
 </g>
 </svg>
 
-    
-    <p>Solid arrows point from a file to a file which it depends on. A file
-    is dependent upon another if the latter must be compiled before the former
-    can be.
-    </p>
-    </div></div></div></div>
-      </div>
-    </div>
+<p>Solid arrows point from a file to a file which it depends on. A file
+is dependent upon another if the latter must be compiled before the former
+can be.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
 <br>
-    <section class="visible-xs visible-sm hidden-md">
-      <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#mods-1">Modules</a></h3></div>
-  <div id="mods-1" class="panel-collapse collapse">
-    <div class="list-group">
-      <a class="list-group-item" href="../module/befor64_pack_data_m.html">befor64_pack_data_m</a>
-    </div>
-  </div>
-</div>
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../sourcefile/befor64_pack_data_m.f90~4.html#src">befor64_pack_data_m.F90</a>
-  </div>
-</div>
-
-    </section>
-    <br class="visible-xs visible-sm hidden-md">
-
-    <section>
-      <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="hl"><pre><span></span><a id="ln-1" name="ln-1" href="#ln-1"></a><span class="c">!&lt; KISS library for packing heterogeneous data into single (homogeneous) packed one.</span>
+      <section>
+        <h2><span class="anchor" id="src"></span>Source Code</h2>
+        <div class="hl codehilite"><pre><span></span><a id="ln-1" name="ln-1" href="#ln-1"></a><span class="c">!&lt; KISS library for packing heterogeneous data into single (homogeneous) packed one.</span>
 <a id="ln-2" name="ln-2" href="#ln-2"></a><span class="c">!</span>
-<a id="ln-3" name="ln-3" href="#ln-3"></a><span class="k">module </span><span class="n">befor64_pack_data_m</span><span class="w"></span>
+<a id="ln-3" name="ln-3" href="#ln-3"></a><span class="k">module </span><span class="n">befor64_pack_data_m</span>
 <a id="ln-4" name="ln-4" href="#ln-4"></a><span class="c">!&lt; KISS library for packing heterogeneous data into single (homogeneous) packed one.</span>
-<a id="ln-5" name="ln-5" href="#ln-5"></a><span class="k">use </span><span class="n">penf</span><span class="w"></span>
+<a id="ln-5" name="ln-5" href="#ln-5"></a><span class="k">use </span><span class="n">penf</span>
 <a id="ln-6" name="ln-6" href="#ln-6"></a>
 <a id="ln-7" name="ln-7" href="#ln-7"></a><span class="k">implicit none</span>
 <a id="ln-8" name="ln-8" href="#ln-8"></a><span class="k">private</span>
-<a id="ln-9" name="ln-9" href="#ln-9"></a><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">pack_data</span><span class="w"></span>
+<a id="ln-9" name="ln-9" href="#ln-9"></a><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">pack_data</span>
 <a id="ln-10" name="ln-10" href="#ln-10"></a>
-<a id="ln-11" name="ln-11" href="#ln-11"></a><span class="k">interface </span><span class="n">pack_data</span><span class="w"></span>
+<a id="ln-11" name="ln-11" href="#ln-11"></a><span class="k">interface </span><span class="n">pack_data</span>
 <a id="ln-12" name="ln-12" href="#ln-12"></a><span class="w">  </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-13" name="ln-13" href="#ln-13"></a><span class="w">  </span><span class="c">!&lt;</span>
 <a id="ln-14" name="ln-14" href="#ln-14"></a><span class="w">  </span><span class="c">!&lt; This is useful for encoding different (heterogeneous) kinds variables into a single (homogeneous) stream of bits.</span>
@@ -355,16 +370,16 @@
 <a id="ln-57" name="ln-57" href="#ln-57"></a><span class="w">  </span><span class="c">!&lt;...</span>
 <a id="ln-58" name="ln-58" href="#ln-58"></a><span class="w">  </span><span class="c">!&lt;call pack_data(a1=array_r4,a2=array_i4,packed=rpack)</span>
 <a id="ln-59" name="ln-59" href="#ln-59"></a><span class="w">  </span><span class="c">!&lt;```</span>
-<a id="ln-60" name="ln-60" href="#ln-60"></a><span class="w">  </span><span class="k">module procedure </span><span class="n">pack_data_R8_R4</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_R8_I8</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_R8_I4</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_R8_I2</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_R8_I1</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span><span class="w"></span>
-<a id="ln-61" name="ln-61" href="#ln-61"></a><span class="w">                   </span><span class="n">pack_data_R4_R8</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_R4_I8</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_R4_I4</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_R4_I2</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_R4_I1</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span><span class="w"></span>
-<a id="ln-62" name="ln-62" href="#ln-62"></a><span class="w">                   </span><span class="n">pack_data_I8_R8</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I8_R4</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I8_I4</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I8_I2</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I8_I1</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span><span class="w"></span>
-<a id="ln-63" name="ln-63" href="#ln-63"></a><span class="w">                   </span><span class="n">pack_data_I4_R8</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I4_R4</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I4_I8</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I4_I2</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I4_I1</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span><span class="w"></span>
-<a id="ln-64" name="ln-64" href="#ln-64"></a><span class="w">                   </span><span class="n">pack_data_I2_R8</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I2_R4</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I2_I8</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I2_I4</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I2_I1</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span><span class="w"></span>
-<a id="ln-65" name="ln-65" href="#ln-65"></a><span class="w">                   </span><span class="n">pack_data_I1_R8</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I1_R4</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I1_I8</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I1_I4</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I1_I2</span><span class="w"></span>
+<a id="ln-60" name="ln-60" href="#ln-60"></a><span class="w">  </span><span class="k">module procedure </span><span class="n">pack_data_R8_R4</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_R8_I8</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_R8_I4</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_R8_I2</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_R8_I1</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-61" name="ln-61" href="#ln-61"></a><span class="w">                   </span><span class="n">pack_data_R4_R8</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_R4_I8</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_R4_I4</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_R4_I2</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_R4_I1</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-62" name="ln-62" href="#ln-62"></a><span class="w">                   </span><span class="n">pack_data_I8_R8</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I8_R4</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I8_I4</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I8_I2</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I8_I1</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-63" name="ln-63" href="#ln-63"></a><span class="w">                   </span><span class="n">pack_data_I4_R8</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I4_R4</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I4_I8</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I4_I2</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I4_I1</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-64" name="ln-64" href="#ln-64"></a><span class="w">                   </span><span class="n">pack_data_I2_R8</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I2_R4</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I2_I8</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I2_I4</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I2_I1</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<a id="ln-65" name="ln-65" href="#ln-65"></a><span class="w">                   </span><span class="n">pack_data_I1_R8</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I1_R4</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I1_I8</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I1_I4</span><span class="p">,</span><span class="w"> </span><span class="n">pack_data_I1_I2</span>
 <a id="ln-66" name="ln-66" href="#ln-66"></a><span class="k">endinterface</span>
 <a id="ln-67" name="ln-67" href="#ln-67"></a>
 <a id="ln-68" name="ln-68" href="#ln-68"></a><span class="k">contains</span>
-<a id="ln-69" name="ln-69" href="#ln-69"></a><span class="k">   pure subroutine </span><span class="n">pack_data_R8_R4</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-69" name="ln-69" href="#ln-69"></a><span class="k">   pure subroutine </span><span class="n">pack_data_R8_R4</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-70" name="ln-70" href="#ln-70"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-71" name="ln-71" href="#ln-71"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-72" name="ln-72" href="#ln-72"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -385,12 +400,12 @@
 <a id="ln-87" name="ln-87" href="#ln-87"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-88" name="ln-88" href="#ln-88"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-89" name="ln-89" href="#ln-89"></a>
-<a id="ln-90" name="ln-90" href="#ln-90"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-91" name="ln-91" href="#ln-91"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-92" name="ln-92" href="#ln-92"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-93" name="ln-93" href="#ln-93"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_R8_R4</span><span class="w"></span>
+<a id="ln-90" name="ln-90" href="#ln-90"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-91" name="ln-91" href="#ln-91"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-92" name="ln-92" href="#ln-92"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-93" name="ln-93" href="#ln-93"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_R8_R4</span>
 <a id="ln-94" name="ln-94" href="#ln-94"></a>
-<a id="ln-95" name="ln-95" href="#ln-95"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_R8_I8</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-95" name="ln-95" href="#ln-95"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_R8_I8</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-96" name="ln-96" href="#ln-96"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-97" name="ln-97" href="#ln-97"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-98" name="ln-98" href="#ln-98"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -411,12 +426,12 @@
 <a id="ln-113" name="ln-113" href="#ln-113"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-114" name="ln-114" href="#ln-114"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-115" name="ln-115" href="#ln-115"></a>
-<a id="ln-116" name="ln-116" href="#ln-116"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-117" name="ln-117" href="#ln-117"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-118" name="ln-118" href="#ln-118"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-119" name="ln-119" href="#ln-119"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_R8_I8</span><span class="w"></span>
+<a id="ln-116" name="ln-116" href="#ln-116"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-117" name="ln-117" href="#ln-117"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-118" name="ln-118" href="#ln-118"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-119" name="ln-119" href="#ln-119"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_R8_I8</span>
 <a id="ln-120" name="ln-120" href="#ln-120"></a>
-<a id="ln-121" name="ln-121" href="#ln-121"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_R8_I4</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-121" name="ln-121" href="#ln-121"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_R8_I4</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-122" name="ln-122" href="#ln-122"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-123" name="ln-123" href="#ln-123"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-124" name="ln-124" href="#ln-124"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -437,12 +452,12 @@
 <a id="ln-139" name="ln-139" href="#ln-139"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-140" name="ln-140" href="#ln-140"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-141" name="ln-141" href="#ln-141"></a>
-<a id="ln-142" name="ln-142" href="#ln-142"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-143" name="ln-143" href="#ln-143"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-144" name="ln-144" href="#ln-144"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-145" name="ln-145" href="#ln-145"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_R8_I4</span><span class="w"></span>
+<a id="ln-142" name="ln-142" href="#ln-142"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-143" name="ln-143" href="#ln-143"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-144" name="ln-144" href="#ln-144"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-145" name="ln-145" href="#ln-145"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_R8_I4</span>
 <a id="ln-146" name="ln-146" href="#ln-146"></a>
-<a id="ln-147" name="ln-147" href="#ln-147"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_R8_I2</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-147" name="ln-147" href="#ln-147"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_R8_I2</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-148" name="ln-148" href="#ln-148"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-149" name="ln-149" href="#ln-149"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-150" name="ln-150" href="#ln-150"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -463,12 +478,12 @@
 <a id="ln-165" name="ln-165" href="#ln-165"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-166" name="ln-166" href="#ln-166"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-167" name="ln-167" href="#ln-167"></a>
-<a id="ln-168" name="ln-168" href="#ln-168"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-169" name="ln-169" href="#ln-169"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-170" name="ln-170" href="#ln-170"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-171" name="ln-171" href="#ln-171"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_R8_I2</span><span class="w"></span>
+<a id="ln-168" name="ln-168" href="#ln-168"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-169" name="ln-169" href="#ln-169"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-170" name="ln-170" href="#ln-170"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-171" name="ln-171" href="#ln-171"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_R8_I2</span>
 <a id="ln-172" name="ln-172" href="#ln-172"></a>
-<a id="ln-173" name="ln-173" href="#ln-173"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_R8_I1</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-173" name="ln-173" href="#ln-173"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_R8_I1</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-174" name="ln-174" href="#ln-174"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-175" name="ln-175" href="#ln-175"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-176" name="ln-176" href="#ln-176"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -489,12 +504,12 @@
 <a id="ln-191" name="ln-191" href="#ln-191"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-192" name="ln-192" href="#ln-192"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-193" name="ln-193" href="#ln-193"></a>
-<a id="ln-194" name="ln-194" href="#ln-194"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-195" name="ln-195" href="#ln-195"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-196" name="ln-196" href="#ln-196"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-197" name="ln-197" href="#ln-197"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_R8_I1</span><span class="w"></span>
+<a id="ln-194" name="ln-194" href="#ln-194"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-195" name="ln-195" href="#ln-195"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-196" name="ln-196" href="#ln-196"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-197" name="ln-197" href="#ln-197"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_R8_I1</span>
 <a id="ln-198" name="ln-198" href="#ln-198"></a>
-<a id="ln-199" name="ln-199" href="#ln-199"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_R4_R8</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-199" name="ln-199" href="#ln-199"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_R4_R8</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-200" name="ln-200" href="#ln-200"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-201" name="ln-201" href="#ln-201"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-202" name="ln-202" href="#ln-202"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -515,12 +530,12 @@
 <a id="ln-217" name="ln-217" href="#ln-217"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-218" name="ln-218" href="#ln-218"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-219" name="ln-219" href="#ln-219"></a>
-<a id="ln-220" name="ln-220" href="#ln-220"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-221" name="ln-221" href="#ln-221"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-222" name="ln-222" href="#ln-222"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-223" name="ln-223" href="#ln-223"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_R4_R8</span><span class="w"></span>
+<a id="ln-220" name="ln-220" href="#ln-220"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-221" name="ln-221" href="#ln-221"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-222" name="ln-222" href="#ln-222"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-223" name="ln-223" href="#ln-223"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_R4_R8</span>
 <a id="ln-224" name="ln-224" href="#ln-224"></a>
-<a id="ln-225" name="ln-225" href="#ln-225"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_R4_I8</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-225" name="ln-225" href="#ln-225"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_R4_I8</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-226" name="ln-226" href="#ln-226"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-227" name="ln-227" href="#ln-227"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-228" name="ln-228" href="#ln-228"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -541,12 +556,12 @@
 <a id="ln-243" name="ln-243" href="#ln-243"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-244" name="ln-244" href="#ln-244"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-245" name="ln-245" href="#ln-245"></a>
-<a id="ln-246" name="ln-246" href="#ln-246"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-247" name="ln-247" href="#ln-247"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-248" name="ln-248" href="#ln-248"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-249" name="ln-249" href="#ln-249"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_R4_I8</span><span class="w"></span>
+<a id="ln-246" name="ln-246" href="#ln-246"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-247" name="ln-247" href="#ln-247"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-248" name="ln-248" href="#ln-248"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-249" name="ln-249" href="#ln-249"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_R4_I8</span>
 <a id="ln-250" name="ln-250" href="#ln-250"></a>
-<a id="ln-251" name="ln-251" href="#ln-251"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_R4_I4</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-251" name="ln-251" href="#ln-251"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_R4_I4</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-252" name="ln-252" href="#ln-252"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-253" name="ln-253" href="#ln-253"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-254" name="ln-254" href="#ln-254"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -567,12 +582,12 @@
 <a id="ln-269" name="ln-269" href="#ln-269"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-270" name="ln-270" href="#ln-270"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-271" name="ln-271" href="#ln-271"></a>
-<a id="ln-272" name="ln-272" href="#ln-272"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-273" name="ln-273" href="#ln-273"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-274" name="ln-274" href="#ln-274"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-275" name="ln-275" href="#ln-275"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_R4_I4</span><span class="w"></span>
+<a id="ln-272" name="ln-272" href="#ln-272"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-273" name="ln-273" href="#ln-273"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-274" name="ln-274" href="#ln-274"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-275" name="ln-275" href="#ln-275"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_R4_I4</span>
 <a id="ln-276" name="ln-276" href="#ln-276"></a>
-<a id="ln-277" name="ln-277" href="#ln-277"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_R4_I2</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-277" name="ln-277" href="#ln-277"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_R4_I2</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-278" name="ln-278" href="#ln-278"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-279" name="ln-279" href="#ln-279"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-280" name="ln-280" href="#ln-280"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -593,12 +608,12 @@
 <a id="ln-295" name="ln-295" href="#ln-295"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-296" name="ln-296" href="#ln-296"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-297" name="ln-297" href="#ln-297"></a>
-<a id="ln-298" name="ln-298" href="#ln-298"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-299" name="ln-299" href="#ln-299"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-300" name="ln-300" href="#ln-300"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-301" name="ln-301" href="#ln-301"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_R4_I2</span><span class="w"></span>
+<a id="ln-298" name="ln-298" href="#ln-298"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-299" name="ln-299" href="#ln-299"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-300" name="ln-300" href="#ln-300"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-301" name="ln-301" href="#ln-301"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_R4_I2</span>
 <a id="ln-302" name="ln-302" href="#ln-302"></a>
-<a id="ln-303" name="ln-303" href="#ln-303"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_R4_I1</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-303" name="ln-303" href="#ln-303"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_R4_I1</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-304" name="ln-304" href="#ln-304"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-305" name="ln-305" href="#ln-305"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-306" name="ln-306" href="#ln-306"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -619,12 +634,12 @@
 <a id="ln-321" name="ln-321" href="#ln-321"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-322" name="ln-322" href="#ln-322"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-323" name="ln-323" href="#ln-323"></a>
-<a id="ln-324" name="ln-324" href="#ln-324"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-325" name="ln-325" href="#ln-325"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-326" name="ln-326" href="#ln-326"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-327" name="ln-327" href="#ln-327"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_R4_I1</span><span class="w"></span>
+<a id="ln-324" name="ln-324" href="#ln-324"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-325" name="ln-325" href="#ln-325"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-326" name="ln-326" href="#ln-326"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-327" name="ln-327" href="#ln-327"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_R4_I1</span>
 <a id="ln-328" name="ln-328" href="#ln-328"></a>
-<a id="ln-329" name="ln-329" href="#ln-329"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I8_R8</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-329" name="ln-329" href="#ln-329"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I8_R8</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-330" name="ln-330" href="#ln-330"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-331" name="ln-331" href="#ln-331"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-332" name="ln-332" href="#ln-332"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -645,12 +660,12 @@
 <a id="ln-347" name="ln-347" href="#ln-347"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-348" name="ln-348" href="#ln-348"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-349" name="ln-349" href="#ln-349"></a>
-<a id="ln-350" name="ln-350" href="#ln-350"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-351" name="ln-351" href="#ln-351"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-352" name="ln-352" href="#ln-352"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-353" name="ln-353" href="#ln-353"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I8_R8</span><span class="w"></span>
+<a id="ln-350" name="ln-350" href="#ln-350"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-351" name="ln-351" href="#ln-351"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-352" name="ln-352" href="#ln-352"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-353" name="ln-353" href="#ln-353"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I8_R8</span>
 <a id="ln-354" name="ln-354" href="#ln-354"></a>
-<a id="ln-355" name="ln-355" href="#ln-355"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I8_R4</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-355" name="ln-355" href="#ln-355"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I8_R4</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-356" name="ln-356" href="#ln-356"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-357" name="ln-357" href="#ln-357"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-358" name="ln-358" href="#ln-358"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -671,12 +686,12 @@
 <a id="ln-373" name="ln-373" href="#ln-373"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-374" name="ln-374" href="#ln-374"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-375" name="ln-375" href="#ln-375"></a>
-<a id="ln-376" name="ln-376" href="#ln-376"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-377" name="ln-377" href="#ln-377"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-378" name="ln-378" href="#ln-378"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-379" name="ln-379" href="#ln-379"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I8_R4</span><span class="w"></span>
+<a id="ln-376" name="ln-376" href="#ln-376"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-377" name="ln-377" href="#ln-377"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-378" name="ln-378" href="#ln-378"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-379" name="ln-379" href="#ln-379"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I8_R4</span>
 <a id="ln-380" name="ln-380" href="#ln-380"></a>
-<a id="ln-381" name="ln-381" href="#ln-381"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I8_I4</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-381" name="ln-381" href="#ln-381"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I8_I4</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-382" name="ln-382" href="#ln-382"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-383" name="ln-383" href="#ln-383"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-384" name="ln-384" href="#ln-384"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -697,12 +712,12 @@
 <a id="ln-399" name="ln-399" href="#ln-399"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-400" name="ln-400" href="#ln-400"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-401" name="ln-401" href="#ln-401"></a>
-<a id="ln-402" name="ln-402" href="#ln-402"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-403" name="ln-403" href="#ln-403"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-404" name="ln-404" href="#ln-404"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-405" name="ln-405" href="#ln-405"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I8_I4</span><span class="w"></span>
+<a id="ln-402" name="ln-402" href="#ln-402"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-403" name="ln-403" href="#ln-403"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-404" name="ln-404" href="#ln-404"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-405" name="ln-405" href="#ln-405"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I8_I4</span>
 <a id="ln-406" name="ln-406" href="#ln-406"></a>
-<a id="ln-407" name="ln-407" href="#ln-407"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I8_I2</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-407" name="ln-407" href="#ln-407"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I8_I2</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-408" name="ln-408" href="#ln-408"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-409" name="ln-409" href="#ln-409"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-410" name="ln-410" href="#ln-410"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -723,12 +738,12 @@
 <a id="ln-425" name="ln-425" href="#ln-425"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-426" name="ln-426" href="#ln-426"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-427" name="ln-427" href="#ln-427"></a>
-<a id="ln-428" name="ln-428" href="#ln-428"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-429" name="ln-429" href="#ln-429"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-430" name="ln-430" href="#ln-430"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-431" name="ln-431" href="#ln-431"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I8_I2</span><span class="w"></span>
+<a id="ln-428" name="ln-428" href="#ln-428"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-429" name="ln-429" href="#ln-429"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-430" name="ln-430" href="#ln-430"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-431" name="ln-431" href="#ln-431"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I8_I2</span>
 <a id="ln-432" name="ln-432" href="#ln-432"></a>
-<a id="ln-433" name="ln-433" href="#ln-433"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I8_I1</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-433" name="ln-433" href="#ln-433"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I8_I1</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-434" name="ln-434" href="#ln-434"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-435" name="ln-435" href="#ln-435"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-436" name="ln-436" href="#ln-436"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -749,12 +764,12 @@
 <a id="ln-451" name="ln-451" href="#ln-451"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-452" name="ln-452" href="#ln-452"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-453" name="ln-453" href="#ln-453"></a>
-<a id="ln-454" name="ln-454" href="#ln-454"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-455" name="ln-455" href="#ln-455"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-456" name="ln-456" href="#ln-456"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-457" name="ln-457" href="#ln-457"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I8_I1</span><span class="w"></span>
+<a id="ln-454" name="ln-454" href="#ln-454"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-455" name="ln-455" href="#ln-455"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-456" name="ln-456" href="#ln-456"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-457" name="ln-457" href="#ln-457"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I8_I1</span>
 <a id="ln-458" name="ln-458" href="#ln-458"></a>
-<a id="ln-459" name="ln-459" href="#ln-459"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I4_R8</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-459" name="ln-459" href="#ln-459"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I4_R8</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-460" name="ln-460" href="#ln-460"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-461" name="ln-461" href="#ln-461"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-462" name="ln-462" href="#ln-462"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -775,12 +790,12 @@
 <a id="ln-477" name="ln-477" href="#ln-477"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-478" name="ln-478" href="#ln-478"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-479" name="ln-479" href="#ln-479"></a>
-<a id="ln-480" name="ln-480" href="#ln-480"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-481" name="ln-481" href="#ln-481"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-482" name="ln-482" href="#ln-482"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-483" name="ln-483" href="#ln-483"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I4_R8</span><span class="w"></span>
+<a id="ln-480" name="ln-480" href="#ln-480"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-481" name="ln-481" href="#ln-481"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-482" name="ln-482" href="#ln-482"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-483" name="ln-483" href="#ln-483"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I4_R8</span>
 <a id="ln-484" name="ln-484" href="#ln-484"></a>
-<a id="ln-485" name="ln-485" href="#ln-485"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I4_R4</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-485" name="ln-485" href="#ln-485"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I4_R4</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-486" name="ln-486" href="#ln-486"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-487" name="ln-487" href="#ln-487"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-488" name="ln-488" href="#ln-488"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -801,12 +816,12 @@
 <a id="ln-503" name="ln-503" href="#ln-503"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-504" name="ln-504" href="#ln-504"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-505" name="ln-505" href="#ln-505"></a>
-<a id="ln-506" name="ln-506" href="#ln-506"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-507" name="ln-507" href="#ln-507"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-508" name="ln-508" href="#ln-508"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-509" name="ln-509" href="#ln-509"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I4_R4</span><span class="w"></span>
+<a id="ln-506" name="ln-506" href="#ln-506"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-507" name="ln-507" href="#ln-507"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-508" name="ln-508" href="#ln-508"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-509" name="ln-509" href="#ln-509"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I4_R4</span>
 <a id="ln-510" name="ln-510" href="#ln-510"></a>
-<a id="ln-511" name="ln-511" href="#ln-511"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I4_I8</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-511" name="ln-511" href="#ln-511"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I4_I8</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-512" name="ln-512" href="#ln-512"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-513" name="ln-513" href="#ln-513"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-514" name="ln-514" href="#ln-514"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -827,12 +842,12 @@
 <a id="ln-529" name="ln-529" href="#ln-529"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-530" name="ln-530" href="#ln-530"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-531" name="ln-531" href="#ln-531"></a>
-<a id="ln-532" name="ln-532" href="#ln-532"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-533" name="ln-533" href="#ln-533"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-534" name="ln-534" href="#ln-534"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-535" name="ln-535" href="#ln-535"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I4_I8</span><span class="w"></span>
+<a id="ln-532" name="ln-532" href="#ln-532"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-533" name="ln-533" href="#ln-533"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-534" name="ln-534" href="#ln-534"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-535" name="ln-535" href="#ln-535"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I4_I8</span>
 <a id="ln-536" name="ln-536" href="#ln-536"></a>
-<a id="ln-537" name="ln-537" href="#ln-537"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I4_I2</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-537" name="ln-537" href="#ln-537"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I4_I2</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-538" name="ln-538" href="#ln-538"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-539" name="ln-539" href="#ln-539"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-540" name="ln-540" href="#ln-540"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -853,12 +868,12 @@
 <a id="ln-555" name="ln-555" href="#ln-555"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-556" name="ln-556" href="#ln-556"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-557" name="ln-557" href="#ln-557"></a>
-<a id="ln-558" name="ln-558" href="#ln-558"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-559" name="ln-559" href="#ln-559"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-560" name="ln-560" href="#ln-560"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-561" name="ln-561" href="#ln-561"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I4_I2</span><span class="w"></span>
+<a id="ln-558" name="ln-558" href="#ln-558"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-559" name="ln-559" href="#ln-559"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-560" name="ln-560" href="#ln-560"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-561" name="ln-561" href="#ln-561"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I4_I2</span>
 <a id="ln-562" name="ln-562" href="#ln-562"></a>
-<a id="ln-563" name="ln-563" href="#ln-563"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I4_I1</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-563" name="ln-563" href="#ln-563"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I4_I1</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-564" name="ln-564" href="#ln-564"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-565" name="ln-565" href="#ln-565"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-566" name="ln-566" href="#ln-566"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -879,12 +894,12 @@
 <a id="ln-581" name="ln-581" href="#ln-581"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-582" name="ln-582" href="#ln-582"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-583" name="ln-583" href="#ln-583"></a>
-<a id="ln-584" name="ln-584" href="#ln-584"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-585" name="ln-585" href="#ln-585"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-586" name="ln-586" href="#ln-586"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-587" name="ln-587" href="#ln-587"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I4_I1</span><span class="w"></span>
+<a id="ln-584" name="ln-584" href="#ln-584"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-585" name="ln-585" href="#ln-585"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-586" name="ln-586" href="#ln-586"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-587" name="ln-587" href="#ln-587"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I4_I1</span>
 <a id="ln-588" name="ln-588" href="#ln-588"></a>
-<a id="ln-589" name="ln-589" href="#ln-589"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I2_R8</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-589" name="ln-589" href="#ln-589"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I2_R8</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-590" name="ln-590" href="#ln-590"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-591" name="ln-591" href="#ln-591"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-592" name="ln-592" href="#ln-592"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -905,12 +920,12 @@
 <a id="ln-607" name="ln-607" href="#ln-607"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-608" name="ln-608" href="#ln-608"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-609" name="ln-609" href="#ln-609"></a>
-<a id="ln-610" name="ln-610" href="#ln-610"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-611" name="ln-611" href="#ln-611"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-612" name="ln-612" href="#ln-612"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-613" name="ln-613" href="#ln-613"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I2_R8</span><span class="w"></span>
+<a id="ln-610" name="ln-610" href="#ln-610"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-611" name="ln-611" href="#ln-611"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-612" name="ln-612" href="#ln-612"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-613" name="ln-613" href="#ln-613"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I2_R8</span>
 <a id="ln-614" name="ln-614" href="#ln-614"></a>
-<a id="ln-615" name="ln-615" href="#ln-615"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I2_R4</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-615" name="ln-615" href="#ln-615"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I2_R4</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-616" name="ln-616" href="#ln-616"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-617" name="ln-617" href="#ln-617"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-618" name="ln-618" href="#ln-618"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -931,12 +946,12 @@
 <a id="ln-633" name="ln-633" href="#ln-633"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-634" name="ln-634" href="#ln-634"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-635" name="ln-635" href="#ln-635"></a>
-<a id="ln-636" name="ln-636" href="#ln-636"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-637" name="ln-637" href="#ln-637"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-638" name="ln-638" href="#ln-638"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-639" name="ln-639" href="#ln-639"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I2_R4</span><span class="w"></span>
+<a id="ln-636" name="ln-636" href="#ln-636"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-637" name="ln-637" href="#ln-637"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-638" name="ln-638" href="#ln-638"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-639" name="ln-639" href="#ln-639"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I2_R4</span>
 <a id="ln-640" name="ln-640" href="#ln-640"></a>
-<a id="ln-641" name="ln-641" href="#ln-641"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I2_I8</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-641" name="ln-641" href="#ln-641"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I2_I8</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-642" name="ln-642" href="#ln-642"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-643" name="ln-643" href="#ln-643"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-644" name="ln-644" href="#ln-644"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -957,12 +972,12 @@
 <a id="ln-659" name="ln-659" href="#ln-659"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-660" name="ln-660" href="#ln-660"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-661" name="ln-661" href="#ln-661"></a>
-<a id="ln-662" name="ln-662" href="#ln-662"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-663" name="ln-663" href="#ln-663"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-664" name="ln-664" href="#ln-664"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-665" name="ln-665" href="#ln-665"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I2_I8</span><span class="w"></span>
+<a id="ln-662" name="ln-662" href="#ln-662"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-663" name="ln-663" href="#ln-663"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-664" name="ln-664" href="#ln-664"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-665" name="ln-665" href="#ln-665"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I2_I8</span>
 <a id="ln-666" name="ln-666" href="#ln-666"></a>
-<a id="ln-667" name="ln-667" href="#ln-667"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I2_I4</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-667" name="ln-667" href="#ln-667"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I2_I4</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-668" name="ln-668" href="#ln-668"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-669" name="ln-669" href="#ln-669"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-670" name="ln-670" href="#ln-670"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -983,12 +998,12 @@
 <a id="ln-685" name="ln-685" href="#ln-685"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-686" name="ln-686" href="#ln-686"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-687" name="ln-687" href="#ln-687"></a>
-<a id="ln-688" name="ln-688" href="#ln-688"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-689" name="ln-689" href="#ln-689"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-690" name="ln-690" href="#ln-690"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-691" name="ln-691" href="#ln-691"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I2_I4</span><span class="w"></span>
+<a id="ln-688" name="ln-688" href="#ln-688"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-689" name="ln-689" href="#ln-689"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-690" name="ln-690" href="#ln-690"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-691" name="ln-691" href="#ln-691"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I2_I4</span>
 <a id="ln-692" name="ln-692" href="#ln-692"></a>
-<a id="ln-693" name="ln-693" href="#ln-693"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I2_I1</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-693" name="ln-693" href="#ln-693"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I2_I1</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-694" name="ln-694" href="#ln-694"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-695" name="ln-695" href="#ln-695"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-696" name="ln-696" href="#ln-696"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -1009,12 +1024,12 @@
 <a id="ln-711" name="ln-711" href="#ln-711"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-712" name="ln-712" href="#ln-712"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-713" name="ln-713" href="#ln-713"></a>
-<a id="ln-714" name="ln-714" href="#ln-714"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-715" name="ln-715" href="#ln-715"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-716" name="ln-716" href="#ln-716"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-717" name="ln-717" href="#ln-717"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I2_I1</span><span class="w"></span>
+<a id="ln-714" name="ln-714" href="#ln-714"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-715" name="ln-715" href="#ln-715"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-716" name="ln-716" href="#ln-716"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-717" name="ln-717" href="#ln-717"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I2_I1</span>
 <a id="ln-718" name="ln-718" href="#ln-718"></a>
-<a id="ln-719" name="ln-719" href="#ln-719"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I1_R8</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-719" name="ln-719" href="#ln-719"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I1_R8</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-720" name="ln-720" href="#ln-720"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-721" name="ln-721" href="#ln-721"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-722" name="ln-722" href="#ln-722"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -1035,12 +1050,12 @@
 <a id="ln-737" name="ln-737" href="#ln-737"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-738" name="ln-738" href="#ln-738"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-739" name="ln-739" href="#ln-739"></a>
-<a id="ln-740" name="ln-740" href="#ln-740"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-741" name="ln-741" href="#ln-741"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-742" name="ln-742" href="#ln-742"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-743" name="ln-743" href="#ln-743"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I1_R8</span><span class="w"></span>
+<a id="ln-740" name="ln-740" href="#ln-740"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-741" name="ln-741" href="#ln-741"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-742" name="ln-742" href="#ln-742"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-743" name="ln-743" href="#ln-743"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I1_R8</span>
 <a id="ln-744" name="ln-744" href="#ln-744"></a>
-<a id="ln-745" name="ln-745" href="#ln-745"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I1_R4</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-745" name="ln-745" href="#ln-745"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I1_R4</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-746" name="ln-746" href="#ln-746"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-747" name="ln-747" href="#ln-747"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-748" name="ln-748" href="#ln-748"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -1061,12 +1076,12 @@
 <a id="ln-763" name="ln-763" href="#ln-763"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-764" name="ln-764" href="#ln-764"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-765" name="ln-765" href="#ln-765"></a>
-<a id="ln-766" name="ln-766" href="#ln-766"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-767" name="ln-767" href="#ln-767"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-768" name="ln-768" href="#ln-768"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-769" name="ln-769" href="#ln-769"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I1_R4</span><span class="w"></span>
+<a id="ln-766" name="ln-766" href="#ln-766"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-767" name="ln-767" href="#ln-767"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-768" name="ln-768" href="#ln-768"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-769" name="ln-769" href="#ln-769"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I1_R4</span>
 <a id="ln-770" name="ln-770" href="#ln-770"></a>
-<a id="ln-771" name="ln-771" href="#ln-771"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I1_I8</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-771" name="ln-771" href="#ln-771"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I1_I8</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-772" name="ln-772" href="#ln-772"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-773" name="ln-773" href="#ln-773"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-774" name="ln-774" href="#ln-774"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -1087,12 +1102,12 @@
 <a id="ln-789" name="ln-789" href="#ln-789"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-790" name="ln-790" href="#ln-790"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-791" name="ln-791" href="#ln-791"></a>
-<a id="ln-792" name="ln-792" href="#ln-792"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-793" name="ln-793" href="#ln-793"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-794" name="ln-794" href="#ln-794"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-795" name="ln-795" href="#ln-795"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I1_I8</span><span class="w"></span>
+<a id="ln-792" name="ln-792" href="#ln-792"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-793" name="ln-793" href="#ln-793"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-794" name="ln-794" href="#ln-794"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-795" name="ln-795" href="#ln-795"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I1_I8</span>
 <a id="ln-796" name="ln-796" href="#ln-796"></a>
-<a id="ln-797" name="ln-797" href="#ln-797"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I1_I4</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-797" name="ln-797" href="#ln-797"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I1_I4</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-798" name="ln-798" href="#ln-798"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-799" name="ln-799" href="#ln-799"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-800" name="ln-800" href="#ln-800"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -1113,12 +1128,12 @@
 <a id="ln-815" name="ln-815" href="#ln-815"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-816" name="ln-816" href="#ln-816"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-817" name="ln-817" href="#ln-817"></a>
-<a id="ln-818" name="ln-818" href="#ln-818"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-819" name="ln-819" href="#ln-819"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-820" name="ln-820" href="#ln-820"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-821" name="ln-821" href="#ln-821"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I1_I4</span><span class="w"></span>
+<a id="ln-818" name="ln-818" href="#ln-818"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-819" name="ln-819" href="#ln-819"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-820" name="ln-820" href="#ln-820"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-821" name="ln-821" href="#ln-821"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I1_I4</span>
 <a id="ln-822" name="ln-822" href="#ln-822"></a>
-<a id="ln-823" name="ln-823" href="#ln-823"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I1_I2</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span><span class="w"></span>
+<a id="ln-823" name="ln-823" href="#ln-823"></a><span class="w">   </span><span class="k">pure subroutine </span><span class="n">pack_data_I1_I2</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">packed</span><span class="p">)</span>
 <a id="ln-824" name="ln-824" href="#ln-824"></a><span class="w">   </span><span class="c">!&lt; Pack different kinds of data into single I1P array.</span>
 <a id="ln-825" name="ln-825" href="#ln-825"></a><span class="w">   </span><span class="c">!&lt;</span>
 <a id="ln-826" name="ln-826" href="#ln-826"></a><span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -1139,61 +1154,59 @@
 <a id="ln-841" name="ln-841" href="#ln-841"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p1</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of first stream.</span>
 <a id="ln-842" name="ln-842" href="#ln-842"></a><span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I1P</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">p2</span><span class="p">(:)</span><span class="w">     </span><span class="c">!&lt; Temporary packed data of second stream.</span>
 <a id="ln-843" name="ln-843" href="#ln-843"></a>
-<a id="ln-844" name="ln-844" href="#ln-844"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span><span class="w"></span>
-<a id="ln-845" name="ln-845" href="#ln-845"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="w"></span>
-<a id="ln-846" name="ln-846" href="#ln-846"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span><span class="w"></span>
-<a id="ln-847" name="ln-847" href="#ln-847"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I1_I2</span><span class="w"></span>
-<a id="ln-848" name="ln-848" href="#ln-848"></a><span class="k">endmodule </span><span class="n">befor64_pack_data_m</span><span class="w"></span>
+<a id="ln-844" name="ln-844" href="#ln-844"></a><span class="w">   </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<a id="ln-845" name="ln-845" href="#ln-845"></a><span class="w">   </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">transfer</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span>
+<a id="ln-846" name="ln-846" href="#ln-846"></a><span class="w">   </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">]</span>
+<a id="ln-847" name="ln-847" href="#ln-847"></a><span class="w">   </span><span class="k">endsubroutine </span><span class="n">pack_data_I1_I2</span>
+<a id="ln-848" name="ln-848" href="#ln-848"></a><span class="k">endmodule </span><span class="n">befor64_pack_data_m</span>
 </pre></div>
 
-    </section>
+      </section>
     </div>
   </div>
 
-    <hr>    
+      <hr>
     </div> <!-- /container -->
     <footer>
       <div class="container">
-      <div class="row">
-        <div class="col-xs-6 col-md-6"><p>Lib_VTK_IO was developed by Stefano Zaghi<br>&copy; 2022 
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Lib_VTK_IO
+ was developed by Stefano Zaghi<br>              &copy; 2025 
 </p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
         </div>
-        <div class="col-xs-6 col-md-6">
-          <p class="text-right">
-            Documentation generated by 
-            <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
-          </p>
-        </div>
-      </div>
-      <br>
-      </div> <!-- /container -->    
+        <br>
+      </div> <!-- /container -->
     </footer>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
+    <!-- Bootstrap core JavaScript -->
     <!-- Placed at the end of the document so the pages load faster -->
-<!--
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
--->
-    <script src="../js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
 
     <!-- MathJax JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
-        jax: ['input/TeX','input/MathML','output/HTML-CSS'],
-        extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
-      });
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script src="../tipuesearch/tipuesearch_content.js"></script>
-    <script src="../tipuesearch/tipuesearch_set.js"></script>
-    <script src="../tipuesearch/tipuesearch.js"></script>
-    
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
   </body>
 </html>

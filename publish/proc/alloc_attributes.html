@@ -1,169 +1,661 @@
+<!-- -*- mode: jinja2 -*- -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-   <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
+      <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
     <meta name="author" content="Stefano Zaghi" >
     <link rel="icon" href="../favicon.png">
 
     <title>alloc_attributes &ndash; Lib_VTK_IO</title>
 
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="../css/pygments.css" rel="stylesheet">
     <link href="../css/font-awesome.min.css" rel="stylesheet">
     <link href="../css/local.css" rel="stylesheet">
-    <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    
-    <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="../js/svg-pan-zoom.min.js"></script>
-
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
           <a class="navbar-brand" href="../index.html">Lib_VTK_IO </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
-              <a href="#" class="dropdown-toggle"
-              data-toggle="dropdown" role="button"
-              aria-haspopup="true"
-     aria-expanded="false">Contents <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-            <li><a href="../lists/files.html">Source Files</a></li>
-            <li><a href="../lists/modules.html">Modules</a></li>
-            <li><a href="../lists/procedures.html">Procedures</a></li>
-            <li><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                   <li><a href="../lists/types.html">Derived Types</a></li>
-            <li><a href="../lists/programs.html">Programs</a></li>
-       
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
             </ul>
-        
-            </li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/files.html">Source Files</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/modules.html">Modules</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/procedures.html">Procedures</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                             <li class="visible-xs hidden-sm visible-lg"><a href="../lists/types.html">Derived Types</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/programs.html">Programs</a></li>
-          </ul>
-        <form action="../search.html" class="navbar-form navbar-right" role="search">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
         </div>
-<!--
-        <button type="submit" class="btn btn-default">Submit</button>
--->
-        </form>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+      </nav>
+    </div>
 
     <div class="container">
   <div class="row">
     <h1>alloc_attributes
       <small>Subroutine</small>
+      
     </h1>
-    <div class="row">
-  <div class="col-lg-12">
-<div class="well well-sm">
-  <ul class="list-inline" style="margin-bottom:0px;display:inline">
-     <li><i class="fa fa-list-ol"></i>
-       <a data-toggle="tooltip"
-    data-placement="bottom" data-html="true"
-    title=" 0.0% of total for procedures.">10 statements</a>
-     </li> 
-    <li><i class="fa fa-code"></i><a href="../src/foxy_xml_tag.F90"> Source File</a></li>
-  </ul>
-  <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/foxy_xml_tag.f90.html'>foxy_xml_tag.F90</a></li>
-     <li><a href='../module/foxy_xml_tag.html'>foxy_xml_tag</a></li>
-     <li class="active">alloc_attributes</li>
-  </ol>
-</div>
-</div>
-</div>
-<script>
-  $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-  })
-</script>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.0% of total for procedures.">10 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/foxy_xml_tag.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/foxy_xml_tag.f90.html'>foxy_xml_tag.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/foxy_xml_tag.html'>foxy_xml_tag</a></li>
+            <li class="breadcrumb-item active" aria-current="page">alloc_attributes</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
 
   </div>
   
   <div class="row">
     <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
-    <div id="sidebar">
-  <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../proc/alloc_attributes.html#src">alloc_attributes</a>
-  </div>
-</div>
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/alloc_attributes.html#src">alloc_attributes</a>
+      </div>
+    </div>
 
-</div>
+
+  </div>
 
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private elemental subroutine alloc_attributes(self, Na)</h2>
+    <h2>private elemental subroutine alloc_attributes(self, Na)  
+</h2>
     
 
+
+    <h3>Type Bound</h3>
+    <p><a href='../type/xml_tag.html'>xml_tag</a></p>
 
     <h3>Arguments</h3>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" id="variable-self~323"></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-self~289"></span>
+              class(<a href='../type/xml_tag.html'>xml_tag</a>),
+            </td>
 <td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-na"></span>integer(kind=I4P),</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-na"></span>
+              integer(kind=I4P),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>Na</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Na</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
     <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~alloc_attributes~~CalledByGraph Pages: 1 -->
+<svg id="procalloc_attributesCalledByGraph" width="641pt" height="163pt"
+ viewBox="0.00 0.00 641.00 162.54" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~alloc_attributes~~CalledByGraph" class="graph" transform="scale(0.57 0.57) rotate(0) translate(4 280)">
+<title>proc~~alloc_attributes~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-280 1116,-280 1116,4 -4,4"/>
+<!-- proc~alloc_attributes -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node1" class="node">
+<title>proc~alloc_attributes</title>
+<polygon fill="none" stroke="black" points="1112,-152 966,-152 966,-128 1112,-128 1112,-152"/>
+<text text-anchor="middle" x="1039" y="-137.6" font-family="Helvetica,sans-Serif" font-size="10.50">xml_tag%alloc_attributes</text>
+</g>
+<!-- proc~add_single_attribute -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node2" class="node">
+<title>proc~add_single_attribute</title>
+<g id="a_proc~~alloc_attributes~~CalledByGraph_node2"><a xlink:href="../proc/add_single_attribute.html" xlink:title="xml_tag%add_single_attribute">
+<polygon fill="#d9534f" stroke="#d9534f" points="920,-192 748,-192 748,-168 920,-168 920,-192"/>
+<text text-anchor="middle" x="834" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%add_single_attribute</text>
+</a>
+</g>
+</g>
+<!-- proc~add_single_attribute&#45;&gt;proc~alloc_attributes -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge1" class="edge">
+<title>proc~add_single_attribute&#45;&gt;proc~alloc_attributes</title>
+<path fill="none" stroke="#000000" d="M895.91,-168C918.19,-163.61 943.59,-158.6 966.7,-154.05"/>
+<polygon fill="#000000" stroke="#000000" points="967.65,-157.43 976.79,-152.06 966.3,-150.56 967.65,-157.43"/>
+</g>
+<!-- proc~parse_attributes_names -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node3" class="node">
+<title>proc~parse_attributes_names</title>
+<g id="a_proc~~alloc_attributes~~CalledByGraph_node3"><a xlink:href="../proc/parse_attributes_names.html" xlink:title="xml_tag%parse_attributes_names">
+<polygon fill="#d9534f" stroke="#d9534f" points="930,-131 738,-131 738,-107 930,-107 930,-131"/>
+<text text-anchor="middle" x="834" y="-116.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%parse_attributes_names</text>
+</a>
+</g>
+</g>
+<!-- proc~parse_attributes_names&#45;&gt;proc~alloc_attributes -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge2" class="edge">
+<title>proc~parse_attributes_names&#45;&gt;proc~alloc_attributes</title>
+<path fill="none" stroke="#000000" d="M930.26,-128.85C938.75,-129.73 947.31,-130.62 955.68,-131.48"/>
+<polygon fill="#000000" stroke="#000000" points="955.48,-134.98 965.79,-132.53 956.2,-128.02 955.48,-134.98"/>
+</g>
+<!-- none~add_attributes -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node4" class="node">
+<title>none~add_attributes</title>
+<g id="a_proc~~alloc_attributes~~CalledByGraph_node4"><a xlink:href="../type/xml_tag.html#boundprocedure-add_attributes" xlink:title="xml_tag%add_attributes">
+<polygon fill="#a7506f" stroke="#a7506f" points="467,-254 326,-254 326,-230 467,-230 467,-254"/>
+<text text-anchor="middle" x="396.5" y="-239.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%add_attributes</text>
+</a>
+</g>
+</g>
+<!-- none~add_attributes&#45;&gt;proc~add_single_attribute -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge3" class="edge">
+<title>none~add_attributes&#45;&gt;proc~add_single_attribute</title>
+<path fill="none" stroke="#000000" d="M467.11,-251.06C529.47,-257.1 623.01,-261.01 702,-243 740.13,-234.31 780.1,-213.05 805.71,-197.63"/>
+<polygon fill="#000000" stroke="#000000" points="807.78,-200.47 814.47,-192.25 804.11,-194.5 807.78,-200.47"/>
+</g>
+<!-- proc~add_multiple_attributes -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node5" class="node">
+<title>proc~add_multiple_attributes</title>
+<g id="a_proc~~alloc_attributes~~CalledByGraph_node5"><a xlink:href="../proc/add_multiple_attributes.html" xlink:title="xml_tag%add_multiple_attributes">
+<polygon fill="#d9534f" stroke="#d9534f" points="702,-234 512,-234 512,-210 702,-210 702,-234"/>
+<text text-anchor="middle" x="607" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%add_multiple_attributes</text>
+</a>
+</g>
+</g>
+<!-- none~add_attributes&#45;&gt;proc~add_multiple_attributes -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge9" class="edge">
+<title>none~add_attributes&#45;&gt;proc~add_multiple_attributes</title>
+<path fill="none" stroke="#000000" d="M467.22,-235.31C478.3,-234.25 489.96,-233.13 501.63,-232.01"/>
+<polygon fill="#000000" stroke="#000000" points="502.25,-235.47 511.87,-231.03 501.58,-228.5 502.25,-235.47"/>
+</g>
+<!-- proc~add_stream_attributes -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node6" class="node">
+<title>proc~add_stream_attributes</title>
+<g id="a_proc~~alloc_attributes~~CalledByGraph_node6"><a xlink:href="../proc/add_stream_attributes.html" xlink:title="xml_tag%add_stream_attributes">
+<polygon fill="#d9534f" stroke="#d9534f" points="698.5,-192 515.5,-192 515.5,-168 698.5,-168 698.5,-192"/>
+<text text-anchor="middle" x="607" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%add_stream_attributes</text>
+</a>
+</g>
+</g>
+<!-- none~add_attributes&#45;&gt;proc~add_stream_attributes -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge11" class="edge">
+<title>none~add_attributes&#45;&gt;proc~add_stream_attributes</title>
+<path fill="none" stroke="#000000" d="M427.78,-230C450.67,-221.21 483,-209.4 512,-201 520.02,-198.68 528.49,-196.46 536.93,-194.4"/>
+<polygon fill="#000000" stroke="#000000" points="537.88,-197.77 546.8,-192.05 536.26,-190.96 537.88,-197.77"/>
+</g>
+<!-- proc~add_multiple_attributes&#45;&gt;proc~add_single_attribute -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge4" class="edge">
+<title>proc~add_multiple_attributes&#45;&gt;proc~add_single_attribute</title>
+<path fill="none" stroke="#000000" d="M672.48,-209.96C699.31,-204.96 730.63,-199.11 758.44,-193.92"/>
+<polygon fill="#000000" stroke="#000000" points="759.33,-197.31 768.51,-192.04 758.04,-190.43 759.33,-197.31"/>
+</g>
+<!-- proc~add_stream_attributes&#45;&gt;proc~add_single_attribute -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge5" class="edge">
+<title>proc~add_stream_attributes&#45;&gt;proc~add_single_attribute</title>
+<path fill="none" stroke="#000000" d="M698.54,-180C711.36,-180 724.57,-180 737.47,-180"/>
+<polygon fill="#000000" stroke="#000000" points="737.75,-183.5 747.75,-180 737.75,-176.5 737.75,-183.5"/>
+</g>
+<!-- proc~parse -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node7" class="node">
+<title>proc~parse</title>
+<g id="a_proc~~alloc_attributes~~CalledByGraph_node7"><a xlink:href="../proc/parse.html" xlink:title="xml_tag%parse">
+<polygon fill="#d9534f" stroke="#d9534f" points="654,-110 560,-110 560,-86 654,-86 654,-110"/>
+<text text-anchor="middle" x="607" y="-95.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%parse</text>
+</a>
+</g>
+</g>
+<!-- proc~parse&#45;&gt;proc~parse_attributes_names -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge7" class="edge">
+<title>proc~parse&#45;&gt;proc~parse_attributes_names</title>
+<path fill="none" stroke="#000000" d="M654.08,-102.3C675.41,-104.29 701.72,-106.75 727.53,-109.16"/>
+<polygon fill="#000000" stroke="#000000" points="727.49,-112.67 737.77,-110.11 728.14,-105.7 727.49,-112.67"/>
+</g>
+<!-- proc~set -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node8" class="node">
+<title>proc~set</title>
+<g id="a_proc~~alloc_attributes~~CalledByGraph_node8"><a xlink:href="../proc/set.html" xlink:title="xml_tag%set">
+<polygon fill="#d9534f" stroke="#d9534f" points="436.5,-192 356.5,-192 356.5,-168 436.5,-168 436.5,-192"/>
+<text text-anchor="middle" x="396.5" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%set</text>
+</a>
+</g>
+</g>
+<!-- proc~set&#45;&gt;proc~add_single_attribute -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge6" class="edge">
+<title>proc~set&#45;&gt;proc~add_single_attribute</title>
+<path fill="none" stroke="#000000" d="M436.74,-170.98C458.73,-166.39 486.74,-161.3 512,-159 596.1,-151.35 617.82,-152.3 702,-159 721.17,-160.53 741.77,-163.29 760.83,-166.32"/>
+<polygon fill="#000000" stroke="#000000" points="760.5,-169.82 770.94,-167.98 761.64,-162.91 760.5,-169.82"/>
+</g>
+<!-- proc~set&#45;&gt;proc~add_multiple_attributes -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge10" class="edge">
+<title>proc~set&#45;&gt;proc~add_multiple_attributes</title>
+<path fill="none" stroke="#000000" d="M436.72,-187.9C464.62,-193.52 502.87,-201.23 535.95,-207.89"/>
+<polygon fill="#000000" stroke="#000000" points="535.54,-211.38 546.04,-209.92 536.92,-204.52 535.54,-211.38"/>
+</g>
+<!-- proc~set&#45;&gt;proc~add_stream_attributes -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge12" class="edge">
+<title>proc~set&#45;&gt;proc~add_stream_attributes</title>
+<path fill="none" stroke="#000000" d="M436.72,-180C456.21,-180 480.75,-180 505.05,-180"/>
+<polygon fill="#000000" stroke="#000000" points="505.07,-183.5 515.07,-180 505.07,-176.5 505.07,-183.5"/>
+</g>
+<!-- proc~create_tag_flat -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node9" class="node">
+<title>proc~create_tag_flat</title>
+<g id="a_proc~~alloc_attributes~~CalledByGraph_node9"><a xlink:href="../proc/create_tag_flat.html" xlink:title="create_tag_flat">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="263,-192 172,-192 172,-168 263,-168 263,-192"/>
+<text text-anchor="middle" x="217.5" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">create_tag_flat</text>
+</a>
+</g>
+</g>
+<!-- proc~create_tag_flat&#45;&gt;proc~set -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge16" class="edge">
+<title>proc~create_tag_flat&#45;&gt;proc~set</title>
+<path fill="none" stroke="#000000" d="M263.16,-180C288.48,-180 320.2,-180 346.23,-180"/>
+<polygon fill="#000000" stroke="#000000" points="346.27,-183.5 356.27,-180 346.27,-176.5 346.27,-183.5"/>
+</g>
+<!-- proc~create_tag_nested -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node10" class="node">
+<title>proc~create_tag_nested</title>
+<g id="a_proc~~alloc_attributes~~CalledByGraph_node10"><a xlink:href="../proc/create_tag_nested.html" xlink:title="create_tag_nested">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="272.5,-234 162.5,-234 162.5,-210 272.5,-210 272.5,-234"/>
+<text text-anchor="middle" x="217.5" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">create_tag_nested</text>
+</a>
+</g>
+</g>
+<!-- proc~create_tag_nested&#45;&gt;proc~set -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge17" class="edge">
+<title>proc~create_tag_nested&#45;&gt;proc~set</title>
+<path fill="none" stroke="#000000" d="M269.22,-209.96C293.44,-204.22 322.32,-197.37 346.34,-191.67"/>
+<polygon fill="#000000" stroke="#000000" points="347.38,-195.01 356.3,-189.3 345.77,-188.2 347.38,-195.01"/>
+</g>
+<!-- proc~parse_from_string -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node11" class="node">
+<title>proc~parse_from_string</title>
+<g id="a_proc~~alloc_attributes~~CalledByGraph_node11"><a xlink:href="../proc/parse_from_string.html" xlink:title="xml_file%parse_from_string">
+<polygon fill="#d9534f" stroke="#d9534f" points="476,-108 317,-108 317,-84 476,-84 476,-108"/>
+<text text-anchor="middle" x="396.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_file%parse_from_string</text>
+</a>
+</g>
+</g>
+<!-- proc~parse_from_string&#45;&gt;proc~parse -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge13" class="edge">
+<title>proc~parse_from_string&#45;&gt;proc~parse</title>
+<path fill="none" stroke="#000000" d="M476.03,-96.75C500.55,-96.99 527.11,-97.24 549.78,-97.46"/>
+<polygon fill="#000000" stroke="#000000" points="549.87,-100.96 559.9,-97.56 549.94,-93.96 549.87,-100.96"/>
+</g>
+<!-- proc~search~2 -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node12" class="node">
+<title>proc~search~2</title>
+<g id="a_proc~~alloc_attributes~~CalledByGraph_node12"><a xlink:href="../proc/search~2.html" xlink:title="xml_tag%search">
+<polygon fill="#d9534f" stroke="#d9534f" points="446.5,-55 346.5,-55 346.5,-31 446.5,-31 446.5,-55"/>
+<text text-anchor="middle" x="396.5" y="-40.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%search</text>
+</a>
+</g>
+</g>
+<!-- proc~search~2&#45;&gt;proc~parse -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge14" class="edge">
+<title>proc~search~2&#45;&gt;proc~parse</title>
+<path fill="none" stroke="#000000" d="M443,-55C474.63,-63.34 516.96,-74.51 550.56,-83.38"/>
+<polygon fill="#000000" stroke="#000000" points="549.68,-86.76 560.24,-85.93 551.46,-79.99 549.68,-86.76"/>
+</g>
+<!-- program~add_attributes -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node13" class="node">
+<title>program~add_attributes</title>
+<g id="a_proc~~alloc_attributes~~CalledByGraph_node13"><a xlink:href="../program/add_attributes.html" xlink:title="add_attributes">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="262,-276 173,-276 173,-252 262,-252 262,-276"/>
+<text text-anchor="middle" x="217.5" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">add_attributes</text>
+</a>
+</g>
+</g>
+<!-- program~add_attributes&#45;&gt;none~add_attributes -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge8" class="edge">
+<title>program~add_attributes&#45;&gt;none~add_attributes</title>
+<path fill="none" stroke="#000000" d="M262.25,-258.56C278.41,-256.55 297.26,-254.21 315.61,-251.93"/>
+<polygon fill="#000000" stroke="#000000" points="316.24,-255.38 325.73,-250.67 315.38,-248.43 316.24,-255.38"/>
+</g>
+<!-- program~create_tag -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node14" class="node">
+<title>program~create_tag</title>
+<g id="a_proc~~alloc_attributes~~CalledByGraph_node14"><a xlink:href="../program/create_tag.html" xlink:title="create_tag">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="252,-150 183,-150 183,-126 252,-126 252,-150"/>
+<text text-anchor="middle" x="217.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">create_tag</text>
+</a>
+</g>
+</g>
+<!-- program~create_tag&#45;&gt;proc~parse -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge15" class="edge">
+<title>program~create_tag&#45;&gt;proc~parse</title>
+<path fill="none" stroke="#000000" d="M252.31,-135.93C301.59,-132.76 396,-126.1 476,-117 500.17,-114.25 526.77,-110.49 549.58,-107.05"/>
+<polygon fill="#000000" stroke="#000000" points="550.41,-110.46 559.77,-105.49 549.35,-103.54 550.41,-110.46"/>
+</g>
+<!-- program~create_tag&#45;&gt;proc~set -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge18" class="edge">
+<title>program~create_tag&#45;&gt;proc~set</title>
+<path fill="none" stroke="#000000" d="M252.21,-146C278.88,-152.33 316.51,-161.26 346.51,-168.37"/>
+<polygon fill="#000000" stroke="#000000" points="345.82,-171.81 356.36,-170.71 347.44,-165 345.82,-171.81"/>
+</g>
+<!-- interface~xml_tag -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node15" class="node">
+<title>interface~xml_tag</title>
+<g id="a_proc~~alloc_attributes~~CalledByGraph_node15"><a xlink:href="../interface/xml_tag.html" xlink:title="xml_tag">
+<polygon fill="#a7506f" stroke="#a7506f" points="86.5,-234 31.5,-234 31.5,-210 86.5,-210 86.5,-234"/>
+<text text-anchor="middle" x="59" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag</text>
+</a>
+</g>
+</g>
+<!-- interface~xml_tag&#45;&gt;proc~create_tag_flat -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge19" class="edge">
+<title>interface~xml_tag&#45;&gt;proc~create_tag_flat</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M86.55,-214.88C107.1,-209.36 136.28,-201.53 161.77,-194.69"/>
+<polygon fill="#000000" stroke="#000000" points="162.95,-197.99 171.7,-192.02 161.14,-191.23 162.95,-197.99"/>
+</g>
+<!-- interface~xml_tag&#45;&gt;proc~create_tag_nested -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge20" class="edge">
+<title>interface~xml_tag&#45;&gt;proc~create_tag_nested</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M86.55,-222C104.55,-222 129.17,-222 152.13,-222"/>
+<polygon fill="#000000" stroke="#000000" points="152.19,-225.5 162.19,-222 152.19,-218.5 152.19,-225.5"/>
+</g>
+<!-- proc~get_content -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node16" class="node">
+<title>proc~get_content</title>
+<g id="a_proc~~alloc_attributes~~CalledByGraph_node16"><a xlink:href="../proc/get_content.html" xlink:title="xml_tag%get_content">
+<polygon fill="#d9534f" stroke="#d9534f" points="281,-34 154,-34 154,-10 281,-10 281,-34"/>
+<text text-anchor="middle" x="217.5" y="-19.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%get_content</text>
+</a>
+</g>
+</g>
+<!-- proc~get_content&#45;&gt;proc~search~2 -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge22" class="edge">
+<title>proc~get_content&#45;&gt;proc~search~2</title>
+<path fill="none" stroke="#000000" d="M281.4,-29.46C299.26,-31.58 318.64,-33.88 336.27,-35.97"/>
+<polygon fill="#000000" stroke="#000000" points="336.09,-39.48 346.43,-37.18 336.91,-32.52 336.09,-39.48"/>
+</g>
+<!-- proc~parse~2 -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node17" class="node">
+<title>proc~parse~2</title>
+<g id="a_proc~~alloc_attributes~~CalledByGraph_node17"><a xlink:href="../proc/parse~2.html" xlink:title="xml_file%parse">
+<polygon fill="#d9534f" stroke="#d9534f" points="264.5,-108 170.5,-108 170.5,-84 264.5,-84 264.5,-108"/>
+<text text-anchor="middle" x="217.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_file%parse</text>
+</a>
+</g>
+</g>
+<!-- proc~parse~2&#45;&gt;proc~parse_from_string -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge21" class="edge">
+<title>proc~parse~2&#45;&gt;proc~parse_from_string</title>
+<path fill="none" stroke="#000000" d="M264.54,-96C277.53,-96 292.11,-96 306.7,-96"/>
+<polygon fill="#000000" stroke="#000000" points="306.78,-99.5 316.78,-96 306.78,-92.5 306.78,-99.5"/>
+</g>
+<!-- proc~content -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node18" class="node">
+<title>proc~content</title>
+<g id="a_proc~~alloc_attributes~~CalledByGraph_node18"><a xlink:href="../proc/content.html" xlink:title="xml_file%content">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="111,-24 7,-24 7,0 111,0 111,-24"/>
+<text text-anchor="middle" x="59" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_file%content</text>
+</a>
+</g>
+</g>
+<!-- proc~content&#45;&gt;proc~get_content -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge23" class="edge">
+<title>proc~content&#45;&gt;proc~get_content</title>
+<path fill="none" stroke="#000000" d="M111.24,-15.27C121.69,-15.94 132.86,-16.66 143.88,-17.36"/>
+<polygon fill="#000000" stroke="#000000" points="143.74,-20.86 153.94,-18 144.18,-13.87 143.74,-20.86"/>
+</g>
+<!-- program~delete_tag -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node19" class="node">
+<title>program~delete_tag</title>
+<g id="a_proc~~alloc_attributes~~CalledByGraph_node19"><a xlink:href="../program/delete_tag.html" xlink:title="delete_tag">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="93.5,-192 24.5,-192 24.5,-168 93.5,-168 93.5,-192"/>
+<text text-anchor="middle" x="59" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">delete_tag</text>
+</a>
+</g>
+</g>
+<!-- program~delete_tag&#45;&gt;proc~parse~2 -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge24" class="edge">
+<title>program~delete_tag&#45;&gt;proc~parse~2</title>
+<path fill="none" stroke="#000000" d="M93.65,-171.12C102.02,-168.04 110.69,-164.05 118,-159 138.22,-145.02 133.61,-130.74 154,-117 156.53,-115.3 159.21,-113.72 161.98,-112.26"/>
+<polygon fill="#000000" stroke="#000000" points="163.5,-115.41 171.07,-108 160.53,-109.07 163.5,-115.41"/>
+</g>
+<!-- program~parse_file_simple -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node20" class="node">
+<title>program~parse_file_simple</title>
+<g id="a_proc~~alloc_attributes~~CalledByGraph_node20"><a xlink:href="../program/parse_file_simple.html" xlink:title="parse_file_simple">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="111.5,-150 6.5,-150 6.5,-126 111.5,-126 111.5,-150"/>
+<text text-anchor="middle" x="59" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">parse_file_simple</text>
+</a>
+</g>
+</g>
+<!-- program~parse_file_simple&#45;&gt;proc~parse~2 -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge25" class="edge">
+<title>program~parse_file_simple&#45;&gt;proc~parse~2</title>
+<path fill="none" stroke="#000000" d="M104.85,-125.96C122.61,-121.2 143.2,-115.67 161.82,-110.67"/>
+<polygon fill="#000000" stroke="#000000" points="162.9,-114.01 171.65,-108.04 161.08,-107.25 162.9,-114.01"/>
+</g>
+<!-- program~parse_string_simple -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node21" class="node">
+<title>program~parse_string_simple</title>
+<g id="a_proc~~alloc_attributes~~CalledByGraph_node21"><a xlink:href="../program/parse_string_simple.html" xlink:title="parse_string_simple">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="118,-108 0,-108 0,-84 118,-84 118,-108"/>
+<text text-anchor="middle" x="59" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">parse_string_simple</text>
+</a>
+</g>
+</g>
+<!-- program~parse_string_simple&#45;&gt;proc~parse~2 -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge26" class="edge">
+<title>program~parse_string_simple&#45;&gt;proc~parse~2</title>
+<path fill="none" stroke="#000000" d="M118.27,-96C131.99,-96 146.58,-96 160.2,-96"/>
+<polygon fill="#000000" stroke="#000000" points="160.4,-99.5 170.4,-96 160.4,-92.5 160.4,-99.5"/>
+</g>
+<!-- program~write_tag -->
+<g id="proc~~alloc_attributes~~CalledByGraph_node22" class="node">
+<title>program~write_tag</title>
+<g id="a_proc~~alloc_attributes~~CalledByGraph_node22"><a xlink:href="../program/write_tag.html" xlink:title="write_tag">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="89.5,-66 28.5,-66 28.5,-42 89.5,-42 89.5,-66"/>
+<text text-anchor="middle" x="59" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_tag</text>
+</a>
+</g>
+</g>
+<!-- program~write_tag&#45;&gt;proc~parse~2 -->
+<g id="proc~~alloc_attributes~~CalledByGraph_edge27" class="edge">
+<title>program~write_tag&#45;&gt;proc~parse~2</title>
+<path fill="none" stroke="#000000" d="M89.8,-62C110.15,-67.46 137.7,-74.85 161.91,-81.35"/>
+<polygon fill="#000000" stroke="#000000" points="161.13,-84.76 171.7,-83.98 162.95,-78 161.13,-84.76"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocalloc_attributesCalledByGraph = svgPanZoom('#procalloc_attributesCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
 
-    <section class="visible-xs visible-sm hidden-md">
-      <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../proc/alloc_attributes.html#src">alloc_attributes</a>
-  </div>
-</div>
-
-    </section>
-    <br class="visible-xs visible-sm hidden-md">
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
 
 
     
@@ -171,23 +663,24 @@
 
     
     
+
 
 
     
     <section>
     <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="highlight"><pre><span></span><span class="w">  </span><span class="k">elemental subroutine </span><span class="n">alloc_attributes</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">Na</span><span class="p">)</span><span class="w"></span>
+    <div class="hl codehilite"><pre><span></span><span class="w">  </span><span class="k">elemental subroutine </span><span class="n">alloc_attributes</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">Na</span><span class="p">)</span>
 <span class="w">  </span><span class="c">!&lt; Allocate (prepare for filling) dynamic memory of attributes.</span>
 <span class="w">  </span><span class="k">class</span><span class="p">(</span><span class="n">xml_tag</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w">     </span><span class="c">!&lt; XML tag.</span>
 <span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">      </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">    </span><span class="kd">::</span><span class="w"> </span><span class="n">Na</span><span class="w">       </span><span class="c">!&lt; Number of attributes.</span>
 
 <span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">attribute</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
-<span class="k">    call </span><span class="n">self</span><span class="p">%</span><span class="n">attribute</span><span class="p">%</span><span class="n">free</span><span class="w"></span>
-<span class="w">    </span><span class="k">deallocate</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">attribute</span><span class="p">)</span><span class="w"></span>
+<span class="k">    call </span><span class="n">self</span><span class="p">%</span><span class="n">attribute</span><span class="p">%</span><span class="n">free</span>
+<span class="w">    </span><span class="k">deallocate</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">attribute</span><span class="p">)</span>
 <span class="w">  </span><span class="k">endif</span>
-<span class="k">  allocate</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">attribute</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">Na</span><span class="p">))</span><span class="w"></span>
-<span class="w">  </span><span class="n">self</span><span class="p">%</span><span class="n">attributes_number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Na</span><span class="w"></span>
-<span class="w">  </span><span class="k">endsubroutine </span><span class="n">alloc_attributes</span><span class="w"></span>
+<span class="k">  allocate</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">attribute</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">Na</span><span class="p">))</span>
+<span class="w">  </span><span class="n">self</span><span class="p">%</span><span class="n">attributes_number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Na</span>
+<span class="w">  </span><span class="k">endsubroutine </span><span class="n">alloc_attributes</span>
 </pre></div>
 
     </section>
@@ -196,50 +689,48 @@
     </div>
   </div>
 
-    <hr>    
+      <hr>
     </div> <!-- /container -->
     <footer>
       <div class="container">
-      <div class="row">
-        <div class="col-xs-6 col-md-6"><p>Lib_VTK_IO was developed by Stefano Zaghi<br>&copy; 2022 
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Lib_VTK_IO
+ was developed by Stefano Zaghi<br>              &copy; 2025 
 </p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
         </div>
-        <div class="col-xs-6 col-md-6">
-          <p class="text-right">
-            Documentation generated by 
-            <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
-          </p>
-        </div>
-      </div>
-      <br>
-      </div> <!-- /container -->    
+        <br>
+      </div> <!-- /container -->
     </footer>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
+    <!-- Bootstrap core JavaScript -->
     <!-- Placed at the end of the document so the pages load faster -->
-<!--
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
--->
-    <script src="../js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
 
     <!-- MathJax JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
-        jax: ['input/TeX','input/MathML','output/HTML-CSS'],
-        extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
-      });
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script src="../tipuesearch/tipuesearch_content.js"></script>
-    <script src="../tipuesearch/tipuesearch_set.js"></script>
-    <script src="../tipuesearch/tipuesearch.js"></script>
-    
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
   </body>
 </html>

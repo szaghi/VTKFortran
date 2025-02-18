@@ -1,639 +1,715 @@
+<!-- -*- mode: jinja2 -*- -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-   <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
+      <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
     <meta name="author" content="Stefano Zaghi" >
     <link rel="icon" href="../favicon.png">
 
     <title>encode &ndash; Lib_VTK_IO</title>
 
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="../css/pygments.css" rel="stylesheet">
     <link href="../css/font-awesome.min.css" rel="stylesheet">
     <link href="../css/local.css" rel="stylesheet">
-    <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    
-    <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="../js/svg-pan-zoom.min.js"></script>
-
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
           <a class="navbar-brand" href="../index.html">Lib_VTK_IO </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
-              <a href="#" class="dropdown-toggle"
-              data-toggle="dropdown" role="button"
-              aria-haspopup="true"
-     aria-expanded="false">Contents <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-            <li><a href="../lists/files.html">Source Files</a></li>
-            <li><a href="../lists/modules.html">Modules</a></li>
-            <li><a href="../lists/procedures.html">Procedures</a></li>
-            <li><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                   <li><a href="../lists/types.html">Derived Types</a></li>
-            <li><a href="../lists/programs.html">Programs</a></li>
-       
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
             </ul>
-        
-            </li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/files.html">Source Files</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/modules.html">Modules</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/procedures.html">Procedures</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                             <li class="visible-xs hidden-sm visible-lg"><a href="../lists/types.html">Derived Types</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/programs.html">Programs</a></li>
-          </ul>
-        <form action="../search.html" class="navbar-form navbar-right" role="search">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
         </div>
-<!--
-        <button type="submit" class="btn btn-default">Submit</button>
--->
-        </form>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+      </nav>
+    </div>
 
     <div class="container">
   <div class="row">
     <h1>encode
       <small>Function</small>
+      
     </h1>
-    <div class="row">
-  <div class="col-lg-12">
-<div class="well well-sm">
-  <ul class="list-inline" style="margin-bottom:0px;display:inline">
-     <li><i class="fa fa-list-ol"></i>
-       <a data-toggle="tooltip"
-    data-placement="bottom" data-html="true"
-    title=" 0.1% of total for procedures.">12 statements</a>
-     </li> 
-    <li><i class="fa fa-code"></i><a href="../src/stringifor_string_t.F90"> Source File</a></li>
-  </ul>
-  <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/stringifor_string_t.f90.html'>stringifor_string_t.F90</a></li>
-     <li><a href='../module/stringifor_string_t.html'>stringifor_string_t</a></li>
-     <li class="active">encode</li>
-  </ol>
-</div>
-</div>
-</div>
-<script>
-  $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-  })
-</script>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.1% of total for procedures.">12 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/stringifor_string_t.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/stringifor_string_t.f90.html'>stringifor_string_t.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/stringifor_string_t.html'>stringifor_string_t</a></li>
+            <li class="breadcrumb-item active" aria-current="page">encode</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
 
   </div>
   
   <div class="row">
     <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
-    <div id="sidebar">
-  <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../proc/encode.html#src">encode</a>
-  </div>
-</div>
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/encode.html#src">encode</a>
+      </div>
+    </div>
 
-</div>
+
+  </div>
 
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private elemental function encode(self, codec) result(encoded)</h2>
+    <h2>private elemental function encode(self, codec) result(encoded)  
+</h2>
     
 
+
+    <h3>Type Bound</h3>
+    <p><a href='../type/string.html'>string</a></p>
 
     <h3>Arguments</h3>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" id="variable-self~353"></span>class(<a href='../type/string.html'>string</a>),</td>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-self~172"></span>
+              class(<a href='../type/string.html'>string</a>),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-codec~2"></span>character(kind=CK,len=*),</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-codec~2"></span>
+              character(kind=CK, len=*),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>codec</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>codec</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
-   <h3>Return Value <small><span class="anchor" id="variable-encoded"></span>type(<a href='../type/string.html'>string</a>)</small></h3>
-    
+      <h3>Return Value
+        <small>
+          <span class="anchor" id="variable-encoded"></span>
+          type(<a href='../type/string.html'>string</a>)
+        </small>
+      </h3>
+      
     <br>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-  <h3 class="panel-title">Calls</h3>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
       </div>
-      <div class="panel-body">
+      <div class="card-body">
   <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: proc~~encode~~CallsGraph Pages: 1 -->
-<svg id="procencodeCallsGraph" width="572pt" height="683pt"
- viewBox="0.00 0.00 572.00 683.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg id="procencodeCallsGraph" width="616pt" height="683pt"
+ viewBox="0.00 0.00 616.00 683.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="proc~~encode~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 679)">
 <title>proc~~encode~~CallsGraph</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-679 568,-679 568,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-679 612,-679 612,4 -4,4"/>
 <!-- proc~encode -->
 <g id="proc~~encode~~CallsGraph_node1" class="node">
 <title>proc~encode</title>
-<polygon fill="none" stroke="black" points="54,-402 0,-402 0,-378 54,-378 54,-402"/>
-<text text-anchor="middle" x="27" y="-387.6" font-family="Helvetica,sans-Serif" font-size="10.50">encode</text>
+<polygon fill="none" stroke="black" points="92,-381 0,-381 0,-357 92,-357 92,-381"/>
+<text text-anchor="middle" x="46" y="-366.6" font-family="Helvetica,sans-Serif" font-size="10.50">string%encode</text>
 </g>
 <!-- interface~b64_encode -->
 <g id="proc~~encode~~CallsGraph_node2" class="node">
 <title>interface~b64_encode</title>
-<g id="a_proc~~encode~~CallsGraph_node2"><a xlink:href=".././interface/b64_encode.html" xlink:title="b64_encode">
-<polygon fill="#a7506f" stroke="#a7506f" points="168,-402 90,-402 90,-378 168,-378 168,-402"/>
-<text text-anchor="middle" x="129" y="-387.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode</text>
+<g id="a_proc~~encode~~CallsGraph_node2"><a xlink:href="../interface/b64_encode.html" xlink:title="b64_encode">
+<polygon fill="#a7506f" stroke="#a7506f" points="209,-402 131,-402 131,-378 209,-378 209,-402"/>
+<text text-anchor="middle" x="170" y="-387.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode</text>
 </a>
 </g>
 </g>
 <!-- proc~encode&#45;&gt;interface~b64_encode -->
 <g id="proc~~encode~~CallsGraph_edge1" class="edge">
 <title>proc~encode&#45;&gt;interface~b64_encode</title>
-<path fill="none" stroke="#000000" d="M54.01,-390C61.83,-390 70.68,-390 79.46,-390"/>
-<polygon fill="#000000" stroke="#000000" points="79.68,-393.5 89.68,-390 79.68,-386.5 79.68,-393.5"/>
+<path fill="none" stroke="#000000" d="M92.08,-376.76C101.45,-378.37 111.36,-380.08 120.84,-381.71"/>
+<polygon fill="#000000" stroke="#000000" points="120.46,-385.2 130.91,-383.44 121.65,-378.3 120.46,-385.2"/>
 </g>
-<!-- proc~b64_encode_r8 -->
+<!-- proc~upper~3 -->
 <g id="proc~~encode~~CallsGraph_node3" class="node">
-<title>proc~b64_encode_r8</title>
-<g id="a_proc~~encode~~CallsGraph_node3"><a xlink:href=".././proc/b64_encode_r8.html" xlink:title="b64_encode_R8">
-<polygon fill="#d9534f" stroke="#d9534f" points="315,-423 218,-423 218,-399 315,-399 315,-423"/>
-<text text-anchor="middle" x="266.5" y="-408.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_R8</text>
+<title>proc~upper~3</title>
+<g id="a_proc~~encode~~CallsGraph_node3"><a xlink:href="../proc/upper~3.html" xlink:title="string%upper">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="212,-360 128,-360 128,-336 212,-336 212,-360"/>
+<text text-anchor="middle" x="170" y="-345.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%upper</text>
 </a>
 </g>
 </g>
-<!-- interface~b64_encode&#45;&gt;proc~b64_encode_r8 -->
+<!-- proc~encode&#45;&gt;proc~upper~3 -->
 <g id="proc~~encode~~CallsGraph_edge2" class="edge">
-<title>interface~b64_encode&#45;&gt;proc~b64_encode_r8</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M168.1,-395.91C180.33,-397.8 194.16,-399.94 207.48,-402.01"/>
-<polygon fill="#000000" stroke="#000000" points="207.11,-405.49 217.53,-403.57 208.18,-398.57 207.11,-405.49"/>
+<title>proc~encode&#45;&gt;proc~upper~3</title>
+<path fill="none" stroke="#000000" d="M92.08,-361.24C100.47,-359.8 109.3,-358.28 117.85,-356.8"/>
+<polygon fill="#000000" stroke="#000000" points="118.47,-360.25 127.74,-355.1 117.29,-353.35 118.47,-360.25"/>
 </g>
-<!-- proc~b64_encode_r4_a -->
+<!-- proc~b64_encode_i1 -->
 <g id="proc~~encode~~CallsGraph_node4" class="node">
-<title>proc~b64_encode_r4_a</title>
-<g id="a_proc~~encode~~CallsGraph_node4"><a xlink:href=".././proc/b64_encode_r4_a.html" xlink:title="b64_encode_R4_a">
-<polygon fill="#d9534f" stroke="#d9534f" points="321,-381 212,-381 212,-357 321,-357 321,-381"/>
-<text text-anchor="middle" x="266.5" y="-366.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_R4_a</text>
+<title>proc~b64_encode_i1</title>
+<g id="a_proc~~encode~~CallsGraph_node4"><a xlink:href="../proc/b64_encode_i1.html" xlink:title="b64_encode_I1">
+<polygon fill="#d9534f" stroke="#d9534f" points="357,-423 264,-423 264,-399 357,-399 357,-423"/>
+<text text-anchor="middle" x="310.5" y="-408.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_I1</text>
 </a>
 </g>
 </g>
-<!-- interface~b64_encode&#45;&gt;proc~b64_encode_r4_a -->
+<!-- interface~b64_encode&#45;&gt;proc~b64_encode_i1 -->
 <g id="proc~~encode~~CallsGraph_edge3" class="edge">
-<title>interface~b64_encode&#45;&gt;proc~b64_encode_r4_a</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M168.1,-384.09C178.58,-382.47 190.23,-380.67 201.73,-378.88"/>
-<polygon fill="#000000" stroke="#000000" points="202.41,-382.32 211.76,-377.33 201.34,-375.4 202.41,-382.32"/>
+<title>interface~b64_encode&#45;&gt;proc~b64_encode_i1</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M209.21,-395.79C222.94,-397.88 238.72,-400.27 253.63,-402.53"/>
+<polygon fill="#000000" stroke="#000000" points="253.38,-406.03 263.79,-404.07 254.43,-399.11 253.38,-406.03"/>
+</g>
+<!-- proc~b64_encode_i1_a -->
+<g id="proc~~encode~~CallsGraph_node5" class="node">
+<title>proc~b64_encode_i1_a</title>
+<g id="a_proc~~encode~~CallsGraph_node5"><a xlink:href="../proc/b64_encode_i1_a.html" xlink:title="b64_encode_I1_a">
+<polygon fill="#d9534f" stroke="#d9534f" points="363,-381 258,-381 258,-357 363,-357 363,-381"/>
+<text text-anchor="middle" x="310.5" y="-366.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_I1_a</text>
+</a>
+</g>
+</g>
+<!-- interface~b64_encode&#45;&gt;proc~b64_encode_i1_a -->
+<g id="proc~~encode~~CallsGraph_edge4" class="edge">
+<title>interface~b64_encode&#45;&gt;proc~b64_encode_i1_a</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M209.21,-384.21C221.21,-382.39 234.77,-380.33 247.95,-378.33"/>
+<polygon fill="#000000" stroke="#000000" points="248.57,-381.78 257.93,-376.82 247.52,-374.86 248.57,-381.78"/>
+</g>
+<!-- proc~b64_encode_i2 -->
+<g id="proc~~encode~~CallsGraph_node6" class="node">
+<title>proc~b64_encode_i2</title>
+<g id="a_proc~~encode~~CallsGraph_node6"><a xlink:href="../proc/b64_encode_i2.html" xlink:title="b64_encode_I2">
+<polygon fill="#d9534f" stroke="#d9534f" points="357,-339 264,-339 264,-315 357,-315 357,-339"/>
+<text text-anchor="middle" x="310.5" y="-324.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_I2</text>
+</a>
+</g>
+</g>
+<!-- interface~b64_encode&#45;&gt;proc~b64_encode_i2 -->
+<g id="proc~~encode~~CallsGraph_edge5" class="edge">
+<title>interface~b64_encode&#45;&gt;proc~b64_encode_i2</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M195.4,-377.78C200.89,-374.95 206.67,-371.92 212,-369 228.25,-360.11 231.15,-355.7 248,-348 252.09,-346.13 256.4,-344.33 260.77,-342.63"/>
+<polygon fill="#000000" stroke="#000000" points="262.18,-345.84 270.33,-339.07 259.74,-339.28 262.18,-345.84"/>
 </g>
 <!-- proc~b64_encode_i2_a -->
-<g id="proc~~encode~~CallsGraph_node5" class="node">
+<g id="proc~~encode~~CallsGraph_node7" class="node">
 <title>proc~b64_encode_i2_a</title>
-<g id="a_proc~~encode~~CallsGraph_node5"><a xlink:href=".././proc/b64_encode_i2_a.html" xlink:title="b64_encode_I2_a">
-<polygon fill="#d9534f" stroke="#d9534f" points="319,-339 214,-339 214,-315 319,-315 319,-339"/>
-<text text-anchor="middle" x="266.5" y="-324.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_I2_a</text>
+<g id="a_proc~~encode~~CallsGraph_node7"><a xlink:href="../proc/b64_encode_i2_a.html" xlink:title="b64_encode_I2_a">
+<polygon fill="#d9534f" stroke="#d9534f" points="363,-297 258,-297 258,-273 363,-273 363,-297"/>
+<text text-anchor="middle" x="310.5" y="-282.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_I2_a</text>
 </a>
 </g>
 </g>
 <!-- interface~b64_encode&#45;&gt;proc~b64_encode_i2_a -->
 <g id="proc~~encode~~CallsGraph_edge6" class="edge">
 <title>interface~b64_encode&#45;&gt;proc~b64_encode_i2_a</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M148.96,-377.93C163.61,-368.92 184.6,-356.73 204,-348 208.16,-346.13 212.55,-344.32 216.98,-342.61"/>
-<polygon fill="#000000" stroke="#000000" points="218.52,-345.77 226.69,-339.02 216.09,-339.21 218.52,-345.77"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M199.77,-378C204.16,-375.42 208.41,-372.42 212,-369 235.32,-346.72 223.14,-326.54 248,-306 249.73,-304.57 251.57,-303.24 253.48,-301.99"/>
+<polygon fill="#000000" stroke="#000000" points="255.24,-305.02 262.26,-297.08 251.82,-298.91 255.24,-305.02"/>
 </g>
-<!-- proc~b64_encode_i8_a -->
-<g id="proc~~encode~~CallsGraph_node6" class="node">
-<title>proc~b64_encode_i8_a</title>
-<g id="a_proc~~encode~~CallsGraph_node6"><a xlink:href=".././proc/b64_encode_i8_a.html" xlink:title="b64_encode_I8_a">
-<polygon fill="#d9534f" stroke="#d9534f" points="319,-297 214,-297 214,-273 319,-273 319,-297"/>
-<text text-anchor="middle" x="266.5" y="-282.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_I8_a</text>
+<!-- proc~b64_encode_i4 -->
+<g id="proc~~encode~~CallsGraph_node8" class="node">
+<title>proc~b64_encode_i4</title>
+<g id="a_proc~~encode~~CallsGraph_node8"><a xlink:href="../proc/b64_encode_i4.html" xlink:title="b64_encode_I4">
+<polygon fill="#d9534f" stroke="#d9534f" points="357,-255 264,-255 264,-231 357,-231 357,-255"/>
+<text text-anchor="middle" x="310.5" y="-240.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_I4</text>
 </a>
 </g>
 </g>
-<!-- interface~b64_encode&#45;&gt;proc~b64_encode_i8_a -->
-<g id="proc~~encode~~CallsGraph_edge4" class="edge">
-<title>interface~b64_encode&#45;&gt;proc~b64_encode_i8_a</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M137.6,-377.93C149.59,-359.81 174.58,-325.65 204,-306 206.42,-304.38 208.97,-302.88 211.61,-301.48"/>
-<polygon fill="#000000" stroke="#000000" points="213.29,-304.57 220.84,-297.13 210.3,-298.23 213.29,-304.57"/>
+<!-- interface~b64_encode&#45;&gt;proc~b64_encode_i4 -->
+<g id="proc~~encode~~CallsGraph_edge7" class="edge">
+<title>interface~b64_encode&#45;&gt;proc~b64_encode_i4</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M201.6,-377.77C205.46,-375.29 209.07,-372.39 212,-369 244.3,-331.71 213.09,-298.86 248,-264 250.1,-261.91 252.41,-260.02 254.87,-258.33"/>
+<polygon fill="#000000" stroke="#000000" points="256.79,-261.26 263.73,-253.25 253.31,-255.19 256.79,-261.26"/>
 </g>
 <!-- proc~b64_encode_i4_a -->
-<g id="proc~~encode~~CallsGraph_node7" class="node">
+<g id="proc~~encode~~CallsGraph_node9" class="node">
 <title>proc~b64_encode_i4_a</title>
-<g id="a_proc~~encode~~CallsGraph_node7"><a xlink:href=".././proc/b64_encode_i4_a.html" xlink:title="b64_encode_I4_a">
-<polygon fill="#d9534f" stroke="#d9534f" points="319,-255 214,-255 214,-231 319,-231 319,-255"/>
-<text text-anchor="middle" x="266.5" y="-240.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_I4_a</text>
+<g id="a_proc~~encode~~CallsGraph_node9"><a xlink:href="../proc/b64_encode_i4_a.html" xlink:title="b64_encode_I4_a">
+<polygon fill="#d9534f" stroke="#d9534f" points="363,-213 258,-213 258,-189 363,-189 363,-213"/>
+<text text-anchor="middle" x="310.5" y="-198.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_I4_a</text>
 </a>
 </g>
 </g>
 <!-- interface~b64_encode&#45;&gt;proc~b64_encode_i4_a -->
-<g id="proc~~encode~~CallsGraph_edge5" class="edge">
-<title>interface~b64_encode&#45;&gt;proc~b64_encode_i4_a</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M133.94,-377.66C142.56,-352.59 165.48,-295.44 204,-264 205.74,-262.58 207.58,-261.25 209.5,-260.02"/>
-<polygon fill="#000000" stroke="#000000" points="211.25,-263.04 218.3,-255.13 207.86,-256.92 211.25,-263.04"/>
-</g>
-<!-- proc~b64_encode_i1_a -->
-<g id="proc~~encode~~CallsGraph_node8" class="node">
-<title>proc~b64_encode_i1_a</title>
-<g id="a_proc~~encode~~CallsGraph_node8"><a xlink:href=".././proc/b64_encode_i1_a.html" xlink:title="b64_encode_I1_a">
-<polygon fill="#d9534f" stroke="#d9534f" points="319,-213 214,-213 214,-189 319,-189 319,-213"/>
-<text text-anchor="middle" x="266.5" y="-198.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_I1_a</text>
-</a>
-</g>
-</g>
-<!-- interface~b64_encode&#45;&gt;proc~b64_encode_i1_a -->
-<g id="proc~~encode~~CallsGraph_edge7" class="edge">
-<title>interface~b64_encode&#45;&gt;proc~b64_encode_i1_a</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M131.91,-377.91C137.37,-347.33 155.86,-266.17 204,-222 205.31,-220.79 206.7,-219.66 208.15,-218.58"/>
-<polygon fill="#000000" stroke="#000000" points="210.3,-221.37 216.96,-213.13 206.62,-215.41 210.3,-221.37"/>
-</g>
-<!-- proc~b64_encode_string_a -->
-<g id="proc~~encode~~CallsGraph_node9" class="node">
-<title>proc~b64_encode_string_a</title>
-<g id="a_proc~~encode~~CallsGraph_node9"><a xlink:href=".././proc/b64_encode_string_a.html" xlink:title="b64_encode_string_a">
-<polygon fill="#d9534f" stroke="#d9534f" points="329,-171 204,-171 204,-147 329,-147 329,-171"/>
-<text text-anchor="middle" x="266.5" y="-156.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_string_a</text>
-</a>
-</g>
-</g>
-<!-- interface~b64_encode&#45;&gt;proc~b64_encode_string_a -->
 <g id="proc~~encode~~CallsGraph_edge8" class="edge">
-<title>interface~b64_encode&#45;&gt;proc~b64_encode_string_a</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M130.7,-377.88C133.41,-342.34 146.18,-237.26 204,-180 205.24,-178.77 206.55,-177.62 207.93,-176.53"/>
-<polygon fill="#000000" stroke="#000000" points="209.93,-179.4 216.38,-171 206.1,-173.54 209.93,-179.4"/>
+<title>interface~b64_encode&#45;&gt;proc~b64_encode_i4_a</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M202.3,-377.74C205.95,-375.28 209.32,-372.39 212,-369 253.71,-316.23 202.6,-271.63 248,-222 248.9,-221.02 249.85,-220.08 250.84,-219.19"/>
+<polygon fill="#000000" stroke="#000000" points="253.1,-221.87 259.13,-213.16 248.98,-216.21 253.1,-221.87"/>
 </g>
 <!-- proc~b64_encode_i8 -->
 <g id="proc~~encode~~CallsGraph_node10" class="node">
 <title>proc~b64_encode_i8</title>
-<g id="a_proc~~encode~~CallsGraph_node10"><a xlink:href=".././proc/b64_encode_i8.html" xlink:title="b64_encode_I8">
-<polygon fill="#d9534f" stroke="#d9534f" points="313,-675 220,-675 220,-651 313,-651 313,-675"/>
-<text text-anchor="middle" x="266.5" y="-660.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_I8</text>
+<g id="a_proc~~encode~~CallsGraph_node10"><a xlink:href="../proc/b64_encode_i8.html" xlink:title="b64_encode_I8">
+<polygon fill="#d9534f" stroke="#d9534f" points="357,-675 264,-675 264,-651 357,-651 357,-675"/>
+<text text-anchor="middle" x="310.5" y="-660.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_I8</text>
 </a>
 </g>
 </g>
 <!-- interface~b64_encode&#45;&gt;proc~b64_encode_i8 -->
 <g id="proc~~encode~~CallsGraph_edge9" class="edge">
 <title>interface~b64_encode&#45;&gt;proc~b64_encode_i8</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M129.87,-402.15C130.12,-442.18 136.36,-571.36 204,-642 206.08,-644.18 208.4,-646.13 210.89,-647.88"/>
-<polygon fill="#000000" stroke="#000000" points="209.45,-651.09 219.85,-653.08 212.96,-645.03 209.45,-651.09"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M171.03,-402.16C171.81,-442.22 179.75,-571.5 248,-642 250.1,-644.17 252.43,-646.11 254.92,-647.85"/>
+<polygon fill="#000000" stroke="#000000" points="253.49,-651.07 263.9,-653.04 256.99,-645.01 253.49,-651.07"/>
 </g>
-<!-- proc~b64_encode_r8_a -->
+<!-- proc~b64_encode_i8_a -->
 <g id="proc~~encode~~CallsGraph_node11" class="node">
-<title>proc~b64_encode_r8_a</title>
-<g id="a_proc~~encode~~CallsGraph_node11"><a xlink:href=".././proc/b64_encode_r8_a.html" xlink:title="b64_encode_R8_a">
-<polygon fill="#d9534f" stroke="#d9534f" points="321,-633 212,-633 212,-609 321,-609 321,-633"/>
-<text text-anchor="middle" x="266.5" y="-618.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_R8_a</text>
+<title>proc~b64_encode_i8_a</title>
+<g id="a_proc~~encode~~CallsGraph_node11"><a xlink:href="../proc/b64_encode_i8_a.html" xlink:title="b64_encode_I8_a">
+<polygon fill="#d9534f" stroke="#d9534f" points="363,-633 258,-633 258,-609 363,-609 363,-633"/>
+<text text-anchor="middle" x="310.5" y="-618.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_I8_a</text>
 </a>
 </g>
 </g>
-<!-- interface~b64_encode&#45;&gt;proc~b64_encode_r8_a -->
+<!-- interface~b64_encode&#45;&gt;proc~b64_encode_i8_a -->
 <g id="proc~~encode~~CallsGraph_edge10" class="edge">
-<title>interface~b64_encode&#45;&gt;proc~b64_encode_r8_a</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M130.7,-402.12C133.41,-437.66 146.18,-542.74 204,-600 205.24,-601.23 206.55,-602.38 207.93,-603.47"/>
-<polygon fill="#000000" stroke="#000000" points="206.1,-606.46 216.38,-609 209.93,-600.6 206.1,-606.46"/>
+<title>interface~b64_encode&#45;&gt;proc~b64_encode_i8_a</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M171.89,-402.13C175.16,-437.7 189.56,-542.85 248,-600 249.25,-601.22 250.57,-602.37 251.95,-603.45"/>
+<polygon fill="#000000" stroke="#000000" points="250.14,-606.45 260.43,-608.95 253.95,-600.57 250.14,-606.45"/>
 </g>
 <!-- proc~b64_encode_r4 -->
 <g id="proc~~encode~~CallsGraph_node12" class="node">
 <title>proc~b64_encode_r4</title>
-<g id="a_proc~~encode~~CallsGraph_node12"><a xlink:href=".././proc/b64_encode_r4.html" xlink:title="b64_encode_R4">
-<polygon fill="#d9534f" stroke="#d9534f" points="315,-591 218,-591 218,-567 315,-567 315,-591"/>
-<text text-anchor="middle" x="266.5" y="-576.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_R4</text>
+<g id="a_proc~~encode~~CallsGraph_node12"><a xlink:href="../proc/b64_encode_r4.html" xlink:title="b64_encode_R4">
+<polygon fill="#d9534f" stroke="#d9534f" points="359,-591 262,-591 262,-567 359,-567 359,-591"/>
+<text text-anchor="middle" x="310.5" y="-576.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_R4</text>
 </a>
 </g>
 </g>
 <!-- interface~b64_encode&#45;&gt;proc~b64_encode_r4 -->
 <g id="proc~~encode~~CallsGraph_edge11" class="edge">
 <title>interface~b64_encode&#45;&gt;proc~b64_encode_r4</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M131.91,-402.09C137.37,-432.67 155.86,-513.83 204,-558 205.65,-559.52 207.42,-560.93 209.28,-562.24"/>
-<polygon fill="#000000" stroke="#000000" points="207.5,-565.25 217.89,-567.35 211.07,-559.23 207.5,-565.25"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M173.14,-402.09C179.18,-432.7 199.21,-513.89 248,-558 249.67,-559.51 251.44,-560.91 253.31,-562.2"/>
+<polygon fill="#000000" stroke="#000000" points="251.55,-565.23 261.94,-567.29 255.1,-559.2 251.55,-565.23"/>
 </g>
-<!-- proc~b64_encode_i4 -->
+<!-- proc~b64_encode_r4_a -->
 <g id="proc~~encode~~CallsGraph_node13" class="node">
-<title>proc~b64_encode_i4</title>
-<g id="a_proc~~encode~~CallsGraph_node13"><a xlink:href=".././proc/b64_encode_i4.html" xlink:title="b64_encode_I4">
-<polygon fill="#d9534f" stroke="#d9534f" points="313,-549 220,-549 220,-525 313,-525 313,-549"/>
-<text text-anchor="middle" x="266.5" y="-534.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_I4</text>
+<title>proc~b64_encode_r4_a</title>
+<g id="a_proc~~encode~~CallsGraph_node13"><a xlink:href="../proc/b64_encode_r4_a.html" xlink:title="b64_encode_R4_a">
+<polygon fill="#d9534f" stroke="#d9534f" points="365,-549 256,-549 256,-525 365,-525 365,-549"/>
+<text text-anchor="middle" x="310.5" y="-534.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_R4_a</text>
 </a>
 </g>
 </g>
-<!-- interface~b64_encode&#45;&gt;proc~b64_encode_i4 -->
+<!-- interface~b64_encode&#45;&gt;proc~b64_encode_r4_a -->
 <g id="proc~~encode~~CallsGraph_edge12" class="edge">
-<title>interface~b64_encode&#45;&gt;proc~b64_encode_i4</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M133.94,-402.34C142.56,-427.41 165.48,-484.56 204,-516 206.07,-517.69 208.27,-519.24 210.58,-520.67"/>
-<polygon fill="#000000" stroke="#000000" points="209.4,-524 219.87,-525.6 212.68,-517.82 209.4,-524"/>
+<title>interface~b64_encode&#45;&gt;proc~b64_encode_r4_a</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M175.25,-402.34C184.49,-427.41 208.79,-484.58 248,-516 249.79,-517.43 251.68,-518.77 253.65,-520.02"/>
+<polygon fill="#000000" stroke="#000000" points="252.22,-523.23 262.67,-524.94 255.57,-517.08 252.22,-523.23"/>
 </g>
-<!-- proc~b64_encode_i2 -->
+<!-- proc~b64_encode_r8 -->
 <g id="proc~~encode~~CallsGraph_node14" class="node">
-<title>proc~b64_encode_i2</title>
-<g id="a_proc~~encode~~CallsGraph_node14"><a xlink:href=".././proc/b64_encode_i2.html" xlink:title="b64_encode_I2">
-<polygon fill="#d9534f" stroke="#d9534f" points="313,-507 220,-507 220,-483 313,-483 313,-507"/>
-<text text-anchor="middle" x="266.5" y="-492.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_I2</text>
+<title>proc~b64_encode_r8</title>
+<g id="a_proc~~encode~~CallsGraph_node14"><a xlink:href="../proc/b64_encode_r8.html" xlink:title="b64_encode_R8">
+<polygon fill="#d9534f" stroke="#d9534f" points="359,-507 262,-507 262,-483 359,-483 359,-507"/>
+<text text-anchor="middle" x="310.5" y="-492.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_R8</text>
 </a>
 </g>
 </g>
-<!-- interface~b64_encode&#45;&gt;proc~b64_encode_i2 -->
+<!-- interface~b64_encode&#45;&gt;proc~b64_encode_r8 -->
 <g id="proc~~encode~~CallsGraph_edge13" class="edge">
-<title>interface~b64_encode&#45;&gt;proc~b64_encode_i2</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M137.6,-402.07C149.59,-420.19 174.58,-454.35 204,-474 206.42,-475.62 208.97,-477.12 211.61,-478.52"/>
-<polygon fill="#000000" stroke="#000000" points="210.3,-481.77 220.84,-482.87 213.29,-475.43 210.3,-481.77"/>
+<title>interface~b64_encode&#45;&gt;proc~b64_encode_r8</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M179.03,-402.06C191.66,-420.15 217.86,-454.3 248,-474 250.56,-475.67 253.27,-477.23 256.07,-478.67"/>
+<polygon fill="#000000" stroke="#000000" points="254.68,-481.89 265.22,-482.9 257.62,-475.53 254.68,-481.89"/>
 </g>
-<!-- proc~b64_encode_i1 -->
+<!-- proc~b64_encode_r8_a -->
 <g id="proc~~encode~~CallsGraph_node15" class="node">
-<title>proc~b64_encode_i1</title>
-<g id="a_proc~~encode~~CallsGraph_node15"><a xlink:href=".././proc/b64_encode_i1.html" xlink:title="b64_encode_I1">
-<polygon fill="#d9534f" stroke="#d9534f" points="313,-465 220,-465 220,-441 313,-441 313,-465"/>
-<text text-anchor="middle" x="266.5" y="-450.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_I1</text>
+<title>proc~b64_encode_r8_a</title>
+<g id="a_proc~~encode~~CallsGraph_node15"><a xlink:href="../proc/b64_encode_r8_a.html" xlink:title="b64_encode_R8_a">
+<polygon fill="#d9534f" stroke="#d9534f" points="365,-465 256,-465 256,-441 365,-441 365,-465"/>
+<text text-anchor="middle" x="310.5" y="-450.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_R8_a</text>
 </a>
 </g>
 </g>
-<!-- interface~b64_encode&#45;&gt;proc~b64_encode_i1 -->
+<!-- interface~b64_encode&#45;&gt;proc~b64_encode_r8_a -->
 <g id="proc~~encode~~CallsGraph_edge14" class="edge">
-<title>interface~b64_encode&#45;&gt;proc~b64_encode_i1</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M148.96,-402.07C163.61,-411.08 184.6,-423.27 204,-432 208.16,-433.87 212.55,-435.68 216.98,-437.39"/>
-<polygon fill="#000000" stroke="#000000" points="216.09,-440.79 226.69,-440.98 218.52,-434.23 216.09,-440.79"/>
+<title>interface~b64_encode&#45;&gt;proc~b64_encode_r8_a</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M190.79,-402.02C206.07,-410.99 227.93,-423.18 248,-432 252.18,-433.84 256.57,-435.62 261.01,-437.32"/>
+<polygon fill="#000000" stroke="#000000" points="260.14,-440.72 270.73,-440.89 262.55,-434.15 260.14,-440.72"/>
 </g>
 <!-- proc~b64_encode_string -->
 <g id="proc~~encode~~CallsGraph_node16" class="node">
 <title>proc~b64_encode_string</title>
-<g id="a_proc~~encode~~CallsGraph_node16"><a xlink:href=".././proc/b64_encode_string.html" xlink:title="b64_encode_string">
-<polygon fill="#d9534f" stroke="#d9534f" points="323,-129 210,-129 210,-105 323,-105 323,-129"/>
-<text text-anchor="middle" x="266.5" y="-114.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_string</text>
+<g id="a_proc~~encode~~CallsGraph_node16"><a xlink:href="../proc/b64_encode_string.html" xlink:title="b64_encode_string">
+<polygon fill="#d9534f" stroke="#d9534f" points="367,-171 254,-171 254,-147 367,-147 367,-171"/>
+<text text-anchor="middle" x="310.5" y="-156.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_string</text>
 </a>
 </g>
 </g>
 <!-- interface~b64_encode&#45;&gt;proc~b64_encode_string -->
 <g id="proc~~encode~~CallsGraph_edge15" class="edge">
 <title>interface~b64_encode&#45;&gt;proc~b64_encode_string</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M129.87,-377.85C130.12,-337.82 136.36,-208.64 204,-138 205.05,-136.9 206.16,-135.87 207.31,-134.88"/>
-<polygon fill="#000000" stroke="#000000" points="209.37,-137.72 215.59,-129.14 205.38,-131.97 209.37,-137.72"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M202.46,-377.87C206.09,-375.39 209.41,-372.46 212,-369 263.26,-300.56 191.94,-244.57 248,-180 248.76,-179.13 249.55,-178.29 250.38,-177.49"/>
+<polygon fill="#000000" stroke="#000000" points="252.83,-180.02 258.64,-171.17 248.58,-174.46 252.83,-180.02"/>
 </g>
-<!-- proc~encode_bits -->
+<!-- proc~b64_encode_string_a -->
 <g id="proc~~encode~~CallsGraph_node17" class="node">
-<title>proc~encode_bits</title>
-<g id="a_proc~~encode~~CallsGraph_node17"><a xlink:href=".././proc/encode_bits.html" xlink:title="encode_bits">
-<polygon fill="#d9534f" stroke="#d9534f" points="441,-402 365,-402 365,-378 441,-378 441,-402"/>
-<text text-anchor="middle" x="403" y="-387.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">encode_bits</text>
+<title>proc~b64_encode_string_a</title>
+<g id="a_proc~~encode~~CallsGraph_node17"><a xlink:href="../proc/b64_encode_string_a.html" xlink:title="b64_encode_string_a">
+<polygon fill="#d9534f" stroke="#d9534f" points="373,-129 248,-129 248,-105 373,-105 373,-129"/>
+<text text-anchor="middle" x="310.5" y="-114.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_encode_string_a</text>
 </a>
 </g>
 </g>
-<!-- proc~b64_encode_r8&#45;&gt;proc~encode_bits -->
+<!-- interface~b64_encode&#45;&gt;proc~b64_encode_string_a -->
 <g id="proc~~encode~~CallsGraph_edge16" class="edge">
-<title>proc~b64_encode_r8&#45;&gt;proc~encode_bits</title>
-<path fill="none" stroke="#000000" d="M315.3,-403.54C328.17,-401.53 342.08,-399.36 354.91,-397.35"/>
-<polygon fill="#000000" stroke="#000000" points="355.58,-400.79 364.92,-395.79 354.5,-393.87 355.58,-400.79"/>
+<title>interface~b64_encode&#45;&gt;proc~b64_encode_string_a</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M202.57,-377.95C206.18,-375.46 209.47,-372.5 212,-369 272.88,-284.8 181.21,-217.59 248,-138 248.74,-137.11 249.53,-136.27 250.34,-135.45"/>
+<polygon fill="#000000" stroke="#000000" points="252.8,-137.98 258.52,-129.06 248.49,-132.46 252.8,-137.98"/>
 </g>
-<!-- proc~b64_encode_r4_a&#45;&gt;proc~encode_bits -->
+<!-- proc~encode_bits -->
+<g id="proc~~encode~~CallsGraph_node19" class="node">
+<title>proc~encode_bits</title>
+<g id="a_proc~~encode~~CallsGraph_node19"><a xlink:href="../proc/encode_bits.html" xlink:title="encode_bits">
+<polygon fill="#d9534f" stroke="#d9534f" points="485,-402 409,-402 409,-378 485,-378 485,-402"/>
+<text text-anchor="middle" x="447" y="-387.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">encode_bits</text>
+</a>
+</g>
+</g>
+<!-- proc~b64_encode_i1&#45;&gt;proc~encode_bits -->
 <g id="proc~~encode~~CallsGraph_edge17" class="edge">
-<title>proc~b64_encode_r4_a&#45;&gt;proc~encode_bits</title>
-<path fill="none" stroke="#000000" d="M321.04,-377.36C332.15,-379.09 343.77,-380.91 354.63,-382.6"/>
-<polygon fill="#000000" stroke="#000000" points="354.35,-386.1 364.77,-384.19 355.43,-379.19 354.35,-386.1"/>
-</g>
-<!-- proc~b64_encode_i2_a&#45;&gt;proc~encode_bits -->
-<g id="proc~~encode~~CallsGraph_edge18" class="edge">
-<title>proc~b64_encode_i2_a&#45;&gt;proc~encode_bits</title>
-<path fill="none" stroke="#000000" d="M306.65,-339.1C314.17,-341.78 321.91,-344.79 329,-348 344.58,-355.06 361.17,-364.44 374.59,-372.55"/>
-<polygon fill="#000000" stroke="#000000" points="372.97,-375.66 383.32,-377.91 376.63,-369.69 372.97,-375.66"/>
-</g>
-<!-- proc~b64_encode_i8_a&#45;&gt;proc~encode_bits -->
-<g id="proc~~encode~~CallsGraph_edge19" class="edge">
-<title>proc~b64_encode_i8_a&#45;&gt;proc~encode_bits</title>
-<path fill="none" stroke="#000000" d="M312.18,-297.1C318.08,-299.59 323.85,-302.54 329,-306 354.07,-322.87 375.76,-350.48 388.84,-369.41"/>
-<polygon fill="#000000" stroke="#000000" points="386.07,-371.56 394.54,-377.92 391.88,-367.67 386.07,-371.56"/>
-</g>
-<!-- proc~b64_encode_i4_a&#45;&gt;proc~encode_bits -->
-<g id="proc~~encode~~CallsGraph_edge20" class="edge">
-<title>proc~b64_encode_i4_a&#45;&gt;proc~encode_bits</title>
-<path fill="none" stroke="#000000" d="M314.72,-255.11C319.84,-257.56 324.73,-260.49 329,-264 362.96,-291.88 384.46,-339.98 394.76,-367.99"/>
-<polygon fill="#000000" stroke="#000000" points="391.54,-369.39 398.16,-377.66 398.14,-367.07 391.54,-369.39"/>
+<title>proc~b64_encode_i1&#45;&gt;proc~encode_bits</title>
+<path fill="none" stroke="#000000" d="M357.04,-403.89C370.52,-401.79 385.3,-399.48 398.88,-397.36"/>
+<polygon fill="#000000" stroke="#000000" points="399.65,-400.78 408.99,-395.78 398.57,-393.86 399.65,-400.78"/>
 </g>
 <!-- proc~b64_encode_i1_a&#45;&gt;proc~encode_bits -->
-<g id="proc~~encode~~CallsGraph_edge21" class="edge">
+<g id="proc~~encode~~CallsGraph_edge18" class="edge">
 <title>proc~b64_encode_i1_a&#45;&gt;proc~encode_bits</title>
-<path fill="none" stroke="#000000" d="M316.05,-213.11C320.76,-215.55 325.18,-218.48 329,-222 372.43,-262.05 391.27,-332.45 398.34,-368.06"/>
-<polygon fill="#000000" stroke="#000000" points="394.9,-368.72 400.17,-377.92 401.79,-367.45 394.9,-368.72"/>
+<path fill="none" stroke="#000000" d="M363.12,-377.06C374.92,-378.9 387.4,-380.85 399,-382.66"/>
+<polygon fill="#000000" stroke="#000000" points="398.5,-386.13 408.92,-384.21 399.58,-379.21 398.5,-386.13"/>
 </g>
-<!-- proc~b64_encode_string_a&#45;&gt;proc~encode_bits -->
+<!-- proc~b64_encode_i2&#45;&gt;proc~encode_bits -->
+<g id="proc~~encode~~CallsGraph_edge19" class="edge">
+<title>proc~b64_encode_i2&#45;&gt;proc~encode_bits</title>
+<path fill="none" stroke="#000000" d="M350.65,-339.1C358.17,-341.78 365.91,-344.79 373,-348 388.58,-355.06 405.17,-364.44 418.59,-372.55"/>
+<polygon fill="#000000" stroke="#000000" points="416.97,-375.66 427.32,-377.91 420.63,-369.69 416.97,-375.66"/>
+</g>
+<!-- proc~b64_encode_i2_a&#45;&gt;proc~encode_bits -->
+<g id="proc~~encode~~CallsGraph_edge20" class="edge">
+<title>proc~b64_encode_i2_a&#45;&gt;proc~encode_bits</title>
+<path fill="none" stroke="#000000" d="M356.18,-297.1C362.08,-299.59 367.85,-302.54 373,-306 398.07,-322.87 419.76,-350.48 432.84,-369.41"/>
+<polygon fill="#000000" stroke="#000000" points="430.07,-371.56 438.54,-377.92 435.88,-367.67 430.07,-371.56"/>
+</g>
+<!-- proc~b64_encode_i4&#45;&gt;proc~encode_bits -->
+<g id="proc~~encode~~CallsGraph_edge21" class="edge">
+<title>proc~b64_encode_i4&#45;&gt;proc~encode_bits</title>
+<path fill="none" stroke="#000000" d="M357.15,-254.37C362.83,-256.97 368.29,-260.13 373,-264 406.96,-291.88 428.46,-339.98 438.76,-367.99"/>
+<polygon fill="#000000" stroke="#000000" points="435.54,-369.39 442.16,-377.66 442.14,-367.07 435.54,-369.39"/>
+</g>
+<!-- proc~b64_encode_i4_a&#45;&gt;proc~encode_bits -->
+<g id="proc~~encode~~CallsGraph_edge22" class="edge">
+<title>proc~b64_encode_i4_a&#45;&gt;proc~encode_bits</title>
+<path fill="none" stroke="#000000" d="M360.05,-213.11C364.76,-215.55 369.18,-218.48 373,-222 416.43,-262.05 435.27,-332.45 442.34,-368.06"/>
+<polygon fill="#000000" stroke="#000000" points="438.9,-368.72 444.17,-377.92 445.79,-367.45 438.9,-368.72"/>
+</g>
+<!-- proc~b64_encode_i8&#45;&gt;proc~encode_bits -->
 <g id="proc~~encode~~CallsGraph_edge23" class="edge">
-<title>proc~b64_encode_string_a&#45;&gt;proc~encode_bits</title>
-<path fill="none" stroke="#000000" d="M316.93,-171.15C321.35,-173.58 325.48,-176.5 329,-180 381.88,-232.59 396.52,-325.44 400.52,-367.8"/>
-<polygon fill="#000000" stroke="#000000" points="397.05,-368.21 401.36,-377.89 404.02,-367.63 397.05,-368.21"/>
+<title>proc~b64_encode_i8&#45;&gt;proc~encode_bits</title>
+<path fill="none" stroke="#000000" d="M357.16,-653.09C363.05,-650.28 368.56,-646.65 373,-642 435.57,-576.42 444.97,-460.52 446.06,-412.16"/>
+<polygon fill="#000000" stroke="#000000" points="449.56,-412.19 446.18,-402.15 442.56,-412.1 449.56,-412.19"/>
+</g>
+<!-- proc~b64_encode_i8_a&#45;&gt;proc~encode_bits -->
+<g id="proc~~encode~~CallsGraph_edge24" class="edge">
+<title>proc~b64_encode_i8_a&#45;&gt;proc~encode_bits</title>
+<path fill="none" stroke="#000000" d="M360.93,-608.85C365.35,-606.42 369.48,-603.5 373,-600 425.88,-547.41 440.52,-454.56 444.52,-412.2"/>
+<polygon fill="#000000" stroke="#000000" points="448.02,-412.37 445.36,-402.11 441.05,-411.79 448.02,-412.37"/>
+</g>
+<!-- proc~b64_encode_r4&#45;&gt;proc~encode_bits -->
+<g id="proc~~encode~~CallsGraph_edge25" class="edge">
+<title>proc~b64_encode_r4&#45;&gt;proc~encode_bits</title>
+<path fill="none" stroke="#000000" d="M359.13,-567.37C364.17,-564.83 368.94,-561.75 373,-558 416.43,-517.95 435.27,-447.55 442.34,-411.94"/>
+<polygon fill="#000000" stroke="#000000" points="445.79,-412.55 444.17,-402.08 438.9,-411.28 445.79,-412.55"/>
+</g>
+<!-- proc~b64_encode_r4_a&#45;&gt;proc~encode_bits -->
+<g id="proc~~encode~~CallsGraph_edge26" class="edge">
+<title>proc~b64_encode_r4_a&#45;&gt;proc~encode_bits</title>
+<path fill="none" stroke="#000000" d="M358.72,-524.89C363.84,-522.44 368.73,-519.51 373,-516 406.96,-488.12 428.46,-440.02 438.76,-412.01"/>
+<polygon fill="#000000" stroke="#000000" points="442.14,-412.93 442.16,-402.34 435.54,-410.61 442.14,-412.93"/>
+</g>
+<!-- proc~b64_encode_r8&#45;&gt;proc~encode_bits -->
+<g id="proc~~encode~~CallsGraph_edge27" class="edge">
+<title>proc~b64_encode_r8&#45;&gt;proc~encode_bits</title>
+<path fill="none" stroke="#000000" d="M356.18,-482.9C362.08,-480.41 367.85,-477.46 373,-474 398.07,-457.13 419.76,-429.52 432.84,-410.59"/>
+<polygon fill="#000000" stroke="#000000" points="435.88,-412.33 438.54,-402.08 430.07,-408.44 435.88,-412.33"/>
+</g>
+<!-- proc~b64_encode_r8_a&#45;&gt;proc~encode_bits -->
+<g id="proc~~encode~~CallsGraph_edge28" class="edge">
+<title>proc~b64_encode_r8_a&#45;&gt;proc~encode_bits</title>
+<path fill="none" stroke="#000000" d="M350.65,-440.9C358.17,-438.22 365.91,-435.21 373,-432 388.58,-424.94 405.17,-415.56 418.59,-407.45"/>
+<polygon fill="#000000" stroke="#000000" points="420.63,-410.31 427.32,-402.09 416.97,-404.34 420.63,-410.31"/>
 </g>
 <!-- interface~byte_size -->
 <g id="proc~~encode~~CallsGraph_node18" class="node">
 <title>interface~byte_size</title>
-<g id="a_proc~~encode~~CallsGraph_node18"><a xlink:href=".././interface/byte_size.html" xlink:title="byte_size">
-<polygon fill="#a7506f" stroke="#a7506f" points="433.5,-150 372.5,-150 372.5,-126 433.5,-126 433.5,-150"/>
-<text text-anchor="middle" x="403" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">byte_size</text>
+<g id="a_proc~~encode~~CallsGraph_node18"><a xlink:href="../interface/byte_size.html" xlink:title="byte_size">
+<polygon fill="#a7506f" stroke="#a7506f" points="477.5,-150 416.5,-150 416.5,-126 477.5,-126 477.5,-150"/>
+<text text-anchor="middle" x="447" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">byte_size</text>
 </a>
 </g>
-</g>
-<!-- proc~b64_encode_string_a&#45;&gt;interface~byte_size -->
-<g id="proc~~encode~~CallsGraph_edge22" class="edge">
-<title>proc~b64_encode_string_a&#45;&gt;interface~byte_size</title>
-<path fill="none" stroke="#000000" d="M329.24,-149.36C340.53,-147.6 352.03,-145.8 362.45,-144.17"/>
-<polygon fill="#000000" stroke="#000000" points="363.13,-147.61 372.47,-142.61 362.05,-140.7 363.13,-147.61"/>
-</g>
-<!-- proc~b64_encode_i8&#45;&gt;proc~encode_bits -->
-<g id="proc~~encode~~CallsGraph_edge24" class="edge">
-<title>proc~b64_encode_i8&#45;&gt;proc~encode_bits</title>
-<path fill="none" stroke="#000000" d="M313.16,-653.09C319.05,-650.28 324.56,-646.65 329,-642 391.57,-576.42 400.97,-460.52 402.06,-412.16"/>
-<polygon fill="#000000" stroke="#000000" points="405.56,-412.19 402.18,-402.15 398.56,-412.1 405.56,-412.19"/>
-</g>
-<!-- proc~b64_encode_r8_a&#45;&gt;proc~encode_bits -->
-<g id="proc~~encode~~CallsGraph_edge25" class="edge">
-<title>proc~b64_encode_r8_a&#45;&gt;proc~encode_bits</title>
-<path fill="none" stroke="#000000" d="M316.93,-608.85C321.35,-606.42 325.48,-603.5 329,-600 381.88,-547.41 396.52,-454.56 400.52,-412.2"/>
-<polygon fill="#000000" stroke="#000000" points="404.02,-412.37 401.36,-402.11 397.05,-411.79 404.02,-412.37"/>
-</g>
-<!-- proc~b64_encode_r4&#45;&gt;proc~encode_bits -->
-<g id="proc~~encode~~CallsGraph_edge26" class="edge">
-<title>proc~b64_encode_r4&#45;&gt;proc~encode_bits</title>
-<path fill="none" stroke="#000000" d="M315.13,-567.37C320.17,-564.83 324.94,-561.75 329,-558 372.43,-517.95 391.27,-447.55 398.34,-411.94"/>
-<polygon fill="#000000" stroke="#000000" points="401.79,-412.55 400.17,-402.08 394.9,-411.28 401.79,-412.55"/>
-</g>
-<!-- proc~b64_encode_i4&#45;&gt;proc~encode_bits -->
-<g id="proc~~encode~~CallsGraph_edge27" class="edge">
-<title>proc~b64_encode_i4&#45;&gt;proc~encode_bits</title>
-<path fill="none" stroke="#000000" d="M313.15,-525.63C318.83,-523.03 324.29,-519.87 329,-516 362.96,-488.12 384.46,-440.02 394.76,-412.01"/>
-<polygon fill="#000000" stroke="#000000" points="398.14,-412.93 398.16,-402.34 391.54,-410.61 398.14,-412.93"/>
-</g>
-<!-- proc~b64_encode_i2&#45;&gt;proc~encode_bits -->
-<g id="proc~~encode~~CallsGraph_edge28" class="edge">
-<title>proc~b64_encode_i2&#45;&gt;proc~encode_bits</title>
-<path fill="none" stroke="#000000" d="M312.18,-482.9C318.08,-480.41 323.85,-477.46 329,-474 354.07,-457.13 375.76,-429.52 388.84,-410.59"/>
-<polygon fill="#000000" stroke="#000000" points="391.88,-412.33 394.54,-402.08 386.07,-408.44 391.88,-412.33"/>
-</g>
-<!-- proc~b64_encode_i1&#45;&gt;proc~encode_bits -->
-<g id="proc~~encode~~CallsGraph_edge29" class="edge">
-<title>proc~b64_encode_i1&#45;&gt;proc~encode_bits</title>
-<path fill="none" stroke="#000000" d="M306.65,-440.9C314.17,-438.22 321.91,-435.21 329,-432 344.58,-424.94 361.17,-415.56 374.59,-407.45"/>
-<polygon fill="#000000" stroke="#000000" points="376.63,-410.31 383.32,-402.09 372.97,-404.34 376.63,-410.31"/>
-</g>
-<!-- proc~b64_encode_string&#45;&gt;proc~encode_bits -->
-<g id="proc~~encode~~CallsGraph_edge31" class="edge">
-<title>proc~b64_encode_string&#45;&gt;proc~encode_bits</title>
-<path fill="none" stroke="#000000" d="M317.42,-129.13C321.69,-131.57 325.65,-134.49 329,-138 391.57,-203.58 400.97,-319.48 402.06,-367.84"/>
-<polygon fill="#000000" stroke="#000000" points="398.56,-367.9 402.18,-377.85 405.56,-367.81 398.56,-367.9"/>
 </g>
 <!-- proc~b64_encode_string&#45;&gt;interface~byte_size -->
-<g id="proc~~encode~~CallsGraph_edge30" class="edge">
+<g id="proc~~encode~~CallsGraph_edge29" class="edge">
 <title>proc~b64_encode_string&#45;&gt;interface~byte_size</title>
-<path fill="none" stroke="#000000" d="M323.37,-125.72C336.32,-127.75 349.85,-129.86 361.97,-131.75"/>
-<polygon fill="#000000" stroke="#000000" points="361.78,-135.26 372.2,-133.35 362.86,-128.35 361.78,-135.26"/>
+<path fill="none" stroke="#000000" d="M367.37,-150.28C380.32,-148.25 393.85,-146.14 405.97,-144.25"/>
+<polygon fill="#000000" stroke="#000000" points="406.86,-147.65 416.2,-142.65 405.78,-140.74 406.86,-147.65"/>
 </g>
-<!-- proc~byte_size_i1p -->
-<g id="proc~~encode~~CallsGraph_node19" class="node">
-<title>proc~byte_size_i1p</title>
-<g id="a_proc~~encode~~CallsGraph_node19"><a xlink:href=".././proc/byte_size_i1p.html" xlink:title="byte_size_I1P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="561.5,-276 479.5,-276 479.5,-252 561.5,-252 561.5,-276"/>
-<text text-anchor="middle" x="520.5" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">byte_size_I1P</text>
-</a>
+<!-- proc~b64_encode_string&#45;&gt;proc~encode_bits -->
+<g id="proc~~encode~~CallsGraph_edge30" class="edge">
+<title>proc~b64_encode_string&#45;&gt;proc~encode_bits</title>
+<path fill="none" stroke="#000000" d="M360.93,-171.15C365.35,-173.58 369.48,-176.5 373,-180 425.88,-232.59 440.52,-325.44 444.52,-367.8"/>
+<polygon fill="#000000" stroke="#000000" points="441.05,-368.21 445.36,-377.89 448.02,-367.63 441.05,-368.21"/>
 </g>
+<!-- proc~b64_encode_string_a&#45;&gt;interface~byte_size -->
+<g id="proc~~encode~~CallsGraph_edge31" class="edge">
+<title>proc~b64_encode_string_a&#45;&gt;interface~byte_size</title>
+<path fill="none" stroke="#000000" d="M373.24,-126.64C384.53,-128.4 396.03,-130.2 406.45,-131.83"/>
+<polygon fill="#000000" stroke="#000000" points="406.05,-135.3 416.47,-133.39 407.13,-128.39 406.05,-135.3"/>
 </g>
-<!-- interface~byte_size&#45;&gt;proc~byte_size_i1p -->
+<!-- proc~b64_encode_string_a&#45;&gt;proc~encode_bits -->
 <g id="proc~~encode~~CallsGraph_edge32" class="edge">
-<title>interface~byte_size&#45;&gt;proc~byte_size_i1p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M409.85,-150.18C420.57,-171.43 445.21,-215.61 477,-243 478.33,-244.14 479.73,-245.24 481.19,-246.3"/>
-<polygon fill="#000000" stroke="#000000" points="479.61,-249.44 489.93,-251.84 483.35,-243.53 479.61,-249.44"/>
-</g>
-<!-- proc~byte_size_r4p -->
-<g id="proc~~encode~~CallsGraph_node20" class="node">
-<title>proc~byte_size_r4p</title>
-<g id="a_proc~~encode~~CallsGraph_node20"><a xlink:href=".././proc/byte_size_r4p.html" xlink:title="byte_size_R4P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="564,-234 477,-234 477,-210 564,-210 564,-234"/>
-<text text-anchor="middle" x="520.5" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">byte_size_R4P</text>
-</a>
-</g>
-</g>
-<!-- interface~byte_size&#45;&gt;proc~byte_size_r4p -->
-<g id="proc~~encode~~CallsGraph_edge34" class="edge">
-<title>interface~byte_size&#45;&gt;proc~byte_size_r4p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M416.14,-150.19C430.02,-163.71 453.84,-185.64 477,-201 479.1,-202.39 481.31,-203.75 483.56,-205.07"/>
-<polygon fill="#000000" stroke="#000000" points="481.95,-208.17 492.4,-209.89 485.3,-202.03 481.95,-208.17"/>
-</g>
-<!-- proc~byte_size_i4p -->
-<g id="proc~~encode~~CallsGraph_node21" class="node">
-<title>proc~byte_size_i4p</title>
-<g id="a_proc~~encode~~CallsGraph_node21"><a xlink:href=".././proc/byte_size_i4p.html" xlink:title="byte_size_I4P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="561.5,-192 479.5,-192 479.5,-168 561.5,-168 561.5,-192"/>
-<text text-anchor="middle" x="520.5" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">byte_size_I4P</text>
-</a>
-</g>
-</g>
-<!-- interface~byte_size&#45;&gt;proc~byte_size_i4p -->
-<g id="proc~~encode~~CallsGraph_edge33" class="edge">
-<title>interface~byte_size&#45;&gt;proc~byte_size_i4p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M433.74,-148.82C446.78,-153.56 462.32,-159.21 476.58,-164.39"/>
-<polygon fill="#000000" stroke="#000000" points="475.6,-167.76 486.19,-167.89 477.99,-161.18 475.6,-167.76"/>
-</g>
-<!-- proc~byte_size_i8p -->
-<g id="proc~~encode~~CallsGraph_node22" class="node">
-<title>proc~byte_size_i8p</title>
-<g id="a_proc~~encode~~CallsGraph_node22"><a xlink:href=".././proc/byte_size_i8p.html" xlink:title="byte_size_I8P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="561.5,-150 479.5,-150 479.5,-126 561.5,-126 561.5,-150"/>
-<text text-anchor="middle" x="520.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">byte_size_I8P</text>
-</a>
-</g>
-</g>
-<!-- interface~byte_size&#45;&gt;proc~byte_size_i8p -->
-<g id="proc~~encode~~CallsGraph_edge35" class="edge">
-<title>interface~byte_size&#45;&gt;proc~byte_size_i8p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M433.74,-138C444.61,-138 457.21,-138 469.36,-138"/>
-<polygon fill="#000000" stroke="#000000" points="469.41,-141.5 479.41,-138 469.41,-134.5 469.41,-141.5"/>
-</g>
-<!-- proc~byte_size_r8p -->
-<g id="proc~~encode~~CallsGraph_node23" class="node">
-<title>proc~byte_size_r8p</title>
-<g id="a_proc~~encode~~CallsGraph_node23"><a xlink:href=".././proc/byte_size_r8p.html" xlink:title="byte_size_R8P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="564,-108 477,-108 477,-84 564,-84 564,-108"/>
-<text text-anchor="middle" x="520.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">byte_size_R8P</text>
-</a>
-</g>
-</g>
-<!-- interface~byte_size&#45;&gt;proc~byte_size_r8p -->
-<g id="proc~~encode~~CallsGraph_edge36" class="edge">
-<title>interface~byte_size&#45;&gt;proc~byte_size_r8p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M433.74,-127.18C446.78,-122.44 462.32,-116.79 476.58,-111.61"/>
-<polygon fill="#000000" stroke="#000000" points="477.99,-114.82 486.19,-108.11 475.6,-108.24 477.99,-114.82"/>
-</g>
-<!-- proc~byte_size_i2p -->
-<g id="proc~~encode~~CallsGraph_node24" class="node">
-<title>proc~byte_size_i2p</title>
-<g id="a_proc~~encode~~CallsGraph_node24"><a xlink:href=".././proc/byte_size_i2p.html" xlink:title="byte_size_I2P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="561.5,-66 479.5,-66 479.5,-42 561.5,-42 561.5,-66"/>
-<text text-anchor="middle" x="520.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">byte_size_I2P</text>
-</a>
-</g>
-</g>
-<!-- interface~byte_size&#45;&gt;proc~byte_size_i2p -->
-<g id="proc~~encode~~CallsGraph_edge37" class="edge">
-<title>interface~byte_size&#45;&gt;proc~byte_size_i2p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M416.14,-125.81C430.02,-112.29 453.84,-90.36 477,-75 479.1,-73.61 481.31,-72.25 483.56,-70.93"/>
-<polygon fill="#000000" stroke="#000000" points="485.3,-73.97 492.4,-66.11 481.95,-67.83 485.3,-73.97"/>
+<title>proc~b64_encode_string_a&#45;&gt;proc~encode_bits</title>
+<path fill="none" stroke="#000000" d="M361.42,-129.13C365.69,-131.57 369.65,-134.49 373,-138 435.57,-203.58 444.97,-319.48 446.06,-367.84"/>
+<polygon fill="#000000" stroke="#000000" points="442.56,-367.9 446.18,-377.85 449.56,-367.81 442.56,-367.9"/>
 </g>
 <!-- proc~byte_size_chr -->
-<g id="proc~~encode~~CallsGraph_node25" class="node">
+<g id="proc~~encode~~CallsGraph_node20" class="node">
 <title>proc~byte_size_chr</title>
-<g id="a_proc~~encode~~CallsGraph_node25"><a xlink:href=".././proc/byte_size_chr.html" xlink:title="byte_size_chr">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="562.5,-24 478.5,-24 478.5,0 562.5,0 562.5,-24"/>
-<text text-anchor="middle" x="520.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">byte_size_chr</text>
+<g id="a_proc~~encode~~CallsGraph_node20"><a xlink:href="../proc/byte_size_chr.html" xlink:title="byte_size_chr">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="606.5,-276 522.5,-276 522.5,-252 606.5,-252 606.5,-276"/>
+<text text-anchor="middle" x="564.5" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">byte_size_chr</text>
 </a>
 </g>
 </g>
 <!-- interface~byte_size&#45;&gt;proc~byte_size_chr -->
-<g id="proc~~encode~~CallsGraph_edge38" class="edge">
+<g id="proc~~encode~~CallsGraph_edge33" class="edge">
 <title>interface~byte_size&#45;&gt;proc~byte_size_chr</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M409.85,-125.82C420.57,-104.57 445.21,-60.39 477,-33 478.33,-31.86 479.73,-30.76 481.19,-29.7"/>
-<polygon fill="#000000" stroke="#000000" points="483.35,-32.47 489.93,-24.16 479.61,-26.56 483.35,-32.47"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M453.85,-150.18C464.57,-171.43 489.21,-215.61 521,-243 522.33,-244.14 523.73,-245.24 525.19,-246.3"/>
+<polygon fill="#000000" stroke="#000000" points="523.61,-249.44 533.93,-251.84 527.35,-243.53 523.61,-249.44"/>
+</g>
+<!-- proc~byte_size_i1p -->
+<g id="proc~~encode~~CallsGraph_node21" class="node">
+<title>proc~byte_size_i1p</title>
+<g id="a_proc~~encode~~CallsGraph_node21"><a xlink:href="../proc/byte_size_i1p.html" xlink:title="byte_size_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="605.5,-234 523.5,-234 523.5,-210 605.5,-210 605.5,-234"/>
+<text text-anchor="middle" x="564.5" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">byte_size_I1P</text>
+</a>
+</g>
+</g>
+<!-- interface~byte_size&#45;&gt;proc~byte_size_i1p -->
+<g id="proc~~encode~~CallsGraph_edge34" class="edge">
+<title>interface~byte_size&#45;&gt;proc~byte_size_i1p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M460.14,-150.19C474.02,-163.71 497.84,-185.64 521,-201 523.1,-202.39 525.31,-203.75 527.56,-205.07"/>
+<polygon fill="#000000" stroke="#000000" points="525.95,-208.17 536.4,-209.89 529.3,-202.03 525.95,-208.17"/>
+</g>
+<!-- proc~byte_size_i2p -->
+<g id="proc~~encode~~CallsGraph_node22" class="node">
+<title>proc~byte_size_i2p</title>
+<g id="a_proc~~encode~~CallsGraph_node22"><a xlink:href="../proc/byte_size_i2p.html" xlink:title="byte_size_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="605.5,-192 523.5,-192 523.5,-168 605.5,-168 605.5,-192"/>
+<text text-anchor="middle" x="564.5" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">byte_size_I2P</text>
+</a>
+</g>
+</g>
+<!-- interface~byte_size&#45;&gt;proc~byte_size_i2p -->
+<g id="proc~~encode~~CallsGraph_edge35" class="edge">
+<title>interface~byte_size&#45;&gt;proc~byte_size_i2p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M477.74,-148.82C490.78,-153.56 506.32,-159.21 520.58,-164.39"/>
+<polygon fill="#000000" stroke="#000000" points="519.6,-167.76 530.19,-167.89 521.99,-161.18 519.6,-167.76"/>
+</g>
+<!-- proc~byte_size_i4p -->
+<g id="proc~~encode~~CallsGraph_node23" class="node">
+<title>proc~byte_size_i4p</title>
+<g id="a_proc~~encode~~CallsGraph_node23"><a xlink:href="../proc/byte_size_i4p.html" xlink:title="byte_size_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="605.5,-150 523.5,-150 523.5,-126 605.5,-126 605.5,-150"/>
+<text text-anchor="middle" x="564.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">byte_size_I4P</text>
+</a>
+</g>
+</g>
+<!-- interface~byte_size&#45;&gt;proc~byte_size_i4p -->
+<g id="proc~~encode~~CallsGraph_edge36" class="edge">
+<title>interface~byte_size&#45;&gt;proc~byte_size_i4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M477.74,-138C488.61,-138 501.21,-138 513.36,-138"/>
+<polygon fill="#000000" stroke="#000000" points="513.41,-141.5 523.41,-138 513.41,-134.5 513.41,-141.5"/>
+</g>
+<!-- proc~byte_size_i8p -->
+<g id="proc~~encode~~CallsGraph_node24" class="node">
+<title>proc~byte_size_i8p</title>
+<g id="a_proc~~encode~~CallsGraph_node24"><a xlink:href="../proc/byte_size_i8p.html" xlink:title="byte_size_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="605.5,-108 523.5,-108 523.5,-84 605.5,-84 605.5,-108"/>
+<text text-anchor="middle" x="564.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">byte_size_I8P</text>
+</a>
+</g>
+</g>
+<!-- interface~byte_size&#45;&gt;proc~byte_size_i8p -->
+<g id="proc~~encode~~CallsGraph_edge37" class="edge">
+<title>interface~byte_size&#45;&gt;proc~byte_size_i8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M477.74,-127.18C490.78,-122.44 506.32,-116.79 520.58,-111.61"/>
+<polygon fill="#000000" stroke="#000000" points="521.99,-114.82 530.19,-108.11 519.6,-108.24 521.99,-114.82"/>
+</g>
+<!-- proc~byte_size_r4p -->
+<g id="proc~~encode~~CallsGraph_node25" class="node">
+<title>proc~byte_size_r4p</title>
+<g id="a_proc~~encode~~CallsGraph_node25"><a xlink:href="../proc/byte_size_r4p.html" xlink:title="byte_size_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="608,-66 521,-66 521,-42 608,-42 608,-66"/>
+<text text-anchor="middle" x="564.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">byte_size_R4P</text>
+</a>
+</g>
+</g>
+<!-- interface~byte_size&#45;&gt;proc~byte_size_r4p -->
+<g id="proc~~encode~~CallsGraph_edge38" class="edge">
+<title>interface~byte_size&#45;&gt;proc~byte_size_r4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M460.14,-125.81C474.02,-112.29 497.84,-90.36 521,-75 523.1,-73.61 525.31,-72.25 527.56,-70.93"/>
+<polygon fill="#000000" stroke="#000000" points="529.3,-73.97 536.4,-66.11 525.95,-67.83 529.3,-73.97"/>
+</g>
+<!-- proc~byte_size_r8p -->
+<g id="proc~~encode~~CallsGraph_node26" class="node">
+<title>proc~byte_size_r8p</title>
+<g id="a_proc~~encode~~CallsGraph_node26"><a xlink:href="../proc/byte_size_r8p.html" xlink:title="byte_size_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="608,-24 521,-24 521,0 608,0 608,-24"/>
+<text text-anchor="middle" x="564.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">byte_size_R8P</text>
+</a>
+</g>
+</g>
+<!-- interface~byte_size&#45;&gt;proc~byte_size_r8p -->
+<g id="proc~~encode~~CallsGraph_edge39" class="edge">
+<title>interface~byte_size&#45;&gt;proc~byte_size_r8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M453.85,-125.82C464.57,-104.57 489.21,-60.39 521,-33 522.33,-31.86 523.73,-30.76 525.19,-29.7"/>
+<polygon fill="#000000" stroke="#000000" points="527.35,-32.47 533.93,-24.16 523.61,-26.56 527.35,-32.47"/>
 </g>
 </g>
 </svg>
-</div><div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div><div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog"><div class="modal-dialog modal-lg" role="document"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="-graph-help-label">Graph Key</h4></div><div class="modal-body">
-    <p>Nodes of different colours represent the following: </p>
-    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: Graph Key Pages: 1 -->
-<svg width="597pt" height="32pt"
- viewBox="0.00 0.00 596.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
 <title>Graph Key</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 592.5,-28 592.5,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
 <!-- Subroutine -->
 <g id="node1" class="node">
 <title>Subroutine</title>
@@ -652,63 +728,192 @@
 <polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
 <text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
 </g>
-<!-- Unknown Procedure Type -->
+<!-- Type Bound Procedure -->
 <g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
 <title>Unknown Procedure Type</title>
-<polygon fill="#777777" stroke="#777777" points="388.5,-24 243.5,-24 243.5,0 388.5,0 388.5,-24"/>
-<text text-anchor="middle" x="316" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
 </g>
 <!-- Program -->
-<g id="node5" class="node">
+<g id="node6" class="node">
 <title>Program</title>
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="465,-24 407,-24 407,0 465,0 465,-24"/>
-<text text-anchor="middle" x="436" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
 </g>
 <!-- This Page&#39;s Entity -->
-<g id="node6" class="node">
+<g id="node7" class="node">
 <title>This Page&#39;s Entity</title>
-<polygon fill="none" stroke="black" points="588.5,-24 483.5,-24 483.5,0 588.5,0 588.5,-24"/>
-<text text-anchor="middle" x="536" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
 </g>
 </g>
 </svg>
 
-    
-    <p>Solid arrows point from a procedure to one which it calls. Dashed 
-    arrows point from an interface to procedures which implement that interface.
-    This could include the module procedures in a generic interface or the
-    implementation in a submodule of an interface in a parent module.
-    </p>
-    </div></div></div></div>
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~encode~~CalledByGraph Pages: 1 -->
+<svg id="procencodeCalledByGraph" width="232pt" height="74pt"
+ viewBox="0.00 0.00 232.00 74.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~encode~~CalledByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 70)">
+<title>proc~~encode~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-70 228,-70 228,4 -4,4"/>
+<!-- proc~encode -->
+<g id="proc~~encode~~CalledByGraph_node1" class="node">
+<title>proc~encode</title>
+<polygon fill="none" stroke="black" points="224,-45 132,-45 132,-21 224,-21 224,-45"/>
+<text text-anchor="middle" x="178" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50">string%encode</text>
+</g>
+<!-- program~volatile_doctest~1125 -->
+<g id="proc~~encode~~CalledByGraph_node2" class="node">
+<title>program~volatile_doctest~1125</title>
+<g id="a_proc~~encode~~CalledByGraph_node2"><a xlink:href="../program/volatile_doctest~1125.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-66 0,-66 0,-42 96,-42 96,-66"/>
+<text text-anchor="middle" x="48" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~1125&#45;&gt;proc~encode -->
+<g id="proc~~encode~~CalledByGraph_edge1" class="edge">
+<title>program~volatile_doctest~1125&#45;&gt;proc~encode</title>
+<path fill="none" stroke="#000000" d="M96.3,-46.24C104.5,-44.89 113.1,-43.48 121.49,-42.11"/>
+<polygon fill="#000000" stroke="#000000" points="122.3,-45.52 131.6,-40.45 121.16,-38.61 122.3,-45.52"/>
+</g>
+<!-- program~volatile_doctest~1200 -->
+<g id="proc~~encode~~CalledByGraph_node3" class="node">
+<title>program~volatile_doctest~1200</title>
+<g id="a_proc~~encode~~CalledByGraph_node3"><a xlink:href="../program/volatile_doctest~1200.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-24 0,-24 0,0 96,0 96,-24"/>
+<text text-anchor="middle" x="48" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~1200&#45;&gt;proc~encode -->
+<g id="proc~~encode~~CalledByGraph_edge2" class="edge">
+<title>program~volatile_doctest~1200&#45;&gt;proc~encode</title>
+<path fill="none" stroke="#000000" d="M96.3,-19.76C104.5,-21.11 113.1,-22.52 121.49,-23.89"/>
+<polygon fill="#000000" stroke="#000000" points="121.16,-27.39 131.6,-25.55 122.3,-20.48 121.16,-27.39"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <br>
 
-    <section class="visible-xs visible-sm hidden-md">
-      <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../proc/encode.html#src">encode</a>
-  </div>
-</div>
-
-    </section>
-    <br class="visible-xs visible-sm hidden-md">
-
 
     
     
 
     
     
+
 
 
     
     <section>
     <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="highlight"><pre><span></span><span class="w">   </span><span class="k">elemental function encode</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">codec</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span><span class="w"></span>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">elemental function encode</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">codec</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
 <span class="w">   </span><span class="c">!&lt; Return a string encoded accordingly the codec.</span>
 <span class="w">   </span><span class="c">!&lt;</span>
 <span class="w">   </span><span class="c">!&lt; @note Only BASE64 codec is currently available.</span>
@@ -724,13 +929,13 @@
 <span class="w">   </span><span class="k">type</span><span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="w">                          </span><span class="kd">::</span><span class="w"> </span><span class="n">encoded</span><span class="w"> </span><span class="c">!&lt; Encoded string.</span>
 
 <span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
-<span class="k">     </span><span class="n">encoded</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">codec</span><span class="w"></span>
-<span class="w">     </span><span class="k">select case</span><span class="p">(</span><span class="n">encoded</span><span class="p">%</span><span class="n">upper</span><span class="p">()</span><span class="o">//</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="w"></span>
-<span class="w">     </span><span class="k">case</span><span class="p">(</span><span class="s1">&#39;BASE64&#39;</span><span class="p">)</span><span class="w"></span>
-<span class="w">       </span><span class="k">call </span><span class="n">b64_encode</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">,</span><span class="w"> </span><span class="n">code</span><span class="o">=</span><span class="n">encoded</span><span class="p">%</span><span class="n">raw</span><span class="p">)</span><span class="w"></span>
+<span class="k">     </span><span class="n">encoded</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">codec</span>
+<span class="w">     </span><span class="k">select case</span><span class="p">(</span><span class="n">encoded</span><span class="p">%</span><span class="n">upper</span><span class="p">()</span><span class="o">//</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="w">     </span><span class="k">case</span><span class="p">(</span><span class="s1">&#39;BASE64&#39;</span><span class="p">)</span>
+<span class="w">       </span><span class="k">call </span><span class="n">b64_encode</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">,</span><span class="w"> </span><span class="n">code</span><span class="o">=</span><span class="n">encoded</span><span class="p">%</span><span class="n">raw</span><span class="p">)</span>
 <span class="w">     </span><span class="k">endselect</span>
 <span class="k">   endif</span>
-<span class="k">   endfunction encode</span><span class="w"></span>
+<span class="k">   endfunction encode</span>
 </pre></div>
 
     </section>
@@ -739,50 +944,48 @@
     </div>
   </div>
 
-    <hr>    
+      <hr>
     </div> <!-- /container -->
     <footer>
       <div class="container">
-      <div class="row">
-        <div class="col-xs-6 col-md-6"><p>Lib_VTK_IO was developed by Stefano Zaghi<br>&copy; 2022 
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Lib_VTK_IO
+ was developed by Stefano Zaghi<br>              &copy; 2025 
 </p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
         </div>
-        <div class="col-xs-6 col-md-6">
-          <p class="text-right">
-            Documentation generated by 
-            <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
-          </p>
-        </div>
-      </div>
-      <br>
-      </div> <!-- /container -->    
+        <br>
+      </div> <!-- /container -->
     </footer>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
+    <!-- Bootstrap core JavaScript -->
     <!-- Placed at the end of the document so the pages load faster -->
-<!--
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
--->
-    <script src="../js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
 
     <!-- MathJax JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
-        jax: ['input/TeX','input/MathML','output/HTML-CSS'],
-        extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
-      });
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script src="../tipuesearch/tipuesearch_content.js"></script>
-    <script src="../tipuesearch/tipuesearch_set.js"></script>
-    <script src="../tipuesearch/tipuesearch.js"></script>
-    
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
   </body>
 </html>

@@ -1,190 +1,1204 @@
+<!-- -*- mode: jinja2 -*- -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-   <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
+      <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
     <meta name="author" content="Stefano Zaghi" >
     <link rel="icon" href="../favicon.png">
 
     <title>replace_one_occurrence &ndash; Lib_VTK_IO</title>
 
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="../css/pygments.css" rel="stylesheet">
     <link href="../css/font-awesome.min.css" rel="stylesheet">
     <link href="../css/local.css" rel="stylesheet">
-    <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    
-    <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="../js/svg-pan-zoom.min.js"></script>
-
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
           <a class="navbar-brand" href="../index.html">Lib_VTK_IO </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
-              <a href="#" class="dropdown-toggle"
-              data-toggle="dropdown" role="button"
-              aria-haspopup="true"
-     aria-expanded="false">Contents <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-            <li><a href="../lists/files.html">Source Files</a></li>
-            <li><a href="../lists/modules.html">Modules</a></li>
-            <li><a href="../lists/procedures.html">Procedures</a></li>
-            <li><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                   <li><a href="../lists/types.html">Derived Types</a></li>
-            <li><a href="../lists/programs.html">Programs</a></li>
-       
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
             </ul>
-        
-            </li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/files.html">Source Files</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/modules.html">Modules</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/procedures.html">Procedures</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                             <li class="visible-xs hidden-sm visible-lg"><a href="../lists/types.html">Derived Types</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/programs.html">Programs</a></li>
-          </ul>
-        <form action="../search.html" class="navbar-form navbar-right" role="search">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
         </div>
-<!--
-        <button type="submit" class="btn btn-default">Submit</button>
--->
-        </form>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+      </nav>
+    </div>
 
     <div class="container">
   <div class="row">
     <h1>replace_one_occurrence
       <small>Function</small>
+      
     </h1>
-    <div class="row">
-  <div class="col-lg-12">
-<div class="well well-sm">
-  <ul class="list-inline" style="margin-bottom:0px;display:inline">
-     <li><i class="fa fa-list-ol"></i>
-       <a data-toggle="tooltip"
-    data-placement="bottom" data-html="true"
-    title=" 0.1% of total for procedures.">18 statements</a>
-     </li> 
-    <li><i class="fa fa-code"></i><a href="../src/stringifor_string_t.F90"> Source File</a></li>
-  </ul>
-  <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/stringifor_string_t.f90.html'>stringifor_string_t.F90</a></li>
-     <li><a href='../module/stringifor_string_t.html'>stringifor_string_t</a></li>
-     <li class="active">replace_one_occurrence</li>
-  </ol>
-</div>
-</div>
-</div>
-<script>
-  $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-  })
-</script>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.1% of total for procedures.">18 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/stringifor_string_t.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/stringifor_string_t.f90.html'>stringifor_string_t.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/stringifor_string_t.html'>stringifor_string_t</a></li>
+            <li class="breadcrumb-item active" aria-current="page">replace_one_occurrence</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
 
   </div>
   
   <div class="row">
     <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
-    <div id="sidebar">
-  <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../proc/replace_one_occurrence.html#src">replace_one_occurrence</a>
-  </div>
-</div>
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/replace_one_occurrence.html#src">replace_one_occurrence</a>
+      </div>
+    </div>
 
-</div>
+
+  </div>
 
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private elemental function replace_one_occurrence(self, old, new) result(replaced)</h2>
+    <h2>private elemental function replace_one_occurrence(self, old, new) result(replaced)  
+</h2>
     
 
+
+    <h3>Type Bound</h3>
+    <p><a href='../type/string.html'>string</a></p>
 
     <h3>Arguments</h3>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" id="variable-self~391"></span>class(<a href='../type/string.html'>string</a>),</td>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-self~221"></span>
+              class(<a href='../type/string.html'>string</a>),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-old~2"></span>character(kind=CK,len=*),</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-old~2"></span>
+              character(kind=CK, len=*),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>old</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-new~2"></span>character(kind=CK,len=*),</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>old</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-new~2"></span>
+              character(kind=CK, len=*),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>new</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>new</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
-   <h3>Return Value <small><span class="anchor" id="variable-replaced~2"></span>type(<a href='../type/string.html'>string</a>)</small></h3>
-    
+      <h3>Return Value
+        <small>
+          <span class="anchor" id="variable-replaced~2"></span>
+          type(<a href='../type/string.html'>string</a>)
+        </small>
+      </h3>
+      
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~replace_one_occurrence~~CalledByGraph Pages: 1 -->
+<svg id="procreplace_one_occurrenceCalledByGraph" width="641pt" height="361pt"
+ viewBox="0.00 0.00 641.00 360.66" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~replace_one_occurrence~~CalledByGraph" class="graph" transform="scale(0.31 0.31) rotate(0) translate(4 1150)">
+<title>proc~~replace_one_occurrence~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-1150 2047,-1150 2047,4 -4,4"/>
+<!-- proc~replace_one_occurrence -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node1" class="node">
+<title>proc~replace_one_occurrence</title>
+<polygon fill="none" stroke="black" points="2043,-360 1860,-360 1860,-336 2043,-336 2043,-360"/>
+<text text-anchor="middle" x="1951.5" y="-345.6" font-family="Helvetica,sans-Serif" font-size="10.50">string%replace_one_occurrence</text>
+</g>
+<!-- proc~replace -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node2" class="node">
+<title>proc~replace</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node2"><a xlink:href="../proc/replace.html" xlink:title="string%replace">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1824,-360 1732,-360 1732,-336 1824,-336 1824,-360"/>
+<text text-anchor="middle" x="1778" y="-345.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%replace</text>
+</a>
+</g>
+</g>
+<!-- proc~replace&#45;&gt;proc~replace_one_occurrence -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge1" class="edge">
+<title>proc~replace&#45;&gt;proc~replace_one_occurrence</title>
+<path fill="none" stroke="#000000" d="M1824.06,-348C1832.14,-348 1840.84,-348 1849.76,-348"/>
+<polygon fill="#000000" stroke="#000000" points="1849.92,-351.5 1859.92,-348 1849.92,-344.5 1849.92,-351.5"/>
+</g>
+<!-- proc~unique -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node3" class="node">
+<title>proc~unique</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node3"><a xlink:href="../proc/unique.html" xlink:title="string%unique">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1692.5,-402 1603.5,-402 1603.5,-378 1692.5,-378 1692.5,-402"/>
+<text text-anchor="middle" x="1648" y="-387.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%unique</text>
+</a>
+</g>
+</g>
+<!-- proc~unique&#45;&gt;proc~replace -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge2" class="edge">
+<title>proc~unique&#45;&gt;proc~replace</title>
+<path fill="none" stroke="#000000" d="M1685.68,-377.96C1699.74,-373.35 1715.96,-368.03 1730.8,-363.16"/>
+<polygon fill="#000000" stroke="#000000" points="1731.9,-366.48 1740.31,-360.04 1729.72,-359.83 1731.9,-366.48"/>
+</g>
+<!-- program~volatile_doctest~1129 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node4" class="node">
+<title>program~volatile_doctest~1129</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node4"><a xlink:href="../program/volatile_doctest~1129.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1696,-360 1600,-360 1600,-336 1696,-336 1696,-360"/>
+<text text-anchor="middle" x="1648" y="-345.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~1129&#45;&gt;proc~replace -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge3" class="edge">
+<title>program~volatile_doctest~1129&#45;&gt;proc~replace</title>
+<path fill="none" stroke="#000000" d="M1696.3,-348C1704.5,-348 1713.1,-348 1721.49,-348"/>
+<polygon fill="#000000" stroke="#000000" points="1721.6,-351.5 1731.6,-348 1721.6,-344.5 1721.6,-351.5"/>
+</g>
+<!-- program~volatile_doctest~809 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node5" class="node">
+<title>program~volatile_doctest~809</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node5"><a xlink:href="../program/volatile_doctest~809.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1696,-318 1600,-318 1600,-294 1696,-294 1696,-318"/>
+<text text-anchor="middle" x="1648" y="-303.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~809&#45;&gt;proc~replace -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge4" class="edge">
+<title>program~volatile_doctest~809&#45;&gt;proc~replace</title>
+<path fill="none" stroke="#000000" d="M1685.68,-318.04C1699.74,-322.65 1715.96,-327.97 1730.8,-332.84"/>
+<polygon fill="#000000" stroke="#000000" points="1729.72,-336.17 1740.31,-335.96 1731.9,-329.52 1729.72,-336.17"/>
+</g>
+<!-- proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node6" class="node">
+<title>proc~split</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node6"><a xlink:href="../proc/split.html" xlink:title="string%split">
+<polygon fill="#d9534f" stroke="#d9534f" points="1553,-444 1479,-444 1479,-420 1553,-420 1553,-444"/>
+<text text-anchor="middle" x="1516" y="-429.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%split</text>
+</a>
+</g>
+</g>
+<!-- proc~split&#45;&gt;proc~unique -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge5" class="edge">
+<title>proc~split&#45;&gt;proc~unique</title>
+<path fill="none" stroke="#000000" d="M1553.21,-420.3C1567.63,-415.64 1584.42,-410.22 1599.78,-405.26"/>
+<polygon fill="#000000" stroke="#000000" points="1601.19,-408.48 1609.62,-402.08 1599.03,-401.82 1601.19,-408.48"/>
+</g>
+<!-- program~volatile_doctest~1127 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node7" class="node">
+<title>program~volatile_doctest~1127</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node7"><a xlink:href="../program/volatile_doctest~1127.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1564,-402 1468,-402 1468,-378 1564,-378 1564,-402"/>
+<text text-anchor="middle" x="1516" y="-387.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~1127&#45;&gt;proc~unique -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge6" class="edge">
+<title>program~volatile_doctest~1127&#45;&gt;proc~unique</title>
+<path fill="none" stroke="#000000" d="M1564.3,-390C1573.68,-390 1583.6,-390 1593.18,-390"/>
+<polygon fill="#000000" stroke="#000000" points="1593.41,-393.5 1603.41,-390 1593.41,-386.5 1593.41,-393.5"/>
+</g>
+<!-- program~volatile_doctest~336 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node8" class="node">
+<title>program~volatile_doctest~336</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node8"><a xlink:href="../program/volatile_doctest~336.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1564,-360 1468,-360 1468,-336 1564,-336 1564,-360"/>
+<text text-anchor="middle" x="1516" y="-345.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~336&#45;&gt;proc~unique -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge7" class="edge">
+<title>program~volatile_doctest~336&#45;&gt;proc~unique</title>
+<path fill="none" stroke="#000000" d="M1554.25,-360.04C1568.53,-364.65 1585.01,-369.97 1600.08,-374.84"/>
+<polygon fill="#000000" stroke="#000000" points="1599.15,-378.22 1609.74,-377.96 1601.3,-371.56 1599.15,-378.22"/>
+</g>
+<!-- proc~camelcase -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node9" class="node">
+<title>proc~camelcase</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node9"><a xlink:href="../proc/camelcase.html" xlink:title="string%camelcase">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1339.5,-1041 1229.5,-1041 1229.5,-1017 1339.5,-1017 1339.5,-1041"/>
+<text text-anchor="middle" x="1284.5" y="-1026.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%camelcase</text>
+</a>
+</g>
+</g>
+<!-- proc~camelcase&#45;&gt;proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge8" class="edge">
+<title>proc~camelcase&#45;&gt;proc~split</title>
+<path fill="none" stroke="#000000" d="M1327.17,-1016.9C1360.96,-1004.83 1406.95,-982.83 1432,-947 1489.17,-865.23 1509.41,-542.7 1513.95,-454.43"/>
+<polygon fill="#000000" stroke="#000000" points="1517.45,-454.38 1514.45,-444.22 1510.46,-454.03 1517.45,-454.38"/>
+</g>
+<!-- proc~glob_string -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node10" class="node">
+<title>proc~glob_string</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node10"><a xlink:href="../proc/glob_string.html" xlink:title="string%glob_string">
+<polygon fill="#d9534f" stroke="#d9534f" points="1340,-938 1229,-938 1229,-914 1340,-914 1340,-938"/>
+<text text-anchor="middle" x="1284.5" y="-923.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%glob_string</text>
+</a>
+</g>
+</g>
+<!-- proc~glob_string&#45;&gt;proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge9" class="edge">
+<title>proc~glob_string&#45;&gt;proc~split</title>
+<path fill="none" stroke="#000000" d="M1340.25,-916.5C1371.69,-908.2 1409.31,-892.89 1432,-865 1484.36,-800.62 1507.57,-534.65 1513.44,-454.78"/>
+<polygon fill="#000000" stroke="#000000" points="1516.96,-454.62 1514.19,-444.39 1509.98,-454.12 1516.96,-454.62"/>
+</g>
+<!-- proc~snakecase -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node11" class="node">
+<title>proc~snakecase</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node11"><a xlink:href="../proc/snakecase.html" xlink:title="string%snakecase">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1339,-856 1230,-856 1230,-832 1339,-832 1339,-856"/>
+<text text-anchor="middle" x="1284.5" y="-841.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%snakecase</text>
+</a>
+</g>
+</g>
+<!-- proc~snakecase&#45;&gt;proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge10" class="edge">
+<title>proc~snakecase&#45;&gt;proc~split</title>
+<path fill="none" stroke="#000000" d="M1339.31,-838.58C1370.62,-832.63 1408.43,-820.15 1432,-794 1478.1,-742.86 1505.05,-525.09 1512.72,-454.32"/>
+<polygon fill="#000000" stroke="#000000" points="1516.21,-454.58 1513.78,-444.27 1509.25,-453.84 1516.21,-454.58"/>
+</g>
+<!-- proc~split_chunked -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node12" class="node">
+<title>proc~split_chunked</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node12"><a xlink:href="../proc/split_chunked.html" xlink:title="string%split_chunked">
+<polygon fill="#d9534f" stroke="#d9534f" points="1347,-730 1222,-730 1222,-706 1347,-706 1347,-730"/>
+<text text-anchor="middle" x="1284.5" y="-715.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%split_chunked</text>
+</a>
+</g>
+</g>
+<!-- proc~split_chunked&#45;&gt;proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge11" class="edge">
+<title>proc~split_chunked&#45;&gt;proc~split</title>
+<path fill="none" stroke="#000000" d="M1347.31,-709.62C1376.31,-702.79 1409.38,-690.41 1432,-668 1492.71,-607.85 1509.13,-500.73 1513.48,-454.39"/>
+<polygon fill="#000000" stroke="#000000" points="1516.98,-454.48 1514.32,-444.23 1510.01,-453.9 1516.98,-454.48"/>
+</g>
+<!-- proc~startcase -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node13" class="node">
+<title>proc~startcase</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node13"><a xlink:href="../proc/startcase.html" xlink:title="string%startcase">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1335,-604 1234,-604 1234,-580 1335,-580 1335,-604"/>
+<text text-anchor="middle" x="1284.5" y="-589.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%startcase</text>
+</a>
+</g>
+</g>
+<!-- proc~startcase&#45;&gt;proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge12" class="edge">
+<title>proc~startcase&#45;&gt;proc~split</title>
+<path fill="none" stroke="#000000" d="M1335.11,-593.1C1365.42,-591.5 1403.67,-585.21 1432,-566 1472.52,-538.52 1496.94,-484 1507.98,-453.66"/>
+<polygon fill="#000000" stroke="#000000" points="1511.35,-454.62 1511.33,-444.02 1504.74,-452.32 1511.35,-454.62"/>
+</g>
+<!-- proc~write_lines~3 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node14" class="node">
+<title>proc~write_lines~3</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node14"><a xlink:href="../proc/write_lines~3.html" xlink:title="string%write_lines">
+<polygon fill="#d9534f" stroke="#d9534f" points="1339,-524 1230,-524 1230,-500 1339,-500 1339,-524"/>
+<text text-anchor="middle" x="1284.5" y="-509.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%write_lines</text>
+</a>
+</g>
+</g>
+<!-- proc~write_lines~3&#45;&gt;proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge13" class="edge">
+<title>proc~write_lines~3&#45;&gt;proc~split</title>
+<path fill="none" stroke="#000000" d="M1339.11,-507.69C1367.48,-504.13 1402.45,-497.67 1432,-486 1453.99,-477.31 1476.31,-462.37 1492.25,-450.41"/>
+<polygon fill="#000000" stroke="#000000" points="1494.63,-453 1500.42,-444.13 1490.36,-447.45 1494.63,-453"/>
+</g>
+<!-- proc~write_parallel_block_files_string -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node15" class="node">
+<title>proc~write_parallel_block_files_string</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node15"><a xlink:href="../proc/write_parallel_block_files_string.html" xlink:title="xml_writer_abstract%write_parallel_block_files_string">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1432,-444 1137,-444 1137,-420 1432,-420 1432,-444"/>
+<text text-anchor="middle" x="1284.5" y="-429.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_writer_abstract%write_parallel_block_files_string</text>
+</a>
+</g>
+</g>
+<!-- proc~write_parallel_block_files_string&#45;&gt;proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge14" class="edge">
+<title>proc~write_parallel_block_files_string&#45;&gt;proc~split</title>
+<path fill="none" stroke="#000000" d="M1432.15,-432C1445.19,-432 1457.64,-432 1468.75,-432"/>
+<polygon fill="#000000" stroke="#000000" points="1468.95,-435.5 1478.95,-432 1468.95,-428.5 1468.95,-435.5"/>
+</g>
+<!-- program~stringifor_test_csv_naive_parser -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node16" class="node">
+<title>program~stringifor_test_csv_naive_parser</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node16"><a xlink:href="../program/stringifor_test_csv_naive_parser.html" xlink:title="stringifor_test_csv_naive_parser">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1375.5,-402 1193.5,-402 1193.5,-378 1375.5,-378 1375.5,-402"/>
+<text text-anchor="middle" x="1284.5" y="-387.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">stringifor_test_csv_naive_parser</text>
+</a>
+</g>
+</g>
+<!-- program~stringifor_test_csv_naive_parser&#45;&gt;proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge15" class="edge">
+<title>program~stringifor_test_csv_naive_parser&#45;&gt;proc~split</title>
+<path fill="none" stroke="#000000" d="M1375.63,-401.39C1394.32,-404.18 1413.85,-407.41 1432,-411 1444.08,-413.39 1457.02,-416.43 1469.02,-419.45"/>
+<polygon fill="#000000" stroke="#000000" points="1468.27,-422.87 1478.83,-421.97 1470.01,-416.09 1468.27,-422.87"/>
+</g>
+<!-- program~stringifor_test_csv_naive_parser~2 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node17" class="node">
+<title>program~stringifor_test_csv_naive_parser~2</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node17"><a xlink:href="../program/stringifor_test_csv_naive_parser~2.html" xlink:title="stringifor_test_csv_naive_parser">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1375.5,-360 1193.5,-360 1193.5,-336 1375.5,-336 1375.5,-360"/>
+<text text-anchor="middle" x="1284.5" y="-345.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">stringifor_test_csv_naive_parser</text>
+</a>
+</g>
+</g>
+<!-- program~stringifor_test_csv_naive_parser~2&#45;&gt;proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge16" class="edge">
+<title>program~stringifor_test_csv_naive_parser~2&#45;&gt;proc~split</title>
+<path fill="none" stroke="#000000" d="M1375.55,-350.6C1395.02,-353.93 1414.88,-359.6 1432,-369 1453.55,-380.84 1448.3,-396.29 1468,-411 1469.8,-412.35 1471.71,-413.63 1473.67,-414.85"/>
+<polygon fill="#000000" stroke="#000000" points="1472.14,-418.01 1482.59,-419.81 1475.55,-411.89 1472.14,-418.01"/>
+</g>
+<!-- program~stringifor_test_parse_large_csv -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node18" class="node">
+<title>program~stringifor_test_parse_large_csv</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node18"><a xlink:href="../program/stringifor_test_parse_large_csv.html" xlink:title="stringifor_test_parse_large_csv">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1059.5,-814 883.5,-814 883.5,-790 1059.5,-790 1059.5,-814"/>
+<text text-anchor="middle" x="971.5" y="-799.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">stringifor_test_parse_large_csv</text>
+</a>
+</g>
+</g>
+<!-- program~stringifor_test_parse_large_csv&#45;&gt;proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge17" class="edge">
+<title>program~stringifor_test_parse_large_csv&#45;&gt;proc~split</title>
+<path fill="none" stroke="#000000" d="M1041.59,-814.01C1140.73,-827.01 1323.33,-834.6 1432,-739 1475.51,-700.73 1503.47,-518.83 1512.13,-454.56"/>
+<polygon fill="#000000" stroke="#000000" points="1515.64,-454.68 1513.48,-444.31 1508.7,-453.77 1515.64,-454.68"/>
+</g>
+<!-- program~stringifor_test_parse_large_csv&#45;&gt;proc~split_chunked -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge35" class="edge">
+<title>program~stringifor_test_parse_large_csv&#45;&gt;proc~split_chunked</title>
+<path fill="none" stroke="#000000" d="M1059.51,-790.6C1073.51,-787.97 1087.74,-784.79 1101,-781 1117.67,-776.24 1120.75,-772.04 1137,-766 1169.09,-754.08 1205.69,-742.08 1234.28,-733.07"/>
+<polygon fill="#000000" stroke="#000000" points="1235.54,-736.34 1244.04,-730.01 1233.45,-729.66 1235.54,-736.34"/>
+</g>
+<!-- program~stringifor_test_parse_large_csv~2 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node19" class="node">
+<title>program~stringifor_test_parse_large_csv~2</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node19"><a xlink:href="../program/stringifor_test_parse_large_csv~2.html" xlink:title="stringifor_test_parse_large_csv">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1059.5,-688 883.5,-688 883.5,-664 1059.5,-664 1059.5,-688"/>
+<text text-anchor="middle" x="971.5" y="-673.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">stringifor_test_parse_large_csv</text>
+</a>
+</g>
+</g>
+<!-- program~stringifor_test_parse_large_csv~2&#45;&gt;proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge18" class="edge">
+<title>program~stringifor_test_parse_large_csv~2&#45;&gt;proc~split</title>
+<path fill="none" stroke="#000000" d="M1059.56,-687.37C1159.43,-695.56 1323.38,-693.63 1432,-613 1484.66,-573.91 1504.85,-493.35 1511.78,-454.26"/>
+<polygon fill="#000000" stroke="#000000" points="1515.27,-454.62 1513.43,-444.18 1508.36,-453.49 1515.27,-454.62"/>
+</g>
+<!-- program~stringifor_test_parse_large_csv~2&#45;&gt;proc~split_chunked -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge36" class="edge">
+<title>program~stringifor_test_parse_large_csv~2&#45;&gt;proc~split_chunked</title>
+<path fill="none" stroke="#000000" d="M1059.54,-687.76C1107.49,-694.23 1166.29,-702.17 1211.6,-708.29"/>
+<polygon fill="#000000" stroke="#000000" points="1211.26,-711.78 1221.64,-709.65 1212.2,-704.84 1211.26,-711.78"/>
+</g>
+<!-- program~volatile_doctest~1028 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node20" class="node">
+<title>program~volatile_doctest~1028</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node20"><a xlink:href="../program/volatile_doctest~1028.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1332.5,-318 1236.5,-318 1236.5,-294 1332.5,-294 1332.5,-318"/>
+<text text-anchor="middle" x="1284.5" y="-303.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~1028&#45;&gt;proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge19" class="edge">
+<title>program~volatile_doctest~1028&#45;&gt;proc~split</title>
+<path fill="none" stroke="#000000" d="M1332.59,-301.51C1363.78,-301.04 1403.96,-305.5 1432,-327 1464.23,-351.71 1439.5,-382.06 1468,-411 1469.06,-412.07 1470.18,-413.1 1471.36,-414.07"/>
+<polygon fill="#000000" stroke="#000000" points="1469.5,-417.04 1479.72,-419.83 1473.47,-411.28 1469.5,-417.04"/>
+</g>
+<!-- program~volatile_doctest~135 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node21" class="node">
+<title>program~volatile_doctest~135</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node21"><a xlink:href="../program/volatile_doctest~135.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="774,-564 678,-564 678,-540 774,-540 774,-564"/>
+<text text-anchor="middle" x="726" y="-549.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~135&#45;&gt;proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge20" class="edge">
+<title>program~volatile_doctest~135&#45;&gt;proc~split</title>
+<path fill="none" stroke="#000000" d="M774.43,-555.74C913.23,-565.92 1316.1,-589.69 1432,-533 1466.4,-516.17 1491.52,-477.64 1504.64,-453.33"/>
+<polygon fill="#000000" stroke="#000000" points="1507.88,-454.68 1509.37,-444.19 1501.67,-451.46 1507.88,-454.68"/>
+</g>
+<!-- proc~write_file~3 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node33" class="node">
+<title>proc~write_file~3</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node33"><a xlink:href="../proc/write_file~3.html" xlink:title="string%write_file">
+<polygon fill="#d9534f" stroke="#d9534f" points="1021.5,-524 921.5,-524 921.5,-500 1021.5,-500 1021.5,-524"/>
+<text text-anchor="middle" x="971.5" y="-509.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%write_file</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~135&#45;&gt;proc~write_file~3 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge53" class="edge">
+<title>program~volatile_doctest~135&#45;&gt;proc~write_file~3</title>
+<path fill="none" stroke="#000000" d="M774.24,-544.24C813.34,-537.82 869.09,-528.66 911.19,-521.74"/>
+<polygon fill="#000000" stroke="#000000" points="912.01,-525.16 921.31,-520.08 910.87,-518.25 912.01,-525.16"/>
+</g>
+<!-- program~volatile_doctest~247 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node22" class="node">
+<title>program~volatile_doctest~247</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node22"><a xlink:href="../program/volatile_doctest~247.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1332.5,-276 1236.5,-276 1236.5,-252 1332.5,-252 1332.5,-276"/>
+<text text-anchor="middle" x="1284.5" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~247&#45;&gt;proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge21" class="edge">
+<title>program~volatile_doctest~247&#45;&gt;proc~split</title>
+<path fill="none" stroke="#000000" d="M1332.81,-258.42C1364.51,-257.38 1405.19,-261.6 1432,-285 1475.88,-323.29 1429.84,-367 1468,-411 1468.86,-411.99 1469.77,-412.93 1470.73,-413.83"/>
+<polygon fill="#000000" stroke="#000000" points="1468.74,-416.71 1478.83,-419.94 1472.95,-411.12 1468.74,-416.71"/>
+</g>
+<!-- program~volatile_doctest~323 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node23" class="node">
+<title>program~volatile_doctest~323</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node23"><a xlink:href="../program/volatile_doctest~323.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1332.5,-234 1236.5,-234 1236.5,-210 1332.5,-210 1332.5,-234"/>
+<text text-anchor="middle" x="1284.5" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~323&#45;&gt;proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge22" class="edge">
+<title>program~volatile_doctest~323&#45;&gt;proc~split</title>
+<path fill="none" stroke="#000000" d="M1332.63,-215.89C1364.65,-214.5 1405.8,-218.54 1432,-243 1487.82,-295.11 1419.93,-351.66 1468,-411 1468.82,-412.02 1469.7,-412.98 1470.64,-413.91"/>
+<polygon fill="#000000" stroke="#000000" points="1468.57,-416.73 1478.6,-420.13 1472.88,-411.21 1468.57,-416.73"/>
+</g>
+<!-- program~volatile_doctest~345 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node24" class="node">
+<title>program~volatile_doctest~345</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node24"><a xlink:href="../program/volatile_doctest~345.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1332.5,-192 1236.5,-192 1236.5,-168 1332.5,-168 1332.5,-192"/>
+<text text-anchor="middle" x="1284.5" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~345&#45;&gt;proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge23" class="edge">
+<title>program~volatile_doctest~345&#45;&gt;proc~split</title>
+<path fill="none" stroke="#000000" d="M1332.6,-173.58C1364.82,-171.99 1406.22,-175.92 1432,-201 1499.87,-267.04 1409.93,-336.2 1468,-411 1468.92,-412.19 1469.93,-413.32 1471.01,-414.38"/>
+<polygon fill="#000000" stroke="#000000" points="1468.88,-417.16 1478.92,-420.53 1473.17,-411.63 1468.88,-417.16"/>
+</g>
+<!-- program~volatile_doctest~369 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node25" class="node">
+<title>program~volatile_doctest~369</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node25"><a xlink:href="../program/volatile_doctest~369.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1332.5,-150 1236.5,-150 1236.5,-126 1332.5,-126 1332.5,-150"/>
+<text text-anchor="middle" x="1284.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~369&#45;&gt;proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge24" class="edge">
+<title>program~volatile_doctest~369&#45;&gt;proc~split</title>
+<path fill="none" stroke="#000000" d="M1332.82,-131.36C1365.14,-129.66 1406.57,-133.56 1432,-159 1511.98,-239.02 1399.87,-320.68 1468,-411 1468.91,-412.2 1469.9,-413.34 1470.96,-414.41"/>
+<polygon fill="#000000" stroke="#000000" points="1468.8,-417.16 1478.82,-420.61 1473.13,-411.67 1468.8,-417.16"/>
+</g>
+<!-- program~volatile_doctest~427 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node26" class="node">
+<title>program~volatile_doctest~427</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node26"><a xlink:href="../program/volatile_doctest~427.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1332.5,-108 1236.5,-108 1236.5,-84 1332.5,-84 1332.5,-108"/>
+<text text-anchor="middle" x="1284.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~427&#45;&gt;proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge25" class="edge">
+<title>program~volatile_doctest~427&#45;&gt;proc~split</title>
+<path fill="none" stroke="#000000" d="M1332.63,-89.22C1365.08,-87.41 1406.74,-91.21 1432,-117 1524.12,-211.04 1389.78,-305.11 1468,-411 1468.81,-412.09 1469.68,-413.13 1470.62,-414.11"/>
+<polygon fill="#000000" stroke="#000000" points="1468.76,-417.11 1478.75,-420.66 1473.16,-411.66 1468.76,-417.11"/>
+</g>
+<!-- program~volatile_doctest~575 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node27" class="node">
+<title>program~volatile_doctest~575</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node27"><a xlink:href="../program/volatile_doctest~575.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="774,-522 678,-522 678,-498 774,-498 774,-522"/>
+<text text-anchor="middle" x="726" y="-507.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~575&#45;&gt;proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge26" class="edge">
+<title>program~volatile_doctest~575&#45;&gt;proc~split</title>
+<path fill="none" stroke="#000000" d="M774.13,-501.13C794.88,-497.5 819.58,-493.57 842,-491 1103.06,-461.1 1172.43,-493.84 1432,-453 1444.16,-451.09 1457.14,-448.21 1469.13,-445.2"/>
+<polygon fill="#000000" stroke="#000000" points="1470.14,-448.56 1478.94,-442.66 1468.38,-441.78 1470.14,-448.56"/>
+</g>
+<!-- program~volatile_doctest~575&#45;&gt;proc~write_file~3 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge54" class="edge">
+<title>program~volatile_doctest~575&#45;&gt;proc~write_file~3</title>
+<path fill="none" stroke="#000000" d="M774.24,-510.39C813.34,-510.71 869.09,-511.17 911.19,-511.51"/>
+<polygon fill="#000000" stroke="#000000" points="911.28,-515.01 921.31,-511.6 911.33,-508.01 911.28,-515.01"/>
+</g>
+<!-- program~volatile_doctest~820 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node28" class="node">
+<title>program~volatile_doctest~820</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node28"><a xlink:href="../program/volatile_doctest~820.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1332.5,-66 1236.5,-66 1236.5,-42 1332.5,-42 1332.5,-66"/>
+<text text-anchor="middle" x="1284.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~820&#45;&gt;proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge27" class="edge">
+<title>program~volatile_doctest~820&#45;&gt;proc~split</title>
+<path fill="none" stroke="#000000" d="M1332.75,-47.1C1365.25,-45.23 1406.93,-49.02 1432,-75 1484.14,-129.04 1423.84,-350.26 1468,-411 1468.8,-412.1 1469.67,-413.14 1470.6,-414.13"/>
+<polygon fill="#000000" stroke="#000000" points="1468.72,-417.11 1478.69,-420.7 1473.13,-411.68 1468.72,-417.11"/>
+</g>
+<!-- program~volatile_doctest~904 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node29" class="node">
+<title>program~volatile_doctest~904</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node29"><a xlink:href="../program/volatile_doctest~904.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1332.5,-24 1236.5,-24 1236.5,0 1332.5,0 1332.5,-24"/>
+<text text-anchor="middle" x="1284.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~904&#45;&gt;proc~split -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge28" class="edge">
+<title>program~volatile_doctest~904&#45;&gt;proc~split</title>
+<path fill="none" stroke="#000000" d="M1332.84,-5.01C1365.39,-3.1 1407.09,-6.88 1432,-33 1490.23,-94.06 1418.78,-342.46 1468,-411 1468.79,-412.1 1469.65,-413.15 1470.58,-414.14"/>
+<polygon fill="#000000" stroke="#000000" points="1468.69,-417.12 1478.65,-420.73 1473.12,-411.69 1468.69,-417.12"/>
+</g>
+<!-- interface~glob -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node30" class="node">
+<title>interface~glob</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node30"><a xlink:href="../interface/glob.html" xlink:title="glob">
+<polygon fill="#a7506f" stroke="#a7506f" points="575,-958 521,-958 521,-934 575,-934 575,-958"/>
+<text text-anchor="middle" x="548" y="-943.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">glob</text>
+</a>
+</g>
+</g>
+<!-- interface~glob&#45;&gt;proc~glob_string -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge32" class="edge">
+<title>interface~glob&#45;&gt;proc~glob_string</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M575.14,-945.29C678.94,-942.46 1063.84,-931.98 1218.52,-927.77"/>
+<polygon fill="#000000" stroke="#000000" points="1218.91,-931.26 1228.81,-927.49 1218.72,-924.26 1218.91,-931.26"/>
+</g>
+<!-- proc~glob_character -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node42" class="node">
+<title>proc~glob_character</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node42"><a xlink:href="../proc/glob_character.html" xlink:title="string%glob_character">
+<polygon fill="#d9534f" stroke="#d9534f" points="792.5,-978 659.5,-978 659.5,-954 792.5,-954 792.5,-978"/>
+<text text-anchor="middle" x="726" y="-963.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%glob_character</text>
+</a>
+</g>
+</g>
+<!-- interface~glob&#45;&gt;proc~glob_character -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge56" class="edge">
+<title>interface~glob&#45;&gt;proc~glob_character</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M575.35,-948.99C594.99,-951.23 622.87,-954.39 649.25,-957.39"/>
+<polygon fill="#000000" stroke="#000000" points="648.93,-960.88 659.27,-958.53 649.72,-953.92 648.93,-960.88"/>
+</g>
+<!-- none~glob -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node31" class="node">
+<title>none~glob</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node31"><a xlink:href="../type/string.html#boundprocedure-glob" xlink:title="string%glob">
+<polygon fill="#a7506f" stroke="#a7506f" points="1009.5,-999 933.5,-999 933.5,-975 1009.5,-975 1009.5,-999"/>
+<text text-anchor="middle" x="971.5" y="-984.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%glob</text>
+</a>
+</g>
+</g>
+<!-- none~glob&#45;&gt;proc~glob_string -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge31" class="edge">
+<title>none~glob&#45;&gt;proc~glob_string</title>
+<path fill="none" stroke="#000000" d="M1009.7,-979.7C1061.36,-969.57 1155.56,-951.09 1218.85,-938.68"/>
+<polygon fill="#000000" stroke="#000000" points="1219.59,-942.1 1228.73,-936.74 1218.24,-935.23 1219.59,-942.1"/>
+</g>
+<!-- none~glob&#45;&gt;proc~glob_character -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge55" class="edge">
+<title>none~glob&#45;&gt;proc~glob_character</title>
+<path fill="none" stroke="#000000" d="M933.22,-988.81C898.58,-987.56 845.96,-983.45 802.54,-978.81"/>
+<polygon fill="#000000" stroke="#000000" points="802.9,-975.33 792.57,-977.72 802.13,-982.29 802.9,-975.33"/>
+</g>
+<!-- none~write_parallel_block_files -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node32" class="node">
+<title>none~write_parallel_block_files</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node32"><a xlink:href="../type/xml_writer_abstract.html#boundprocedure-write_parallel_block_files" xlink:title="xml_writer_abstract%write_parallel_block_files">
+<polygon fill="#a7506f" stroke="#a7506f" points="1101,-441 842,-441 842,-417 1101,-417 1101,-441"/>
+<text text-anchor="middle" x="971.5" y="-426.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_writer_abstract%write_parallel_block_files</text>
+</a>
+</g>
+</g>
+<!-- none~write_parallel_block_files&#45;&gt;proc~write_parallel_block_files_string -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge42" class="edge">
+<title>none~write_parallel_block_files&#45;&gt;proc~write_parallel_block_files_string</title>
+<path fill="none" stroke="#000000" d="M1101.24,-430.24C1109.71,-430.32 1118.28,-430.41 1126.87,-430.49"/>
+<polygon fill="#000000" stroke="#000000" points="1126.9,-433.99 1136.94,-430.59 1126.97,-426.99 1126.9,-433.99"/>
+</g>
+<!-- proc~write_file~3&#45;&gt;proc~write_lines~3 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge41" class="edge">
+<title>proc~write_file~3&#45;&gt;proc~write_lines~3</title>
+<path fill="none" stroke="#000000" d="M1021.78,-512C1075.26,-512 1160.85,-512 1219.5,-512"/>
+<polygon fill="#000000" stroke="#000000" points="1219.76,-515.5 1229.76,-512 1219.76,-508.5 1219.76,-515.5"/>
+</g>
+<!-- program~volatile_doctest~1181 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node34" class="node">
+<title>program~volatile_doctest~1181</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node34"><a xlink:href="../program/volatile_doctest~1181.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1019.5,-772 923.5,-772 923.5,-748 1019.5,-748 1019.5,-772"/>
+<text text-anchor="middle" x="971.5" y="-757.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~1181&#45;&gt;proc~split_chunked -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge37" class="edge">
+<title>program~volatile_doctest~1181&#45;&gt;proc~split_chunked</title>
+<path fill="none" stroke="#000000" d="M1019.73,-753.62C1070.82,-746.72 1152.84,-735.65 1211.86,-727.67"/>
+<polygon fill="#000000" stroke="#000000" points="1212.42,-731.13 1221.86,-726.32 1211.49,-724.19 1212.42,-731.13"/>
+</g>
+<!-- program~volatile_doctest~154 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node35" class="node">
+<title>program~volatile_doctest~154</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node35"><a xlink:href="../program/volatile_doctest~154.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1019.5,-646 923.5,-646 923.5,-622 1019.5,-622 1019.5,-646"/>
+<text text-anchor="middle" x="971.5" y="-631.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~154&#45;&gt;proc~startcase -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge39" class="edge">
+<title>program~volatile_doctest~154&#45;&gt;proc~startcase</title>
+<path fill="none" stroke="#000000" d="M1019.73,-627.62C1074.35,-620.25 1164.34,-608.09 1223.76,-600.07"/>
+<polygon fill="#000000" stroke="#000000" points="1224.32,-603.52 1233.76,-598.72 1223.38,-596.59 1224.32,-603.52"/>
+</g>
+<!-- program~volatile_doctest~694 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node36" class="node">
+<title>program~volatile_doctest~694</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node36"><a xlink:href="../program/volatile_doctest~694.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1019.5,-1083 923.5,-1083 923.5,-1059 1019.5,-1059 1019.5,-1083"/>
+<text text-anchor="middle" x="971.5" y="-1068.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~694&#45;&gt;proc~camelcase -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge29" class="edge">
+<title>program~volatile_doctest~694&#45;&gt;proc~camelcase</title>
+<path fill="none" stroke="#000000" d="M1019.73,-1064.62C1072.98,-1057.43 1159.86,-1045.7 1219.25,-1037.68"/>
+<polygon fill="#000000" stroke="#000000" points="1219.83,-1041.13 1229.27,-1036.32 1218.89,-1034.19 1219.83,-1041.13"/>
+</g>
+<!-- program~volatile_doctest~708 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node37" class="node">
+<title>program~volatile_doctest~708</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node37"><a xlink:href="../program/volatile_doctest~708.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1019.5,-1041 923.5,-1041 923.5,-1017 1019.5,-1017 1019.5,-1041"/>
+<text text-anchor="middle" x="971.5" y="-1026.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~708&#45;&gt;proc~camelcase -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge30" class="edge">
+<title>program~volatile_doctest~708&#45;&gt;proc~camelcase</title>
+<path fill="none" stroke="#000000" d="M1019.73,-1029C1072.98,-1029 1159.86,-1029 1219.25,-1029"/>
+<polygon fill="#000000" stroke="#000000" points="1219.27,-1032.5 1229.27,-1029 1219.27,-1025.5 1219.27,-1032.5"/>
+</g>
+<!-- program~volatile_doctest~882 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node38" class="node">
+<title>program~volatile_doctest~882</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node38"><a xlink:href="../program/volatile_doctest~882.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1019.5,-898 923.5,-898 923.5,-874 1019.5,-874 1019.5,-898"/>
+<text text-anchor="middle" x="971.5" y="-883.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~882&#45;&gt;proc~snakecase -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge33" class="edge">
+<title>program~volatile_doctest~882&#45;&gt;proc~snakecase</title>
+<path fill="none" stroke="#000000" d="M1019.73,-879.62C1073.14,-872.41 1160.38,-860.63 1219.79,-852.6"/>
+<polygon fill="#000000" stroke="#000000" points="1220.36,-856.06 1229.81,-851.25 1219.43,-849.12 1220.36,-856.06"/>
+</g>
+<!-- program~volatile_doctest~891 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node39" class="node">
+<title>program~volatile_doctest~891</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node39"><a xlink:href="../program/volatile_doctest~891.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1019.5,-730 923.5,-730 923.5,-706 1019.5,-706 1019.5,-730"/>
+<text text-anchor="middle" x="971.5" y="-715.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~891&#45;&gt;proc~split_chunked -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge38" class="edge">
+<title>program~volatile_doctest~891&#45;&gt;proc~split_chunked</title>
+<path fill="none" stroke="#000000" d="M1019.73,-718C1070.82,-718 1152.84,-718 1211.86,-718"/>
+<polygon fill="#000000" stroke="#000000" points="1211.86,-721.5 1221.86,-718 1211.86,-714.5 1211.86,-721.5"/>
+</g>
+<!-- program~volatile_doctest~967 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node40" class="node">
+<title>program~volatile_doctest~967</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node40"><a xlink:href="../program/volatile_doctest~967.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1019.5,-604 923.5,-604 923.5,-580 1019.5,-580 1019.5,-604"/>
+<text text-anchor="middle" x="971.5" y="-589.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~967&#45;&gt;proc~startcase -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge40" class="edge">
+<title>program~volatile_doctest~967&#45;&gt;proc~startcase</title>
+<path fill="none" stroke="#000000" d="M1019.73,-592C1074.24,-592 1163.96,-592 1223.4,-592"/>
+<polygon fill="#000000" stroke="#000000" points="1223.76,-595.5 1233.76,-592 1223.76,-588.5 1223.76,-595.5"/>
+</g>
+<!-- program~volatile_doctest~98 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node41" class="node">
+<title>program~volatile_doctest~98</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node41"><a xlink:href="../program/volatile_doctest~98.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="1019.5,-856 923.5,-856 923.5,-832 1019.5,-832 1019.5,-856"/>
+<text text-anchor="middle" x="971.5" y="-841.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~98&#45;&gt;proc~snakecase -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge34" class="edge">
+<title>program~volatile_doctest~98&#45;&gt;proc~snakecase</title>
+<path fill="none" stroke="#000000" d="M1019.73,-844C1073.14,-844 1160.38,-844 1219.79,-844"/>
+<polygon fill="#000000" stroke="#000000" points="1219.81,-847.5 1229.81,-844 1219.81,-840.5 1219.81,-847.5"/>
+</g>
+<!-- proc~glob_character&#45;&gt;none~glob -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge45" class="edge">
+<title>proc~glob_character&#45;&gt;none~glob</title>
+<path fill="none" stroke="#000000" d="M792.57,-965.59C833.78,-968.06 885.97,-972.76 923.15,-977.44"/>
+<polygon fill="#000000" stroke="#000000" points="922.85,-980.93 933.22,-978.76 923.76,-973.99 922.85,-980.93"/>
+</g>
+<!-- proc~parse_scratch_files -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node43" class="node">
+<title>proc~parse_scratch_files</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node43"><a xlink:href="../proc/parse_scratch_files.html" xlink:title="vtm_file%parse_scratch_files">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="450,-398 284,-398 284,-374 450,-374 450,-398"/>
+<text text-anchor="middle" x="367" y="-383.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">vtm_file%parse_scratch_files</text>
+</a>
+</g>
+</g>
+<!-- proc~parse_scratch_files&#45;&gt;none~write_parallel_block_files -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge50" class="edge">
+<title>proc~parse_scratch_files&#45;&gt;none~write_parallel_block_files</title>
+<path fill="none" stroke="#000000" d="M450.11,-387.08C538.25,-388.81 682.3,-393.32 806,-405 833.13,-407.56 862.64,-411.5 889.06,-415.45"/>
+<polygon fill="#000000" stroke="#000000" points="888.62,-418.92 899.03,-416.96 889.67,-412 888.62,-418.92"/>
+</g>
+<!-- none~write_block -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node52" class="node">
+<title>none~write_block</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node52"><a xlink:href="../type/vtm_file.html#boundprocedure-write_block" xlink:title="vtm_file%write_block">
+<polygon fill="#a7506f" stroke="#a7506f" points="610,-439 486,-439 486,-415 610,-415 610,-439"/>
+<text text-anchor="middle" x="548" y="-424.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">vtm_file%write_block</text>
+</a>
+</g>
+</g>
+<!-- proc~parse_scratch_files&#45;&gt;none~write_block -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge60" class="edge">
+<title>proc~parse_scratch_files&#45;&gt;none~write_block</title>
+<path fill="none" stroke="#000000" d="M420.74,-398.08C440.68,-402.65 463.57,-407.89 484.33,-412.65"/>
+<polygon fill="#000000" stroke="#000000" points="483.8,-416.11 494.33,-414.94 485.36,-409.29 483.8,-416.11"/>
+</g>
+<!-- proc~write_block_array -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node44" class="node">
+<title>proc~write_block_array</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node44"><a xlink:href="../proc/write_block_array.html" xlink:title="vtm_file%write_block_array">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="805,-480 647,-480 647,-456 805,-456 805,-480"/>
+<text text-anchor="middle" x="726" y="-465.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">vtm_file%write_block_array</text>
+</a>
+</g>
+</g>
+<!-- proc~write_block_array&#45;&gt;none~write_parallel_block_files -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge51" class="edge">
+<title>proc~write_block_array&#45;&gt;none~write_parallel_block_files</title>
+<path fill="none" stroke="#000000" d="M802.04,-455.98C828.31,-451.77 858,-447.02 885.06,-442.69"/>
+<polygon fill="#000000" stroke="#000000" points="885.96,-446.08 895.28,-441.05 884.86,-439.17 885.96,-446.08"/>
+</g>
+<!-- proc~write_block_string -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node45" class="node">
+<title>proc~write_block_string</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node45"><a xlink:href="../proc/write_block_string.html" xlink:title="vtm_file%write_block_string">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="806,-438 646,-438 646,-414 806,-414 806,-438"/>
+<text text-anchor="middle" x="726" y="-423.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">vtm_file%write_block_string</text>
+</a>
+</g>
+</g>
+<!-- proc~write_block_string&#45;&gt;none~write_parallel_block_files -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge52" class="edge">
+<title>proc~write_block_string&#45;&gt;none~write_parallel_block_files</title>
+<path fill="none" stroke="#000000" d="M806.06,-426.97C814.34,-427.08 822.93,-427.18 831.63,-427.29"/>
+<polygon fill="#000000" stroke="#000000" points="831.85,-430.79 841.9,-427.42 831.94,-423.79 831.85,-430.79"/>
+</g>
+<!-- program~volatile_doctest~211 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node46" class="node">
+<title>program~volatile_doctest~211</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node46"><a xlink:href="../program/volatile_doctest~211.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="415,-979 319,-979 319,-955 415,-955 415,-979"/>
+<text text-anchor="middle" x="367" y="-964.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~211&#45;&gt;interface~glob -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge43" class="edge">
+<title>program~volatile_doctest~211&#45;&gt;interface~glob</title>
+<path fill="none" stroke="#000000" d="M415.03,-961.48C444.97,-957.97 483.17,-953.49 510.76,-950.25"/>
+<polygon fill="#000000" stroke="#000000" points="511.25,-953.72 520.77,-949.08 510.43,-946.77 511.25,-953.72"/>
+</g>
+<!-- program~volatile_doctest~31 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node47" class="node">
+<title>program~volatile_doctest~31</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node47"><a xlink:href="../program/volatile_doctest~31.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="774,-1146 678,-1146 678,-1122 774,-1122 774,-1146"/>
+<text text-anchor="middle" x="726" y="-1131.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~31&#45;&gt;none~glob -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge46" class="edge">
+<title>program~volatile_doctest~31&#45;&gt;none~glob</title>
+<path fill="none" stroke="#000000" d="M774.25,-1129.31C785.78,-1126.18 797.28,-1121.13 806,-1113 842.09,-1079.37 804.31,-1039.83 842,-1008 864.18,-989.27 896.46,-984.05 923.11,-983.49"/>
+<polygon fill="#000000" stroke="#000000" points="923.39,-986.99 933.39,-983.5 923.39,-979.99 923.39,-986.99"/>
+</g>
+<!-- program~volatile_doctest~315 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node48" class="node">
+<title>program~volatile_doctest~315</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node48"><a xlink:href="../program/volatile_doctest~315.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="415,-937 319,-937 319,-913 415,-913 415,-937"/>
+<text text-anchor="middle" x="367" y="-922.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~315&#45;&gt;interface~glob -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge44" class="edge">
+<title>program~volatile_doctest~315&#45;&gt;interface~glob</title>
+<path fill="none" stroke="#000000" d="M415.03,-930.52C444.97,-934.03 483.17,-938.51 510.76,-941.75"/>
+<polygon fill="#000000" stroke="#000000" points="510.43,-945.23 520.77,-942.92 511.25,-938.28 510.43,-945.23"/>
+</g>
+<!-- program~volatile_doctest~543 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node49" class="node">
+<title>program~volatile_doctest~543</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node49"><a xlink:href="../program/volatile_doctest~543.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="774,-1104 678,-1104 678,-1080 774,-1080 774,-1104"/>
+<text text-anchor="middle" x="726" y="-1089.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~543&#45;&gt;none~glob -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge47" class="edge">
+<title>program~volatile_doctest~543&#45;&gt;none~glob</title>
+<path fill="none" stroke="#000000" d="M774.09,-1085.92C785.36,-1082.8 796.78,-1078.1 806,-1071 831.56,-1051.34 815.51,-1026.39 842,-1008 865.52,-991.67 897.23,-986.36 923.27,-985.16"/>
+<polygon fill="#000000" stroke="#000000" points="923.4,-988.66 933.3,-984.89 923.21,-981.66 923.4,-988.66"/>
+</g>
+<!-- program~volatile_doctest~844 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node50" class="node">
+<title>program~volatile_doctest~844</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node50"><a xlink:href="../program/volatile_doctest~844.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="774,-1062 678,-1062 678,-1038 774,-1038 774,-1062"/>
+<text text-anchor="middle" x="726" y="-1047.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~844&#45;&gt;none~glob -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge48" class="edge">
+<title>program~volatile_doctest~844&#45;&gt;none~glob</title>
+<path fill="none" stroke="#000000" d="M774.06,-1039.71C784.74,-1036.77 795.91,-1033.19 806,-1029 823.1,-1021.89 824.57,-1014.27 842,-1008 867.97,-998.67 898.38,-993.46 923.11,-990.57"/>
+<polygon fill="#000000" stroke="#000000" points="923.76,-994.02 933.32,-989.46 923,-987.06 923.76,-994.02"/>
+</g>
+<!-- program~volatile_doctest~849 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node51" class="node">
+<title>program~volatile_doctest~849</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node51"><a xlink:href="../program/volatile_doctest~849.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="774,-1020 678,-1020 678,-996 774,-996 774,-1020"/>
+<text text-anchor="middle" x="726" y="-1005.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~849&#45;&gt;none~glob -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge49" class="edge">
+<title>program~volatile_doctest~849&#45;&gt;none~glob</title>
+<path fill="none" stroke="#000000" d="M774.24,-1003.93C817.17,-1000.22 880.18,-994.79 923.15,-991.08"/>
+<polygon fill="#000000" stroke="#000000" points="923.68,-994.55 933.34,-990.2 923.08,-987.58 923.68,-994.55"/>
+</g>
+<!-- none~write_block&#45;&gt;proc~write_block_array -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge58" class="edge">
+<title>none~write_block&#45;&gt;proc~write_block_array</title>
+<path fill="none" stroke="#000000" d="M600.85,-439.08C620.46,-443.65 642.96,-448.89 663.38,-453.65"/>
+<polygon fill="#000000" stroke="#000000" points="662.68,-457.08 673.21,-455.94 664.27,-450.26 662.68,-457.08"/>
+</g>
+<!-- none~write_block&#45;&gt;proc~write_block_string -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge59" class="edge">
+<title>none~write_block&#45;&gt;proc~write_block_string</title>
+<path fill="none" stroke="#000000" d="M610.06,-426.65C618.34,-426.61 626.97,-426.56 635.62,-426.51"/>
+<polygon fill="#000000" stroke="#000000" points="635.78,-430.01 645.76,-426.45 635.74,-423.01 635.78,-430.01"/>
+</g>
+<!-- proc~finalize~8 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node53" class="node">
+<title>proc~finalize~8</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node53"><a xlink:href="../proc/finalize~8.html" xlink:title="vtm_file%finalize">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="248,-398 145,-398 145,-374 248,-374 248,-398"/>
+<text text-anchor="middle" x="196.5" y="-383.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">vtm_file%finalize</text>
+</a>
+</g>
+</g>
+<!-- proc~finalize~8&#45;&gt;proc~parse_scratch_files -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge57" class="edge">
+<title>proc~finalize~8&#45;&gt;proc~parse_scratch_files</title>
+<path fill="none" stroke="#000000" d="M248.06,-386C256.3,-386 265.05,-386 273.92,-386"/>
+<polygon fill="#000000" stroke="#000000" points="273.97,-389.5 283.97,-386 273.97,-382.5 273.97,-389.5"/>
+</g>
+<!-- proc~initialize~6 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node54" class="node">
+<title>proc~initialize~6</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node54"><a xlink:href="../proc/initialize~6.html" xlink:title="vtm_file%initialize">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="109,-398 0,-398 0,-374 109,-374 109,-398"/>
+<text text-anchor="middle" x="54.5" y="-383.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">vtm_file%initialize</text>
+</a>
+</g>
+</g>
+<!-- proc~initialize~6&#45;&gt;proc~finalize~8 -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge62" class="edge">
+<title>proc~initialize~6&#45;&gt;proc~finalize~8</title>
+<path fill="none" stroke="#000000" d="M109.23,-386C117.56,-386 126.22,-386 134.69,-386"/>
+<polygon fill="#000000" stroke="#000000" points="134.91,-389.5 144.91,-386 134.91,-382.5 134.91,-389.5"/>
+</g>
+<!-- program~vtk_fortran_write_vtm -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_node55" class="node">
+<title>program~vtk_fortran_write_vtm</title>
+<g id="a_proc~~replace_one_occurrence~~CalledByGraph_node55"><a xlink:href="../program/vtk_fortran_write_vtm.html" xlink:title="vtk_fortran_write_vtm">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="430.5,-440 303.5,-440 303.5,-416 430.5,-416 430.5,-440"/>
+<text text-anchor="middle" x="367" y="-425.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">vtk_fortran_write_vtm</text>
+</a>
+</g>
+</g>
+<!-- program~vtk_fortran_write_vtm&#45;&gt;none~write_block -->
+<g id="proc~~replace_one_occurrence~~CalledByGraph_edge61" class="edge">
+<title>program~vtk_fortran_write_vtm&#45;&gt;none~write_block</title>
+<path fill="none" stroke="#000000" d="M430.61,-427.65C445.19,-427.57 460.82,-427.48 475.74,-427.4"/>
+<polygon fill="#000000" stroke="#000000" points="475.96,-430.9 485.94,-427.34 475.92,-423.9 475.96,-430.9"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocreplace_one_occurrenceCalledByGraph = svgPanZoom('#procreplace_one_occurrenceCalledByGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <br>
 
-    <section class="visible-xs visible-sm hidden-md">
-      <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../proc/replace_one_occurrence.html#src">replace_one_occurrence</a>
-  </div>
-</div>
-
-    </section>
-    <br class="visible-xs visible-sm hidden-md">
-
 
     
     
 
     
     
+
 
 
     
     <section>
     <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="highlight"><pre><span></span><span class="w">   </span><span class="k">elemental function </span><span class="n">replace_one_occurrence</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">old</span><span class="p">,</span><span class="w"> </span><span class="n">new</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">replaced</span><span class="p">)</span><span class="w"></span>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">elemental function </span><span class="n">replace_one_occurrence</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">old</span><span class="p">,</span><span class="w"> </span><span class="n">new</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">replaced</span><span class="p">)</span>
 <span class="w">   </span><span class="c">!&lt; Return a string with the first occurrence of substring old replaced by new.</span>
 <span class="w">   </span><span class="c">!&lt;</span>
 <span class="w">   </span><span class="c">!&lt; @note The doctest is not necessary, this being tested by [[string:replace]].</span>
@@ -195,17 +1209,17 @@
 <span class="w">   </span><span class="kt">integer</span><span class="w">                                </span><span class="kd">::</span><span class="w"> </span><span class="n">pos</span><span class="w">       </span><span class="c">!&lt; Position from which replace old.</span>
 
 <span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
-<span class="k">      </span><span class="n">replaced</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">self</span><span class="w"></span>
-<span class="w">      </span><span class="n">pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">index</span><span class="p">(</span><span class="n">string</span><span class="o">=</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">,</span><span class="w"> </span><span class="n">substring</span><span class="o">=</span><span class="n">old</span><span class="p">)</span><span class="w"></span>
+<span class="k">      </span><span class="n">replaced</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">self</span>
+<span class="w">      </span><span class="n">pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">index</span><span class="p">(</span><span class="n">string</span><span class="o">=</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">,</span><span class="w"> </span><span class="n">substring</span><span class="o">=</span><span class="n">old</span><span class="p">)</span>
 <span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pos</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
 <span class="k">         if</span><span class="w"> </span><span class="p">(</span><span class="n">pos</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
-<span class="k">            </span><span class="n">replaced</span><span class="p">%</span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new</span><span class="o">//</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">old</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">:)</span><span class="w"></span>
+<span class="k">            </span><span class="n">replaced</span><span class="p">%</span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new</span><span class="o">//</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">old</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">:)</span>
 <span class="w">         </span><span class="k">else</span>
-<span class="k">            </span><span class="n">replaced</span><span class="p">%</span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">pos</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">//</span><span class="n">new</span><span class="o">//</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">(</span><span class="n">pos</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">old</span><span class="p">):)</span><span class="w"></span>
+<span class="k">            </span><span class="n">replaced</span><span class="p">%</span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">pos</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">//</span><span class="n">new</span><span class="o">//</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">(</span><span class="n">pos</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">old</span><span class="p">):)</span>
 <span class="w">         </span><span class="k">endif</span>
 <span class="k">      endif</span>
 <span class="k">   endif</span>
-<span class="k">   endfunction </span><span class="n">replace_one_occurrence</span><span class="w"></span>
+<span class="k">   endfunction </span><span class="n">replace_one_occurrence</span>
 </pre></div>
 
     </section>
@@ -214,50 +1228,48 @@
     </div>
   </div>
 
-    <hr>    
+      <hr>
     </div> <!-- /container -->
     <footer>
       <div class="container">
-      <div class="row">
-        <div class="col-xs-6 col-md-6"><p>Lib_VTK_IO was developed by Stefano Zaghi<br>&copy; 2022 
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Lib_VTK_IO
+ was developed by Stefano Zaghi<br>              &copy; 2025 
 </p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
         </div>
-        <div class="col-xs-6 col-md-6">
-          <p class="text-right">
-            Documentation generated by 
-            <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
-          </p>
-        </div>
-      </div>
-      <br>
-      </div> <!-- /container -->    
+        <br>
+      </div> <!-- /container -->
     </footer>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
+    <!-- Bootstrap core JavaScript -->
     <!-- Placed at the end of the document so the pages load faster -->
-<!--
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
--->
-    <script src="../js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
 
     <!-- MathJax JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
-        jax: ['input/TeX','input/MathML','output/HTML-CSS'],
-        extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
-      });
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script src="../tipuesearch/tipuesearch_content.js"></script>
-    <script src="../tipuesearch/tipuesearch_set.js"></script>
-    <script src="../tipuesearch/tipuesearch.js"></script>
-    
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
   </body>
 </html>

@@ -1,184 +1,481 @@
+<!-- -*- mode: jinja2 -*- -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-   <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
+      <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
     <meta name="author" content="Stefano Zaghi" >
     <link rel="icon" href="../favicon.png">
 
     <title>startcase &ndash; Lib_VTK_IO</title>
 
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="../css/pygments.css" rel="stylesheet">
     <link href="../css/font-awesome.min.css" rel="stylesheet">
     <link href="../css/local.css" rel="stylesheet">
-    <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    
-    <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="../js/svg-pan-zoom.min.js"></script>
-
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
           <a class="navbar-brand" href="../index.html">Lib_VTK_IO </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
-              <a href="#" class="dropdown-toggle"
-              data-toggle="dropdown" role="button"
-              aria-haspopup="true"
-     aria-expanded="false">Contents <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-            <li><a href="../lists/files.html">Source Files</a></li>
-            <li><a href="../lists/modules.html">Modules</a></li>
-            <li><a href="../lists/procedures.html">Procedures</a></li>
-            <li><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                   <li><a href="../lists/types.html">Derived Types</a></li>
-            <li><a href="../lists/programs.html">Programs</a></li>
-       
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
             </ul>
-        
-            </li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/files.html">Source Files</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/modules.html">Modules</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/procedures.html">Procedures</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                             <li class="visible-xs hidden-sm visible-lg"><a href="../lists/types.html">Derived Types</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/programs.html">Programs</a></li>
-          </ul>
-        <form action="../search.html" class="navbar-form navbar-right" role="search">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
         </div>
-<!--
-        <button type="submit" class="btn btn-default">Submit</button>
--->
-        </form>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+      </nav>
+    </div>
 
     <div class="container">
   <div class="row">
     <h1>startcase
       <small>Function</small>
+      
     </h1>
-    <div class="row">
-  <div class="col-lg-12">
-<div class="well well-sm">
-  <ul class="list-inline" style="margin-bottom:0px;display:inline">
-     <li><i class="fa fa-list-ol"></i>
-       <a data-toggle="tooltip"
-    data-placement="bottom" data-html="true"
-    title=" 0.1% of total for procedures.">14 statements</a>
-     </li> 
-    <li><i class="fa fa-code"></i><a href="../src/stringifor_string_t.F90"> Source File</a></li>
-  </ul>
-  <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/stringifor_string_t.f90~2.html'>stringifor_string_t.F90</a></li>
-     <li><a href='../module/stringifor_string_t~2.html'>stringifor_string_t</a></li>
-     <li class="active">startcase</li>
-  </ol>
-</div>
-</div>
-</div>
-<script>
-  $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-  })
-</script>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.1% of total for procedures.">14 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/stringifor_string_t.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/stringifor_string_t.f90~2.html'>stringifor_string_t.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/stringifor_string_t~2.html'>stringifor_string_t</a></li>
+            <li class="breadcrumb-item active" aria-current="page">startcase</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
 
   </div>
   
   <div class="row">
     <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
-    <div id="sidebar">
-  <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../proc/startcase~2.html#src">startcase</a>
-  </div>
-</div>
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/startcase~2.html#src">startcase</a>
+      </div>
+    </div>
 
-</div>
+
+  </div>
 
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private elemental function startcase(self, sep)</h2>
+    <h2>private elemental function startcase(self, sep)  
+</h2>
     
 
+
+    <h3>Type Bound</h3>
+    <p><a href='../type/string~2.html'>string</a></p>
 
     <h3>Arguments</h3>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" id="variable-self~438"></span>class(<a href='../type/string~2.html'>string</a>),</td>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-self~349"></span>
+              class(<a href='../type/string~2.html'>string</a>),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-sep~24"></span>character(kind=CK,len=*),</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sep~63"></span>
+              character(kind=CK, len=*),
+            </td>
 <td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>sep</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sep</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
-   <h3>Return Value <small><span class="anchor" id="variable-startcase~4"></span>type(<a href='../type/string~2.html'>string</a>)</small></h3>
-    
+      <h3>Return Value
+        <small>
+          <span class="anchor" id="variable-startcase~4"></span>
+          type(<a href='../type/string~2.html'>string</a>)
+        </small>
+      </h3>
+      
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~startcase~2~~CallsGraph Pages: 1 -->
+<svg id="procstartcase2CallsGraph" width="641pt" height="168pt"
+ viewBox="0.00 0.00 641.00 167.58" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~startcase~2~~CallsGraph" class="graph" transform="scale(0.84 0.84) rotate(0) translate(4 196)">
+<title>proc~~startcase~2~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-196 761,-196 761,4 -4,4"/>
+<!-- proc~startcase~2 -->
+<g id="proc~~startcase~2~~CallsGraph_node1" class="node">
+<title>proc~startcase~2</title>
+<polygon fill="none" stroke="black" points="101,-108 0,-108 0,-84 101,-84 101,-108"/>
+<text text-anchor="middle" x="50.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50">string%startcase</text>
+</g>
+<!-- none~join~8 -->
+<g id="proc~~startcase~2~~CallsGraph_node2" class="node">
+<title>none~join~8</title>
+<g id="a_proc~~startcase~2~~CallsGraph_node2"><a xlink:href="../type/string~2.html#boundprocedure-join~8" xlink:title="string%join">
+<polygon fill="#a7506f" stroke="#a7506f" points="224.5,-150 152.5,-150 152.5,-126 224.5,-126 224.5,-150"/>
+<text text-anchor="middle" x="188.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%join</text>
+</a>
+</g>
+</g>
+<!-- proc~startcase~2&#45;&gt;none~join~8 -->
+<g id="proc~~startcase~2~~CallsGraph_edge1" class="edge">
+<title>proc~startcase~2&#45;&gt;none~join~8</title>
+<path fill="none" stroke="#000000" d="M90.47,-108.04C106.74,-113.06 125.75,-118.93 142.6,-124.13"/>
+<polygon fill="#000000" stroke="#000000" points="141.65,-127.5 152.24,-127.11 143.72,-120.82 141.65,-127.5"/>
+</g>
+<!-- proc~capitalize~2 -->
+<g id="proc~~startcase~2~~CallsGraph_node3" class="node">
+<title>proc~capitalize~2</title>
+<g id="a_proc~~startcase~2~~CallsGraph_node3"><a xlink:href="../proc/capitalize~2.html" xlink:title="string%capitalize">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="240,-108 137,-108 137,-84 240,-84 240,-108"/>
+<text text-anchor="middle" x="188.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%capitalize</text>
+</a>
+</g>
+</g>
+<!-- proc~startcase~2&#45;&gt;proc~capitalize~2 -->
+<g id="proc~~startcase~2~~CallsGraph_edge2" class="edge">
+<title>proc~startcase~2&#45;&gt;proc~capitalize~2</title>
+<path fill="none" stroke="#000000" d="M101.37,-96C109.56,-96 118.13,-96 126.56,-96"/>
+<polygon fill="#000000" stroke="#000000" points="126.73,-99.5 136.73,-96 126.73,-92.5 126.73,-99.5"/>
+</g>
+<!-- proc~split~2 -->
+<g id="proc~~startcase~2~~CallsGraph_node4" class="node">
+<title>proc~split~2</title>
+<g id="a_proc~~startcase~2~~CallsGraph_node4"><a xlink:href="../proc/split~2.html" xlink:title="string%split">
+<polygon fill="#d9534f" stroke="#d9534f" points="225.5,-66 151.5,-66 151.5,-42 225.5,-42 225.5,-66"/>
+<text text-anchor="middle" x="188.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%split</text>
+</a>
+</g>
+</g>
+<!-- proc~startcase~2&#45;&gt;proc~split~2 -->
+<g id="proc~~startcase~2~~CallsGraph_edge3" class="edge">
+<title>proc~startcase~2&#45;&gt;proc~split~2</title>
+<path fill="none" stroke="#000000" d="M90.47,-83.96C106.33,-79.07 124.79,-73.37 141.32,-68.26"/>
+<polygon fill="#000000" stroke="#000000" points="142.8,-71.47 151.32,-65.17 140.73,-64.78 142.8,-71.47"/>
+</g>
+<!-- proc~join_characters~2 -->
+<g id="proc~~startcase~2~~CallsGraph_node5" class="node">
+<title>proc~join_characters~2</title>
+<g id="a_proc~~startcase~2~~CallsGraph_node5"><a xlink:href="../proc/join_characters~2.html" xlink:title="string%join_characters">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="410,-192 276,-192 276,-168 410,-168 410,-192"/>
+<text text-anchor="middle" x="343" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%join_characters</text>
+</a>
+</g>
+</g>
+<!-- none~join~8&#45;&gt;proc~join_characters~2 -->
+<g id="proc~~startcase~2~~CallsGraph_edge4" class="edge">
+<title>none~join~8&#45;&gt;proc~join_characters~2</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M224.87,-147.74C243.78,-152.95 267.46,-159.47 288.57,-165.28"/>
+<polygon fill="#000000" stroke="#000000" points="287.81,-168.7 298.38,-167.99 289.66,-161.96 287.81,-168.7"/>
+</g>
+<!-- proc~join_strings~2 -->
+<g id="proc~~startcase~2~~CallsGraph_node6" class="node">
+<title>proc~join_strings~2</title>
+<g id="a_proc~~startcase~2~~CallsGraph_node6"><a xlink:href="../proc/join_strings~2.html" xlink:title="string%join_strings">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="399,-150 287,-150 287,-126 399,-126 399,-150"/>
+<text text-anchor="middle" x="343" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%join_strings</text>
+</a>
+</g>
+</g>
+<!-- none~join~8&#45;&gt;proc~join_strings~2 -->
+<g id="proc~~startcase~2~~CallsGraph_edge5" class="edge">
+<title>none~join~8&#45;&gt;proc~join_strings~2</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M224.87,-138C240.24,-138 258.76,-138 276.49,-138"/>
+<polygon fill="#000000" stroke="#000000" points="276.81,-141.5 286.81,-138 276.81,-134.5 276.81,-141.5"/>
+</g>
+<!-- proc~lower~2 -->
+<g id="proc~~startcase~2~~CallsGraph_node7" class="node">
+<title>proc~lower~2</title>
+<g id="a_proc~~startcase~2~~CallsGraph_node7"><a xlink:href="../proc/lower~2.html" xlink:title="string%lower">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="384,-108 302,-108 302,-84 384,-84 384,-108"/>
+<text text-anchor="middle" x="343" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%lower</text>
+</a>
+</g>
+</g>
+<!-- proc~capitalize~2&#45;&gt;proc~lower~2 -->
+<g id="proc~~startcase~2~~CallsGraph_edge6" class="edge">
+<title>proc~capitalize~2&#45;&gt;proc~lower~2</title>
+<path fill="none" stroke="#000000" d="M240.28,-96C256.63,-96 274.74,-96 291.1,-96"/>
+<polygon fill="#000000" stroke="#000000" points="291.56,-99.5 301.56,-96 291.56,-92.5 291.56,-99.5"/>
+</g>
+<!-- proc~partition~2 -->
+<g id="proc~~startcase~2~~CallsGraph_node8" class="node">
+<title>proc~partition~2</title>
+<g id="a_proc~~startcase~2~~CallsGraph_node8"><a xlink:href="../proc/partition~2.html" xlink:title="string%partition">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="391.5,-66 294.5,-66 294.5,-42 391.5,-42 391.5,-66"/>
+<text text-anchor="middle" x="343" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%partition</text>
+</a>
+</g>
+</g>
+<!-- proc~split~2&#45;&gt;proc~partition~2 -->
+<g id="proc~~startcase~2~~CallsGraph_edge7" class="edge">
+<title>proc~split~2&#45;&gt;proc~partition~2</title>
+<path fill="none" stroke="#000000" d="M225.64,-54C243.12,-54 264.52,-54 284.19,-54"/>
+<polygon fill="#000000" stroke="#000000" points="284.28,-57.5 294.28,-54 284.28,-50.5 284.28,-57.5"/>
+</g>
+<!-- proc~unique~2 -->
+<g id="proc~~startcase~2~~CallsGraph_node9" class="node">
+<title>proc~unique~2</title>
+<g id="a_proc~~startcase~2~~CallsGraph_node9"><a xlink:href="../proc/unique~2.html" xlink:title="string%unique">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="387.5,-24 298.5,-24 298.5,0 387.5,0 387.5,-24"/>
+<text text-anchor="middle" x="343" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%unique</text>
+</a>
+</g>
+</g>
+<!-- proc~split~2&#45;&gt;proc~unique~2 -->
+<g id="proc~~startcase~2~~CallsGraph_edge8" class="edge">
+<title>proc~split~2&#45;&gt;proc~unique~2</title>
+<path fill="none" stroke="#000000" d="M225.64,-44.05C244.42,-38.87 267.74,-32.45 288.56,-26.72"/>
+<polygon fill="#000000" stroke="#000000" points="289.53,-30.08 298.24,-24.05 287.67,-23.33 289.53,-30.08"/>
+</g>
+<!-- proc~replace~2 -->
+<g id="proc~~startcase~2~~CallsGraph_node10" class="node">
+<title>proc~replace~2</title>
+<g id="a_proc~~startcase~2~~CallsGraph_node10"><a xlink:href="../proc/replace~2.html" xlink:title="string%replace">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="538,-24 446,-24 446,0 538,0 538,-24"/>
+<text text-anchor="middle" x="492" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%replace</text>
+</a>
+</g>
+</g>
+<!-- proc~unique~2&#45;&gt;proc~replace~2 -->
+<g id="proc~~startcase~2~~CallsGraph_edge9" class="edge">
+<title>proc~unique~2&#45;&gt;proc~replace~2</title>
+<path fill="none" stroke="#000000" d="M387.71,-12C402.77,-12 419.85,-12 435.71,-12"/>
+<polygon fill="#000000" stroke="#000000" points="435.93,-15.5 445.93,-12 435.93,-8.5 435.93,-15.5"/>
+</g>
+<!-- proc~replace_one_occurrence~2 -->
+<g id="proc~~startcase~2~~CallsGraph_node11" class="node">
+<title>proc~replace_one_occurrence~2</title>
+<g id="a_proc~~startcase~2~~CallsGraph_node11"><a xlink:href="../proc/replace_one_occurrence~2.html" xlink:title="string%replace_one_occurrence">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="757,-24 574,-24 574,0 757,0 757,-24"/>
+<text text-anchor="middle" x="665.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%replace_one_occurrence</text>
+</a>
+</g>
+</g>
+<!-- proc~replace~2&#45;&gt;proc~replace_one_occurrence~2 -->
+<g id="proc~~startcase~2~~CallsGraph_edge10" class="edge">
+<title>proc~replace~2&#45;&gt;proc~replace_one_occurrence~2</title>
+<path fill="none" stroke="#000000" d="M538.06,-12C546.14,-12 554.84,-12 563.76,-12"/>
+<polygon fill="#000000" stroke="#000000" points="563.92,-15.5 573.92,-12 563.92,-8.5 563.92,-15.5"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocstartcase2CallsGraph = svgPanZoom('#procstartcase2CallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <br>
 
-    <section class="visible-xs visible-sm hidden-md">
-      <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../proc/startcase~2.html#src">startcase</a>
-  </div>
-</div>
-
-    </section>
-    <br class="visible-xs visible-sm hidden-md">
-
 
     
     
 
     
     
+
 
 
     
     <section>
     <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="highlight"><pre><span></span><span class="w">   </span><span class="k">elemental function </span><span class="n">startcase</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">sep</span><span class="p">)</span><span class="w"></span>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">elemental function </span><span class="n">startcase</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">sep</span><span class="p">)</span>
 <span class="w">   </span><span class="c">!&lt; Return a string with all words capitalized, e.g. title case.</span>
 <span class="w">   </span><span class="c">!&lt;</span>
 <span class="w">   </span><span class="c">!&lt; @note Multiple subsequent separators are collapsed to one occurence.</span>
@@ -198,12 +495,12 @@
 <span class="w">   </span><span class="k">type</span><span class="p">(</span><span class="n">string</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                       </span><span class="kd">::</span><span class="w"> </span><span class="n">tokens</span><span class="p">(:)</span><span class="w"> </span><span class="c">!&lt; String tokens.</span>
 
 <span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
-<span class="k">      </span><span class="n">sep_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SPACE</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">sep</span><span class="p">))</span><span class="w"> </span><span class="n">sep_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sep</span><span class="w"></span>
-<span class="w">      </span><span class="k">call </span><span class="n">self</span><span class="p">%</span><span class="n">split</span><span class="p">(</span><span class="n">tokens</span><span class="o">=</span><span class="n">tokens</span><span class="p">,</span><span class="w"> </span><span class="n">sep</span><span class="o">=</span><span class="n">sep_</span><span class="p">)</span><span class="w"></span>
-<span class="w">      </span><span class="n">tokens</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tokens</span><span class="p">%</span><span class="n">capitalize</span><span class="p">()</span><span class="w"></span>
-<span class="w">      </span><span class="n">startcase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">startcase</span><span class="p">%</span><span class="n">join</span><span class="p">(</span><span class="k">array</span><span class="o">=</span><span class="n">tokens</span><span class="p">,</span><span class="w"> </span><span class="n">sep</span><span class="o">=</span><span class="n">sep_</span><span class="p">)</span><span class="w"></span>
+<span class="k">      </span><span class="n">sep_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SPACE</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">sep</span><span class="p">))</span><span class="w"> </span><span class="n">sep_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sep</span>
+<span class="w">      </span><span class="k">call </span><span class="n">self</span><span class="p">%</span><span class="n">split</span><span class="p">(</span><span class="n">tokens</span><span class="o">=</span><span class="n">tokens</span><span class="p">,</span><span class="w"> </span><span class="n">sep</span><span class="o">=</span><span class="n">sep_</span><span class="p">)</span>
+<span class="w">      </span><span class="n">tokens</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tokens</span><span class="p">%</span><span class="n">capitalize</span><span class="p">()</span>
+<span class="w">      </span><span class="n">startcase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">startcase</span><span class="p">%</span><span class="n">join</span><span class="p">(</span><span class="k">array</span><span class="o">=</span><span class="n">tokens</span><span class="p">,</span><span class="w"> </span><span class="n">sep</span><span class="o">=</span><span class="n">sep_</span><span class="p">)</span>
 <span class="w">   </span><span class="k">endif</span>
-<span class="k">   endfunction </span><span class="n">startcase</span><span class="w"></span>
+<span class="k">   endfunction </span><span class="n">startcase</span>
 </pre></div>
 
     </section>
@@ -212,50 +509,48 @@
     </div>
   </div>
 
-    <hr>    
+      <hr>
     </div> <!-- /container -->
     <footer>
       <div class="container">
-      <div class="row">
-        <div class="col-xs-6 col-md-6"><p>Lib_VTK_IO was developed by Stefano Zaghi<br>&copy; 2022 
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Lib_VTK_IO
+ was developed by Stefano Zaghi<br>              &copy; 2025 
 </p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
         </div>
-        <div class="col-xs-6 col-md-6">
-          <p class="text-right">
-            Documentation generated by 
-            <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
-          </p>
-        </div>
-      </div>
-      <br>
-      </div> <!-- /container -->    
+        <br>
+      </div> <!-- /container -->
     </footer>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
+    <!-- Bootstrap core JavaScript -->
     <!-- Placed at the end of the document so the pages load faster -->
-<!--
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
--->
-    <script src="../js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
 
     <!-- MathJax JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
-        jax: ['input/TeX','input/MathML','output/HTML-CSS'],
-        extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
-      });
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script src="../tipuesearch/tipuesearch_content.js"></script>
-    <script src="../tipuesearch/tipuesearch_set.js"></script>
-    <script src="../tipuesearch/tipuesearch.js"></script>
-    
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
   </body>
 </html>

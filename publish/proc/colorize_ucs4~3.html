@@ -1,175 +1,242 @@
+<!-- -*- mode: jinja2 -*- -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-   <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
+      <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
     <meta name="author" content="Stefano Zaghi" >
     <link rel="icon" href="../favicon.png">
 
     <title>colorize_ucs4 &ndash; Lib_VTK_IO</title>
 
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="../css/pygments.css" rel="stylesheet">
     <link href="../css/font-awesome.min.css" rel="stylesheet">
     <link href="../css/local.css" rel="stylesheet">
-    <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    
-    <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="../js/svg-pan-zoom.min.js"></script>
-
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
           <a class="navbar-brand" href="../index.html">Lib_VTK_IO </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
-              <a href="#" class="dropdown-toggle"
-              data-toggle="dropdown" role="button"
-              aria-haspopup="true"
-     aria-expanded="false">Contents <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-            <li><a href="../lists/files.html">Source Files</a></li>
-            <li><a href="../lists/modules.html">Modules</a></li>
-            <li><a href="../lists/procedures.html">Procedures</a></li>
-            <li><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                   <li><a href="../lists/types.html">Derived Types</a></li>
-            <li><a href="../lists/programs.html">Programs</a></li>
-       
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
             </ul>
-        
-            </li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/files.html">Source Files</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/modules.html">Modules</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/procedures.html">Procedures</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                             <li class="visible-xs hidden-sm visible-lg"><a href="../lists/types.html">Derived Types</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/programs.html">Programs</a></li>
-          </ul>
-        <form action="../search.html" class="navbar-form navbar-right" role="search">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
         </div>
-<!--
-        <button type="submit" class="btn btn-default">Submit</button>
--->
-        </form>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+      </nav>
+    </div>
 
     <div class="container">
   <div class="row">
     <h1>colorize_ucs4
       <small>Function</small>
+      
     </h1>
-    <div class="row">
-  <div class="col-lg-12">
-<div class="well well-sm">
-  <ul class="list-inline" style="margin-bottom:0px;display:inline">
-     <li><i class="fa fa-list-ol"></i>
-       <a data-toggle="tooltip"
-    data-placement="bottom" data-html="true"
-    title=" 0.2% of total for procedures.">37 statements</a>
-     </li> 
-    <li><i class="fa fa-code"></i><a href="../src/face.F90"> Source File</a></li>
-  </ul>
-  <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/face.f90~3.html'>face.F90</a></li>
-     <li><a href='../module/face~4.html'>face</a></li>
-     <li class="active">colorize_ucs4</li>
-  </ol>
-</div>
-</div>
-</div>
-<script>
-  $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-  })
-</script>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.2% of total for procedures.">37 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/face.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/face.f90~3.html'>face.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/face~2.html'>face</a></li>
+            <li class="breadcrumb-item active" aria-current="page">colorize_ucs4</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
 
   </div>
   
   <div class="row">
     <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
-    <div id="sidebar">
-  <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../proc/colorize_ucs4~3.html#src">colorize_ucs4</a>
-  </div>
-</div>
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/colorize_ucs4~3.html#src">colorize_ucs4</a>
+      </div>
+    </div>
 
-</div>
+
+  </div>
 
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private pure function colorize_ucs4(string, color_fg, color_bg, style) result(colorized)</h2>
+    <h2>private pure function colorize_ucs4(string, color_fg, color_bg, style) result(colorized)  
+</h2>
     
+
 
 
     <h3>Arguments</h3>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" id="variable-string~17"></span>character(kind=UCS4,len=*),</td>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-string~38"></span>
+              character(kind=UCS4, len=*),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>string</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-color_fg~10"></span>character(len=*),</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>string</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-color_fg~10"></span>
+              character(len=*),
+            </td>
 <td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>color_fg</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-color_bg~10"></span>character(len=*),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>color_fg</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-color_bg~10"></span>
+              character(len=*),
+            </td>
 <td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>color_bg</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-style~12"></span>character(len=*),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>color_bg</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-style~12"></span>
+              character(len=*),
+            </td>
 <td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>style</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>style</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
-   <h3>Return Value <small><span class="anchor" id="variable-colorized~10"></span>character(kind=UCS4,len=:),allocatable</small></h3>
-    
+      <h3>Return Value
+        <small>
+          <span class="anchor" id="variable-colorized~10"></span>
+          character(kind=UCS4, len=:), allocatable
+        </small>
+      </h3>
+      
     <br>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-  <h3 class="panel-title">Calls</h3>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
       </div>
-      <div class="panel-body">
+      <div class="card-body">
   <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
@@ -190,7 +257,7 @@
 <!-- proc~color_index~3 -->
 <g id="proc~~colorize_ucs4~3~~CallsGraph_node2" class="node">
 <title>proc~color_index~3</title>
-<g id="a_proc~~colorize_ucs4~3~~CallsGraph_node2"><a xlink:href=".././proc/color_index~3.html" xlink:title="color_index">
+<g id="a_proc~~colorize_ucs4~3~~CallsGraph_node2"><a xlink:href="../proc/color_index~3.html" xlink:title="color_index">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="194,-108 121,-108 121,-84 194,-84 194,-108"/>
 <text text-anchor="middle" x="157.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">color_index</text>
 </a>
@@ -202,51 +269,61 @@
 <path fill="none" stroke="#000000" d="M75.88,-66.04C87.94,-70.52 101.8,-75.67 114.59,-80.42"/>
 <polygon fill="#000000" stroke="#000000" points="113.52,-83.76 124.11,-83.96 115.96,-77.2 113.52,-83.76"/>
 </g>
-<!-- proc~upper~4 -->
-<g id="proc~~colorize_ucs4~3~~CallsGraph_node3" class="node">
-<title>proc~upper~4</title>
-<g id="a_proc~~colorize_ucs4~3~~CallsGraph_node3"><a xlink:href=".././proc/upper~4.html" xlink:title="upper">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="184.5,-66 130.5,-66 130.5,-42 184.5,-42 184.5,-66"/>
-<text text-anchor="middle" x="157.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">upper</text>
-</a>
-</g>
-</g>
-<!-- proc~colorize_ucs4~3&#45;&gt;proc~upper~4 -->
-<g id="proc~~colorize_ucs4~3~~CallsGraph_edge2" class="edge">
-<title>proc~colorize_ucs4~3&#45;&gt;proc~upper~4</title>
-<path fill="none" stroke="#000000" d="M85.26,-54C96.69,-54 108.99,-54 120.1,-54"/>
-<polygon fill="#000000" stroke="#000000" points="120.32,-57.5 130.32,-54 120.32,-50.5 120.32,-57.5"/>
-</g>
 <!-- proc~style_index~3 -->
-<g id="proc~~colorize_ucs4~3~~CallsGraph_node4" class="node">
+<g id="proc~~colorize_ucs4~3~~CallsGraph_node3" class="node">
 <title>proc~style_index~3</title>
-<g id="a_proc~~colorize_ucs4~3~~CallsGraph_node4"><a xlink:href=".././proc/style_index~3.html" xlink:title="style_index">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="193,-24 122,-24 122,0 193,0 193,-24"/>
-<text text-anchor="middle" x="157.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">style_index</text>
+<g id="a_proc~~colorize_ucs4~3~~CallsGraph_node3"><a xlink:href="../proc/style_index~3.html" xlink:title="style_index">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="193,-66 122,-66 122,-42 193,-42 193,-66"/>
+<text text-anchor="middle" x="157.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">style_index</text>
 </a>
 </g>
 </g>
 <!-- proc~colorize_ucs4~3&#45;&gt;proc~style_index~3 -->
-<g id="proc~~colorize_ucs4~3~~CallsGraph_edge3" class="edge">
+<g id="proc~~colorize_ucs4~3~~CallsGraph_edge2" class="edge">
 <title>proc~colorize_ucs4~3&#45;&gt;proc~style_index~3</title>
-<path fill="none" stroke="#000000" d="M75.88,-41.96C87.94,-37.48 101.8,-32.33 114.59,-27.58"/>
-<polygon fill="#000000" stroke="#000000" points="115.96,-30.8 124.11,-24.04 113.52,-24.24 115.96,-30.8"/>
+<path fill="none" stroke="#000000" d="M85.26,-54C93.93,-54 103.11,-54 111.88,-54"/>
+<polygon fill="#000000" stroke="#000000" points="111.94,-57.5 121.94,-54 111.94,-50.5 111.94,-57.5"/>
+</g>
+<!-- proc~upper~4 -->
+<g id="proc~~colorize_ucs4~3~~CallsGraph_node4" class="node">
+<title>proc~upper~4</title>
+<g id="a_proc~~colorize_ucs4~3~~CallsGraph_node4"><a xlink:href="../proc/upper~4.html" xlink:title="upper">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="184.5,-24 130.5,-24 130.5,0 184.5,0 184.5,-24"/>
+<text text-anchor="middle" x="157.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">upper</text>
+</a>
+</g>
+</g>
+<!-- proc~colorize_ucs4~3&#45;&gt;proc~upper~4 -->
+<g id="proc~~colorize_ucs4~3~~CallsGraph_edge3" class="edge">
+<title>proc~colorize_ucs4~3&#45;&gt;proc~upper~4</title>
+<path fill="none" stroke="#000000" d="M75.88,-41.96C89.87,-36.76 106.29,-30.66 120.64,-25.33"/>
+<polygon fill="#000000" stroke="#000000" points="122.04,-28.54 130.2,-21.78 119.61,-21.98 122.04,-28.54"/>
 </g>
 </g>
 </svg>
-</div><div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div><div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog"><div class="modal-dialog modal-lg" role="document"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="-graph-help-label">Graph Key</h4></div><div class="modal-body">
-    <p>Nodes of different colours represent the following: </p>
-    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: Graph Key Pages: 1 -->
-<svg width="597pt" height="32pt"
- viewBox="0.00 0.00 596.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
 <title>Graph Key</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 592.5,-28 592.5,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
 <!-- Subroutine -->
 <g id="node1" class="node">
 <title>Subroutine</title>
@@ -265,63 +342,59 @@
 <polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
 <text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
 </g>
-<!-- Unknown Procedure Type -->
+<!-- Type Bound Procedure -->
 <g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
 <title>Unknown Procedure Type</title>
-<polygon fill="#777777" stroke="#777777" points="388.5,-24 243.5,-24 243.5,0 388.5,0 388.5,-24"/>
-<text text-anchor="middle" x="316" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
 </g>
 <!-- Program -->
-<g id="node5" class="node">
+<g id="node6" class="node">
 <title>Program</title>
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="465,-24 407,-24 407,0 465,0 465,-24"/>
-<text text-anchor="middle" x="436" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
 </g>
 <!-- This Page&#39;s Entity -->
-<g id="node6" class="node">
+<g id="node7" class="node">
 <title>This Page&#39;s Entity</title>
-<polygon fill="none" stroke="black" points="588.5,-24 483.5,-24 483.5,0 588.5,0 588.5,-24"/>
-<text text-anchor="middle" x="536" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
 </g>
 </g>
 </svg>
 
-    
-    <p>Solid arrows point from a procedure to one which it calls. Dashed 
-    arrows point from an interface to procedures which implement that interface.
-    This could include the module procedures in a generic interface or the
-    implementation in a submodule of an interface in a parent module.
-    </p>
-    </div></div></div></div>
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <br>
 
-    <section class="visible-xs visible-sm hidden-md">
-      <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../proc/colorize_ucs4~3.html#src">colorize_ucs4</a>
-  </div>
-</div>
-
-    </section>
-    <br class="visible-xs visible-sm hidden-md">
-
 
     
     
 
     
     
+
 
 
     
     <section>
     <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="highlight"><pre><span></span><span class="w">   </span><span class="k">pure function </span><span class="n">colorize_ucs4</span><span class="p">(</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">color_fg</span><span class="p">,</span><span class="w"> </span><span class="n">color_bg</span><span class="p">,</span><span class="w"> </span><span class="n">style</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">colorized</span><span class="p">)</span><span class="w"></span>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">pure function </span><span class="n">colorize_ucs4</span><span class="p">(</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">color_fg</span><span class="p">,</span><span class="w"> </span><span class="n">color_bg</span><span class="p">,</span><span class="w"> </span><span class="n">style</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">colorized</span><span class="p">)</span>
 <span class="w">   </span><span class="c">!&lt; Colorize and stylize strings, UCS4 kind.</span>
 <span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=*</span><span class="p">,</span><span class="w"> </span><span class="nb">kind</span><span class="o">=</span><span class="n">UCS4</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">           </span><span class="kd">::</span><span class="w"> </span><span class="n">string</span><span class="w">    </span><span class="c">!&lt; Input string.</span>
 <span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=*</span><span class="p">),</span><span class="w">            </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">color_fg</span><span class="w">  </span><span class="c">!&lt; Foreground color definition.</span>
@@ -331,35 +404,35 @@
 <span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:,</span><span class="w"> </span><span class="nb">kind</span><span class="o">=</span><span class="n">UCS4</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">          </span><span class="kd">::</span><span class="w"> </span><span class="n">buffer</span><span class="w">    </span><span class="c">!&lt; Temporary buffer.</span>
 <span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">int32</span><span class="p">)</span><span class="w">                                    </span><span class="kd">::</span><span class="w"> </span><span class="n">i</span><span class="w">         </span><span class="c">!&lt; Counter.</span>
 
-<span class="w">   </span><span class="n">colorized</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">string</span><span class="w"></span>
+<span class="w">   </span><span class="n">colorized</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">string</span>
 <span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">color_fg</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
-<span class="k">      </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">color_index</span><span class="p">(</span><span class="n">upper</span><span class="p">(</span><span class="n">color_fg</span><span class="p">))</span><span class="w"></span>
+<span class="k">      </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">color_index</span><span class="p">(</span><span class="n">upper</span><span class="p">(</span><span class="n">color_fg</span><span class="p">))</span>
 <span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
-<span class="k">         </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CODE_START</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">COLORS_FG</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">))</span><span class="o">//</span><span class="n">CODE_END</span><span class="w"></span>
-<span class="w">         </span><span class="n">colorized</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buffer</span><span class="o">//</span><span class="n">colorized</span><span class="w"></span>
-<span class="w">         </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CODE_CLEAR</span><span class="w"></span>
-<span class="w">         </span><span class="n">colorized</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">colorized</span><span class="o">//</span><span class="n">buffer</span><span class="w"></span>
+<span class="k">         </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CODE_START</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">COLORS_FG</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">))</span><span class="o">//</span><span class="n">CODE_END</span>
+<span class="w">         </span><span class="n">colorized</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buffer</span><span class="o">//</span><span class="n">colorized</span>
+<span class="w">         </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CODE_CLEAR</span>
+<span class="w">         </span><span class="n">colorized</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">colorized</span><span class="o">//</span><span class="n">buffer</span>
 <span class="w">      </span><span class="k">endif</span>
 <span class="k">   endif</span>
 <span class="k">   if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">color_bg</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
-<span class="k">      </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">color_index</span><span class="p">(</span><span class="n">upper</span><span class="p">(</span><span class="n">color_bg</span><span class="p">))</span><span class="w"></span>
+<span class="k">      </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">color_index</span><span class="p">(</span><span class="n">upper</span><span class="p">(</span><span class="n">color_bg</span><span class="p">))</span>
 <span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
-<span class="k">         </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CODE_START</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">COLORS_BG</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">))</span><span class="o">//</span><span class="n">CODE_END</span><span class="w"></span>
-<span class="w">         </span><span class="n">colorized</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buffer</span><span class="o">//</span><span class="n">colorized</span><span class="w"></span>
-<span class="w">         </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CODE_CLEAR</span><span class="w"></span>
-<span class="w">         </span><span class="n">colorized</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">colorized</span><span class="o">//</span><span class="n">buffer</span><span class="w"></span>
+<span class="k">         </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CODE_START</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">COLORS_BG</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">))</span><span class="o">//</span><span class="n">CODE_END</span>
+<span class="w">         </span><span class="n">colorized</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buffer</span><span class="o">//</span><span class="n">colorized</span>
+<span class="w">         </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CODE_CLEAR</span>
+<span class="w">         </span><span class="n">colorized</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">colorized</span><span class="o">//</span><span class="n">buffer</span>
 <span class="w">      </span><span class="k">endif</span>
 <span class="k">   endif</span>
 <span class="k">   if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">style</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
-<span class="k">      </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">style_index</span><span class="p">(</span><span class="n">upper</span><span class="p">(</span><span class="n">style</span><span class="p">))</span><span class="w"></span>
+<span class="k">      </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">style_index</span><span class="p">(</span><span class="n">upper</span><span class="p">(</span><span class="n">style</span><span class="p">))</span>
 <span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
-<span class="k">         </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CODE_START</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">STYLES</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">))</span><span class="o">//</span><span class="n">CODE_END</span><span class="w"></span>
-<span class="w">         </span><span class="n">colorized</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buffer</span><span class="o">//</span><span class="n">colorized</span><span class="w"></span>
-<span class="w">         </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CODE_CLEAR</span><span class="w"></span>
-<span class="w">         </span><span class="n">colorized</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">colorized</span><span class="o">//</span><span class="n">buffer</span><span class="w"></span>
+<span class="k">         </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CODE_START</span><span class="o">//</span><span class="nb">trim</span><span class="p">(</span><span class="n">STYLES</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">))</span><span class="o">//</span><span class="n">CODE_END</span>
+<span class="w">         </span><span class="n">colorized</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buffer</span><span class="o">//</span><span class="n">colorized</span>
+<span class="w">         </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CODE_CLEAR</span>
+<span class="w">         </span><span class="n">colorized</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">colorized</span><span class="o">//</span><span class="n">buffer</span>
 <span class="w">      </span><span class="k">endif</span>
 <span class="k">   endif</span>
-<span class="k">   endfunction </span><span class="n">colorize_ucs4</span><span class="w"></span>
+<span class="k">   endfunction </span><span class="n">colorize_ucs4</span>
 </pre></div>
 
     </section>
@@ -368,50 +441,48 @@
     </div>
   </div>
 
-    <hr>    
+      <hr>
     </div> <!-- /container -->
     <footer>
       <div class="container">
-      <div class="row">
-        <div class="col-xs-6 col-md-6"><p>Lib_VTK_IO was developed by Stefano Zaghi<br>&copy; 2022 
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Lib_VTK_IO
+ was developed by Stefano Zaghi<br>              &copy; 2025 
 </p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
         </div>
-        <div class="col-xs-6 col-md-6">
-          <p class="text-right">
-            Documentation generated by 
-            <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
-          </p>
-        </div>
-      </div>
-      <br>
-      </div> <!-- /container -->    
+        <br>
+      </div> <!-- /container -->
     </footer>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
+    <!-- Bootstrap core JavaScript -->
     <!-- Placed at the end of the document so the pages load faster -->
-<!--
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
--->
-    <script src="../js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
 
     <!-- MathJax JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
-        jax: ['input/TeX','input/MathML','output/HTML-CSS'],
-        extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
-      });
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script src="../tipuesearch/tipuesearch_content.js"></script>
-    <script src="../tipuesearch/tipuesearch_set.js"></script>
-    <script src="../tipuesearch/tipuesearch.js"></script>
-    
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
   </body>
 </html>

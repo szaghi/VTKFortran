@@ -1,198 +1,236 @@
+<!-- -*- mode: jinja2 -*- -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-   <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
+      <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
     <meta name="author" content="Stefano Zaghi" >
     <link rel="icon" href="../favicon.png">
 
     <title>xml_tag &ndash; Lib_VTK_IO </title>
 
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="../css/pygments.css" rel="stylesheet">
     <link href="../css/font-awesome.min.css" rel="stylesheet">
     <link href="../css/local.css" rel="stylesheet">
-    <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    
-    <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="../js/svg-pan-zoom.min.js"></script>
-
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
           <a class="navbar-brand" href="../index.html">Lib_VTK_IO </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
-              <a href="#" class="dropdown-toggle"
-              data-toggle="dropdown" role="button"
-              aria-haspopup="true"
-     aria-expanded="false">Contents <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-            <li><a href="../lists/files.html">Source Files</a></li>
-            <li><a href="../lists/modules.html">Modules</a></li>
-            <li><a href="../lists/procedures.html">Procedures</a></li>
-            <li><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                   <li><a href="../lists/types.html">Derived Types</a></li>
-            <li><a href="../lists/programs.html">Programs</a></li>
-       
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
             </ul>
-        
-            </li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/files.html">Source Files</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/modules.html">Modules</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/procedures.html">Procedures</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                             <li class="visible-xs hidden-sm visible-lg"><a href="../lists/types.html">Derived Types</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/programs.html">Programs</a></li>
-          </ul>
-        <form action="../search.html" class="navbar-form navbar-right" role="search">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
         </div>
-<!--
-        <button type="submit" class="btn btn-default">Submit</button>
--->
-        </form>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+      </nav>
+    </div>
 
     <div class="container">
   <div class="row">
     <h1>xml_tag
-    <small>Derived Type</small>
+      <small>Derived Type</small>
+      
     </h1>
-    <div class="row">
-  <div class="col-lg-12">
-<div class="well well-sm">
-  <ul class="list-inline" style="margin-bottom:0px;display:inline">
-     <li><i class="fa fa-list-ol"></i>
-       <a data-toggle="tooltip"
-    data-placement="bottom" data-html="true"
-    title="<p> 6.3% of total for derived types.</p>Including implementation: 727 statements,  4.6% of total for derived types.">40 statements</a>
-     </li> 
-    <li><i class="fa fa-code"></i><a href="../src/foxy_xml_tag.F90"> Source File</a></li>
-  </ul>
-  <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/foxy_xml_tag.f90.html'>foxy_xml_tag.F90</a></li>
-     <li><a href='../module/foxy_xml_tag.html'>foxy_xml_tag</a></li>
-     <li class="active">xml_tag</li>
-  </ol>
-</div>
-</div>
-</div>
-<script>
-  $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-  })
-</script>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title="<p> 6.4% of total for derived types.</p>Including implementation: 592 statements,  6.0% of total for derived types.">44 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/foxy_xml_tag.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/foxy_xml_tag.f90.html'>foxy_xml_tag.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/foxy_xml_tag.html'>foxy_xml_tag</a></li>
+            <li class="breadcrumb-item active" aria-current="page">xml_tag</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
 
   </div>
   
   <div class="row">
     <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
-    <div id="sidebar">
-  <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#vars-0">Variables</a></h3></div>
-  <div id="vars-0" class="panel-collapse collapse">
-    <div class="list-group">
-      <a class="list-group-item" href="../type/xml_tag.html#variable-tag_name">tag_name</a>
-      <a class="list-group-item" href="../type/xml_tag.html#variable-tag_content">tag_content</a>
-      <a class="list-group-item" href="../type/xml_tag.html#variable-attribute">attribute</a>
-      <a class="list-group-item" href="../type/xml_tag.html#variable-attributes_number">attributes_number</a>
-      <a class="list-group-item" href="../type/xml_tag.html#variable-indent~2">indent</a>
-      <a class="list-group-item" href="../type/xml_tag.html#variable-is_self_closing">is_self_closing</a>
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../type/xml_tag.html#variable-tag_name">tag_name</a>
+            <a class="list-group-item" href="../type/xml_tag.html#variable-tag_content">tag_content</a>
+            <a class="list-group-item" href="../type/xml_tag.html#variable-attribute">attribute</a>
+            <a class="list-group-item" href="../type/xml_tag.html#variable-attributes_number">attributes_number</a>
+            <a class="list-group-item" href="../type/xml_tag.html#variable-indent">indent</a>
+            <a class="list-group-item" href="../type/xml_tag.html#variable-is_self_closing">is_self_closing</a>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#cons-0">Constructor</a></h3></div>
-  <div id="cons-0" class="panel-collapse collapse">
-    <div class="list-group">
-      <a class="list-group-item" href="../type/xml_tag.html#interface-xml_tag">xml_tag</a>
-    </div>
-  </div>
-</div>
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#boundprocs-0">Type-Bound Procedures</a></h3></div>
-  <div id="boundprocs-0" class="panel-collapse collapse">
-    <div class="list-group">
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-add_attributes">add_attributes</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-attributes">attributes</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-get_content">get_content</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-delete_attributes">delete_attributes</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-delete_content">delete_content</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-end_tag">end_tag</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-free~4">free</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-is_attribute_present">is_attribute_present</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-is_parsed">is_parsed</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-name">name</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-parse~2">parse</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-self_closing_tag">self_closing_tag</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-set">set</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-start_tag">start_tag</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-stringify~2">stringify</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-write">write</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-assignment%28%3D%29">assignment(=)</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-add_single_attribute">add_single_attribute</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-add_multiple_attributes">add_multiple_attributes</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-add_stream_attributes">add_stream_attributes</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-alloc_attributes">alloc_attributes</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-delete_single_attribute">delete_single_attribute</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-delete_multiple_attributes">delete_multiple_attributes</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-get">get</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-get_value">get_value</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-get_attributes">get_attributes</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-parse_tag_name">parse_tag_name</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-parse_attributes_names">parse_attributes_names</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-search">search</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-assign_tag">assign_tag</a>
-    </div>
-  </div>
-</div>
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../type/xml_tag.html#src">xml_tag</a>
-  </div>
-</div>
 
-</div>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#cons-0"
+         aria-expanded="false" aria-controls="cons-0">
+         <h4 class="card-header bg-primary text-white">Constructor</h4>
+      </a>
+      <div id="cons-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../type/xml_tag.html#interface-xml_tag">xml_tag</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#fins-0"
+         aria-expanded="false" aria-controls="fins-0">
+         <h4 class="card-header bg-primary text-white">Finalization Procedures</h4>
+      </a>
+      <div id="fins-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../type/xml_tag.html#finalproc-finalize~6">finalize</a>
+        </div>
+      </div>
+    </div>
+
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#boundprocs-0"
+         aria-expanded="false" aria-controls="boundprocs-0">
+         <h4 class="card-header bg-primary text-white">Type-Bound Procedures</h4>
+      </a>
+      <div id="boundprocs-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-add_attributes">add_attributes</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-attributes">attributes</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-get_content">get_content</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-delete_attributes">delete_attributes</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-delete_content">delete_content</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-end_tag">end_tag</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-free~3">free</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-is_attribute_present">is_attribute_present</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-is_parsed">is_parsed</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-name">name</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-parse">parse</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-self_closing_tag">self_closing_tag</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-set~7">set</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-start_tag">start_tag</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-stringify">stringify</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-write">write</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-assignment%28%3D%29~2">assignment(=)</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-add_single_attribute">add_single_attribute</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-add_multiple_attributes">add_multiple_attributes</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-add_stream_attributes">add_stream_attributes</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-alloc_attributes">alloc_attributes</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-delete_single_attribute">delete_single_attribute</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-delete_multiple_attributes">delete_multiple_attributes</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-get">get</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-get_value">get_value</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-get_attributes">get_attributes</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-parse_tag_name">parse_tag_name</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-parse_attributes_names">parse_attributes_names</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-search~2">search</a>
+            <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-assign_tag">assign_tag</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../type/xml_tag.html#src">xml_tag</a>
+      </div>
+    </div>
+
+
+  </div>
 
     </div>
     
     <div class="col-md-9" id='text'>
-      <h2>type, public :: xml_tag</h2>
+      <h2 id="type-def-statement">
+        type, public :: xml_tag</h2>
     
-<br>    <div class="panel panel-default">
-      <div class="panel-heading">
-  <h3 class="panel-title">Inherits</h3>
-      </div>
-      <div class="panel-body">
-    <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<br>      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Inherits</h3>
+        </div>
+        <div class="card-body">
+          <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
@@ -212,7 +250,7 @@
 <!-- type~string -->
 <g id="type~~xml_tag~~InheritsGraph_node2" class="node">
 <title>type~string</title>
-<g id="a_type~~xml_tag~~InheritsGraph_node2"><a xlink:href=".././type/string.html" xlink:title="string">
+<g id="a_type~~xml_tag~~InheritsGraph_node2"><a xlink:href="../type/string.html" xlink:title="string">
 <polygon fill="#5cb85c" stroke="#5cb85c" points="54,-24 0,-24 0,0 54,0 54,-24"/>
 <text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string</text>
 </a>
@@ -227,9 +265,19 @@
 </g>
 </g>
 </svg>
-</div><div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div><div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog"><div class="modal-dialog modal-lg" role="document"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="-graph-help-label">Graph Key</h4></div><div class="modal-body">
-    <p>Nodes of different colours represent the following: </p>
-    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#InheritsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="InheritsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
@@ -255,21 +303,23 @@
 </g>
 </svg>
 
-    
-    <p>Solid arrows point from a derived type to the parent type which it
-    extends. Dashed arrows point from a derived type to the other
-    types it contains as a components, with a label listing the name(s) of
-    said component(s).
-    </p>
-    </div></div></div></div>
+<p>Solid arrows point from a derived type to the parent type which it
+extends. Dashed arrows point from a derived type to the other
+types it contains as a components, with a label listing the name(s) of
+said component(s).
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+        </div>
       </div>
-    </div>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-  <h3 class="panel-title">Inherited by</h3>
-      </div>
-      <div class="panel-body">
-     <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Inherited by</h3>
+        </div>
+        <div class="card-body">
+          <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
@@ -283,45 +333,45 @@
 <!-- type~xml_tag -->
 <g id="type~~xml_tag~~InheritedByGraph_node1" class="node">
 <title>type~xml_tag</title>
-<polygon fill="none" stroke="black" points="55,-82 0,-82 0,-58 55,-58 55,-82"/>
-<text text-anchor="middle" x="27.5" y="-67.6" font-family="Helvetica,sans-Serif" font-size="10.50">xml_tag</text>
-</g>
-<!-- type~xml_writer_abstract -->
-<g id="type~~xml_tag~~InheritedByGraph_node2" class="node">
-<title>type~xml_writer_abstract</title>
-<g id="a_type~~xml_tag~~InheritedByGraph_node2"><a xlink:href=".././type/xml_writer_abstract.html" xlink:title="xml_writer_abstract">
-<polygon fill="#5cb85c" stroke="#5cb85c" points="224,-108 107,-108 107,-84 224,-84 224,-108"/>
-<text text-anchor="middle" x="165.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_writer_abstract</text>
-</a>
-</g>
-</g>
-<!-- type~xml_writer_abstract&#45;&gt;type~xml_tag -->
-<g id="type~~xml_tag~~InheritedByGraph_edge1" class="edge">
-<title>type~xml_writer_abstract&#45;&gt;type~xml_tag</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M106.82,-84.97C92.66,-82.27 77.88,-79.44 65.02,-76.98"/>
-<polygon fill="#000000" stroke="#000000" points="65.66,-73.54 55.18,-75.1 64.34,-80.42 65.66,-73.54"/>
-<text text-anchor="middle" x="81" y="-83.4" font-family="Helvetica,sans-Serif" font-size="9.50">tag</text>
+<polygon fill="none" stroke="black" points="55,-192 0,-192 0,-168 55,-168 55,-192"/>
+<text text-anchor="middle" x="27.5" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50">xml_tag</text>
 </g>
 <!-- type~xml_file -->
-<g id="type~~xml_tag~~InheritedByGraph_node3" class="node">
+<g id="type~~xml_tag~~InheritedByGraph_node2" class="node">
 <title>type~xml_file</title>
-<g id="a_type~~xml_tag~~InheritedByGraph_node3"><a xlink:href=".././type/xml_file.html" xlink:title="xml_file">
-<polygon fill="#5cb85c" stroke="#5cb85c" points="192.5,-66 138.5,-66 138.5,-42 192.5,-42 192.5,-66"/>
-<text text-anchor="middle" x="165.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_file</text>
+<g id="a_type~~xml_tag~~InheritedByGraph_node2"><a xlink:href="../type/xml_file.html" xlink:title="xml_file">
+<polygon fill="#5cb85c" stroke="#5cb85c" points="192.5,-213 138.5,-213 138.5,-189 192.5,-189 192.5,-213"/>
+<text text-anchor="middle" x="165.5" y="-198.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_file</text>
 </a>
 </g>
 </g>
 <!-- type~xml_file&#45;&gt;type~xml_tag -->
 <g id="type~~xml_tag~~InheritedByGraph_edge2" class="edge">
 <title>type~xml_file&#45;&gt;type~xml_tag</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M138.34,-54.13C119.97,-54.54 94.87,-55.73 73,-59 70.45,-59.38 67.84,-59.84 65.21,-60.36"/>
-<polygon fill="#000000" stroke="#000000" points="64.19,-57 55.16,-62.55 65.68,-63.84 64.19,-57"/>
-<text text-anchor="middle" x="81" y="-61.4" font-family="Helvetica,sans-Serif" font-size="9.50">tag</text>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M138.28,-196.95C117.53,-193.75 88.3,-189.23 65.22,-185.67"/>
+<polygon fill="#000000" stroke="#000000" points="65.52,-182.18 55.11,-184.11 64.45,-189.09 65.52,-182.18"/>
+<text text-anchor="middle" x="81" y="-191.4" font-family="Helvetica,sans-Serif" font-size="9.50">tag</text>
+</g>
+<!-- type~xml_writer_abstract -->
+<g id="type~~xml_tag~~InheritedByGraph_node3" class="node">
+<title>type~xml_writer_abstract</title>
+<g id="a_type~~xml_tag~~InheritedByGraph_node3"><a xlink:href="../type/xml_writer_abstract.html" xlink:title="xml_writer_abstract">
+<polygon fill="#5cb85c" stroke="#5cb85c" points="224,-171 107,-171 107,-147 224,-147 224,-171"/>
+<text text-anchor="middle" x="165.5" y="-156.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_writer_abstract</text>
+</a>
+</g>
+</g>
+<!-- type~xml_writer_abstract&#45;&gt;type~xml_tag -->
+<g id="type~~xml_tag~~InheritedByGraph_edge1" class="edge">
+<title>type~xml_writer_abstract&#45;&gt;type~xml_tag</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M106.74,-164.13C95.51,-165.46 83.86,-167.07 73,-169 70.37,-169.47 67.67,-170 64.96,-170.57"/>
+<polygon fill="#000000" stroke="#000000" points="64.18,-167.16 55.2,-172.79 65.73,-173.99 64.18,-167.16"/>
+<text text-anchor="middle" x="81" y="-171.4" font-family="Helvetica,sans-Serif" font-size="9.50">tag</text>
 </g>
 <!-- type~pvtk_file -->
 <g id="type~~xml_tag~~InheritedByGraph_node4" class="node">
 <title>type~pvtk_file</title>
-<g id="a_type~~xml_tag~~InheritedByGraph_node4"><a xlink:href=".././type/pvtk_file.html" xlink:title="pvtk_file">
+<g id="a_type~~xml_tag~~InheritedByGraph_node4"><a xlink:href="../type/pvtk_file.html" xlink:title="pvtk_file">
 <polygon fill="#5cb85c" stroke="#5cb85c" points="407.5,-234 350.5,-234 350.5,-210 407.5,-210 407.5,-234"/>
 <text text-anchor="middle" x="379" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pvtk_file</text>
 </a>
@@ -330,92 +380,101 @@
 <!-- type~pvtk_file&#45;&gt;type~xml_writer_abstract -->
 <g id="type~~xml_tag~~InheritedByGraph_edge4" class="edge">
 <title>type~pvtk_file&#45;&gt;type~xml_writer_abstract</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M350.36,-216.29C321.5,-209.39 275.82,-195.79 242,-173 218.6,-157.23 196.58,-133.34 182.43,-116.35"/>
-<polygon fill="#000000" stroke="#000000" points="184.81,-113.73 175.78,-108.18 179.38,-118.15 184.81,-113.73"/>
-<text text-anchor="middle" x="267" y="-200.4" font-family="Helvetica,sans-Serif" font-size="9.50">xml_writer</text>
-</g>
-<!-- type~xml_writer_ascii_local -->
-<g id="type~~xml_tag~~InheritedByGraph_node5" class="node">
-<title>type~xml_writer_ascii_local</title>
-<g id="a_type~~xml_tag~~InheritedByGraph_node5"><a xlink:href=".././type/xml_writer_ascii_local.html" xlink:title="xml_writer_ascii_local">
-<polygon fill="#5cb85c" stroke="#5cb85c" points="443,-192 315,-192 315,-168 443,-168 443,-192"/>
-<text text-anchor="middle" x="379" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_writer_ascii_local</text>
-</a>
-</g>
-</g>
-<!-- type~xml_writer_ascii_local&#45;&gt;type~xml_writer_abstract -->
-<g id="type~~xml_tag~~InheritedByGraph_edge6" class="edge">
-<title>type~xml_writer_ascii_local&#45;&gt;type~xml_writer_abstract</title>
-<path fill="none" stroke="#000000" d="M314.72,-169.92C299.31,-166.91 282.96,-163.26 268,-159"/>
-</g>
-<!-- type~xml_writer_appended -->
-<g id="type~~xml_tag~~InheritedByGraph_node6" class="node">
-<title>type~xml_writer_appended</title>
-<g id="a_type~~xml_tag~~InheritedByGraph_node6"><a xlink:href=".././type/xml_writer_appended.html" xlink:title="xml_writer_appended">
-<polygon fill="#5cb85c" stroke="#5cb85c" points="442.5,-150 315.5,-150 315.5,-126 442.5,-126 442.5,-150"/>
-<text text-anchor="middle" x="379" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_writer_appended</text>
-</a>
-</g>
-</g>
-<!-- type~xml_writer_appended&#45;&gt;type~xml_writer_abstract -->
-<g id="type~~xml_tag~~InheritedByGraph_edge8" class="edge">
-<title>type~xml_writer_appended&#45;&gt;type~xml_writer_abstract</title>
-<path fill="none" stroke="#000000" d="M335.97,-150.05C310.52,-156.56 280.62,-162.6 268,-159"/>
-<path fill="none" stroke="#000000" d="M266,-159C236.2,-150.5 206.81,-129.98 187.79,-114.66"/>
-<polygon fill="#000000" stroke="#000000" points="189.99,-111.94 180.06,-108.25 185.52,-117.32 189.99,-111.94"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M350.5,-215.09C322.91,-208.02 279.3,-196.48 242,-185 231.56,-181.79 220.39,-178.09 209.93,-174.5"/>
+<polygon fill="#000000" stroke="#000000" points="210.76,-171.09 200.17,-171.13 208.48,-177.7 210.76,-171.09"/>
+<text text-anchor="middle" x="267" y="-201.4" font-family="Helvetica,sans-Serif" font-size="9.50">xml_writer</text>
 </g>
 <!-- type~vtk_file -->
-<g id="type~~xml_tag~~InheritedByGraph_node7" class="node">
+<g id="type~~xml_tag~~InheritedByGraph_node5" class="node">
 <title>type~vtk_file</title>
-<g id="a_type~~xml_tag~~InheritedByGraph_node7"><a xlink:href=".././type/vtk_file.html" xlink:title="vtk_file">
-<polygon fill="#5cb85c" stroke="#5cb85c" points="406,-108 352,-108 352,-84 406,-84 406,-108"/>
-<text text-anchor="middle" x="379" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">vtk_file</text>
+<g id="a_type~~xml_tag~~InheritedByGraph_node5"><a xlink:href="../type/vtk_file.html" xlink:title="vtk_file">
+<polygon fill="#5cb85c" stroke="#5cb85c" points="406,-192 352,-192 352,-168 406,-168 406,-192"/>
+<text text-anchor="middle" x="379" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">vtk_file</text>
 </a>
 </g>
 </g>
 <!-- type~vtk_file&#45;&gt;type~xml_writer_abstract -->
 <g id="type~~xml_tag~~InheritedByGraph_edge3" class="edge">
 <title>type~vtk_file&#45;&gt;type~xml_writer_abstract</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M351.64,-96C322.51,-96 274.43,-96 234.57,-96"/>
-<polygon fill="#000000" stroke="#000000" points="234.36,-92.5 224.36,-96 234.36,-99.5 234.36,-92.5"/>
-<text text-anchor="middle" x="267" y="-98.4" font-family="Helvetica,sans-Serif" font-size="9.50">xml_writer</text>
-</g>
-<!-- type~xml_writer_binary_local -->
-<g id="type~~xml_tag~~InheritedByGraph_node8" class="node">
-<title>type~xml_writer_binary_local</title>
-<g id="a_type~~xml_tag~~InheritedByGraph_node8"><a xlink:href=".././type/xml_writer_binary_local.html" xlink:title="xml_writer_binary_local">
-<polygon fill="#5cb85c" stroke="#5cb85c" points="448,-66 310,-66 310,-42 448,-42 448,-66"/>
-<text text-anchor="middle" x="379" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_writer_binary_local</text>
-</a>
-</g>
-</g>
-<!-- type~xml_writer_binary_local&#45;&gt;type~xml_writer_abstract -->
-<g id="type~~xml_tag~~InheritedByGraph_edge7" class="edge">
-<title>type~xml_writer_binary_local&#45;&gt;type~xml_writer_abstract</title>
-<path fill="none" stroke="#000000" d="M317.39,-66.04C291.42,-71.19 260.96,-77.24 234.25,-82.55"/>
-<polygon fill="#000000" stroke="#000000" points="233.33,-79.16 224.21,-84.54 234.7,-86.03 233.33,-79.16"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M351.64,-177.38C322.45,-174.48 274.22,-169.7 234.31,-165.73"/>
+<polygon fill="#000000" stroke="#000000" points="234.66,-162.25 224.36,-164.75 233.97,-169.22 234.66,-162.25"/>
+<text text-anchor="middle" x="267" y="-173.4" font-family="Helvetica,sans-Serif" font-size="9.50">xml_writer</text>
 </g>
 <!-- type~vtm_file -->
-<g id="type~~xml_tag~~InheritedByGraph_node9" class="node">
+<g id="type~~xml_tag~~InheritedByGraph_node6" class="node">
 <title>type~vtm_file</title>
-<g id="a_type~~xml_tag~~InheritedByGraph_node9"><a xlink:href=".././type/vtm_file.html" xlink:title="vtm_file">
-<polygon fill="#5cb85c" stroke="#5cb85c" points="406.5,-24 351.5,-24 351.5,0 406.5,0 406.5,-24"/>
-<text text-anchor="middle" x="379" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">vtm_file</text>
+<g id="a_type~~xml_tag~~InheritedByGraph_node6"><a xlink:href="../type/vtm_file.html" xlink:title="vtm_file">
+<polygon fill="#5cb85c" stroke="#5cb85c" points="406.5,-150 351.5,-150 351.5,-126 406.5,-126 406.5,-150"/>
+<text text-anchor="middle" x="379" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">vtm_file</text>
 </a>
 </g>
 </g>
 <!-- type~vtm_file&#45;&gt;type~xml_writer_abstract -->
 <g id="type~~xml_tag~~InheritedByGraph_edge5" class="edge">
 <title>type~vtm_file&#45;&gt;type~xml_writer_abstract</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M351.44,-19.93C338.85,-23.77 323.61,-28.5 310,-33 279.57,-43.06 269.11,-39.91 242,-57 232.43,-63.03 233.54,-68.92 224,-75 221.4,-76.66 218.64,-78.22 215.81,-79.67"/>
-<polygon fill="#000000" stroke="#000000" points="214.16,-76.57 206.55,-83.95 217.1,-82.93 214.16,-76.57"/>
-<text text-anchor="middle" x="267" y="-59.4" font-family="Helvetica,sans-Serif" font-size="9.50">xml_writer</text>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M351.21,-140.66C321.97,-143.56 274,-148.33 234.28,-152.27"/>
+<polygon fill="#000000" stroke="#000000" points="233.72,-148.81 224.11,-153.28 234.41,-155.77 233.72,-148.81"/>
+<text text-anchor="middle" x="267" y="-152.4" font-family="Helvetica,sans-Serif" font-size="9.50">xml_writer</text>
+</g>
+<!-- type~xml_writer_appended -->
+<g id="type~~xml_tag~~InheritedByGraph_node7" class="node">
+<title>type~xml_writer_appended</title>
+<g id="a_type~~xml_tag~~InheritedByGraph_node7"><a xlink:href="../type/xml_writer_appended.html" xlink:title="xml_writer_appended">
+<polygon fill="#5cb85c" stroke="#5cb85c" points="442.5,-108 315.5,-108 315.5,-84 442.5,-84 442.5,-108"/>
+<text text-anchor="middle" x="379" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_writer_appended</text>
+</a>
+</g>
+</g>
+<!-- type~xml_writer_appended&#45;&gt;type~xml_writer_abstract -->
+<g id="type~~xml_tag~~InheritedByGraph_edge6" class="edge">
+<title>type~xml_writer_appended&#45;&gt;type~xml_writer_abstract</title>
+<path fill="none" stroke="#000000" d="M335.18,-83.95C326.75,-81.25 318.03,-78.22 310,-75 290.63,-67.23 287.21,-45.85 268,-54"/>
+</g>
+<!-- type~xml_writer_ascii_local -->
+<g id="type~~xml_tag~~InheritedByGraph_node8" class="node">
+<title>type~xml_writer_ascii_local</title>
+<g id="a_type~~xml_tag~~InheritedByGraph_node8"><a xlink:href="../type/xml_writer_ascii_local.html" xlink:title="xml_writer_ascii_local">
+<polygon fill="#5cb85c" stroke="#5cb85c" points="443,-66 315,-66 315,-42 443,-42 443,-66"/>
+<text text-anchor="middle" x="379" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_writer_ascii_local</text>
+</a>
+</g>
+</g>
+<!-- type~xml_writer_ascii_local&#45;&gt;type~xml_writer_abstract -->
+<g id="type~~xml_tag~~InheritedByGraph_edge7" class="edge">
+<title>type~xml_writer_ascii_local&#45;&gt;type~xml_writer_abstract</title>
+<path fill="none" stroke="#000000" d="M314.9,-45.52C299.08,-45.66 282.5,-47.85 268,-54"/>
+</g>
+<!-- type~xml_writer_binary_local -->
+<g id="type~~xml_tag~~InheritedByGraph_node9" class="node">
+<title>type~xml_writer_binary_local</title>
+<g id="a_type~~xml_tag~~InheritedByGraph_node9"><a xlink:href="../type/xml_writer_binary_local.html" xlink:title="xml_writer_binary_local">
+<polygon fill="#5cb85c" stroke="#5cb85c" points="448,-24 310,-24 310,0 448,0 448,-24"/>
+<text text-anchor="middle" x="379" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_writer_binary_local</text>
+</a>
+</g>
+</g>
+<!-- type~xml_writer_binary_local&#45;&gt;type~xml_writer_abstract -->
+<g id="type~~xml_tag~~InheritedByGraph_edge8" class="edge">
+<title>type~xml_writer_binary_local&#45;&gt;type~xml_writer_abstract</title>
+<path fill="none" stroke="#000000" d="M335.18,-24.05C326.75,-26.75 318.03,-29.78 310,-33 290.63,-40.77 287.21,-45.85 268,-54"/>
+<path fill="none" stroke="#000000" d="M266,-54C226.05,-70.94 194.7,-112.85 178.54,-138.3"/>
+<polygon fill="#000000" stroke="#000000" points="175.54,-136.5 173.29,-146.85 181.5,-140.16 175.54,-136.5"/>
 </g>
 </g>
 </svg>
-</div><div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div><div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog"><div class="modal-dialog modal-lg" role="document"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="-graph-help-label">Graph Key</h4></div><div class="modal-body">
-    <p>Nodes of different colours represent the following: </p>
-    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#InheritedByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="InheritedByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
@@ -441,1630 +500,3253 @@
 </g>
 </svg>
 
-    
-    <p>Solid arrows point from a derived type to the parent type which it
-    extends. Dashed arrows point from a derived type to the other
-    types it contains as a components, with a label listing the name(s) of
-    said component(s).
-    </p>
-    </div></div></div></div>
+<p>Solid arrows point from a derived type to the parent type which it
+extends. Dashed arrows point from a derived type to the other
+types it contains as a components, with a label listing the name(s) of
+said component(s).
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+        </div>
       </div>
-    </div>
     <br>
-
-    <section class="visible-xs visible-sm hidden-md">
-      <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#vars-1">Variables</a></h3></div>
-  <div id="vars-1" class="panel-collapse collapse">
-    <div class="list-group">
-      <a class="list-group-item" href="../type/xml_tag.html#variable-tag_name">tag_name</a>
-      <a class="list-group-item" href="../type/xml_tag.html#variable-tag_content">tag_content</a>
-      <a class="list-group-item" href="../type/xml_tag.html#variable-attribute">attribute</a>
-      <a class="list-group-item" href="../type/xml_tag.html#variable-attributes_number">attributes_number</a>
-      <a class="list-group-item" href="../type/xml_tag.html#variable-indent~2">indent</a>
-      <a class="list-group-item" href="../type/xml_tag.html#variable-is_self_closing">is_self_closing</a>
-    </div>
-  </div>
-</div>
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#cons-1">Constructor</a></h3></div>
-  <div id="cons-1" class="panel-collapse collapse">
-    <div class="list-group">
-      <a class="list-group-item" href="../type/xml_tag.html#interface-xml_tag">xml_tag</a>
-    </div>
-  </div>
-</div>
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#boundprocs-1">Type-Bound Procedures</a></h3></div>
-  <div id="boundprocs-1" class="panel-collapse collapse">
-    <div class="list-group">
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-add_attributes">add_attributes</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-attributes">attributes</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-get_content">get_content</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-delete_attributes">delete_attributes</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-delete_content">delete_content</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-end_tag">end_tag</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-free~4">free</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-is_attribute_present">is_attribute_present</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-is_parsed">is_parsed</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-name">name</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-parse~2">parse</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-self_closing_tag">self_closing_tag</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-set">set</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-start_tag">start_tag</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-stringify~2">stringify</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-write">write</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-assignment%28%3D%29">assignment(=)</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-add_single_attribute">add_single_attribute</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-add_multiple_attributes">add_multiple_attributes</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-add_stream_attributes">add_stream_attributes</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-alloc_attributes">alloc_attributes</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-delete_single_attribute">delete_single_attribute</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-delete_multiple_attributes">delete_multiple_attributes</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-get">get</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-get_value">get_value</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-get_attributes">get_attributes</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-parse_tag_name">parse_tag_name</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-parse_attributes_names">parse_attributes_names</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-search">search</a>
-      <a class="list-group-item" href="../type/xml_tag.html#boundprocedure-assign_tag">assign_tag</a>
-    </div>
-  </div>
-</div>
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../type/xml_tag.html#src">xml_tag</a>
-  </div>
-</div>
-
-    </section>
-    <br class="visible-xs visible-sm hidden-md">
 
     <section>
     <h2>Components</h2>
-    <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Visibility</th><th>Attributes</th><th></th><th>Name</th><th></th><th>Initial</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" id="variable-tag_name"></span>type(<a href='../type/string.html'>string</a>),</td>
-<td>private</td>  <td></td><td>::</td>
-  <td><strong>tag_name</strong></td><td></td><td></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-tag_content"></span>type(<a href='../type/string.html'>string</a>),</td>
-<td>private</td>  <td></td><td>::</td>
-  <td><strong>tag_content</strong></td><td></td><td></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-attribute"></span>type(<a href='../type/string.html'>string</a>),</td>
-<td>private,</td>  <td>allocatable</td><td>::</td>
-  <td><strong>attribute</strong>(:,:)</td><td></td><td></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-attributes_number"></span>integer(kind=I4P),</td>
-<td>private</td>  <td></td><td>::</td>
-  <td><strong>attributes_number</strong></td><td> =</td><td>0</td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-indent~2"></span>integer(kind=I4P),</td>
-<td>private</td>  <td></td><td>::</td>
-  <td><strong>indent</strong></td><td> =</td><td>0</td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-is_self_closing"></span>logical,</td>
-<td>private</td>  <td></td><td>::</td>
-  <td><strong>is_self_closing</strong></td><td> =</td><td>.false.</td><td></td>
-</tr>
-</tbody>
-</table>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Visibility</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tag_name"></span>
+              type(<a href='string.html'>string</a>),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>tag_name</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tag_content"></span>
+              type(<a href='string.html'>string</a>),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>tag_content</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-attribute"></span>
+              type(<a href='string.html'>string</a>),
+            </td>
+              <td>private,</td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>attribute</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-attributes_number"></span>
+              integer(kind=I4P),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>attributes_number</strong></td>
+<td> =</td>
+                <td>0</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-indent"></span>
+              integer(kind=I4P),
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>indent</strong></td>
+<td> =</td>
+                <td>0</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-is_self_closing"></span>
+              logical,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is_self_closing</strong></td>
+<td> =</td>
+                <td>.false.</td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
     </section>
     <br>
     
-   <section>
-   <h2>Constructor</h2>
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="interface-xml_tag"></span><h3>public interface <a href='../interface/xml_tag.html'>xml_tag</a>  </h3></div>
-  <ul class="list-group">
-    <li class="list-group-item">
-    <h3>private pure function <a href='../proc/create_tag_flat.html'>create_tag_flat</a>(name, attribute, attributes, attributes_stream, sanitize_attributes_value, content, indent, is_content_indented, is_self_closing) result(tag)</h3>    
-<h4>Arguments</h4>      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>name</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>attribute</strong>(1:)</td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>attributes</strong>(1:,1:)</td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>attributes_stream</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>sanitize_attributes_value</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>content</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>integer(kind=I4P),</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>indent</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>is_content_indented</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>is_self_closing</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+      <section>
+        <h2>Constructor</h2>
+            <div class="card">
+    <div class="card-header bg-light codesum">
+      <span class="anchor" id="interface-xml_tag"></span>
+      <h3>public        interface <a href='../interface/xml_tag.html'>xml_tag</a> 
+      </h3>
+    </div>
+    <ul class="list-group">
+          <li class="list-group-item">
+                <h3>
+    private pure function <a href='../proc/create_tag_flat.html'>create_tag_flat</a>(name, attribute, attributes, attributes_stream, sanitize_attributes_value, content, indent, is_content_indented, is_self_closing) result(tag)  
 
-<h4>Return Value <small>type(<a href='../type/xml_tag.html'>xml_tag</a>)</small></h4>  
-
-    </li>
-    <li class="list-group-item">
-    <h3>private pure function <a href='../proc/create_tag_nested.html'>create_tag_nested</a>(name, content, attribute, attributes, attributes_stream, sanitize_attributes_value, indent, is_content_indented) result(tag)</h3>    
-<h4>Arguments</h4>      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>name</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>type(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>content</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>attribute</strong>(1:)</td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>attributes</strong>(1:,1:)</td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>attributes_stream</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>sanitize_attributes_value</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>integer(kind=I4P),</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>indent</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>is_content_indented</strong></td><td></td>
-</tr>
-</tbody>
-</table>
-
-<h4>Return Value <small>type(<a href='../type/xml_tag.html'>xml_tag</a>)</small></h4>  
-
-    </li>
-  </ul>
-</div>
-
-   </section>
-   <br>
+    </h3>
     
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-name~2"></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>name</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-attribute~2"></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>attribute</strong>(1:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-attributes~2"></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>attributes</strong>(1:,1:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-attributes_stream"></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>attributes_stream</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sanitize_attributes_value"></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sanitize_attributes_value</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-content"></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>content</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-indent~2"></span>
+              integer(kind=I4P),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>indent</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-is_content_indented"></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is_content_indented</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-is_self_closing~2"></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is_self_closing</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>type(<a href='xml_tag.html'>xml_tag</a>)</small>
+    </h4>
     
- 
-    <section>
-    <h2>Type-Bound Procedures</h2>
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-add_attributes"></span><h3>generic, public :: <strong>add_attributes</strong>  => <a href='../type/xml_tag.html#boundprocedure-add_single_attribute'>add_single_attribute</a>, <a href='../type/xml_tag.html#boundprocedure-add_multiple_attributes'>add_multiple_attributes</a>, <a href='../type/xml_tag.html#boundprocedure-add_stream_attributes'>add_stream_attributes</a>   </h3></div>
-  <ul class="list-group">
+
+          </li>
+          <li class="list-group-item">
+                <h3>
+    private pure function <a href='../proc/create_tag_nested.html'>create_tag_nested</a>(name, content, attribute, attributes, attributes_stream, sanitize_attributes_value, indent, is_content_indented) result(tag)  
+
+    </h3>
+    
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-name~3"></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>name</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-content~2"></span>
+              type(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>content</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-attribute~3"></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>attribute</strong>(1:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-attributes~3"></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>attributes</strong>(1:,1:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-attributes_stream~2"></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>attributes_stream</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-sanitize_attributes_value~2"></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sanitize_attributes_value</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-indent~3"></span>
+              integer(kind=I4P),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>indent</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-is_content_indented~2"></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is_content_indented</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>type(<a href='xml_tag.html'>xml_tag</a>)</small>
+    </h4>
+    
+
+          </li>
+    </ul>
+  </div>
+
+      </section>
+      <br>
+
+      <section>
+        <h2>Finalization Procedures</h2>
+            <div class="card">
+    <div class="card-header codesum">
+      <span class="anchor" id="finalproc-finalize~6"></span>
+      <h3>final :: <strong>finalize</strong> </h3>
+    </div>
+    <div class="card-body">
+      
+      
+    </div>
+    <ul class="list-group">
       <li class="list-group-item">
+            <h3>
+    private elemental subroutine <a href='../proc/finalize~6.html'>finalize</a>(tag)  
+
+    </h3>
+    
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tag~6"></span>
+              type(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>tag</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+      </li>
+    </ul>
+  </div>
+
+      </section>
+      <br>
+
+      <section>
+        <h2>Type-Bound Procedures</h2>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-add_attributes"></span>
+      <h3>
+          generic, public ::
+  <strong>add_attributes</strong> => <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_tag.html#boundprocedure-add_single_attribute'>add_single_attribute</a>, <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_tag.html#boundprocedure-add_multiple_attributes'>add_multiple_attributes</a>, <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_tag.html#boundprocedure-add_stream_attributes'>add_stream_attributes</a>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
                   <h3>
-        private pure subroutine <a href='../proc/add_single_attribute.html'>add_single_attribute</a>(self, attribute, sanitize_value)</h3>
-      
+    private pure subroutine <a href='../proc/add_single_attribute.html'>add_single_attribute</a>(self, attribute, sanitize_value)  
+</h3>
     
 
-    <h4>
-    Arguments
-    </h4>
+  
+
+  <h4>Arguments</h4>
       <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
 <td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>attribute</strong>(1:)</td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>attribute</strong>(1:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
 <td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>sanitize_value</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sanitize_value</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
 
-      </li>
-      <li class="list-group-item">
+        </li>
+        <li class="list-group-item">
                   <h3>
-        private pure subroutine <a href='../proc/add_multiple_attributes.html'>add_multiple_attributes</a>(self, attributes, sanitize_values)</h3>
-      
+    private pure subroutine <a href='../proc/add_multiple_attributes.html'>add_multiple_attributes</a>(self, attributes, sanitize_values)  
+</h3>
     
 
-    <h4>
-    Arguments
-    </h4>
+  
+
+  <h4>Arguments</h4>
       <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
 <td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>attributes</strong>(1:,1:)</td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>attributes</strong>(1:,1:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
 <td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>sanitize_values</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sanitize_values</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
 
-      </li>
-      <li class="list-group-item">
+        </li>
+        <li class="list-group-item">
                   <h3>
-        private pure subroutine <a href='../proc/add_stream_attributes.html'>add_stream_attributes</a>(self, attributes_stream, sanitize_values)</h3>
-      
+    private pure subroutine <a href='../proc/add_stream_attributes.html'>add_stream_attributes</a>(self, attributes_stream, sanitize_values)  
+</h3>
     
 
-    <h4>
-    Arguments
-    </h4>
+  
+
+  <h4>Arguments</h4>
       <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
 <td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>attributes_stream</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>attributes_stream</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
 <td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>sanitize_values</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sanitize_values</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
 
-      </li>
-  </ul>
-</div>
+        </li>
+    </ul>
+  </div>
 
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-attributes"></span><h3>procedure, public, pass(self) :: <strong>attributes</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private pure function <a href='../proc/attributes.html'>attributes</a>(self) result(att_)</h3>
-      
-    
-
-    <h4>
-    Arguments
-    </h4>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-</tbody>
-</table>
-
-      <h4>
-        Return Value <small>character(len=:),allocatable      
-      </small>
-      </h4>
-      
-
-      </li>
-  </ul>
-</div>
-
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-get_content"></span><h3>procedure, public, pass(self) :: <strong>get_content</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private pure subroutine <a href='../proc/get_content.html'>get_content</a>(self, name, content)</h3>
-      
-    
-
-    <h4>
-    Arguments
-    </h4>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>name</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character(len=:),</td>
-<td>intent(out),</td>
-  <td></td>  <td>allocatable</td><td>::</td>
-  <td><strong>content</strong></td><td></td>
-</tr>
-</tbody>
-</table>
-
-
-      </li>
-  </ul>
-</div>
-
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-delete_attributes"></span><h3>generic, public :: <strong>delete_attributes</strong>  => <a href='../type/xml_tag.html#boundprocedure-delete_single_attribute'>delete_single_attribute</a>, <a href='../type/xml_tag.html#boundprocedure-delete_multiple_attributes'>delete_multiple_attributes</a>   </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-attributes"></span>
+      <h3>
+          procedure, public, pass(self) ::
+  <strong>attributes</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
                   <h3>
-        private pure subroutine <a href='../proc/delete_single_attribute.html'>delete_single_attribute</a>(self, name)</h3>
-      
+    private pure function <a href='../proc/attributes.html'>attributes</a>(self) result(att_)  
+</h3>
     
 
-    <h4>
-    Arguments
-    </h4>
+  
+
+  <h4>Arguments</h4>
       <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>name</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
 
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
-      </li>
-      <li class="list-group-item">
+    <h4>
+    Return Value
+    <small>character(len=:), allocatable</small>
+    </h4>
+    
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-get_content"></span>
+      <h3>
+          procedure, public, pass(self) ::
+  <strong>get_content</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
                   <h3>
-        private pure subroutine <a href='../proc/delete_multiple_attributes.html'>delete_multiple_attributes</a>(self, name)</h3>
-      
+    private pure subroutine <a href='../proc/get_content.html'>get_content</a>(self, name, content)  
+</h3>
     
 
-    <h4>
-    Arguments
-    </h4>
+  
+
+  <h4>Arguments</h4>
       <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>name</strong>(1:)</td><td></td>
-</tr>
-</tbody>
-</table>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
 
-
-      </li>
-  </ul>
-</div>
-
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-delete_content"></span><h3>procedure, public, pass(self) :: <strong>delete_content</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private pure subroutine <a href='../proc/delete_content.html'>delete_content</a>(self)</h3>
-      
-    
-
-    <h4>
-    Arguments
-    </h4>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-</tbody>
-</table>
-
-
-      </li>
-  </ul>
-</div>
-
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-end_tag"></span><h3>procedure, public, pass(self) :: <strong>end_tag</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private pure function <a href='../proc/end_tag.html'>end_tag</a>(self, is_indented) result(tag_)</h3>
-      
-    
-
-    <h4>
-    Arguments
-    </h4>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>is_indented</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>name</strong></td>
+            <td>
 
-      <h4>
-        Return Value <small>character(len=:),allocatable      
-      </small>
-      </h4>
-      
-
-      </li>
-  </ul>
-</div>
-
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-free~4"></span><h3>procedure, public, pass(self) :: <strong>free</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private elemental subroutine <a href='../proc/free~4.html'>free</a>(self)</h3>
-      
-    
-
-    <h4>
-    Arguments
-    </h4>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-</tbody>
-</table>
-
-
-      </li>
-  </ul>
-</div>
-
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-is_attribute_present"></span><h3>procedure, public, pass(self) :: <strong>is_attribute_present</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private pure function <a href='../proc/is_attribute_present.html'>is_attribute_present</a>(self, name) result(is_present)</h3>
-      
-    
-
-    <h4>
-    Arguments
-    </h4>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>name</strong></td><td></td>
-</tr>
-</tbody>
-</table>
-
-      <h4>
-        Return Value <small>logical      
-      </small>
-      </h4>
-      
-
-      </li>
-  </ul>
-</div>
-
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-is_parsed"></span><h3>procedure, public, pass(self) :: <strong>is_parsed</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private elemental function <a href='../proc/is_parsed.html'>is_parsed</a>(self)</h3>
-      
-    
-
-    <h4>
-    Arguments
-    </h4>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-</tbody>
-</table>
-
-      <h4>
-        Return Value <small>logical      
-      </small>
-      </h4>
-      
-
-      </li>
-  </ul>
-</div>
-
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-name"></span><h3>procedure, public, pass(self) :: <strong>name</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private pure function <a href='../proc/name.html'>name</a>(self)</h3>
-      
-    
-
-    <h4>
-    Arguments
-    </h4>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-</tbody>
-</table>
-
-      <h4>
-        Return Value <small>character(len=:),allocatable      
-      </small>
-      </h4>
-      
-
-      </li>
-  </ul>
-</div>
-
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-parse~2"></span><h3>procedure, public, pass(self) :: <strong>parse</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private elemental subroutine <a href='../proc/parse~2.html'>parse</a>(self, source, tstart, tend)</h3>
-      
-    
-
-    <h4>
-    Arguments
-    </h4>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>source</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=:),
+            </td>
 <td>intent(out),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>tstart</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>integer(kind=I4P),</td>
-<td>intent(out),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>tend</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td></td>            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>content</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
 
-      </li>
-  </ul>
-</div>
+        </li>
+    </ul>
+  </div>
 
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-self_closing_tag"></span><h3>procedure, public, pass(self) :: <strong>self_closing_tag</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private pure function <a href='../proc/self_closing_tag.html'>self_closing_tag</a>(self, is_indented) result(tag_)</h3>
-      
-    
-
-    <h4>
-    Arguments
-    </h4>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>is_indented</strong></td><td></td>
-</tr>
-</tbody>
-</table>
-
-      <h4>
-        Return Value <small>character(len=:),allocatable      
-      </small>
-      </h4>
-      
-
-      </li>
-  </ul>
-</div>
-
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-set"></span><h3>procedure, public, pass(self) :: <strong>set</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private pure subroutine <a href='../proc/set.html'>set</a>(self, name, attribute, attributes, attributes_stream, sanitize_attributes_value, content, indent, is_content_indented, is_self_closing)</h3>
-      
-    
-
-    <h4>
-    Arguments
-    </h4>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>name</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>attribute</strong>(1:)</td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>attributes</strong>(1:,1:)</td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>attributes_stream</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>sanitize_attributes_value</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>content</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>integer(kind=I4P),</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>indent</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>is_content_indented</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>is_self_closing</strong></td><td></td>
-</tr>
-</tbody>
-</table>
-
-
-      </li>
-  </ul>
-</div>
-
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-start_tag"></span><h3>procedure, public, pass(self) :: <strong>start_tag</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private pure function <a href='../proc/start_tag.html'>start_tag</a>(self, is_indented) result(tag_)</h3>
-      
-    
-
-    <h4>
-    Arguments
-    </h4>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>is_indented</strong></td><td></td>
-</tr>
-</tbody>
-</table>
-
-      <h4>
-        Return Value <small>character(len=:),allocatable      
-      </small>
-      </h4>
-      
-
-      </li>
-  </ul>
-</div>
-
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-stringify~2"></span><h3>procedure, public, pass(self) :: <strong>stringify</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private pure function <a href='../proc/stringify~2.html'>stringify</a>(self, is_indented, is_content_indented, only_start, only_content, only_end) result(stringed)</h3>
-      
-    
-
-    <h4>
-    Arguments
-    </h4>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>is_indented</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>is_content_indented</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>only_start</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>only_content</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>only_end</strong></td><td></td>
-</tr>
-</tbody>
-</table>
-
-      <h4>
-        Return Value <small>character(len=:),allocatable      
-      </small>
-      </h4>
-      
-
-      </li>
-  </ul>
-</div>
-
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-write"></span><h3>procedure, public, pass(self) :: <strong>write</strong>  => <a href='../proc/write_tag~2.html'>write_tag</a>   </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private subroutine <a href='../proc/write_tag~2.html'>write_tag</a>(self, unit, is_indented, is_content_indented, form, end_record, only_start, only_content, only_end, iostat, iomsg)</h3>
-      
-    
-
-    <h4>
-    Arguments
-    </h4>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>integer(kind=I4P),</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>unit</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>is_indented</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>is_content_indented</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>form</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>end_record</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>only_start</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>only_content</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
-<td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>only_end</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>integer(kind=I4P),</td>
-<td>intent(out),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>iostat</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(out),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>iomsg</strong></td><td></td>
-</tr>
-</tbody>
-</table>
-
-
-      </li>
-  </ul>
-</div>
-
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-assignment%28%3D%29"></span><h3>generic, public :: <strong>assignment(=)</strong>  => <a href='../type/xml_tag.html#boundprocedure-assign_tag'>assign_tag</a>   </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-delete_attributes"></span>
+      <h3>
+          generic, public ::
+  <strong>delete_attributes</strong> => <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_tag.html#boundprocedure-delete_single_attribute'>delete_single_attribute</a>, <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_tag.html#boundprocedure-delete_multiple_attributes'>delete_multiple_attributes</a>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
                   <h3>
-        private elemental subroutine <a href='../proc/assign_tag.html'>assign_tag</a>(lhs, rhs)</h3>
-      
+    private pure subroutine <a href='../proc/delete_single_attribute.html'>delete_single_attribute</a>(self, name)  
+</h3>
     
 
-    <h4>
-    Arguments
-    </h4>
+  
+
+  <h4>Arguments</h4>
       <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
 <td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>lhs</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>type(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>rhs</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>name</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
 
-      </li>
-  </ul>
-</div>
-
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-add_single_attribute"></span><h3>procedure, private, pass(self) :: <strong>add_single_attribute</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private pure subroutine <a href='../proc/add_single_attribute.html'>add_single_attribute</a>(self, attribute, sanitize_value)</h3>
-      
+        </li>
+        <li class="list-group-item">
+                  <h3>
+    private pure subroutine <a href='../proc/delete_multiple_attributes.html'>delete_multiple_attributes</a>(self, name)  
+</h3>
     
 
-    <h4>
-    Arguments
-    </h4>
+  
+
+  <h4>Arguments</h4>
       <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
 <td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>attribute</strong>(1:)</td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>name</strong>(1:)</td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-delete_content"></span>
+      <h3>
+          procedure, public, pass(self) ::
+  <strong>delete_content</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private pure subroutine <a href='../proc/delete_content.html'>delete_content</a>(self)  
+</h3>
+    
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-end_tag"></span>
+      <h3>
+          procedure, public, pass(self) ::
+  <strong>end_tag</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private pure function <a href='../proc/end_tag.html'>end_tag</a>(self, is_indented) result(tag_)  
+</h3>
+    
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
 <td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>sanitize_value</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is_indented</strong></td>
+            <td>
 
-
-      </li>
-  </ul>
-</div>
-
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-add_multiple_attributes"></span><h3>procedure, private, pass(self) :: <strong>add_multiple_attributes</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private pure subroutine <a href='../proc/add_multiple_attributes.html'>add_multiple_attributes</a>(self, attributes, sanitize_values)</h3>
-      
-    
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
     <h4>
-    Arguments
+    Return Value
+    <small>character(len=:), allocatable</small>
     </h4>
+    
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-free~3"></span>
+      <h3>
+          procedure, public, pass(self) ::
+  <strong>free</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private elemental subroutine <a href='../proc/free~3.html'>free</a>(self)  
+</h3>
+    
+
+  
+
+  <h4>Arguments</h4>
       <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
 <td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-is_attribute_present"></span>
+      <h3>
+          procedure, public, pass(self) ::
+  <strong>is_attribute_present</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private pure function <a href='../proc/is_attribute_present.html'>is_attribute_present</a>(self, name) result(is_present)  
+</h3>
+    
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>attributes</strong>(1:,1:)</td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>name</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>logical</small>
+    </h4>
+    
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-is_parsed"></span>
+      <h3>
+          procedure, public, pass(self) ::
+  <strong>is_parsed</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private elemental function <a href='../proc/is_parsed.html'>is_parsed</a>(self)  
+</h3>
+    
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>logical</small>
+    </h4>
+    
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-name"></span>
+      <h3>
+          procedure, public, pass(self) ::
+  <strong>name</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private pure function <a href='../proc/name.html'>name</a>(self)  
+</h3>
+    
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>character(len=:), allocatable</small>
+    </h4>
+    
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-parse"></span>
+      <h3>
+          procedure, public, pass(self) ::
+  <strong>parse</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private elemental subroutine <a href='../proc/parse.html'>parse</a>(self, source, tstart, tend)  
+</h3>
+    
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>source</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer(kind=I4P),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>tstart</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer(kind=I4P),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>tend</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-self_closing_tag"></span>
+      <h3>
+          procedure, public, pass(self) ::
+  <strong>self_closing_tag</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private pure function <a href='../proc/self_closing_tag.html'>self_closing_tag</a>(self, is_indented) result(tag_)  
+</h3>
+    
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
 <td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>sanitize_values</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is_indented</strong></td>
+            <td>
 
-
-      </li>
-  </ul>
-</div>
-
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-add_stream_attributes"></span><h3>procedure, private, pass(self) :: <strong>add_stream_attributes</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private pure subroutine <a href='../proc/add_stream_attributes.html'>add_stream_attributes</a>(self, attributes_stream, sanitize_values)</h3>
-      
-    
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
     <h4>
-    Arguments
+    Return Value
+    <small>character(len=:), allocatable</small>
     </h4>
+    
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-set~7"></span>
+      <h3>
+          procedure, public, pass(self) ::
+  <strong>set</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private pure subroutine <a href='../proc/set.html'>set</a>(self, name, attribute, attributes, attributes_stream, sanitize_attributes_value, content, indent, is_content_indented, is_self_closing)  
+</h3>
+    
+
+  
+
+  <h4>Arguments</h4>
       <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
 <td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>attributes_stream</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>logical,</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
 <td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>sanitize_values</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>name</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>attribute</strong>(1:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>attributes</strong>(1:,1:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>attributes_stream</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sanitize_attributes_value</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>content</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer(kind=I4P),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>indent</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is_content_indented</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is_self_closing</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
 
-      </li>
-  </ul>
-</div>
+        </li>
+    </ul>
+  </div>
 
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-alloc_attributes"></span><h3>procedure, private, pass(self) :: <strong>alloc_attributes</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private elemental subroutine <a href='../proc/alloc_attributes.html'>alloc_attributes</a>(self, Na)</h3>
-      
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-start_tag"></span>
+      <h3>
+          procedure, public, pass(self) ::
+  <strong>start_tag</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private pure function <a href='../proc/start_tag.html'>start_tag</a>(self, is_indented) result(tag_)  
+</h3>
     
 
-    <h4>
-    Arguments
-    </h4>
+  
+
+  <h4>Arguments</h4>
       <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>Na</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
 
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is_indented</strong></td>
+            <td>
 
-      </li>
-  </ul>
-</div>
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-delete_single_attribute"></span><h3>procedure, private, pass(self) :: <strong>delete_single_attribute</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private pure subroutine <a href='../proc/delete_single_attribute.html'>delete_single_attribute</a>(self, name)</h3>
-      
+    <h4>
+    Return Value
+    <small>character(len=:), allocatable</small>
+    </h4>
     
 
-    <h4>
-    Arguments
-    </h4>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>name</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+        </li>
+    </ul>
+  </div>
 
-
-      </li>
-  </ul>
-</div>
-
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-delete_multiple_attributes"></span><h3>procedure, private, pass(self) :: <strong>delete_multiple_attributes</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private pure subroutine <a href='../proc/delete_multiple_attributes.html'>delete_multiple_attributes</a>(self, name)</h3>
-      
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-stringify"></span>
+      <h3>
+          procedure, public, pass(self) ::
+  <strong>stringify</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private pure function <a href='../proc/stringify.html'>stringify</a>(self, is_indented, is_content_indented, only_start, only_content, only_end) result(stringed)  
+</h3>
     
 
-    <h4>
-    Arguments
-    </h4>
+  
+
+  <h4>Arguments</h4>
       <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>name</strong>(1:)</td><td></td>
-</tr>
-</tbody>
-</table>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
 
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is_indented</strong></td>
+            <td>
 
-      </li>
-  </ul>
-</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is_content_indented</strong></td>
+            <td>
 
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-get"></span><h3>procedure, private, pass(self) :: <strong>get</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private elemental subroutine <a href='../proc/get.html'>get</a>(self, source)</h3>
-      
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>only_start</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>only_content</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>only_end</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>character(len=:), allocatable</small>
+    </h4>
     
 
-    <h4>
-    Arguments
-    </h4>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>source</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+        </li>
+    </ul>
+  </div>
 
-
-      </li>
-  </ul>
-</div>
-
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-get_value"></span><h3>procedure, private, pass(self) :: <strong>get_value</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private elemental subroutine <a href='../proc/get_value.html'>get_value</a>(self, source)</h3>
-      
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-write"></span>
+      <h3>
+          procedure, public, pass(self) ::
+  <strong>write</strong> => <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/proc/write_tag.html'>write_tag</a>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private  subroutine <a href='../proc/write_tag.html'>write_tag</a>(self, unit, is_indented, is_content_indented, form, end_record, only_start, only_content, only_end, iostat, iomsg)  
+</h3>
     
 
-    <h4>
-    Arguments
-    </h4>
+  
+
+  <h4>Arguments</h4>
       <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>source</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
 
-
-      </li>
-  </ul>
-</div>
-
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-get_attributes"></span><h3>procedure, private, pass(self) :: <strong>get_attributes</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private elemental subroutine <a href='../proc/get_attributes.html'>get_attributes</a>(self, source)</h3>
-      
-    
-
-    <h4>
-    Arguments
-    </h4>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer(kind=I4P),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>source</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>unit</strong></td>
+            <td>
 
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is_indented</strong></td>
+            <td>
 
-      </li>
-  </ul>
-</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is_content_indented</strong></td>
+            <td>
 
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-parse_tag_name"></span><h3>procedure, private, pass(self) :: <strong>parse_tag_name</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private elemental subroutine <a href='../proc/parse_tag_name.html'>parse_tag_name</a>(self, source, tstart, tend)</h3>
-      
-    
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>form</strong></td>
+            <td>
 
-    <h4>
-    Arguments
-    </h4>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
-<td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>source</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>end_record</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>only_start</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>only_content</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>only_end</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer(kind=I4P),
+            </td>
 <td>intent(out),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>tstart</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iostat</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
 <td>intent(out),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>tend</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iomsg</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
 
-      </li>
-  </ul>
-</div>
+        </li>
+    </ul>
+  </div>
 
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-parse_attributes_names"></span><h3>procedure, private, pass(self) :: <strong>parse_attributes_names</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private elemental subroutine <a href='../proc/parse_attributes_names.html'>parse_attributes_names</a>(self, source)</h3>
-      
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-assignment%28%3D%29~2"></span>
+      <h3>
+          generic, public ::
+  <strong>assignment(=)</strong> => <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_tag.html#boundprocedure-assign_tag'>assign_tag</a>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private elemental subroutine <a href='../proc/assign_tag.html'>assign_tag</a>(lhs, rhs)  
+</h3>
     
 
-    <h4>
-    Arguments
-    </h4>
+  
+
+  <h4>Arguments</h4>
       <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
 <td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>lhs</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              type(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>source</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rhs</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
 
-      </li>
-  </ul>
-</div>
+        </li>
+    </ul>
+  </div>
 
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-search"></span><h3>procedure, private, pass(self) :: <strong>search</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private elemental subroutine <a href='../proc/search.html'>search</a>(self, tag_name, source, tstart, tend)</h3>
-      
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-add_single_attribute"></span>
+      <h3>
+          procedure, private, pass(self) ::
+  <strong>add_single_attribute</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private pure subroutine <a href='../proc/add_single_attribute.html'>add_single_attribute</a>(self, attribute, sanitize_value)  
+</h3>
     
 
-    <h4>
-    Arguments
-    </h4>
+  
+
+  <h4>Arguments</h4>
       <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
 <td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>tag_name</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>attribute</strong>(1:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sanitize_value</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-add_multiple_attributes"></span>
+      <h3>
+          procedure, private, pass(self) ::
+  <strong>add_multiple_attributes</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private pure subroutine <a href='../proc/add_multiple_attributes.html'>add_multiple_attributes</a>(self, attributes, sanitize_values)  
+</h3>
+    
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>source</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>attributes</strong>(1:,1:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sanitize_values</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-add_stream_attributes"></span>
+      <h3>
+          procedure, private, pass(self) ::
+  <strong>add_stream_attributes</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private pure subroutine <a href='../proc/add_stream_attributes.html'>add_stream_attributes</a>(self, attributes_stream, sanitize_values)  
+</h3>
+    
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>attributes_stream</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>sanitize_values</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-alloc_attributes"></span>
+      <h3>
+          procedure, private, pass(self) ::
+  <strong>alloc_attributes</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private elemental subroutine <a href='../proc/alloc_attributes.html'>alloc_attributes</a>(self, Na)  
+</h3>
+    
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer(kind=I4P),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Na</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-delete_single_attribute"></span>
+      <h3>
+          procedure, private, pass(self) ::
+  <strong>delete_single_attribute</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private pure subroutine <a href='../proc/delete_single_attribute.html'>delete_single_attribute</a>(self, name)  
+</h3>
+    
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>name</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-delete_multiple_attributes"></span>
+      <h3>
+          procedure, private, pass(self) ::
+  <strong>delete_multiple_attributes</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private pure subroutine <a href='../proc/delete_multiple_attributes.html'>delete_multiple_attributes</a>(self, name)  
+</h3>
+    
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>name</strong>(1:)</td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-get"></span>
+      <h3>
+          procedure, private, pass(self) ::
+  <strong>get</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private elemental subroutine <a href='../proc/get.html'>get</a>(self, source)  
+</h3>
+    
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>source</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-get_value"></span>
+      <h3>
+          procedure, private, pass(self) ::
+  <strong>get_value</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private elemental subroutine <a href='../proc/get_value.html'>get_value</a>(self, source)  
+</h3>
+    
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>source</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-get_attributes"></span>
+      <h3>
+          procedure, private, pass(self) ::
+  <strong>get_attributes</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private elemental subroutine <a href='../proc/get_attributes.html'>get_attributes</a>(self, source)  
+</h3>
+    
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>source</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-parse_tag_name"></span>
+      <h3>
+          procedure, private, pass(self) ::
+  <strong>parse_tag_name</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private elemental subroutine <a href='../proc/parse_tag_name.html'>parse_tag_name</a>(self, source, tstart, tend)  
+</h3>
+    
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>source</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer(kind=I4P),
+            </td>
 <td>intent(out),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>tstart</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>integer(kind=I4P),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>tstart</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer(kind=I4P),
+            </td>
 <td>intent(out),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>tend</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>tend</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
 
-      </li>
-  </ul>
-</div>
+        </li>
+    </ul>
+  </div>
 
-     <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="boundprocedure-assign_tag"></span><h3>procedure, private, pass(lhs) :: <strong>assign_tag</strong>    </h3></div>
-  <ul class="list-group">
-      <li class="list-group-item">
-                <h3>
-        private elemental subroutine <a href='../proc/assign_tag.html'>assign_tag</a>(lhs, rhs)</h3>
-      
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-parse_attributes_names"></span>
+      <h3>
+          procedure, private, pass(self) ::
+  <strong>parse_attributes_names</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private elemental subroutine <a href='../proc/parse_attributes_names.html'>parse_attributes_names</a>(self, source)  
+</h3>
     
 
-    <h4>
-    Arguments
-    </h4>
+  
+
+  <h4>Arguments</h4>
       <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>class(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
 <td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>lhs</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>type(<a href='../type/xml_tag.html'>xml_tag</a>),</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>rhs</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>source</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
 
-      </li>
-  </ul>
-</div>
+        </li>
+    </ul>
+  </div>
 
-    </section>
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-search~2"></span>
+      <h3>
+          procedure, private, pass(self) ::
+  <strong>search</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private elemental subroutine <a href='../proc/search~2.html'>search</a>(self, tag_name, source, tstart, tend)  
+</h3>
     
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>tag_name</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>source</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer(kind=I4P),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>tstart</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              integer(kind=I4P),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>tend</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-assign_tag"></span>
+      <h3>
+          procedure, private, pass(lhs) ::
+  <strong>assign_tag</strong>
+        
+      </h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private elemental subroutine <a href='../proc/assign_tag.html'>assign_tag</a>(lhs, rhs)  
+</h3>
+    
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
+<td>intent(inout)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>lhs</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              type(<a href='xml_tag.html'>xml_tag</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rhs</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+      </section>
+
     <section>
     <h3><span class="anchor" id="src"></span>Source Code</h3>
-    <div class="highlight"><pre><span></span><span class="k">type</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">xml_tag</span><span class="w"></span>
+    <div class="hl codehilite"><pre><span></span><span class="k">type</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">xml_tag</span>
 <span class="w">  </span><span class="c">!&lt; XML tag class.</span>
 <span class="w">  </span><span class="c">!&lt;</span>
 <span class="w">  </span><span class="c">!&lt; A valid XML tag must have the following syntax for a tag without a content (with only attributes):</span>
@@ -2086,16 +3768,16 @@
 <span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">              </span><span class="kd">::</span><span class="w"> </span><span class="n">attributes_number</span><span class="o">=</span><span class="mi">0</span><span class="w">     </span><span class="c">!&lt; Number of defined attributes.</span>
 <span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">              </span><span class="kd">::</span><span class="w"> </span><span class="n">indent</span><span class="o">=</span><span class="mi">0</span><span class="w">                </span><span class="c">!&lt; Number of indent-white-spaces.</span>
 <span class="w">  </span><span class="kt">logical</span><span class="w">                   </span><span class="kd">::</span><span class="w"> </span><span class="n">is_self_closing</span><span class="o">=</span><span class="p">.</span><span class="n">false</span><span class="p">.</span><span class="w"> </span><span class="c">!&lt; Self closing tag flag.</span>
-<span class="w">  </span><span class="k">contains</span><span class="w"></span>
+<span class="w">  </span><span class="k">contains</span>
 <span class="w">    </span><span class="c">! public methods</span>
-<span class="w">    </span><span class="k">generic</span><span class="w">               </span><span class="kd">::</span><span class="w"> </span><span class="n">add_attributes</span><span class="w"> </span><span class="o">=&gt;</span><span class="w">        </span><span class="p">&amp;</span><span class="w"></span>
-<span class="w">                             </span><span class="n">add_single_attribute</span><span class="p">,</span><span class="w">    </span><span class="p">&amp;</span><span class="w"></span>
-<span class="w">                             </span><span class="n">add_multiple_attributes</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span><span class="w"></span>
+<span class="w">    </span><span class="k">generic</span><span class="w">               </span><span class="kd">::</span><span class="w"> </span><span class="n">add_attributes</span><span class="w"> </span><span class="o">=&gt;</span><span class="w">        </span><span class="p">&amp;</span>
+<span class="w">                             </span><span class="n">add_single_attribute</span><span class="p">,</span><span class="w">    </span><span class="p">&amp;</span>
+<span class="w">                             </span><span class="n">add_multiple_attributes</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
 <span class="w">                             </span><span class="n">add_stream_attributes</span><span class="w">       </span><span class="c">!&lt; Add attributes name/value pairs.</span>
 <span class="w">    </span><span class="k">procedure</span><span class="p">,</span><span class="w"> </span><span class="k">pass</span><span class="p">(</span><span class="n">self</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">attributes</span><span class="w">                  </span><span class="c">!&lt; Return attributes name/value pairs as string.</span>
 <span class="w">    </span><span class="k">procedure</span><span class="p">,</span><span class="w"> </span><span class="k">pass</span><span class="p">(</span><span class="n">self</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">get_content</span><span class="w">                 </span><span class="c">!&lt; Return tag content.</span>
-<span class="w">    </span><span class="k">generic</span><span class="w">               </span><span class="kd">::</span><span class="w"> </span><span class="n">delete_attributes</span><span class="w"> </span><span class="o">=&gt;</span><span class="w">     </span><span class="p">&amp;</span><span class="w"></span>
-<span class="w">                             </span><span class="n">delete_single_attribute</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span><span class="w"></span>
+<span class="w">    </span><span class="k">generic</span><span class="w">               </span><span class="kd">::</span><span class="w"> </span><span class="n">delete_attributes</span><span class="w"> </span><span class="o">=&gt;</span><span class="w">     </span><span class="p">&amp;</span>
+<span class="w">                             </span><span class="n">delete_single_attribute</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
 <span class="w">                             </span><span class="n">delete_multiple_attributes</span><span class="w">  </span><span class="c">!&lt; Delete attributes name/value pairs.</span>
 <span class="w">    </span><span class="k">procedure</span><span class="p">,</span><span class="w"> </span><span class="k">pass</span><span class="p">(</span><span class="n">self</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">delete_content</span><span class="w">              </span><span class="c">!&lt; Delete tag conent.</span>
 <span class="w">    </span><span class="k">procedure</span><span class="p">,</span><span class="w"> </span><span class="k">pass</span><span class="p">(</span><span class="n">self</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">end_tag</span><span class="w">                     </span><span class="c">!&lt; Return `&lt;/tag_name&gt;` end tag.</span>
@@ -2128,7 +3810,7 @@
 <span class="cp">#if (__GNUC__ &lt; 9)</span>
 <span class="w">    </span><span class="k">final</span><span class="w">                         </span><span class="kd">::</span><span class="w"> </span><span class="n">finalize</span><span class="w">   </span><span class="c">!&lt; Free dynamic memory when finalizing.</span>
 <span class="cp">#endif</span>
-<span class="k">endtype </span><span class="n">xml_tag</span><span class="w"></span>
+<span class="k">endtype </span><span class="n">xml_tag</span>
 </pre></div>
 
     </section>
@@ -2136,50 +3818,48 @@
     </div>
   </div>
 
-    <hr>    
+      <hr>
     </div> <!-- /container -->
     <footer>
       <div class="container">
-      <div class="row">
-        <div class="col-xs-6 col-md-6"><p>Lib_VTK_IO was developed by Stefano Zaghi<br>&copy; 2022 
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Lib_VTK_IO
+ was developed by Stefano Zaghi<br>              &copy; 2025 
 </p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
         </div>
-        <div class="col-xs-6 col-md-6">
-          <p class="text-right">
-            Documentation generated by 
-            <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
-          </p>
-        </div>
-      </div>
-      <br>
-      </div> <!-- /container -->    
+        <br>
+      </div> <!-- /container -->
     </footer>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
+    <!-- Bootstrap core JavaScript -->
     <!-- Placed at the end of the document so the pages load faster -->
-<!--
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
--->
-    <script src="../js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
 
     <!-- MathJax JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
-        jax: ['input/TeX','input/MathML','output/HTML-CSS'],
-        extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
-      });
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script src="../tipuesearch/tipuesearch_content.js"></script>
-    <script src="../tipuesearch/tipuesearch_set.js"></script>
-    <script src="../tipuesearch/tipuesearch.js"></script>
-    
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
   </body>
 </html>

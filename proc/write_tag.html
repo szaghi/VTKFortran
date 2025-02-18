@@ -1,181 +1,573 @@
+<!-- -*- mode: jinja2 -*- -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-   <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
+      <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
     <meta name="author" content="Stefano Zaghi" >
     <link rel="icon" href="../favicon.png">
 
     <title>write_tag &ndash; Lib_VTK_IO</title>
 
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="../css/pygments.css" rel="stylesheet">
     <link href="../css/font-awesome.min.css" rel="stylesheet">
     <link href="../css/local.css" rel="stylesheet">
-    <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    
-    <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="../js/svg-pan-zoom.min.js"></script>
-
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
           <a class="navbar-brand" href="../index.html">Lib_VTK_IO </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
-              <a href="#" class="dropdown-toggle"
-              data-toggle="dropdown" role="button"
-              aria-haspopup="true"
-     aria-expanded="false">Contents <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-            <li><a href="../lists/files.html">Source Files</a></li>
-            <li><a href="../lists/modules.html">Modules</a></li>
-            <li><a href="../lists/procedures.html">Procedures</a></li>
-            <li><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                   <li><a href="../lists/types.html">Derived Types</a></li>
-            <li><a href="../lists/programs.html">Programs</a></li>
-       
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
             </ul>
-        
-            </li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/files.html">Source Files</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/modules.html">Modules</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/procedures.html">Procedures</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                             <li class="visible-xs hidden-sm visible-lg"><a href="../lists/types.html">Derived Types</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/programs.html">Programs</a></li>
-          </ul>
-        <form action="../search.html" class="navbar-form navbar-right" role="search">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
         </div>
-<!--
-        <button type="submit" class="btn btn-default">Submit</button>
--->
-        </form>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+      </nav>
+    </div>
 
     <div class="container">
   <div class="row">
     <h1>write_tag
       <small>Subroutine</small>
+      
     </h1>
-    <div class="row">
-  <div class="col-lg-12">
-<div class="well well-sm">
-  <ul class="list-inline" style="margin-bottom:0px;display:inline">
-     <li><i class="fa fa-list-ol"></i>
-       <a data-toggle="tooltip"
-    data-placement="bottom" data-html="true"
-    title=" 0.1% of total for procedures.">12 statements</a>
-     </li> 
-    <li><i class="fa fa-code"></i><a href="../src/vtk_fortran_vtk_file_xml_writer_abstract.f90"> Source File</a></li>
-  </ul>
-  <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/vtk_fortran_vtk_file_xml_writer_abstract.f90.html'>vtk_fortran_vtk_file_xml_writer_abstract.f90</a></li>
-     <li><a href='../module/vtk_fortran_vtk_file_xml_writer_abstract.html'>vtk_fortran_vtk_file_xml_writer_abstract</a></li>
-     <li class="active">write_tag</li>
-  </ol>
-</div>
-</div>
-</div>
-<script>
-  $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-  })
-</script>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.2% of total for procedures.">32 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/foxy_xml_tag.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/foxy_xml_tag.f90.html'>foxy_xml_tag.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/foxy_xml_tag.html'>foxy_xml_tag</a></li>
+            <li class="breadcrumb-item active" aria-current="page">write_tag</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
 
   </div>
   
   <div class="row">
     <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
-    <div id="sidebar">
-  <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../proc/write_tag.html#src">write_tag</a>
-  </div>
-</div>
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/write_tag.html#src">write_tag</a>
+      </div>
+    </div>
 
-</div>
+
+  </div>
 
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private subroutine write_tag(self, name, attributes, content)</h2>
+    <h2>private  subroutine write_tag(self, unit, is_indented, is_content_indented, form, end_record, only_start, only_content, only_end, iostat, iomsg)  
+</h2>
     
 
+
+    <h3>Type Bound</h3>
+    <p><a href='../type/xml_tag.html'>xml_tag</a></p>
 
     <h3>Arguments</h3>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" id="variable-self~94"></span>class(<a href='../type/xml_writer_abstract.html'>xml_writer_abstract</a>),</td>
-<td>intent(inout)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-name~7"></span>character,</td>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-self~284"></span>
+              class(<a href='../type/xml_tag.html'>xml_tag</a>),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>name</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-attributes~4"></span>character,</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-unit~31"></span>
+              integer(kind=I4P),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>unit</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-is_indented~5"></span>
+              logical,
+            </td>
 <td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>attributes</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-content~2"></span>character,</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is_indented</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-is_content_indented~5"></span>
+              logical,
+            </td>
 <td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>content</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is_content_indented</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-form~15"></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>form</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-end_record"></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>end_record</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-only_start~2"></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>only_start</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-only_content~2"></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>only_content</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-only_end~2"></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>only_end</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-iostat~39"></span>
+              integer(kind=I4P),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iostat</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-iomsg~39"></span>
+              character(len=*),
+            </td>
+<td>intent(out),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>iomsg</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
     <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~write_tag~~CallsGraph Pages: 1 -->
+<svg id="procwrite_tagCallsGraph" width="599pt" height="200pt"
+ viewBox="0.00 0.00 599.00 200.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~write_tag~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 196)">
+<title>proc~~write_tag~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-196 595,-196 595,4 -4,4"/>
+<!-- proc~write_tag -->
+<g id="proc~~write_tag~~CallsGraph_node1" class="node">
+<title>proc~write_tag</title>
+<polygon fill="none" stroke="black" points="113,-129 0,-129 0,-105 113,-105 113,-129"/>
+<text text-anchor="middle" x="56.5" y="-114.6" font-family="Helvetica,sans-Serif" font-size="10.50">xml_tag%write_tag</text>
+</g>
+<!-- proc~chars -->
+<g id="proc~~write_tag~~CallsGraph_node2" class="node">
+<title>proc~chars</title>
+<g id="a_proc~~write_tag~~CallsGraph_node2"><a xlink:href="../proc/chars.html" xlink:title="string%chars">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="407,-192 325,-192 325,-168 407,-168 407,-192"/>
+<text text-anchor="middle" x="366" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%chars</text>
+</a>
+</g>
+</g>
+<!-- proc~write_tag&#45;&gt;proc~chars -->
+<g id="proc~~write_tag~~CallsGraph_edge1" class="edge">
+<title>proc~write_tag&#45;&gt;proc~chars</title>
+<path fill="none" stroke="#000000" d="M108.73,-129.08C121.84,-132.08 135.93,-135.23 149,-138 205.69,-150.01 271.03,-162.54 314.87,-170.75"/>
+<polygon fill="#000000" stroke="#000000" points="314.24,-174.19 324.71,-172.58 315.52,-167.31 314.24,-174.19"/>
+</g>
+<!-- proc~stringify -->
+<g id="proc~~write_tag~~CallsGraph_node3" class="node">
+<title>proc~stringify</title>
+<g id="a_proc~~write_tag~~CallsGraph_node3"><a xlink:href="../proc/stringify.html" xlink:title="xml_tag%stringify">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="256,-129 149,-129 149,-105 256,-105 256,-129"/>
+<text text-anchor="middle" x="202.5" y="-114.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%stringify</text>
+</a>
+</g>
+</g>
+<!-- proc~write_tag&#45;&gt;proc~stringify -->
+<g id="proc~~write_tag~~CallsGraph_edge2" class="edge">
+<title>proc~write_tag&#45;&gt;proc~stringify</title>
+<path fill="none" stroke="#000000" d="M113.17,-117C121.5,-117 130.14,-117 138.6,-117"/>
+<polygon fill="#000000" stroke="#000000" points="138.81,-120.5 148.81,-117 138.81,-113.5 138.81,-120.5"/>
+</g>
+<!-- proc~upper~3 -->
+<g id="proc~~write_tag~~CallsGraph_node4" class="node">
+<title>proc~upper~3</title>
+<g id="a_proc~~write_tag~~CallsGraph_node4"><a xlink:href="../proc/upper~3.html" xlink:title="string%upper">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="244.5,-87 160.5,-87 160.5,-63 244.5,-63 244.5,-87"/>
+<text text-anchor="middle" x="202.5" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%upper</text>
+</a>
+</g>
+</g>
+<!-- proc~write_tag&#45;&gt;proc~upper~3 -->
+<g id="proc~~write_tag~~CallsGraph_edge3" class="edge">
+<title>proc~write_tag&#45;&gt;proc~upper~3</title>
+<path fill="none" stroke="#000000" d="M98.76,-104.96C114.88,-100.26 133.53,-94.82 150.48,-89.88"/>
+<polygon fill="#000000" stroke="#000000" points="151.61,-93.2 160.23,-87.04 149.65,-86.48 151.61,-93.2"/>
+</g>
+<!-- proc~stringify&#45;&gt;proc~chars -->
+<g id="proc~~write_tag~~CallsGraph_edge4" class="edge">
+<title>proc~stringify&#45;&gt;proc~chars</title>
+<path fill="none" stroke="#000000" d="M226.34,-129.11C243.95,-138.13 269.09,-150.34 292,-159 299.37,-161.79 307.28,-164.42 315.07,-166.81"/>
+<polygon fill="#000000" stroke="#000000" points="314.25,-170.22 324.83,-169.72 316.25,-163.51 314.25,-170.22"/>
+</g>
+<!-- proc~end_tag -->
+<g id="proc~~write_tag~~CallsGraph_node5" class="node">
+<title>proc~end_tag</title>
+<g id="a_proc~~write_tag~~CallsGraph_node5"><a xlink:href="../proc/end_tag.html" xlink:title="xml_tag%end_tag">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="419.5,-150 312.5,-150 312.5,-126 419.5,-126 419.5,-150"/>
+<text text-anchor="middle" x="366" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%end_tag</text>
+</a>
+</g>
+</g>
+<!-- proc~stringify&#45;&gt;proc~end_tag -->
+<g id="proc~~write_tag~~CallsGraph_edge5" class="edge">
+<title>proc~stringify&#45;&gt;proc~end_tag</title>
+<path fill="none" stroke="#000000" d="M256.38,-123.88C270.96,-125.77 286.91,-127.85 302,-129.81"/>
+<polygon fill="#000000" stroke="#000000" points="301.91,-133.33 312.28,-131.14 302.81,-126.38 301.91,-133.33"/>
+</g>
+<!-- proc~is_allocated -->
+<g id="proc~~write_tag~~CallsGraph_node6" class="node">
+<title>proc~is_allocated</title>
+<g id="a_proc~~write_tag~~CallsGraph_node6"><a xlink:href="../proc/is_allocated.html" xlink:title="string%is_allocated">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="423.5,-108 308.5,-108 308.5,-84 423.5,-84 423.5,-108"/>
+<text text-anchor="middle" x="366" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%is_allocated</text>
+</a>
+</g>
+</g>
+<!-- proc~stringify&#45;&gt;proc~is_allocated -->
+<g id="proc~~write_tag~~CallsGraph_edge6" class="edge">
+<title>proc~stringify&#45;&gt;proc~is_allocated</title>
+<path fill="none" stroke="#000000" d="M256.38,-110.12C269.78,-108.38 284.35,-106.49 298.33,-104.67"/>
+<polygon fill="#000000" stroke="#000000" points="298.92,-108.12 308.38,-103.36 298.02,-101.18 298.92,-108.12"/>
+</g>
+<!-- proc~self_closing_tag -->
+<g id="proc~~write_tag~~CallsGraph_node7" class="node">
+<title>proc~self_closing_tag</title>
+<g id="a_proc~~write_tag~~CallsGraph_node7"><a xlink:href="../proc/self_closing_tag.html" xlink:title="xml_tag%self_closing_tag">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="440,-66 292,-66 292,-42 440,-42 440,-66"/>
+<text text-anchor="middle" x="366" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%self_closing_tag</text>
+</a>
+</g>
+</g>
+<!-- proc~stringify&#45;&gt;proc~self_closing_tag -->
+<g id="proc~~write_tag~~CallsGraph_edge7" class="edge">
+<title>proc~stringify&#45;&gt;proc~self_closing_tag</title>
+<path fill="none" stroke="#000000" d="M235.76,-104.97C242.52,-102.2 249.56,-99.14 256,-96 272.64,-87.87 274.97,-82.28 292,-75 296.73,-72.98 301.71,-71.08 306.76,-69.33"/>
+<polygon fill="#000000" stroke="#000000" points="308.1,-72.57 316.5,-66.12 305.91,-65.92 308.1,-72.57"/>
+</g>
+<!-- proc~start_tag -->
+<g id="proc~~write_tag~~CallsGraph_node8" class="node">
+<title>proc~start_tag</title>
+<g id="a_proc~~write_tag~~CallsGraph_node8"><a xlink:href="../proc/start_tag.html" xlink:title="xml_tag%start_tag">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="421.5,-24 310.5,-24 310.5,0 421.5,0 421.5,-24"/>
+<text text-anchor="middle" x="366" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%start_tag</text>
+</a>
+</g>
+</g>
+<!-- proc~stringify&#45;&gt;proc~start_tag -->
+<g id="proc~~write_tag~~CallsGraph_edge8" class="edge">
+<title>proc~stringify&#45;&gt;proc~start_tag</title>
+<path fill="none" stroke="#000000" d="M242.51,-104.91C247.35,-102.43 252,-99.48 256,-96 280.33,-74.83 266.64,-52.92 292,-33 294.92,-30.71 298.08,-28.66 301.39,-26.84"/>
+<polygon fill="#000000" stroke="#000000" points="302.93,-29.99 310.46,-22.53 299.93,-23.67 302.93,-29.99"/>
+</g>
+<!-- proc~attributes -->
+<g id="proc~~write_tag~~CallsGraph_node9" class="node">
+<title>proc~attributes</title>
+<g id="a_proc~~write_tag~~CallsGraph_node9"><a xlink:href="../proc/attributes.html" xlink:title="xml_tag%attributes">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="591,-45 476,-45 476,-21 591,-21 591,-45"/>
+<text text-anchor="middle" x="533.5" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%attributes</text>
+</a>
+</g>
+</g>
+<!-- proc~self_closing_tag&#45;&gt;proc~attributes -->
+<g id="proc~~write_tag~~CallsGraph_edge9" class="edge">
+<title>proc~self_closing_tag&#45;&gt;proc~attributes</title>
+<path fill="none" stroke="#000000" d="M440.07,-44.73C448.57,-43.65 457.2,-42.55 465.61,-41.49"/>
+<polygon fill="#000000" stroke="#000000" points="466.25,-44.94 475.73,-40.2 465.36,-37.99 466.25,-44.94"/>
+</g>
+<!-- proc~start_tag&#45;&gt;proc~attributes -->
+<g id="proc~~write_tag~~CallsGraph_edge10" class="edge">
+<title>proc~start_tag&#45;&gt;proc~attributes</title>
+<path fill="none" stroke="#000000" d="M421.65,-18.93C435.8,-20.73 451.2,-22.68 465.89,-24.55"/>
+<polygon fill="#000000" stroke="#000000" points="465.56,-28.03 475.92,-25.82 466.44,-21.09 465.56,-28.03"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
 
-    <section class="visible-xs visible-sm hidden-md">
-      <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../proc/write_tag.html#src">write_tag</a>
-  </div>
-</div>
-
-    </section>
-    <br class="visible-xs visible-sm hidden-md">
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
 
 
     
@@ -183,26 +575,54 @@
 
     
     
+
 
 
     
     <section>
     <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="highlight"><pre><span></span><span class="w">   </span><span class="k">subroutine </span><span class="n">write_tag</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">attributes</span><span class="p">,</span><span class="w"> </span><span class="n">content</span><span class="p">)</span><span class="w"></span>
-<span class="w">   </span><span class="c">!&lt; Write `&lt;tag_name...&gt;...&lt;/tag_name&gt;` tag.</span>
-<span class="w">   </span><span class="k">class</span><span class="p">(</span><span class="n">xml_writer_abstract</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w">        </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w">       </span><span class="c">!&lt; Writer.</span>
-<span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">               </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">           </span><span class="kd">::</span><span class="w"> </span><span class="n">name</span><span class="w">       </span><span class="c">!&lt; Tag name.</span>
-<span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">               </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">attributes</span><span class="w"> </span><span class="c">!&lt; Tag attributes.</span>
-<span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">               </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">content</span><span class="w">    </span><span class="c">!&lt; Tag content.</span>
+    <div class="hl codehilite"><pre><span></span><span class="w">  </span><span class="k">subroutine </span><span class="n">write_tag</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">unit</span><span class="p">,</span><span class="w"> </span><span class="n">is_indented</span><span class="p">,</span><span class="w"> </span><span class="n">is_content_indented</span><span class="p">,</span><span class="w"> </span><span class="n">form</span><span class="p">,</span><span class="w"> </span><span class="n">end_record</span><span class="p">,</span><span class="w"> </span><span class="n">only_start</span><span class="p">,</span><span class="w"> </span><span class="n">only_content</span><span class="p">,</span><span class="w"> </span><span class="n">only_end</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                       </span><span class="n">iostat</span><span class="p">,</span><span class="w"> </span><span class="n">iomsg</span><span class="p">)</span>
+<span class="w">  </span><span class="c">!&lt; Write tag to unit file.</span>
+<span class="w">  </span><span class="k">class</span><span class="p">(</span><span class="n">xml_tag</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">            </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w">                </span><span class="c">!&lt; XML tag.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">   </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">            </span><span class="kd">::</span><span class="w"> </span><span class="n">unit</span><span class="w">                </span><span class="c">!&lt; File unit.</span>
+<span class="w">  </span><span class="kt">logical</span><span class="p">,</span><span class="w">        </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w">  </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">is_indented</span><span class="w">         </span><span class="c">!&lt; Activate content indentation.</span>
+<span class="w">  </span><span class="kt">logical</span><span class="p">,</span><span class="w">        </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w">  </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">is_content_indented</span><span class="w"> </span><span class="c">!&lt; Activate content indentation.</span>
+<span class="w">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">   </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w">  </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">form</span><span class="w">                </span><span class="c">!&lt; Format.</span>
+<span class="w">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">   </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w">  </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">end_record</span><span class="w">          </span><span class="c">!&lt; Ending record.</span>
+<span class="w">  </span><span class="kt">logical</span><span class="p">,</span><span class="w">        </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w">  </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">only_start</span><span class="w">          </span><span class="c">!&lt; Write only start tag.</span>
+<span class="w">  </span><span class="kt">logical</span><span class="p">,</span><span class="w">        </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w">  </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">only_content</span><span class="w">        </span><span class="c">!&lt; Write only content.</span>
+<span class="w">  </span><span class="kt">logical</span><span class="p">,</span><span class="w">        </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w">  </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">only_end</span><span class="w">            </span><span class="c">!&lt; Write only end tag.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">   </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">iostat</span><span class="w">              </span><span class="c">!&lt; IO status.</span>
+<span class="w">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">   </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">iomsg</span><span class="w">               </span><span class="c">!&lt; IO message.</span>
+<span class="w">  </span><span class="k">type</span><span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="w">                          </span><span class="kd">::</span><span class="w"> </span><span class="n">form_</span><span class="w">               </span><span class="c">!&lt; Format.</span>
+<span class="w">  </span><span class="k">type</span><span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="w">                          </span><span class="kd">::</span><span class="w"> </span><span class="n">end_record_</span><span class="w">         </span><span class="c">!&lt; Ending record.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                          </span><span class="kd">::</span><span class="w"> </span><span class="n">iostat_</span><span class="w">             </span><span class="c">!&lt; IO status.</span>
+<span class="w">  </span><span class="kt">character</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span><span class="w">                        </span><span class="kd">::</span><span class="w"> </span><span class="n">iomsg_</span><span class="w">              </span><span class="c">!&lt; IO message.</span>
 
-<span class="w">   </span><span class="n">self</span><span class="p">%</span><span class="n">tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">xml_tag</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">attributes_stream</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span><span class="w"> </span><span class="n">sanitize_attributes_value</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.,</span><span class="w"> </span><span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span><span class="w"></span>
-<span class="w">                      </span><span class="n">indent</span><span class="o">=</span><span class="n">self</span><span class="p">%</span><span class="n">indent</span><span class="p">)</span><span class="w"></span>
-<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">self</span><span class="p">%</span><span class="n">is_volatile</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
-<span class="k">      call </span><span class="n">self</span><span class="p">%</span><span class="n">tag</span><span class="p">%</span><span class="k">write</span><span class="p">(</span><span class="n">unit</span><span class="o">=</span><span class="n">self</span><span class="p">%</span><span class="n">xml</span><span class="p">,</span><span class="w"> </span><span class="n">iostat</span><span class="o">=</span><span class="n">self</span><span class="p">%</span><span class="n">error</span><span class="p">,</span><span class="w"> </span><span class="n">is_indented</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.,</span><span class="w"> </span><span class="n">is_content_indented</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.,</span><span class="w"> </span><span class="n">end_record</span><span class="o">=</span><span class="n">end_rec</span><span class="p">)</span><span class="w"></span>
-<span class="w">   </span><span class="k">else</span>
-<span class="k">      </span><span class="n">self</span><span class="p">%</span><span class="n">xml_volatile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">xml_volatile</span><span class="o">//</span><span class="n">self</span><span class="p">%</span><span class="n">tag</span><span class="p">%</span><span class="n">stringify</span><span class="p">(</span><span class="n">is_indented</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.,</span><span class="w"> </span><span class="n">is_content_indented</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.)</span><span class="o">//</span><span class="n">end_rec</span><span class="w"></span>
-<span class="w">   </span><span class="k">endif</span>
-<span class="k">   endsubroutine </span><span class="n">write_tag</span><span class="w"></span>
+<span class="w">  </span><span class="n">form_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;UNFORMATTED&#39;</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">form</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
+<span class="k">    </span><span class="n">form_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">form</span>
+<span class="w">    </span><span class="n">form_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">form_</span><span class="p">%</span><span class="n">upper</span><span class="p">()</span>
+<span class="w">  </span><span class="k">endif</span>
+<span class="k">  </span><span class="n">end_record_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">end_record</span><span class="p">))</span><span class="w"> </span><span class="n">end_record_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">end_record</span>
+<span class="w">  </span><span class="k">select case</span><span class="p">(</span><span class="n">form_</span><span class="p">%</span><span class="n">chars</span><span class="p">())</span>
+<span class="w">  </span><span class="k">case</span><span class="p">(</span><span class="s1">&#39;UNFORMATTED&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">write</span><span class="p">(</span><span class="n">unit</span><span class="o">=</span><span class="n">unit</span><span class="p">,</span><span class="w"> </span><span class="n">iostat</span><span class="o">=</span><span class="n">iostat_</span><span class="p">,</span><span class="w"> </span><span class="n">iomsg</span><span class="o">=</span><span class="n">iomsg_</span><span class="p">)</span><span class="n">self</span><span class="p">%</span><span class="n">stringify</span><span class="p">(</span><span class="n">is_indented</span><span class="o">=</span><span class="n">is_indented</span><span class="p">,</span><span class="w">                 </span><span class="p">&amp;</span>
+<span class="w">                                                                 </span><span class="n">is_content_indented</span><span class="o">=</span><span class="n">is_content_indented</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                                 </span><span class="n">only_start</span><span class="o">=</span><span class="n">only_start</span><span class="p">,</span><span class="w">                   </span><span class="p">&amp;</span>
+<span class="w">                                                                 </span><span class="n">only_content</span><span class="o">=</span><span class="n">only_content</span><span class="p">,</span><span class="w">               </span><span class="p">&amp;</span>
+<span class="w">                                                                 </span><span class="n">only_end</span><span class="o">=</span><span class="n">only_end</span><span class="p">)</span><span class="o">//</span><span class="n">end_record_</span>
+<span class="w">  </span><span class="k">case</span><span class="p">(</span><span class="s1">&#39;FORMATTED&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">write</span><span class="p">(</span><span class="n">unit</span><span class="o">=</span><span class="n">unit</span><span class="p">,</span><span class="w"> </span><span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;(A)&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">iostat</span><span class="o">=</span><span class="n">iostat_</span><span class="p">,</span><span class="w"> </span><span class="n">iomsg</span><span class="o">=</span><span class="n">iomsg_</span><span class="p">)</span><span class="n">self</span><span class="p">%</span><span class="n">stringify</span><span class="p">(</span><span class="n">is_indented</span><span class="o">=</span><span class="n">is_indented</span><span class="p">,</span><span class="w">                 </span><span class="p">&amp;</span>
+<span class="w">                                                                            </span><span class="n">is_content_indented</span><span class="o">=</span><span class="n">is_content_indented</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                                                                            </span><span class="n">only_start</span><span class="o">=</span><span class="n">only_start</span><span class="p">,</span><span class="w">                   </span><span class="p">&amp;</span>
+<span class="w">                                                                            </span><span class="n">only_content</span><span class="o">=</span><span class="n">only_content</span><span class="p">,</span><span class="w">               </span><span class="p">&amp;</span>
+<span class="w">                                                                            </span><span class="n">only_end</span><span class="o">=</span><span class="n">only_end</span><span class="p">)</span><span class="o">//</span><span class="n">end_record_</span>
+<span class="w">  </span><span class="k">endselect</span>
+<span class="k">  if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">iostat</span><span class="p">))</span><span class="w"> </span><span class="n">iostat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iostat_</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">iomsg</span><span class="p">))</span><span class="w"> </span><span class="n">iomsg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iomsg_</span>
+<span class="w">  </span><span class="k">endsubroutine </span><span class="n">write_tag</span>
 </pre></div>
 
     </section>
@@ -211,50 +631,48 @@
     </div>
   </div>
 
-    <hr>    
+      <hr>
     </div> <!-- /container -->
     <footer>
       <div class="container">
-      <div class="row">
-        <div class="col-xs-6 col-md-6"><p>Lib_VTK_IO was developed by Stefano Zaghi<br>&copy; 2022 
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Lib_VTK_IO
+ was developed by Stefano Zaghi<br>              &copy; 2025 
 </p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
         </div>
-        <div class="col-xs-6 col-md-6">
-          <p class="text-right">
-            Documentation generated by 
-            <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
-          </p>
-        </div>
-      </div>
-      <br>
-      </div> <!-- /container -->    
+        <br>
+      </div> <!-- /container -->
     </footer>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
+    <!-- Bootstrap core JavaScript -->
     <!-- Placed at the end of the document so the pages load faster -->
-<!--
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
--->
-    <script src="../js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
 
     <!-- MathJax JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
-        jax: ['input/TeX','input/MathML','output/HTML-CSS'],
-        extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
-      });
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script src="../tipuesearch/tipuesearch_content.js"></script>
-    <script src="../tipuesearch/tipuesearch_set.js"></script>
-    <script src="../tipuesearch/tipuesearch.js"></script>
-    
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
   </body>
 </html>

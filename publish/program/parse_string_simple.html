@@ -1,153 +1,172 @@
+<!-- -*- mode: jinja2 -*- -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-   <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
+      <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
     <meta name="author" content="Stefano Zaghi" >
     <link rel="icon" href="../favicon.png">
 
     <title>parse_string_simple &ndash; Lib_VTK_IO</title>
 
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="../css/pygments.css" rel="stylesheet">
     <link href="../css/font-awesome.min.css" rel="stylesheet">
     <link href="../css/local.css" rel="stylesheet">
-    <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    
-    <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="../js/svg-pan-zoom.min.js"></script>
-
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
           <a class="navbar-brand" href="../index.html">Lib_VTK_IO </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
-              <a href="#" class="dropdown-toggle"
-              data-toggle="dropdown" role="button"
-              aria-haspopup="true"
-     aria-expanded="false">Contents <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-            <li><a href="../lists/files.html">Source Files</a></li>
-            <li><a href="../lists/modules.html">Modules</a></li>
-            <li><a href="../lists/procedures.html">Procedures</a></li>
-            <li><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                   <li><a href="../lists/types.html">Derived Types</a></li>
-            <li><a href="../lists/programs.html">Programs</a></li>
-       
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
             </ul>
-        
-            </li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/files.html">Source Files</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/modules.html">Modules</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/procedures.html">Procedures</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                             <li class="visible-xs hidden-sm visible-lg"><a href="../lists/types.html">Derived Types</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/programs.html">Programs</a></li>
-          </ul>
-        <form action="../search.html" class="navbar-form navbar-right" role="search">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
         </div>
-<!--
-        <button type="submit" class="btn btn-default">Submit</button>
--->
-        </form>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+      </nav>
+    </div>
 
     <div class="container">
   <div class="row">
-    <h1>parse_string_simple    <small>Program</small>
+    <h1>parse_string_simple      <small>Program</small>
+      
     </h1>
-    <div class="row">
-  <div class="col-lg-12">
-<div class="well well-sm">
-  <ul class="list-inline" style="margin-bottom:0px;display:inline">
-     <li><i class="fa fa-list-ol"></i>
-       <a data-toggle="tooltip"
-    data-placement="bottom" data-html="true"
-    title=" 0.2% of total for programs.">21 statements</a>
-     </li> 
-    <li><i class="fa fa-code"></i><a href="../src/parse_string_simple.f90"> Source File</a></li>
-  </ul>
-  <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/parse_string_simple.f90.html'>parse_string_simple.f90</a></li>
-     <li class="active">parse_string_simple</li>
-  </ol>
-</div>
-</div>
-</div>
-<script>
-  $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-  })
-</script>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.2% of total for programs.">21 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/parse_string_simple.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/parse_string_simple.f90.html'>parse_string_simple.f90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">parse_string_simple</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
 
   </div>
   
   <div class="row">
     <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
-    <div id="sidebar">
-  <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#vars-0">Variables</a></h3></div>
-  <div id="vars-0" class="panel-collapse collapse">
-    <div class="list-group">
-      <a class="list-group-item" href="../program/parse_string_simple.html#variable-source~13">source</a>
-      <a class="list-group-item" href="../program/parse_string_simple.html#variable-parsed~5">parsed</a>
-      <a class="list-group-item" href="../program/parse_string_simple.html#variable-xfile~2">xfile</a>
-      <a class="list-group-item" href="../program/parse_string_simple.html#variable-test_passed~11">test_passed</a>
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../program/parse_string_simple.html#variable-source~18">source</a>
+            <a class="list-group-item" href="../program/parse_string_simple.html#variable-parsed~10">parsed</a>
+            <a class="list-group-item" href="../program/parse_string_simple.html#variable-xfile~3">xfile</a>
+            <a class="list-group-item" href="../program/parse_string_simple.html#variable-test_passed~192">test_passed</a>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../program/parse_string_simple.html#src">parse_string_simple</a>
-  </div>
-</div>
 
-</div>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../program/parse_string_simple.html#src">parse_string_simple</a>
+      </div>
+    </div>
+
+
+  </div>
 
     </div>
     
     <div class="col-md-9" id='text'>
-        <div class="panel panel-default">
-      <div class="panel-heading">
-  <h3 class="panel-title">Uses</h3>
-      </div>
-      <ul class="list-group">
-      <li class="list-group-item">
-  <ul class="list-inline">
-    <li><a href='../module/foxy.html'>foxy</a></li>
-  </ul>
-      </li>
-      <li class="list-group-item">
-  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/foxy.html'>foxy</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
@@ -155,210 +174,210 @@
 <!-- Title: program~~parse_string_simple~~UsesGraph Pages: 1 -->
 <svg id="programparse_string_simpleUsesGraph" width="641pt" height="78pt"
  viewBox="0.00 0.00 641.00 78.32" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="program~~parse_string_simple~~UsesGraph" class="graph" transform="scale(2.37 2.37) rotate(0) translate(4 181.6)">
+<g id="program~~parse_string_simple~~UsesGraph" class="graph" transform="scale(0.42 0.42) rotate(0) translate(4 181.6)">
 <title>program~~parse_string_simple~~UsesGraph</title>
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-181.6 1515,-181.6 1515,4 -4,4"/>
 <!-- program~parse_string_simple -->
 <g id="program~~parse_string_simple~~UsesGraph_node1" class="node">
 <title>program~parse_string_simple</title>
-<polygon fill="none" stroke="black" points="1511,-144 1393,-144 1393,-120 1511,-120 1511,-144"/>
-<text text-anchor="middle" x="1452" y="-129.6" font-family="Helvetica,sans-Serif" font-size="10.50">parse_string_simple</text>
+<polygon fill="none" stroke="black" points="1511,-104 1393,-104 1393,-80 1511,-80 1511,-104"/>
+<text text-anchor="middle" x="1452" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50">parse_string_simple</text>
 </g>
 <!-- module~foxy -->
 <g id="program~~parse_string_simple~~UsesGraph_node2" class="node">
 <title>module~foxy</title>
-<g id="a_program~~parse_string_simple~~UsesGraph_node2"><a xlink:href=".././module/foxy.html" xlink:title="foxy">
-<polygon fill="#337ab7" stroke="#337ab7" points="1357,-144 1303,-144 1303,-120 1357,-120 1357,-144"/>
-<text text-anchor="middle" x="1330" y="-129.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">foxy</text>
+<g id="a_program~~parse_string_simple~~UsesGraph_node2"><a xlink:href="../module/foxy.html" xlink:title="foxy">
+<polygon fill="#337ab7" stroke="#337ab7" points="1357,-104 1303,-104 1303,-80 1357,-80 1357,-104"/>
+<text text-anchor="middle" x="1330" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">foxy</text>
 </a>
 </g>
 </g>
 <!-- program~parse_string_simple&#45;&gt;module~foxy -->
 <g id="program~~parse_string_simple~~UsesGraph_edge1" class="edge">
 <title>program~parse_string_simple&#45;&gt;module~foxy</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1392.76,-132C1384.04,-132 1375.27,-132 1367.19,-132"/>
-<polygon fill="#000000" stroke="#000000" points="1367.02,-128.5 1357.02,-132 1367.02,-135.5 1367.02,-128.5"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1392.76,-92C1384.04,-92 1375.27,-92 1367.19,-92"/>
+<polygon fill="#000000" stroke="#000000" points="1367.02,-88.5 1357.02,-92 1367.02,-95.5 1367.02,-88.5"/>
 </g>
-<!-- module~penf~2 -->
+<!-- module~foxy_xml_file -->
 <g id="program~~parse_string_simple~~UsesGraph_node3" class="node">
-<title>module~penf~2</title>
-<g id="a_program~~parse_string_simple~~UsesGraph_node3"><a xlink:href=".././module/penf~2.html" xlink:title="penf">
-<polygon fill="#337ab7" stroke="#337ab7" points="537,-124 483,-124 483,-100 537,-100 537,-124"/>
-<text text-anchor="middle" x="510" y="-109.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf</text>
+<title>module~foxy_xml_file</title>
+<g id="a_program~~parse_string_simple~~UsesGraph_node3"><a xlink:href="../module/foxy_xml_file.html" xlink:title="foxy_xml_file">
+<polygon fill="#337ab7" stroke="#337ab7" points="1267,-104 1186,-104 1186,-80 1267,-80 1267,-104"/>
+<text text-anchor="middle" x="1226.5" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">foxy_xml_file</text>
 </a>
 </g>
 </g>
-<!-- module~foxy&#45;&gt;module~penf~2 -->
+<!-- module~foxy&#45;&gt;module~foxy_xml_file -->
 <g id="program~~parse_string_simple~~UsesGraph_edge2" class="edge">
-<title>module~foxy&#45;&gt;module~penf~2</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1225.5,-152C1175.75,-152.55 1052.15,-128.7 1002.5,-132"/>
+<title>module~foxy&#45;&gt;module~foxy_xml_file</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1302.86,-92C1295.09,-92 1286.31,-92 1277.55,-92"/>
+<polygon fill="#000000" stroke="#000000" points="1277.35,-88.5 1267.35,-92 1277.35,-95.5 1277.35,-88.5"/>
 </g>
 <!-- module~foxy_xml_tag -->
 <g id="program~~parse_string_simple~~UsesGraph_node4" class="node">
 <title>module~foxy_xml_tag</title>
-<g id="a_program~~parse_string_simple~~UsesGraph_node4"><a xlink:href=".././module/foxy_xml_tag.html" xlink:title="foxy_xml_tag">
-<polygon fill="#337ab7" stroke="#337ab7" points="1150,-124 1068,-124 1068,-100 1150,-100 1150,-124"/>
-<text text-anchor="middle" x="1109" y="-109.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">foxy_xml_tag</text>
+<g id="a_program~~parse_string_simple~~UsesGraph_node4"><a xlink:href="../module/foxy_xml_tag.html" xlink:title="foxy_xml_tag">
+<polygon fill="#337ab7" stroke="#337ab7" points="1150,-104 1068,-104 1068,-80 1150,-80 1150,-104"/>
+<text text-anchor="middle" x="1109" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">foxy_xml_tag</text>
 </a>
 </g>
 </g>
 <!-- module~foxy&#45;&gt;module~foxy_xml_tag -->
 <g id="program~~parse_string_simple~~UsesGraph_edge3" class="edge">
 <title>module~foxy&#45;&gt;module~foxy_xml_tag</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1302.99,-139.86C1282.65,-145.33 1253.54,-151.71 1227.5,-152"/>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1225.5,-152C1195.24,-152.34 1162.84,-139.88 1140.09,-128.79"/>
-<polygon fill="#000000" stroke="#000000" points="1141.46,-125.56 1130.96,-124.15 1138.29,-131.8 1141.46,-125.56"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1302.94,-81.06C1292.04,-77.04 1279.11,-73 1267,-71 1231.48,-65.15 1221.67,-66.16 1186,-71 1176.03,-72.35 1165.52,-74.66 1155.6,-77.26"/>
+<polygon fill="#000000" stroke="#000000" points="1154.63,-73.9 1145.92,-79.94 1156.49,-80.65 1154.63,-73.9"/>
 </g>
-<!-- module~foxy_xml_file -->
+<!-- module~penf~5 -->
 <g id="program~~parse_string_simple~~UsesGraph_node5" class="node">
-<title>module~foxy_xml_file</title>
-<g id="a_program~~parse_string_simple~~UsesGraph_node5"><a xlink:href=".././module/foxy_xml_file.html" xlink:title="foxy_xml_file">
-<polygon fill="#337ab7" stroke="#337ab7" points="1267,-124 1186,-124 1186,-100 1267,-100 1267,-124"/>
-<text text-anchor="middle" x="1226.5" y="-109.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">foxy_xml_file</text>
+<title>module~penf~5</title>
+<g id="a_program~~parse_string_simple~~UsesGraph_node5"><a xlink:href="../module/penf~5.html" xlink:title="penf">
+<polygon fill="#337ab7" stroke="#337ab7" points="537,-124 483,-124 483,-100 537,-100 537,-124"/>
+<text text-anchor="middle" x="510" y="-109.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf</text>
 </a>
 </g>
 </g>
-<!-- module~foxy&#45;&gt;module~foxy_xml_file -->
+<!-- module~foxy&#45;&gt;module~penf~5 -->
 <g id="program~~parse_string_simple~~UsesGraph_edge4" class="edge">
-<title>module~foxy&#45;&gt;module~foxy_xml_file</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1302.86,-126.85C1295.01,-125.3 1286.12,-123.55 1277.27,-121.81"/>
-<polygon fill="#000000" stroke="#000000" points="1277.84,-118.35 1267.35,-119.85 1276.49,-125.22 1277.84,-118.35"/>
+<title>module~foxy&#45;&gt;module~penf~5</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1302.79,-102.21C1291.87,-106.12 1278.97,-110.28 1267,-113 1198.46,-128.58 1180.04,-126.08 1110,-132"/>
 </g>
-<!-- module~penf_b_size -->
-<g id="program~~parse_string_simple~~UsesGraph_node6" class="node">
-<title>module~penf_b_size</title>
-<g id="a_program~~parse_string_simple~~UsesGraph_node6"><a xlink:href=".././module/penf_b_size.html" xlink:title="penf_b_size">
-<polygon fill="#337ab7" stroke="#337ab7" points="316,-144 242,-144 242,-120 316,-120 316,-144"/>
-<text text-anchor="middle" x="279" y="-129.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf_b_size</text>
-</a>
-</g>
-</g>
-<!-- module~penf~2&#45;&gt;module~penf_b_size -->
+<!-- module~foxy_xml_file&#45;&gt;module~foxy_xml_tag -->
 <g id="program~~parse_string_simple~~UsesGraph_edge5" class="edge">
-<title>module~penf~2&#45;&gt;module~penf_b_size</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M495.53,-124C476.9,-139.56 441.47,-165.47 405.5,-172"/>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M403.5,-172C386.64,-175.06 346.24,-160.37 316.22,-147.94"/>
-<polygon fill="#000000" stroke="#000000" points="317.45,-144.67 306.87,-144.01 314.73,-151.12 317.45,-144.67"/>
+<title>module~foxy_xml_file&#45;&gt;module~foxy_xml_tag</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1185.75,-92C1177.59,-92 1168.89,-92 1160.4,-92"/>
+<polygon fill="#000000" stroke="#000000" points="1160.21,-88.5 1150.21,-92 1160.21,-95.5 1160.21,-88.5"/>
 </g>
-<!-- module~penf_stringify~3 -->
-<g id="program~~parse_string_simple~~UsesGraph_node8" class="node">
-<title>module~penf_stringify~3</title>
-<g id="a_program~~parse_string_simple~~UsesGraph_node8"><a xlink:href=".././module/penf_stringify~3.html" xlink:title="penf_stringify">
-<polygon fill="#337ab7" stroke="#337ab7" points="447,-124 362,-124 362,-100 447,-100 447,-124"/>
-<text text-anchor="middle" x="404.5" y="-109.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf_stringify</text>
-</a>
-</g>
-</g>
-<!-- module~penf~2&#45;&gt;module~penf_stringify~3 -->
-<g id="program~~parse_string_simple~~UsesGraph_edge7" class="edge">
-<title>module~penf~2&#45;&gt;module~penf_stringify~3</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M482.88,-112C475.13,-112 466.36,-112 457.58,-112"/>
-<polygon fill="#000000" stroke="#000000" points="457.32,-108.5 447.32,-112 457.32,-115.5 457.32,-108.5"/>
-</g>
-<!-- module~penf_global_parameters_variables~2 -->
-<g id="program~~parse_string_simple~~UsesGraph_node9" class="node">
-<title>module~penf_global_parameters_variables~2</title>
-<g id="a_program~~parse_string_simple~~UsesGraph_node9"><a xlink:href=".././module/penf_global_parameters_variables~2.html" xlink:title="penf_global_parameters_variables">
-<polygon fill="#337ab7" stroke="#337ab7" points="196,-144 0,-144 0,-120 196,-120 196,-144"/>
-<text text-anchor="middle" x="98" y="-129.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf_global_parameters_variables</text>
-</a>
-</g>
-</g>
-<!-- module~penf~2&#45;&gt;module~penf_global_parameters_variables~2 -->
+<!-- module~foxy_xml_file&#45;&gt;module~penf~5 -->
 <g id="program~~parse_string_simple~~UsesGraph_edge6" class="edge">
-<title>module~penf~2&#45;&gt;module~penf_global_parameters_variables~2</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M403.5,-172C312.5,-188.52 205.01,-164.28 145.17,-146.94"/>
-<polygon fill="#000000" stroke="#000000" points="145.85,-143.5 135.27,-144.01 143.86,-150.21 145.85,-143.5"/>
+<title>module~foxy_xml_file&#45;&gt;module~penf~5</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1201.93,-104.06C1179.12,-114.79 1143.2,-129.19 1110,-132"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1108,-132C1061.28,-135.95 1049.19,-127.69 1002.5,-132"/>
 </g>
-<!-- module~foxy_xml_tag&#45;&gt;module~penf~2 -->
-<g id="program~~parse_string_simple~~UsesGraph_edge8" class="edge">
-<title>module~foxy_xml_tag&#45;&gt;module~penf~2</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1067.93,-121.46C1048.33,-125.61 1024.31,-129.99 1002.5,-132"/>
+<!-- module~foxy_xml_tag&#45;&gt;module~penf~5 -->
+<g id="program~~parse_string_simple~~UsesGraph_edge7" class="edge">
+<title>module~foxy_xml_tag&#45;&gt;module~penf~5</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1086.61,-104.05C1065.87,-114.77 1033.12,-129.18 1002.5,-132"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1000.5,-132C948.72,-136.78 935.32,-127.68 883.5,-132"/>
 </g>
-<!-- module~stringifor~2 -->
-<g id="program~~parse_string_simple~~UsesGraph_node7" class="node">
-<title>module~stringifor~2</title>
-<g id="a_program~~parse_string_simple~~UsesGraph_node7"><a xlink:href=".././module/stringifor~2.html" xlink:title="stringifor">
+<!-- module~stringifor -->
+<g id="program~~parse_string_simple~~UsesGraph_node9" class="node">
+<title>module~stringifor</title>
+<g id="a_program~~parse_string_simple~~UsesGraph_node9"><a xlink:href="../module/stringifor.html" xlink:title="stringifor">
 <polygon fill="#337ab7" stroke="#337ab7" points="1032,-104 971,-104 971,-80 1032,-80 1032,-104"/>
 <text text-anchor="middle" x="1001.5" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">stringifor</text>
 </a>
 </g>
 </g>
-<!-- module~foxy_xml_tag&#45;&gt;module~stringifor~2 -->
-<g id="program~~parse_string_simple~~UsesGraph_edge9" class="edge">
-<title>module~foxy_xml_tag&#45;&gt;module~stringifor~2</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1067.81,-104.38C1059.37,-102.78 1050.47,-101.09 1042.05,-99.5"/>
-<polygon fill="#000000" stroke="#000000" points="1042.55,-96.03 1032.07,-97.61 1041.25,-102.91 1042.55,-96.03"/>
+<!-- module~foxy_xml_tag&#45;&gt;module~stringifor -->
+<g id="program~~parse_string_simple~~UsesGraph_edge8" class="edge">
+<title>module~foxy_xml_tag&#45;&gt;module~stringifor</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1067.81,-92C1059.46,-92 1050.66,-92 1042.32,-92"/>
+<polygon fill="#000000" stroke="#000000" points="1042.07,-88.5 1032.07,-92 1042.07,-95.5 1042.07,-88.5"/>
 </g>
-<!-- module~foxy_xml_file&#45;&gt;module~penf~2 -->
-<g id="program~~parse_string_simple~~UsesGraph_edge10" class="edge">
-<title>module~foxy_xml_file&#45;&gt;module~penf~2</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1189.82,-99.94C1177.37,-96.3 1163.21,-92.8 1150,-91 1113.89,-86.07 1103.03,-80.94 1068,-91 1034.99,-100.48 1036.7,-128.85 1002.5,-132"/>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1000.5,-132C948.61,-135.44 935.32,-127.68 883.5,-132"/>
-</g>
-<!-- module~foxy_xml_file&#45;&gt;module~foxy_xml_tag -->
-<g id="program~~parse_string_simple~~UsesGraph_edge11" class="edge">
-<title>module~foxy_xml_file&#45;&gt;module~foxy_xml_tag</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1185.75,-112C1177.59,-112 1168.89,-112 1160.4,-112"/>
-<polygon fill="#000000" stroke="#000000" points="1160.21,-108.5 1150.21,-112 1160.21,-115.5 1160.21,-108.5"/>
-</g>
-<!-- module~penf_b_size&#45;&gt;module~penf_global_parameters_variables~2 -->
-<g id="program~~parse_string_simple~~UsesGraph_edge12" class="edge">
-<title>module~penf_b_size&#45;&gt;module~penf_global_parameters_variables~2</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M241.78,-132C231.22,-132 219.1,-132 206.49,-132"/>
-<polygon fill="#000000" stroke="#000000" points="206.29,-128.5 196.29,-132 206.29,-135.5 206.29,-128.5"/>
-</g>
-<!-- module~stringifor~2&#45;&gt;module~penf~2 -->
-<g id="program~~parse_string_simple~~UsesGraph_edge13" class="edge">
-<title>module~stringifor~2&#45;&gt;module~penf~2</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M976.61,-104.06C953.48,-114.79 917.09,-129.2 883.5,-132"/>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M881.5,-132C831.01,-136.21 817.98,-127.68 767.5,-132"/>
-</g>
-<!-- module~stringifor_string_t -->
-<g id="program~~parse_string_simple~~UsesGraph_node10" class="node">
-<title>module~stringifor_string_t</title>
-<g id="a_program~~parse_string_simple~~UsesGraph_node10"><a xlink:href=".././module/stringifor_string_t.html" xlink:title="stringifor_string_t">
-<polygon fill="#337ab7" stroke="#337ab7" points="935,-104 830,-104 830,-80 935,-80 935,-104"/>
-<text text-anchor="middle" x="882.5" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">stringifor_string_t</text>
+<!-- module~penf_b_size~6 -->
+<g id="program~~parse_string_simple~~UsesGraph_node6" class="node">
+<title>module~penf_b_size~6</title>
+<g id="a_program~~parse_string_simple~~UsesGraph_node6"><a xlink:href="../module/penf_b_size~6.html" xlink:title="penf_b_size">
+<polygon fill="#337ab7" stroke="#337ab7" points="316,-144 242,-144 242,-120 316,-120 316,-144"/>
+<text text-anchor="middle" x="279" y="-129.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf_b_size</text>
 </a>
 </g>
 </g>
-<!-- module~stringifor~2&#45;&gt;module~stringifor_string_t -->
-<g id="program~~parse_string_simple~~UsesGraph_edge14" class="edge">
-<title>module~stringifor~2&#45;&gt;module~stringifor_string_t</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M970.98,-92C963.11,-92 954.3,-92 945.39,-92"/>
-<polygon fill="#000000" stroke="#000000" points="945.33,-88.5 935.33,-92 945.33,-95.5 945.33,-88.5"/>
+<!-- module~penf~5&#45;&gt;module~penf_b_size~6 -->
+<g id="program~~parse_string_simple~~UsesGraph_edge9" class="edge">
+<title>module~penf~5&#45;&gt;module~penf_b_size~6</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M495.53,-124C476.9,-139.56 441.47,-165.47 405.5,-172"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M403.5,-172C386.64,-175.06 346.24,-160.37 316.22,-147.94"/>
+<polygon fill="#000000" stroke="#000000" points="317.45,-144.67 306.87,-144.01 314.73,-151.12 317.45,-144.67"/>
 </g>
-<!-- module~penf_stringify~3&#45;&gt;module~penf_b_size -->
-<g id="program~~parse_string_simple~~UsesGraph_edge16" class="edge">
-<title>module~penf_stringify~3&#45;&gt;module~penf_b_size</title>
+<!-- module~penf_global_parameters_variables~2 -->
+<g id="program~~parse_string_simple~~UsesGraph_node7" class="node">
+<title>module~penf_global_parameters_variables~2</title>
+<g id="a_program~~parse_string_simple~~UsesGraph_node7"><a xlink:href="../module/penf_global_parameters_variables~2.html" xlink:title="penf_global_parameters_variables">
+<polygon fill="#337ab7" stroke="#337ab7" points="196,-144 0,-144 0,-120 196,-120 196,-144"/>
+<text text-anchor="middle" x="98" y="-129.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf_global_parameters_variables</text>
+</a>
+</g>
+</g>
+<!-- module~penf~5&#45;&gt;module~penf_global_parameters_variables~2 -->
+<g id="program~~parse_string_simple~~UsesGraph_edge10" class="edge">
+<title>module~penf~5&#45;&gt;module~penf_global_parameters_variables~2</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M403.5,-172C312.5,-188.52 205.01,-164.28 145.17,-146.94"/>
+<polygon fill="#000000" stroke="#000000" points="145.85,-143.5 135.27,-144.01 143.86,-150.21 145.85,-143.5"/>
+</g>
+<!-- module~penf_stringify~4 -->
+<g id="program~~parse_string_simple~~UsesGraph_node8" class="node">
+<title>module~penf_stringify~4</title>
+<g id="a_program~~parse_string_simple~~UsesGraph_node8"><a xlink:href="../module/penf_stringify~4.html" xlink:title="penf_stringify">
+<polygon fill="#337ab7" stroke="#337ab7" points="447,-124 362,-124 362,-100 447,-100 447,-124"/>
+<text text-anchor="middle" x="404.5" y="-109.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf_stringify</text>
+</a>
+</g>
+</g>
+<!-- module~penf~5&#45;&gt;module~penf_stringify~4 -->
+<g id="program~~parse_string_simple~~UsesGraph_edge11" class="edge">
+<title>module~penf~5&#45;&gt;module~penf_stringify~4</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M482.88,-112C475.13,-112 466.36,-112 457.58,-112"/>
+<polygon fill="#000000" stroke="#000000" points="457.32,-108.5 447.32,-112 457.32,-115.5 457.32,-108.5"/>
+</g>
+<!-- module~penf_b_size~6&#45;&gt;module~penf_global_parameters_variables~2 -->
+<g id="program~~parse_string_simple~~UsesGraph_edge12" class="edge">
+<title>module~penf_b_size~6&#45;&gt;module~penf_global_parameters_variables~2</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M241.78,-132C231.22,-132 219.1,-132 206.49,-132"/>
+<polygon fill="#000000" stroke="#000000" points="206.29,-128.5 196.29,-132 206.29,-135.5 206.29,-128.5"/>
+</g>
+<!-- module~penf_stringify~4&#45;&gt;module~penf_b_size~6 -->
+<g id="program~~parse_string_simple~~UsesGraph_edge14" class="edge">
+<title>module~penf_stringify~4&#45;&gt;module~penf_b_size~6</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M361.69,-118.77C350.32,-120.61 337.95,-122.62 326.35,-124.49"/>
 <polygon fill="#000000" stroke="#000000" points="325.71,-121.05 316.4,-126.11 326.83,-127.96 325.71,-121.05"/>
 </g>
-<!-- module~penf_stringify~3&#45;&gt;module~penf_global_parameters_variables~2 -->
-<g id="program~~parse_string_simple~~UsesGraph_edge17" class="edge">
-<title>module~penf_stringify~3&#45;&gt;module~penf_global_parameters_variables~2</title>
+<!-- module~penf_stringify~4&#45;&gt;module~penf_global_parameters_variables~2 -->
+<g id="program~~parse_string_simple~~UsesGraph_edge15" class="edge">
+<title>module~penf_stringify~4&#45;&gt;module~penf_global_parameters_variables~2</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M361.67,-111.36C350.12,-111.21 337.57,-111.07 326,-111 284.22,-110.73 273.65,-107.73 232,-111 212.45,-112.53 191.44,-115.32 172.01,-118.37"/>
 <polygon fill="#000000" stroke="#000000" points="171.33,-114.93 162.02,-119.98 172.45,-121.84 171.33,-114.93"/>
 </g>
 <!-- iso_fortran_env -->
-<g id="program~~parse_string_simple~~UsesGraph_node11" class="node">
+<g id="program~~parse_string_simple~~UsesGraph_node10" class="node">
 <title>iso_fortran_env</title>
-<g id="a_program~~parse_string_simple~~UsesGraph_node11"><a xlink:href="https://gcc.gnu.org/onlinedocs/gfortran/ISO_005fFORTRAN_005fENV.html" xlink:title="iso_fortran_env">
+<g id="a_program~~parse_string_simple~~UsesGraph_node10"><a xlink:href="http://fortranwiki.org/fortran/show/iso_fortran_env" xlink:title="iso_fortran_env">
 <polygon fill="#337ab7" stroke="#337ab7" points="326,-64 232,-64 232,-40 326,-40 326,-64"/>
 <text text-anchor="middle" x="279" y="-49.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">iso_fortran_env</text>
 </a>
 </g>
 </g>
-<!-- module~penf_stringify~3&#45;&gt;iso_fortran_env -->
-<g id="program~~parse_string_simple~~UsesGraph_edge15" class="edge">
-<title>module~penf_stringify~3&#45;&gt;iso_fortran_env</title>
+<!-- module~penf_stringify~4&#45;&gt;iso_fortran_env -->
+<g id="program~~parse_string_simple~~UsesGraph_edge13" class="edge">
+<title>module~penf_stringify~4&#45;&gt;iso_fortran_env</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M378.51,-99.86C360.01,-90.87 334.59,-78.52 314.21,-68.62"/>
 <polygon fill="#000000" stroke="#000000" points="315.48,-65.35 304.95,-64.12 312.42,-71.64 315.48,-65.35"/>
 </g>
-<!-- module~stringifor_string_t&#45;&gt;module~penf~2 -->
-<g id="program~~parse_string_simple~~UsesGraph_edge19" class="edge">
-<title>module~stringifor_string_t&#45;&gt;module~penf~2</title>
+<!-- module~stringifor&#45;&gt;module~penf~5 -->
+<g id="program~~parse_string_simple~~UsesGraph_edge16" class="edge">
+<title>module~stringifor&#45;&gt;module~penf~5</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M976.61,-104.06C953.48,-114.79 917.09,-129.2 883.5,-132"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M881.5,-132C831.01,-136.21 817.98,-127.68 767.5,-132"/>
+</g>
+<!-- module~stringifor_string_t -->
+<g id="program~~parse_string_simple~~UsesGraph_node11" class="node">
+<title>module~stringifor_string_t</title>
+<g id="a_program~~parse_string_simple~~UsesGraph_node11"><a xlink:href="../module/stringifor_string_t.html" xlink:title="stringifor_string_t">
+<polygon fill="#337ab7" stroke="#337ab7" points="935,-104 830,-104 830,-80 935,-80 935,-104"/>
+<text text-anchor="middle" x="882.5" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">stringifor_string_t</text>
+</a>
+</g>
+</g>
+<!-- module~stringifor&#45;&gt;module~stringifor_string_t -->
+<g id="program~~parse_string_simple~~UsesGraph_edge17" class="edge">
+<title>module~stringifor&#45;&gt;module~stringifor_string_t</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M970.98,-92C963.11,-92 954.3,-92 945.39,-92"/>
+<polygon fill="#000000" stroke="#000000" points="945.33,-88.5 935.33,-92 945.33,-95.5 945.33,-88.5"/>
+</g>
+<!-- module~stringifor_string_t&#45;&gt;module~penf~5 -->
+<g id="program~~parse_string_simple~~UsesGraph_edge21" class="edge">
+<title>module~stringifor_string_t&#45;&gt;module~penf~5</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M858.26,-104.06C835.75,-114.78 800.31,-129.19 767.5,-132"/>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M765.5,-132C709.48,-136.79 695.22,-132.02 639,-132"/>
 </g>
@@ -367,10 +386,25 @@
 <title>module~stringifor_string_t&#45;&gt;iso_fortran_env</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M765.5,-52C655.72,-24.76 623.59,-41.11 511,-52"/>
 </g>
-<!-- module~face -->
+<!-- module~befor64~2 -->
 <g id="program~~parse_string_simple~~UsesGraph_node12" class="node">
+<title>module~befor64~2</title>
+<g id="a_program~~parse_string_simple~~UsesGraph_node12"><a xlink:href="../module/befor64~2.html" xlink:title="befor64">
+<polygon fill="#337ab7" stroke="#337ab7" points="794,-104 739,-104 739,-80 794,-80 794,-104"/>
+<text text-anchor="middle" x="766.5" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">befor64</text>
+</a>
+</g>
+</g>
+<!-- module~stringifor_string_t&#45;&gt;module~befor64~2 -->
+<g id="program~~parse_string_simple~~UsesGraph_edge19" class="edge">
+<title>module~stringifor_string_t&#45;&gt;module~befor64~2</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M829.84,-92C821.23,-92 812.47,-92 804.33,-92"/>
+<polygon fill="#000000" stroke="#000000" points="804.07,-88.5 794.07,-92 804.07,-95.5 804.07,-88.5"/>
+</g>
+<!-- module~face -->
+<g id="program~~parse_string_simple~~UsesGraph_node13" class="node">
 <title>module~face</title>
-<g id="a_program~~parse_string_simple~~UsesGraph_node12"><a xlink:href=".././module/face.html" xlink:title="face">
+<g id="a_program~~parse_string_simple~~UsesGraph_node13"><a xlink:href="../module/face.html" xlink:title="face">
 <polygon fill="#337ab7" stroke="#337ab7" points="665,-24 611,-24 611,0 665,0 665,-24"/>
 <text text-anchor="middle" x="638" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">face</text>
 </a>
@@ -383,61 +417,60 @@
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M765.5,-52C734.51,-44.31 700,-33.22 674.86,-24.67"/>
 <polygon fill="#000000" stroke="#000000" points="675.97,-21.35 665.38,-21.41 673.7,-27.97 675.97,-21.35"/>
 </g>
-<!-- module~befor64~4 -->
-<g id="program~~parse_string_simple~~UsesGraph_node13" class="node">
-<title>module~befor64~4</title>
-<g id="a_program~~parse_string_simple~~UsesGraph_node13"><a xlink:href=".././module/befor64~4.html" xlink:title="befor64">
-<polygon fill="#337ab7" stroke="#337ab7" points="794,-104 739,-104 739,-80 794,-80 794,-104"/>
-<text text-anchor="middle" x="766.5" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">befor64</text>
-</a>
-</g>
-</g>
-<!-- module~stringifor_string_t&#45;&gt;module~befor64~4 -->
-<g id="program~~parse_string_simple~~UsesGraph_edge21" class="edge">
-<title>module~stringifor_string_t&#45;&gt;module~befor64~4</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M829.84,-92C821.23,-92 812.47,-92 804.33,-92"/>
-<polygon fill="#000000" stroke="#000000" points="804.07,-88.5 794.07,-92 804.07,-95.5 804.07,-88.5"/>
-</g>
-<!-- module~face&#45;&gt;iso_fortran_env -->
-<g id="program~~parse_string_simple~~UsesGraph_edge22" class="edge">
-<title>module~face&#45;&gt;iso_fortran_env</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M610.75,-21.9C579.92,-33.25 530.51,-50.49 511,-52"/>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M509,-52C450.22,-56.56 382.7,-55.84 336.29,-54.42"/>
-<polygon fill="#000000" stroke="#000000" points="336.25,-50.92 326.14,-54.09 336.02,-57.92 336.25,-50.92"/>
-</g>
-<!-- module~befor64~4&#45;&gt;module~penf~2 -->
+<!-- module~befor64~2&#45;&gt;module~penf~5 -->
 <g id="program~~parse_string_simple~~UsesGraph_edge23" class="edge">
-<title>module~befor64~4&#45;&gt;module~penf~2</title>
+<title>module~befor64~2&#45;&gt;module~penf~5</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M742.41,-104.01C717.56,-115.79 676.54,-132.01 639,-132"/>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M637,-132C606.44,-131.99 572.21,-126.18 547.16,-120.83"/>
 <polygon fill="#000000" stroke="#000000" points="547.88,-117.4 537.35,-118.66 546.36,-124.23 547.88,-117.4"/>
 </g>
-<!-- module~befor64_pack_data_m~4 -->
+<!-- module~befor64_pack_data_m~3 -->
 <g id="program~~parse_string_simple~~UsesGraph_node14" class="node">
-<title>module~befor64_pack_data_m~4</title>
-<g id="a_program~~parse_string_simple~~UsesGraph_node14"><a xlink:href=".././module/befor64_pack_data_m~4.html" xlink:title="befor64_pack_data_m">
+<title>module~befor64_pack_data_m~3</title>
+<g id="a_program~~parse_string_simple~~UsesGraph_node14"><a xlink:href="../module/befor64_pack_data_m~3.html" xlink:title="befor64_pack_data_m">
 <polygon fill="#337ab7" stroke="#337ab7" points="703,-104 573,-104 573,-80 703,-80 703,-104"/>
 <text text-anchor="middle" x="638" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">befor64_pack_data_m</text>
 </a>
 </g>
 </g>
-<!-- module~befor64~4&#45;&gt;module~befor64_pack_data_m~4 -->
-<g id="program~~parse_string_simple~~UsesGraph_edge24" class="edge">
-<title>module~befor64~4&#45;&gt;module~befor64_pack_data_m~4</title>
+<!-- module~befor64~2&#45;&gt;module~befor64_pack_data_m~3 -->
+<g id="program~~parse_string_simple~~UsesGraph_edge22" class="edge">
+<title>module~befor64~2&#45;&gt;module~befor64_pack_data_m~3</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M738.98,-92C731.21,-92 722.31,-92 713.1,-92"/>
 <polygon fill="#000000" stroke="#000000" points="713.01,-88.5 703.01,-92 713.01,-95.5 713.01,-88.5"/>
 </g>
-<!-- module~befor64_pack_data_m~4&#45;&gt;module~penf~2 -->
+<!-- module~face&#45;&gt;iso_fortran_env -->
+<g id="program~~parse_string_simple~~UsesGraph_edge24" class="edge">
+<title>module~face&#45;&gt;iso_fortran_env</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M610.75,-21.9C579.92,-33.25 530.51,-50.49 511,-52"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M509,-52C450.22,-56.56 382.7,-55.84 336.29,-54.42"/>
+<polygon fill="#000000" stroke="#000000" points="336.25,-50.92 326.14,-54.09 336.02,-57.92 336.25,-50.92"/>
+</g>
+<!-- module~befor64_pack_data_m~3&#45;&gt;module~penf~5 -->
 <g id="program~~parse_string_simple~~UsesGraph_edge25" class="edge">
-<title>module~befor64_pack_data_m~4&#45;&gt;module~penf~2</title>
+<title>module~befor64_pack_data_m~3&#45;&gt;module~penf~5</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M572.89,-102.18C564.1,-103.57 555.34,-104.96 547.29,-106.24"/>
 <polygon fill="#000000" stroke="#000000" points="546.5,-102.82 537.17,-107.85 547.6,-109.73 546.5,-102.82"/>
 </g>
 </g>
 </svg>
-</div><script>var panprogramparse_string_simpleUsesGraph = svgPanZoom('#programparse_string_simpleUsesGraph', {zoomEnabled: true,controlIconsEnabled: true, fit: true, center: true,}); </script><div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div><div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog"><div class="modal-dialog modal-lg" role="document"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="-graph-help-label">Graph Key</h4></div><div class="modal-body">
-    <p>Nodes of different colours represent the following: </p>
-    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+</div>                <script>
+                  var panprogramparse_string_simpleUsesGraph = svgPanZoom('#programparse_string_simpleUsesGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
@@ -487,70 +520,526 @@
 </g>
 </svg>
 
-    
-    <p>Solid arrows point from a submodule to the (sub)module which it is
-    descended from. Dashed arrows point from a module or program unit to 
-    modules which it uses.
-    </p>
-    </div></div></div></div>
-      </li>
-      </ul>
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
     </div>
 
     
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: program~~parse_string_simple~~CallsGraph Pages: 1 -->
+<svg id="programparse_string_simpleCallsGraph" width="641pt" height="234pt"
+ viewBox="0.00 0.00 641.00 234.08" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="program~~parse_string_simple~~CallsGraph" class="graph" transform="scale(0.61 0.61) rotate(0) translate(4 382)">
+<title>program~~parse_string_simple~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-382 1053,-382 1053,4 -4,4"/>
+<!-- program~parse_string_simple -->
+<g id="program~~parse_string_simple~~CallsGraph_node1" class="node">
+<title>program~parse_string_simple</title>
+<polygon fill="none" stroke="black" points="118,-190 0,-190 0,-166 118,-166 118,-190"/>
+<text text-anchor="middle" x="59" y="-175.6" font-family="Helvetica,sans-Serif" font-size="10.50">parse_string_simple</text>
+</g>
+<!-- proc~parse~2 -->
+<g id="program~~parse_string_simple~~CallsGraph_node2" class="node">
+<title>proc~parse~2</title>
+<g id="a_program~~parse_string_simple~~CallsGraph_node2"><a xlink:href="../proc/parse~2.html" xlink:title="xml_file%parse">
+<polygon fill="#d9534f" stroke="#d9534f" points="254,-251 160,-251 160,-227 254,-227 254,-251"/>
+<text text-anchor="middle" x="207" y="-236.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_file%parse</text>
+</a>
+</g>
+</g>
+<!-- program~parse_string_simple&#45;&gt;proc~parse~2 -->
+<g id="program~~parse_string_simple~~CallsGraph_edge1" class="edge">
+<title>program~parse_string_simple&#45;&gt;proc~parse~2</title>
+<path fill="none" stroke="#000000" d="M88.84,-190.05C111.44,-199.49 143.08,-212.71 167.78,-223.03"/>
+<polygon fill="#000000" stroke="#000000" points="166.64,-226.35 177.22,-226.97 169.34,-219.89 166.64,-226.35"/>
+</g>
+<!-- proc~stringify~2 -->
+<g id="program~~parse_string_simple~~CallsGraph_node3" class="node">
+<title>proc~stringify~2</title>
+<g id="a_program~~parse_string_simple~~CallsGraph_node3"><a xlink:href="../proc/stringify~2.html" xlink:title="xml_file%stringify">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="260,-169 154,-169 154,-145 260,-145 260,-169"/>
+<text text-anchor="middle" x="207" y="-154.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_file%stringify</text>
+</a>
+</g>
+</g>
+<!-- program~parse_string_simple&#45;&gt;proc~stringify~2 -->
+<g id="program~~parse_string_simple~~CallsGraph_edge2" class="edge">
+<title>program~parse_string_simple&#45;&gt;proc~stringify~2</title>
+<path fill="none" stroke="#000000" d="M118.12,-169.64C126.49,-168.44 135.13,-167.19 143.58,-165.98"/>
+<polygon fill="#000000" stroke="#000000" points="144.35,-169.4 153.75,-164.52 143.35,-162.47 144.35,-169.4"/>
+</g>
+<!-- proc~load_file_as_stream -->
+<g id="program~~parse_string_simple~~CallsGraph_node4" class="node">
+<title>proc~load_file_as_stream</title>
+<g id="a_program~~parse_string_simple~~CallsGraph_node4"><a xlink:href="../proc/load_file_as_stream.html" xlink:title="load_file_as_stream">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="434,-293 317,-293 317,-269 434,-269 434,-293"/>
+<text text-anchor="middle" x="375.5" y="-278.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">load_file_as_stream</text>
+</a>
+</g>
+</g>
+<!-- proc~parse~2&#45;&gt;proc~load_file_as_stream -->
+<g id="program~~parse_string_simple~~CallsGraph_edge3" class="edge">
+<title>proc~parse~2&#45;&gt;proc~load_file_as_stream</title>
+<path fill="none" stroke="#000000" d="M254.38,-250.7C273.81,-255.6 296.6,-261.35 317.08,-266.52"/>
+<polygon fill="#000000" stroke="#000000" points="316.37,-269.95 326.92,-269 318.08,-263.16 316.37,-269.95"/>
+</g>
+<!-- proc~parse_from_string -->
+<g id="program~~parse_string_simple~~CallsGraph_node5" class="node">
+<title>proc~parse_from_string</title>
+<g id="a_program~~parse_string_simple~~CallsGraph_node5"><a xlink:href="../proc/parse_from_string.html" xlink:title="xml_file%parse_from_string">
+<polygon fill="#d9534f" stroke="#d9534f" points="455,-251 296,-251 296,-227 455,-227 455,-251"/>
+<text text-anchor="middle" x="375.5" y="-236.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_file%parse_from_string</text>
+</a>
+</g>
+</g>
+<!-- proc~parse~2&#45;&gt;proc~parse_from_string -->
+<g id="program~~parse_string_simple~~CallsGraph_edge4" class="edge">
+<title>proc~parse~2&#45;&gt;proc~parse_from_string</title>
+<path fill="none" stroke="#000000" d="M254.38,-239C264.15,-239 274.77,-239 285.52,-239"/>
+<polygon fill="#000000" stroke="#000000" points="285.84,-242.5 295.84,-239 285.84,-235.5 285.84,-242.5"/>
+</g>
+<!-- proc~stringify -->
+<g id="program~~parse_string_simple~~CallsGraph_node6" class="node">
+<title>proc~stringify</title>
+<g id="a_program~~parse_string_simple~~CallsGraph_node6"><a xlink:href="../proc/stringify.html" xlink:title="xml_tag%stringify">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="429,-128 322,-128 322,-104 429,-104 429,-128"/>
+<text text-anchor="middle" x="375.5" y="-113.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%stringify</text>
+</a>
+</g>
+</g>
+<!-- proc~stringify~2&#45;&gt;proc~stringify -->
+<g id="program~~parse_string_simple~~CallsGraph_edge5" class="edge">
+<title>proc~stringify~2&#45;&gt;proc~stringify</title>
+<path fill="none" stroke="#000000" d="M257.05,-144.92C275.43,-140.39 296.5,-135.21 315.68,-130.48"/>
+<polygon fill="#000000" stroke="#000000" points="316.64,-133.85 325.51,-128.06 314.96,-127.06 316.64,-133.85"/>
+</g>
+<!-- proc~add_tag -->
+<g id="program~~parse_string_simple~~CallsGraph_node7" class="node">
+<title>proc~add_tag</title>
+<g id="a_program~~parse_string_simple~~CallsGraph_node7"><a xlink:href="../proc/add_tag.html" xlink:title="xml_file%add_tag">
+<polygon fill="#d9534f" stroke="#d9534f" points="618,-314 512,-314 512,-290 618,-290 618,-314"/>
+<text text-anchor="middle" x="565" y="-299.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_file%add_tag</text>
+</a>
+</g>
+</g>
+<!-- proc~parse_from_string&#45;&gt;proc~add_tag -->
+<g id="program~~parse_string_simple~~CallsGraph_edge6" class="edge">
+<title>proc~parse_from_string&#45;&gt;proc~add_tag</title>
+<path fill="none" stroke="#000000" d="M429.51,-251.11C438.16,-253.67 446.93,-256.64 455,-260 472.1,-267.12 473.97,-273.72 491,-281 495.73,-283.02 500.71,-284.92 505.76,-286.67"/>
+<polygon fill="#000000" stroke="#000000" points="504.91,-290.08 515.5,-289.88 507.1,-283.43 504.91,-290.08"/>
+</g>
+<!-- proc~is_parsed -->
+<g id="program~~parse_string_simple~~CallsGraph_node11" class="node">
+<title>proc~is_parsed</title>
+<g id="a_program~~parse_string_simple~~CallsGraph_node11"><a xlink:href="../proc/is_parsed.html" xlink:title="xml_tag%is_parsed">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="622.5,-230 507.5,-230 507.5,-206 622.5,-206 622.5,-230"/>
+<text text-anchor="middle" x="565" y="-215.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%is_parsed</text>
+</a>
+</g>
+</g>
+<!-- proc~parse_from_string&#45;&gt;proc~is_parsed -->
+<g id="program~~parse_string_simple~~CallsGraph_edge7" class="edge">
+<title>proc~parse_from_string&#45;&gt;proc~is_parsed</title>
+<path fill="none" stroke="#000000" d="M455.2,-230.19C469.18,-228.62 483.61,-227 497.22,-225.48"/>
+<polygon fill="#000000" stroke="#000000" points="497.89,-228.93 507.44,-224.33 497.11,-221.97 497.89,-228.93"/>
+</g>
+<!-- proc~parse -->
+<g id="program~~parse_string_simple~~CallsGraph_node12" class="node">
+<title>proc~parse</title>
+<g id="a_program~~parse_string_simple~~CallsGraph_node12"><a xlink:href="../proc/parse.html" xlink:title="xml_tag%parse">
+<polygon fill="#d9534f" stroke="#d9534f" points="612,-272 518,-272 518,-248 612,-248 612,-272"/>
+<text text-anchor="middle" x="565" y="-257.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%parse</text>
+</a>
+</g>
+</g>
+<!-- proc~parse_from_string&#45;&gt;proc~parse -->
+<g id="program~~parse_string_simple~~CallsGraph_edge8" class="edge">
+<title>proc~parse_from_string&#45;&gt;proc~parse</title>
+<path fill="none" stroke="#000000" d="M455.2,-247.81C472.88,-249.79 491.29,-251.86 507.83,-253.71"/>
+<polygon fill="#000000" stroke="#000000" points="507.54,-257.2 517.86,-254.83 508.32,-250.24 507.54,-257.2"/>
+</g>
+<!-- proc~chars -->
+<g id="program~~parse_string_simple~~CallsGraph_node8" class="node">
+<title>proc~chars</title>
+<g id="a_program~~parse_string_simple~~CallsGraph_node8"><a xlink:href="../proc/chars.html" xlink:title="string%chars">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="606,-66 524,-66 524,-42 606,-42 606,-66"/>
+<text text-anchor="middle" x="565" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%chars</text>
+</a>
+</g>
+</g>
+<!-- proc~stringify&#45;&gt;proc~chars -->
+<g id="program~~parse_string_simple~~CallsGraph_edge9" class="edge">
+<title>proc~stringify&#45;&gt;proc~chars</title>
+<path fill="none" stroke="#000000" d="M408.39,-103.96C431.26,-95.48 462.87,-84.07 491,-75 498.41,-72.61 506.29,-70.2 514.03,-67.92"/>
+<polygon fill="#000000" stroke="#000000" points="515.08,-71.26 523.7,-65.1 513.12,-64.54 515.08,-71.26"/>
+</g>
+<!-- proc~end_tag -->
+<g id="program~~parse_string_simple~~CallsGraph_node9" class="node">
+<title>proc~end_tag</title>
+<g id="a_program~~parse_string_simple~~CallsGraph_node9"><a xlink:href="../proc/end_tag.html" xlink:title="xml_tag%end_tag">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="618.5,-24 511.5,-24 511.5,0 618.5,0 618.5,-24"/>
+<text text-anchor="middle" x="565" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%end_tag</text>
+</a>
+</g>
+</g>
+<!-- proc~stringify&#45;&gt;proc~end_tag -->
+<g id="program~~parse_string_simple~~CallsGraph_edge10" class="edge">
+<title>proc~stringify&#45;&gt;proc~end_tag</title>
+<path fill="none" stroke="#000000" d="M389.94,-103.82C410.36,-85.9 451.06,-52.48 491,-33 495.04,-31.03 499.3,-29.21 503.66,-27.54"/>
+<polygon fill="#000000" stroke="#000000" points="505.03,-30.76 513.27,-24.11 502.67,-24.17 505.03,-30.76"/>
+</g>
+<!-- proc~is_allocated -->
+<g id="program~~parse_string_simple~~CallsGraph_node10" class="node">
+<title>proc~is_allocated</title>
+<g id="a_program~~parse_string_simple~~CallsGraph_node10"><a xlink:href="../proc/is_allocated.html" xlink:title="string%is_allocated">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="828.5,-210 713.5,-210 713.5,-186 828.5,-186 828.5,-210"/>
+<text text-anchor="middle" x="771" y="-195.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%is_allocated</text>
+</a>
+</g>
+</g>
+<!-- proc~stringify&#45;&gt;proc~is_allocated -->
+<g id="program~~parse_string_simple~~CallsGraph_edge11" class="edge">
+<title>proc~stringify&#45;&gt;proc~is_allocated</title>
+<path fill="none" stroke="#000000" d="M403.72,-128.17C426.58,-137.91 460.34,-151.2 491,-159 562.43,-177.17 646.45,-187.46 703.48,-192.85"/>
+<polygon fill="#000000" stroke="#000000" points="703.17,-196.34 713.45,-193.77 703.81,-189.37 703.17,-196.34"/>
+</g>
+<!-- proc~self_closing_tag -->
+<g id="program~~parse_string_simple~~CallsGraph_node13" class="node">
+<title>proc~self_closing_tag</title>
+<g id="a_program~~parse_string_simple~~CallsGraph_node13"><a xlink:href="../proc/self_closing_tag.html" xlink:title="xml_tag%self_closing_tag">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="639,-150 491,-150 491,-126 639,-126 639,-150"/>
+<text text-anchor="middle" x="565" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%self_closing_tag</text>
+</a>
+</g>
+</g>
+<!-- proc~stringify&#45;&gt;proc~self_closing_tag -->
+<g id="program~~parse_string_simple~~CallsGraph_edge12" class="edge">
+<title>proc~stringify&#45;&gt;proc~self_closing_tag</title>
+<path fill="none" stroke="#000000" d="M429.23,-122.19C445.16,-124.06 463.07,-126.16 480.5,-128.2"/>
+<polygon fill="#000000" stroke="#000000" points="480.35,-131.71 490.69,-129.4 481.16,-124.76 480.35,-131.71"/>
+</g>
+<!-- proc~start_tag -->
+<g id="program~~parse_string_simple~~CallsGraph_node14" class="node">
+<title>proc~start_tag</title>
+<g id="a_program~~parse_string_simple~~CallsGraph_node14"><a xlink:href="../proc/start_tag.html" xlink:title="xml_tag%start_tag">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="620.5,-108 509.5,-108 509.5,-84 620.5,-84 620.5,-108"/>
+<text text-anchor="middle" x="565" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%start_tag</text>
+</a>
+</g>
+</g>
+<!-- proc~stringify&#45;&gt;proc~start_tag -->
+<g id="program~~parse_string_simple~~CallsGraph_edge13" class="edge">
+<title>proc~stringify&#45;&gt;proc~start_tag</title>
+<path fill="none" stroke="#000000" d="M429.23,-110.38C451.02,-108.05 476.5,-105.33 499.41,-102.89"/>
+<polygon fill="#000000" stroke="#000000" points="499.81,-106.37 509.38,-101.83 499.07,-99.41 499.81,-106.37"/>
+</g>
+<!-- proc~is_parsed&#45;&gt;proc~is_allocated -->
+<g id="program~~parse_string_simple~~CallsGraph_edge14" class="edge">
+<title>proc~is_parsed&#45;&gt;proc~is_allocated</title>
+<path fill="none" stroke="#000000" d="M622.55,-212.46C647.54,-210.01 677.09,-207.11 703.16,-204.55"/>
+<polygon fill="#000000" stroke="#000000" points="703.72,-208.01 713.34,-203.56 703.04,-201.05 703.72,-208.01"/>
+</g>
+<!-- proc~parse&#45;&gt;proc~is_allocated -->
+<g id="program~~parse_string_simple~~CallsGraph_edge16" class="edge">
+<title>proc~parse&#45;&gt;proc~is_allocated</title>
+<path fill="none" stroke="#000000" d="M612.11,-248.46C621.15,-245.71 630.47,-242.54 639,-239 655.9,-231.98 657.89,-225.49 675,-219 684.12,-215.54 693.96,-212.58 703.73,-210.06"/>
+<polygon fill="#000000" stroke="#000000" points="704.57,-213.45 713.45,-207.68 702.91,-206.65 704.57,-213.45"/>
+</g>
+<!-- proc~get -->
+<g id="program~~parse_string_simple~~CallsGraph_node16" class="node">
+<title>proc~get</title>
+<g id="a_program~~parse_string_simple~~CallsGraph_node16"><a xlink:href="../proc/get.html" xlink:title="xml_tag%get">
+<polygon fill="#d9534f" stroke="#d9534f" points="812,-336 730,-336 730,-312 812,-312 812,-336"/>
+<text text-anchor="middle" x="771" y="-321.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%get</text>
+</a>
+</g>
+</g>
+<!-- proc~parse&#45;&gt;proc~get -->
+<g id="program~~parse_string_simple~~CallsGraph_edge15" class="edge">
+<title>proc~parse&#45;&gt;proc~get</title>
+<path fill="none" stroke="#000000" d="M612.23,-271.26C621.26,-274.03 630.55,-277.28 639,-281 656.16,-288.55 657.61,-295.99 675,-303 689.13,-308.69 705.09,-312.98 719.85,-316.15"/>
+<polygon fill="#000000" stroke="#000000" points="719.34,-319.62 729.83,-318.16 720.72,-312.75 719.34,-319.62"/>
+</g>
+<!-- proc~parse_attributes_names -->
+<g id="program~~parse_string_simple~~CallsGraph_node17" class="node">
+<title>proc~parse_attributes_names</title>
+<g id="a_program~~parse_string_simple~~CallsGraph_node17"><a xlink:href="../proc/parse_attributes_names.html" xlink:title="xml_tag%parse_attributes_names">
+<polygon fill="#d9534f" stroke="#d9534f" points="867,-294 675,-294 675,-270 867,-270 867,-294"/>
+<text text-anchor="middle" x="771" y="-279.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%parse_attributes_names</text>
+</a>
+</g>
+</g>
+<!-- proc~parse&#45;&gt;proc~parse_attributes_names -->
+<g id="program~~parse_string_simple~~CallsGraph_edge17" class="edge">
+<title>proc~parse&#45;&gt;proc~parse_attributes_names</title>
+<path fill="none" stroke="#000000" d="M612.04,-264.96C627.87,-266.67 646.32,-268.66 664.9,-270.67"/>
+<polygon fill="#000000" stroke="#000000" points="664.6,-274.15 674.92,-271.75 665.35,-267.19 664.6,-274.15"/>
+</g>
+<!-- proc~parse_tag_name -->
+<g id="program~~parse_string_simple~~CallsGraph_node18" class="node">
+<title>proc~parse_tag_name</title>
+<g id="a_program~~parse_string_simple~~CallsGraph_node18"><a xlink:href="../proc/parse_tag_name.html" xlink:title="xml_tag%parse_tag_name">
+<polygon fill="#d9534f" stroke="#d9534f" points="847.5,-252 694.5,-252 694.5,-228 847.5,-228 847.5,-252"/>
+<text text-anchor="middle" x="771" y="-237.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%parse_tag_name</text>
+</a>
+</g>
+</g>
+<!-- proc~parse&#45;&gt;proc~parse_tag_name -->
+<g id="program~~parse_string_simple~~CallsGraph_edge18" class="edge">
+<title>proc~parse&#45;&gt;proc~parse_tag_name</title>
+<path fill="none" stroke="#000000" d="M612.04,-255.49C633.31,-253.4 659.29,-250.85 683.99,-248.43"/>
+<polygon fill="#000000" stroke="#000000" points="684.5,-251.9 694.11,-247.44 683.82,-244.93 684.5,-251.9"/>
+</g>
+<!-- proc~attributes -->
+<g id="program~~parse_string_simple~~CallsGraph_node15" class="node">
+<title>proc~attributes</title>
+<g id="a_program~~parse_string_simple~~CallsGraph_node15"><a xlink:href="../proc/attributes.html" xlink:title="xml_tag%attributes">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="828.5,-128 713.5,-128 713.5,-104 828.5,-104 828.5,-128"/>
+<text text-anchor="middle" x="771" y="-113.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%attributes</text>
+</a>
+</g>
+</g>
+<!-- proc~self_closing_tag&#45;&gt;proc~attributes -->
+<g id="program~~parse_string_simple~~CallsGraph_edge19" class="edge">
+<title>proc~self_closing_tag&#45;&gt;proc~attributes</title>
+<path fill="none" stroke="#000000" d="M639.07,-130.12C660,-127.86 682.7,-125.41 703.23,-123.2"/>
+<polygon fill="#000000" stroke="#000000" points="703.87,-126.65 713.43,-122.1 703.12,-119.69 703.87,-126.65"/>
+</g>
+<!-- proc~start_tag&#45;&gt;proc~attributes -->
+<g id="program~~parse_string_simple~~CallsGraph_edge20" class="edge">
+<title>proc~start_tag&#45;&gt;proc~attributes</title>
+<path fill="none" stroke="#000000" d="M620.67,-101.36C646.1,-103.85 676.57,-106.84 703.34,-109.46"/>
+<polygon fill="#000000" stroke="#000000" points="703.11,-112.96 713.4,-110.45 703.79,-105.99 703.11,-112.96"/>
+</g>
+<!-- proc~get_attributes -->
+<g id="program~~parse_string_simple~~CallsGraph_node20" class="node">
+<title>proc~get_attributes</title>
+<g id="a_program~~parse_string_simple~~CallsGraph_node20"><a xlink:href="../proc/get_attributes.html" xlink:title="xml_tag%get_attributes">
+<polygon fill="#d9534f" stroke="#d9534f" points="1045,-378 907,-378 907,-354 1045,-354 1045,-378"/>
+<text text-anchor="middle" x="976" y="-363.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%get_attributes</text>
+</a>
+</g>
+</g>
+<!-- proc~get&#45;&gt;proc~get_attributes -->
+<g id="program~~parse_string_simple~~CallsGraph_edge21" class="edge">
+<title>proc~get&#45;&gt;proc~get_attributes</title>
+<path fill="none" stroke="#000000" d="M812.11,-332.3C839.11,-337.88 875.4,-345.39 906.88,-351.91"/>
+<polygon fill="#000000" stroke="#000000" points="906.41,-355.38 916.91,-353.98 907.82,-348.53 906.41,-355.38"/>
+</g>
+<!-- proc~get_value -->
+<g id="program~~parse_string_simple~~CallsGraph_node21" class="node">
+<title>proc~get_value</title>
+<g id="a_program~~parse_string_simple~~CallsGraph_node21"><a xlink:href="../proc/get_value.html" xlink:title="xml_tag%get_value">
+<polygon fill="#d9534f" stroke="#d9534f" points="1034,-336 918,-336 918,-312 1034,-312 1034,-336"/>
+<text text-anchor="middle" x="976" y="-321.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%get_value</text>
+</a>
+</g>
+</g>
+<!-- proc~get&#45;&gt;proc~get_value -->
+<g id="program~~parse_string_simple~~CallsGraph_edge22" class="edge">
+<title>proc~get&#45;&gt;proc~get_value</title>
+<path fill="none" stroke="#000000" d="M812.11,-324C839.32,-324 875.96,-324 907.6,-324"/>
+<polygon fill="#000000" stroke="#000000" points="907.68,-327.5 917.68,-324 907.68,-320.5 907.68,-327.5"/>
+</g>
+<!-- proc~alloc_attributes -->
+<g id="program~~parse_string_simple~~CallsGraph_node19" class="node">
+<title>proc~alloc_attributes</title>
+<g id="a_program~~parse_string_simple~~CallsGraph_node19"><a xlink:href="../proc/alloc_attributes.html" xlink:title="xml_tag%alloc_attributes">
+<polygon fill="#d9534f" stroke="#d9534f" points="1049,-294 903,-294 903,-270 1049,-270 1049,-294"/>
+<text text-anchor="middle" x="976" y="-279.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%alloc_attributes</text>
+</a>
+</g>
+</g>
+<!-- proc~parse_attributes_names&#45;&gt;proc~alloc_attributes -->
+<g id="program~~parse_string_simple~~CallsGraph_edge23" class="edge">
+<title>proc~parse_attributes_names&#45;&gt;proc~alloc_attributes</title>
+<path fill="none" stroke="#000000" d="M867.26,-282C875.75,-282 884.31,-282 892.68,-282"/>
+<polygon fill="#000000" stroke="#000000" points="892.79,-285.5 902.79,-282 892.79,-278.5 892.79,-285.5"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprogramparse_string_simpleCallsGraph = svgPanZoom('#programparse_string_simpleCallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
 
-     <section class="visible-xs visible-sm hidden-md">
-       <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#vars-1">Variables</a></h3></div>
-  <div id="vars-1" class="panel-collapse collapse">
-    <div class="list-group">
-      <a class="list-group-item" href="../program/parse_string_simple.html#variable-source~13">source</a>
-      <a class="list-group-item" href="../program/parse_string_simple.html#variable-parsed~5">parsed</a>
-      <a class="list-group-item" href="../program/parse_string_simple.html#variable-xfile~2">xfile</a>
-      <a class="list-group-item" href="../program/parse_string_simple.html#variable-test_passed~11">test_passed</a>
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../program/parse_string_simple.html#src">parse_string_simple</a>
-  </div>
-</div>
-
-     </section>
-     <br class="visible-xs visible-sm hidden-md">
-
+<br>
 
     <section>
     <h2>Variables</h2>
-    <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Attributes</th><th></th><th>Name</th><th></th><th>Initial</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" id="variable-source~13"></span>character(len=:),</td>
-  <td>allocatable</td><td>::</td>
-  <td><strong>source</strong></td><td></td><td></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-parsed~5"></span>character(len=:),</td>
-  <td>allocatable</td><td>::</td>
-  <td><strong>parsed</strong></td><td></td><td></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-xfile~2"></span>type(<a href='../type/xml_file.html'>xml_file</a>)</td>
-  <td></td><td>::</td>
-  <td><strong>xfile</strong></td><td></td><td></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-test_passed~11"></span>logical</td>
-  <td></td><td>::</td>
-  <td><strong>test_passed</strong>(1)</td><td></td><td></td><td></td>
-</tr>
-</tbody>
-</table>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-source~18"></span>
+              character(len=:),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>source</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-parsed~10"></span>
+              character(len=:),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>parsed</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xfile~3"></span>
+              type(<a href='../type/xml_file.html'>xml_file</a>)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>xfile</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-test_passed~192"></span>
+              logical
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>test_passed</strong>(1)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
     </section>
     <br>
@@ -562,13 +1051,14 @@
 
 
     
+
     <section>
     <h2 id="src">Source Code</h2>
-    <div class="highlight"><pre><span></span><span class="k">program </span><span class="n">parse_string_simple</span><span class="w"></span>
+    <div class="hl codehilite"><pre><span></span><span class="k">program </span><span class="n">parse_string_simple</span>
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
 <span class="c">!&lt; FoXy test.</span>
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
-<span class="k">use </span><span class="n">foxy</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">xml_file</span><span class="w"></span>
+<span class="k">use </span><span class="n">foxy</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">xml_file</span>
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
 
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
@@ -580,33 +1070,33 @@
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
 
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
-<span class="n">test_passed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span><span class="w"></span>
+<span class="n">test_passed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
 
-<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Input XML data:&#39;</span><span class="w"></span>
-<span class="n">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&lt;first x=&quot;1&quot; y=&quot;c&quot; z=&quot;2&quot;&gt;lorem ipsum...&lt;/first&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span><span class="w"></span>
-<span class="w">         </span><span class="s1">&#39;&lt;second a1=&quot;2&quot;/&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span><span class="w"></span>
-<span class="w">         </span><span class="s1">&#39;&lt;third&gt;bye&lt;/third&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span><span class="w"></span>
-<span class="w">         </span><span class="s1">&#39;&lt;fourth a=&quot;3&quot;&gt;bye bye Mrs. Robinson&lt;/fourth&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span><span class="w"></span>
-<span class="w">         </span><span class="s1">&#39;&lt;fift&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span><span class="w"></span>
-<span class="w">         </span><span class="s1">&#39;  &lt;nested level=&quot;1&quot;&gt;I am supported! Nested tag at level 1&lt;/nested&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span><span class="w"></span>
-<span class="w">         </span><span class="s1">&#39;  &lt;nested2 level=&quot;1&quot;&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span><span class="w"></span>
-<span class="w">         </span><span class="s1">&#39;    &lt;nested3 level=&quot;2&quot;&gt;Nested tag at level 2&lt;/nested3&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span><span class="w"></span>
-<span class="w">         </span><span class="s1">&#39;  &lt;/nested2&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span><span class="w"></span>
-<span class="w">         </span><span class="s1">&#39;&lt;/fift&gt;&#39;</span><span class="w"></span>
-<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A)&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">source</span><span class="w"></span>
+<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Input XML data:&#39;</span>
+<span class="n">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&lt;first x=&quot;1&quot; y=&quot;c&quot; z=&quot;2&quot;&gt;lorem ipsum...&lt;/first&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span>
+<span class="w">         </span><span class="s1">&#39;&lt;second a1=&quot;2&quot;/&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span>
+<span class="w">         </span><span class="s1">&#39;&lt;third&gt;bye&lt;/third&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span>
+<span class="w">         </span><span class="s1">&#39;&lt;fourth a=&quot;3&quot;&gt;bye bye Mrs. Robinson&lt;/fourth&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span>
+<span class="w">         </span><span class="s1">&#39;&lt;fift&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span>
+<span class="w">         </span><span class="s1">&#39;  &lt;nested level=&quot;1&quot;&gt;I am supported! Nested tag at level 1&lt;/nested&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span>
+<span class="w">         </span><span class="s1">&#39;  &lt;nested2 level=&quot;1&quot;&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span>
+<span class="w">         </span><span class="s1">&#39;    &lt;nested3 level=&quot;2&quot;&gt;Nested tag at level 2&lt;/nested3&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span>
+<span class="w">         </span><span class="s1">&#39;  &lt;/nested2&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span>
+<span class="w">         </span><span class="s1">&#39;&lt;/fift&gt;&#39;</span>
+<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A)&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">source</span>
 
-<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Parsing file&#39;</span><span class="w"></span>
-<span class="k">call </span><span class="n">xfile</span><span class="p">%</span><span class="n">parse</span><span class="p">(</span><span class="n">string</span><span class="o">=</span><span class="n">source</span><span class="p">)</span><span class="w"></span>
-<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Parsed data&#39;</span><span class="w"></span>
-<span class="n">parsed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">xfile</span><span class="p">%</span><span class="n">stringify</span><span class="p">()</span><span class="w"></span>
-<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A)&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">parsed</span><span class="w"></span>
-<span class="n">test_passed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">source</span><span class="p">)</span><span class="o">==</span><span class="nb">trim</span><span class="p">(</span><span class="n">parsed</span><span class="p">)</span><span class="w"></span>
-<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A,L1)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Is parsed data correct? &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">test_passed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"></span>
+<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Parsing file&#39;</span>
+<span class="k">call </span><span class="n">xfile</span><span class="p">%</span><span class="n">parse</span><span class="p">(</span><span class="n">string</span><span class="o">=</span><span class="n">source</span><span class="p">)</span>
+<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Parsed data&#39;</span>
+<span class="n">parsed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">xfile</span><span class="p">%</span><span class="n">stringify</span><span class="p">()</span>
+<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A)&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">parsed</span>
+<span class="n">test_passed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="n">source</span><span class="p">)</span><span class="o">==</span><span class="nb">trim</span><span class="p">(</span><span class="n">parsed</span><span class="p">)</span>
+<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A,L1)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Is parsed data correct? &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">test_passed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A,L1)&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39;Are all tests passed? &#39;</span><span class="p">,</span><span class="w"> </span><span class="k">all</span><span class="p">(</span><span class="n">test_passed</span><span class="p">)</span><span class="w"></span>
-<span class="k">stop</span><span class="w"></span>
+<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A,L1)&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39;Are all tests passed? &#39;</span><span class="p">,</span><span class="w"> </span><span class="k">all</span><span class="p">(</span><span class="n">test_passed</span><span class="p">)</span>
+<span class="k">stop</span>
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
-<span class="k">endprogram </span><span class="n">parse_string_simple</span><span class="w"></span>
+<span class="k">endprogram </span><span class="n">parse_string_simple</span>
 </pre></div>
 
     </section>
@@ -614,50 +1104,48 @@
     </div>
   </div>
 
-    <hr>    
+      <hr>
     </div> <!-- /container -->
     <footer>
       <div class="container">
-      <div class="row">
-        <div class="col-xs-6 col-md-6"><p>Lib_VTK_IO was developed by Stefano Zaghi<br>&copy; 2022 
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Lib_VTK_IO
+ was developed by Stefano Zaghi<br>              &copy; 2025 
 </p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
         </div>
-        <div class="col-xs-6 col-md-6">
-          <p class="text-right">
-            Documentation generated by 
-            <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
-          </p>
-        </div>
-      </div>
-      <br>
-      </div> <!-- /container -->    
+        <br>
+      </div> <!-- /container -->
     </footer>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
+    <!-- Bootstrap core JavaScript -->
     <!-- Placed at the end of the document so the pages load faster -->
-<!--
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
--->
-    <script src="../js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
 
     <!-- MathJax JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
-        jax: ['input/TeX','input/MathML','output/HTML-CSS'],
-        extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
-      });
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script src="../tipuesearch/tipuesearch_content.js"></script>
-    <script src="../tipuesearch/tipuesearch_set.js"></script>
-    <script src="../tipuesearch/tipuesearch.js"></script>
-    
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
   </body>
 </html>

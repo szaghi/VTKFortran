@@ -1,155 +1,174 @@
+<!-- -*- mode: jinja2 -*- -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-   <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
+      <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
     <meta name="author" content="Stefano Zaghi" >
     <link rel="icon" href="../favicon.png">
 
     <title>delete_tag &ndash; Lib_VTK_IO</title>
 
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="../css/pygments.css" rel="stylesheet">
     <link href="../css/font-awesome.min.css" rel="stylesheet">
     <link href="../css/local.css" rel="stylesheet">
-    <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    
-    <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="../js/svg-pan-zoom.min.js"></script>
-
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
           <a class="navbar-brand" href="../index.html">Lib_VTK_IO </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
-              <a href="#" class="dropdown-toggle"
-              data-toggle="dropdown" role="button"
-              aria-haspopup="true"
-     aria-expanded="false">Contents <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-            <li><a href="../lists/files.html">Source Files</a></li>
-            <li><a href="../lists/modules.html">Modules</a></li>
-            <li><a href="../lists/procedures.html">Procedures</a></li>
-            <li><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                   <li><a href="../lists/types.html">Derived Types</a></li>
-            <li><a href="../lists/programs.html">Programs</a></li>
-       
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
             </ul>
-        
-            </li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/files.html">Source Files</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/modules.html">Modules</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/procedures.html">Procedures</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                             <li class="visible-xs hidden-sm visible-lg"><a href="../lists/types.html">Derived Types</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/programs.html">Programs</a></li>
-          </ul>
-        <form action="../search.html" class="navbar-form navbar-right" role="search">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
         </div>
-<!--
-        <button type="submit" class="btn btn-default">Submit</button>
--->
-        </form>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+      </nav>
+    </div>
 
     <div class="container">
   <div class="row">
-    <h1>delete_tag    <small>Program</small>
+    <h1>delete_tag      <small>Program</small>
+      
     </h1>
-    <div class="row">
-  <div class="col-lg-12">
-<div class="well well-sm">
-  <ul class="list-inline" style="margin-bottom:0px;display:inline">
-     <li><i class="fa fa-list-ol"></i>
-       <a data-toggle="tooltip"
-    data-placement="bottom" data-html="true"
-    title=" 0.3% of total for programs.">30 statements</a>
-     </li> 
-    <li><i class="fa fa-code"></i><a href="../src/delete_tag.f90"> Source File</a></li>
-  </ul>
-  <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/delete_tag.f90.html'>delete_tag.f90</a></li>
-     <li class="active">delete_tag</li>
-  </ol>
-</div>
-</div>
-</div>
-<script>
-  $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-  })
-</script>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.3% of total for programs.">30 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/delete_tag.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/delete_tag.f90.html'>delete_tag.f90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">delete_tag</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
 
   </div>
   
   <div class="row">
     <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
-    <div id="sidebar">
-  <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#vars-0">Variables</a></h3></div>
-  <div id="vars-0" class="panel-collapse collapse">
-    <div class="list-group">
-      <a class="list-group-item" href="../program/delete_tag.html#variable-source~12">source</a>
-      <a class="list-group-item" href="../program/delete_tag.html#variable-parsed~4">parsed</a>
-      <a class="list-group-item" href="../program/delete_tag.html#variable-a_file">a_file</a>
-      <a class="list-group-item" href="../program/delete_tag.html#variable-a_tag~4">a_tag</a>
-      <a class="list-group-item" href="../program/delete_tag.html#variable-another_tag">another_tag</a>
-      <a class="list-group-item" href="../program/delete_tag.html#variable-test_passed~10">test_passed</a>
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../program/delete_tag.html#variable-source~3">source</a>
+            <a class="list-group-item" href="../program/delete_tag.html#variable-parsed~3">parsed</a>
+            <a class="list-group-item" href="../program/delete_tag.html#variable-a_file">a_file</a>
+            <a class="list-group-item" href="../program/delete_tag.html#variable-a_tag~3">a_tag</a>
+            <a class="list-group-item" href="../program/delete_tag.html#variable-another_tag">another_tag</a>
+            <a class="list-group-item" href="../program/delete_tag.html#variable-test_passed~67">test_passed</a>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../program/delete_tag.html#src">delete_tag</a>
-  </div>
-</div>
 
-</div>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../program/delete_tag.html#src">delete_tag</a>
+      </div>
+    </div>
+
+
+  </div>
 
     </div>
     
     <div class="col-md-9" id='text'>
-        <div class="panel panel-default">
-      <div class="panel-heading">
-  <h3 class="panel-title">Uses</h3>
-      </div>
-      <ul class="list-group">
-      <li class="list-group-item">
-  <ul class="list-inline">
-    <li><a href='../module/foxy.html'>foxy</a></li>
-  </ul>
-      </li>
-      <li class="list-group-item">
-  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/foxy.html'>foxy</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
@@ -157,210 +176,210 @@
 <!-- Title: program~~delete_tag~~UsesGraph Pages: 1 -->
 <svg id="programdelete_tagUsesGraph" width="641pt" height="81pt"
  viewBox="0.00 0.00 641.00 80.93" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="program~~delete_tag~~UsesGraph" class="graph" transform="scale(2.29 2.29) rotate(0) translate(4 181.6)">
+<g id="program~~delete_tag~~UsesGraph" class="graph" transform="scale(0.44 0.44) rotate(0) translate(4 181.6)">
 <title>program~~delete_tag~~UsesGraph</title>
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-181.6 1466,-181.6 1466,4 -4,4"/>
 <!-- program~delete_tag -->
 <g id="program~~delete_tag~~UsesGraph_node1" class="node">
 <title>program~delete_tag</title>
-<polygon fill="none" stroke="black" points="1462,-144 1393,-144 1393,-120 1462,-120 1462,-144"/>
-<text text-anchor="middle" x="1427.5" y="-129.6" font-family="Helvetica,sans-Serif" font-size="10.50">delete_tag</text>
+<polygon fill="none" stroke="black" points="1462,-104 1393,-104 1393,-80 1462,-80 1462,-104"/>
+<text text-anchor="middle" x="1427.5" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50">delete_tag</text>
 </g>
 <!-- module~foxy -->
 <g id="program~~delete_tag~~UsesGraph_node2" class="node">
 <title>module~foxy</title>
-<g id="a_program~~delete_tag~~UsesGraph_node2"><a xlink:href=".././module/foxy.html" xlink:title="foxy">
-<polygon fill="#337ab7" stroke="#337ab7" points="1357,-144 1303,-144 1303,-120 1357,-120 1357,-144"/>
-<text text-anchor="middle" x="1330" y="-129.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">foxy</text>
+<g id="a_program~~delete_tag~~UsesGraph_node2"><a xlink:href="../module/foxy.html" xlink:title="foxy">
+<polygon fill="#337ab7" stroke="#337ab7" points="1357,-104 1303,-104 1303,-80 1357,-80 1357,-104"/>
+<text text-anchor="middle" x="1330" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">foxy</text>
 </a>
 </g>
 </g>
 <!-- program~delete_tag&#45;&gt;module~foxy -->
 <g id="program~~delete_tag~~UsesGraph_edge1" class="edge">
 <title>program~delete_tag&#45;&gt;module~foxy</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1392.83,-132C1384.6,-132 1375.75,-132 1367.4,-132"/>
-<polygon fill="#000000" stroke="#000000" points="1367.17,-128.5 1357.17,-132 1367.17,-135.5 1367.17,-128.5"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1392.83,-92C1384.6,-92 1375.75,-92 1367.4,-92"/>
+<polygon fill="#000000" stroke="#000000" points="1367.17,-88.5 1357.17,-92 1367.17,-95.5 1367.17,-88.5"/>
 </g>
-<!-- module~penf~2 -->
+<!-- module~foxy_xml_file -->
 <g id="program~~delete_tag~~UsesGraph_node3" class="node">
-<title>module~penf~2</title>
-<g id="a_program~~delete_tag~~UsesGraph_node3"><a xlink:href=".././module/penf~2.html" xlink:title="penf">
-<polygon fill="#337ab7" stroke="#337ab7" points="537,-124 483,-124 483,-100 537,-100 537,-124"/>
-<text text-anchor="middle" x="510" y="-109.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf</text>
+<title>module~foxy_xml_file</title>
+<g id="a_program~~delete_tag~~UsesGraph_node3"><a xlink:href="../module/foxy_xml_file.html" xlink:title="foxy_xml_file">
+<polygon fill="#337ab7" stroke="#337ab7" points="1267,-104 1186,-104 1186,-80 1267,-80 1267,-104"/>
+<text text-anchor="middle" x="1226.5" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">foxy_xml_file</text>
 </a>
 </g>
 </g>
-<!-- module~foxy&#45;&gt;module~penf~2 -->
+<!-- module~foxy&#45;&gt;module~foxy_xml_file -->
 <g id="program~~delete_tag~~UsesGraph_edge2" class="edge">
-<title>module~foxy&#45;&gt;module~penf~2</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1225.5,-152C1175.75,-152.55 1052.15,-128.7 1002.5,-132"/>
+<title>module~foxy&#45;&gt;module~foxy_xml_file</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1302.86,-92C1295.09,-92 1286.31,-92 1277.55,-92"/>
+<polygon fill="#000000" stroke="#000000" points="1277.35,-88.5 1267.35,-92 1277.35,-95.5 1277.35,-88.5"/>
 </g>
 <!-- module~foxy_xml_tag -->
 <g id="program~~delete_tag~~UsesGraph_node4" class="node">
 <title>module~foxy_xml_tag</title>
-<g id="a_program~~delete_tag~~UsesGraph_node4"><a xlink:href=".././module/foxy_xml_tag.html" xlink:title="foxy_xml_tag">
-<polygon fill="#337ab7" stroke="#337ab7" points="1150,-124 1068,-124 1068,-100 1150,-100 1150,-124"/>
-<text text-anchor="middle" x="1109" y="-109.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">foxy_xml_tag</text>
+<g id="a_program~~delete_tag~~UsesGraph_node4"><a xlink:href="../module/foxy_xml_tag.html" xlink:title="foxy_xml_tag">
+<polygon fill="#337ab7" stroke="#337ab7" points="1150,-104 1068,-104 1068,-80 1150,-80 1150,-104"/>
+<text text-anchor="middle" x="1109" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">foxy_xml_tag</text>
 </a>
 </g>
 </g>
 <!-- module~foxy&#45;&gt;module~foxy_xml_tag -->
 <g id="program~~delete_tag~~UsesGraph_edge3" class="edge">
 <title>module~foxy&#45;&gt;module~foxy_xml_tag</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1302.99,-139.86C1282.65,-145.33 1253.54,-151.71 1227.5,-152"/>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1225.5,-152C1195.24,-152.34 1162.84,-139.88 1140.09,-128.79"/>
-<polygon fill="#000000" stroke="#000000" points="1141.46,-125.56 1130.96,-124.15 1138.29,-131.8 1141.46,-125.56"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1302.94,-81.06C1292.04,-77.04 1279.11,-73 1267,-71 1231.48,-65.15 1221.67,-66.16 1186,-71 1176.03,-72.35 1165.52,-74.66 1155.6,-77.26"/>
+<polygon fill="#000000" stroke="#000000" points="1154.63,-73.9 1145.92,-79.94 1156.49,-80.65 1154.63,-73.9"/>
 </g>
-<!-- module~foxy_xml_file -->
+<!-- module~penf~5 -->
 <g id="program~~delete_tag~~UsesGraph_node5" class="node">
-<title>module~foxy_xml_file</title>
-<g id="a_program~~delete_tag~~UsesGraph_node5"><a xlink:href=".././module/foxy_xml_file.html" xlink:title="foxy_xml_file">
-<polygon fill="#337ab7" stroke="#337ab7" points="1267,-124 1186,-124 1186,-100 1267,-100 1267,-124"/>
-<text text-anchor="middle" x="1226.5" y="-109.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">foxy_xml_file</text>
+<title>module~penf~5</title>
+<g id="a_program~~delete_tag~~UsesGraph_node5"><a xlink:href="../module/penf~5.html" xlink:title="penf">
+<polygon fill="#337ab7" stroke="#337ab7" points="537,-124 483,-124 483,-100 537,-100 537,-124"/>
+<text text-anchor="middle" x="510" y="-109.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf</text>
 </a>
 </g>
 </g>
-<!-- module~foxy&#45;&gt;module~foxy_xml_file -->
+<!-- module~foxy&#45;&gt;module~penf~5 -->
 <g id="program~~delete_tag~~UsesGraph_edge4" class="edge">
-<title>module~foxy&#45;&gt;module~foxy_xml_file</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1302.86,-126.85C1295.01,-125.3 1286.12,-123.55 1277.27,-121.81"/>
-<polygon fill="#000000" stroke="#000000" points="1277.84,-118.35 1267.35,-119.85 1276.49,-125.22 1277.84,-118.35"/>
+<title>module~foxy&#45;&gt;module~penf~5</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1302.79,-102.21C1291.87,-106.12 1278.97,-110.28 1267,-113 1198.46,-128.58 1180.04,-126.08 1110,-132"/>
 </g>
-<!-- module~penf_b_size -->
-<g id="program~~delete_tag~~UsesGraph_node6" class="node">
-<title>module~penf_b_size</title>
-<g id="a_program~~delete_tag~~UsesGraph_node6"><a xlink:href=".././module/penf_b_size.html" xlink:title="penf_b_size">
-<polygon fill="#337ab7" stroke="#337ab7" points="316,-144 242,-144 242,-120 316,-120 316,-144"/>
-<text text-anchor="middle" x="279" y="-129.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf_b_size</text>
-</a>
-</g>
-</g>
-<!-- module~penf~2&#45;&gt;module~penf_b_size -->
+<!-- module~foxy_xml_file&#45;&gt;module~foxy_xml_tag -->
 <g id="program~~delete_tag~~UsesGraph_edge5" class="edge">
-<title>module~penf~2&#45;&gt;module~penf_b_size</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M495.53,-124C476.9,-139.56 441.47,-165.47 405.5,-172"/>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M403.5,-172C386.64,-175.06 346.24,-160.37 316.22,-147.94"/>
-<polygon fill="#000000" stroke="#000000" points="317.45,-144.67 306.87,-144.01 314.73,-151.12 317.45,-144.67"/>
+<title>module~foxy_xml_file&#45;&gt;module~foxy_xml_tag</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1185.75,-92C1177.59,-92 1168.89,-92 1160.4,-92"/>
+<polygon fill="#000000" stroke="#000000" points="1160.21,-88.5 1150.21,-92 1160.21,-95.5 1160.21,-88.5"/>
 </g>
-<!-- module~penf_stringify~3 -->
-<g id="program~~delete_tag~~UsesGraph_node8" class="node">
-<title>module~penf_stringify~3</title>
-<g id="a_program~~delete_tag~~UsesGraph_node8"><a xlink:href=".././module/penf_stringify~3.html" xlink:title="penf_stringify">
-<polygon fill="#337ab7" stroke="#337ab7" points="447,-124 362,-124 362,-100 447,-100 447,-124"/>
-<text text-anchor="middle" x="404.5" y="-109.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf_stringify</text>
-</a>
-</g>
-</g>
-<!-- module~penf~2&#45;&gt;module~penf_stringify~3 -->
-<g id="program~~delete_tag~~UsesGraph_edge7" class="edge">
-<title>module~penf~2&#45;&gt;module~penf_stringify~3</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M482.88,-112C475.13,-112 466.36,-112 457.58,-112"/>
-<polygon fill="#000000" stroke="#000000" points="457.32,-108.5 447.32,-112 457.32,-115.5 457.32,-108.5"/>
-</g>
-<!-- module~penf_global_parameters_variables~2 -->
-<g id="program~~delete_tag~~UsesGraph_node9" class="node">
-<title>module~penf_global_parameters_variables~2</title>
-<g id="a_program~~delete_tag~~UsesGraph_node9"><a xlink:href=".././module/penf_global_parameters_variables~2.html" xlink:title="penf_global_parameters_variables">
-<polygon fill="#337ab7" stroke="#337ab7" points="196,-144 0,-144 0,-120 196,-120 196,-144"/>
-<text text-anchor="middle" x="98" y="-129.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf_global_parameters_variables</text>
-</a>
-</g>
-</g>
-<!-- module~penf~2&#45;&gt;module~penf_global_parameters_variables~2 -->
+<!-- module~foxy_xml_file&#45;&gt;module~penf~5 -->
 <g id="program~~delete_tag~~UsesGraph_edge6" class="edge">
-<title>module~penf~2&#45;&gt;module~penf_global_parameters_variables~2</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M403.5,-172C312.5,-188.52 205.01,-164.28 145.17,-146.94"/>
-<polygon fill="#000000" stroke="#000000" points="145.85,-143.5 135.27,-144.01 143.86,-150.21 145.85,-143.5"/>
+<title>module~foxy_xml_file&#45;&gt;module~penf~5</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1201.93,-104.06C1179.12,-114.79 1143.2,-129.19 1110,-132"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1108,-132C1061.28,-135.95 1049.19,-127.69 1002.5,-132"/>
 </g>
-<!-- module~foxy_xml_tag&#45;&gt;module~penf~2 -->
-<g id="program~~delete_tag~~UsesGraph_edge8" class="edge">
-<title>module~foxy_xml_tag&#45;&gt;module~penf~2</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1067.93,-121.46C1048.33,-125.61 1024.31,-129.99 1002.5,-132"/>
+<!-- module~foxy_xml_tag&#45;&gt;module~penf~5 -->
+<g id="program~~delete_tag~~UsesGraph_edge7" class="edge">
+<title>module~foxy_xml_tag&#45;&gt;module~penf~5</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1086.61,-104.05C1065.87,-114.77 1033.12,-129.18 1002.5,-132"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1000.5,-132C948.72,-136.78 935.32,-127.68 883.5,-132"/>
 </g>
-<!-- module~stringifor~2 -->
-<g id="program~~delete_tag~~UsesGraph_node7" class="node">
-<title>module~stringifor~2</title>
-<g id="a_program~~delete_tag~~UsesGraph_node7"><a xlink:href=".././module/stringifor~2.html" xlink:title="stringifor">
+<!-- module~stringifor -->
+<g id="program~~delete_tag~~UsesGraph_node9" class="node">
+<title>module~stringifor</title>
+<g id="a_program~~delete_tag~~UsesGraph_node9"><a xlink:href="../module/stringifor.html" xlink:title="stringifor">
 <polygon fill="#337ab7" stroke="#337ab7" points="1032,-104 971,-104 971,-80 1032,-80 1032,-104"/>
 <text text-anchor="middle" x="1001.5" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">stringifor</text>
 </a>
 </g>
 </g>
-<!-- module~foxy_xml_tag&#45;&gt;module~stringifor~2 -->
-<g id="program~~delete_tag~~UsesGraph_edge9" class="edge">
-<title>module~foxy_xml_tag&#45;&gt;module~stringifor~2</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1067.81,-104.38C1059.37,-102.78 1050.47,-101.09 1042.05,-99.5"/>
-<polygon fill="#000000" stroke="#000000" points="1042.55,-96.03 1032.07,-97.61 1041.25,-102.91 1042.55,-96.03"/>
+<!-- module~foxy_xml_tag&#45;&gt;module~stringifor -->
+<g id="program~~delete_tag~~UsesGraph_edge8" class="edge">
+<title>module~foxy_xml_tag&#45;&gt;module~stringifor</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1067.81,-92C1059.46,-92 1050.66,-92 1042.32,-92"/>
+<polygon fill="#000000" stroke="#000000" points="1042.07,-88.5 1032.07,-92 1042.07,-95.5 1042.07,-88.5"/>
 </g>
-<!-- module~foxy_xml_file&#45;&gt;module~penf~2 -->
-<g id="program~~delete_tag~~UsesGraph_edge10" class="edge">
-<title>module~foxy_xml_file&#45;&gt;module~penf~2</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1189.82,-99.94C1177.37,-96.3 1163.21,-92.8 1150,-91 1113.89,-86.07 1103.03,-80.94 1068,-91 1034.99,-100.48 1036.7,-128.85 1002.5,-132"/>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1000.5,-132C948.61,-135.44 935.32,-127.68 883.5,-132"/>
-</g>
-<!-- module~foxy_xml_file&#45;&gt;module~foxy_xml_tag -->
-<g id="program~~delete_tag~~UsesGraph_edge11" class="edge">
-<title>module~foxy_xml_file&#45;&gt;module~foxy_xml_tag</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1185.75,-112C1177.59,-112 1168.89,-112 1160.4,-112"/>
-<polygon fill="#000000" stroke="#000000" points="1160.21,-108.5 1150.21,-112 1160.21,-115.5 1160.21,-108.5"/>
-</g>
-<!-- module~penf_b_size&#45;&gt;module~penf_global_parameters_variables~2 -->
-<g id="program~~delete_tag~~UsesGraph_edge12" class="edge">
-<title>module~penf_b_size&#45;&gt;module~penf_global_parameters_variables~2</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M241.78,-132C231.22,-132 219.1,-132 206.49,-132"/>
-<polygon fill="#000000" stroke="#000000" points="206.29,-128.5 196.29,-132 206.29,-135.5 206.29,-128.5"/>
-</g>
-<!-- module~stringifor~2&#45;&gt;module~penf~2 -->
-<g id="program~~delete_tag~~UsesGraph_edge13" class="edge">
-<title>module~stringifor~2&#45;&gt;module~penf~2</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M976.61,-104.06C953.48,-114.79 917.09,-129.2 883.5,-132"/>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M881.5,-132C831.01,-136.21 817.98,-127.68 767.5,-132"/>
-</g>
-<!-- module~stringifor_string_t -->
-<g id="program~~delete_tag~~UsesGraph_node10" class="node">
-<title>module~stringifor_string_t</title>
-<g id="a_program~~delete_tag~~UsesGraph_node10"><a xlink:href=".././module/stringifor_string_t.html" xlink:title="stringifor_string_t">
-<polygon fill="#337ab7" stroke="#337ab7" points="935,-104 830,-104 830,-80 935,-80 935,-104"/>
-<text text-anchor="middle" x="882.5" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">stringifor_string_t</text>
+<!-- module~penf_b_size~6 -->
+<g id="program~~delete_tag~~UsesGraph_node6" class="node">
+<title>module~penf_b_size~6</title>
+<g id="a_program~~delete_tag~~UsesGraph_node6"><a xlink:href="../module/penf_b_size~6.html" xlink:title="penf_b_size">
+<polygon fill="#337ab7" stroke="#337ab7" points="316,-144 242,-144 242,-120 316,-120 316,-144"/>
+<text text-anchor="middle" x="279" y="-129.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf_b_size</text>
 </a>
 </g>
 </g>
-<!-- module~stringifor~2&#45;&gt;module~stringifor_string_t -->
-<g id="program~~delete_tag~~UsesGraph_edge14" class="edge">
-<title>module~stringifor~2&#45;&gt;module~stringifor_string_t</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M970.98,-92C963.11,-92 954.3,-92 945.39,-92"/>
-<polygon fill="#000000" stroke="#000000" points="945.33,-88.5 935.33,-92 945.33,-95.5 945.33,-88.5"/>
+<!-- module~penf~5&#45;&gt;module~penf_b_size~6 -->
+<g id="program~~delete_tag~~UsesGraph_edge9" class="edge">
+<title>module~penf~5&#45;&gt;module~penf_b_size~6</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M495.53,-124C476.9,-139.56 441.47,-165.47 405.5,-172"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M403.5,-172C386.64,-175.06 346.24,-160.37 316.22,-147.94"/>
+<polygon fill="#000000" stroke="#000000" points="317.45,-144.67 306.87,-144.01 314.73,-151.12 317.45,-144.67"/>
 </g>
-<!-- module~penf_stringify~3&#45;&gt;module~penf_b_size -->
-<g id="program~~delete_tag~~UsesGraph_edge16" class="edge">
-<title>module~penf_stringify~3&#45;&gt;module~penf_b_size</title>
+<!-- module~penf_global_parameters_variables~2 -->
+<g id="program~~delete_tag~~UsesGraph_node7" class="node">
+<title>module~penf_global_parameters_variables~2</title>
+<g id="a_program~~delete_tag~~UsesGraph_node7"><a xlink:href="../module/penf_global_parameters_variables~2.html" xlink:title="penf_global_parameters_variables">
+<polygon fill="#337ab7" stroke="#337ab7" points="196,-144 0,-144 0,-120 196,-120 196,-144"/>
+<text text-anchor="middle" x="98" y="-129.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf_global_parameters_variables</text>
+</a>
+</g>
+</g>
+<!-- module~penf~5&#45;&gt;module~penf_global_parameters_variables~2 -->
+<g id="program~~delete_tag~~UsesGraph_edge10" class="edge">
+<title>module~penf~5&#45;&gt;module~penf_global_parameters_variables~2</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M403.5,-172C312.5,-188.52 205.01,-164.28 145.17,-146.94"/>
+<polygon fill="#000000" stroke="#000000" points="145.85,-143.5 135.27,-144.01 143.86,-150.21 145.85,-143.5"/>
+</g>
+<!-- module~penf_stringify~4 -->
+<g id="program~~delete_tag~~UsesGraph_node8" class="node">
+<title>module~penf_stringify~4</title>
+<g id="a_program~~delete_tag~~UsesGraph_node8"><a xlink:href="../module/penf_stringify~4.html" xlink:title="penf_stringify">
+<polygon fill="#337ab7" stroke="#337ab7" points="447,-124 362,-124 362,-100 447,-100 447,-124"/>
+<text text-anchor="middle" x="404.5" y="-109.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf_stringify</text>
+</a>
+</g>
+</g>
+<!-- module~penf~5&#45;&gt;module~penf_stringify~4 -->
+<g id="program~~delete_tag~~UsesGraph_edge11" class="edge">
+<title>module~penf~5&#45;&gt;module~penf_stringify~4</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M482.88,-112C475.13,-112 466.36,-112 457.58,-112"/>
+<polygon fill="#000000" stroke="#000000" points="457.32,-108.5 447.32,-112 457.32,-115.5 457.32,-108.5"/>
+</g>
+<!-- module~penf_b_size~6&#45;&gt;module~penf_global_parameters_variables~2 -->
+<g id="program~~delete_tag~~UsesGraph_edge12" class="edge">
+<title>module~penf_b_size~6&#45;&gt;module~penf_global_parameters_variables~2</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M241.78,-132C231.22,-132 219.1,-132 206.49,-132"/>
+<polygon fill="#000000" stroke="#000000" points="206.29,-128.5 196.29,-132 206.29,-135.5 206.29,-128.5"/>
+</g>
+<!-- module~penf_stringify~4&#45;&gt;module~penf_b_size~6 -->
+<g id="program~~delete_tag~~UsesGraph_edge14" class="edge">
+<title>module~penf_stringify~4&#45;&gt;module~penf_b_size~6</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M361.69,-118.77C350.32,-120.61 337.95,-122.62 326.35,-124.49"/>
 <polygon fill="#000000" stroke="#000000" points="325.71,-121.05 316.4,-126.11 326.83,-127.96 325.71,-121.05"/>
 </g>
-<!-- module~penf_stringify~3&#45;&gt;module~penf_global_parameters_variables~2 -->
-<g id="program~~delete_tag~~UsesGraph_edge17" class="edge">
-<title>module~penf_stringify~3&#45;&gt;module~penf_global_parameters_variables~2</title>
+<!-- module~penf_stringify~4&#45;&gt;module~penf_global_parameters_variables~2 -->
+<g id="program~~delete_tag~~UsesGraph_edge15" class="edge">
+<title>module~penf_stringify~4&#45;&gt;module~penf_global_parameters_variables~2</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M361.67,-111.36C350.12,-111.21 337.57,-111.07 326,-111 284.22,-110.73 273.65,-107.73 232,-111 212.45,-112.53 191.44,-115.32 172.01,-118.37"/>
 <polygon fill="#000000" stroke="#000000" points="171.33,-114.93 162.02,-119.98 172.45,-121.84 171.33,-114.93"/>
 </g>
 <!-- iso_fortran_env -->
-<g id="program~~delete_tag~~UsesGraph_node11" class="node">
+<g id="program~~delete_tag~~UsesGraph_node10" class="node">
 <title>iso_fortran_env</title>
-<g id="a_program~~delete_tag~~UsesGraph_node11"><a xlink:href="https://gcc.gnu.org/onlinedocs/gfortran/ISO_005fFORTRAN_005fENV.html" xlink:title="iso_fortran_env">
+<g id="a_program~~delete_tag~~UsesGraph_node10"><a xlink:href="http://fortranwiki.org/fortran/show/iso_fortran_env" xlink:title="iso_fortran_env">
 <polygon fill="#337ab7" stroke="#337ab7" points="326,-64 232,-64 232,-40 326,-40 326,-64"/>
 <text text-anchor="middle" x="279" y="-49.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">iso_fortran_env</text>
 </a>
 </g>
 </g>
-<!-- module~penf_stringify~3&#45;&gt;iso_fortran_env -->
-<g id="program~~delete_tag~~UsesGraph_edge15" class="edge">
-<title>module~penf_stringify~3&#45;&gt;iso_fortran_env</title>
+<!-- module~penf_stringify~4&#45;&gt;iso_fortran_env -->
+<g id="program~~delete_tag~~UsesGraph_edge13" class="edge">
+<title>module~penf_stringify~4&#45;&gt;iso_fortran_env</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M378.51,-99.86C360.01,-90.87 334.59,-78.52 314.21,-68.62"/>
 <polygon fill="#000000" stroke="#000000" points="315.48,-65.35 304.95,-64.12 312.42,-71.64 315.48,-65.35"/>
 </g>
-<!-- module~stringifor_string_t&#45;&gt;module~penf~2 -->
-<g id="program~~delete_tag~~UsesGraph_edge19" class="edge">
-<title>module~stringifor_string_t&#45;&gt;module~penf~2</title>
+<!-- module~stringifor&#45;&gt;module~penf~5 -->
+<g id="program~~delete_tag~~UsesGraph_edge16" class="edge">
+<title>module~stringifor&#45;&gt;module~penf~5</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M976.61,-104.06C953.48,-114.79 917.09,-129.2 883.5,-132"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M881.5,-132C831.01,-136.21 817.98,-127.68 767.5,-132"/>
+</g>
+<!-- module~stringifor_string_t -->
+<g id="program~~delete_tag~~UsesGraph_node11" class="node">
+<title>module~stringifor_string_t</title>
+<g id="a_program~~delete_tag~~UsesGraph_node11"><a xlink:href="../module/stringifor_string_t.html" xlink:title="stringifor_string_t">
+<polygon fill="#337ab7" stroke="#337ab7" points="935,-104 830,-104 830,-80 935,-80 935,-104"/>
+<text text-anchor="middle" x="882.5" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">stringifor_string_t</text>
+</a>
+</g>
+</g>
+<!-- module~stringifor&#45;&gt;module~stringifor_string_t -->
+<g id="program~~delete_tag~~UsesGraph_edge17" class="edge">
+<title>module~stringifor&#45;&gt;module~stringifor_string_t</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M970.98,-92C963.11,-92 954.3,-92 945.39,-92"/>
+<polygon fill="#000000" stroke="#000000" points="945.33,-88.5 935.33,-92 945.33,-95.5 945.33,-88.5"/>
+</g>
+<!-- module~stringifor_string_t&#45;&gt;module~penf~5 -->
+<g id="program~~delete_tag~~UsesGraph_edge21" class="edge">
+<title>module~stringifor_string_t&#45;&gt;module~penf~5</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M858.26,-104.06C835.75,-114.78 800.31,-129.19 767.5,-132"/>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M765.5,-132C709.48,-136.79 695.22,-132.02 639,-132"/>
 </g>
@@ -369,10 +388,25 @@
 <title>module~stringifor_string_t&#45;&gt;iso_fortran_env</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M765.5,-52C655.72,-24.76 623.59,-41.11 511,-52"/>
 </g>
-<!-- module~face -->
+<!-- module~befor64~2 -->
 <g id="program~~delete_tag~~UsesGraph_node12" class="node">
+<title>module~befor64~2</title>
+<g id="a_program~~delete_tag~~UsesGraph_node12"><a xlink:href="../module/befor64~2.html" xlink:title="befor64">
+<polygon fill="#337ab7" stroke="#337ab7" points="794,-104 739,-104 739,-80 794,-80 794,-104"/>
+<text text-anchor="middle" x="766.5" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">befor64</text>
+</a>
+</g>
+</g>
+<!-- module~stringifor_string_t&#45;&gt;module~befor64~2 -->
+<g id="program~~delete_tag~~UsesGraph_edge19" class="edge">
+<title>module~stringifor_string_t&#45;&gt;module~befor64~2</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M829.84,-92C821.23,-92 812.47,-92 804.33,-92"/>
+<polygon fill="#000000" stroke="#000000" points="804.07,-88.5 794.07,-92 804.07,-95.5 804.07,-88.5"/>
+</g>
+<!-- module~face -->
+<g id="program~~delete_tag~~UsesGraph_node13" class="node">
 <title>module~face</title>
-<g id="a_program~~delete_tag~~UsesGraph_node12"><a xlink:href=".././module/face.html" xlink:title="face">
+<g id="a_program~~delete_tag~~UsesGraph_node13"><a xlink:href="../module/face.html" xlink:title="face">
 <polygon fill="#337ab7" stroke="#337ab7" points="665,-24 611,-24 611,0 665,0 665,-24"/>
 <text text-anchor="middle" x="638" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">face</text>
 </a>
@@ -385,61 +419,60 @@
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M765.5,-52C734.51,-44.31 700,-33.22 674.86,-24.67"/>
 <polygon fill="#000000" stroke="#000000" points="675.97,-21.35 665.38,-21.41 673.7,-27.97 675.97,-21.35"/>
 </g>
-<!-- module~befor64~4 -->
-<g id="program~~delete_tag~~UsesGraph_node13" class="node">
-<title>module~befor64~4</title>
-<g id="a_program~~delete_tag~~UsesGraph_node13"><a xlink:href=".././module/befor64~4.html" xlink:title="befor64">
-<polygon fill="#337ab7" stroke="#337ab7" points="794,-104 739,-104 739,-80 794,-80 794,-104"/>
-<text text-anchor="middle" x="766.5" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">befor64</text>
-</a>
-</g>
-</g>
-<!-- module~stringifor_string_t&#45;&gt;module~befor64~4 -->
-<g id="program~~delete_tag~~UsesGraph_edge21" class="edge">
-<title>module~stringifor_string_t&#45;&gt;module~befor64~4</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M829.84,-92C821.23,-92 812.47,-92 804.33,-92"/>
-<polygon fill="#000000" stroke="#000000" points="804.07,-88.5 794.07,-92 804.07,-95.5 804.07,-88.5"/>
-</g>
-<!-- module~face&#45;&gt;iso_fortran_env -->
-<g id="program~~delete_tag~~UsesGraph_edge22" class="edge">
-<title>module~face&#45;&gt;iso_fortran_env</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M610.75,-21.9C579.92,-33.25 530.51,-50.49 511,-52"/>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M509,-52C450.22,-56.56 382.7,-55.84 336.29,-54.42"/>
-<polygon fill="#000000" stroke="#000000" points="336.25,-50.92 326.14,-54.09 336.02,-57.92 336.25,-50.92"/>
-</g>
-<!-- module~befor64~4&#45;&gt;module~penf~2 -->
+<!-- module~befor64~2&#45;&gt;module~penf~5 -->
 <g id="program~~delete_tag~~UsesGraph_edge23" class="edge">
-<title>module~befor64~4&#45;&gt;module~penf~2</title>
+<title>module~befor64~2&#45;&gt;module~penf~5</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M742.41,-104.01C717.56,-115.79 676.54,-132.01 639,-132"/>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M637,-132C606.44,-131.99 572.21,-126.18 547.16,-120.83"/>
 <polygon fill="#000000" stroke="#000000" points="547.88,-117.4 537.35,-118.66 546.36,-124.23 547.88,-117.4"/>
 </g>
-<!-- module~befor64_pack_data_m~4 -->
+<!-- module~befor64_pack_data_m~3 -->
 <g id="program~~delete_tag~~UsesGraph_node14" class="node">
-<title>module~befor64_pack_data_m~4</title>
-<g id="a_program~~delete_tag~~UsesGraph_node14"><a xlink:href=".././module/befor64_pack_data_m~4.html" xlink:title="befor64_pack_data_m">
+<title>module~befor64_pack_data_m~3</title>
+<g id="a_program~~delete_tag~~UsesGraph_node14"><a xlink:href="../module/befor64_pack_data_m~3.html" xlink:title="befor64_pack_data_m">
 <polygon fill="#337ab7" stroke="#337ab7" points="703,-104 573,-104 573,-80 703,-80 703,-104"/>
 <text text-anchor="middle" x="638" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">befor64_pack_data_m</text>
 </a>
 </g>
 </g>
-<!-- module~befor64~4&#45;&gt;module~befor64_pack_data_m~4 -->
-<g id="program~~delete_tag~~UsesGraph_edge24" class="edge">
-<title>module~befor64~4&#45;&gt;module~befor64_pack_data_m~4</title>
+<!-- module~befor64~2&#45;&gt;module~befor64_pack_data_m~3 -->
+<g id="program~~delete_tag~~UsesGraph_edge22" class="edge">
+<title>module~befor64~2&#45;&gt;module~befor64_pack_data_m~3</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M738.98,-92C731.21,-92 722.31,-92 713.1,-92"/>
 <polygon fill="#000000" stroke="#000000" points="713.01,-88.5 703.01,-92 713.01,-95.5 713.01,-88.5"/>
 </g>
-<!-- module~befor64_pack_data_m~4&#45;&gt;module~penf~2 -->
+<!-- module~face&#45;&gt;iso_fortran_env -->
+<g id="program~~delete_tag~~UsesGraph_edge24" class="edge">
+<title>module~face&#45;&gt;iso_fortran_env</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M610.75,-21.9C579.92,-33.25 530.51,-50.49 511,-52"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M509,-52C450.22,-56.56 382.7,-55.84 336.29,-54.42"/>
+<polygon fill="#000000" stroke="#000000" points="336.25,-50.92 326.14,-54.09 336.02,-57.92 336.25,-50.92"/>
+</g>
+<!-- module~befor64_pack_data_m~3&#45;&gt;module~penf~5 -->
 <g id="program~~delete_tag~~UsesGraph_edge25" class="edge">
-<title>module~befor64_pack_data_m~4&#45;&gt;module~penf~2</title>
+<title>module~befor64_pack_data_m~3&#45;&gt;module~penf~5</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M572.89,-102.18C564.1,-103.57 555.34,-104.96 547.29,-106.24"/>
 <polygon fill="#000000" stroke="#000000" points="546.5,-102.82 537.17,-107.85 547.6,-109.73 546.5,-102.82"/>
 </g>
 </g>
 </svg>
-</div><script>var panprogramdelete_tagUsesGraph = svgPanZoom('#programdelete_tagUsesGraph', {zoomEnabled: true,controlIconsEnabled: true, fit: true, center: true,}); </script><div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div><div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog"><div class="modal-dialog modal-lg" role="document"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="-graph-help-label">Graph Key</h4></div><div class="modal-body">
-    <p>Nodes of different colours represent the following: </p>
-    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+</div>                <script>
+                  var panprogramdelete_tagUsesGraph = svgPanZoom('#programdelete_tagUsesGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
@@ -489,82 +522,594 @@
 </g>
 </svg>
 
-    
-    <p>Solid arrows point from a submodule to the (sub)module which it is
-    descended from. Dashed arrows point from a module or program unit to 
-    modules which it uses.
-    </p>
-    </div></div></div></div>
-      </li>
-      </ul>
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
     </div>
 
     
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: program~~delete_tag~~CallsGraph Pages: 1 -->
+<svg id="programdelete_tagCallsGraph" width="641pt" height="210pt"
+ viewBox="0.00 0.00 641.00 210.11" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="program~~delete_tag~~CallsGraph" class="graph" transform="scale(0.63 0.63) rotate(0) translate(4 331)">
+<title>program~~delete_tag~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-331 1018,-331 1018,4 -4,4"/>
+<!-- program~delete_tag -->
+<g id="program~~delete_tag~~CallsGraph_node1" class="node">
+<title>program~delete_tag</title>
+<polygon fill="none" stroke="black" points="69,-243 0,-243 0,-219 69,-219 69,-243"/>
+<text text-anchor="middle" x="34.5" y="-228.6" font-family="Helvetica,sans-Serif" font-size="10.50">delete_tag</text>
+</g>
+<!-- proc~delete_tag -->
+<g id="program~~delete_tag~~CallsGraph_node2" class="node">
+<title>proc~delete_tag</title>
+<g id="a_program~~delete_tag~~CallsGraph_node2"><a xlink:href="../proc/delete_tag.html" xlink:title="xml_file%delete_tag">
+<polygon fill="#d9534f" stroke="#d9534f" points="225,-295 105,-295 105,-271 225,-271 225,-295"/>
+<text text-anchor="middle" x="165" y="-280.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_file%delete_tag</text>
+</a>
+</g>
+</g>
+<!-- program~delete_tag&#45;&gt;proc~delete_tag -->
+<g id="program~~delete_tag~~CallsGraph_edge1" class="edge">
+<title>program~delete_tag&#45;&gt;proc~delete_tag</title>
+<path fill="none" stroke="#000000" d="M65.3,-243.06C82.94,-250.2 105.48,-259.32 124.57,-267.05"/>
+<polygon fill="#000000" stroke="#000000" points="123.33,-270.32 133.91,-270.82 125.96,-263.83 123.33,-270.32"/>
+</g>
+<!-- proc~parse~2 -->
+<g id="program~~delete_tag~~CallsGraph_node3" class="node">
+<title>proc~parse~2</title>
+<g id="a_program~~delete_tag~~CallsGraph_node3"><a xlink:href="../proc/parse~2.html" xlink:title="xml_file%parse">
+<polygon fill="#d9534f" stroke="#d9534f" points="212,-100 118,-100 118,-76 212,-76 212,-100"/>
+<text text-anchor="middle" x="165" y="-85.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_file%parse</text>
+</a>
+</g>
+</g>
+<!-- program~delete_tag&#45;&gt;proc~parse~2 -->
+<g id="program~~delete_tag~~CallsGraph_edge2" class="edge">
+<title>program~delete_tag&#45;&gt;proc~parse~2</title>
+<path fill="none" stroke="#000000" d="M46.46,-218.81C68.65,-194.11 119.09,-137.98 146.11,-107.91"/>
+<polygon fill="#000000" stroke="#000000" points="148.99,-109.94 153.07,-100.16 143.78,-105.26 148.99,-109.94"/>
+</g>
+<!-- proc~stringify~2 -->
+<g id="program~~delete_tag~~CallsGraph_node4" class="node">
+<title>proc~stringify~2</title>
+<g id="a_program~~delete_tag~~CallsGraph_node4"><a xlink:href="../proc/stringify~2.html" xlink:title="xml_file%stringify">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="218,-243 112,-243 112,-219 218,-219 218,-243"/>
+<text text-anchor="middle" x="165" y="-228.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_file%stringify</text>
+</a>
+</g>
+</g>
+<!-- program~delete_tag&#45;&gt;proc~stringify~2 -->
+<g id="program~~delete_tag~~CallsGraph_edge3" class="edge">
+<title>program~delete_tag&#45;&gt;proc~stringify~2</title>
+<path fill="none" stroke="#000000" d="M69.26,-231C79.17,-231 90.33,-231 101.43,-231"/>
+<polygon fill="#000000" stroke="#000000" points="101.57,-234.5 111.57,-231 101.57,-227.5 101.57,-234.5"/>
+</g>
+<!-- proc~name -->
+<g id="program~~delete_tag~~CallsGraph_node6" class="node">
+<title>proc~name</title>
+<g id="a_program~~delete_tag~~CallsGraph_node6"><a xlink:href="../proc/name.html" xlink:title="xml_tag%name">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="388,-306 293,-306 293,-282 388,-282 388,-306"/>
+<text text-anchor="middle" x="340.5" y="-291.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%name</text>
+</a>
+</g>
+</g>
+<!-- proc~delete_tag&#45;&gt;proc~name -->
+<g id="program~~delete_tag~~CallsGraph_edge4" class="edge">
+<title>proc~delete_tag&#45;&gt;proc~name</title>
+<path fill="none" stroke="#000000" d="M225.22,-286.75C243.86,-287.94 264.39,-289.24 282.84,-290.41"/>
+<polygon fill="#000000" stroke="#000000" points="282.65,-293.9 292.85,-291.04 283.1,-286.92 282.65,-293.9"/>
+</g>
+<!-- proc~load_file_as_stream -->
+<g id="program~~delete_tag~~CallsGraph_node5" class="node">
+<title>proc~load_file_as_stream</title>
+<g id="a_program~~delete_tag~~CallsGraph_node5"><a xlink:href="../proc/load_file_as_stream.html" xlink:title="load_file_as_stream">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="399,-58 282,-58 282,-34 399,-34 399,-58"/>
+<text text-anchor="middle" x="340.5" y="-43.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">load_file_as_stream</text>
+</a>
+</g>
+</g>
+<!-- proc~parse~2&#45;&gt;proc~load_file_as_stream -->
+<g id="program~~delete_tag~~CallsGraph_edge5" class="edge">
+<title>proc~parse~2&#45;&gt;proc~load_file_as_stream</title>
+<path fill="none" stroke="#000000" d="M212.04,-76.86C232.85,-71.82 257.69,-65.8 279.9,-60.43"/>
+<polygon fill="#000000" stroke="#000000" points="281,-63.76 289.9,-58.01 279.35,-56.96 281,-63.76"/>
+</g>
+<!-- proc~parse_from_string -->
+<g id="program~~delete_tag~~CallsGraph_node7" class="node">
+<title>proc~parse_from_string</title>
+<g id="a_program~~delete_tag~~CallsGraph_node7"><a xlink:href="../proc/parse_from_string.html" xlink:title="xml_file%parse_from_string">
+<polygon fill="#d9534f" stroke="#d9534f" points="420,-100 261,-100 261,-76 420,-76 420,-100"/>
+<text text-anchor="middle" x="340.5" y="-85.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_file%parse_from_string</text>
+</a>
+</g>
+</g>
+<!-- proc~parse~2&#45;&gt;proc~parse_from_string -->
+<g id="program~~delete_tag~~CallsGraph_edge6" class="edge">
+<title>proc~parse~2&#45;&gt;proc~parse_from_string</title>
+<path fill="none" stroke="#000000" d="M212.04,-88C223.96,-88 237.21,-88 250.52,-88"/>
+<polygon fill="#000000" stroke="#000000" points="250.7,-91.5 260.7,-88 250.7,-84.5 250.7,-91.5"/>
+</g>
+<!-- proc~stringify -->
+<g id="program~~delete_tag~~CallsGraph_node8" class="node">
+<title>proc~stringify</title>
+<g id="a_program~~delete_tag~~CallsGraph_node8"><a xlink:href="../proc/stringify.html" xlink:title="xml_tag%stringify">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="394,-243 287,-243 287,-219 394,-219 394,-243"/>
+<text text-anchor="middle" x="340.5" y="-228.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%stringify</text>
+</a>
+</g>
+</g>
+<!-- proc~stringify~2&#45;&gt;proc~stringify -->
+<g id="program~~delete_tag~~CallsGraph_edge7" class="edge">
+<title>proc~stringify~2&#45;&gt;proc~stringify</title>
+<path fill="none" stroke="#000000" d="M218.06,-231C236.5,-231 257.45,-231 276.7,-231"/>
+<polygon fill="#000000" stroke="#000000" points="276.88,-234.5 286.88,-231 276.88,-227.5 276.88,-234.5"/>
+</g>
+<!-- proc~chars -->
+<g id="program~~delete_tag~~CallsGraph_node10" class="node">
+<title>proc~chars</title>
+<g id="a_program~~delete_tag~~CallsGraph_node10"><a xlink:href="../proc/chars.html" xlink:title="string%chars">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="571,-327 489,-327 489,-303 571,-303 571,-327"/>
+<text text-anchor="middle" x="530" y="-312.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%chars</text>
+</a>
+</g>
+</g>
+<!-- proc~name&#45;&gt;proc~chars -->
+<g id="program~~delete_tag~~CallsGraph_edge8" class="edge">
+<title>proc~name&#45;&gt;proc~chars</title>
+<path fill="none" stroke="#000000" d="M388.33,-299.25C415.86,-302.33 450.67,-306.23 478.77,-309.37"/>
+<polygon fill="#000000" stroke="#000000" points="478.47,-312.86 488.8,-310.5 479.25,-305.91 478.47,-312.86"/>
+</g>
+<!-- proc~add_tag -->
+<g id="program~~delete_tag~~CallsGraph_node9" class="node">
+<title>proc~add_tag</title>
+<g id="a_program~~delete_tag~~CallsGraph_node9"><a xlink:href="../proc/add_tag.html" xlink:title="xml_file%add_tag">
+<polygon fill="#d9534f" stroke="#d9534f" points="583,-37 477,-37 477,-13 583,-13 583,-37"/>
+<text text-anchor="middle" x="530" y="-22.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_file%add_tag</text>
+</a>
+</g>
+</g>
+<!-- proc~parse_from_string&#45;&gt;proc~add_tag -->
+<g id="program~~delete_tag~~CallsGraph_edge9" class="edge">
+<title>proc~parse_from_string&#45;&gt;proc~add_tag</title>
+<path fill="none" stroke="#000000" d="M394.51,-75.89C403.16,-73.33 411.93,-70.36 420,-67 437.1,-59.88 438.97,-53.28 456,-46 460.73,-43.98 465.71,-42.08 470.76,-40.33"/>
+<polygon fill="#000000" stroke="#000000" points="472.1,-43.57 480.5,-37.12 469.91,-36.92 472.1,-43.57"/>
+</g>
+<!-- proc~is_parsed -->
+<g id="program~~delete_tag~~CallsGraph_node13" class="node">
+<title>proc~is_parsed</title>
+<g id="a_program~~delete_tag~~CallsGraph_node13"><a xlink:href="../proc/is_parsed.html" xlink:title="xml_tag%is_parsed">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="587.5,-121 472.5,-121 472.5,-97 587.5,-97 587.5,-121"/>
+<text text-anchor="middle" x="530" y="-106.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%is_parsed</text>
+</a>
+</g>
+</g>
+<!-- proc~parse_from_string&#45;&gt;proc~is_parsed -->
+<g id="program~~delete_tag~~CallsGraph_edge10" class="edge">
+<title>proc~parse_from_string&#45;&gt;proc~is_parsed</title>
+<path fill="none" stroke="#000000" d="M420.2,-96.81C434.18,-98.38 448.61,-100 462.22,-101.52"/>
+<polygon fill="#000000" stroke="#000000" points="462.11,-105.03 472.44,-102.67 462.89,-98.07 462.11,-105.03"/>
+</g>
+<!-- proc~parse -->
+<g id="program~~delete_tag~~CallsGraph_node14" class="node">
+<title>proc~parse</title>
+<g id="a_program~~delete_tag~~CallsGraph_node14"><a xlink:href="../proc/parse.html" xlink:title="xml_tag%parse">
+<polygon fill="#d9534f" stroke="#d9534f" points="577,-79 483,-79 483,-55 577,-55 577,-79"/>
+<text text-anchor="middle" x="530" y="-64.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%parse</text>
+</a>
+</g>
+</g>
+<!-- proc~parse_from_string&#45;&gt;proc~parse -->
+<g id="program~~delete_tag~~CallsGraph_edge11" class="edge">
+<title>proc~parse_from_string&#45;&gt;proc~parse</title>
+<path fill="none" stroke="#000000" d="M420.2,-79.19C437.88,-77.21 456.29,-75.14 472.83,-73.29"/>
+<polygon fill="#000000" stroke="#000000" points="473.32,-76.76 482.86,-72.17 472.54,-69.8 473.32,-76.76"/>
+</g>
+<!-- proc~stringify&#45;&gt;proc~chars -->
+<g id="program~~delete_tag~~CallsGraph_edge12" class="edge">
+<title>proc~stringify&#45;&gt;proc~chars</title>
+<path fill="none" stroke="#000000" d="M364.64,-243.09C380.33,-251.37 401.52,-262.67 420,-273 436.17,-282.04 438.97,-286.72 456,-294 463.41,-297.17 471.45,-300.02 479.39,-302.53"/>
+<polygon fill="#000000" stroke="#000000" points="478.39,-305.89 488.98,-305.42 480.41,-299.18 478.39,-305.89"/>
+</g>
+<!-- proc~end_tag -->
+<g id="program~~delete_tag~~CallsGraph_node11" class="node">
+<title>proc~end_tag</title>
+<g id="a_program~~delete_tag~~CallsGraph_node11"><a xlink:href="../proc/end_tag.html" xlink:title="xml_tag%end_tag">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="583.5,-285 476.5,-285 476.5,-261 583.5,-261 583.5,-285"/>
+<text text-anchor="middle" x="530" y="-270.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%end_tag</text>
+</a>
+</g>
+</g>
+<!-- proc~stringify&#45;&gt;proc~end_tag -->
+<g id="program~~delete_tag~~CallsGraph_edge13" class="edge">
+<title>proc~stringify&#45;&gt;proc~end_tag</title>
+<path fill="none" stroke="#000000" d="M394.23,-242.81C416.69,-247.84 443.07,-253.75 466.5,-259"/>
+<polygon fill="#000000" stroke="#000000" points="465.82,-262.43 476.34,-261.2 467.35,-255.6 465.82,-262.43"/>
+</g>
+<!-- proc~is_allocated -->
+<g id="program~~delete_tag~~CallsGraph_node12" class="node">
+<title>proc~is_allocated</title>
+<g id="a_program~~delete_tag~~CallsGraph_node12"><a xlink:href="../proc/is_allocated.html" xlink:title="string%is_allocated">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="793.5,-150 678.5,-150 678.5,-126 793.5,-126 793.5,-150"/>
+<text text-anchor="middle" x="736" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%is_allocated</text>
+</a>
+</g>
+</g>
+<!-- proc~stringify&#45;&gt;proc~is_allocated -->
+<g id="program~~delete_tag~~CallsGraph_edge14" class="edge">
+<title>proc~stringify&#45;&gt;proc~is_allocated</title>
+<path fill="none" stroke="#000000" d="M358.37,-218.89C379.89,-204.13 418.78,-179.72 456,-168 526.25,-145.88 610.82,-139.42 668.3,-137.84"/>
+<polygon fill="#000000" stroke="#000000" points="668.44,-141.34 678.36,-137.61 668.28,-134.34 668.44,-141.34"/>
+</g>
+<!-- proc~self_closing_tag -->
+<g id="program~~delete_tag~~CallsGraph_node15" class="node">
+<title>proc~self_closing_tag</title>
+<g id="a_program~~delete_tag~~CallsGraph_node15"><a xlink:href="../proc/self_closing_tag.html" xlink:title="xml_tag%self_closing_tag">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="604,-243 456,-243 456,-219 604,-219 604,-243"/>
+<text text-anchor="middle" x="530" y="-228.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%self_closing_tag</text>
+</a>
+</g>
+</g>
+<!-- proc~stringify&#45;&gt;proc~self_closing_tag -->
+<g id="program~~delete_tag~~CallsGraph_edge15" class="edge">
+<title>proc~stringify&#45;&gt;proc~self_closing_tag</title>
+<path fill="none" stroke="#000000" d="M394.23,-231C410.16,-231 428.07,-231 445.5,-231"/>
+<polygon fill="#000000" stroke="#000000" points="445.69,-234.5 455.69,-231 445.69,-227.5 445.69,-234.5"/>
+</g>
+<!-- proc~start_tag -->
+<g id="program~~delete_tag~~CallsGraph_node16" class="node">
+<title>proc~start_tag</title>
+<g id="a_program~~delete_tag~~CallsGraph_node16"><a xlink:href="../proc/start_tag.html" xlink:title="xml_tag%start_tag">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="585.5,-201 474.5,-201 474.5,-177 585.5,-177 585.5,-201"/>
+<text text-anchor="middle" x="530" y="-186.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%start_tag</text>
+</a>
+</g>
+</g>
+<!-- proc~stringify&#45;&gt;proc~start_tag -->
+<g id="program~~delete_tag~~CallsGraph_edge16" class="edge">
+<title>proc~stringify&#45;&gt;proc~start_tag</title>
+<path fill="none" stroke="#000000" d="M394.23,-219.19C416.31,-214.24 442.17,-208.45 465.3,-203.27"/>
+<polygon fill="#000000" stroke="#000000" points="466.37,-206.62 475.37,-201.01 464.84,-199.78 466.37,-206.62"/>
+</g>
+<!-- proc~is_parsed&#45;&gt;proc~is_allocated -->
+<g id="program~~delete_tag~~CallsGraph_edge17" class="edge">
+<title>proc~is_parsed&#45;&gt;proc~is_allocated</title>
+<path fill="none" stroke="#000000" d="M587.55,-117.04C612.54,-120.59 642.09,-124.79 668.16,-128.5"/>
+<polygon fill="#000000" stroke="#000000" points="667.94,-132 678.34,-129.94 668.93,-125.07 667.94,-132"/>
+</g>
+<!-- proc~parse&#45;&gt;proc~is_allocated -->
+<g id="program~~delete_tag~~CallsGraph_edge19" class="edge">
+<title>proc~parse&#45;&gt;proc~is_allocated</title>
+<path fill="none" stroke="#000000" d="M577.25,-77.29C586.38,-80.15 595.69,-83.68 604,-88 622.23,-97.47 621.48,-108.1 640,-117 648.91,-121.28 658.7,-124.7 668.52,-127.43"/>
+<polygon fill="#000000" stroke="#000000" points="667.75,-130.85 678.31,-129.94 669.49,-124.06 667.75,-130.85"/>
+</g>
+<!-- proc~get -->
+<g id="program~~delete_tag~~CallsGraph_node18" class="node">
+<title>proc~get</title>
+<g id="a_program~~delete_tag~~CallsGraph_node18"><a xlink:href="../proc/get.html" xlink:title="xml_tag%get">
+<polygon fill="#d9534f" stroke="#d9534f" points="777,-66 695,-66 695,-42 777,-42 777,-66"/>
+<text text-anchor="middle" x="736" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%get</text>
+</a>
+</g>
+</g>
+<!-- proc~parse&#45;&gt;proc~get -->
+<g id="program~~delete_tag~~CallsGraph_edge18" class="edge">
+<title>proc~parse&#45;&gt;proc~get</title>
+<path fill="none" stroke="#000000" d="M577.04,-64.07C609.06,-62.03 651.74,-59.31 684.67,-57.21"/>
+<polygon fill="#000000" stroke="#000000" points="685.23,-60.68 694.99,-56.55 684.79,-53.69 685.23,-60.68"/>
+</g>
+<!-- proc~parse_attributes_names -->
+<g id="program~~delete_tag~~CallsGraph_node19" class="node">
+<title>proc~parse_attributes_names</title>
+<g id="a_program~~delete_tag~~CallsGraph_node19"><a xlink:href="../proc/parse_attributes_names.html" xlink:title="xml_tag%parse_attributes_names">
+<polygon fill="#d9534f" stroke="#d9534f" points="832,-24 640,-24 640,0 832,0 832,-24"/>
+<text text-anchor="middle" x="736" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%parse_attributes_names</text>
+</a>
+</g>
+</g>
+<!-- proc~parse&#45;&gt;proc~parse_attributes_names -->
+<g id="program~~delete_tag~~CallsGraph_edge20" class="edge">
+<title>proc~parse&#45;&gt;proc~parse_attributes_names</title>
+<path fill="none" stroke="#000000" d="M574.76,-54.92C584.43,-52.11 594.59,-49.05 604,-46 620.18,-40.76 623.66,-37.73 640,-33 648.05,-30.67 656.54,-28.45 665.01,-26.39"/>
+<polygon fill="#000000" stroke="#000000" points="665.98,-29.76 674.9,-24.05 664.37,-22.95 665.98,-29.76"/>
+</g>
+<!-- proc~parse_tag_name -->
+<g id="program~~delete_tag~~CallsGraph_node20" class="node">
+<title>proc~parse_tag_name</title>
+<g id="a_program~~delete_tag~~CallsGraph_node20"><a xlink:href="../proc/parse_tag_name.html" xlink:title="xml_tag%parse_tag_name">
+<polygon fill="#d9534f" stroke="#d9534f" points="812.5,-108 659.5,-108 659.5,-84 812.5,-84 812.5,-108"/>
+<text text-anchor="middle" x="736" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%parse_tag_name</text>
+</a>
+</g>
+</g>
+<!-- proc~parse&#45;&gt;proc~parse_tag_name -->
+<g id="program~~delete_tag~~CallsGraph_edge21" class="edge">
+<title>proc~parse&#45;&gt;proc~parse_tag_name</title>
+<path fill="none" stroke="#000000" d="M577.04,-73.54C598.31,-76.57 624.29,-80.26 648.99,-83.77"/>
+<polygon fill="#000000" stroke="#000000" points="648.72,-87.27 659.11,-85.21 649.71,-80.34 648.72,-87.27"/>
+</g>
+<!-- proc~attributes -->
+<g id="program~~delete_tag~~CallsGraph_node17" class="node">
+<title>proc~attributes</title>
+<g id="a_program~~delete_tag~~CallsGraph_node17"><a xlink:href="../proc/attributes.html" xlink:title="xml_tag%attributes">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="793.5,-212 678.5,-212 678.5,-188 793.5,-188 793.5,-212"/>
+<text text-anchor="middle" x="736" y="-197.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%attributes</text>
+</a>
+</g>
+</g>
+<!-- proc~self_closing_tag&#45;&gt;proc~attributes -->
+<g id="program~~delete_tag~~CallsGraph_edge22" class="edge">
+<title>proc~self_closing_tag&#45;&gt;proc~attributes</title>
+<path fill="none" stroke="#000000" d="M604.07,-219.9C625.1,-216.7 647.91,-213.23 668.52,-210.1"/>
+<polygon fill="#000000" stroke="#000000" points="669.07,-213.56 678.43,-208.6 668.02,-206.64 669.07,-213.56"/>
+</g>
+<!-- proc~start_tag&#45;&gt;proc~attributes -->
+<g id="program~~delete_tag~~CallsGraph_edge23" class="edge">
+<title>proc~start_tag&#45;&gt;proc~attributes</title>
+<path fill="none" stroke="#000000" d="M585.67,-191.95C611.1,-193.32 641.57,-194.96 668.34,-196.41"/>
+<polygon fill="#000000" stroke="#000000" points="668.23,-199.9 678.4,-196.95 668.6,-192.91 668.23,-199.9"/>
+</g>
+<!-- proc~get_attributes -->
+<g id="program~~delete_tag~~CallsGraph_node22" class="node">
+<title>proc~get_attributes</title>
+<g id="a_program~~delete_tag~~CallsGraph_node22"><a xlink:href="../proc/get_attributes.html" xlink:title="xml_tag%get_attributes">
+<polygon fill="#d9534f" stroke="#d9534f" points="1010,-66 872,-66 872,-42 1010,-42 1010,-66"/>
+<text text-anchor="middle" x="941" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%get_attributes</text>
+</a>
+</g>
+</g>
+<!-- proc~get&#45;&gt;proc~get_attributes -->
+<g id="program~~delete_tag~~CallsGraph_edge24" class="edge">
+<title>proc~get&#45;&gt;proc~get_attributes</title>
+<path fill="none" stroke="#000000" d="M777.11,-54C801.29,-54 832.93,-54 861.88,-54"/>
+<polygon fill="#000000" stroke="#000000" points="861.99,-57.5 871.99,-54 861.99,-50.5 861.99,-57.5"/>
+</g>
+<!-- proc~get_value -->
+<g id="program~~delete_tag~~CallsGraph_node23" class="node">
+<title>proc~get_value</title>
+<g id="a_program~~delete_tag~~CallsGraph_node23"><a xlink:href="../proc/get_value.html" xlink:title="xml_tag%get_value">
+<polygon fill="#d9534f" stroke="#d9534f" points="999,-108 883,-108 883,-84 999,-84 999,-108"/>
+<text text-anchor="middle" x="941" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%get_value</text>
+</a>
+</g>
+</g>
+<!-- proc~get&#45;&gt;proc~get_value -->
+<g id="program~~delete_tag~~CallsGraph_edge25" class="edge">
+<title>proc~get&#45;&gt;proc~get_value</title>
+<path fill="none" stroke="#000000" d="M777.11,-62.3C804.32,-67.93 840.96,-75.51 872.6,-82.06"/>
+<polygon fill="#000000" stroke="#000000" points="872.18,-85.54 882.68,-84.14 873.6,-78.69 872.18,-85.54"/>
+</g>
+<!-- proc~alloc_attributes -->
+<g id="program~~delete_tag~~CallsGraph_node21" class="node">
+<title>proc~alloc_attributes</title>
+<g id="a_program~~delete_tag~~CallsGraph_node21"><a xlink:href="../proc/alloc_attributes.html" xlink:title="xml_tag%alloc_attributes">
+<polygon fill="#d9534f" stroke="#d9534f" points="1014,-24 868,-24 868,0 1014,0 1014,-24"/>
+<text text-anchor="middle" x="941" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%alloc_attributes</text>
+</a>
+</g>
+</g>
+<!-- proc~parse_attributes_names&#45;&gt;proc~alloc_attributes -->
+<g id="program~~delete_tag~~CallsGraph_edge26" class="edge">
+<title>proc~parse_attributes_names&#45;&gt;proc~alloc_attributes</title>
+<path fill="none" stroke="#000000" d="M832.26,-12C840.75,-12 849.31,-12 857.68,-12"/>
+<polygon fill="#000000" stroke="#000000" points="857.79,-15.5 867.79,-12 857.79,-8.5 857.79,-15.5"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprogramdelete_tagCallsGraph = svgPanZoom('#programdelete_tagCallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
 
-     <section class="visible-xs visible-sm hidden-md">
-       <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#vars-1">Variables</a></h3></div>
-  <div id="vars-1" class="panel-collapse collapse">
-    <div class="list-group">
-      <a class="list-group-item" href="../program/delete_tag.html#variable-source~12">source</a>
-      <a class="list-group-item" href="../program/delete_tag.html#variable-parsed~4">parsed</a>
-      <a class="list-group-item" href="../program/delete_tag.html#variable-a_file">a_file</a>
-      <a class="list-group-item" href="../program/delete_tag.html#variable-a_tag~4">a_tag</a>
-      <a class="list-group-item" href="../program/delete_tag.html#variable-another_tag">another_tag</a>
-      <a class="list-group-item" href="../program/delete_tag.html#variable-test_passed~10">test_passed</a>
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../program/delete_tag.html#src">delete_tag</a>
-  </div>
-</div>
-
-     </section>
-     <br class="visible-xs visible-sm hidden-md">
-
+<br>
 
     <section>
     <h2>Variables</h2>
-    <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Attributes</th><th></th><th>Name</th><th></th><th>Initial</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" id="variable-source~12"></span>character(len=:),</td>
-  <td>allocatable</td><td>::</td>
-  <td><strong>source</strong></td><td></td><td></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-parsed~4"></span>character(len=:),</td>
-  <td>allocatable</td><td>::</td>
-  <td><strong>parsed</strong></td><td></td><td></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-a_file"></span>type(<a href='../type/xml_file.html'>xml_file</a>)</td>
-  <td></td><td>::</td>
-  <td><strong>a_file</strong></td><td></td><td></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-a_tag~4"></span>type(<a href='../type/xml_tag.html'>xml_tag</a>)</td>
-  <td></td><td>::</td>
-  <td><strong>a_tag</strong></td><td></td><td></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-another_tag"></span>type(<a href='../type/xml_tag.html'>xml_tag</a>)</td>
-  <td></td><td>::</td>
-  <td><strong>another_tag</strong></td><td></td><td></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-test_passed~10"></span>logical</td>
-  <td></td><td>::</td>
-  <td><strong>test_passed</strong>(2)</td><td></td><td></td><td></td>
-</tr>
-</tbody>
-</table>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-source~3"></span>
+              character(len=:),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>source</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-parsed~3"></span>
+              character(len=:),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>parsed</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-a_file"></span>
+              type(<a href='../type/xml_file.html'>xml_file</a>)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>a_file</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-a_tag~3"></span>
+              type(<a href='../type/xml_tag.html'>xml_tag</a>)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>a_tag</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-another_tag"></span>
+              type(<a href='../type/xml_tag.html'>xml_tag</a>)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>another_tag</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-test_passed~67"></span>
+              logical
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>test_passed</strong>(2)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
     </section>
     <br>
@@ -576,13 +1121,14 @@
 
 
     
+
     <section>
     <h2 id="src">Source Code</h2>
-    <div class="highlight"><pre><span></span><span class="k">program </span><span class="n">delete_tag</span><span class="w"></span>
+    <div class="hl codehilite"><pre><span></span><span class="k">program </span><span class="n">delete_tag</span>
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
 <span class="c">!&lt; FoXy test.</span>
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
-<span class="k">use </span><span class="n">foxy</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">xml_file</span><span class="p">,</span><span class="w"> </span><span class="n">xml_tag</span><span class="w"></span>
+<span class="k">use </span><span class="n">foxy</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">xml_file</span><span class="p">,</span><span class="w"> </span><span class="n">xml_tag</span>
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
 
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
@@ -596,34 +1142,34 @@
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
 
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
-<span class="n">test_passed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span><span class="w"></span>
+<span class="n">test_passed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
 
-<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;source&#39;</span><span class="w"></span>
-<span class="n">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&lt;first x=&quot;1&quot; y=&quot;c&quot; z=&quot;2&quot;&gt;lorem ipsum...&lt;/first&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span><span class="w"></span>
-<span class="w">         </span><span class="s1">&#39;&lt;third&gt;bye&lt;/third&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span><span class="w"></span>
-<span class="w">         </span><span class="s1">&#39;&lt;fourth a=&quot;3&quot;&gt;bye bye Mrs. Robinson&lt;/fourth&gt;&#39;</span><span class="w"></span>
-<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A)&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">source</span><span class="w"></span>
-<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;parsed&#39;</span><span class="w"></span>
-<span class="k">call </span><span class="n">a_file</span><span class="p">%</span><span class="n">parse</span><span class="p">(</span><span class="n">string</span><span class="o">=</span><span class="n">source</span><span class="p">)</span><span class="w"></span>
-<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;remove &quot;third&quot; tag&#39;</span><span class="w"></span>
-<span class="n">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&lt;first x=&quot;1&quot; y=&quot;c&quot; z=&quot;2&quot;&gt;lorem ipsum...&lt;/first&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span><span class="w"></span>
-<span class="w">         </span><span class="s1">&#39;&lt;fourth a=&quot;3&quot;&gt;bye bye Mrs. Robinson&lt;/fourth&gt;&#39;</span><span class="w"></span>
-<span class="k">call </span><span class="n">a_file</span><span class="p">%</span><span class="n">delete_tag</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;third&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="n">parsed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a_file</span><span class="p">%</span><span class="n">stringify</span><span class="p">()</span><span class="w"></span>
-<span class="n">test_passed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">source</span><span class="p">))</span><span class="o">==</span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">parsed</span><span class="p">))</span><span class="w"></span>
-<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A,L1)&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">parsed</span><span class="o">//</span><span class="s1">&#39; Is correct? &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">test_passed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"></span>
+<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;source&#39;</span>
+<span class="n">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&lt;first x=&quot;1&quot; y=&quot;c&quot; z=&quot;2&quot;&gt;lorem ipsum...&lt;/first&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span>
+<span class="w">         </span><span class="s1">&#39;&lt;third&gt;bye&lt;/third&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span>
+<span class="w">         </span><span class="s1">&#39;&lt;fourth a=&quot;3&quot;&gt;bye bye Mrs. Robinson&lt;/fourth&gt;&#39;</span>
+<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A)&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">source</span>
+<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;parsed&#39;</span>
+<span class="k">call </span><span class="n">a_file</span><span class="p">%</span><span class="n">parse</span><span class="p">(</span><span class="n">string</span><span class="o">=</span><span class="n">source</span><span class="p">)</span>
+<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;remove &quot;third&quot; tag&#39;</span>
+<span class="n">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&lt;first x=&quot;1&quot; y=&quot;c&quot; z=&quot;2&quot;&gt;lorem ipsum...&lt;/first&gt;&#39;</span><span class="o">//</span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="p">&amp;</span>
+<span class="w">         </span><span class="s1">&#39;&lt;fourth a=&quot;3&quot;&gt;bye bye Mrs. Robinson&lt;/fourth&gt;&#39;</span>
+<span class="k">call </span><span class="n">a_file</span><span class="p">%</span><span class="n">delete_tag</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;third&quot;</span><span class="p">)</span>
+<span class="n">parsed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a_file</span><span class="p">%</span><span class="n">stringify</span><span class="p">()</span>
+<span class="n">test_passed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">source</span><span class="p">))</span><span class="o">==</span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">parsed</span><span class="p">))</span>
+<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A,L1)&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">parsed</span><span class="o">//</span><span class="s1">&#39; Is correct? &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">test_passed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;remove &quot;first&quot; tag&#39;</span><span class="w"></span>
-<span class="n">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&lt;fourth a=&quot;3&quot;&gt;bye bye Mrs. Robinson&lt;/fourth&gt;&#39;</span><span class="w"></span>
-<span class="k">call </span><span class="n">a_file</span><span class="p">%</span><span class="n">delete_tag</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;first&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="n">parsed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a_file</span><span class="p">%</span><span class="n">stringify</span><span class="p">()</span><span class="w"></span>
-<span class="n">test_passed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">source</span><span class="p">))</span><span class="o">==</span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">parsed</span><span class="p">))</span><span class="w"></span>
-<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A,L1)&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">parsed</span><span class="o">//</span><span class="s1">&#39; Is correct? &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">test_passed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"></span>
+<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;remove &quot;first&quot; tag&#39;</span>
+<span class="n">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&lt;fourth a=&quot;3&quot;&gt;bye bye Mrs. Robinson&lt;/fourth&gt;&#39;</span>
+<span class="k">call </span><span class="n">a_file</span><span class="p">%</span><span class="n">delete_tag</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;first&quot;</span><span class="p">)</span>
+<span class="n">parsed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a_file</span><span class="p">%</span><span class="n">stringify</span><span class="p">()</span>
+<span class="n">test_passed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">source</span><span class="p">))</span><span class="o">==</span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">parsed</span><span class="p">))</span>
+<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A,L1)&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">parsed</span><span class="o">//</span><span class="s1">&#39; Is correct? &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">test_passed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
-<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A,L1)&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39;Are all tests passed? &#39;</span><span class="p">,</span><span class="w"> </span><span class="k">all</span><span class="p">(</span><span class="n">test_passed</span><span class="p">)</span><span class="w"></span>
-<span class="k">stop</span><span class="w"></span>
+<span class="k">print</span><span class="w"> </span><span class="s2">&quot;(A,L1)&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">new_line</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">//</span><span class="s1">&#39;Are all tests passed? &#39;</span><span class="p">,</span><span class="w"> </span><span class="k">all</span><span class="p">(</span><span class="n">test_passed</span><span class="p">)</span>
+<span class="k">stop</span>
 <span class="c">!-----------------------------------------------------------------------------------------------------------------------------------</span>
-<span class="k">endprogram </span><span class="n">delete_tag</span><span class="w"></span>
+<span class="k">endprogram </span><span class="n">delete_tag</span>
 </pre></div>
 
     </section>
@@ -631,50 +1177,48 @@
     </div>
   </div>
 
-    <hr>    
+      <hr>
     </div> <!-- /container -->
     <footer>
       <div class="container">
-      <div class="row">
-        <div class="col-xs-6 col-md-6"><p>Lib_VTK_IO was developed by Stefano Zaghi<br>&copy; 2022 
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Lib_VTK_IO
+ was developed by Stefano Zaghi<br>              &copy; 2025 
 </p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
         </div>
-        <div class="col-xs-6 col-md-6">
-          <p class="text-right">
-            Documentation generated by 
-            <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
-          </p>
-        </div>
-      </div>
-      <br>
-      </div> <!-- /container -->    
+        <br>
+      </div> <!-- /container -->
     </footer>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
+    <!-- Bootstrap core JavaScript -->
     <!-- Placed at the end of the document so the pages load faster -->
-<!--
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
--->
-    <script src="../js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
 
     <!-- MathJax JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
-        jax: ['input/TeX','input/MathML','output/HTML-CSS'],
-        extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
-      });
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script src="../tipuesearch/tipuesearch_content.js"></script>
-    <script src="../tipuesearch/tipuesearch_set.js"></script>
-    <script src="../tipuesearch/tipuesearch.js"></script>
-    
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
   </body>
 </html>

@@ -1,184 +1,945 @@
+<!-- -*- mode: jinja2 -*- -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-   <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
+      <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
     <meta name="author" content="Stefano Zaghi" >
     <link rel="icon" href="../favicon.png">
 
     <title>is_integer &ndash; Lib_VTK_IO</title>
 
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="../css/pygments.css" rel="stylesheet">
     <link href="../css/font-awesome.min.css" rel="stylesheet">
     <link href="../css/local.css" rel="stylesheet">
-    <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    
-    <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="../js/svg-pan-zoom.min.js"></script>
-
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
           <a class="navbar-brand" href="../index.html">Lib_VTK_IO </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
-              <a href="#" class="dropdown-toggle"
-              data-toggle="dropdown" role="button"
-              aria-haspopup="true"
-     aria-expanded="false">Contents <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-            <li><a href="../lists/files.html">Source Files</a></li>
-            <li><a href="../lists/modules.html">Modules</a></li>
-            <li><a href="../lists/procedures.html">Procedures</a></li>
-            <li><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                   <li><a href="../lists/types.html">Derived Types</a></li>
-            <li><a href="../lists/programs.html">Programs</a></li>
-       
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
             </ul>
-        
-            </li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/files.html">Source Files</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/modules.html">Modules</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/procedures.html">Procedures</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                             <li class="visible-xs hidden-sm visible-lg"><a href="../lists/types.html">Derived Types</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/programs.html">Programs</a></li>
-          </ul>
-        <form action="../search.html" class="navbar-form navbar-right" role="search">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
         </div>
-<!--
-        <button type="submit" class="btn btn-default">Submit</button>
--->
-        </form>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+      </nav>
+    </div>
 
     <div class="container">
   <div class="row">
     <h1>is_integer
       <small>Function</small>
+      
     </h1>
-    <div class="row">
-  <div class="col-lg-12">
-<div class="well well-sm">
-  <ul class="list-inline" style="margin-bottom:0px;display:inline">
-     <li><i class="fa fa-list-ol"></i>
-       <a data-toggle="tooltip"
-    data-placement="bottom" data-html="true"
-    title=" 0.3% of total for procedures.">71 statements</a>
-     </li> 
-    <li><i class="fa fa-code"></i><a href="../src/stringifor_string_t.F90"> Source File</a></li>
-  </ul>
-  <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/stringifor_string_t.f90.html'>stringifor_string_t.F90</a></li>
-     <li><a href='../module/stringifor_string_t.html'>stringifor_string_t</a></li>
-     <li class="active">is_integer</li>
-  </ol>
-</div>
-</div>
-</div>
-<script>
-  $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-  })
-</script>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.3% of total for procedures.">71 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/stringifor_string_t.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/stringifor_string_t.f90.html'>stringifor_string_t.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/stringifor_string_t.html'>stringifor_string_t</a></li>
+            <li class="breadcrumb-item active" aria-current="page">is_integer</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
 
   </div>
   
   <div class="row">
     <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
-    <div id="sidebar">
-  <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../proc/is_integer.html#src">is_integer</a>
-  </div>
-</div>
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/is_integer.html#src">is_integer</a>
+      </div>
+    </div>
 
-</div>
+
+  </div>
 
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private elemental function is_integer(self, allow_spaces)</h2>
+    <h2>private elemental function is_integer(self, allow_spaces)  
+</h2>
     
 
+
+    <h3>Type Bound</h3>
+    <p><a href='../type/string.html'>string</a></p>
 
     <h3>Arguments</h3>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" id="variable-self~385"></span>class(<a href='../type/string.html'>string</a>),</td>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-self~215"></span>
+              class(<a href='../type/string.html'>string</a>),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>self</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-allow_spaces"></span>logical,</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>self</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-allow_spaces"></span>
+              logical,
+            </td>
 <td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>allow_spaces</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>allow_spaces</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
-   <h3>Return Value <small><span class="anchor" id="variable-is_integer~3"></span>logical</small></h3>
-    
+      <h3>Return Value
+        <small>
+          <span class="anchor" id="variable-is_integer~2"></span>
+          logical
+        </small>
+      </h3>
+      
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: proc~~is_integer~~CalledByGraph Pages: 1 -->
+<svg id="procis_integerCalledByGraph" width="639pt" height="1250pt"
+ viewBox="0.00 0.00 639.00 1250.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~is_integer~~CalledByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 1246)">
+<title>proc~~is_integer~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-1246 635,-1246 635,4 -4,4"/>
+<!-- proc~is_integer -->
+<g id="proc~~is_integer~~CalledByGraph_node1" class="node">
+<title>proc~is_integer</title>
+<polygon fill="none" stroke="black" points="631,-602 527,-602 527,-578 631,-578 631,-602"/>
+<text text-anchor="middle" x="579" y="-587.6" font-family="Helvetica,sans-Serif" font-size="10.50">string%is_integer</text>
+</g>
+<!-- proc~is_number -->
+<g id="proc~~is_integer~~CalledByGraph_node2" class="node">
+<title>proc~is_number</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node2"><a xlink:href="../proc/is_number.html" xlink:title="string%is_number">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="481.5,-728 373.5,-728 373.5,-704 481.5,-704 481.5,-728"/>
+<text text-anchor="middle" x="427.5" y="-713.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%is_number</text>
+</a>
+</g>
+</g>
+<!-- proc~is_number&#45;&gt;proc~is_integer -->
+<g id="proc~~is_integer~~CalledByGraph_edge1" class="edge">
+<title>proc~is_number&#45;&gt;proc~is_integer</title>
+<path fill="none" stroke="#000000" d="M474.31,-703.94C480.18,-701.45 485.9,-698.5 491,-695 523.74,-672.53 550.93,-634.43 565.78,-610.83"/>
+<polygon fill="#000000" stroke="#000000" points="568.79,-612.62 571.03,-602.26 562.82,-608.96 568.79,-612.62"/>
+</g>
+<!-- proc~to_integer_i1p -->
+<g id="proc~~is_integer~~CalledByGraph_node3" class="node">
+<title>proc~to_integer_i1p</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node3"><a xlink:href="../proc/to_integer_i1p.html" xlink:title="string%to_integer_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="491,-686 364,-686 364,-662 491,-662 491,-686"/>
+<text text-anchor="middle" x="427.5" y="-671.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%to_integer_I1P</text>
+</a>
+</g>
+</g>
+<!-- proc~to_integer_i1p&#45;&gt;proc~is_integer -->
+<g id="proc~~is_integer~~CalledByGraph_edge2" class="edge">
+<title>proc~to_integer_i1p&#45;&gt;proc~is_integer</title>
+<path fill="none" stroke="#000000" d="M470.24,-661.94C477.32,-659.34 484.49,-656.35 491,-653 514.72,-640.79 539.1,-622.55 555.99,-608.84"/>
+<polygon fill="#000000" stroke="#000000" points="558.62,-611.2 564.1,-602.13 554.16,-605.81 558.62,-611.2"/>
+</g>
+<!-- proc~to_integer_i2p -->
+<g id="proc~~is_integer~~CalledByGraph_node4" class="node">
+<title>proc~to_integer_i2p</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node4"><a xlink:href="../proc/to_integer_i2p.html" xlink:title="string%to_integer_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="491,-644 364,-644 364,-620 491,-620 491,-644"/>
+<text text-anchor="middle" x="427.5" y="-629.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%to_integer_I2P</text>
+</a>
+</g>
+</g>
+<!-- proc~to_integer_i2p&#45;&gt;proc~is_integer -->
+<g id="proc~~is_integer~~CalledByGraph_edge3" class="edge">
+<title>proc~to_integer_i2p&#45;&gt;proc~is_integer</title>
+<path fill="none" stroke="#000000" d="M471.34,-619.96C488.23,-615.22 507.8,-609.72 525.52,-604.74"/>
+<polygon fill="#000000" stroke="#000000" points="526.47,-608.11 535.15,-602.04 524.58,-601.37 526.47,-608.11"/>
+</g>
+<!-- proc~to_integer_i4p -->
+<g id="proc~~is_integer~~CalledByGraph_node5" class="node">
+<title>proc~to_integer_i4p</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node5"><a xlink:href="../proc/to_integer_i4p.html" xlink:title="string%to_integer_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="491,-602 364,-602 364,-578 491,-578 491,-602"/>
+<text text-anchor="middle" x="427.5" y="-587.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%to_integer_I4P</text>
+</a>
+</g>
+</g>
+<!-- proc~to_integer_i4p&#45;&gt;proc~is_integer -->
+<g id="proc~~is_integer~~CalledByGraph_edge4" class="edge">
+<title>proc~to_integer_i4p&#45;&gt;proc~is_integer</title>
+<path fill="none" stroke="#000000" d="M491.04,-590C499.45,-590 508.09,-590 516.49,-590"/>
+<polygon fill="#000000" stroke="#000000" points="516.59,-593.5 526.59,-590 516.59,-586.5 516.59,-593.5"/>
+</g>
+<!-- proc~to_integer_i8p -->
+<g id="proc~~is_integer~~CalledByGraph_node6" class="node">
+<title>proc~to_integer_i8p</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node6"><a xlink:href="../proc/to_integer_i8p.html" xlink:title="string%to_integer_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="491,-560 364,-560 364,-536 491,-536 491,-560"/>
+<text text-anchor="middle" x="427.5" y="-545.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%to_integer_I8P</text>
+</a>
+</g>
+</g>
+<!-- proc~to_integer_i8p&#45;&gt;proc~is_integer -->
+<g id="proc~~is_integer~~CalledByGraph_edge5" class="edge">
+<title>proc~to_integer_i8p&#45;&gt;proc~is_integer</title>
+<path fill="none" stroke="#000000" d="M471.34,-560.04C488.23,-564.78 507.8,-570.28 525.52,-575.26"/>
+<polygon fill="#000000" stroke="#000000" points="524.58,-578.63 535.15,-577.96 526.47,-571.89 524.58,-578.63"/>
+</g>
+<!-- program~volatile_doctest~1204 -->
+<g id="proc~~is_integer~~CalledByGraph_node7" class="node">
+<title>program~volatile_doctest~1204</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node7"><a xlink:href="../program/volatile_doctest~1204.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="475.5,-518 379.5,-518 379.5,-494 475.5,-494 475.5,-518"/>
+<text text-anchor="middle" x="427.5" y="-503.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~1204&#45;&gt;proc~is_integer -->
+<g id="proc~~is_integer~~CalledByGraph_edge6" class="edge">
+<title>program~volatile_doctest~1204&#45;&gt;proc~is_integer</title>
+<path fill="none" stroke="#000000" d="M470.24,-518.06C477.32,-520.66 484.49,-523.65 491,-527 514.72,-539.21 539.1,-557.45 555.99,-571.16"/>
+<polygon fill="#000000" stroke="#000000" points="554.16,-574.19 564.1,-577.87 558.62,-568.8 554.16,-574.19"/>
+</g>
+<!-- program~volatile_doctest~479 -->
+<g id="proc~~is_integer~~CalledByGraph_node8" class="node">
+<title>program~volatile_doctest~479</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node8"><a xlink:href="../program/volatile_doctest~479.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="475.5,-476 379.5,-476 379.5,-452 475.5,-452 475.5,-476"/>
+<text text-anchor="middle" x="427.5" y="-461.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~479&#45;&gt;proc~is_integer -->
+<g id="proc~~is_integer~~CalledByGraph_edge7" class="edge">
+<title>program~volatile_doctest~479&#45;&gt;proc~is_integer</title>
+<path fill="none" stroke="#000000" d="M474.31,-476.06C480.18,-478.55 485.9,-481.5 491,-485 523.74,-507.47 550.93,-545.57 565.78,-569.17"/>
+<polygon fill="#000000" stroke="#000000" points="562.82,-571.04 571.03,-577.74 568.79,-567.38 562.82,-571.04"/>
+</g>
+<!-- none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_node9" class="node">
+<title>none~to_number</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node9"><a xlink:href="../type/string.html#boundprocedure-to_number" xlink:title="string%to_number">
+<polygon fill="#a7506f" stroke="#a7506f" points="328,-633 218,-633 218,-609 328,-609 328,-633"/>
+<text text-anchor="middle" x="273" y="-618.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%to_number</text>
+</a>
+</g>
+</g>
+<!-- none~to_number&#45;&gt;proc~to_integer_i1p -->
+<g id="proc~~is_integer~~CalledByGraph_edge10" class="edge">
+<title>none~to_number&#45;&gt;proc~to_integer_i1p</title>
+<path fill="none" stroke="#000000" d="M307.71,-633.14C324.59,-639.18 345.35,-646.55 364,-653 369.27,-654.82 374.81,-656.71 380.31,-658.58"/>
+<polygon fill="#000000" stroke="#000000" points="379.52,-662.01 390.11,-661.89 381.76,-655.38 379.52,-662.01"/>
+</g>
+<!-- none~to_number&#45;&gt;proc~to_integer_i2p -->
+<g id="proc~~is_integer~~CalledByGraph_edge11" class="edge">
+<title>none~to_number&#45;&gt;proc~to_integer_i2p</title>
+<path fill="none" stroke="#000000" d="M328.2,-624.91C336.5,-625.51 345.19,-626.14 353.82,-626.76"/>
+<polygon fill="#000000" stroke="#000000" points="353.67,-630.26 363.89,-627.48 354.17,-623.27 353.67,-630.26"/>
+</g>
+<!-- none~to_number&#45;&gt;proc~to_integer_i4p -->
+<g id="proc~~is_integer~~CalledByGraph_edge12" class="edge">
+<title>none~to_number&#45;&gt;proc~to_integer_i4p</title>
+<path fill="none" stroke="#000000" d="M328.2,-609.98C337.6,-608.07 347.49,-606.06 357.23,-604.08"/>
+<polygon fill="#000000" stroke="#000000" points="358.2,-607.46 367.3,-602.03 356.8,-600.6 358.2,-607.46"/>
+</g>
+<!-- none~to_number&#45;&gt;proc~to_integer_i8p -->
+<g id="proc~~is_integer~~CalledByGraph_edge13" class="edge">
+<title>none~to_number&#45;&gt;proc~to_integer_i8p</title>
+<path fill="none" stroke="#000000" d="M292.38,-608.91C310.18,-597.57 338.18,-580.66 364,-569 368.16,-567.12 372.54,-565.32 376.98,-563.61"/>
+<polygon fill="#000000" stroke="#000000" points="378.52,-566.78 386.7,-560.04 376.1,-560.21 378.52,-566.78"/>
+</g>
+<!-- program~volatile_doctest~1016 -->
+<g id="proc~~is_integer~~CalledByGraph_node10" class="node">
+<title>program~volatile_doctest~1016</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node10"><a xlink:href="../program/volatile_doctest~1016.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="321,-738 225,-738 225,-714 321,-714 321,-738"/>
+<text text-anchor="middle" x="273" y="-723.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~1016&#45;&gt;proc~is_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge8" class="edge">
+<title>program~volatile_doctest~1016&#45;&gt;proc~is_number</title>
+<path fill="none" stroke="#000000" d="M321.42,-722.89C334.64,-722.02 349.23,-721.07 363.21,-720.15"/>
+<polygon fill="#000000" stroke="#000000" points="363.51,-723.64 373.26,-719.49 363.06,-716.65 363.51,-723.64"/>
+</g>
+<!-- program~volatile_doctest~110 -->
+<g id="proc~~is_integer~~CalledByGraph_node11" class="node">
+<title>program~volatile_doctest~110</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node11"><a xlink:href="../program/volatile_doctest~110.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="321,-696 225,-696 225,-672 321,-672 321,-696"/>
+<text text-anchor="middle" x="273" y="-681.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~110&#45;&gt;proc~is_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge9" class="edge">
+<title>program~volatile_doctest~110&#45;&gt;proc~is_number</title>
+<path fill="none" stroke="#000000" d="M321.42,-693.95C334.64,-696.73 349.23,-699.79 363.21,-702.72"/>
+<polygon fill="#000000" stroke="#000000" points="362.76,-706.2 373.26,-704.83 364.2,-699.35 362.76,-706.2"/>
+</g>
+<!-- program~stringifor_test_csv_naive_parser -->
+<g id="proc~~is_integer~~CalledByGraph_node12" class="node">
+<title>program~stringifor_test_csv_naive_parser</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node12"><a xlink:href="../program/stringifor_test_csv_naive_parser.html" xlink:title="stringifor_test_csv_naive_parser">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="182,-1242 0,-1242 0,-1218 182,-1218 182,-1242"/>
+<text text-anchor="middle" x="91" y="-1227.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">stringifor_test_csv_naive_parser</text>
+</a>
+</g>
+</g>
+<!-- program~stringifor_test_csv_naive_parser&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge14" class="edge">
+<title>program~stringifor_test_csv_naive_parser&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M172.09,-1217.85C175.75,-1215.35 179.09,-1212.43 182,-1209 260.68,-1116.29 161.01,-770.41 218,-663 223.1,-653.38 231.48,-645.26 240.13,-638.81"/>
+<polygon fill="#000000" stroke="#000000" points="242.14,-641.67 248.41,-633.13 238.18,-635.9 242.14,-641.67"/>
+</g>
+<!-- program~stringifor_test_csv_naive_parser~2 -->
+<g id="proc~~is_integer~~CalledByGraph_node13" class="node">
+<title>program~stringifor_test_csv_naive_parser~2</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node13"><a xlink:href="../program/stringifor_test_csv_naive_parser~2.html" xlink:title="stringifor_test_csv_naive_parser">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="182,-1200 0,-1200 0,-1176 182,-1176 182,-1200"/>
+<text text-anchor="middle" x="91" y="-1185.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">stringifor_test_csv_naive_parser</text>
+</a>
+</g>
+</g>
+<!-- program~stringifor_test_csv_naive_parser~2&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge15" class="edge">
+<title>program~stringifor_test_csv_naive_parser~2&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M172.07,-1175.83C175.73,-1173.34 179.08,-1170.42 182,-1167 254.89,-1081.59 165.1,-762.05 218,-663 223.13,-653.39 231.51,-645.28 240.16,-638.82"/>
+<polygon fill="#000000" stroke="#000000" points="242.17,-641.69 248.44,-633.15 238.21,-635.92 242.17,-641.69"/>
+</g>
+<!-- program~volatile_doctest~1021 -->
+<g id="proc~~is_integer~~CalledByGraph_node14" class="node">
+<title>program~volatile_doctest~1021</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node14"><a xlink:href="../program/volatile_doctest~1021.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-1158 43,-1158 43,-1134 139,-1134 139,-1158"/>
+<text text-anchor="middle" x="91" y="-1143.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~1021&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge16" class="edge">
+<title>program~volatile_doctest~1021&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.41,-1145.75C155.2,-1143.15 171.44,-1137.29 182,-1125 249.1,-1046.88 169.19,-753.68 218,-663 223.16,-653.41 231.55,-645.3 240.2,-638.84"/>
+<polygon fill="#000000" stroke="#000000" points="242.21,-641.71 248.47,-633.16 238.25,-635.94 242.21,-641.71"/>
+</g>
+<!-- program~volatile_doctest~1152 -->
+<g id="proc~~is_integer~~CalledByGraph_node15" class="node">
+<title>program~volatile_doctest~1152</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node15"><a xlink:href="../program/volatile_doctest~1152.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-1116 43,-1116 43,-1092 139,-1092 139,-1116"/>
+<text text-anchor="middle" x="91" y="-1101.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~1152&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge17" class="edge">
+<title>program~volatile_doctest~1152&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.36,-1103.7C155.15,-1101.11 171.39,-1095.25 182,-1083 243.31,-1012.18 173.28,-745.31 218,-663 223.24,-653.35 231.74,-645.19 240.46,-638.71"/>
+<polygon fill="#000000" stroke="#000000" points="242.51,-641.55 248.79,-633.01 238.56,-635.77 242.51,-641.55"/>
+</g>
+<!-- program~volatile_doctest~1188 -->
+<g id="proc~~is_integer~~CalledByGraph_node16" class="node">
+<title>program~volatile_doctest~1188</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node16"><a xlink:href="../program/volatile_doctest~1188.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-1074 43,-1074 43,-1050 139,-1050 139,-1074"/>
+<text text-anchor="middle" x="91" y="-1059.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~1188&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge18" class="edge">
+<title>program~volatile_doctest~1188&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.3,-1061.65C155.08,-1059.04 171.34,-1053.2 182,-1041 237.53,-977.47 177.37,-736.96 218,-663 223.29,-653.38 231.8,-645.23 240.52,-638.74"/>
+<polygon fill="#000000" stroke="#000000" points="242.57,-641.58 248.84,-633.04 238.61,-635.8 242.57,-641.58"/>
+</g>
+<!-- program~volatile_doctest~1195 -->
+<g id="proc~~is_integer~~CalledByGraph_node17" class="node">
+<title>program~volatile_doctest~1195</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node17"><a xlink:href="../program/volatile_doctest~1195.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-1032 43,-1032 43,-1008 139,-1008 139,-1032"/>
+<text text-anchor="middle" x="91" y="-1017.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~1195&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge19" class="edge">
+<title>program~volatile_doctest~1195&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.22,-1019.58C154.99,-1016.97 171.26,-1011.14 182,-999 231.75,-942.75 181.46,-728.6 218,-663 223.34,-653.41 231.87,-645.27 240.58,-638.78"/>
+<polygon fill="#000000" stroke="#000000" points="242.63,-641.62 248.9,-633.07 238.67,-635.84 242.63,-641.62"/>
+</g>
+<!-- program~volatile_doctest~125 -->
+<g id="proc~~is_integer~~CalledByGraph_node18" class="node">
+<title>program~volatile_doctest~125</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node18"><a xlink:href="../program/volatile_doctest~125.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-990 43,-990 43,-966 139,-966 139,-990"/>
+<text text-anchor="middle" x="91" y="-975.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~125&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge20" class="edge">
+<title>program~volatile_doctest~125&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.12,-977.49C154.88,-974.87 171.17,-969.06 182,-957 269.96,-859.05 153.07,-777.52 218,-663 223.42,-653.45 231.96,-645.32 240.67,-638.83"/>
+<polygon fill="#000000" stroke="#000000" points="242.72,-641.67 248.98,-633.11 238.75,-635.9 242.72,-641.67"/>
+</g>
+<!-- program~volatile_doctest~173 -->
+<g id="proc~~is_integer~~CalledByGraph_node19" class="node">
+<title>program~volatile_doctest~173</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node19"><a xlink:href="../program/volatile_doctest~173.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-948 43,-948 43,-924 139,-924 139,-948"/>
+<text text-anchor="middle" x="91" y="-933.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~173&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge21" class="edge">
+<title>program~volatile_doctest~173&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.46,-935.29C155.06,-932.62 171.16,-926.83 182,-915 258.43,-831.58 161.21,-760.85 218,-663 223.51,-653.5 232.08,-645.39 240.79,-638.89"/>
+<polygon fill="#000000" stroke="#000000" points="242.84,-641.73 249.08,-633.17 238.86,-635.97 242.84,-641.73"/>
+</g>
+<!-- program~volatile_doctest~174 -->
+<g id="proc~~is_integer~~CalledByGraph_node20" class="node">
+<title>program~volatile_doctest~174</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node20"><a xlink:href="../program/volatile_doctest~174.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-906 43,-906 43,-882 139,-882 139,-906"/>
+<text text-anchor="middle" x="91" y="-891.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~174&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge22" class="edge">
+<title>program~volatile_doctest~174&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.27,-893.12C154.86,-890.44 171,-884.68 182,-873 246.94,-804.08 169.33,-744.23 218,-663 223.69,-653.5 232.39,-645.35 241.17,-638.83"/>
+<polygon fill="#000000" stroke="#000000" points="243.25,-641.64 249.5,-633.08 239.28,-635.88 243.25,-641.64"/>
+</g>
+<!-- program~volatile_doctest~218 -->
+<g id="proc~~is_integer~~CalledByGraph_node21" class="node">
+<title>program~volatile_doctest~218</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node21"><a xlink:href="../program/volatile_doctest~218.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-864 43,-864 43,-840 139,-840 139,-864"/>
+<text text-anchor="middle" x="91" y="-849.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~218&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge23" class="edge">
+<title>program~volatile_doctest~218&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.01,-850.86C154.57,-848.16 170.76,-842.45 182,-831 235.5,-776.52 177.41,-727.68 218,-663 223.93,-653.55 232.79,-645.37 241.62,-638.82"/>
+<polygon fill="#000000" stroke="#000000" points="243.74,-641.6 249.98,-633.03 239.76,-635.84 243.74,-641.6"/>
+</g>
+<!-- program~volatile_doctest~244 -->
+<g id="proc~~is_integer~~CalledByGraph_node22" class="node">
+<title>program~volatile_doctest~244</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node22"><a xlink:href="../program/volatile_doctest~244.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-822 43,-822 43,-798 139,-798 139,-822"/>
+<text text-anchor="middle" x="91" y="-807.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~244&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge24" class="edge">
+<title>program~volatile_doctest~244&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.05,-808.35C154.43,-805.58 170.5,-799.95 182,-789 224.18,-748.84 185.4,-711.26 218,-663 224.3,-653.68 233.33,-645.5 242.21,-638.9"/>
+<polygon fill="#000000" stroke="#000000" points="244.37,-641.66 250.58,-633.07 240.37,-635.92 244.37,-641.66"/>
+</g>
+<!-- program~volatile_doctest~259 -->
+<g id="proc~~is_integer~~CalledByGraph_node23" class="node">
+<title>program~volatile_doctest~259</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node23"><a xlink:href="../program/volatile_doctest~259.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-780 43,-780 43,-756 139,-756 139,-780"/>
+<text text-anchor="middle" x="91" y="-765.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~259&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge25" class="edge">
+<title>program~volatile_doctest~259&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.22,-765.33C154.26,-762.43 170.07,-757 182,-747 213.13,-720.91 193.18,-695.15 218,-663 224.98,-653.95 234.35,-645.77 243.32,-639.08"/>
+<polygon fill="#000000" stroke="#000000" points="245.56,-641.78 251.7,-633.15 241.52,-636.07 245.56,-641.78"/>
+</g>
+<!-- program~volatile_doctest~289 -->
+<g id="proc~~is_integer~~CalledByGraph_node24" class="node">
+<title>program~volatile_doctest~289</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node24"><a xlink:href="../program/volatile_doctest~289.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-738 43,-738 43,-714 139,-714 139,-738"/>
+<text text-anchor="middle" x="91" y="-723.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~289&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge26" class="edge">
+<title>program~volatile_doctest~289&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.02,-720.82C153.55,-717.74 169.11,-712.83 182,-705 203.01,-692.24 200.21,-679.97 218,-663 226.82,-654.59 237.24,-646.18 246.57,-639.11"/>
+<polygon fill="#000000" stroke="#000000" points="248.8,-641.81 254.74,-633.04 244.63,-636.19 248.8,-641.81"/>
+</g>
+<!-- program~volatile_doctest~301 -->
+<g id="proc~~is_integer~~CalledByGraph_node25" class="node">
+<title>program~volatile_doctest~301</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node25"><a xlink:href="../program/volatile_doctest~301.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-696 43,-696 43,-672 139,-672 139,-696"/>
+<text text-anchor="middle" x="91" y="-681.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~301&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge27" class="edge">
+<title>program~volatile_doctest~301&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.24,-674.91C153.18,-671.72 168.35,-667.72 182,-663 202.07,-656.06 223.67,-646.07 240.67,-637.58"/>
+<polygon fill="#000000" stroke="#000000" points="242.28,-640.69 249.61,-633.04 239.11,-634.45 242.28,-640.69"/>
+</g>
+<!-- program~volatile_doctest~394 -->
+<g id="proc~~is_integer~~CalledByGraph_node26" class="node">
+<title>program~volatile_doctest~394</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node26"><a xlink:href="../program/volatile_doctest~394.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-654 43,-654 43,-630 139,-630 139,-654"/>
+<text text-anchor="middle" x="91" y="-639.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~394&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge28" class="edge">
+<title>program~volatile_doctest~394&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.29,-636.48C160.16,-634.05 185.01,-631.15 207.54,-628.52"/>
+<polygon fill="#000000" stroke="#000000" points="208.17,-631.97 217.7,-627.33 207.36,-625.02 208.17,-631.97"/>
+</g>
+<!-- program~volatile_doctest~422 -->
+<g id="proc~~is_integer~~CalledByGraph_node27" class="node">
+<title>program~volatile_doctest~422</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node27"><a xlink:href="../program/volatile_doctest~422.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-612 43,-612 43,-588 139,-588 139,-612"/>
+<text text-anchor="middle" x="91" y="-597.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~422&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge29" class="edge">
+<title>program~volatile_doctest~422&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.29,-605.52C160.16,-607.95 185.01,-610.85 207.54,-613.48"/>
+<polygon fill="#000000" stroke="#000000" points="207.36,-616.98 217.7,-614.67 208.17,-610.03 207.36,-616.98"/>
+</g>
+<!-- program~volatile_doctest~542 -->
+<g id="proc~~is_integer~~CalledByGraph_node28" class="node">
+<title>program~volatile_doctest~542</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node28"><a xlink:href="../program/volatile_doctest~542.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-570 43,-570 43,-546 139,-546 139,-570"/>
+<text text-anchor="middle" x="91" y="-555.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~542&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge30" class="edge">
+<title>program~volatile_doctest~542&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.24,-567.09C153.18,-570.28 168.35,-574.28 182,-579 202.07,-585.94 223.67,-595.93 240.67,-604.42"/>
+<polygon fill="#000000" stroke="#000000" points="239.11,-607.55 249.61,-608.96 242.28,-601.31 239.11,-607.55"/>
+</g>
+<!-- program~volatile_doctest~545 -->
+<g id="proc~~is_integer~~CalledByGraph_node29" class="node">
+<title>program~volatile_doctest~545</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node29"><a xlink:href="../program/volatile_doctest~545.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-528 43,-528 43,-504 139,-504 139,-528"/>
+<text text-anchor="middle" x="91" y="-513.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~545&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge31" class="edge">
+<title>program~volatile_doctest~545&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.45,-522.26C153.69,-525.39 168.98,-530.05 182,-537 212.06,-553.04 239.58,-581.67 256.07,-601"/>
+<polygon fill="#000000" stroke="#000000" points="253.55,-603.44 262.64,-608.9 258.93,-598.97 253.55,-603.44"/>
+</g>
+<!-- program~volatile_doctest~559 -->
+<g id="proc~~is_integer~~CalledByGraph_node30" class="node">
+<title>program~volatile_doctest~559</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node30"><a xlink:href="../program/volatile_doctest~559.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-486 43,-486 43,-462 139,-462 139,-486"/>
+<text text-anchor="middle" x="91" y="-471.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~559&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge32" class="edge">
+<title>program~volatile_doctest~559&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.45,-478.51C154,-481.55 169.47,-486.61 182,-495 221.37,-521.35 249.18,-571.13 262.7,-599.59"/>
+<polygon fill="#000000" stroke="#000000" points="259.52,-601.07 266.87,-608.7 265.89,-598.15 259.52,-601.07"/>
+</g>
+<!-- program~volatile_doctest~582 -->
+<g id="proc~~is_integer~~CalledByGraph_node31" class="node">
+<title>program~volatile_doctest~582</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node31"><a xlink:href="../program/volatile_doctest~582.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-444 43,-444 43,-420 139,-420 139,-444"/>
+<text text-anchor="middle" x="91" y="-429.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~582&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge33" class="edge">
+<title>program~volatile_doctest~582&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.2,-435.37C154.06,-438.33 169.78,-443.63 182,-453 230.78,-490.4 256.16,-562 266.41,-598.46"/>
+<polygon fill="#000000" stroke="#000000" points="263.15,-599.81 269.12,-608.57 269.91,-598 263.15,-599.81"/>
+</g>
+<!-- program~volatile_doctest~593 -->
+<g id="proc~~is_integer~~CalledByGraph_node32" class="node">
+<title>program~volatile_doctest~593</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node32"><a xlink:href="../program/volatile_doctest~593.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-402 43,-402 43,-378 139,-378 139,-402"/>
+<text text-anchor="middle" x="91" y="-387.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~593&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge34" class="edge">
+<title>program~volatile_doctest~593&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.22,-392.67C154.26,-395.57 170.07,-401 182,-411 241.01,-460.46 262.27,-555.64 269.11,-598.78"/>
+<polygon fill="#000000" stroke="#000000" points="265.66,-599.41 270.58,-608.8 272.59,-598.4 265.66,-599.41"/>
+</g>
+<!-- program~volatile_doctest~714 -->
+<g id="proc~~is_integer~~CalledByGraph_node33" class="node">
+<title>program~volatile_doctest~714</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node33"><a xlink:href="../program/volatile_doctest~714.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-360 43,-360 43,-336 139,-336 139,-360"/>
+<text text-anchor="middle" x="91" y="-345.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~714&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge35" class="edge">
+<title>program~volatile_doctest~714&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.12,-350.16C154.33,-353 170.27,-358.53 182,-369 251.14,-430.69 267.18,-549.23 270.89,-598.58"/>
+<polygon fill="#000000" stroke="#000000" points="267.41,-599.04 271.55,-608.8 274.39,-598.59 267.41,-599.04"/>
+</g>
+<!-- program~volatile_doctest~751 -->
+<g id="proc~~is_integer~~CalledByGraph_node34" class="node">
+<title>program~volatile_doctest~751</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node34"><a xlink:href="../program/volatile_doctest~751.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-318 43,-318 43,-294 139,-294 139,-318"/>
+<text text-anchor="middle" x="91" y="-303.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~751&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge36" class="edge">
+<title>program~volatile_doctest~751&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.4,-307.86C154.63,-310.67 170.51,-316.26 182,-327 261.55,-401.33 271.47,-543.82 272.22,-598.7"/>
+<polygon fill="#000000" stroke="#000000" points="268.72,-598.76 272.26,-608.74 275.72,-598.73 268.72,-598.76"/>
+</g>
+<!-- program~volatile_doctest~760 -->
+<g id="proc~~is_integer~~CalledByGraph_node35" class="node">
+<title>program~volatile_doctest~760</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node35"><a xlink:href="../program/volatile_doctest~760.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-276 43,-276 43,-252 139,-252 139,-276"/>
+<text text-anchor="middle" x="91" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~760&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge37" class="edge">
+<title>program~volatile_doctest~760&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.15,-265.54C154.54,-268.31 170.59,-273.95 182,-285 228.03,-329.56 259.59,-531.09 269.04,-598.76"/>
+<polygon fill="#000000" stroke="#000000" points="265.59,-599.34 270.41,-608.77 272.52,-598.38 265.59,-599.34"/>
+</g>
+<!-- program~volatile_doctest~779 -->
+<g id="proc~~is_integer~~CalledByGraph_node36" class="node">
+<title>program~volatile_doctest~779</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node36"><a xlink:href="../program/volatile_doctest~779.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-234 43,-234 43,-210 139,-210 139,-234"/>
+<text text-anchor="middle" x="91" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~779&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge38" class="edge">
+<title>program~volatile_doctest~779&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.33,-223.36C154.73,-226.11 170.74,-231.79 182,-243 233.28,-294.05 261.82,-524.98 269.72,-598.47"/>
+<polygon fill="#000000" stroke="#000000" points="266.28,-599.28 270.81,-608.86 273.24,-598.55 266.28,-599.28"/>
+</g>
+<!-- program~volatile_doctest~794 -->
+<g id="proc~~is_integer~~CalledByGraph_node37" class="node">
+<title>program~volatile_doctest~794</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node37"><a xlink:href="../program/volatile_doctest~794.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-192 43,-192 43,-168 139,-168 139,-192"/>
+<text text-anchor="middle" x="91" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~794&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge39" class="edge">
+<title>program~volatile_doctest~794&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.01,-181.14C154.57,-183.84 170.76,-189.55 182,-201 238.65,-258.69 263.9,-519.97 270.3,-598.57"/>
+<polygon fill="#000000" stroke="#000000" points="266.83,-599.1 271.11,-608.79 273.81,-598.55 266.83,-599.1"/>
+</g>
+<!-- program~volatile_doctest~830 -->
+<g id="proc~~is_integer~~CalledByGraph_node38" class="node">
+<title>program~volatile_doctest~830</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node38"><a xlink:href="../program/volatile_doctest~830.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-150 43,-150 43,-126 139,-126 139,-150"/>
+<text text-anchor="middle" x="91" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~830&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge40" class="edge">
+<title>program~volatile_doctest~830&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.13,-139.02C154.7,-141.72 170.87,-147.45 182,-159 244.08,-223.41 265.8,-515.56 270.79,-598.8"/>
+<polygon fill="#000000" stroke="#000000" points="267.3,-599.13 271.37,-608.91 274.29,-598.73 267.3,-599.13"/>
+</g>
+<!-- program~volatile_doctest~841 -->
+<g id="proc~~is_integer~~CalledByGraph_node39" class="node">
+<title>program~volatile_doctest~841</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node39"><a xlink:href="../program/volatile_doctest~841.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-108 43,-108 43,-84 139,-84 139,-108"/>
+<text text-anchor="middle" x="91" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~841&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge41" class="edge">
+<title>program~volatile_doctest~841&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.23,-96.92C154.81,-99.61 170.96,-105.36 182,-117 249.4,-188.04 267.45,-510.16 271.17,-598.52"/>
+<polygon fill="#000000" stroke="#000000" points="267.68,-598.9 271.58,-608.75 274.68,-598.62 267.68,-598.9"/>
+</g>
+<!-- program~volatile_doctest~962 -->
+<g id="proc~~is_integer~~CalledByGraph_node40" class="node">
+<title>program~volatile_doctest~962</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node40"><a xlink:href="../program/volatile_doctest~962.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-66 43,-66 43,-42 139,-42 139,-66"/>
+<text text-anchor="middle" x="91" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~962&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge42" class="edge">
+<title>program~volatile_doctest~962&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.31,-54.84C154.9,-57.52 171.03,-63.29 182,-75 254.8,-152.76 269.01,-505.49 271.51,-598.47"/>
+<polygon fill="#000000" stroke="#000000" points="268.01,-598.8 271.76,-608.71 275.01,-598.63 268.01,-598.8"/>
+</g>
+<!-- program~volatile_doctest~983 -->
+<g id="proc~~is_integer~~CalledByGraph_node41" class="node">
+<title>program~volatile_doctest~983</title>
+<g id="a_proc~~is_integer~~CalledByGraph_node41"><a xlink:href="../program/volatile_doctest~983.html" xlink:title="volatile_doctest">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-24 43,-24 43,0 139,0 139,-24"/>
+<text text-anchor="middle" x="91" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
+</a>
+</g>
+</g>
+<!-- program~volatile_doctest~983&#45;&gt;none~to_number -->
+<g id="proc~~is_integer~~CalledByGraph_edge43" class="edge">
+<title>program~volatile_doctest~983&#45;&gt;none~to_number</title>
+<path fill="none" stroke="#000000" d="M139.39,-12.77C154.98,-15.44 171.1,-21.22 182,-33 260.27,-117.57 270.47,-501.53 271.8,-598.63"/>
+<polygon fill="#000000" stroke="#000000" points="268.3,-598.83 271.92,-608.78 275.3,-598.74 268.3,-598.83"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <br>
 
-    <section class="visible-xs visible-sm hidden-md">
-      <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../proc/is_integer.html#src">is_integer</a>
-  </div>
-</div>
-
-    </section>
-    <br class="visible-xs visible-sm hidden-md">
-
 
     
     
 
     
     
+
 
 
     
     <section>
     <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="highlight"><pre><span></span><span class="w">   </span><span class="k">elemental function </span><span class="n">is_integer</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">allow_spaces</span><span class="p">)</span><span class="w"></span>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">elemental function </span><span class="n">is_integer</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">allow_spaces</span><span class="p">)</span>
 <span class="w">   </span><span class="c">!&lt; Return true if the string contains an integer.</span>
 <span class="w">   </span><span class="c">!&lt;</span>
 <span class="w">   </span><span class="c">!&lt; The regular expression is `\s*[\+\-]?\d+([eE]\+?\d+)?\s*`. The parse algorithm is done in stages:</span>
@@ -222,68 +983,68 @@
 <span class="w">   </span><span class="kt">integer</span><span class="w">                             </span><span class="kd">::</span><span class="w"> </span><span class="n">c</span><span class="w">             </span><span class="c">!&lt; Character counter.</span>
 
 <span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
-<span class="k">      </span><span class="n">allow_spaces_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">allow_spaces</span><span class="p">))</span><span class="w"> </span><span class="n">allow_spaces_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allow_spaces</span><span class="w"></span>
-<span class="w">      </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"></span>
-<span class="w">      </span><span class="n">is_integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span><span class="w"></span>
-<span class="w">      </span><span class="k">do </span><span class="n">c</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">)</span><span class="w"></span>
-<span class="w">         </span><span class="k">select case</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">(</span><span class="n">c</span><span class="p">:</span><span class="n">c</span><span class="p">))</span><span class="w"></span>
-<span class="w">         </span><span class="k">case</span><span class="p">(</span><span class="n">SPACE</span><span class="p">,</span><span class="w"> </span><span class="n">TAB</span><span class="p">)</span><span class="w"></span>
-<span class="w">            </span><span class="k">select case</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">)</span><span class="w"></span>
-<span class="w">               </span><span class="n">is_integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allow_spaces_</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span><span class="w"></span>
-<span class="w">               </span><span class="n">is_integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allow_spaces_</span><span class="w"></span>
-<span class="w">               </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">6</span><span class="w"></span>
-<span class="w">            </span><span class="k">case </span><span class="n">default</span><span class="w"></span>
-<span class="w">               </span><span class="n">is_integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span><span class="w"></span>
+<span class="k">      </span><span class="n">allow_spaces_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">allow_spaces</span><span class="p">))</span><span class="w"> </span><span class="n">allow_spaces_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allow_spaces</span>
+<span class="w">      </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">      </span><span class="n">is_integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">      </span><span class="k">do </span><span class="n">c</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">)</span>
+<span class="w">         </span><span class="k">select case</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">raw</span><span class="p">(</span><span class="n">c</span><span class="p">:</span><span class="n">c</span><span class="p">))</span>
+<span class="w">         </span><span class="k">case</span><span class="p">(</span><span class="n">SPACE</span><span class="p">,</span><span class="w"> </span><span class="n">TAB</span><span class="p">)</span>
+<span class="w">            </span><span class="k">select case</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
+<span class="w">            </span><span class="k">case</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">)</span>
+<span class="w">               </span><span class="n">is_integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allow_spaces_</span>
+<span class="w">            </span><span class="k">case</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span>
+<span class="w">               </span><span class="n">is_integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allow_spaces_</span>
+<span class="w">               </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">6</span>
+<span class="w">            </span><span class="k">case </span><span class="n">default</span>
+<span class="w">               </span><span class="n">is_integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
 <span class="w">            </span><span class="k">endselect</span>
-<span class="k">         case</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span><span class="w"></span>
-<span class="w">            </span><span class="k">select case</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"></span>
-<span class="w">               </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
-<span class="w">            </span><span class="k">case </span><span class="n">default</span><span class="w"></span>
-<span class="w">               </span><span class="n">is_integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span><span class="w"></span>
+<span class="k">         case</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+<span class="w">            </span><span class="k">select case</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
+<span class="w">            </span><span class="k">case</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">               </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">            </span><span class="k">case </span><span class="n">default</span>
+<span class="w">               </span><span class="n">is_integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
 <span class="w">            </span><span class="k">end select</span>
-<span class="k">         case</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">)</span><span class="w"></span>
-<span class="w">            </span><span class="k">select case</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"></span>
-<span class="w">               </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"></span>
-<span class="w">               </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="w"></span>
-<span class="w">            </span><span class="k">case </span><span class="n">default</span><span class="w"></span>
-<span class="w">               </span><span class="n">is_integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span><span class="w"></span>
+<span class="k">         case</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">)</span>
+<span class="w">            </span><span class="k">select case</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
+<span class="w">            </span><span class="k">case</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">               </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">            </span><span class="k">case</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="w">               </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span>
+<span class="w">            </span><span class="k">case </span><span class="n">default</span>
+<span class="w">               </span><span class="n">is_integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
 <span class="w">            </span><span class="k">endselect</span>
-<span class="k">         case</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">:</span><span class="s1">&#39;9&#39;</span><span class="p">)</span><span class="w"></span>
-<span class="w">            </span><span class="k">select case</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="p">(</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">)</span><span class="w"></span>
-<span class="w">               </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="p">(</span><span class="mi">3</span><span class="p">:</span><span class="mi">4</span><span class="p">)</span><span class="w"></span>
-<span class="w">               </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="w"></span>
-<span class="w">            </span><span class="k">case </span><span class="n">default</span><span class="w"></span>
+<span class="k">         case</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">:</span><span class="s1">&#39;9&#39;</span><span class="p">)</span>
+<span class="w">            </span><span class="k">select case</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
+<span class="w">            </span><span class="k">case</span><span class="p">(</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">               </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">            </span><span class="k">case</span><span class="p">(</span><span class="mi">3</span><span class="p">:</span><span class="mi">4</span><span class="p">)</span>
+<span class="w">               </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span>
+<span class="w">            </span><span class="k">case </span><span class="n">default</span>
 <span class="w">               </span><span class="k">continue</span>
 <span class="k">            endselect</span>
-<span class="k">         case</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;e&#39;</span><span class="p">,</span><span class="s1">&#39;E&#39;</span><span class="p">)</span><span class="w"></span>
-<span class="w">            </span><span class="k">select case</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"></span>
-<span class="w">               </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="w"></span>
-<span class="w">            </span><span class="k">case </span><span class="n">default</span><span class="w"></span>
-<span class="w">               </span><span class="n">is_integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span><span class="w"></span>
+<span class="k">         case</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;e&#39;</span><span class="p">,</span><span class="s1">&#39;E&#39;</span><span class="p">)</span>
+<span class="w">            </span><span class="k">select case</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
+<span class="w">            </span><span class="k">case</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">               </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">            </span><span class="k">case </span><span class="n">default</span>
+<span class="w">               </span><span class="n">is_integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
 <span class="w">            </span><span class="k">endselect</span>
-<span class="k">         case </span><span class="n">default</span><span class="w"></span>
-<span class="w">            </span><span class="n">is_integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span><span class="w"></span>
+<span class="k">         case </span><span class="n">default</span>
+<span class="w">            </span><span class="n">is_integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
 <span class="w">         </span><span class="k">endselect</span>
 <span class="k">         if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">is_integer</span><span class="p">)</span><span class="w"> </span><span class="k">exit</span>
 <span class="k">      enddo</span>
 <span class="k">   endif</span>
 <span class="k">   if</span><span class="w"> </span><span class="p">(</span><span class="n">is_integer</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
-<span class="k">      select case</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span><span class="w"></span>
-<span class="w">      </span><span class="k">case</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">)</span><span class="w"></span>
-<span class="w">         </span><span class="n">is_integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span><span class="w"></span>
-<span class="w">      </span><span class="k">case </span><span class="n">default</span><span class="w"></span>
-<span class="w">         </span><span class="n">is_integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span><span class="w"></span>
+<span class="k">      select case</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
+<span class="w">      </span><span class="k">case</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">)</span>
+<span class="w">         </span><span class="n">is_integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
+<span class="w">      </span><span class="k">case </span><span class="n">default</span>
+<span class="w">         </span><span class="n">is_integer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
 <span class="w">      </span><span class="k">end select</span>
 <span class="k">   endif</span>
-<span class="k">   endfunction </span><span class="n">is_integer</span><span class="w"></span>
+<span class="k">   endfunction </span><span class="n">is_integer</span>
 </pre></div>
 
     </section>
@@ -292,50 +1053,48 @@
     </div>
   </div>
 
-    <hr>    
+      <hr>
     </div> <!-- /container -->
     <footer>
       <div class="container">
-      <div class="row">
-        <div class="col-xs-6 col-md-6"><p>Lib_VTK_IO was developed by Stefano Zaghi<br>&copy; 2022 
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Lib_VTK_IO
+ was developed by Stefano Zaghi<br>              &copy; 2025 
 </p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
         </div>
-        <div class="col-xs-6 col-md-6">
-          <p class="text-right">
-            Documentation generated by 
-            <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
-          </p>
-        </div>
-      </div>
-      <br>
-      </div> <!-- /container -->    
+        <br>
+      </div> <!-- /container -->
     </footer>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
+    <!-- Bootstrap core JavaScript -->
     <!-- Placed at the end of the document so the pages load faster -->
-<!--
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
--->
-    <script src="../js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
 
     <!-- MathJax JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
-        jax: ['input/TeX','input/MathML','output/HTML-CSS'],
-        extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
-      });
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script src="../tipuesearch/tipuesearch_content.js"></script>
-    <script src="../tipuesearch/tipuesearch_set.js"></script>
-    <script src="../tipuesearch/tipuesearch.js"></script>
-    
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
   </body>
 </html>

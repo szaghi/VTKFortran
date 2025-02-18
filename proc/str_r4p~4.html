@@ -1,169 +1,227 @@
+<!-- -*- mode: jinja2 -*- -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-   <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
+      <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
     <meta name="author" content="Stefano Zaghi" >
     <link rel="icon" href="../favicon.png">
 
     <title>str_R4P &ndash; Lib_VTK_IO</title>
 
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="../css/pygments.css" rel="stylesheet">
     <link href="../css/font-awesome.min.css" rel="stylesheet">
     <link href="../css/local.css" rel="stylesheet">
-    <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    
-    <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="../js/svg-pan-zoom.min.js"></script>
-
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
           <a class="navbar-brand" href="../index.html">Lib_VTK_IO </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
-              <a href="#" class="dropdown-toggle"
-              data-toggle="dropdown" role="button"
-              aria-haspopup="true"
-     aria-expanded="false">Contents <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-            <li><a href="../lists/files.html">Source Files</a></li>
-            <li><a href="../lists/modules.html">Modules</a></li>
-            <li><a href="../lists/procedures.html">Procedures</a></li>
-            <li><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                   <li><a href="../lists/types.html">Derived Types</a></li>
-            <li><a href="../lists/programs.html">Programs</a></li>
-       
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
             </ul>
-        
-            </li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/files.html">Source Files</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/modules.html">Modules</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/procedures.html">Procedures</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                             <li class="visible-xs hidden-sm visible-lg"><a href="../lists/types.html">Derived Types</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/programs.html">Programs</a></li>
-          </ul>
-        <form action="../search.html" class="navbar-form navbar-right" role="search">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
         </div>
-<!--
-        <button type="submit" class="btn btn-default">Submit</button>
--->
-        </form>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+      </nav>
+    </div>
 
     <div class="container">
   <div class="row">
     <h1>str_R4P
       <small>Function</small>
+      
     </h1>
-    <div class="row">
-  <div class="col-lg-12">
-<div class="well well-sm">
-  <ul class="list-inline" style="margin-bottom:0px;display:inline">
-     <li><i class="fa fa-list-ol"></i>
-       <a data-toggle="tooltip"
-    data-placement="bottom" data-html="true"
-    title=" 0.1% of total for procedures.">12 statements</a>
-     </li> 
-    <li><i class="fa fa-code"></i><a href="../src/penf_stringify.F90"> Source File</a></li>
-  </ul>
-  <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/penf_stringify.f90~4.html'>penf_stringify.F90</a></li>
-     <li><a href='../module/penf_stringify~5.html'>penf_stringify</a></li>
-     <li class="active">str_R4P</li>
-  </ol>
-</div>
-</div>
-</div>
-<script>
-  $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-  })
-</script>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.1% of total for procedures.">12 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/penf_stringify.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/penf_stringify.f90~4.html'>penf_stringify.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/penf_stringify~6.html'>penf_stringify</a></li>
+            <li class="breadcrumb-item active" aria-current="page">str_R4P</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
 
   </div>
   
   <div class="row">
     <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
-    <div id="sidebar">
-  <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../proc/str_r4p~4.html#src">str_R4P</a>
-  </div>
-</div>
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../proc/str_r4p~4.html#src">str_R4P</a>
+      </div>
+    </div>
 
-</div>
+
+  </div>
 
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private elemental function str_R4P(n, no_sign, compact) result(str)</h2>
+    <h2>private elemental function str_R4P(n, no_sign, compact) result(str)  
+</h2>
     
+
 
 
     <h3>Arguments</h3>
-      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" id="variable-n~223"></span>real(kind=R4P),</td>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n~247"></span>
+              real(kind=R4P),
+            </td>
 <td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>n</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-no_sign~45"></span>logical,</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-no_sign~45"></span>
+              logical,
+            </td>
 <td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>no_sign</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" id="variable-compact~21"></span>logical,</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>no_sign</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-compact~21"></span>
+              logical,
+            </td>
 <td>intent(in),</td>
-  <td>optional</td>  <td></td><td>::</td>
-  <td><strong>compact</strong></td><td></td>
-</tr>
-</tbody>
-</table>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>compact</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
 
-   <h3>Return Value <small><span class="anchor" id="variable-str~109"></span>character</small></h3>
-    
+      <h3>Return Value
+        <small>
+          <span class="anchor" id="variable-str~129"></span>
+          character(len=DR4P)
+        </small>
+      </h3>
+      
     <br>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-  <h3 class="panel-title">Calls</h3>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
       </div>
-      <div class="panel-body">
+      <div class="card-body">
   <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
@@ -184,7 +242,7 @@
 <!-- proc~compact_real_string~4 -->
 <g id="proc~~str_r4p~4~~CallsGraph_node2" class="node">
 <title>proc~compact_real_string~4</title>
-<g id="a_proc~~str_r4p~4~~CallsGraph_node2"><a xlink:href=".././proc/compact_real_string~4.html" xlink:title="compact_real_string">
+<g id="a_proc~~str_r4p~4~~CallsGraph_node2"><a xlink:href="../proc/compact_real_string~4.html" xlink:title="compact_real_string">
 <polygon fill="#d9534f" stroke="#d9534f" points="210,-24 90,-24 90,0 210,0 210,-24"/>
 <text text-anchor="middle" x="150" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compact_real_string</text>
 </a>
@@ -198,19 +256,29 @@
 </g>
 </g>
 </svg>
-</div><div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div><div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog"><div class="modal-dialog modal-lg" role="document"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="-graph-help-label">Graph Key</h4></div><div class="modal-body">
-    <p>Nodes of different colours represent the following: </p>
-    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: Graph Key Pages: 1 -->
-<svg width="597pt" height="32pt"
- viewBox="0.00 0.00 596.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
 <title>Graph Key</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 592.5,-28 592.5,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
 <!-- Subroutine -->
 <g id="node1" class="node">
 <title>Subroutine</title>
@@ -229,41 +297,49 @@
 <polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
 <text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
 </g>
-<!-- Unknown Procedure Type -->
+<!-- Type Bound Procedure -->
 <g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
 <title>Unknown Procedure Type</title>
-<polygon fill="#777777" stroke="#777777" points="388.5,-24 243.5,-24 243.5,0 388.5,0 388.5,-24"/>
-<text text-anchor="middle" x="316" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
 </g>
 <!-- Program -->
-<g id="node5" class="node">
+<g id="node6" class="node">
 <title>Program</title>
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="465,-24 407,-24 407,0 465,0 465,-24"/>
-<text text-anchor="middle" x="436" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
 </g>
 <!-- This Page&#39;s Entity -->
-<g id="node6" class="node">
+<g id="node7" class="node">
 <title>This Page&#39;s Entity</title>
-<polygon fill="none" stroke="black" points="588.5,-24 483.5,-24 483.5,0 588.5,0 588.5,-24"/>
-<text text-anchor="middle" x="536" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
 </g>
 </g>
 </svg>
 
-    
-    <p>Solid arrows point from a procedure to one which it calls. Dashed 
-    arrows point from an interface to procedures which implement that interface.
-    This could include the module procedures in a generic interface or the
-    implementation in a submodule of an interface in a parent module.
-    </p>
-    </div></div></div></div>
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-  <h3 class="panel-title">Called by</h3>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
       </div>
-      <div class="panel-body">
+      <div class="card-body">
   <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
@@ -281,25 +357,10 @@
 <polygon fill="none" stroke="black" points="430,-87 376,-87 376,-63 430,-63 430,-87"/>
 <text text-anchor="middle" x="403" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50">str_R4P</text>
 </g>
-<!-- proc~str_a_r4p~4 -->
-<g id="proc~~str_r4p~4~~CalledByGraph_node2" class="node">
-<title>proc~str_a_r4p~4</title>
-<g id="a_proc~~str_r4p~4~~CalledByGraph_node2"><a xlink:href=".././proc/str_a_r4p~4.html" xlink:title="str_a_R4P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="340,-67 276,-67 276,-43 340,-43 340,-67"/>
-<text text-anchor="middle" x="308" y="-52.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_R4P</text>
-</a>
-</g>
-</g>
-<!-- proc~str_a_r4p~4&#45;&gt;proc~str_r4p~4 -->
-<g id="proc~~str_r4p~4~~CalledByGraph_edge1" class="edge">
-<title>proc~str_a_r4p~4&#45;&gt;proc~str_r4p~4</title>
-<path fill="none" stroke="#000000" d="M340.23,-61.72C348.48,-63.49 357.46,-65.42 365.94,-67.25"/>
-<polygon fill="#000000" stroke="#000000" points="365.46,-70.72 375.97,-69.4 366.93,-63.88 365.46,-70.72"/>
-</g>
 <!-- interface~str~4 -->
-<g id="proc~~str_r4p~4~~CalledByGraph_node3" class="node">
+<g id="proc~~str_r4p~4~~CalledByGraph_node2" class="node">
 <title>interface~str~4</title>
-<g id="a_proc~~str_r4p~4~~CalledByGraph_node3"><a xlink:href=".././interface/str~4.html" xlink:title="str">
+<g id="a_proc~~str_r4p~4~~CalledByGraph_node2"><a xlink:href="../interface/str~4.html" xlink:title="str">
 <polygon fill="#a7506f" stroke="#a7506f" points="240,-87 186,-87 186,-63 240,-63 240,-87"/>
 <text text-anchor="middle" x="213" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str</text>
 </a>
@@ -311,120 +372,145 @@
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M240.24,-75.52C251.28,-75.71 264.27,-75.91 276,-76 304.44,-76.23 311.56,-76.23 340,-76 348.25,-75.93 357.12,-75.82 365.49,-75.69"/>
 <polygon fill="#000000" stroke="#000000" points="365.81,-79.18 375.76,-75.52 365.7,-72.18 365.81,-79.18"/>
 </g>
+<!-- proc~str_a_r4p~4 -->
+<g id="proc~~str_r4p~4~~CalledByGraph_node3" class="node">
+<title>proc~str_a_r4p~4</title>
+<g id="a_proc~~str_r4p~4~~CalledByGraph_node3"><a xlink:href="../proc/str_a_r4p~4.html" xlink:title="str_a_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="340,-67 276,-67 276,-43 340,-43 340,-67"/>
+<text text-anchor="middle" x="308" y="-52.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_R4P</text>
+</a>
+</g>
+</g>
 <!-- interface~str~4&#45;&gt;proc~str_a_r4p~4 -->
-<g id="proc~~str_r4p~4~~CalledByGraph_edge3" class="edge">
+<g id="proc~~str_r4p~4~~CalledByGraph_edge7" class="edge">
 <title>interface~str~4&#45;&gt;proc~str_a_r4p~4</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M240.4,-69.32C248.35,-67.61 257.27,-65.69 265.94,-63.83"/>
 <polygon fill="#000000" stroke="#000000" points="266.88,-67.21 275.92,-61.68 265.41,-60.36 266.88,-67.21"/>
 </g>
-<!-- proc~bctoi_i8p~4 -->
+<!-- proc~str_a_r4p~4&#45;&gt;proc~str_r4p~4 -->
+<g id="proc~~str_r4p~4~~CalledByGraph_edge1" class="edge">
+<title>proc~str_a_r4p~4&#45;&gt;proc~str_r4p~4</title>
+<path fill="none" stroke="#000000" d="M340.23,-61.72C348.48,-63.49 357.46,-65.42 365.94,-67.25"/>
+<polygon fill="#000000" stroke="#000000" points="365.46,-70.72 375.97,-69.4 366.93,-63.88 365.46,-70.72"/>
+</g>
+<!-- proc~bctoi_i1p~4 -->
 <g id="proc~~str_r4p~4~~CalledByGraph_node4" class="node">
-<title>proc~bctoi_i8p~4</title>
-<g id="a_proc~~str_r4p~4~~CalledByGraph_node4"><a xlink:href=".././proc/bctoi_i8p~4.html" xlink:title="bctoi_I8P">
+<title>proc~bctoi_i1p~4</title>
+<g id="a_proc~~str_r4p~4~~CalledByGraph_node4"><a xlink:href="../proc/bctoi_i1p~4.html" xlink:title="bctoi_I1P">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="150,-150 90,-150 90,-126 150,-126 150,-150"/>
-<text text-anchor="middle" x="120" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bctoi_I8P</text>
+<text text-anchor="middle" x="120" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bctoi_I1P</text>
 </a>
 </g>
 </g>
-<!-- proc~bctoi_i8p~4&#45;&gt;interface~str~4 -->
-<g id="proc~~str_r4p~4~~CalledByGraph_edge4" class="edge">
-<title>proc~bctoi_i8p~4&#45;&gt;interface~str~4</title>
+<!-- proc~bctoi_i1p~4&#45;&gt;interface~str~4 -->
+<g id="proc~~str_r4p~4~~CalledByGraph_edge3" class="edge">
+<title>proc~bctoi_i1p~4&#45;&gt;interface~str~4</title>
 <path fill="none" stroke="#000000" d="M138.55,-125.85C152.02,-116.53 170.82,-103.51 186.03,-92.98"/>
 <polygon fill="#000000" stroke="#000000" points="188.28,-95.68 194.51,-87.11 184.29,-89.92 188.28,-95.68"/>
 </g>
-<!-- proc~bctoi_i4p~4 -->
+<!-- proc~bctoi_i2p~4 -->
 <g id="proc~~str_r4p~4~~CalledByGraph_node5" class="node">
-<title>proc~bctoi_i4p~4</title>
-<g id="a_proc~~str_r4p~4~~CalledByGraph_node5"><a xlink:href=".././proc/bctoi_i4p~4.html" xlink:title="bctoi_I4P">
+<title>proc~bctoi_i2p~4</title>
+<g id="a_proc~~str_r4p~4~~CalledByGraph_node5"><a xlink:href="../proc/bctoi_i2p~4.html" xlink:title="bctoi_I2P">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="150,-108 90,-108 90,-84 150,-84 150,-108"/>
-<text text-anchor="middle" x="120" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bctoi_I4P</text>
+<text text-anchor="middle" x="120" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bctoi_I2P</text>
+</a>
+</g>
+</g>
+<!-- proc~bctoi_i2p~4&#45;&gt;interface~str~4 -->
+<g id="proc~~str_r4p~4~~CalledByGraph_edge4" class="edge">
+<title>proc~bctoi_i2p~4&#45;&gt;interface~str~4</title>
+<path fill="none" stroke="#000000" d="M150.04,-89.3C158.27,-87.4 167.32,-85.31 175.91,-83.33"/>
+<polygon fill="#000000" stroke="#000000" points="176.74,-86.73 185.7,-81.07 175.17,-79.91 176.74,-86.73"/>
+</g>
+<!-- proc~bctoi_i4p~4 -->
+<g id="proc~~str_r4p~4~~CalledByGraph_node6" class="node">
+<title>proc~bctoi_i4p~4</title>
+<g id="a_proc~~str_r4p~4~~CalledByGraph_node6"><a xlink:href="../proc/bctoi_i4p~4.html" xlink:title="bctoi_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="150,-66 90,-66 90,-42 150,-42 150,-66"/>
+<text text-anchor="middle" x="120" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bctoi_I4P</text>
 </a>
 </g>
 </g>
 <!-- proc~bctoi_i4p~4&#45;&gt;interface~str~4 -->
 <g id="proc~~str_r4p~4~~CalledByGraph_edge5" class="edge">
 <title>proc~bctoi_i4p~4&#45;&gt;interface~str~4</title>
-<path fill="none" stroke="#000000" d="M150.04,-89.3C158.27,-87.4 167.32,-85.31 175.91,-83.33"/>
-<polygon fill="#000000" stroke="#000000" points="176.74,-86.73 185.7,-81.07 175.17,-79.91 176.74,-86.73"/>
-</g>
-<!-- proc~bctoi_i2p~4 -->
-<g id="proc~~str_r4p~4~~CalledByGraph_node6" class="node">
-<title>proc~bctoi_i2p~4</title>
-<g id="a_proc~~str_r4p~4~~CalledByGraph_node6"><a xlink:href=".././proc/bctoi_i2p~4.html" xlink:title="bctoi_I2P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="150,-66 90,-66 90,-42 150,-42 150,-66"/>
-<text text-anchor="middle" x="120" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bctoi_I2P</text>
-</a>
-</g>
-</g>
-<!-- proc~bctoi_i2p~4&#45;&gt;interface~str~4 -->
-<g id="proc~~str_r4p~4~~CalledByGraph_edge6" class="edge">
-<title>proc~bctoi_i2p~4&#45;&gt;interface~str~4</title>
 <path fill="none" stroke="#000000" d="M150.04,-60.7C158.27,-62.6 167.32,-64.69 175.91,-66.67"/>
 <polygon fill="#000000" stroke="#000000" points="175.17,-70.09 185.7,-68.93 176.74,-63.27 175.17,-70.09"/>
 </g>
-<!-- proc~bctoi_i1p~4 -->
+<!-- proc~bctoi_i8p~4 -->
 <g id="proc~~str_r4p~4~~CalledByGraph_node7" class="node">
-<title>proc~bctoi_i1p~4</title>
-<g id="a_proc~~str_r4p~4~~CalledByGraph_node7"><a xlink:href=".././proc/bctoi_i1p~4.html" xlink:title="bctoi_I1P">
+<title>proc~bctoi_i8p~4</title>
+<g id="a_proc~~str_r4p~4~~CalledByGraph_node7"><a xlink:href="../proc/bctoi_i8p~4.html" xlink:title="bctoi_I8P">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="150,-24 90,-24 90,0 150,0 150,-24"/>
-<text text-anchor="middle" x="120" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bctoi_I1P</text>
+<text text-anchor="middle" x="120" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bctoi_I8P</text>
 </a>
 </g>
 </g>
-<!-- proc~bctoi_i1p~4&#45;&gt;interface~str~4 -->
-<g id="proc~~str_r4p~4~~CalledByGraph_edge7" class="edge">
-<title>proc~bctoi_i1p~4&#45;&gt;interface~str~4</title>
+<!-- proc~bctoi_i8p~4&#45;&gt;interface~str~4 -->
+<g id="proc~~str_r4p~4~~CalledByGraph_edge6" class="edge">
+<title>proc~bctoi_i8p~4&#45;&gt;interface~str~4</title>
 <path fill="none" stroke="#000000" d="M138.55,-24.15C152.02,-33.47 170.82,-46.49 186.03,-57.02"/>
 <polygon fill="#000000" stroke="#000000" points="184.29,-60.08 194.51,-62.89 188.28,-54.32 184.29,-60.08"/>
 </g>
 <!-- interface~bcton~4 -->
 <g id="proc~~str_r4p~4~~CalledByGraph_node8" class="node">
 <title>interface~bcton~4</title>
-<g id="a_proc~~str_r4p~4~~CalledByGraph_node8"><a xlink:href=".././interface/bcton~4.html" xlink:title="bcton">
+<g id="a_proc~~str_r4p~4~~CalledByGraph_node8"><a xlink:href="../interface/bcton~4.html" xlink:title="bcton">
 <polygon fill="#a7506f" stroke="#a7506f" points="54,-87 0,-87 0,-63 54,-63 54,-87"/>
 <text text-anchor="middle" x="27" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bcton</text>
 </a>
 </g>
 </g>
-<!-- interface~bcton~4&#45;&gt;proc~bctoi_i8p~4 -->
+<!-- interface~bcton~4&#45;&gt;proc~bctoi_i1p~4 -->
 <g id="proc~~str_r4p~4~~CalledByGraph_edge8" class="edge">
-<title>interface~bcton~4&#45;&gt;proc~bctoi_i8p~4</title>
+<title>interface~bcton~4&#45;&gt;proc~bctoi_i1p~4</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M45.55,-87.15C59.02,-96.47 77.82,-109.49 93.03,-120.02"/>
 <polygon fill="#000000" stroke="#000000" points="91.29,-123.08 101.51,-125.89 95.28,-117.32 91.29,-123.08"/>
 </g>
-<!-- interface~bcton~4&#45;&gt;proc~bctoi_i4p~4 -->
+<!-- interface~bcton~4&#45;&gt;proc~bctoi_i2p~4 -->
 <g id="proc~~str_r4p~4~~CalledByGraph_edge9" class="edge">
-<title>interface~bcton~4&#45;&gt;proc~bctoi_i4p~4</title>
+<title>interface~bcton~4&#45;&gt;proc~bctoi_i2p~4</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M54.32,-81.07C62.32,-82.92 71.29,-84.99 79.94,-86.99"/>
 <polygon fill="#000000" stroke="#000000" points="79.34,-90.44 89.87,-89.28 80.91,-83.62 79.34,-90.44"/>
 </g>
-<!-- interface~bcton~4&#45;&gt;proc~bctoi_i2p~4 -->
+<!-- interface~bcton~4&#45;&gt;proc~bctoi_i4p~4 -->
 <g id="proc~~str_r4p~4~~CalledByGraph_edge10" class="edge">
-<title>interface~bcton~4&#45;&gt;proc~bctoi_i2p~4</title>
+<title>interface~bcton~4&#45;&gt;proc~bctoi_i4p~4</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M54.32,-68.93C62.32,-67.08 71.29,-65.01 79.94,-63.01"/>
 <polygon fill="#000000" stroke="#000000" points="80.91,-66.38 89.87,-60.72 79.34,-59.56 80.91,-66.38"/>
 </g>
-<!-- interface~bcton~4&#45;&gt;proc~bctoi_i1p~4 -->
+<!-- interface~bcton~4&#45;&gt;proc~bctoi_i8p~4 -->
 <g id="proc~~str_r4p~4~~CalledByGraph_edge11" class="edge">
-<title>interface~bcton~4&#45;&gt;proc~bctoi_i1p~4</title>
+<title>interface~bcton~4&#45;&gt;proc~bctoi_i8p~4</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M45.55,-62.85C59.02,-53.53 77.82,-40.51 93.03,-29.98"/>
 <polygon fill="#000000" stroke="#000000" points="95.28,-32.68 101.51,-24.11 91.29,-26.92 95.28,-32.68"/>
 </g>
 </g>
 </svg>
-</div><div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div><div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog"><div class="modal-dialog modal-lg" role="document"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="-graph-help-label">Graph Key</h4></div><div class="modal-body">
-    <p>Nodes of different colours represent the following: </p>
-    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: Graph Key Pages: 1 -->
-<svg width="597pt" height="32pt"
- viewBox="0.00 0.00 596.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
 <title>Graph Key</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 592.5,-28 592.5,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
 <!-- Subroutine -->
 <g id="node1" class="node">
 <title>Subroutine</title>
@@ -443,63 +529,59 @@
 <polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
 <text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
 </g>
-<!-- Unknown Procedure Type -->
+<!-- Type Bound Procedure -->
 <g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
 <title>Unknown Procedure Type</title>
-<polygon fill="#777777" stroke="#777777" points="388.5,-24 243.5,-24 243.5,0 388.5,0 388.5,-24"/>
-<text text-anchor="middle" x="316" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
 </g>
 <!-- Program -->
-<g id="node5" class="node">
+<g id="node6" class="node">
 <title>Program</title>
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="465,-24 407,-24 407,0 465,0 465,-24"/>
-<text text-anchor="middle" x="436" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
 </g>
 <!-- This Page&#39;s Entity -->
-<g id="node6" class="node">
+<g id="node7" class="node">
 <title>This Page&#39;s Entity</title>
-<polygon fill="none" stroke="black" points="588.5,-24 483.5,-24 483.5,0 588.5,0 588.5,-24"/>
-<text text-anchor="middle" x="536" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
 </g>
 </g>
 </svg>
 
-    
-    <p>Solid arrows point from a procedure to one which it calls. Dashed 
-    arrows point from an interface to procedures which implement that interface.
-    This could include the module procedures in a generic interface or the
-    implementation in a submodule of an interface in a parent module.
-    </p>
-    </div></div></div></div>
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <br>
 
-    <section class="visible-xs visible-sm hidden-md">
-      <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title">Source Code</h3></div>
-  <div class="list-group">
-    <a class="list-group-item" href="../proc/str_r4p~4.html#src">str_R4P</a>
-  </div>
-</div>
-
-    </section>
-    <br class="visible-xs visible-sm hidden-md">
-
 
     
     
 
     
     
+
 
 
     
     <section>
     <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="highlight"><pre><span></span><span class="w">   </span><span class="k">elemental function </span><span class="n">str_R4P</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">no_sign</span><span class="p">,</span><span class="w"> </span><span class="n">compact</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">str</span><span class="p">)</span><span class="w"></span>
+    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">elemental function </span><span class="n">str_R4P</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">no_sign</span><span class="p">,</span><span class="w"> </span><span class="n">compact</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
 <span class="w">   </span><span class="c">!&lt; Convert real to string.</span>
 <span class="w">   </span><span class="c">!&lt;</span>
 <span class="w">   </span><span class="c">!&lt;```fortran</span>
@@ -528,9 +610,9 @@
 <span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="o">&gt;</span><span class="mf">0._R4P</span><span class="p">)</span><span class="w"> </span><span class="n">str</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="w">        </span><span class="c">! Prefixing plus if n&gt;0.</span>
 <span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">no_sign</span><span class="p">))</span><span class="w"> </span><span class="n">str</span><span class="o">=</span><span class="n">str</span><span class="p">(</span><span class="mi">2</span><span class="p">:)</span><span class="w"> </span><span class="c">! Leaving out the sign.</span>
 <span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">compact</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
-<span class="k">     if</span><span class="w"> </span><span class="p">(</span><span class="n">compact</span><span class="p">)</span><span class="w"> </span><span class="k">call </span><span class="n">compact_real_string</span><span class="p">(</span><span class="n">string</span><span class="o">=</span><span class="n">str</span><span class="p">)</span><span class="w"></span>
+<span class="k">     if</span><span class="w"> </span><span class="p">(</span><span class="n">compact</span><span class="p">)</span><span class="w"> </span><span class="k">call </span><span class="n">compact_real_string</span><span class="p">(</span><span class="n">string</span><span class="o">=</span><span class="n">str</span><span class="p">)</span>
 <span class="w">   </span><span class="k">endif</span>
-<span class="k">   endfunction </span><span class="n">str_R4P</span><span class="w"></span>
+<span class="k">   endfunction </span><span class="n">str_R4P</span>
 </pre></div>
 
     </section>
@@ -539,50 +621,48 @@
     </div>
   </div>
 
-    <hr>    
+      <hr>
     </div> <!-- /container -->
     <footer>
       <div class="container">
-      <div class="row">
-        <div class="col-xs-6 col-md-6"><p>Lib_VTK_IO was developed by Stefano Zaghi<br>&copy; 2022 
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Lib_VTK_IO
+ was developed by Stefano Zaghi<br>              &copy; 2025 
 </p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
         </div>
-        <div class="col-xs-6 col-md-6">
-          <p class="text-right">
-            Documentation generated by 
-            <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
-          </p>
-        </div>
-      </div>
-      <br>
-      </div> <!-- /container -->    
+        <br>
+      </div> <!-- /container -->
     </footer>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
+    <!-- Bootstrap core JavaScript -->
     <!-- Placed at the end of the document so the pages load faster -->
-<!--
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
--->
-    <script src="../js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
 
     <!-- MathJax JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
-        jax: ['input/TeX','input/MathML','output/HTML-CSS'],
-        extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
-      });
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script src="../tipuesearch/tipuesearch_content.js"></script>
-    <script src="../tipuesearch/tipuesearch_set.js"></script>
-    <script src="../tipuesearch/tipuesearch.js"></script>
-    
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
   </body>
 </html>

@@ -1,643 +1,673 @@
+<!-- -*- mode: jinja2 -*- -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-   <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
+      <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
     <meta name="author" content="Stefano Zaghi" >
     <link rel="icon" href="../favicon.png">
 
     <title>bcton &ndash; Lib_VTK_IO</title>
 
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="../css/pygments.css" rel="stylesheet">
     <link href="../css/font-awesome.min.css" rel="stylesheet">
     <link href="../css/local.css" rel="stylesheet">
-    <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    
-    <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="../js/svg-pan-zoom.min.js"></script>
-
   </head>
 
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
           <a class="navbar-brand" href="../index.html">Lib_VTK_IO </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="dropdown hidden-xs visible-sm visible-md hidden-lg">
-              <a href="#" class="dropdown-toggle"
-              data-toggle="dropdown" role="button"
-              aria-haspopup="true"
-     aria-expanded="false">Contents <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-            <li><a href="../lists/files.html">Source Files</a></li>
-            <li><a href="../lists/modules.html">Modules</a></li>
-            <li><a href="../lists/procedures.html">Procedures</a></li>
-            <li><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                   <li><a href="../lists/types.html">Derived Types</a></li>
-            <li><a href="../lists/programs.html">Programs</a></li>
-       
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
             </ul>
-        
-            </li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/files.html">Source Files</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/modules.html">Modules</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/procedures.html">Procedures</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/absint.html">Abstract Interfaces</a></li>
-                             <li class="visible-xs hidden-sm visible-lg"><a href="../lists/types.html">Derived Types</a></li>
-<li class="visible-xs hidden-sm visible-lg"><a href="../lists/programs.html">Programs</a></li>
-          </ul>
-        <form action="../search.html" class="navbar-form navbar-right" role="search">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
         </div>
-<!--
-        <button type="submit" class="btn btn-default">Submit</button>
--->
-        </form>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+      </nav>
+    </div>
 
     <div class="container">
   <div class="row">
     <h1>bcton
-   <small>Interface</small>
+      <small>Interface</small>
+      
     </h1>
-    <div class="row">
-  <div class="col-lg-12">
-<div class="well well-sm">
-  <ul class="list-inline" style="margin-bottom:0px;display:inline">
-     <li><i class="fa fa-list-ol"></i>
-       <a data-toggle="tooltip"
-    data-placement="bottom" data-html="true"
-    title="<p> 0.0% of total for procedures.</p>Including implementation: 43 statements,  0.2% of total for procedures.">3 statements</a>
-     </li> 
-    <li><i class="fa fa-code"></i><a href="../src/penf_stringify.F90"> Source File</a></li>
-  </ul>
-  <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/penf_stringify.f90.html'>penf_stringify.F90</a></li>
-     <li><a href='../module/penf_stringify~3.html'>penf_stringify</a></li>
-     <li class="active">bcton</li>
-  </ol>
-</div>
-</div>
-</div>
-<script>
-  $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-  })
-</script>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title="<p> 0.0% of total for procedures.</p>Including implementation: 43 statements,  0.2% of total for procedures.">3 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/penf_stringify.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/penf_stringify.f90.html'>penf_stringify.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/penf_stringify~4.html'>penf_stringify</a></li>
+            <li class="breadcrumb-item active" aria-current="page">bcton</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
 
   </div>
-  
+
   <div class="row">
     <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
-      <div id="sidebar">
-  <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#modprocs-0">Module Procedures</a></h3></div>
-  <div id="modprocs-0" class="panel-collapse collapse">
-    <div class="list-group">
-      <a class="list-group-item" href="../interface/bcton.html#moduleprocedure-bctor_r8p">bctor_R8P</a>
-      <a class="list-group-item" href="../interface/bcton.html#moduleprocedure-bctor_r4p">bctor_R4P</a>
-      <a class="list-group-item" href="../interface/bcton.html#moduleprocedure-bctoi_i8p">bctoi_I8P</a>
-      <a class="list-group-item" href="../interface/bcton.html#moduleprocedure-bctoi_i4p">bctoi_I4P</a>
-      <a class="list-group-item" href="../interface/bcton.html#moduleprocedure-bctoi_i2p">bctoi_I2P</a>
-      <a class="list-group-item" href="../interface/bcton.html#moduleprocedure-bctoi_i1p">bctoi_I1P</a>
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#modprocs-0"
+         aria-expanded="false" aria-controls="modprocs-0">
+         <h4 class="card-header bg-primary text-white">Module Procedures</h4>
+      </a>
+      <div id="modprocs-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../interface/bcton.html#moduleprocedure-bctor_r8p">bctor_R8P</a>
+            <a class="list-group-item" href="../interface/bcton.html#moduleprocedure-bctor_r4p">bctor_R4P</a>
+            <a class="list-group-item" href="../interface/bcton.html#moduleprocedure-bctoi_i8p">bctoi_I8P</a>
+            <a class="list-group-item" href="../interface/bcton.html#moduleprocedure-bctoi_i4p">bctoi_I4P</a>
+            <a class="list-group-item" href="../interface/bcton.html#moduleprocedure-bctoi_i2p">bctoi_I2P</a>
+            <a class="list-group-item" href="../interface/bcton.html#moduleprocedure-bctoi_i1p">bctoi_I1P</a>
+        </div>
+      </div>
     </div>
+
+  
+
+
   </div>
-</div>
-
-</div>
 
     </div>
-    
+
     <div class="col-md-9" id='text'>
       <h2>public interface bcton</h2>
-   
-    <div class="panel panel-default">
-      <div class="panel-heading">
-  <h3 class="panel-title">Calls</h3>
-      </div>
-      <div class="panel-body">
-  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+      
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Calls</h3>
+          </div>
+          <div class="card-body">
+            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: interface~~bcton~~CallsGraph Pages: 1 -->
-<svg id="interfacebctonCallsGraph" width="600pt" height="747pt"
- viewBox="0.00 0.00 600.00 747.47" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="interface~~bcton~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 743.47)">
+<svg id="interfacebctonCallsGraph" width="600pt" height="749pt"
+ viewBox="0.00 0.00 600.00 748.70" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="interface~~bcton~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 744.7)">
 <title>interface~~bcton~~CallsGraph</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-743.47 596,-743.47 596,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-744.7 596,-744.7 596,4 -4,4"/>
 <!-- interface~bcton -->
 <g id="interface~~bcton~~CallsGraph_node1" class="node">
 <title>interface~bcton</title>
-<polygon fill="none" stroke="black" points="54,-390 0,-390 0,-366 54,-366 54,-390"/>
-<text text-anchor="middle" x="27" y="-375.6" font-family="Helvetica,sans-Serif" font-size="10.50">bcton</text>
+<polygon fill="none" stroke="black" points="54,-354 0,-354 0,-330 54,-330 54,-354"/>
+<text text-anchor="middle" x="27" y="-339.6" font-family="Helvetica,sans-Serif" font-size="10.50">bcton</text>
 </g>
-<!-- proc~bctor_r8p -->
+<!-- proc~bctoi_i1p -->
 <g id="interface~~bcton~~CallsGraph_node2" class="node">
-<title>proc~bctor_r8p</title>
-<g id="a_interface~~bcton~~CallsGraph_node2"><a xlink:href=".././proc/bctor_r8p.html" xlink:title="bctor_R8P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="156,-495 90,-495 90,-471 156,-471 156,-495"/>
-<text text-anchor="middle" x="123" y="-480.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bctor_R8P</text>
+<title>proc~bctoi_i1p</title>
+<g id="a_interface~~bcton~~CallsGraph_node2"><a xlink:href="../proc/bctoi_i1p.html" xlink:title="bctoi_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="153,-375 93,-375 93,-351 153,-351 153,-375"/>
+<text text-anchor="middle" x="123" y="-360.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bctoi_I1P</text>
 </a>
 </g>
 </g>
-<!-- interface~bcton&#45;&gt;proc~bctor_r8p -->
+<!-- interface~bcton&#45;&gt;proc~bctoi_i1p -->
 <g id="interface~~bcton~~CallsGraph_edge1" class="edge">
-<title>interface~bcton&#45;&gt;proc~bctor_r8p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M35.06,-390.17C45.51,-407.52 66.44,-439.7 90,-462 90.95,-462.9 91.94,-463.78 92.97,-464.65"/>
-<polygon fill="#000000" stroke="#000000" points="91.14,-467.66 101.22,-470.92 95.37,-462.08 91.14,-467.66"/>
+<title>interface~bcton&#45;&gt;proc~bctoi_i1p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M54.18,-347.85C63.13,-349.85 73.35,-352.13 83.08,-354.31"/>
+<polygon fill="#000000" stroke="#000000" points="82.46,-357.75 92.98,-356.52 83.99,-350.92 82.46,-357.75"/>
 </g>
 <!-- proc~bctoi_i2p -->
 <g id="interface~~bcton~~CallsGraph_node3" class="node">
 <title>proc~bctoi_i2p</title>
-<g id="a_interface~~bcton~~CallsGraph_node3"><a xlink:href=".././proc/bctoi_i2p.html" xlink:title="bctoi_I2P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="153,-369 93,-369 93,-345 153,-345 153,-369"/>
-<text text-anchor="middle" x="123" y="-354.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bctoi_I2P</text>
+<g id="a_interface~~bcton~~CallsGraph_node3"><a xlink:href="../proc/bctoi_i2p.html" xlink:title="bctoi_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="153,-333 93,-333 93,-309 153,-309 153,-333"/>
+<text text-anchor="middle" x="123" y="-318.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bctoi_I2P</text>
 </a>
 </g>
 </g>
 <!-- interface~bcton&#45;&gt;proc~bctoi_i2p -->
 <g id="interface~~bcton~~CallsGraph_edge2" class="edge">
 <title>interface~bcton&#45;&gt;proc~bctoi_i2p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M54.18,-372.15C63.13,-370.15 73.35,-367.87 83.08,-365.69"/>
-<polygon fill="#000000" stroke="#000000" points="83.99,-369.08 92.98,-363.48 82.46,-362.25 83.99,-369.08"/>
-</g>
-<!-- proc~bctoi_i8p -->
-<g id="interface~~bcton~~CallsGraph_node4" class="node">
-<title>proc~bctoi_i8p</title>
-<g id="a_interface~~bcton~~CallsGraph_node4"><a xlink:href=".././proc/bctoi_i8p.html" xlink:title="bctoi_I8P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="153,-285 93,-285 93,-261 153,-261 153,-285"/>
-<text text-anchor="middle" x="123" y="-270.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bctoi_I8P</text>
-</a>
-</g>
-</g>
-<!-- interface~bcton&#45;&gt;proc~bctoi_i8p -->
-<g id="interface~~bcton~~CallsGraph_edge3" class="edge">
-<title>interface~bcton&#45;&gt;proc~bctoi_i8p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M35.06,-365.83C45.51,-348.48 66.44,-316.3 90,-294 90.95,-293.1 91.94,-292.22 92.97,-291.35"/>
-<polygon fill="#000000" stroke="#000000" points="95.37,-293.92 101.22,-285.08 91.14,-288.34 95.37,-293.92"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M54.18,-336.15C63.13,-334.15 73.35,-331.87 83.08,-329.69"/>
+<polygon fill="#000000" stroke="#000000" points="83.99,-333.08 92.98,-327.48 82.46,-326.25 83.99,-333.08"/>
 </g>
 <!-- proc~bctoi_i4p -->
-<g id="interface~~bcton~~CallsGraph_node5" class="node">
+<g id="interface~~bcton~~CallsGraph_node4" class="node">
 <title>proc~bctoi_i4p</title>
-<g id="a_interface~~bcton~~CallsGraph_node5"><a xlink:href=".././proc/bctoi_i4p.html" xlink:title="bctoi_I4P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="153,-453 93,-453 93,-429 153,-429 153,-453"/>
-<text text-anchor="middle" x="123" y="-438.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bctoi_I4P</text>
+<g id="a_interface~~bcton~~CallsGraph_node4"><a xlink:href="../proc/bctoi_i4p.html" xlink:title="bctoi_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="153,-459 93,-459 93,-435 153,-435 153,-459"/>
+<text text-anchor="middle" x="123" y="-444.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bctoi_I4P</text>
 </a>
 </g>
 </g>
 <!-- interface~bcton&#45;&gt;proc~bctoi_i4p -->
-<g id="interface~~bcton~~CallsGraph_edge4" class="edge">
+<g id="interface~~bcton~~CallsGraph_edge3" class="edge">
 <title>interface~bcton&#45;&gt;proc~bctoi_i4p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M45.59,-390.02C57.98,-398.45 74.96,-409.97 90,-420 91.62,-421.08 93.28,-422.18 94.96,-423.3"/>
-<polygon fill="#000000" stroke="#000000" points="93.08,-426.25 103.36,-428.83 96.93,-420.4 93.08,-426.25"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M35.06,-354.17C45.51,-371.52 66.44,-403.7 90,-426 90.95,-426.9 91.94,-427.78 92.97,-428.65"/>
+<polygon fill="#000000" stroke="#000000" points="91.14,-431.66 101.22,-434.92 95.37,-426.08 91.14,-431.66"/>
+</g>
+<!-- proc~bctoi_i8p -->
+<g id="interface~~bcton~~CallsGraph_node5" class="node">
+<title>proc~bctoi_i8p</title>
+<g id="a_interface~~bcton~~CallsGraph_node5"><a xlink:href="../proc/bctoi_i8p.html" xlink:title="bctoi_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="153,-417 93,-417 93,-393 153,-393 153,-417"/>
+<text text-anchor="middle" x="123" y="-402.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bctoi_I8P</text>
+</a>
+</g>
+</g>
+<!-- interface~bcton&#45;&gt;proc~bctoi_i8p -->
+<g id="interface~~bcton~~CallsGraph_edge4" class="edge">
+<title>interface~bcton&#45;&gt;proc~bctoi_i8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M45.59,-354.02C57.98,-362.45 74.96,-373.97 90,-384 91.62,-385.08 93.28,-386.18 94.96,-387.3"/>
+<polygon fill="#000000" stroke="#000000" points="93.08,-390.25 103.36,-392.83 96.93,-384.4 93.08,-390.25"/>
 </g>
 <!-- proc~bctor_r4p -->
 <g id="interface~~bcton~~CallsGraph_node6" class="node">
 <title>proc~bctor_r4p</title>
-<g id="a_interface~~bcton~~CallsGraph_node6"><a xlink:href=".././proc/bctor_r4p.html" xlink:title="bctor_R4P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="156,-327 90,-327 90,-303 156,-303 156,-327"/>
-<text text-anchor="middle" x="123" y="-312.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bctor_R4P</text>
+<g id="a_interface~~bcton~~CallsGraph_node6"><a xlink:href="../proc/bctor_r4p.html" xlink:title="bctor_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="156,-291 90,-291 90,-267 156,-267 156,-291"/>
+<text text-anchor="middle" x="123" y="-276.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bctor_R4P</text>
 </a>
 </g>
 </g>
 <!-- interface~bcton&#45;&gt;proc~bctor_r4p -->
 <g id="interface~~bcton~~CallsGraph_edge5" class="edge">
 <title>interface~bcton&#45;&gt;proc~bctor_r4p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M45.59,-365.98C57.98,-357.55 74.96,-346.03 90,-336 91.62,-334.92 93.28,-333.82 94.96,-332.7"/>
-<polygon fill="#000000" stroke="#000000" points="96.93,-335.6 103.36,-327.17 93.08,-329.75 96.93,-335.6"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M45.59,-329.98C57.98,-321.55 74.96,-310.03 90,-300 91.62,-298.92 93.28,-297.82 94.96,-296.7"/>
+<polygon fill="#000000" stroke="#000000" points="96.93,-299.6 103.36,-291.17 93.08,-293.75 96.93,-299.6"/>
 </g>
-<!-- proc~bctoi_i1p -->
+<!-- proc~bctor_r8p -->
 <g id="interface~~bcton~~CallsGraph_node7" class="node">
-<title>proc~bctoi_i1p</title>
-<g id="a_interface~~bcton~~CallsGraph_node7"><a xlink:href=".././proc/bctoi_i1p.html" xlink:title="bctoi_I1P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="153,-411 93,-411 93,-387 153,-387 153,-411"/>
-<text text-anchor="middle" x="123" y="-396.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bctoi_I1P</text>
+<title>proc~bctor_r8p</title>
+<g id="a_interface~~bcton~~CallsGraph_node7"><a xlink:href="../proc/bctor_r8p.html" xlink:title="bctor_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="156,-249 90,-249 90,-225 156,-225 156,-249"/>
+<text text-anchor="middle" x="123" y="-234.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bctor_R8P</text>
 </a>
 </g>
 </g>
-<!-- interface~bcton&#45;&gt;proc~bctoi_i1p -->
+<!-- interface~bcton&#45;&gt;proc~bctor_r8p -->
 <g id="interface~~bcton~~CallsGraph_edge6" class="edge">
-<title>interface~bcton&#45;&gt;proc~bctoi_i1p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M54.18,-383.85C63.13,-385.85 73.35,-388.13 83.08,-390.31"/>
-<polygon fill="#000000" stroke="#000000" points="82.46,-393.75 92.98,-392.52 83.99,-386.92 82.46,-393.75"/>
+<title>interface~bcton&#45;&gt;proc~bctor_r8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M35.06,-329.83C45.51,-312.48 66.44,-280.3 90,-258 90.95,-257.1 91.94,-256.22 92.97,-255.35"/>
+<polygon fill="#000000" stroke="#000000" points="95.37,-257.92 101.22,-249.08 91.14,-252.34 95.37,-257.92"/>
 </g>
 <!-- interface~str -->
 <g id="interface~~bcton~~CallsGraph_node8" class="node">
 <title>interface~str</title>
-<g id="a_interface~~bcton~~CallsGraph_node8"><a xlink:href=".././interface/str.html" xlink:title="str">
-<polygon fill="#a7506f" stroke="#a7506f" points="246,-390 192,-390 192,-366 246,-366 246,-390"/>
-<text text-anchor="middle" x="219" y="-375.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str</text>
+<g id="a_interface~~bcton~~CallsGraph_node8"><a xlink:href="../interface/str.html" xlink:title="str">
+<polygon fill="#a7506f" stroke="#a7506f" points="246,-396 192,-396 192,-372 246,-372 246,-396"/>
+<text text-anchor="middle" x="219" y="-381.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str</text>
 </a>
 </g>
 </g>
-<!-- proc~bctoi_i2p&#45;&gt;interface~str -->
+<!-- proc~bctoi_i1p&#45;&gt;interface~str -->
 <g id="interface~~bcton~~CallsGraph_edge7" class="edge">
-<title>proc~bctoi_i2p&#45;&gt;interface~str</title>
-<path fill="none" stroke="#000000" d="M153.23,-363.53C162.33,-365.56 172.48,-367.83 181.99,-369.95"/>
-<polygon fill="#000000" stroke="#000000" points="181.46,-373.42 191.98,-372.19 182.98,-366.59 181.46,-373.42"/>
+<title>proc~bctoi_i1p&#45;&gt;interface~str</title>
+<path fill="none" stroke="#000000" d="M153.23,-369.53C162.33,-371.56 172.48,-373.83 181.99,-375.95"/>
+<polygon fill="#000000" stroke="#000000" points="181.46,-379.42 191.98,-378.19 182.98,-372.59 181.46,-379.42"/>
 </g>
-<!-- proc~bctoi_i8p&#45;&gt;interface~str -->
+<!-- proc~bctoi_i2p&#45;&gt;interface~str -->
 <g id="interface~~bcton~~CallsGraph_edge8" class="edge">
-<title>proc~bctoi_i8p&#45;&gt;interface~str</title>
-<path fill="none" stroke="#000000" d="M144.78,-285.08C148.7,-287.78 152.62,-290.8 156,-294 176.07,-312.99 194.22,-339.15 205.62,-357.2"/>
-<polygon fill="#000000" stroke="#000000" points="202.71,-359.15 210.94,-365.83 208.67,-355.48 202.71,-359.15"/>
+<title>proc~bctoi_i2p&#45;&gt;interface~str</title>
+<path fill="none" stroke="#000000" d="M142.64,-333.17C147.03,-336.05 151.69,-339.12 156,-342 167.86,-349.91 180.94,-358.75 192.02,-366.28"/>
+<polygon fill="#000000" stroke="#000000" points="190.17,-369.25 200.41,-371.98 194.11,-363.46 190.17,-369.25"/>
 </g>
 <!-- proc~bctoi_i4p&#45;&gt;interface~str -->
 <g id="interface~~bcton~~CallsGraph_edge9" class="edge">
 <title>proc~bctoi_i4p&#45;&gt;interface~str</title>
-<path fill="none" stroke="#000000" d="M142.64,-428.83C147.03,-425.95 151.69,-422.88 156,-420 167.86,-412.09 180.94,-403.25 192.02,-395.72"/>
-<polygon fill="#000000" stroke="#000000" points="194.11,-398.54 200.41,-390.02 190.17,-392.75 194.11,-398.54"/>
+<path fill="none" stroke="#000000" d="M142.64,-434.83C147.03,-431.95 151.69,-428.88 156,-426 167.86,-418.09 180.94,-409.25 192.02,-401.72"/>
+<polygon fill="#000000" stroke="#000000" points="194.11,-404.54 200.41,-396.02 190.17,-398.75 194.11,-404.54"/>
 </g>
-<!-- proc~bctoi_i1p&#45;&gt;interface~str -->
+<!-- proc~bctoi_i8p&#45;&gt;interface~str -->
 <g id="interface~~bcton~~CallsGraph_edge10" class="edge">
-<title>proc~bctoi_i1p&#45;&gt;interface~str</title>
-<path fill="none" stroke="#000000" d="M153.23,-392.47C162.33,-390.44 172.48,-388.17 181.99,-386.05"/>
-<polygon fill="#000000" stroke="#000000" points="182.98,-389.41 191.98,-383.81 181.46,-382.58 182.98,-389.41"/>
-</g>
-<!-- proc~str_i8p -->
-<g id="interface~~bcton~~CallsGraph_node9" class="node">
-<title>proc~str_i8p</title>
-<g id="a_interface~~bcton~~CallsGraph_node9"><a xlink:href=".././proc/str_i8p.html" xlink:title="str_I8P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="436,-534 382,-534 382,-510 436,-510 436,-534"/>
-<text text-anchor="middle" x="409" y="-519.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I8P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_i8p -->
-<g id="interface~~bcton~~CallsGraph_edge11" class="edge">
-<title>interface~str&#45;&gt;proc~str_i8p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M223.83,-390.02C231.38,-411.82 250.28,-457.93 282,-483 307.85,-503.43 344.45,-513.22 371.55,-517.87"/>
-<polygon fill="#000000" stroke="#000000" points="371.37,-521.38 381.79,-519.46 372.45,-514.47 371.37,-521.38"/>
-</g>
-<!-- proc~str_a_r8p -->
-<g id="interface~~bcton~~CallsGraph_node10" class="node">
-<title>proc~str_a_r8p</title>
-<g id="a_interface~~bcton~~CallsGraph_node10"><a xlink:href=".././proc/str_a_r8p.html" xlink:title="str_a_R8P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="346,-718 282,-718 282,-694 346,-694 346,-718"/>
-<text text-anchor="middle" x="314" y="-703.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_R8P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_a_r8p -->
-<g id="interface~~bcton~~CallsGraph_edge12" class="edge">
-<title>interface~str&#45;&gt;proc~str_a_r8p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M221.22,-390.15C226.49,-440.79 248.55,-634.76 282,-685 282.35,-685.52 282.72,-686.04 283.1,-686.54"/>
-<polygon fill="#000000" stroke="#000000" points="280.88,-689.27 290.42,-693.88 285.83,-684.33 280.88,-689.27"/>
-</g>
-<!-- proc~str_r8p -->
-<g id="interface~~bcton~~CallsGraph_node11" class="node">
-<title>proc~str_r8p</title>
-<g id="a_interface~~bcton~~CallsGraph_node11"><a xlink:href=".././proc/str_r8p.html" xlink:title="str_R8P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="436,-718 382,-718 382,-694 436,-694 436,-718"/>
-<text text-anchor="middle" x="409" y="-703.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_R8P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_r8p -->
-<g id="interface~~bcton~~CallsGraph_edge13" class="edge">
-<title>interface~str&#45;&gt;proc~str_r8p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M220.17,-390.16C221.26,-446.64 228.94,-682.53 282,-727 308.88,-749.52 350.62,-736.21 378.62,-722.74"/>
-<polygon fill="#000000" stroke="#000000" points="380.2,-725.86 387.54,-718.22 377.04,-719.61 380.2,-725.86"/>
-</g>
-<!-- proc~str_a_i4p -->
-<g id="interface~~bcton~~CallsGraph_node12" class="node">
-<title>proc~str_a_i4p</title>
-<g id="a_interface~~bcton~~CallsGraph_node12"><a xlink:href=".././proc/str_a_i4p.html" xlink:title="str_a_I4P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="343.5,-432 284.5,-432 284.5,-408 343.5,-408 343.5,-432"/>
-<text text-anchor="middle" x="314" y="-417.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I4P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_a_i4p -->
-<g id="interface~~bcton~~CallsGraph_edge15" class="edge">
-<title>interface~str&#45;&gt;proc~str_a_i4p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M246.4,-389.92C255.94,-394.23 266.88,-399.17 277.09,-403.78"/>
-<polygon fill="#000000" stroke="#000000" points="275.66,-406.98 286.21,-407.9 278.54,-400.6 275.66,-406.98"/>
-</g>
-<!-- proc~strf_i2p -->
-<g id="interface~~bcton~~CallsGraph_node13" class="node">
-<title>proc~strf_i2p</title>
-<g id="a_interface~~bcton~~CallsGraph_node13"><a xlink:href=".././proc/strf_i2p.html" xlink:title="strf_I2P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="341,-596 287,-596 287,-572 341,-572 341,-596"/>
-<text text-anchor="middle" x="314" y="-581.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I2P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~strf_i2p -->
-<g id="interface~~bcton~~CallsGraph_edge14" class="edge">
-<title>interface~str&#45;&gt;proc~strf_i2p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M221.34,-390.05C225.37,-421.5 239.8,-507.42 282,-563 282.47,-563.62 282.97,-564.23 283.48,-564.83"/>
-<polygon fill="#000000" stroke="#000000" points="281.37,-567.64 291.09,-571.87 286.13,-562.51 281.37,-567.64"/>
-</g>
-<!-- proc~str_r4p -->
-<g id="interface~~bcton~~CallsGraph_node14" class="node">
-<title>proc~str_r4p</title>
-<g id="a_interface~~bcton~~CallsGraph_node14"><a xlink:href=".././proc/str_r4p.html" xlink:title="str_R4P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="436,-676 382,-676 382,-652 436,-652 436,-676"/>
-<text text-anchor="middle" x="409" y="-661.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_R4P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_r4p -->
-<g id="interface~~bcton~~CallsGraph_edge16" class="edge">
-<title>interface~str&#45;&gt;proc~str_r4p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M219.92,-390.2C220.34,-427.08 226.35,-538.9 282,-605 294.3,-619.61 339.49,-638.68 372.23,-651.13"/>
-<polygon fill="#000000" stroke="#000000" points="371.35,-654.54 381.95,-654.77 373.81,-647.99 371.35,-654.54"/>
-</g>
-<!-- proc~str_i1p -->
-<g id="interface~~bcton~~CallsGraph_node15" class="node">
-<title>proc~str_i1p</title>
-<g id="a_interface~~bcton~~CallsGraph_node15"><a xlink:href=".././proc/str_i1p.html" xlink:title="str_I1P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="436,-65 382,-65 382,-41 436,-41 436,-65"/>
-<text text-anchor="middle" x="409" y="-50.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I1P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_i1p -->
-<g id="interface~~bcton~~CallsGraph_edge17" class="edge">
-<title>interface~str&#45;&gt;proc~str_i1p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M220.16,-365.97C221.22,-328.5 228.86,-211.86 282,-137 304.76,-104.93 343.95,-81.66 372.59,-67.85"/>
-<polygon fill="#000000" stroke="#000000" points="374.27,-70.93 381.86,-63.53 371.31,-64.58 374.27,-70.93"/>
-</g>
-<!-- proc~strf_i4p -->
-<g id="interface~~bcton~~CallsGraph_node16" class="node">
-<title>proc~strf_i4p</title>
-<g id="a_interface~~bcton~~CallsGraph_node16"><a xlink:href=".././proc/strf_i4p.html" xlink:title="strf_I4P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="341,-474 287,-474 287,-450 341,-450 341,-474"/>
-<text text-anchor="middle" x="314" y="-459.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I4P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~strf_i4p -->
-<g id="interface~~bcton~~CallsGraph_edge18" class="edge">
-<title>interface~str&#45;&gt;proc~strf_i4p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M230.77,-390.32C242.66,-403.57 262.66,-424.89 282,-441 283.16,-441.96 284.35,-442.92 285.58,-443.87"/>
-<polygon fill="#000000" stroke="#000000" points="283.74,-446.86 293.88,-449.92 287.86,-441.2 283.74,-446.86"/>
-</g>
-<!-- proc~str_a_r4p -->
-<g id="interface~~bcton~~CallsGraph_node17" class="node">
-<title>proc~str_a_r4p</title>
-<g id="a_interface~~bcton~~CallsGraph_node17"><a xlink:href=".././proc/str_a_r4p.html" xlink:title="str_a_R4P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="346,-676 282,-676 282,-652 346,-652 346,-676"/>
-<text text-anchor="middle" x="314" y="-661.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_R4P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_a_r4p -->
-<g id="interface~~bcton~~CallsGraph_edge19" class="edge">
-<title>interface~str&#45;&gt;proc~str_a_r4p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M220.25,-390.15C221.59,-429.18 229.92,-553.72 282,-638 283.52,-640.46 285.36,-642.81 287.37,-645.01"/>
-<polygon fill="#000000" stroke="#000000" points="284.99,-647.58 294.67,-651.9 289.8,-642.49 284.99,-647.58"/>
-</g>
-<!-- proc~strf_r4p -->
-<g id="interface~~bcton~~CallsGraph_node18" class="node">
-<title>proc~strf_r4p</title>
-<g id="a_interface~~bcton~~CallsGraph_node18"><a xlink:href=".././proc/strf_r4p.html" xlink:title="strf_R4P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="341.5,-390 286.5,-390 286.5,-366 341.5,-366 341.5,-390"/>
-<text text-anchor="middle" x="314" y="-375.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_R4P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~strf_r4p -->
-<g id="interface~~bcton~~CallsGraph_edge20" class="edge">
-<title>interface~str&#45;&gt;proc~strf_r4p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M246.4,-378C255.65,-378 266.21,-378 276.15,-378"/>
-<polygon fill="#000000" stroke="#000000" points="276.21,-381.5 286.21,-378 276.21,-374.5 276.21,-381.5"/>
-</g>
-<!-- proc~str_i2p -->
-<g id="interface~~bcton~~CallsGraph_node19" class="node">
-<title>proc~str_i2p</title>
-<g id="a_interface~~bcton~~CallsGraph_node19"><a xlink:href=".././proc/str_i2p.html" xlink:title="str_I2P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="436,-227 382,-227 382,-203 436,-203 436,-227"/>
-<text text-anchor="middle" x="409" y="-212.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I2P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_i2p -->
-<g id="interface~~bcton~~CallsGraph_edge21" class="edge">
-<title>interface~str&#45;&gt;proc~str_i2p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M221.39,-365.97C226.62,-322.97 246.69,-177.96 282,-151 304.61,-133.74 319.81,-139.91 346,-151 366.72,-159.78 383.91,-179.24 394.89,-194.41"/>
-<polygon fill="#000000" stroke="#000000" points="392.07,-196.48 400.62,-202.74 397.84,-192.52 392.07,-196.48"/>
-</g>
-<!-- proc~str_a_i2p -->
-<g id="interface~~bcton~~CallsGraph_node20" class="node">
-<title>proc~str_a_i2p</title>
-<g id="a_interface~~bcton~~CallsGraph_node20"><a xlink:href=".././proc/str_a_i2p.html" xlink:title="str_a_I2P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="343.5,-310 284.5,-310 284.5,-286 343.5,-286 343.5,-310"/>
-<text text-anchor="middle" x="314" y="-295.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I2P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_a_i2p -->
-<g id="interface~~bcton~~CallsGraph_edge22" class="edge">
-<title>interface~str&#45;&gt;proc~str_a_i2p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M233.73,-365.92C246.25,-354.92 265.29,-338.28 282,-324 284.75,-321.65 287.66,-319.19 290.53,-316.76"/>
-<polygon fill="#000000" stroke="#000000" points="293.04,-319.23 298.44,-310.11 288.54,-313.87 293.04,-319.23"/>
-</g>
-<!-- proc~strf_i8p -->
-<g id="interface~~bcton~~CallsGraph_node21" class="node">
-<title>proc~strf_i8p</title>
-<g id="a_interface~~bcton~~CallsGraph_node21"><a xlink:href=".././proc/strf_i8p.html" xlink:title="strf_I8P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="341,-268 287,-268 287,-244 341,-244 341,-268"/>
-<text text-anchor="middle" x="314" y="-253.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I8P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~strf_i8p -->
-<g id="interface~~bcton~~CallsGraph_edge23" class="edge">
-<title>interface~str&#45;&gt;proc~strf_i8p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M225.44,-365.68C234.81,-345.44 255.55,-304.66 282,-277 282.76,-276.2 283.56,-275.42 284.39,-274.65"/>
-<polygon fill="#000000" stroke="#000000" points="286.8,-277.2 292.34,-268.17 282.38,-271.77 286.8,-277.2"/>
-</g>
-<!-- proc~str_bol -->
-<g id="interface~~bcton~~CallsGraph_node22" class="node">
-<title>proc~str_bol</title>
-<g id="a_interface~~bcton~~CallsGraph_node22"><a xlink:href=".././proc/str_bol.html" xlink:title="str_bol">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="341,-226 287,-226 287,-202 341,-202 341,-226"/>
-<text text-anchor="middle" x="314" y="-211.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_bol</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_bol -->
-<g id="interface~~bcton~~CallsGraph_edge24" class="edge">
-<title>interface~str&#45;&gt;proc~str_bol</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M222.84,-365.66C229.42,-339.23 247.8,-276.24 282,-235 282.6,-234.28 283.23,-233.57 283.88,-232.88"/>
-<polygon fill="#000000" stroke="#000000" points="286.43,-235.3 291.64,-226.07 281.82,-230.03 286.43,-235.3"/>
-</g>
-<!-- proc~strf_r8p -->
-<g id="interface~~bcton~~CallsGraph_node23" class="node">
-<title>proc~strf_r8p</title>
-<g id="a_interface~~bcton~~CallsGraph_node23"><a xlink:href=".././proc/strf_r8p.html" xlink:title="strf_R8P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="341.5,-184 286.5,-184 286.5,-160 341.5,-160 341.5,-184"/>
-<text text-anchor="middle" x="314" y="-169.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_R8P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~strf_r8p -->
-<g id="interface~~bcton~~CallsGraph_edge25" class="edge">
-<title>interface~str&#45;&gt;proc~strf_r8p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M221.34,-365.95C225.37,-334.5 239.8,-248.58 282,-193 282.47,-192.38 282.97,-191.77 283.48,-191.17"/>
-<polygon fill="#000000" stroke="#000000" points="286.13,-193.49 291.09,-184.13 281.37,-188.36 286.13,-193.49"/>
-</g>
-<!-- proc~str_i4p -->
-<g id="interface~~bcton~~CallsGraph_node24" class="node">
-<title>proc~str_i4p</title>
-<g id="a_interface~~bcton~~CallsGraph_node24"><a xlink:href=".././proc/str_i4p.html" xlink:title="str_I4P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="436,-392 382,-392 382,-368 436,-368 436,-392"/>
-<text text-anchor="middle" x="409" y="-377.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I4P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_i4p -->
-<g id="interface~~bcton~~CallsGraph_edge26" class="edge">
-<title>interface~str&#45;&gt;proc~str_i4p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M246.06,-367.06C256.96,-363.04 269.89,-359 282,-357 310.07,-352.38 318,-351.97 346,-357 354.69,-358.56 363.75,-361.26 372.18,-364.27"/>
-<polygon fill="#000000" stroke="#000000" points="371.14,-367.62 381.73,-367.9 373.63,-361.07 371.14,-367.62"/>
-</g>
-<!-- proc~str_a_i8p -->
-<g id="interface~~bcton~~CallsGraph_node25" class="node">
-<title>proc~str_a_i8p</title>
-<g id="a_interface~~bcton~~CallsGraph_node25"><a xlink:href=".././proc/str_a_i8p.html" xlink:title="str_a_I8P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="343.5,-554 284.5,-554 284.5,-530 343.5,-530 343.5,-554"/>
-<text text-anchor="middle" x="314" y="-539.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I8P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~str_a_i8p -->
-<g id="interface~~bcton~~CallsGraph_edge27" class="edge">
-<title>interface~str&#45;&gt;proc~str_a_i8p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M223.39,-390.04C230.9,-415.26 250.79,-474.73 282,-516 283.79,-518.36 285.83,-520.65 287.99,-522.83"/>
-<polygon fill="#000000" stroke="#000000" points="285.85,-525.62 295.61,-529.74 290.55,-520.43 285.85,-525.62"/>
-</g>
-<!-- proc~strf_i1p -->
-<g id="interface~~bcton~~CallsGraph_node26" class="node">
-<title>proc~strf_i1p</title>
-<g id="a_interface~~bcton~~CallsGraph_node26"><a xlink:href=".././proc/strf_i1p.html" xlink:title="strf_I1P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="341,-66 287,-66 287,-42 341,-42 341,-66"/>
-<text text-anchor="middle" x="314" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I1P</text>
-</a>
-</g>
-</g>
-<!-- interface~str&#45;&gt;proc~strf_i1p -->
-<g id="interface~~bcton~~CallsGraph_edge28" class="edge">
-<title>interface~str&#45;&gt;proc~strf_i1p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M219.78,-365.92C219.53,-323.43 223.28,-178.19 282,-80 283.49,-77.51 285.3,-75.15 287.29,-72.94"/>
-<polygon fill="#000000" stroke="#000000" points="289.72,-75.46 294.57,-66.04 284.91,-70.38 289.72,-75.46"/>
+<title>proc~bctoi_i8p&#45;&gt;interface~str</title>
+<path fill="none" stroke="#000000" d="M153.23,-398.47C162.33,-396.44 172.48,-394.17 181.99,-392.05"/>
+<polygon fill="#000000" stroke="#000000" points="182.98,-395.41 191.98,-389.81 181.46,-388.58 182.98,-395.41"/>
 </g>
 <!-- proc~str_a_i1p -->
-<g id="interface~~bcton~~CallsGraph_node27" class="node">
+<g id="interface~~bcton~~CallsGraph_node9" class="node">
 <title>proc~str_a_i1p</title>
-<g id="a_interface~~bcton~~CallsGraph_node27"><a xlink:href=".././proc/str_a_i1p.html" xlink:title="str_a_I1P">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="343.5,-24 284.5,-24 284.5,0 343.5,0 343.5,-24"/>
-<text text-anchor="middle" x="314" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I1P</text>
+<g id="a_interface~~bcton~~CallsGraph_node9"><a xlink:href="../proc/str_a_i1p.html" xlink:title="str_a_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="343.5,-718 284.5,-718 284.5,-694 343.5,-694 343.5,-718"/>
+<text text-anchor="middle" x="314" y="-703.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I1P</text>
 </a>
 </g>
 </g>
 <!-- interface~str&#45;&gt;proc~str_a_i1p -->
-<g id="interface~~bcton~~CallsGraph_edge29" class="edge">
+<g id="interface~~bcton~~CallsGraph_edge11" class="edge">
 <title>interface~str&#45;&gt;proc~str_a_i1p</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M220.92,-365.85C225.24,-311.43 244.84,-90.14 282,-33 282.34,-32.47 282.71,-31.95 283.08,-31.45"/>
-<polygon fill="#000000" stroke="#000000" points="285.82,-33.65 290.36,-24.08 280.84,-28.73 285.82,-33.65"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M221.29,-396.25C226.73,-446.42 249.16,-635.88 282,-685 282.35,-685.52 282.72,-686.04 283.1,-686.54"/>
+<polygon fill="#000000" stroke="#000000" points="280.89,-689.28 290.43,-693.87 285.84,-684.33 280.89,-689.28"/>
 </g>
-<!-- proc~str_a_r8p&#45;&gt;proc~str_r8p -->
-<g id="interface~~bcton~~CallsGraph_edge30" class="edge">
-<title>proc~str_a_r8p&#45;&gt;proc~str_r8p</title>
-<path fill="none" stroke="#000000" d="M346.23,-706C354.48,-706 363.46,-706 371.94,-706"/>
-<polygon fill="#000000" stroke="#000000" points="371.97,-709.5 381.97,-706 371.97,-702.5 371.97,-709.5"/>
-</g>
-<!-- proc~compact_real_string -->
-<g id="interface~~bcton~~CallsGraph_node28" class="node">
-<title>proc~compact_real_string</title>
-<g id="a_interface~~bcton~~CallsGraph_node28"><a xlink:href=".././proc/compact_real_string.html" xlink:title="compact_real_string">
-<polygon fill="#d9534f" stroke="#d9534f" points="592,-697 472,-697 472,-673 592,-673 592,-697"/>
-<text text-anchor="middle" x="532" y="-682.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compact_real_string</text>
+<!-- proc~str_a_i2p -->
+<g id="interface~~bcton~~CallsGraph_node10" class="node">
+<title>proc~str_a_i2p</title>
+<g id="a_interface~~bcton~~CallsGraph_node10"><a xlink:href="../proc/str_a_i2p.html" xlink:title="str_a_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="343.5,-676 284.5,-676 284.5,-652 343.5,-652 343.5,-676"/>
+<text text-anchor="middle" x="314" y="-661.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I2P</text>
 </a>
 </g>
 </g>
-<!-- proc~str_r8p&#45;&gt;proc~compact_real_string -->
+<!-- interface~str&#45;&gt;proc~str_a_i2p -->
+<g id="interface~~bcton~~CallsGraph_edge12" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_i2p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M220.34,-396.14C221.93,-434.58 230.96,-555.89 282,-638 283.53,-640.46 285.37,-642.8 287.38,-645"/>
+<polygon fill="#000000" stroke="#000000" points="285.01,-647.57 294.69,-651.89 289.81,-642.48 285.01,-647.57"/>
+</g>
+<!-- proc~str_a_i4p -->
+<g id="interface~~bcton~~CallsGraph_node11" class="node">
+<title>proc~str_a_i4p</title>
+<g id="a_interface~~bcton~~CallsGraph_node11"><a xlink:href="../proc/str_a_i4p.html" xlink:title="str_a_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="343.5,-558 284.5,-558 284.5,-534 343.5,-534 343.5,-558"/>
+<text text-anchor="middle" x="314" y="-543.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_a_i4p -->
+<g id="interface~~bcton~~CallsGraph_edge13" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_i4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M222.89,-396.17C229.55,-422.22 248.1,-484.33 282,-525 282.6,-525.72 283.23,-526.43 283.89,-527.12"/>
+<polygon fill="#000000" stroke="#000000" points="281.83,-529.96 291.66,-533.91 286.44,-524.7 281.83,-529.96"/>
+</g>
+<!-- proc~str_a_i8p -->
+<g id="interface~~bcton~~CallsGraph_node12" class="node">
+<title>proc~str_a_i8p</title>
+<g id="a_interface~~bcton~~CallsGraph_node12"><a xlink:href="../proc/str_a_i8p.html" xlink:title="str_a_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="343.5,-474 284.5,-474 284.5,-450 343.5,-450 343.5,-474"/>
+<text text-anchor="middle" x="314" y="-459.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_a_i8p -->
+<g id="interface~~bcton~~CallsGraph_edge14" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_i8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M234.53,-396.19C249.55,-408.78 273.18,-428.6 290.59,-443.2"/>
+<polygon fill="#000000" stroke="#000000" points="288.66,-446.15 298.57,-449.9 293.16,-440.79 288.66,-446.15"/>
+</g>
+<!-- proc~str_a_r4p -->
+<g id="interface~~bcton~~CallsGraph_node13" class="node">
+<title>proc~str_a_r4p</title>
+<g id="a_interface~~bcton~~CallsGraph_node13"><a xlink:href="../proc/str_a_r4p.html" xlink:title="str_a_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="346,-356 282,-356 282,-332 346,-332 346,-356"/>
+<text text-anchor="middle" x="314" y="-341.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_R4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_a_r4p -->
+<g id="interface~~bcton~~CallsGraph_edge15" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_r4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M246.4,-372.64C255.42,-368.76 265.69,-364.35 275.42,-360.16"/>
+<polygon fill="#000000" stroke="#000000" points="277.1,-363.25 284.91,-356.08 274.34,-356.82 277.1,-363.25"/>
+</g>
+<!-- proc~str_a_r8p -->
+<g id="interface~~bcton~~CallsGraph_node14" class="node">
+<title>proc~str_a_r8p</title>
+<g id="a_interface~~bcton~~CallsGraph_node14"><a xlink:href="../proc/str_a_r8p.html" xlink:title="str_a_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="346,-314 282,-314 282,-290 346,-290 346,-314"/>
+<text text-anchor="middle" x="314" y="-299.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_R8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_a_r8p -->
+<g id="interface~~bcton~~CallsGraph_edge16" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_r8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M231.28,-371.64C243.28,-358.81 263.08,-338.5 282,-323 283.16,-322.05 284.37,-321.1 285.6,-320.15"/>
+<polygon fill="#000000" stroke="#000000" points="287.87,-322.83 293.92,-314.13 283.76,-317.16 287.87,-322.83"/>
+</g>
+<!-- proc~str_bol -->
+<g id="interface~~bcton~~CallsGraph_node15" class="node">
+<title>proc~str_bol</title>
+<g id="a_interface~~bcton~~CallsGraph_node15"><a xlink:href="../proc/str_bol.html" xlink:title="str_bol">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="341,-516 287,-516 287,-492 341,-492 341,-516"/>
+<text text-anchor="middle" x="314" y="-501.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_bol</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_bol -->
+<g id="interface~~bcton~~CallsGraph_edge17" class="edge">
+<title>interface~str&#45;&gt;proc~str_bol</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M225.5,-396.07C234.95,-415.89 255.81,-455.85 282,-483 282.77,-483.8 283.57,-484.58 284.4,-485.35"/>
+<polygon fill="#000000" stroke="#000000" points="282.39,-488.23 292.37,-491.8 286.8,-482.79 282.39,-488.23"/>
+</g>
+<!-- proc~str_i1p -->
+<g id="interface~~bcton~~CallsGraph_node16" class="node">
+<title>proc~str_i1p</title>
+<g id="a_interface~~bcton~~CallsGraph_node16"><a xlink:href="../proc/str_i1p.html" xlink:title="str_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="436,-728 382,-728 382,-704 436,-704 436,-728"/>
+<text text-anchor="middle" x="409" y="-713.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I1P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_i1p -->
+<g id="interface~~bcton~~CallsGraph_edge18" class="edge">
+<title>interface~str&#45;&gt;proc~str_i1p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M220.22,-396.32C221.49,-452.5 229.87,-683.45 282,-727 306.69,-747.63 344.39,-741.04 372.12,-731.63"/>
+<polygon fill="#000000" stroke="#000000" points="373.65,-734.8 381.84,-728.09 371.25,-728.23 373.65,-734.8"/>
+</g>
+<!-- proc~str_i2p -->
+<g id="interface~~bcton~~CallsGraph_node17" class="node">
+<title>proc~str_i2p</title>
+<g id="a_interface~~bcton~~CallsGraph_node17"><a xlink:href="../proc/str_i2p.html" xlink:title="str_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="436,-666 382,-666 382,-642 436,-642 436,-666"/>
+<text text-anchor="middle" x="409" y="-651.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I2P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_i2p -->
+<g id="interface~~bcton~~CallsGraph_edge19" class="edge">
+<title>interface~str&#45;&gt;proc~str_i2p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M220.48,-396.15C222.42,-430.43 232.29,-529.27 282,-589 305.38,-617.09 344.03,-634.47 372.37,-644.1"/>
+<polygon fill="#000000" stroke="#000000" points="371.33,-647.44 381.92,-647.19 373.49,-640.78 371.33,-647.44"/>
+</g>
+<!-- proc~str_i4p -->
+<g id="interface~~bcton~~CallsGraph_node18" class="node">
+<title>proc~str_i4p</title>
+<g id="a_interface~~bcton~~CallsGraph_node18"><a xlink:href="../proc/str_i4p.html" xlink:title="str_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="436,-578 382,-578 382,-554 436,-554 436,-578"/>
+<text text-anchor="middle" x="409" y="-563.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_i4p -->
+<g id="interface~~bcton~~CallsGraph_edge20" class="edge">
+<title>interface~str&#45;&gt;proc~str_i4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M219.74,-396.11C219.76,-430.03 225.02,-526.15 282,-567 307.77,-585.48 344.77,-582.71 372,-576.83"/>
+<polygon fill="#000000" stroke="#000000" points="373.01,-580.19 381.92,-574.46 371.38,-573.38 373.01,-580.19"/>
+</g>
+<!-- proc~str_i8p -->
+<g id="interface~~bcton~~CallsGraph_node19" class="node">
+<title>proc~str_i8p</title>
+<g id="a_interface~~bcton~~CallsGraph_node19"><a xlink:href="../proc/str_i8p.html" xlink:title="str_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="436,-454 382,-454 382,-430 436,-430 436,-454"/>
+<text text-anchor="middle" x="409" y="-439.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_i8p -->
+<g id="interface~~bcton~~CallsGraph_edge21" class="edge">
+<title>interface~str&#45;&gt;proc~str_i8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M246.14,-392.06C278.88,-402.16 335.13,-419.52 371.95,-430.88"/>
+<polygon fill="#000000" stroke="#000000" points="371.19,-434.31 381.78,-433.91 373.26,-427.62 371.19,-434.31"/>
+</g>
+<!-- proc~str_r4p -->
+<g id="interface~~bcton~~CallsGraph_node20" class="node">
+<title>proc~str_r4p</title>
+<g id="a_interface~~bcton~~CallsGraph_node20"><a xlink:href="../proc/str_r4p.html" xlink:title="str_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="436,-356 382,-356 382,-332 436,-332 436,-356"/>
+<text text-anchor="middle" x="409" y="-341.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_R4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_r4p -->
+<g id="interface~~bcton~~CallsGraph_edge22" class="edge">
+<title>interface~str&#45;&gt;proc~str_r4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M246.32,-381.4C272,-378.55 312.03,-373.24 346,-365 354.57,-362.92 363.65,-360.17 372.13,-357.35"/>
+<polygon fill="#000000" stroke="#000000" points="373.44,-360.6 381.75,-354.04 371.16,-353.98 373.44,-360.6"/>
+</g>
+<!-- proc~str_r8p -->
+<g id="interface~~bcton~~CallsGraph_node21" class="node">
+<title>proc~str_r8p</title>
+<g id="a_interface~~bcton~~CallsGraph_node21"><a xlink:href="../proc/str_r8p.html" xlink:title="str_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="436,-314 382,-314 382,-290 436,-290 436,-314"/>
+<text text-anchor="middle" x="409" y="-299.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_R8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_r8p -->
+<g id="interface~~bcton~~CallsGraph_edge23" class="edge">
+<title>interface~str&#45;&gt;proc~str_r8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M223.05,-371.96C229.5,-349.3 246.93,-300.82 282,-281 311.06,-264.57 349.5,-274.72 376.25,-285.88"/>
+<polygon fill="#000000" stroke="#000000" points="374.98,-289.14 385.54,-289.98 377.81,-282.74 374.98,-289.14"/>
+</g>
+<!-- proc~strf_i1p -->
+<g id="interface~~bcton~~CallsGraph_node22" class="node">
+<title>proc~strf_i1p</title>
+<g id="a_interface~~bcton~~CallsGraph_node22"><a xlink:href="../proc/strf_i1p.html" xlink:title="strf_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="341,-234 287,-234 287,-210 341,-210 341,-234"/>
+<text text-anchor="middle" x="314" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I1P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_i1p -->
+<g id="interface~~bcton~~CallsGraph_edge24" class="edge">
+<title>interface~str&#45;&gt;proc~strf_i1p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M223.55,-371.76C231.22,-346.7 251.21,-288.48 282,-248 283.83,-245.59 285.93,-243.25 288.15,-241.03"/>
+<polygon fill="#000000" stroke="#000000" points="290.86,-243.3 295.95,-234.01 286.18,-238.1 290.86,-243.3"/>
+</g>
+<!-- proc~strf_i2p -->
+<g id="interface~~bcton~~CallsGraph_node23" class="node">
+<title>proc~strf_i2p</title>
+<g id="a_interface~~bcton~~CallsGraph_node23"><a xlink:href="../proc/strf_i2p.html" xlink:title="strf_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="341,-192 287,-192 287,-168 341,-168 341,-192"/>
+<text text-anchor="middle" x="314" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I2P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_i2p -->
+<g id="interface~~bcton~~CallsGraph_edge25" class="edge">
+<title>interface~str&#45;&gt;proc~strf_i2p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M221.44,-371.62C225.64,-340.14 240.33,-255.7 282,-201 282.47,-200.38 282.97,-199.77 283.49,-199.17"/>
+<polygon fill="#000000" stroke="#000000" points="286.13,-201.49 291.1,-192.13 281.38,-196.35 286.13,-201.49"/>
+</g>
+<!-- proc~strf_i4p -->
+<g id="interface~~bcton~~CallsGraph_node24" class="node">
+<title>proc~strf_i4p</title>
+<g id="a_interface~~bcton~~CallsGraph_node24"><a xlink:href="../proc/strf_i4p.html" xlink:title="strf_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="341,-150 287,-150 287,-126 341,-126 341,-150"/>
+<text text-anchor="middle" x="314" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_i4p -->
+<g id="interface~~bcton~~CallsGraph_edge26" class="edge">
+<title>interface~str&#45;&gt;proc~strf_i4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M220.47,-371.77C222.41,-335.76 232.29,-228.31 282,-159 282.45,-158.37 282.93,-157.75 283.44,-157.14"/>
+<polygon fill="#000000" stroke="#000000" points="286.1,-159.44 290.94,-150.01 281.27,-154.36 286.1,-159.44"/>
+</g>
+<!-- proc~strf_i8p -->
+<g id="interface~~bcton~~CallsGraph_node25" class="node">
+<title>proc~strf_i8p</title>
+<g id="a_interface~~bcton~~CallsGraph_node25"><a xlink:href="../proc/strf_i8p.html" xlink:title="strf_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="341,-108 287,-108 287,-84 341,-84 341,-108"/>
+<text text-anchor="middle" x="314" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_i8p -->
+<g id="interface~~bcton~~CallsGraph_edge27" class="edge">
+<title>interface~str&#45;&gt;proc~strf_i8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M219.8,-371.86C219.74,-331.73 224.21,-201.14 282,-117 282.43,-116.38 282.88,-115.77 283.36,-115.17"/>
+<polygon fill="#000000" stroke="#000000" points="285.8,-117.67 290.51,-108.18 280.91,-112.67 285.8,-117.67"/>
+</g>
+<!-- proc~strf_r4p -->
+<g id="interface~~bcton~~CallsGraph_node26" class="node">
+<title>proc~strf_r4p</title>
+<g id="a_interface~~bcton~~CallsGraph_node26"><a xlink:href="../proc/strf_r4p.html" xlink:title="strf_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="341.5,-66 286.5,-66 286.5,-42 341.5,-42 341.5,-66"/>
+<text text-anchor="middle" x="314" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_R4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_r4p -->
+<g id="interface~~bcton~~CallsGraph_edge28" class="edge">
+<title>interface~str&#45;&gt;proc~strf_r4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M221.21,-371.77C226.44,-320.81 248.38,-125.58 282,-75 282.35,-74.48 282.72,-73.96 283.1,-73.46"/>
+<polygon fill="#000000" stroke="#000000" points="285.83,-75.67 290.42,-66.12 280.88,-70.73 285.83,-75.67"/>
+</g>
+<!-- proc~strf_r8p -->
+<g id="interface~~bcton~~CallsGraph_node27" class="node">
+<title>proc~strf_r8p</title>
+<g id="a_interface~~bcton~~CallsGraph_node27"><a xlink:href="../proc/strf_r8p.html" xlink:title="strf_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="341.5,-24 286.5,-24 286.5,0 341.5,0 341.5,-24"/>
+<text text-anchor="middle" x="314" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_R8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_r8p -->
+<g id="interface~~bcton~~CallsGraph_edge29" class="edge">
+<title>interface~str&#45;&gt;proc~strf_r8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M220.9,-371.64C225.11,-316.27 244.3,-91.16 282,-33 282.34,-32.47 282.7,-31.95 283.08,-31.44"/>
+<polygon fill="#000000" stroke="#000000" points="285.82,-33.65 290.35,-24.07 280.84,-28.74 285.82,-33.65"/>
+</g>
+<!-- proc~str_a_i1p&#45;&gt;proc~str_i1p -->
+<g id="interface~~bcton~~CallsGraph_edge30" class="edge">
+<title>proc~str_a_i1p&#45;&gt;proc~str_i1p</title>
+<path fill="none" stroke="#000000" d="M343.66,-709.08C352.5,-710.03 362.36,-711.09 371.65,-712.09"/>
+<polygon fill="#000000" stroke="#000000" points="371.49,-715.59 381.81,-713.18 372.24,-708.63 371.49,-715.59"/>
+</g>
+<!-- proc~str_a_i2p&#45;&gt;proc~str_i2p -->
 <g id="interface~~bcton~~CallsGraph_edge31" class="edge">
-<title>proc~str_r8p&#45;&gt;proc~compact_real_string</title>
-<path fill="none" stroke="#000000" d="M436.26,-701.44C443.83,-700.13 452.47,-698.63 461.39,-697.08"/>
-<polygon fill="#000000" stroke="#000000" points="462.27,-700.48 471.52,-695.32 461.07,-693.58 462.27,-700.48"/>
+<title>proc~str_a_i2p&#45;&gt;proc~str_i2p</title>
+<path fill="none" stroke="#000000" d="M343.66,-660.92C352.5,-659.97 362.36,-658.91 371.65,-657.91"/>
+<polygon fill="#000000" stroke="#000000" points="372.24,-661.37 381.81,-656.82 371.49,-654.41 372.24,-661.37"/>
 </g>
 <!-- proc~str_a_i4p&#45;&gt;proc~str_i4p -->
 <g id="interface~~bcton~~CallsGraph_edge32" class="edge">
 <title>proc~str_a_i4p&#45;&gt;proc~str_i4p</title>
-<path fill="none" stroke="#000000" d="M342.9,-408C352.13,-404.03 362.53,-399.56 372.27,-395.37"/>
-<polygon fill="#000000" stroke="#000000" points="373.91,-398.47 381.71,-391.31 371.14,-392.04 373.91,-398.47"/>
+<path fill="none" stroke="#000000" d="M343.66,-552.16C352.6,-554.09 362.57,-556.23 371.95,-558.25"/>
+<polygon fill="#000000" stroke="#000000" points="371.29,-561.69 381.81,-560.37 372.77,-554.84 371.29,-561.69"/>
 </g>
-<!-- proc~str_r4p&#45;&gt;proc~compact_real_string -->
+<!-- proc~str_a_i8p&#45;&gt;proc~str_i8p -->
 <g id="interface~~bcton~~CallsGraph_edge33" class="edge">
-<title>proc~str_r4p&#45;&gt;proc~compact_real_string</title>
-<path fill="none" stroke="#000000" d="M436.26,-668.56C443.83,-669.87 452.47,-671.37 461.39,-672.92"/>
-<polygon fill="#000000" stroke="#000000" points="461.07,-676.42 471.52,-674.68 462.27,-669.52 461.07,-676.42"/>
+<title>proc~str_a_i8p&#45;&gt;proc~str_i8p</title>
+<path fill="none" stroke="#000000" d="M343.66,-455.84C352.6,-453.91 362.57,-451.77 371.95,-449.75"/>
+<polygon fill="#000000" stroke="#000000" points="372.77,-453.16 381.81,-447.63 371.29,-446.31 372.77,-453.16"/>
 </g>
 <!-- proc~str_a_r4p&#45;&gt;proc~str_r4p -->
 <g id="interface~~bcton~~CallsGraph_edge34" class="edge">
 <title>proc~str_a_r4p&#45;&gt;proc~str_r4p</title>
-<path fill="none" stroke="#000000" d="M346.23,-664C354.48,-664 363.46,-664 371.94,-664"/>
-<polygon fill="#000000" stroke="#000000" points="371.97,-667.5 381.97,-664 371.97,-660.5 371.97,-667.5"/>
+<path fill="none" stroke="#000000" d="M346.23,-344C354.48,-344 363.46,-344 371.94,-344"/>
+<polygon fill="#000000" stroke="#000000" points="371.97,-347.5 381.97,-344 371.97,-340.5 371.97,-347.5"/>
 </g>
-<!-- proc~str_a_i2p&#45;&gt;proc~str_i2p -->
+<!-- proc~str_a_r8p&#45;&gt;proc~str_r8p -->
 <g id="interface~~bcton~~CallsGraph_edge35" class="edge">
-<title>proc~str_a_i2p&#45;&gt;proc~str_i2p</title>
-<path fill="none" stroke="#000000" d="M334.1,-285.89C338.14,-283.11 342.29,-280.06 346,-277 361.94,-263.83 378.42,-247.19 390.37,-234.46"/>
-<polygon fill="#000000" stroke="#000000" points="392.96,-236.82 397.19,-227.11 387.83,-232.06 392.96,-236.82"/>
+<title>proc~str_a_r8p&#45;&gt;proc~str_r8p</title>
+<path fill="none" stroke="#000000" d="M346.23,-302C354.48,-302 363.46,-302 371.94,-302"/>
+<polygon fill="#000000" stroke="#000000" points="371.97,-305.5 381.97,-302 371.97,-298.5 371.97,-305.5"/>
 </g>
-<!-- proc~str_a_i8p&#45;&gt;proc~str_i8p -->
+<!-- proc~compact_real_string -->
+<g id="interface~~bcton~~CallsGraph_node28" class="node">
+<title>proc~compact_real_string</title>
+<g id="a_interface~~bcton~~CallsGraph_node28"><a xlink:href="../proc/compact_real_string.html" xlink:title="compact_real_string">
+<polygon fill="#d9534f" stroke="#d9534f" points="592,-335 472,-335 472,-311 592,-311 592,-335"/>
+<text text-anchor="middle" x="532" y="-320.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compact_real_string</text>
+</a>
+</g>
+</g>
+<!-- proc~str_r4p&#45;&gt;proc~compact_real_string -->
 <g id="interface~~bcton~~CallsGraph_edge36" class="edge">
-<title>proc~str_a_i8p&#45;&gt;proc~str_i8p</title>
-<path fill="none" stroke="#000000" d="M343.66,-535.84C352.6,-533.91 362.57,-531.77 371.95,-529.75"/>
-<polygon fill="#000000" stroke="#000000" points="372.77,-533.16 381.81,-527.63 371.29,-526.31 372.77,-533.16"/>
+<title>proc~str_r4p&#45;&gt;proc~compact_real_string</title>
+<path fill="none" stroke="#000000" d="M436.26,-339.44C443.83,-338.13 452.47,-336.63 461.39,-335.08"/>
+<polygon fill="#000000" stroke="#000000" points="462.27,-338.48 471.52,-333.32 461.07,-331.58 462.27,-338.48"/>
 </g>
-<!-- proc~str_a_i1p&#45;&gt;proc~str_i1p -->
+<!-- proc~str_r8p&#45;&gt;proc~compact_real_string -->
 <g id="interface~~bcton~~CallsGraph_edge37" class="edge">
-<title>proc~str_a_i1p&#45;&gt;proc~str_i1p</title>
-<path fill="none" stroke="#000000" d="M342.4,-24.08C351.82,-28.23 362.51,-32.94 372.48,-37.34"/>
-<polygon fill="#000000" stroke="#000000" points="371.19,-40.6 381.75,-41.43 374.02,-34.19 371.19,-40.6"/>
+<title>proc~str_r8p&#45;&gt;proc~compact_real_string</title>
+<path fill="none" stroke="#000000" d="M436.26,-306.56C443.83,-307.87 452.47,-309.37 461.39,-310.92"/>
+<polygon fill="#000000" stroke="#000000" points="461.07,-314.42 471.52,-312.68 462.27,-307.52 461.07,-314.42"/>
 </g>
 </g>
 </svg>
-</div><div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div><div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog"><div class="modal-dialog modal-lg" role="document"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="-graph-help-label">Graph Key</h4></div><div class="modal-body">
-    <p>Nodes of different colours represent the following: </p>
-    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: Graph Key Pages: 1 -->
-<svg width="597pt" height="32pt"
- viewBox="0.00 0.00 596.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
 <title>Graph Key</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 592.5,-28 592.5,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
 <!-- Subroutine -->
 <g id="node1" class="node">
 <title>Subroutine</title>
@@ -656,42 +686,50 @@
 <polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
 <text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
 </g>
-<!-- Unknown Procedure Type -->
+<!-- Type Bound Procedure -->
 <g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
 <title>Unknown Procedure Type</title>
-<polygon fill="#777777" stroke="#777777" points="388.5,-24 243.5,-24 243.5,0 388.5,0 388.5,-24"/>
-<text text-anchor="middle" x="316" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
 </g>
 <!-- Program -->
-<g id="node5" class="node">
+<g id="node6" class="node">
 <title>Program</title>
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="465,-24 407,-24 407,0 465,0 465,-24"/>
-<text text-anchor="middle" x="436" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
 </g>
 <!-- This Page&#39;s Entity -->
-<g id="node6" class="node">
+<g id="node7" class="node">
 <title>This Page&#39;s Entity</title>
-<polygon fill="none" stroke="black" points="588.5,-24 483.5,-24 483.5,0 588.5,0 588.5,-24"/>
-<text text-anchor="middle" x="536" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
 </g>
 </g>
 </svg>
 
-    
-    <p>Solid arrows point from a procedure to one which it calls. Dashed 
-    arrows point from an interface to procedures which implement that interface.
-    This could include the module procedures in a generic interface or the
-    implementation in a submodule of an interface in a parent module.
-    </p>
-    </div></div></div></div>
-      </div>
-    </div>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-  <h3 class="panel-title">Called by</h3>
-      </div>
-      <div class="panel-body">
-     <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ </div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Called by</h3>
+          </div>
+          <div class="card-body">
+            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
@@ -708,756 +746,766 @@
 <polygon fill="none" stroke="black" points="186,-1032 132,-1032 132,-1008 186,-1008 186,-1032"/>
 <text text-anchor="middle" x="159" y="-1017.6" font-family="Helvetica,sans-Serif" font-size="10.50">bcton</text>
 </g>
-<!-- program~volatile_doctest~258 -->
+<!-- program~volatile_doctest~101 -->
 <g id="interface~~bcton~~CalledByGraph_node2" class="node">
-<title>program~volatile_doctest~258</title>
-<g id="a_interface~~bcton~~CalledByGraph_node2"><a xlink:href=".././program/volatile_doctest~258.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~101</title>
+<g id="a_interface~~bcton~~CalledByGraph_node2"><a xlink:href="../program/volatile_doctest~101.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-2040 0,-2040 0,-2016 96,-2016 96,-2040"/>
 <text text-anchor="middle" x="48" y="-2025.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~258&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~101&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge1" class="edge">
-<title>program~volatile_doctest~258&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~101&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.82,-2015.92C90.37,-2013.47 93.55,-2010.52 96,-2007 152.77,-1925.2 157.56,-1181.19 157.96,-1042.28"/>
 <polygon fill="#000000" stroke="#000000" points="161.46,-1042.04 157.99,-1032.03 154.46,-1042.02 161.46,-1042.04"/>
 </g>
-<!-- program~volatile_doctest~412 -->
+<!-- program~volatile_doctest~1032 -->
 <g id="interface~~bcton~~CalledByGraph_node3" class="node">
-<title>program~volatile_doctest~412</title>
-<g id="a_interface~~bcton~~CalledByGraph_node3"><a xlink:href=".././program/volatile_doctest~412.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~1032</title>
+<g id="a_interface~~bcton~~CalledByGraph_node3"><a xlink:href="../program/volatile_doctest~1032.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1998 0,-1998 0,-1974 96,-1974 96,-1998"/>
 <text text-anchor="middle" x="48" y="-1983.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~412&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~1032&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge2" class="edge">
-<title>program~volatile_doctest~412&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~1032&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.81,-1973.91C90.37,-1971.46 93.55,-1968.52 96,-1965 150.36,-1886.9 157.11,-1177.32 157.9,-1042.18"/>
 <polygon fill="#000000" stroke="#000000" points="161.4,-1042.19 157.95,-1032.17 154.4,-1042.15 161.4,-1042.19"/>
 </g>
-<!-- program~volatile_doctest~612 -->
+<!-- program~volatile_doctest~106 -->
 <g id="interface~~bcton~~CalledByGraph_node4" class="node">
-<title>program~volatile_doctest~612</title>
-<g id="a_interface~~bcton~~CalledByGraph_node4"><a xlink:href=".././program/volatile_doctest~612.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~106</title>
+<g id="a_interface~~bcton~~CalledByGraph_node4"><a xlink:href="../program/volatile_doctest~106.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1956 0,-1956 0,-1932 96,-1932 96,-1956"/>
 <text text-anchor="middle" x="48" y="-1941.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~612&#45;&gt;interface~bcton -->
-<g id="interface~~bcton~~CalledByGraph_edge5" class="edge">
-<title>program~volatile_doctest~612&#45;&gt;interface~bcton</title>
+<!-- program~volatile_doctest~106&#45;&gt;interface~bcton -->
+<g id="interface~~bcton~~CalledByGraph_edge3" class="edge">
+<title>program~volatile_doctest~106&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.8,-1931.9C90.36,-1929.45 93.54,-1926.52 96,-1923 147.9,-1848.67 156.61,-1174.54 157.82,-1042.41"/>
 <polygon fill="#000000" stroke="#000000" points="161.33,-1042.3 157.91,-1032.27 154.33,-1042.24 161.33,-1042.3"/>
 </g>
-<!-- program~volatile_doctest~420 -->
+<!-- program~volatile_doctest~1071 -->
 <g id="interface~~bcton~~CalledByGraph_node5" class="node">
-<title>program~volatile_doctest~420</title>
-<g id="a_interface~~bcton~~CalledByGraph_node5"><a xlink:href=".././program/volatile_doctest~420.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~1071</title>
+<g id="a_interface~~bcton~~CalledByGraph_node5"><a xlink:href="../program/volatile_doctest~1071.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1914 0,-1914 0,-1890 96,-1890 96,-1914"/>
 <text text-anchor="middle" x="48" y="-1899.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~420&#45;&gt;interface~bcton -->
-<g id="interface~~bcton~~CalledByGraph_edge3" class="edge">
-<title>program~volatile_doctest~420&#45;&gt;interface~bcton</title>
+<!-- program~volatile_doctest~1071&#45;&gt;interface~bcton -->
+<g id="interface~~bcton~~CalledByGraph_edge4" class="edge">
+<title>program~volatile_doctest~1071&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.79,-1889.9C90.35,-1887.45 93.54,-1884.51 96,-1881 145.52,-1810.34 156.12,-1170.01 157.75,-1042.15"/>
 <polygon fill="#000000" stroke="#000000" points="161.25,-1042.05 157.87,-1032.01 154.25,-1041.96 161.25,-1042.05"/>
 </g>
-<!-- program~volatile_doctest~436 -->
+<!-- program~volatile_doctest~1097 -->
 <g id="interface~~bcton~~CalledByGraph_node6" class="node">
-<title>program~volatile_doctest~436</title>
-<g id="a_interface~~bcton~~CalledByGraph_node6"><a xlink:href=".././program/volatile_doctest~436.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~1097</title>
+<g id="a_interface~~bcton~~CalledByGraph_node6"><a xlink:href="../program/volatile_doctest~1097.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1872 0,-1872 0,-1848 96,-1848 96,-1872"/>
 <text text-anchor="middle" x="48" y="-1857.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~436&#45;&gt;interface~bcton -->
-<g id="interface~~bcton~~CalledByGraph_edge4" class="edge">
-<title>program~volatile_doctest~436&#45;&gt;interface~bcton</title>
+<!-- program~volatile_doctest~1097&#45;&gt;interface~bcton -->
+<g id="interface~~bcton~~CalledByGraph_edge5" class="edge">
+<title>program~volatile_doctest~1097&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.77,-1847.89C90.34,-1845.44 93.53,-1842.51 96,-1839 143.09,-1772.06 155.58,-1166.49 157.66,-1042.23"/>
 <polygon fill="#000000" stroke="#000000" points="161.16,-1042.08 157.82,-1032.03 154.16,-1041.97 161.16,-1042.08"/>
 </g>
-<!-- program~volatile_doctest~810 -->
+<!-- program~volatile_doctest~111 -->
 <g id="interface~~bcton~~CalledByGraph_node7" class="node">
-<title>program~volatile_doctest~810</title>
-<g id="a_interface~~bcton~~CalledByGraph_node7"><a xlink:href=".././program/volatile_doctest~810.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~111</title>
+<g id="a_interface~~bcton~~CalledByGraph_node7"><a xlink:href="../program/volatile_doctest~111.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1830 0,-1830 0,-1806 96,-1806 96,-1830"/>
 <text text-anchor="middle" x="48" y="-1815.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~810&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~111&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge6" class="edge">
-<title>program~volatile_doctest~810&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~111&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.76,-1805.88C90.33,-1803.43 93.52,-1800.5 96,-1797 140.63,-1733.83 154.99,-1163.78 157.56,-1042.59"/>
 <polygon fill="#000000" stroke="#000000" points="161.06,-1042.36 157.77,-1032.29 154.06,-1042.22 161.06,-1042.36"/>
 </g>
-<!-- program~volatile_doctest~818 -->
+<!-- program~volatile_doctest~1155 -->
 <g id="interface~~bcton~~CalledByGraph_node8" class="node">
-<title>program~volatile_doctest~818</title>
-<g id="a_interface~~bcton~~CalledByGraph_node8"><a xlink:href=".././program/volatile_doctest~818.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~1155</title>
+<g id="a_interface~~bcton~~CalledByGraph_node8"><a xlink:href="../program/volatile_doctest~1155.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1788 0,-1788 0,-1764 96,-1764 96,-1788"/>
 <text text-anchor="middle" x="48" y="-1773.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~818&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~1155&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge7" class="edge">
-<title>program~volatile_doctest~818&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~1155&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.74,-1763.87C90.31,-1761.42 93.52,-1758.5 96,-1755 138.24,-1695.51 154.41,-1159.39 157.45,-1042.46"/>
 <polygon fill="#000000" stroke="#000000" points="160.96,-1042.29 157.71,-1032.2 153.96,-1042.11 160.96,-1042.29"/>
 </g>
-<!-- program~volatile_doctest~834 -->
+<!-- program~volatile_doctest~119 -->
 <g id="interface~~bcton~~CalledByGraph_node9" class="node">
-<title>program~volatile_doctest~834</title>
-<g id="a_interface~~bcton~~CalledByGraph_node9"><a xlink:href=".././program/volatile_doctest~834.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~119</title>
+<g id="a_interface~~bcton~~CalledByGraph_node9"><a xlink:href="../program/volatile_doctest~119.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1746 0,-1746 0,-1722 96,-1722 96,-1746"/>
 <text text-anchor="middle" x="48" y="-1731.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~834&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~119&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge8" class="edge">
-<title>program~volatile_doctest~834&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~119&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.73,-1721.85C90.3,-1719.41 93.51,-1716.49 96,-1713 135.86,-1657.16 153.8,-1154.6 157.34,-1042.22"/>
 <polygon fill="#000000" stroke="#000000" points="160.84,-1042.16 157.65,-1032.06 153.84,-1041.95 160.84,-1042.16"/>
 </g>
-<!-- program~volatile_doctest~982 -->
+<!-- program~volatile_doctest~1217 -->
 <g id="interface~~bcton~~CalledByGraph_node10" class="node">
-<title>program~volatile_doctest~982</title>
-<g id="a_interface~~bcton~~CalledByGraph_node10"><a xlink:href=".././program/volatile_doctest~982.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~1217</title>
+<g id="a_interface~~bcton~~CalledByGraph_node10"><a xlink:href="../program/volatile_doctest~1217.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1704 0,-1704 0,-1680 96,-1680 96,-1704"/>
 <text text-anchor="middle" x="48" y="-1689.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~982&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~1217&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge9" class="edge">
-<title>program~volatile_doctest~982&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~1217&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.71,-1679.84C90.28,-1677.4 93.5,-1674.48 96,-1671 133.46,-1618.84 153.13,-1150.42 157.2,-1042.23"/>
 <polygon fill="#000000" stroke="#000000" points="160.7,-1042.25 157.57,-1032.13 153.71,-1041.99 160.7,-1042.25"/>
 </g>
-<!-- program~volatile_doctest~990 -->
+<!-- program~volatile_doctest~1218 -->
 <g id="interface~~bcton~~CalledByGraph_node11" class="node">
-<title>program~volatile_doctest~990</title>
-<g id="a_interface~~bcton~~CalledByGraph_node11"><a xlink:href=".././program/volatile_doctest~990.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~1218</title>
+<g id="a_interface~~bcton~~CalledByGraph_node11"><a xlink:href="../program/volatile_doctest~1218.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1662 0,-1662 0,-1638 96,-1638 96,-1662"/>
 <text text-anchor="middle" x="48" y="-1647.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~990&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~1218&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge10" class="edge">
-<title>program~volatile_doctest~990&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~1218&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.68,-1637.82C90.26,-1635.39 93.49,-1632.48 96,-1629 131.04,-1580.54 152.39,-1146.59 157.04,-1042.41"/>
 <polygon fill="#000000" stroke="#000000" points="160.55,-1042.27 157.49,-1032.12 153.55,-1041.96 160.55,-1042.27"/>
 </g>
-<!-- program~volatile_doctest~407 -->
+<!-- program~volatile_doctest~149 -->
 <g id="interface~~bcton~~CalledByGraph_node12" class="node">
-<title>program~volatile_doctest~407</title>
-<g id="a_interface~~bcton~~CalledByGraph_node12"><a xlink:href=".././program/volatile_doctest~407.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~149</title>
+<g id="a_interface~~bcton~~CalledByGraph_node12"><a xlink:href="../program/volatile_doctest~149.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1620 0,-1620 0,-1596 96,-1596 96,-1620"/>
 <text text-anchor="middle" x="48" y="-1605.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~407&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~149&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge11" class="edge">
-<title>program~volatile_doctest~407&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~149&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.66,-1595.8C90.24,-1593.37 93.47,-1590.47 96,-1587 160.87,-1497.99 159.82,-1135.52 158.43,-1042.07"/>
 <polygon fill="#000000" stroke="#000000" points="161.93,-1041.98 158.26,-1032.04 154.93,-1042.1 161.93,-1041.98"/>
 </g>
-<!-- program~volatile_doctest~415 -->
+<!-- program~volatile_doctest~159 -->
 <g id="interface~~bcton~~CalledByGraph_node13" class="node">
-<title>program~volatile_doctest~415</title>
-<g id="a_interface~~bcton~~CalledByGraph_node13"><a xlink:href=".././program/volatile_doctest~415.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~159</title>
+<g id="a_interface~~bcton~~CalledByGraph_node13"><a xlink:href="../program/volatile_doctest~159.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1578 0,-1578 0,-1554 96,-1554 96,-1578"/>
 <text text-anchor="middle" x="48" y="-1563.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~415&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~159&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge12" class="edge">
-<title>program~volatile_doctest~415&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~159&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.63,-1553.78C90.22,-1551.35 93.46,-1548.46 96,-1545 156.09,-1463.28 158.64,-1131.26 158.21,-1042.12"/>
 <polygon fill="#000000" stroke="#000000" points="161.71,-1042.03 158.14,-1032.05 154.71,-1042.08 161.71,-1042.03"/>
 </g>
-<!-- program~volatile_doctest~813 -->
+<!-- program~volatile_doctest~194 -->
 <g id="interface~~bcton~~CalledByGraph_node14" class="node">
-<title>program~volatile_doctest~813</title>
-<g id="a_interface~~bcton~~CalledByGraph_node14"><a xlink:href=".././program/volatile_doctest~813.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~194</title>
+<g id="a_interface~~bcton~~CalledByGraph_node14"><a xlink:href="../program/volatile_doctest~194.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1536 0,-1536 0,-1512 96,-1512 96,-1536"/>
 <text text-anchor="middle" x="48" y="-1521.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~813&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~194&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge13" class="edge">
-<title>program~volatile_doctest~813&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~194&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.59,-1511.76C90.19,-1509.33 93.44,-1506.44 96,-1503 151.26,-1428.64 157.34,-1127.61 157.95,-1042.51"/>
 <polygon fill="#000000" stroke="#000000" points="161.45,-1042.41 158,-1032.39 154.45,-1042.37 161.45,-1042.41"/>
 </g>
-<!-- program~volatile_doctest~1217 -->
+<!-- program~volatile_doctest~204 -->
 <g id="interface~~bcton~~CalledByGraph_node15" class="node">
-<title>program~volatile_doctest~1217</title>
-<g id="a_interface~~bcton~~CalledByGraph_node15"><a xlink:href=".././program/volatile_doctest~1217.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~204</title>
+<g id="a_interface~~bcton~~CalledByGraph_node15"><a xlink:href="../program/volatile_doctest~204.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1494 0,-1494 0,-1470 96,-1470 96,-1494"/>
 <text text-anchor="middle" x="48" y="-1479.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~1217&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~204&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge14" class="edge">
-<title>program~volatile_doctest~1217&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~204&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.55,-1469.73C90.16,-1467.31 93.42,-1464.43 96,-1461 146.51,-1393.88 155.94,-1122.93 157.64,-1042.57"/>
 <polygon fill="#000000" stroke="#000000" points="161.15,-1042.21 157.84,-1032.15 154.15,-1042.08 161.15,-1042.21"/>
 </g>
-<!-- program~volatile_doctest~1164 -->
+<!-- program~volatile_doctest~208 -->
 <g id="interface~~bcton~~CalledByGraph_node16" class="node">
-<title>program~volatile_doctest~1164</title>
-<g id="a_interface~~bcton~~CalledByGraph_node16"><a xlink:href=".././program/volatile_doctest~1164.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~208</title>
+<g id="a_interface~~bcton~~CalledByGraph_node16"><a xlink:href="../program/volatile_doctest~208.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1452 0,-1452 0,-1428 96,-1428 96,-1452"/>
 <text text-anchor="middle" x="48" y="-1437.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~1164&#45;&gt;interface~bcton -->
-<g id="interface~~bcton~~CalledByGraph_edge17" class="edge">
-<title>program~volatile_doctest~1164&#45;&gt;interface~bcton</title>
+<!-- program~volatile_doctest~208&#45;&gt;interface~bcton -->
+<g id="interface~~bcton~~CalledByGraph_edge15" class="edge">
+<title>program~volatile_doctest~208&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.05,-1427.99C89.84,-1425.52 93.29,-1422.55 96,-1419 141.84,-1358.99 154.44,-1117.4 157.28,-1042.35"/>
 <polygon fill="#000000" stroke="#000000" points="160.78,-1042.28 157.64,-1032.16 153.79,-1042.03 160.78,-1042.28"/>
 </g>
-<!-- program~volatile_doctest~1188 -->
+<!-- program~volatile_doctest~236 -->
 <g id="interface~~bcton~~CalledByGraph_node17" class="node">
-<title>program~volatile_doctest~1188</title>
-<g id="a_interface~~bcton~~CalledByGraph_node17"><a xlink:href=".././program/volatile_doctest~1188.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~236</title>
+<g id="a_interface~~bcton~~CalledByGraph_node17"><a xlink:href="../program/volatile_doctest~236.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1410 0,-1410 0,-1386 96,-1386 96,-1410"/>
 <text text-anchor="middle" x="48" y="-1395.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~1188&#45;&gt;interface~bcton -->
-<g id="interface~~bcton~~CalledByGraph_edge19" class="edge">
-<title>program~volatile_doctest~1188&#45;&gt;interface~bcton</title>
+<!-- program~volatile_doctest~236&#45;&gt;interface~bcton -->
+<g id="interface~~bcton~~CalledByGraph_edge16" class="edge">
+<title>program~volatile_doctest~236&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M85.99,-1385.94C89.79,-1383.48 93.26,-1380.53 96,-1377 137.08,-1324.21 152.69,-1112.77 156.8,-1042.69"/>
 <polygon fill="#000000" stroke="#000000" points="160.32,-1042.53 157.38,-1032.35 153.33,-1042.14 160.32,-1042.53"/>
 </g>
-<!-- program~volatile_doctest~1172 -->
+<!-- program~volatile_doctest~249 -->
 <g id="interface~~bcton~~CalledByGraph_node18" class="node">
-<title>program~volatile_doctest~1172</title>
-<g id="a_interface~~bcton~~CalledByGraph_node18"><a xlink:href=".././program/volatile_doctest~1172.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~249</title>
+<g id="a_interface~~bcton~~CalledByGraph_node18"><a xlink:href="../program/volatile_doctest~249.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1368 0,-1368 0,-1344 96,-1344 96,-1368"/>
 <text text-anchor="middle" x="48" y="-1353.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~1172&#45;&gt;interface~bcton -->
-<g id="interface~~bcton~~CalledByGraph_edge18" class="edge">
-<title>program~volatile_doctest~1172&#45;&gt;interface~bcton</title>
+<!-- program~volatile_doctest~249&#45;&gt;interface~bcton -->
+<g id="interface~~bcton~~CalledByGraph_edge17" class="edge">
+<title>program~volatile_doctest~249&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M85.91,-1343.88C89.73,-1341.43 93.22,-1338.5 96,-1335 132.44,-1289.24 150.8,-1106.76 156.24,-1042.52"/>
 <polygon fill="#000000" stroke="#000000" points="159.75,-1042.53 157.08,-1032.28 152.77,-1041.96 159.75,-1042.53"/>
 </g>
-<!-- program~volatile_doctest~288 -->
+<!-- program~volatile_doctest~291 -->
 <g id="interface~~bcton~~CalledByGraph_node19" class="node">
-<title>program~volatile_doctest~288</title>
-<g id="a_interface~~bcton~~CalledByGraph_node19"><a xlink:href=".././program/volatile_doctest~288.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~291</title>
+<g id="a_interface~~bcton~~CalledByGraph_node19"><a xlink:href="../program/volatile_doctest~291.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1326 0,-1326 0,-1302 96,-1302 96,-1326"/>
 <text text-anchor="middle" x="48" y="-1311.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~288&#45;&gt;interface~bcton -->
-<g id="interface~~bcton~~CalledByGraph_edge15" class="edge">
-<title>program~volatile_doctest~288&#45;&gt;interface~bcton</title>
+<!-- program~volatile_doctest~291&#45;&gt;interface~bcton -->
+<g id="interface~~bcton~~CalledByGraph_edge18" class="edge">
+<title>program~volatile_doctest~291&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M85.82,-1301.8C89.65,-1299.36 93.17,-1296.46 96,-1293 127.85,-1254.17 148.69,-1100.09 155.53,-1042.17"/>
 <polygon fill="#000000" stroke="#000000" points="159.01,-1042.56 156.68,-1032.23 152.05,-1041.76 159.01,-1042.56"/>
 </g>
-<!-- program~volatile_doctest~642 -->
+<!-- program~volatile_doctest~308 -->
 <g id="interface~~bcton~~CalledByGraph_node20" class="node">
-<title>program~volatile_doctest~642</title>
-<g id="a_interface~~bcton~~CalledByGraph_node20"><a xlink:href=".././program/volatile_doctest~642.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~308</title>
+<g id="a_interface~~bcton~~CalledByGraph_node20"><a xlink:href="../program/volatile_doctest~308.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1284 0,-1284 0,-1260 96,-1260 96,-1284"/>
 <text text-anchor="middle" x="48" y="-1269.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~642&#45;&gt;interface~bcton -->
-<g id="interface~~bcton~~CalledByGraph_edge16" class="edge">
-<title>program~volatile_doctest~642&#45;&gt;interface~bcton</title>
+<!-- program~volatile_doctest~308&#45;&gt;interface~bcton -->
+<g id="interface~~bcton~~CalledByGraph_edge19" class="edge">
+<title>program~volatile_doctest~308&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M85.22,-1259.98C89.25,-1257.5 92.98,-1254.54 96,-1251 148.68,-1189.27 157.06,-1087.16 158.08,-1042.3"/>
 <polygon fill="#000000" stroke="#000000" points="161.58,-1042.23 158.2,-1032.19 154.58,-1042.15 161.58,-1042.23"/>
 </g>
-<!-- program~volatile_doctest~37 -->
+<!-- program~volatile_doctest~314 -->
 <g id="interface~~bcton~~CalledByGraph_node21" class="node">
-<title>program~volatile_doctest~37</title>
-<g id="a_interface~~bcton~~CalledByGraph_node21"><a xlink:href=".././program/volatile_doctest~37.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~314</title>
+<g id="a_interface~~bcton~~CalledByGraph_node21"><a xlink:href="../program/volatile_doctest~314.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1242 0,-1242 0,-1218 96,-1218 96,-1242"/>
 <text text-anchor="middle" x="48" y="-1227.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~37&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~314&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge20" class="edge">
-<title>program~volatile_doctest~37&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~314&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M85.04,-1217.82C89.1,-1215.37 92.89,-1212.45 96,-1209 139.57,-1160.68 152.59,-1081.12 156.43,-1042.47"/>
 <polygon fill="#000000" stroke="#000000" points="159.93,-1042.55 157.32,-1032.29 152.96,-1041.95 159.93,-1042.55"/>
 </g>
-<!-- program~volatile_doctest~235 -->
+<!-- program~volatile_doctest~32 -->
 <g id="interface~~bcton~~CalledByGraph_node22" class="node">
-<title>program~volatile_doctest~235</title>
-<g id="a_interface~~bcton~~CalledByGraph_node22"><a xlink:href=".././program/volatile_doctest~235.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~32</title>
+<g id="a_interface~~bcton~~CalledByGraph_node22"><a xlink:href="../program/volatile_doctest~32.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1200 0,-1200 0,-1176 96,-1176 96,-1200"/>
 <text text-anchor="middle" x="48" y="-1185.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~235&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~32&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge21" class="edge">
-<title>program~volatile_doctest~235&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~32&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M84.3,-1175.85C88.58,-1173.38 92.62,-1170.45 96,-1167 130.67,-1131.59 147.16,-1073.88 153.95,-1042.33"/>
 <polygon fill="#000000" stroke="#000000" points="157.42,-1042.84 155.96,-1032.34 150.56,-1041.46 157.42,-1042.84"/>
 </g>
-<!-- program~volatile_doctest~243 -->
+<!-- program~volatile_doctest~339 -->
 <g id="interface~~bcton~~CalledByGraph_node23" class="node">
-<title>program~volatile_doctest~243</title>
-<g id="a_interface~~bcton~~CalledByGraph_node23"><a xlink:href=".././program/volatile_doctest~243.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~339</title>
+<g id="a_interface~~bcton~~CalledByGraph_node23"><a xlink:href="../program/volatile_doctest~339.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1158 0,-1158 0,-1134 96,-1134 96,-1158"/>
 <text text-anchor="middle" x="48" y="-1143.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~243&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~339&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge22" class="edge">
-<title>program~volatile_doctest~243&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~339&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M82.92,-1133.94C87.61,-1131.42 92.13,-1128.45 96,-1125 122,-1101.79 140.2,-1065 149.88,-1041.71"/>
 <polygon fill="#000000" stroke="#000000" points="153.16,-1042.92 153.62,-1032.34 146.66,-1040.33 153.16,-1042.92"/>
 </g>
-<!-- program~volatile_doctest~259 -->
+<!-- program~volatile_doctest~347 -->
 <g id="interface~~bcton~~CalledByGraph_node24" class="node">
-<title>program~volatile_doctest~259</title>
-<g id="a_interface~~bcton~~CalledByGraph_node24"><a xlink:href=".././program/volatile_doctest~259.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~347</title>
+<g id="a_interface~~bcton~~CalledByGraph_node24"><a xlink:href="../program/volatile_doctest~347.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1116 0,-1116 0,-1092 96,-1092 96,-1116"/>
 <text text-anchor="middle" x="48" y="-1101.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~259&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~347&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge23" class="edge">
-<title>program~volatile_doctest~259&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~347&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M80.73,-1091.79C86.01,-1089.2 91.3,-1086.26 96,-1083 113.54,-1070.83 130.33,-1053.28 142,-1039.79"/>
 <polygon fill="#000000" stroke="#000000" points="144.79,-1041.9 148.57,-1032 139.44,-1037.39 144.79,-1041.9"/>
 </g>
-<!-- program~volatile_doctest~589 -->
+<!-- program~volatile_doctest~378 -->
 <g id="interface~~bcton~~CalledByGraph_node25" class="node">
-<title>program~volatile_doctest~589</title>
-<g id="a_interface~~bcton~~CalledByGraph_node25"><a xlink:href=".././program/volatile_doctest~589.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~378</title>
+<g id="a_interface~~bcton~~CalledByGraph_node25"><a xlink:href="../program/volatile_doctest~378.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1074 0,-1074 0,-1050 96,-1050 96,-1074"/>
 <text text-anchor="middle" x="48" y="-1059.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~589&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~378&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge24" class="edge">
-<title>program~volatile_doctest~589&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~378&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M80.24,-1049.96C93.4,-1044.89 108.79,-1038.96 122.39,-1033.72"/>
 <polygon fill="#000000" stroke="#000000" points="123.84,-1036.91 131.92,-1030.05 121.33,-1030.38 123.84,-1036.91"/>
 </g>
-<!-- program~volatile_doctest~597 -->
+<!-- program~volatile_doctest~436 -->
 <g id="interface~~bcton~~CalledByGraph_node26" class="node">
-<title>program~volatile_doctest~597</title>
-<g id="a_interface~~bcton~~CalledByGraph_node26"><a xlink:href=".././program/volatile_doctest~597.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~436</title>
+<g id="a_interface~~bcton~~CalledByGraph_node26"><a xlink:href="../program/volatile_doctest~436.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-1032 0,-1032 0,-1008 96,-1008 96,-1032"/>
 <text text-anchor="middle" x="48" y="-1017.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~597&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~436&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge25" class="edge">
-<title>program~volatile_doctest~597&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~436&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M96.18,-1020C104.66,-1020 113.38,-1020 121.5,-1020"/>
 <polygon fill="#000000" stroke="#000000" points="121.76,-1023.5 131.76,-1020 121.76,-1016.5 121.76,-1023.5"/>
 </g>
-<!-- program~volatile_doctest~613 -->
+<!-- program~volatile_doctest~466 -->
 <g id="interface~~bcton~~CalledByGraph_node27" class="node">
-<title>program~volatile_doctest~613</title>
-<g id="a_interface~~bcton~~CalledByGraph_node27"><a xlink:href=".././program/volatile_doctest~613.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~466</title>
+<g id="a_interface~~bcton~~CalledByGraph_node27"><a xlink:href="../program/volatile_doctest~466.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-990 0,-990 0,-966 96,-966 96,-990"/>
 <text text-anchor="middle" x="48" y="-975.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~613&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~466&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge26" class="edge">
-<title>program~volatile_doctest~613&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~466&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M80.24,-990.04C93.4,-995.11 108.79,-1001.04 122.39,-1006.28"/>
 <polygon fill="#000000" stroke="#000000" points="121.33,-1009.62 131.92,-1009.95 123.84,-1003.09 121.33,-1009.62"/>
 </g>
-<!-- program~volatile_doctest~1159 -->
+<!-- program~volatile_doctest~500 -->
 <g id="interface~~bcton~~CalledByGraph_node28" class="node">
-<title>program~volatile_doctest~1159</title>
-<g id="a_interface~~bcton~~CalledByGraph_node28"><a xlink:href=".././program/volatile_doctest~1159.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~500</title>
+<g id="a_interface~~bcton~~CalledByGraph_node28"><a xlink:href="../program/volatile_doctest~500.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-948 0,-948 0,-924 96,-924 96,-948"/>
 <text text-anchor="middle" x="48" y="-933.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~1159&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~500&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge27" class="edge">
-<title>program~volatile_doctest~1159&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~500&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M80.73,-948.21C86.01,-950.8 91.3,-953.74 96,-957 113.54,-969.17 130.33,-986.72 142,-1000.21"/>
 <polygon fill="#000000" stroke="#000000" points="139.44,-1002.61 148.57,-1008 144.79,-998.1 139.44,-1002.61"/>
 </g>
-<!-- program~volatile_doctest~1167 -->
+<!-- program~volatile_doctest~502 -->
 <g id="interface~~bcton~~CalledByGraph_node29" class="node">
-<title>program~volatile_doctest~1167</title>
-<g id="a_interface~~bcton~~CalledByGraph_node29"><a xlink:href=".././program/volatile_doctest~1167.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~502</title>
+<g id="a_interface~~bcton~~CalledByGraph_node29"><a xlink:href="../program/volatile_doctest~502.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-906 0,-906 0,-882 96,-882 96,-906"/>
 <text text-anchor="middle" x="48" y="-891.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~1167&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~502&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge28" class="edge">
-<title>program~volatile_doctest~1167&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~502&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M82.92,-906.06C87.61,-908.58 92.13,-911.55 96,-915 122,-938.21 140.2,-975 149.88,-998.29"/>
 <polygon fill="#000000" stroke="#000000" points="146.66,-999.67 153.62,-1007.66 153.16,-997.08 146.66,-999.67"/>
 </g>
-<!-- program~volatile_doctest~230 -->
+<!-- program~volatile_doctest~511 -->
 <g id="interface~~bcton~~CalledByGraph_node30" class="node">
-<title>program~volatile_doctest~230</title>
-<g id="a_interface~~bcton~~CalledByGraph_node30"><a xlink:href=".././program/volatile_doctest~230.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~511</title>
+<g id="a_interface~~bcton~~CalledByGraph_node30"><a xlink:href="../program/volatile_doctest~511.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-864 0,-864 0,-840 96,-840 96,-864"/>
 <text text-anchor="middle" x="48" y="-849.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~230&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~511&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge29" class="edge">
-<title>program~volatile_doctest~230&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~511&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M84.3,-864.15C88.58,-866.62 92.62,-869.55 96,-873 130.67,-908.41 147.16,-966.12 153.95,-997.67"/>
 <polygon fill="#000000" stroke="#000000" points="150.56,-998.54 155.96,-1007.66 157.42,-997.16 150.56,-998.54"/>
 </g>
-<!-- program~volatile_doctest~238 -->
+<!-- program~volatile_doctest~551 -->
 <g id="interface~~bcton~~CalledByGraph_node31" class="node">
-<title>program~volatile_doctest~238</title>
-<g id="a_interface~~bcton~~CalledByGraph_node31"><a xlink:href=".././program/volatile_doctest~238.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~551</title>
+<g id="a_interface~~bcton~~CalledByGraph_node31"><a xlink:href="../program/volatile_doctest~551.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-822 0,-822 0,-798 96,-798 96,-822"/>
 <text text-anchor="middle" x="48" y="-807.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~238&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~551&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge30" class="edge">
-<title>program~volatile_doctest~238&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~551&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M85.04,-822.18C89.1,-824.63 92.89,-827.55 96,-831 139.57,-879.32 152.59,-958.88 156.43,-997.53"/>
 <polygon fill="#000000" stroke="#000000" points="152.96,-998.05 157.32,-1007.71 159.93,-997.45 152.96,-998.05"/>
 </g>
-<!-- program~volatile_doctest~584 -->
+<!-- program~volatile_doctest~562 -->
 <g id="interface~~bcton~~CalledByGraph_node32" class="node">
-<title>program~volatile_doctest~584</title>
-<g id="a_interface~~bcton~~CalledByGraph_node32"><a xlink:href=".././program/volatile_doctest~584.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~562</title>
+<g id="a_interface~~bcton~~CalledByGraph_node32"><a xlink:href="../program/volatile_doctest~562.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-780 0,-780 0,-756 96,-756 96,-780"/>
 <text text-anchor="middle" x="48" y="-765.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~584&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~562&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge31" class="edge">
-<title>program~volatile_doctest~584&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~562&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M85.22,-780.02C89.25,-782.5 92.98,-785.46 96,-789 148.68,-850.73 157.06,-952.84 158.08,-997.7"/>
 <polygon fill="#000000" stroke="#000000" points="154.58,-997.85 158.2,-1007.81 161.58,-997.77 154.58,-997.85"/>
 </g>
-<!-- program~volatile_doctest~592 -->
+<!-- program~volatile_doctest~566 -->
 <g id="interface~~bcton~~CalledByGraph_node33" class="node">
-<title>program~volatile_doctest~592</title>
-<g id="a_interface~~bcton~~CalledByGraph_node33"><a xlink:href=".././program/volatile_doctest~592.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~566</title>
+<g id="a_interface~~bcton~~CalledByGraph_node33"><a xlink:href="../program/volatile_doctest~566.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-738 0,-738 0,-714 96,-714 96,-738"/>
 <text text-anchor="middle" x="48" y="-723.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~592&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~566&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge32" class="edge">
-<title>program~volatile_doctest~592&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~566&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M85.82,-738.2C89.65,-740.64 93.17,-743.54 96,-747 127.85,-785.83 148.69,-939.91 155.53,-997.83"/>
 <polygon fill="#000000" stroke="#000000" points="152.05,-998.24 156.68,-1007.77 159.01,-997.44 152.05,-998.24"/>
 </g>
-<!-- program~volatile_doctest~1010 -->
+<!-- program~volatile_doctest~569 -->
 <g id="interface~~bcton~~CalledByGraph_node34" class="node">
-<title>program~volatile_doctest~1010</title>
-<g id="a_interface~~bcton~~CalledByGraph_node34"><a xlink:href=".././program/volatile_doctest~1010.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~569</title>
+<g id="a_interface~~bcton~~CalledByGraph_node34"><a xlink:href="../program/volatile_doctest~569.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-696 0,-696 0,-672 96,-672 96,-696"/>
 <text text-anchor="middle" x="48" y="-681.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~1010&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~569&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge33" class="edge">
-<title>program~volatile_doctest~1010&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~569&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M85.91,-696.12C89.73,-698.57 93.22,-701.5 96,-705 132.44,-750.76 150.8,-933.24 156.24,-997.48"/>
 <polygon fill="#000000" stroke="#000000" points="152.77,-998.04 157.08,-1007.72 159.75,-997.47 152.77,-998.04"/>
 </g>
-<!-- program~volatile_doctest~67 -->
+<!-- program~volatile_doctest~581 -->
 <g id="interface~~bcton~~CalledByGraph_node35" class="node">
-<title>program~volatile_doctest~67</title>
-<g id="a_interface~~bcton~~CalledByGraph_node35"><a xlink:href=".././program/volatile_doctest~67.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~581</title>
+<g id="a_interface~~bcton~~CalledByGraph_node35"><a xlink:href="../program/volatile_doctest~581.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-654 0,-654 0,-630 96,-630 96,-654"/>
 <text text-anchor="middle" x="48" y="-639.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~67&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~581&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge34" class="edge">
-<title>program~volatile_doctest~67&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~581&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M85.99,-654.06C89.79,-656.52 93.26,-659.47 96,-663 137.08,-715.79 152.69,-927.23 156.8,-997.31"/>
 <polygon fill="#000000" stroke="#000000" points="153.33,-997.86 157.38,-1007.65 160.32,-997.47 153.33,-997.86"/>
 </g>
-<!-- program~volatile_doctest~435 -->
+<!-- program~volatile_doctest~647 -->
 <g id="interface~~bcton~~CalledByGraph_node36" class="node">
-<title>program~volatile_doctest~435</title>
-<g id="a_interface~~bcton~~CalledByGraph_node36"><a xlink:href=".././program/volatile_doctest~435.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~647</title>
+<g id="a_interface~~bcton~~CalledByGraph_node36"><a xlink:href="../program/volatile_doctest~647.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-612 0,-612 0,-588 96,-588 96,-612"/>
 <text text-anchor="middle" x="48" y="-597.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~435&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~647&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge35" class="edge">
-<title>program~volatile_doctest~435&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~647&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.05,-612.01C89.84,-614.48 93.29,-617.45 96,-621 141.84,-681.01 154.44,-922.6 157.28,-997.65"/>
 <polygon fill="#000000" stroke="#000000" points="153.79,-997.97 157.64,-1007.84 160.78,-997.72 153.79,-997.97"/>
 </g>
-<!-- program~volatile_doctest~805 -->
+<!-- program~volatile_doctest~653 -->
 <g id="interface~~bcton~~CalledByGraph_node37" class="node">
-<title>program~volatile_doctest~805</title>
-<g id="a_interface~~bcton~~CalledByGraph_node37"><a xlink:href=".././program/volatile_doctest~805.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~653</title>
+<g id="a_interface~~bcton~~CalledByGraph_node37"><a xlink:href="../program/volatile_doctest~653.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-570 0,-570 0,-546 96,-546 96,-570"/>
 <text text-anchor="middle" x="48" y="-555.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~805&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~653&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge36" class="edge">
-<title>program~volatile_doctest~805&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~653&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.55,-570.27C90.16,-572.69 93.42,-575.57 96,-579 146.51,-646.12 155.94,-917.07 157.64,-997.43"/>
 <polygon fill="#000000" stroke="#000000" points="154.15,-997.92 157.84,-1007.85 161.15,-997.79 154.15,-997.92"/>
 </g>
-<!-- program~volatile_doctest~833 -->
+<!-- program~volatile_doctest~716 -->
 <g id="interface~~bcton~~CalledByGraph_node38" class="node">
-<title>program~volatile_doctest~833</title>
-<g id="a_interface~~bcton~~CalledByGraph_node38"><a xlink:href=".././program/volatile_doctest~833.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~716</title>
+<g id="a_interface~~bcton~~CalledByGraph_node38"><a xlink:href="../program/volatile_doctest~716.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-528 0,-528 0,-504 96,-504 96,-528"/>
 <text text-anchor="middle" x="48" y="-513.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~833&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~716&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge37" class="edge">
-<title>program~volatile_doctest~833&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~716&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.59,-528.24C90.19,-530.67 93.44,-533.56 96,-537 151.26,-611.36 157.34,-912.39 157.95,-997.49"/>
 <polygon fill="#000000" stroke="#000000" points="154.45,-997.63 158,-1007.61 161.45,-997.59 154.45,-997.63"/>
 </g>
-<!-- program~volatile_doctest~22 -->
+<!-- program~volatile_doctest~727 -->
 <g id="interface~~bcton~~CalledByGraph_node39" class="node">
-<title>program~volatile_doctest~22</title>
-<g id="a_interface~~bcton~~CalledByGraph_node39"><a xlink:href=".././program/volatile_doctest~22.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~727</title>
+<g id="a_interface~~bcton~~CalledByGraph_node39"><a xlink:href="../program/volatile_doctest~727.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-486 0,-486 0,-462 96,-462 96,-486"/>
 <text text-anchor="middle" x="48" y="-471.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~22&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~727&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge38" class="edge">
-<title>program~volatile_doctest~22&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~727&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.63,-486.22C90.22,-488.65 93.46,-491.54 96,-495 156.09,-576.72 158.64,-908.74 158.21,-997.88"/>
 <polygon fill="#000000" stroke="#000000" points="154.71,-997.92 158.14,-1007.95 161.71,-997.97 154.71,-997.92"/>
 </g>
-<!-- program~volatile_doctest~14 -->
+<!-- program~volatile_doctest~78 -->
 <g id="interface~~bcton~~CalledByGraph_node40" class="node">
-<title>program~volatile_doctest~14</title>
-<g id="a_interface~~bcton~~CalledByGraph_node40"><a xlink:href=".././program/volatile_doctest~14.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~78</title>
+<g id="a_interface~~bcton~~CalledByGraph_node40"><a xlink:href="../program/volatile_doctest~78.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-444 0,-444 0,-420 96,-420 96,-444"/>
 <text text-anchor="middle" x="48" y="-429.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~14&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~78&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge39" class="edge">
-<title>program~volatile_doctest~14&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~78&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.66,-444.2C90.24,-446.63 93.47,-449.53 96,-453 160.87,-542.01 159.82,-904.48 158.43,-997.93"/>
 <polygon fill="#000000" stroke="#000000" points="154.93,-997.9 158.26,-1007.96 161.93,-998.02 154.93,-997.9"/>
 </g>
-<!-- program~volatile_doctest~38 -->
+<!-- program~volatile_doctest~797 -->
 <g id="interface~~bcton~~CalledByGraph_node41" class="node">
-<title>program~volatile_doctest~38</title>
-<g id="a_interface~~bcton~~CalledByGraph_node41"><a xlink:href=".././program/volatile_doctest~38.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~797</title>
+<g id="a_interface~~bcton~~CalledByGraph_node41"><a xlink:href="../program/volatile_doctest~797.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-402 0,-402 0,-378 96,-378 96,-402"/>
 <text text-anchor="middle" x="48" y="-387.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~38&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~797&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge40" class="edge">
-<title>program~volatile_doctest~38&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~797&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.68,-402.18C90.26,-404.61 93.49,-407.52 96,-411 131.04,-459.46 152.39,-893.41 157.04,-997.59"/>
 <polygon fill="#000000" stroke="#000000" points="153.55,-998.04 157.49,-1007.88 160.55,-997.73 153.55,-998.04"/>
 </g>
-<!-- program~volatile_doctest~1040 -->
+<!-- program~volatile_doctest~80 -->
 <g id="interface~~bcton~~CalledByGraph_node42" class="node">
-<title>program~volatile_doctest~1040</title>
-<g id="a_interface~~bcton~~CalledByGraph_node42"><a xlink:href=".././program/volatile_doctest~1040.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~80</title>
+<g id="a_interface~~bcton~~CalledByGraph_node42"><a xlink:href="../program/volatile_doctest~80.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-360 0,-360 0,-336 96,-336 96,-360"/>
 <text text-anchor="middle" x="48" y="-345.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~1040&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~80&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge41" class="edge">
-<title>program~volatile_doctest~1040&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~80&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.71,-360.16C90.28,-362.6 93.5,-365.52 96,-369 133.46,-421.16 153.13,-889.58 157.2,-997.77"/>
 <polygon fill="#000000" stroke="#000000" points="153.71,-998.01 157.57,-1007.87 160.7,-997.75 153.71,-998.01"/>
 </g>
-<!-- program~volatile_doctest~9 -->
+<!-- program~volatile_doctest~818 -->
 <g id="interface~~bcton~~CalledByGraph_node43" class="node">
-<title>program~volatile_doctest~9</title>
-<g id="a_interface~~bcton~~CalledByGraph_node43"><a xlink:href=".././program/volatile_doctest~9.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~818</title>
+<g id="a_interface~~bcton~~CalledByGraph_node43"><a xlink:href="../program/volatile_doctest~818.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-318 0,-318 0,-294 96,-294 96,-318"/>
 <text text-anchor="middle" x="48" y="-303.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~9&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~818&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge42" class="edge">
-<title>program~volatile_doctest~9&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~818&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.73,-318.15C90.3,-320.59 93.51,-323.51 96,-327 135.86,-382.84 153.8,-885.4 157.34,-997.78"/>
 <polygon fill="#000000" stroke="#000000" points="153.84,-998.05 157.65,-1007.94 160.84,-997.84 153.84,-998.05"/>
 </g>
-<!-- program~volatile_doctest~17 -->
+<!-- program~volatile_doctest~848 -->
 <g id="interface~~bcton~~CalledByGraph_node44" class="node">
-<title>program~volatile_doctest~17</title>
-<g id="a_interface~~bcton~~CalledByGraph_node44"><a xlink:href=".././program/volatile_doctest~17.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~848</title>
+<g id="a_interface~~bcton~~CalledByGraph_node44"><a xlink:href="../program/volatile_doctest~848.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-276 0,-276 0,-252 96,-252 96,-276"/>
 <text text-anchor="middle" x="48" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~17&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~848&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge43" class="edge">
-<title>program~volatile_doctest~17&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~848&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.74,-276.13C90.31,-278.58 93.52,-281.5 96,-285 138.24,-344.49 154.41,-880.61 157.45,-997.54"/>
 <polygon fill="#000000" stroke="#000000" points="153.96,-997.89 157.71,-1007.8 160.96,-997.71 153.96,-997.89"/>
 </g>
-<!-- program~volatile_doctest~465 -->
+<!-- program~volatile_doctest~907 -->
 <g id="interface~~bcton~~CalledByGraph_node45" class="node">
-<title>program~volatile_doctest~465</title>
-<g id="a_interface~~bcton~~CalledByGraph_node45"><a xlink:href=".././program/volatile_doctest~465.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~907</title>
+<g id="a_interface~~bcton~~CalledByGraph_node45"><a xlink:href="../program/volatile_doctest~907.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-234 0,-234 0,-210 96,-210 96,-234"/>
 <text text-anchor="middle" x="48" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~465&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~907&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge44" class="edge">
-<title>program~volatile_doctest~465&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~907&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.76,-234.12C90.33,-236.57 93.52,-239.5 96,-243 140.63,-306.17 154.99,-876.22 157.56,-997.41"/>
 <polygon fill="#000000" stroke="#000000" points="154.06,-997.78 157.77,-1007.71 161.06,-997.64 154.06,-997.78"/>
 </g>
-<!-- program~volatile_doctest~863 -->
+<!-- program~volatile_doctest~95 -->
 <g id="interface~~bcton~~CalledByGraph_node46" class="node">
-<title>program~volatile_doctest~863</title>
-<g id="a_interface~~bcton~~CalledByGraph_node46"><a xlink:href=".././program/volatile_doctest~863.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~95</title>
+<g id="a_interface~~bcton~~CalledByGraph_node46"><a xlink:href="../program/volatile_doctest~95.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-192 0,-192 0,-168 96,-168 96,-192"/>
 <text text-anchor="middle" x="48" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~863&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~95&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge45" class="edge">
-<title>program~volatile_doctest~863&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~95&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.77,-192.11C90.34,-194.56 93.53,-197.49 96,-201 143.09,-267.94 155.58,-873.51 157.66,-997.77"/>
 <polygon fill="#000000" stroke="#000000" points="154.16,-998.03 157.82,-1007.97 161.16,-997.92 154.16,-998.03"/>
 </g>
-<!-- program~volatile_doctest~987 -->
+<!-- program~volatile_doctest~957 -->
 <g id="interface~~bcton~~CalledByGraph_node47" class="node">
-<title>program~volatile_doctest~987</title>
-<g id="a_interface~~bcton~~CalledByGraph_node47"><a xlink:href=".././program/volatile_doctest~987.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~957</title>
+<g id="a_interface~~bcton~~CalledByGraph_node47"><a xlink:href="../program/volatile_doctest~957.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-150 0,-150 0,-126 96,-126 96,-150"/>
 <text text-anchor="middle" x="48" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~987&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~957&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge46" class="edge">
-<title>program~volatile_doctest~987&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~957&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.79,-150.1C90.35,-152.55 93.54,-155.49 96,-159 145.52,-229.66 156.12,-869.99 157.75,-997.85"/>
 <polygon fill="#000000" stroke="#000000" points="154.25,-998.04 157.87,-1007.99 161.25,-997.95 154.25,-998.04"/>
 </g>
-<!-- program~volatile_doctest~995 -->
+<!-- program~volatile_doctest~960 -->
 <g id="interface~~bcton~~CalledByGraph_node48" class="node">
-<title>program~volatile_doctest~995</title>
-<g id="a_interface~~bcton~~CalledByGraph_node48"><a xlink:href=".././program/volatile_doctest~995.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~960</title>
+<g id="a_interface~~bcton~~CalledByGraph_node48"><a xlink:href="../program/volatile_doctest~960.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-108 0,-108 0,-84 96,-84 96,-108"/>
 <text text-anchor="middle" x="48" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~995&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~960&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge47" class="edge">
-<title>program~volatile_doctest~995&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~960&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.8,-108.1C90.36,-110.55 93.54,-113.48 96,-117 147.9,-191.33 156.61,-865.46 157.82,-997.59"/>
 <polygon fill="#000000" stroke="#000000" points="154.33,-997.76 157.91,-1007.73 161.33,-997.7 154.33,-997.76"/>
 </g>
-<!-- program~volatile_doctest~1011 -->
+<!-- program~volatile_doctest~981 -->
 <g id="interface~~bcton~~CalledByGraph_node49" class="node">
-<title>program~volatile_doctest~1011</title>
-<g id="a_interface~~bcton~~CalledByGraph_node49"><a xlink:href=".././program/volatile_doctest~1011.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~981</title>
+<g id="a_interface~~bcton~~CalledByGraph_node49"><a xlink:href="../program/volatile_doctest~981.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-66 0,-66 0,-42 96,-42 96,-66"/>
 <text text-anchor="middle" x="48" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~1011&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~981&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge48" class="edge">
-<title>program~volatile_doctest~1011&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~981&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.81,-66.09C90.37,-68.54 93.55,-71.48 96,-75 150.36,-153.1 157.11,-862.68 157.9,-997.82"/>
 <polygon fill="#000000" stroke="#000000" points="154.4,-997.85 157.95,-1007.83 161.4,-997.81 154.4,-997.85"/>
 </g>
-<!-- program~volatile_doctest~1187 -->
+<!-- program~volatile_doctest~984 -->
 <g id="interface~~bcton~~CalledByGraph_node50" class="node">
-<title>program~volatile_doctest~1187</title>
-<g id="a_interface~~bcton~~CalledByGraph_node50"><a xlink:href=".././program/volatile_doctest~1187.html" xlink:title="volatile_doctest">
+<title>program~volatile_doctest~984</title>
+<g id="a_interface~~bcton~~CalledByGraph_node50"><a xlink:href="../program/volatile_doctest~984.html" xlink:title="volatile_doctest">
 <polygon fill="#f0ad4e" stroke="#f0ad4e" points="96,-24 0,-24 0,0 96,0 96,-24"/>
 <text text-anchor="middle" x="48" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">volatile_doctest</text>
 </a>
 </g>
 </g>
-<!-- program~volatile_doctest~1187&#45;&gt;interface~bcton -->
+<!-- program~volatile_doctest~984&#45;&gt;interface~bcton -->
 <g id="interface~~bcton~~CalledByGraph_edge49" class="edge">
-<title>program~volatile_doctest~1187&#45;&gt;interface~bcton</title>
+<title>program~volatile_doctest~984&#45;&gt;interface~bcton</title>
 <path fill="none" stroke="#000000" d="M86.82,-24.08C90.37,-26.53 93.55,-29.48 96,-33 152.77,-114.8 157.56,-858.81 157.96,-997.72"/>
 <polygon fill="#000000" stroke="#000000" points="154.46,-997.98 157.99,-1007.97 161.46,-997.96 154.46,-997.98"/>
 </g>
 </g>
 </svg>
-</div><div><a type="button" class="graph-help" data-toggle="modal" href="#graph-help-text">Help</a></div><div class="modal fade" id="graph-help-text" tabindex="-1" role="dialog"><div class="modal-dialog modal-lg" role="document"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="-graph-help-label">Graph Key</h4></div><div class="modal-body">
-    <p>Nodes of different colours represent the following: </p>
-    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: Graph Key Pages: 1 -->
-<svg width="597pt" height="32pt"
- viewBox="0.00 0.00 596.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
 <title>Graph Key</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 592.5,-28 592.5,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
 <!-- Subroutine -->
 <g id="node1" class="node">
 <title>Subroutine</title>
@@ -1476,270 +1524,452 @@
 <polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
 <text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
 </g>
-<!-- Unknown Procedure Type -->
+<!-- Type Bound Procedure -->
 <g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
 <title>Unknown Procedure Type</title>
-<polygon fill="#777777" stroke="#777777" points="388.5,-24 243.5,-24 243.5,0 388.5,0 388.5,-24"/>
-<text text-anchor="middle" x="316" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
 </g>
 <!-- Program -->
-<g id="node5" class="node">
+<g id="node6" class="node">
 <title>Program</title>
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="465,-24 407,-24 407,0 465,0 465,-24"/>
-<text text-anchor="middle" x="436" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
 </g>
 <!-- This Page&#39;s Entity -->
-<g id="node6" class="node">
+<g id="node7" class="node">
 <title>This Page&#39;s Entity</title>
-<polygon fill="none" stroke="black" points="588.5,-24 483.5,-24 483.5,0 588.5,0 588.5,-24"/>
-<text text-anchor="middle" x="536" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
 </g>
 </g>
 </svg>
 
-    
-    <p>Solid arrows point from a procedure to one which it calls. Dashed 
-    arrows point from an interface to procedures which implement that interface.
-    This could include the module procedures in a generic interface or the
-    implementation in a submodule of an interface in a parent module.
-    </p>
-    </div></div></div></div>
-      </div>
-    </div>
-<br>
-     <section class="visible-xs visible-sm hidden-md">
-       <h3>Contents</h3>
- 
-<div class="panel panel-primary">
-  <div class="panel-heading text-left"><h3 class="panel-title"><a data-toggle="collapse" href="#modprocs-1">Module Procedures</a></h3></div>
-  <div id="modprocs-1" class="panel-collapse collapse">
-    <div class="list-group">
-      <a class="list-group-item" href="../interface/bcton.html#moduleprocedure-bctor_r8p">bctor_R8P</a>
-      <a class="list-group-item" href="../interface/bcton.html#moduleprocedure-bctor_r4p">bctor_R4P</a>
-      <a class="list-group-item" href="../interface/bcton.html#moduleprocedure-bctoi_i8p">bctoi_I8P</a>
-      <a class="list-group-item" href="../interface/bcton.html#moduleprocedure-bctoi_i4p">bctoi_I4P</a>
-      <a class="list-group-item" href="../interface/bcton.html#moduleprocedure-bctoi_i2p">bctoi_I2P</a>
-      <a class="list-group-item" href="../interface/bcton.html#moduleprocedure-bctoi_i1p">bctoi_I1P</a>
-    </div>
-  </div>
-</div>
-
-     </section>
-     <br class="visible-xs visible-sm hidden-md">
-     
-
-
-   <h2>Module Procedures</h2>
-      <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="proc-bctor_r8p"></span><h3>private elemental function <a href='../proc/bctor_r8p.html'>bctor_R8P</a>(bstr, knd) result(n)</h3></div>
-  <div class="panel-body">
-           
-<h4>Arguments</h4>      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>bstr</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>real(kind=R8P),</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>knd</strong></td><td></td>
-</tr>
-</tbody>
-</table>
-
-<h4>Return Value <small>real(kind=R8P)</small></h4>  
-
-  </div>
-  </div>
-
-      <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="proc-bctor_r4p"></span><h3>private elemental function <a href='../proc/bctor_r4p.html'>bctor_R4P</a>(bstr, knd) result(n)</h3></div>
-  <div class="panel-body">
-           
-<h4>Arguments</h4>      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>bstr</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>real(kind=R4P),</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>knd</strong></td><td></td>
-</tr>
-</tbody>
-</table>
-
-<h4>Return Value <small>real(kind=R4P)</small></h4>  
-
-  </div>
-  </div>
-
-      <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="proc-bctoi_i8p"></span><h3>private elemental function <a href='../proc/bctoi_i8p.html'>bctoi_I8P</a>(bstr, knd) result(n)</h3></div>
-  <div class="panel-body">
-           
-<h4>Arguments</h4>      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>bstr</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>integer(kind=I8P),</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>knd</strong></td><td></td>
-</tr>
-</tbody>
-</table>
-
-<h4>Return Value <small>integer(kind=I8P)</small></h4>  
-
-  </div>
-  </div>
-
-      <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="proc-bctoi_i4p"></span><h3>private elemental function <a href='../proc/bctoi_i4p.html'>bctoi_I4P</a>(bstr, knd) result(n)</h3></div>
-  <div class="panel-body">
-           
-<h4>Arguments</h4>      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>bstr</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>integer(kind=I4P),</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>knd</strong></td><td></td>
-</tr>
-</tbody>
-</table>
-
-<h4>Return Value <small>integer(kind=I4P)</small></h4>  
-
-  </div>
-  </div>
-
-      <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="proc-bctoi_i2p"></span><h3>private elemental function <a href='../proc/bctoi_i2p.html'>bctoi_I2P</a>(bstr, knd) result(n)</h3></div>
-  <div class="panel-body">
-           
-<h4>Arguments</h4>      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>bstr</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>integer(kind=I2P),</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>knd</strong></td><td></td>
-</tr>
-</tbody>
-</table>
-
-<h4>Return Value <small>integer(kind=I2P)</small></h4>  
-
-  </div>
-  </div>
-
-      <div class="panel panel-default">
-  <div class="panel-heading codesum"><span class="anchor" id="proc-bctoi_i1p"></span><h3>private elemental function <a href='../proc/bctoi_i1p.html'>bctoi_I1P</a>(bstr, knd) result(n)</h3></div>
-  <div class="panel-body">
-           
-<h4>Arguments</h4>      <table class="table table-striped varlist">
-<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
-<tbody>
-<tr>
-  <td><span class="anchor" ></span>character,</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>bstr</strong></td><td></td>
-</tr>
-<tr>
-  <td><span class="anchor" ></span>integer(kind=I1P),</td>
-<td>intent(in)</td>
-  <td></td>  <td></td><td>::</td>
-  <td><strong>knd</strong></td><td></td>
-</tr>
-</tbody>
-</table>
-
-<h4>Return Value <small>integer(kind=I1P)</small></h4>  
-
-  </div>
-  </div>
-
-
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
  </div>
-</div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+<br>
 
-    <hr>    
+
+        <h2>Module Procedures</h2>
+            <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-bctor_r8p"></span> <h3>private elemental function <a href='../proc/bctor_r8p.html'>bctor_R8P</a>(bstr, knd) result(n)  
+</h3></div>
+    <div class="card-body">
+          
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bstr~9"></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>bstr</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-knd~9"></span>
+              real(kind=R8P),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>knd</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>real(kind=R8P)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+            <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-bctor_r4p"></span> <h3>private elemental function <a href='../proc/bctor_r4p.html'>bctor_R4P</a>(bstr, knd) result(n)  
+</h3></div>
+    <div class="card-body">
+          
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bstr~10"></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>bstr</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-knd~10"></span>
+              real(kind=R4P),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>knd</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>real(kind=R4P)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+            <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-bctoi_i8p"></span> <h3>private elemental function <a href='../proc/bctoi_i8p.html'>bctoi_I8P</a>(bstr, knd) result(n)  
+</h3></div>
+    <div class="card-body">
+          
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bstr~11"></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>bstr</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-knd~11"></span>
+              integer(kind=I8P),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>knd</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>integer(kind=I8P)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+            <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-bctoi_i4p"></span> <h3>private elemental function <a href='../proc/bctoi_i4p.html'>bctoi_I4P</a>(bstr, knd) result(n)  
+</h3></div>
+    <div class="card-body">
+          
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bstr~12"></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>bstr</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-knd~12"></span>
+              integer(kind=I4P),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>knd</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>integer(kind=I4P)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+            <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-bctoi_i2p"></span> <h3>private elemental function <a href='../proc/bctoi_i2p.html'>bctoi_I2P</a>(bstr, knd) result(n)  
+</h3></div>
+    <div class="card-body">
+          
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bstr~13"></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>bstr</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-knd~13"></span>
+              integer(kind=I2P),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>knd</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>integer(kind=I2P)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+            <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-bctoi_i1p"></span> <h3>private elemental function <a href='../proc/bctoi_i1p.html'>bctoi_I1P</a>(bstr, knd) result(n)  
+</h3></div>
+    <div class="card-body">
+          
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bstr~14"></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>bstr</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-knd~14"></span>
+              integer(kind=I1P),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>knd</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>integer(kind=I1P)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+</div>
+  </div>
+      <hr>
     </div> <!-- /container -->
     <footer>
       <div class="container">
-      <div class="row">
-        <div class="col-xs-6 col-md-6"><p>Lib_VTK_IO was developed by Stefano Zaghi<br>&copy; 2022 
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Lib_VTK_IO
+ was developed by Stefano Zaghi<br>              &copy; 2025 
 </p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
         </div>
-        <div class="col-xs-6 col-md-6">
-          <p class="text-right">
-            Documentation generated by 
-            <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
-          </p>
-        </div>
-      </div>
-      <br>
-      </div> <!-- /container -->    
+        <br>
+      </div> <!-- /container -->
     </footer>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
+    <!-- Bootstrap core JavaScript -->
     <!-- Placed at the end of the document so the pages load faster -->
-<!--
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
--->
-    <script src="../js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
 
     <!-- MathJax JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
-        jax: ['input/TeX','input/MathML','output/HTML-CSS'],
-        extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
-      });
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script src="../tipuesearch/tipuesearch_content.js"></script>
-    <script src="../tipuesearch/tipuesearch_set.js"></script>
-    <script src="../tipuesearch/tipuesearch.js"></script>
-    
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
   </body>
 </html>
