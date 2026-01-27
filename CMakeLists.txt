@@ -43,7 +43,7 @@ endif()
 
 # ---------- Fortran module dirs + explicit deps for third_party ----------
 # Put all third-party .mod files in a stable, known place
-set(_vtkf_modroot "${CMAKE_BINARY_DIR}/src/third_party/")
+set(_vtkf_modroot "${PROJECT_BINARY_DIR}/src/third_party/")
 file(MAKE_DIRECTORY "${_vtkf_modroot}")
 
 foreach(tgt PENF BeFoR64 FACE StringiFor FoXy)
