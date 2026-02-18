@@ -99,15 +99,15 @@
 
             <li class="list-inline-item" id="source-file">
               <i class="fa fa-code"></i>
-              <a href="../src/vtk_fortran_vtk_file.f90"> Source File</a>
+              <a href="../src/vtk_fortran_vtk_file_xml_writer_appended.f90"> Source File</a>
             </li>
         </ul>
       </div>
       <div class="col">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb justify-content-end mb-0">
-                <li class="breadcrumb-item"><a href='../sourcefile/vtk_fortran_vtk_file.f90.html'>vtk_fortran_vtk_file.f90</a></li>
-                <li class="breadcrumb-item"><a href='../module/vtk_fortran_vtk_file.html'>vtk_fortran_vtk_file</a></li>
+                <li class="breadcrumb-item"><a href='../sourcefile/vtk_fortran_vtk_file_xml_writer_appended.f90.html'>vtk_fortran_vtk_file_xml_writer_appended.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/vtk_fortran_vtk_file_xml_writer_appended.html'>vtk_fortran_vtk_file_xml_writer_appended</a></li>
             <li class="breadcrumb-item active" aria-current="page">initialize</li>
           </ol>
         </nav>
@@ -161,13 +161,13 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private  function initialize(self, format, filename, mesh_topology, is_volatile, nx1, nx2, ny1, ny2, nz1, nz2) result(error)  
+    <h2>private  function initialize(self, format, filename, mesh_topology, nx1, nx2, ny1, ny2, nz1, nz2, is_volatile, mesh_kind) result(error)  
 </h2>
     
 
 
     <h3>Type Bound</h3>
-    <p><a href='../type/vtk_file.html'>vtk_file</a></p>
+    <p><a href='../type/xml_writer_appended.html'>xml_writer_appended</a></p>
 
     <h3>Arguments</h3>
         <table class="table table-striped varlist">
@@ -182,8 +182,8 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-self~169"></span>
-              class(<a href='../type/vtk_file.html'>vtk_file</a>),
+              <span class="anchor" id="variable-self~7"></span>
+              class(<a href='../type/xml_writer_appended.html'>xml_writer_appended</a>),
             </td>
 <td>intent(inout)</td>
               <td></td>            <td>
@@ -197,7 +197,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-format~2"></span>
+              <span class="anchor" id="variable-format"></span>
               character(len=*),
             </td>
 <td>intent(in)</td>
@@ -212,7 +212,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-filename~7"></span>
+              <span class="anchor" id="variable-filename~4"></span>
               character(len=*),
             </td>
 <td>intent(in)</td>
@@ -227,7 +227,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-mesh_topology~2"></span>
+              <span class="anchor" id="variable-mesh_topology"></span>
               character(len=*),
             </td>
 <td>intent(in)</td>
@@ -242,22 +242,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-is_volatile~3"></span>
-              logical,
-            </td>
-<td>intent(in),</td>
-              <td>optional</td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>is_volatile</strong></td>
-            <td>
-                
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-nx1~6"></span>
+              <span class="anchor" id="variable-nx1"></span>
               integer(kind=I4P),
             </td>
 <td>intent(in),</td>
@@ -272,7 +257,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nx2~6"></span>
+              <span class="anchor" id="variable-nx2"></span>
               integer(kind=I4P),
             </td>
 <td>intent(in),</td>
@@ -287,7 +272,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-ny1~6"></span>
+              <span class="anchor" id="variable-ny1"></span>
               integer(kind=I4P),
             </td>
 <td>intent(in),</td>
@@ -302,7 +287,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-ny2~6"></span>
+              <span class="anchor" id="variable-ny2"></span>
               integer(kind=I4P),
             </td>
 <td>intent(in),</td>
@@ -317,7 +302,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nz1~6"></span>
+              <span class="anchor" id="variable-nz1"></span>
               integer(kind=I4P),
             </td>
 <td>intent(in),</td>
@@ -332,7 +317,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nz2~6"></span>
+              <span class="anchor" id="variable-nz2"></span>
               integer(kind=I4P),
             </td>
 <td>intent(in),</td>
@@ -345,12 +330,42 @@
                 
             </td>
         </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-is_volatile"></span>
+              logical,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>is_volatile</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mesh_kind"></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>mesh_kind</strong></td>
+            <td>
+                
+            </td>
+        </tr>
     </tbody>
   </table>
 
       <h3>Return Value
         <small>
-          <span class="anchor" id="variable-error~112"></span>
+          <span class="anchor" id="variable-error~7"></span>
           integer(kind=I4P)
         </small>
       </h3>
@@ -367,375 +382,651 @@
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: proc~~initialize~2~~CallsGraph Pages: 1 -->
-<svg id="procinitialize2CallsGraph" width="448pt" height="196pt"
- viewBox="0.00 0.00 448.00 196.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="proc~~initialize~2~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 192)">
+<svg id="procinitialize2CallsGraph" width="641pt" height="355pt"
+ viewBox="0.00 0.00 641.00 354.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~initialize~2~~CallsGraph" class="graph" transform="scale(0.44 0.44) rotate(0) translate(4 802)">
 <title>proc~~initialize~2~~CallsGraph</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-192 444,-192 444,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-802 1453,-802 1453,4 -4,4"/>
 <!-- proc~initialize~2 -->
 <g id="proc~~initialize~2~~CallsGraph_node1" class="node">
 <title>proc~initialize~2</title>
-<polygon fill="none" stroke="black" points="104,-104 0,-104 0,-80 104,-80 104,-104"/>
-<text text-anchor="middle" x="52" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50">vtk_file%initialize</text>
-</g>
-<!-- initialize -->
-<g id="proc~~initialize~2~~CallsGraph_node2" class="node">
-<title>initialize</title>
-<polygon fill="#777777" stroke="#777777" points="210.5,-188 153.5,-188 153.5,-164 210.5,-164 210.5,-188"/>
-<text text-anchor="middle" x="182" y="-173.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">initialize</text>
-</g>
-<!-- proc~initialize~2&#45;&gt;initialize -->
-<g id="proc~~initialize~2~~CallsGraph_edge1" class="edge">
-<title>proc~initialize~2&#45;&gt;initialize</title>
-<path fill="none" stroke="#000000" d="M68.22,-104.13C85.21,-117.39 113.77,-138.92 140,-155 142.29,-156.4 144.68,-157.8 147.11,-159.16"/>
-<polygon fill="#000000" stroke="#000000" points="145.49,-162.27 155.95,-163.94 148.81,-156.11 145.49,-162.27"/>
-</g>
-<!-- proc~b64_init -->
-<g id="proc~~initialize~2~~CallsGraph_node3" class="node">
-<title>proc~b64_init</title>
-<g id="a_proc~~initialize~2~~CallsGraph_node3"><a xlink:href="../proc/b64_init.html" xlink:title="b64_init">
-<polygon fill="#d9534f" stroke="#d9534f" points="209.5,-146 154.5,-146 154.5,-122 209.5,-122 209.5,-146"/>
-<text text-anchor="middle" x="182" y="-131.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">b64_init</text>
-</a>
-</g>
-</g>
-<!-- proc~initialize~2&#45;&gt;proc~b64_init -->
-<g id="proc~~initialize~2~~CallsGraph_edge2" class="edge">
-<title>proc~initialize~2&#45;&gt;proc~b64_init</title>
-<path fill="none" stroke="#000000" d="M89.68,-104.04C106.97,-109.71 127.54,-116.46 144.77,-122.11"/>
-<polygon fill="#000000" stroke="#000000" points="143.89,-125.51 154.48,-125.3 146.07,-118.86 143.89,-125.51"/>
+<polygon fill="none" stroke="black" points="181,-274 0,-274 0,-250 181,-250 181,-274"/>
+<text text-anchor="middle" x="90.5" y="-259.6" font-family="Helvetica,sans-Serif" font-size="10.50">xml_writer_appended%initialize</text>
 </g>
 <!-- proc~chars -->
-<g id="proc~~initialize~2~~CallsGraph_node4" class="node">
+<g id="proc~~initialize~2~~CallsGraph_node2" class="node">
 <title>proc~chars</title>
-<g id="a_proc~~initialize~2~~CallsGraph_node4"><a xlink:href="../proc/chars.html" xlink:title="string%chars">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="223,-104 141,-104 141,-80 223,-80 223,-104"/>
-<text text-anchor="middle" x="182" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%chars</text>
+<g id="a_proc~~initialize~2~~CallsGraph_node2"><a xlink:href="../proc/chars.html" xlink:title="string%chars">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1019,-416 937,-416 937,-392 1019,-392 1019,-416"/>
+<text text-anchor="middle" x="978" y="-401.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%chars</text>
 </a>
 </g>
 </g>
 <!-- proc~initialize~2&#45;&gt;proc~chars -->
-<g id="proc~~initialize~2~~CallsGraph_edge3" class="edge">
+<g id="proc~~initialize~2~~CallsGraph_edge1" class="edge">
 <title>proc~initialize~2&#45;&gt;proc~chars</title>
-<path fill="none" stroke="#000000" d="M104.32,-92C112.93,-92 121.85,-92 130.44,-92"/>
-<polygon fill="#000000" stroke="#000000" points="130.69,-95.5 140.69,-92 130.69,-88.5 130.69,-95.5"/>
+<path fill="none" stroke="#000000" d="M104.99,-274.14C126.79,-292.99 171.89,-328.91 217,-346 469.45,-441.65 802.21,-421.68 926.94,-409.63"/>
+<polygon fill="#000000" stroke="#000000" points="927.35,-413.11 936.96,-408.63 926.66,-406.14 927.35,-413.11"/>
 </g>
-<!-- proc~penf_init -->
+<!-- proc~open_scratch_file -->
+<g id="proc~~initialize~2~~CallsGraph_node3" class="node">
+<title>proc~open_scratch_file</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node3"><a xlink:href="../proc/open_scratch_file.html" xlink:title="xml_writer_appended%open_scratch_file">
+<polygon fill="#d9534f" stroke="#d9534f" points="447,-295 217,-295 217,-271 447,-271 447,-295"/>
+<text text-anchor="middle" x="332" y="-280.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_writer_appended%open_scratch_file</text>
+</a>
+</g>
+</g>
+<!-- proc~initialize~2&#45;&gt;proc~open_scratch_file -->
+<g id="proc~~initialize~2~~CallsGraph_edge2" class="edge">
+<title>proc~initialize~2&#45;&gt;proc~open_scratch_file</title>
+<path fill="none" stroke="#000000" d="M181.02,-269.85C189.43,-270.59 198.04,-271.34 206.69,-272.1"/>
+<polygon fill="#000000" stroke="#000000" points="206.58,-275.6 216.85,-272.99 207.19,-268.63 206.58,-275.6"/>
+</g>
+<!-- proc~open_xml_file -->
+<g id="proc~~initialize~2~~CallsGraph_node4" class="node">
+<title>proc~open_xml_file</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node4"><a xlink:href="../proc/open_xml_file.html" xlink:title="xml_writer_abstract%open_xml_file">
+<polygon fill="#d9534f" stroke="#d9534f" points="432,-253 232,-253 232,-229 432,-229 432,-253"/>
+<text text-anchor="middle" x="332" y="-238.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_writer_abstract%open_xml_file</text>
+</a>
+</g>
+</g>
+<!-- proc~initialize~2&#45;&gt;proc~open_xml_file -->
+<g id="proc~~initialize~2~~CallsGraph_edge3" class="edge">
+<title>proc~initialize~2&#45;&gt;proc~open_xml_file</title>
+<path fill="none" stroke="#000000" d="M181.02,-254.15C194.26,-252.99 208.02,-251.78 221.6,-250.59"/>
+<polygon fill="#000000" stroke="#000000" points="222.28,-254.05 231.94,-249.69 221.67,-247.07 222.28,-254.05"/>
+</g>
+<!-- proc~upper~3 -->
 <g id="proc~~initialize~2~~CallsGraph_node5" class="node">
-<title>proc~penf_init</title>
-<g id="a_proc~~initialize~2~~CallsGraph_node5"><a xlink:href="../proc/penf_init.html" xlink:title="penf_init">
-<polygon fill="#d9534f" stroke="#d9534f" points="318,-105 260,-105 260,-81 318,-81 318,-105"/>
-<text text-anchor="middle" x="289" y="-90.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">penf_init</text>
+<title>proc~upper~3</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node5"><a xlink:href="../proc/upper~3.html" xlink:title="string%upper">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="374,-211 290,-211 290,-187 374,-187 374,-211"/>
+<text text-anchor="middle" x="332" y="-196.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%upper</text>
 </a>
 </g>
 </g>
-<!-- proc~initialize~2&#45;&gt;proc~penf_init -->
+<!-- proc~initialize~2&#45;&gt;proc~upper~3 -->
 <g id="proc~~initialize~2~~CallsGraph_edge4" class="edge">
-<title>proc~initialize~2&#45;&gt;proc~penf_init</title>
-<path fill="none" stroke="#000000" d="M94.23,-79.93C108.59,-76.3 124.88,-72.8 140,-71 177.07,-66.59 187.18,-64.85 224,-71 232.66,-72.45 241.72,-74.93 250.21,-77.71"/>
-<polygon fill="#000000" stroke="#000000" points="249.26,-81.08 259.85,-81.07 251.56,-74.47 249.26,-81.08"/>
+<title>proc~initialize~2&#45;&gt;proc~upper~3</title>
+<path fill="none" stroke="#000000" d="M123.37,-249.95C148.52,-240.78 184.63,-228.35 217,-220 237.33,-214.75 260.02,-210.3 279.77,-206.86"/>
+<polygon fill="#000000" stroke="#000000" points="280.53,-210.28 289.8,-205.15 279.36,-203.38 280.53,-210.28"/>
 </g>
-<!-- proc~upper~2 -->
+<!-- proc~write_header_tag -->
 <g id="proc~~initialize~2~~CallsGraph_node6" class="node">
-<title>proc~upper~2</title>
-<g id="a_proc~~initialize~2~~CallsGraph_node6"><a xlink:href="../proc/upper~2.html" xlink:title="string%upper">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="224,-24 140,-24 140,0 224,0 224,-24"/>
-<text text-anchor="middle" x="182" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%upper</text>
+<title>proc~write_header_tag</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node6"><a xlink:href="../proc/write_header_tag.html" xlink:title="xml_writer_abstract%write_header_tag">
+<polygon fill="#d9534f" stroke="#d9534f" points="441.5,-169 222.5,-169 222.5,-145 441.5,-145 441.5,-169"/>
+<text text-anchor="middle" x="332" y="-154.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_writer_abstract%write_header_tag</text>
 </a>
 </g>
 </g>
-<!-- proc~initialize~2&#45;&gt;proc~upper~2 -->
+<!-- proc~initialize~2&#45;&gt;proc~write_header_tag -->
 <g id="proc~~initialize~2~~CallsGraph_edge5" class="edge">
-<title>proc~initialize~2&#45;&gt;proc~upper~2</title>
-<path fill="none" stroke="#000000" d="M72.44,-79.85C93.9,-66.44 128.62,-44.74 153.01,-29.5"/>
-<polygon fill="#000000" stroke="#000000" points="155.17,-32.27 161.8,-24 151.46,-26.33 155.17,-32.27"/>
+<title>proc~initialize~2&#45;&gt;proc~write_header_tag</title>
+<path fill="none" stroke="#000000" d="M105.45,-249.81C127.52,-231.23 172.55,-196.06 217,-178 222.75,-175.66 228.77,-173.58 234.91,-171.74"/>
+<polygon fill="#000000" stroke="#000000" points="235.95,-175.08 244.64,-169.02 234.07,-168.34 235.95,-175.08"/>
 </g>
-<!-- proc~b64_init&#45;&gt;proc~penf_init -->
-<g id="proc~~initialize~2~~CallsGraph_edge6" class="edge">
-<title>proc~b64_init&#45;&gt;proc~penf_init</title>
-<path fill="none" stroke="#000000" d="M209.77,-123.55C222.09,-118.74 236.92,-112.94 250.34,-107.7"/>
-<polygon fill="#000000" stroke="#000000" points="251.77,-110.9 259.81,-104.01 249.22,-104.38 251.77,-110.9"/>
-</g>
-<!-- proc~check_endian -->
+<!-- proc~write_topology_tag -->
 <g id="proc~~initialize~2~~CallsGraph_node7" class="node">
-<title>proc~check_endian</title>
-<g id="a_proc~~initialize~2~~CallsGraph_node7"><a xlink:href="../proc/check_endian.html" xlink:title="check_endian">
-<polygon fill="#d9534f" stroke="#d9534f" points="440,-105 354,-105 354,-81 440,-81 440,-105"/>
-<text text-anchor="middle" x="397" y="-90.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">check_endian</text>
+<title>proc~write_topology_tag</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node7"><a xlink:href="../proc/write_topology_tag.html" xlink:title="xml_writer_abstract%write_topology_tag">
+<polygon fill="#d9534f" stroke="#d9534f" points="445.5,-337 218.5,-337 218.5,-313 445.5,-313 445.5,-337"/>
+<text text-anchor="middle" x="332" y="-322.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_writer_abstract%write_topology_tag</text>
 </a>
 </g>
 </g>
-<!-- proc~penf_init&#45;&gt;proc~check_endian -->
+<!-- proc~initialize~2&#45;&gt;proc~write_topology_tag -->
+<g id="proc~~initialize~2~~CallsGraph_edge6" class="edge">
+<title>proc~initialize~2&#45;&gt;proc~write_topology_tag</title>
+<path fill="none" stroke="#000000" d="M123.37,-274.05C148.52,-283.22 184.63,-295.65 217,-304 226.65,-306.49 236.82,-308.8 246.97,-310.91"/>
+<polygon fill="#000000" stroke="#000000" points="246.58,-314.4 257.08,-312.95 247.97,-307.54 246.58,-314.4"/>
+</g>
+<!-- proc~write_topology_tag&#45;&gt;proc~chars -->
+<g id="proc~~initialize~2~~CallsGraph_edge8" class="edge">
+<title>proc~write_topology_tag&#45;&gt;proc~chars</title>
+<path fill="none" stroke="#000000" d="M388.71,-337.01C416.87,-342.77 451.64,-349.39 483,-354 644.41,-377.72 837.15,-393.7 926.69,-400.41"/>
+<polygon fill="#000000" stroke="#000000" points="926.6,-403.92 936.83,-401.17 927.12,-396.94 926.6,-403.92"/>
+</g>
+<!-- interface~str -->
+<g id="proc~~initialize~2~~CallsGraph_node8" class="node">
+<title>interface~str</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node8"><a xlink:href="../interface/str.html" xlink:title="str">
+<polygon fill="#a7506f" stroke="#a7506f" points="1005,-374 951,-374 951,-350 1005,-350 1005,-374"/>
+<text text-anchor="middle" x="978" y="-359.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str</text>
+</a>
+</g>
+</g>
+<!-- proc~write_topology_tag&#45;&gt;interface~str -->
 <g id="proc~~initialize~2~~CallsGraph_edge7" class="edge">
-<title>proc~penf_init&#45;&gt;proc~check_endian</title>
-<path fill="none" stroke="#000000" d="M318.13,-93C325.97,-93 334.76,-93 343.53,-93"/>
-<polygon fill="#000000" stroke="#000000" points="343.76,-96.5 353.76,-93 343.76,-89.5 343.76,-96.5"/>
+<title>proc~write_topology_tag&#45;&gt;interface~str</title>
+<path fill="none" stroke="#000000" d="M445.54,-331.47C593.96,-339.99 847.25,-354.55 940.85,-359.92"/>
+<polygon fill="#000000" stroke="#000000" points="940.76,-363.42 950.95,-360.5 941.16,-356.44 940.76,-363.42"/>
+</g>
+<!-- proc~write_end_tag -->
+<g id="proc~~initialize~2~~CallsGraph_node9" class="node">
+<title>proc~write_end_tag</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node9"><a xlink:href="../proc/write_end_tag.html" xlink:title="xml_writer_abstract%write_end_tag">
+<polygon fill="#d9534f" stroke="#d9534f" points="704.5,-317 503.5,-317 503.5,-293 704.5,-293 704.5,-317"/>
+<text text-anchor="middle" x="604" y="-302.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_writer_abstract%write_end_tag</text>
+</a>
+</g>
+</g>
+<!-- proc~write_topology_tag&#45;&gt;proc~write_end_tag -->
+<g id="proc~~initialize~2~~CallsGraph_edge9" class="edge">
+<title>proc~write_topology_tag&#45;&gt;proc~write_end_tag</title>
+<path fill="none" stroke="#000000" d="M445.55,-316.66C461.22,-315.5 477.3,-314.31 492.92,-313.15"/>
+<polygon fill="#000000" stroke="#000000" points="493.4,-316.63 503.11,-312.4 492.88,-309.65 493.4,-316.63"/>
+</g>
+<!-- proc~write_self_closing_tag -->
+<g id="proc~~initialize~2~~CallsGraph_node10" class="node">
+<title>proc~write_self_closing_tag</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node10"><a xlink:href="../proc/write_self_closing_tag.html" xlink:title="xml_writer_abstract%write_self_closing_tag">
+<polygon fill="#d9534f" stroke="#d9534f" points="725,-275 483,-275 483,-251 725,-251 725,-275"/>
+<text text-anchor="middle" x="604" y="-260.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_writer_abstract%write_self_closing_tag</text>
+</a>
+</g>
+</g>
+<!-- proc~write_topology_tag&#45;&gt;proc~write_self_closing_tag -->
+<g id="proc~~initialize~2~~CallsGraph_edge10" class="edge">
+<title>proc~write_topology_tag&#45;&gt;proc~write_self_closing_tag</title>
+<path fill="none" stroke="#000000" d="M416.04,-312.98C426.6,-310.5 437.15,-307.54 447,-304 464.23,-297.82 465.75,-290.11 483,-284 489.85,-281.57 497.03,-279.42 504.32,-277.51"/>
+<polygon fill="#000000" stroke="#000000" points="505.43,-280.84 514.31,-275.06 503.76,-274.04 505.43,-280.84"/>
+</g>
+<!-- proc~write_start_tag -->
+<g id="proc~~initialize~2~~CallsGraph_node11" class="node">
+<title>proc~write_start_tag</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node11"><a xlink:href="../proc/write_start_tag.html" xlink:title="xml_writer_abstract%write_start_tag">
+<polygon fill="#d9534f" stroke="#d9534f" points="706.5,-233 501.5,-233 501.5,-209 706.5,-209 706.5,-233"/>
+<text text-anchor="middle" x="604" y="-218.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_writer_abstract%write_start_tag</text>
+</a>
+</g>
+</g>
+<!-- proc~write_topology_tag&#45;&gt;proc~write_start_tag -->
+<g id="proc~~initialize~2~~CallsGraph_edge11" class="edge">
+<title>proc~write_topology_tag&#45;&gt;proc~write_start_tag</title>
+<path fill="none" stroke="#000000" d="M431.13,-312.92C436.72,-310.43 442.06,-307.48 447,-304 473.05,-285.66 456.86,-260.23 483,-242 485.95,-239.94 489.04,-238.06 492.24,-236.35"/>
+<polygon fill="#000000" stroke="#000000" points="493.97,-239.4 501.5,-231.95 490.97,-233.08 493.97,-239.4"/>
+</g>
+<!-- proc~str_a_i1p -->
+<g id="proc~~initialize~2~~CallsGraph_node12" class="node">
+<title>proc~str_a_i1p</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node12"><a xlink:href="../proc/str_a_i1p.html" xlink:title="str_a_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1175,-634 1116,-634 1116,-610 1175,-610 1175,-634"/>
+<text text-anchor="middle" x="1145.5" y="-619.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I1P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_a_i1p -->
+<g id="proc~~initialize~2~~CallsGraph_edge12" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_i1p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1005.27,-362.83C1021.07,-364.76 1040.32,-369.92 1052,-383 1115.96,-454.6 1029.63,-519.77 1088,-596 1092.85,-602.33 1099.6,-607.17 1106.75,-610.86"/>
+<polygon fill="#000000" stroke="#000000" points="1105.35,-614.06 1115.91,-614.93 1108.2,-607.67 1105.35,-614.06"/>
+</g>
+<!-- proc~str_a_i2p -->
+<g id="proc~~initialize~2~~CallsGraph_node13" class="node">
+<title>proc~str_a_i2p</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node13"><a xlink:href="../proc/str_a_i2p.html" xlink:title="str_a_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1175,-554 1116,-554 1116,-530 1175,-530 1175,-554"/>
+<text text-anchor="middle" x="1145.5" y="-539.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I2P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_a_i2p -->
+<g id="proc~~initialize~2~~CallsGraph_edge13" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_i2p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1005.19,-363.28C1020.76,-365.4 1039.79,-370.59 1052,-383 1094.96,-426.64 1048.46,-469.24 1088,-516 1092.94,-521.84 1099.47,-526.44 1106.33,-530.03"/>
+<polygon fill="#000000" stroke="#000000" points="1105.22,-533.38 1115.77,-534.34 1108.13,-527.01 1105.22,-533.38"/>
+</g>
+<!-- proc~str_a_i4p -->
+<g id="proc~~initialize~2~~CallsGraph_node14" class="node">
+<title>proc~str_a_i4p</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node14"><a xlink:href="../proc/str_a_i4p.html" xlink:title="str_a_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1175,-474 1116,-474 1116,-450 1175,-450 1175,-474"/>
+<text text-anchor="middle" x="1145.5" y="-459.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_a_i4p -->
+<g id="proc~~initialize~2~~CallsGraph_edge14" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_i4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1005.25,-365.07C1020.08,-367.84 1038.33,-373.09 1052,-383 1075.06,-399.71 1066.27,-417.6 1088,-436 1093.43,-440.59 1099.8,-444.55 1106.27,-447.88"/>
+<polygon fill="#000000" stroke="#000000" points="1105.19,-451.24 1115.73,-452.33 1108.17,-444.91 1105.19,-451.24"/>
+</g>
+<!-- proc~str_a_i8p -->
+<g id="proc~~initialize~2~~CallsGraph_node15" class="node">
+<title>proc~str_a_i8p</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node15"><a xlink:href="../proc/str_a_i8p.html" xlink:title="str_a_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1175,-394 1116,-394 1116,-370 1175,-370 1175,-394"/>
+<text text-anchor="middle" x="1145.5" y="-379.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_I8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_a_i8p -->
+<g id="proc~~initialize~2~~CallsGraph_edge15" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_i8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1005.22,-365.17C1032.33,-368.44 1074.93,-373.59 1105.89,-377.33"/>
+<polygon fill="#000000" stroke="#000000" points="1105.55,-380.82 1115.9,-378.54 1106.39,-373.87 1105.55,-380.82"/>
+</g>
+<!-- proc~str_a_r4p -->
+<g id="proc~~initialize~2~~CallsGraph_node16" class="node">
+<title>proc~str_a_r4p</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node16"><a xlink:href="../proc/str_a_r4p.html" xlink:title="str_a_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1177.5,-314 1113.5,-314 1113.5,-290 1177.5,-290 1177.5,-314"/>
+<text text-anchor="middle" x="1145.5" y="-299.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_R4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_a_r4p -->
+<g id="proc~~initialize~2~~CallsGraph_edge16" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_r4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1005.22,-352.49C1031.71,-342.89 1072.99,-327.93 1103.74,-316.78"/>
+<polygon fill="#000000" stroke="#000000" points="1105.11,-320 1113.32,-313.3 1102.73,-313.42 1105.11,-320"/>
+</g>
+<!-- proc~str_a_r8p -->
+<g id="proc~~initialize~2~~CallsGraph_node17" class="node">
+<title>proc~str_a_r8p</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node17"><a xlink:href="../proc/str_a_r8p.html" xlink:title="str_a_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1177.5,-234 1113.5,-234 1113.5,-210 1177.5,-210 1177.5,-234"/>
+<text text-anchor="middle" x="1145.5" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_a_R8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_a_r8p -->
+<g id="proc~~initialize~2~~CallsGraph_edge17" class="edge">
+<title>interface~str&#45;&gt;proc~str_a_r8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M990,-349.99C1015.38,-322.37 1076.74,-256.03 1088,-248 1092.96,-244.47 1098.47,-241.23 1104.05,-238.32"/>
+<polygon fill="#000000" stroke="#000000" points="1105.97,-241.29 1113.43,-233.77 1102.91,-234.99 1105.97,-241.29"/>
+</g>
+<!-- proc~str_bol -->
+<g id="proc~~initialize~2~~CallsGraph_node18" class="node">
+<title>proc~str_bol</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node18"><a xlink:href="../proc/str_bol.html" xlink:title="str_bol">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1172.5,-192 1118.5,-192 1118.5,-168 1172.5,-168 1172.5,-192"/>
+<text text-anchor="middle" x="1145.5" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_bol</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_bol -->
+<g id="proc~~initialize~2~~CallsGraph_edge18" class="edge">
+<title>interface~str&#45;&gt;proc~str_bol</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M992.57,-349.98C1008.43,-335.37 1034.71,-309.4 1052,-283 1073.81,-249.7 1059.05,-228.32 1088,-201 1093.89,-195.44 1101.37,-191.33 1108.96,-188.29"/>
+<polygon fill="#000000" stroke="#000000" points="1110.19,-191.57 1118.5,-184.99 1107.9,-184.95 1110.19,-191.57"/>
+</g>
+<!-- proc~str_i1p -->
+<g id="proc~~initialize~2~~CallsGraph_node19" class="node">
+<title>proc~str_i1p</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node19"><a xlink:href="../proc/str_i1p.html" xlink:title="str_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1293,-644 1239,-644 1239,-620 1293,-620 1293,-644"/>
+<text text-anchor="middle" x="1266" y="-629.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I1P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_i1p -->
+<g id="proc~~initialize~2~~CallsGraph_edge19" class="edge">
+<title>interface~str&#45;&gt;proc~str_i1p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1005.05,-362.66C1020.97,-364.52 1040.43,-369.65 1052,-383 1128.41,-471.15 1000.04,-566.38 1088,-643 1126.63,-676.65 1189.82,-661.91 1229.33,-647.47"/>
+<polygon fill="#000000" stroke="#000000" points="1230.74,-650.67 1238.83,-643.83 1228.24,-644.13 1230.74,-650.67"/>
+</g>
+<!-- proc~str_i2p -->
+<g id="proc~~initialize~2~~CallsGraph_node20" class="node">
+<title>proc~str_i2p</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node20"><a xlink:href="../proc/str_i2p.html" xlink:title="str_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1293,-583 1239,-583 1239,-559 1293,-559 1293,-583"/>
+<text text-anchor="middle" x="1266" y="-568.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I2P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_i2p -->
+<g id="proc~~initialize~2~~CallsGraph_edge20" class="edge">
+<title>interface~str&#45;&gt;proc~str_i2p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1005.14,-362.95C1020.88,-364.93 1040.12,-370.1 1052,-383 1107.25,-443.02 1026.09,-509.86 1088,-563 1126.76,-596.27 1189.7,-589.74 1229.15,-581.05"/>
+<polygon fill="#000000" stroke="#000000" points="1229.96,-584.46 1238.89,-578.76 1228.35,-577.65 1229.96,-584.46"/>
+</g>
+<!-- proc~str_i4p -->
+<g id="proc~~initialize~2~~CallsGraph_node21" class="node">
+<title>proc~str_i4p</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node21"><a xlink:href="../proc/str_i4p.html" xlink:title="str_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1293,-494 1239,-494 1239,-470 1293,-470 1293,-494"/>
+<text text-anchor="middle" x="1266" y="-479.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_i4p -->
+<g id="proc~~initialize~2~~CallsGraph_edge21" class="edge">
+<title>interface~str&#45;&gt;proc~str_i4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1005.2,-363.68C1020.57,-365.97 1039.39,-371.19 1052,-383 1086.48,-415.29 1049.35,-455.84 1088,-483 1129.31,-512.03 1190.51,-503.38 1229.05,-493.47"/>
+<polygon fill="#000000" stroke="#000000" points="1230.08,-496.81 1238.81,-490.8 1228.24,-490.06 1230.08,-496.81"/>
+</g>
+<!-- proc~str_i8p -->
+<g id="proc~~initialize~2~~CallsGraph_node22" class="node">
+<title>proc~str_i8p</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node22"><a xlink:href="../proc/str_i8p.html" xlink:title="str_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1293,-414 1239,-414 1239,-390 1293,-390 1293,-414"/>
+<text text-anchor="middle" x="1266" y="-399.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_I8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_i8p -->
+<g id="proc~~initialize~2~~CallsGraph_edge22" class="edge">
+<title>interface~str&#45;&gt;proc~str_i8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1005.16,-367.99C1019.3,-371.61 1036.9,-376.73 1052,-383 1068.9,-390.02 1070.28,-398.41 1088,-403 1137.48,-415.82 1151.89,-403.41 1203,-403 1211.25,-402.93 1220.12,-402.82 1228.49,-402.69"/>
+<polygon fill="#000000" stroke="#000000" points="1228.81,-406.18 1238.76,-402.52 1228.7,-399.18 1228.81,-406.18"/>
+</g>
+<!-- proc~str_r4p -->
+<g id="proc~~initialize~2~~CallsGraph_node23" class="node">
+<title>proc~str_r4p</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node23"><a xlink:href="../proc/str_r4p.html" xlink:title="str_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1293,-315 1239,-315 1239,-291 1293,-291 1293,-315"/>
+<text text-anchor="middle" x="1266" y="-300.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_R4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_r4p -->
+<g id="proc~~initialize~2~~CallsGraph_edge23" class="edge">
+<title>interface~str&#45;&gt;proc~str_r4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1005.11,-358.66C1047.16,-353.01 1132.3,-340.47 1203,-323 1211.6,-320.87 1220.75,-318.18 1229.29,-315.46"/>
+<polygon fill="#000000" stroke="#000000" points="1230.57,-318.72 1238.99,-312.29 1228.39,-312.07 1230.57,-318.72"/>
+</g>
+<!-- proc~str_r8p -->
+<g id="proc~~initialize~2~~CallsGraph_node24" class="node">
+<title>proc~str_r8p</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node24"><a xlink:href="../proc/str_r8p.html" xlink:title="str_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1293,-273 1239,-273 1239,-249 1293,-249 1293,-273"/>
+<text text-anchor="middle" x="1266" y="-258.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">str_R8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~str_r8p -->
+<g id="proc~~initialize~2~~CallsGraph_edge24" class="edge">
+<title>interface~str&#45;&gt;proc~str_r8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M990.74,-349.86C1009.41,-331.42 1047.87,-296.84 1088,-281 1134.08,-262.82 1191.8,-259.56 1228.54,-259.67"/>
+<polygon fill="#000000" stroke="#000000" points="1228.74,-263.17 1238.78,-259.79 1228.82,-256.17 1228.74,-263.17"/>
+</g>
+<!-- proc~strf_i1p -->
+<g id="proc~~initialize~2~~CallsGraph_node25" class="node">
+<title>proc~strf_i1p</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node25"><a xlink:href="../proc/strf_i1p.html" xlink:title="strf_I1P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1172.5,-150 1118.5,-150 1118.5,-126 1172.5,-126 1172.5,-150"/>
+<text text-anchor="middle" x="1145.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I1P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_i1p -->
+<g id="proc~~initialize~2~~CallsGraph_edge25" class="edge">
+<title>interface~str&#45;&gt;proc~strf_i1p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M993.77,-349.84C1010.27,-335.5 1036.66,-310.15 1052,-283 1080.23,-233.04 1048.94,-201.04 1088,-159 1093.56,-153.02 1100.98,-148.73 1108.61,-145.66"/>
+<polygon fill="#000000" stroke="#000000" points="1109.92,-148.91 1118.27,-142.39 1107.67,-142.28 1109.92,-148.91"/>
+</g>
+<!-- proc~strf_i2p -->
+<g id="proc~~initialize~2~~CallsGraph_node26" class="node">
+<title>proc~strf_i2p</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node26"><a xlink:href="../proc/strf_i2p.html" xlink:title="strf_I2P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1172.5,-108 1118.5,-108 1118.5,-84 1172.5,-84 1172.5,-108"/>
+<text text-anchor="middle" x="1145.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I2P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_i2p -->
+<g id="proc~~initialize~2~~CallsGraph_edge26" class="edge">
+<title>interface~str&#45;&gt;proc~strf_i2p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M994.42,-349.77C1011.25,-335.55 1037.69,-310.5 1052,-283 1086.84,-216.03 1038.55,-174.04 1088,-117 1093.46,-110.7 1100.99,-106.29 1108.77,-103.2"/>
+<polygon fill="#000000" stroke="#000000" points="1109.88,-106.52 1118.27,-100.05 1107.67,-99.88 1109.88,-106.52"/>
+</g>
+<!-- proc~strf_i4p -->
+<g id="proc~~initialize~2~~CallsGraph_node27" class="node">
+<title>proc~strf_i4p</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node27"><a xlink:href="../proc/strf_i4p.html" xlink:title="strf_I4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1172.5,-66 1118.5,-66 1118.5,-42 1172.5,-42 1172.5,-66"/>
+<text text-anchor="middle" x="1145.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_i4p -->
+<g id="proc~~initialize~2~~CallsGraph_edge27" class="edge">
+<title>interface~str&#45;&gt;proc~strf_i4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M994.63,-349.88C1011.66,-335.76 1038.28,-310.8 1052,-283 1093.54,-198.88 1028.05,-147.17 1088,-75 1093.37,-68.53 1100.94,-64.06 1108.79,-60.96"/>
+<polygon fill="#000000" stroke="#000000" points="1109.96,-64.26 1118.38,-57.82 1107.79,-57.6 1109.96,-64.26"/>
+</g>
+<!-- proc~strf_i8p -->
+<g id="proc~~initialize~2~~CallsGraph_node28" class="node">
+<title>proc~strf_i8p</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node28"><a xlink:href="../proc/strf_i8p.html" xlink:title="strf_I8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1172.5,-798 1118.5,-798 1118.5,-774 1172.5,-774 1172.5,-798"/>
+<text text-anchor="middle" x="1145.5" y="-783.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_I8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_i8p -->
+<g id="proc~~initialize~2~~CallsGraph_edge28" class="edge">
+<title>interface~str&#45;&gt;proc~strf_i8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1005.25,-362.49C1021.25,-364.28 1040.72,-369.4 1052,-383 1106.43,-448.63 1036.1,-697.35 1088,-765 1093.16,-771.73 1100.72,-776.3 1108.64,-779.41"/>
+<polygon fill="#000000" stroke="#000000" points="1107.75,-782.8 1118.34,-782.52 1109.88,-776.13 1107.75,-782.8"/>
+</g>
+<!-- proc~strf_r4p -->
+<g id="proc~~initialize~2~~CallsGraph_node29" class="node">
+<title>proc~strf_r4p</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node29"><a xlink:href="../proc/strf_r4p.html" xlink:title="strf_R4P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1173,-756 1118,-756 1118,-732 1173,-732 1173,-756"/>
+<text text-anchor="middle" x="1145.5" y="-741.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_R4P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_r4p -->
+<g id="proc~~initialize~2~~CallsGraph_edge29" class="edge">
+<title>interface~str&#45;&gt;proc~strf_r4p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1005.2,-362.54C1021.17,-364.34 1040.64,-369.46 1052,-383 1149.67,-499.41 994.81,-602.98 1088,-723 1093.11,-729.58 1100.51,-734.1 1108.27,-737.2"/>
+<polygon fill="#000000" stroke="#000000" points="1107.21,-740.54 1117.8,-740.33 1109.39,-733.89 1107.21,-740.54"/>
+</g>
+<!-- proc~strf_r8p -->
+<g id="proc~~initialize~2~~CallsGraph_node30" class="node">
+<title>proc~strf_r8p</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node30"><a xlink:href="../proc/strf_r8p.html" xlink:title="strf_R8P">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1173,-714 1118,-714 1118,-690 1173,-690 1173,-714"/>
+<text text-anchor="middle" x="1145.5" y="-699.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">strf_R8P</text>
+</a>
+</g>
+</g>
+<!-- interface~str&#45;&gt;proc~strf_r8p -->
+<g id="proc~~initialize~2~~CallsGraph_edge30" class="edge">
+<title>interface~str&#45;&gt;proc~strf_r8p</title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1005.12,-362.6C1021.07,-364.43 1040.53,-369.56 1052,-383 1137.17,-482.8 1010.61,-570.05 1088,-676 1093.13,-683.02 1100.62,-688.19 1108.48,-691.99"/>
+<polygon fill="#000000" stroke="#000000" points="1107.17,-695.24 1117.75,-695.84 1109.86,-688.78 1107.17,-695.24"/>
+</g>
+<!-- proc~stringify~2 -->
+<g id="proc~~initialize~2~~CallsGraph_node31" class="node">
+<title>proc~stringify~2</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node31"><a xlink:href="../proc/stringify~2.html" xlink:title="xml_tag%stringify">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="868,-254 761,-254 761,-230 868,-230 868,-254"/>
+<text text-anchor="middle" x="814.5" y="-239.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%stringify</text>
+</a>
+</g>
+</g>
+<!-- proc~write_end_tag&#45;&gt;proc~stringify~2 -->
+<g id="proc~~initialize~2~~CallsGraph_edge31" class="edge">
+<title>proc~write_end_tag&#45;&gt;proc~stringify~2</title>
+<path fill="none" stroke="#000000" d="M690.59,-292.95C702.27,-290.46 714.02,-287.5 725,-284 745.05,-277.62 766.39,-267.6 783.09,-258.94"/>
+<polygon fill="#000000" stroke="#000000" points="785.14,-261.81 792.34,-254.04 781.87,-255.63 785.14,-261.81"/>
+</g>
+<!-- proc~write_self_closing_tag&#45;&gt;proc~stringify~2 -->
+<g id="proc~~initialize~2~~CallsGraph_edge32" class="edge">
+<title>proc~write_self_closing_tag&#45;&gt;proc~stringify~2</title>
+<path fill="none" stroke="#000000" d="M724.17,-251C733.25,-250.08 742.17,-249.18 750.66,-248.33"/>
+<polygon fill="#000000" stroke="#000000" points="751.18,-251.79 760.78,-247.31 750.48,-244.83 751.18,-251.79"/>
+</g>
+<!-- proc~write_start_tag&#45;&gt;proc~stringify~2 -->
+<g id="proc~~initialize~2~~CallsGraph_edge33" class="edge">
+<title>proc~write_start_tag&#45;&gt;proc~stringify~2</title>
+<path fill="none" stroke="#000000" d="M706.5,-231.22C721.67,-232.75 736.91,-234.29 750.95,-235.7"/>
+<polygon fill="#000000" stroke="#000000" points="750.64,-239.19 760.94,-236.71 751.34,-232.22 750.64,-239.19"/>
+</g>
+<!-- proc~str_a_i1p&#45;&gt;proc~str_i1p -->
+<g id="proc~~initialize~2~~CallsGraph_edge34" class="edge">
+<title>proc~str_a_i1p&#45;&gt;proc~str_i1p</title>
+<path fill="none" stroke="#000000" d="M1175.19,-624.42C1191.18,-625.77 1211.27,-627.47 1228.39,-628.91"/>
+<polygon fill="#000000" stroke="#000000" points="1228.35,-632.42 1238.6,-629.77 1228.93,-625.44 1228.35,-632.42"/>
+</g>
+<!-- proc~str_a_i2p&#45;&gt;proc~str_i2p -->
+<g id="proc~~initialize~2~~CallsGraph_edge35" class="edge">
+<title>proc~str_a_i2p&#45;&gt;proc~str_i2p</title>
+<path fill="none" stroke="#000000" d="M1175.19,-549.02C1191.33,-552.97 1211.65,-557.94 1228.88,-562.16"/>
+<polygon fill="#000000" stroke="#000000" points="1228.06,-565.56 1238.6,-564.54 1229.72,-558.76 1228.06,-565.56"/>
+</g>
+<!-- proc~str_a_i4p&#45;&gt;proc~str_i4p -->
+<g id="proc~~initialize~2~~CallsGraph_edge36" class="edge">
+<title>proc~str_a_i4p&#45;&gt;proc~str_i4p</title>
+<path fill="none" stroke="#000000" d="M1175.19,-466.84C1191.18,-469.54 1211.27,-472.93 1228.39,-475.82"/>
+<polygon fill="#000000" stroke="#000000" points="1228.16,-479.33 1238.6,-477.55 1229.33,-472.43 1228.16,-479.33"/>
+</g>
+<!-- proc~str_a_i8p&#45;&gt;proc~str_i8p -->
+<g id="proc~~initialize~2~~CallsGraph_edge37" class="edge">
+<title>proc~str_a_i8p&#45;&gt;proc~str_i8p</title>
+<path fill="none" stroke="#000000" d="M1175.19,-386.84C1191.18,-389.54 1211.27,-392.93 1228.39,-395.82"/>
+<polygon fill="#000000" stroke="#000000" points="1228.16,-399.33 1238.6,-397.55 1229.33,-392.43 1228.16,-399.33"/>
+</g>
+<!-- proc~str_a_r4p&#45;&gt;proc~str_r4p -->
+<g id="proc~~initialize~2~~CallsGraph_edge38" class="edge">
+<title>proc~str_a_r4p&#45;&gt;proc~str_r4p</title>
+<path fill="none" stroke="#000000" d="M1177.63,-302.26C1193.27,-302.39 1212.31,-302.56 1228.62,-302.69"/>
+<polygon fill="#000000" stroke="#000000" points="1228.85,-306.19 1238.88,-302.78 1228.91,-299.2 1228.85,-306.19"/>
+</g>
+<!-- proc~str_a_r8p&#45;&gt;proc~str_r8p -->
+<g id="proc~~initialize~2~~CallsGraph_edge39" class="edge">
+<title>proc~str_a_r8p&#45;&gt;proc~str_r8p</title>
+<path fill="none" stroke="#000000" d="M1177.63,-232.25C1193.42,-237.44 1212.67,-243.78 1229.09,-249.18"/>
+<polygon fill="#000000" stroke="#000000" points="1228.29,-252.6 1238.88,-252.4 1230.48,-245.95 1228.29,-252.6"/>
+</g>
+<!-- proc~compact_real_string -->
+<g id="proc~~initialize~2~~CallsGraph_node33" class="node">
+<title>proc~compact_real_string</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node33"><a xlink:href="../proc/compact_real_string.html" xlink:title="compact_real_string">
+<polygon fill="#d9534f" stroke="#d9534f" points="1449,-294 1329,-294 1329,-270 1449,-270 1449,-294"/>
+<text text-anchor="middle" x="1389" y="-279.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compact_real_string</text>
+</a>
+</g>
+</g>
+<!-- proc~str_r4p&#45;&gt;proc~compact_real_string -->
+<g id="proc~~initialize~2~~CallsGraph_edge40" class="edge">
+<title>proc~str_r4p&#45;&gt;proc~compact_real_string</title>
+<path fill="none" stroke="#000000" d="M1293.26,-298.44C1300.83,-297.13 1309.47,-295.63 1318.39,-294.08"/>
+<polygon fill="#000000" stroke="#000000" points="1319.27,-297.48 1328.52,-292.32 1318.07,-290.58 1319.27,-297.48"/>
+</g>
+<!-- proc~str_r8p&#45;&gt;proc~compact_real_string -->
+<g id="proc~~initialize~2~~CallsGraph_edge41" class="edge">
+<title>proc~str_r8p&#45;&gt;proc~compact_real_string</title>
+<path fill="none" stroke="#000000" d="M1293.26,-265.56C1300.83,-266.87 1309.47,-268.37 1318.39,-269.92"/>
+<polygon fill="#000000" stroke="#000000" points="1318.07,-273.42 1328.52,-271.68 1319.27,-266.52 1318.07,-273.42"/>
+</g>
+<!-- proc~stringify~2&#45;&gt;proc~chars -->
+<g id="proc~~initialize~2~~CallsGraph_edge44" class="edge">
+<title>proc~stringify~2&#45;&gt;proc~chars</title>
+<path fill="none" stroke="#000000" d="M819.72,-254.3C829.78,-281.73 857.82,-348.24 904,-383 910.82,-388.13 918.85,-392.01 927.05,-394.94"/>
+<polygon fill="#000000" stroke="#000000" points="926.1,-398.31 936.69,-397.96 928.19,-391.63 926.1,-398.31"/>
+</g>
+<!-- proc~stringify~2&#45;&gt;interface~str -->
+<g id="proc~~initialize~2~~CallsGraph_edge42" class="edge">
+<title>proc~stringify~2&#45;&gt;interface~str</title>
+<path fill="none" stroke="#000000" d="M831.87,-254.17C860.29,-275.28 918.88,-318.82 952.27,-343.63"/>
+<polygon fill="#000000" stroke="#000000" points="950.47,-346.65 960.58,-349.8 954.64,-341.03 950.47,-346.65"/>
+</g>
+<!-- proc~attributes -->
+<g id="proc~~initialize~2~~CallsGraph_node32" class="node">
+<title>proc~attributes</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node32"><a xlink:href="../proc/attributes.html" xlink:title="xml_tag%attributes">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1203,-24 1088,-24 1088,0 1203,0 1203,-24"/>
+<text text-anchor="middle" x="1145.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%attributes</text>
+</a>
+</g>
+</g>
+<!-- proc~stringify~2&#45;&gt;proc~attributes -->
+<g id="proc~~initialize~2~~CallsGraph_edge43" class="edge">
+<title>proc~stringify~2&#45;&gt;proc~attributes</title>
+<path fill="none" stroke="#000000" d="M868.17,-240.07C929.68,-236.7 1026.32,-227.55 1052,-203 1107.83,-149.64 1037.55,-91.48 1088,-33 1088.87,-32 1089.78,-31.04 1090.75,-30.13"/>
+<polygon fill="#000000" stroke="#000000" points="1093,-32.82 1098.89,-24.01 1088.79,-27.22 1093,-32.82"/>
+</g>
+<!-- proc~end_tag -->
+<g id="proc~~initialize~2~~CallsGraph_node34" class="node">
+<title>proc~end_tag</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node34"><a xlink:href="../proc/end_tag.html" xlink:title="xml_tag%end_tag">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1031.5,-110 924.5,-110 924.5,-86 1031.5,-86 1031.5,-110"/>
+<text text-anchor="middle" x="978" y="-95.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%end_tag</text>
+</a>
+</g>
+</g>
+<!-- proc~stringify~2&#45;&gt;proc~end_tag -->
+<g id="proc~~initialize~2~~CallsGraph_edge45" class="edge">
+<title>proc~stringify~2&#45;&gt;proc~end_tag</title>
+<path fill="none" stroke="#000000" d="M820.86,-229.79C832.36,-205.02 861.84,-148.69 904,-119 907.46,-116.57 911.19,-114.41 915.08,-112.51"/>
+<polygon fill="#000000" stroke="#000000" points="916.59,-115.67 924.39,-108.49 913.82,-109.24 916.59,-115.67"/>
+</g>
+<!-- proc~is_allocated -->
+<g id="proc~~initialize~2~~CallsGraph_node35" class="node">
+<title>proc~is_allocated</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node35"><a xlink:href="../proc/is_allocated.html" xlink:title="string%is_allocated">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1035.5,-274 920.5,-274 920.5,-250 1035.5,-250 1035.5,-274"/>
+<text text-anchor="middle" x="978" y="-259.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">string%is_allocated</text>
+</a>
+</g>
+</g>
+<!-- proc~stringify~2&#45;&gt;proc~is_allocated -->
+<g id="proc~~initialize~2~~CallsGraph_edge46" class="edge">
+<title>proc~stringify~2&#45;&gt;proc~is_allocated</title>
+<path fill="none" stroke="#000000" d="M868.38,-248.55C881.78,-250.21 896.35,-252.01 910.33,-253.74"/>
+<polygon fill="#000000" stroke="#000000" points="910.03,-257.23 920.38,-254.99 910.89,-250.29 910.03,-257.23"/>
+</g>
+<!-- proc~self_closing_tag -->
+<g id="proc~~initialize~2~~CallsGraph_node36" class="node">
+<title>proc~self_closing_tag</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node36"><a xlink:href="../proc/self_closing_tag.html" xlink:title="xml_tag%self_closing_tag">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1052,-194 904,-194 904,-170 1052,-170 1052,-194"/>
+<text text-anchor="middle" x="978" y="-179.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%self_closing_tag</text>
+</a>
+</g>
+</g>
+<!-- proc~stringify~2&#45;&gt;proc~self_closing_tag -->
+<g id="proc~~initialize~2~~CallsGraph_edge47" class="edge">
+<title>proc~stringify~2&#45;&gt;proc~self_closing_tag</title>
+<path fill="none" stroke="#000000" d="M846.56,-229.85C863.5,-223.28 884.86,-215.08 904,-208 913.27,-204.57 923.23,-200.97 932.73,-197.57"/>
+<polygon fill="#000000" stroke="#000000" points="934.16,-200.78 942.4,-194.13 931.81,-194.18 934.16,-200.78"/>
+</g>
+<!-- proc~start_tag -->
+<g id="proc~~initialize~2~~CallsGraph_node37" class="node">
+<title>proc~start_tag</title>
+<g id="a_proc~~initialize~2~~CallsGraph_node37"><a xlink:href="../proc/start_tag.html" xlink:title="xml_tag%start_tag">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1033.5,-152 922.5,-152 922.5,-128 1033.5,-128 1033.5,-152"/>
+<text text-anchor="middle" x="978" y="-137.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">xml_tag%start_tag</text>
+</a>
+</g>
+</g>
+<!-- proc~stringify~2&#45;&gt;proc~start_tag -->
+<g id="proc~~initialize~2~~CallsGraph_edge48" class="edge">
+<title>proc~stringify~2&#45;&gt;proc~start_tag</title>
+<path fill="none" stroke="#000000" d="M825.37,-229.96C840.49,-212.29 871.11,-179.43 904,-161 907.4,-159.1 910.98,-157.35 914.67,-155.76"/>
+<polygon fill="#000000" stroke="#000000" points="915.96,-159.01 923.98,-152.09 913.39,-152.5 915.96,-159.01"/>
+</g>
+<!-- proc~self_closing_tag&#45;&gt;proc~attributes -->
+<g id="proc~~initialize~2~~CallsGraph_edge49" class="edge">
+<title>proc~self_closing_tag&#45;&gt;proc~attributes</title>
+<path fill="none" stroke="#000000" d="M1039.97,-169.98C1044.37,-167.52 1048.47,-164.55 1052,-161 1093.66,-119.09 1047.95,-76.46 1088,-33 1089.02,-31.89 1090.1,-30.85 1091.24,-29.85"/>
+<polygon fill="#000000" stroke="#000000" points="1093.27,-32.7 1099.4,-24.06 1089.22,-26.99 1093.27,-32.7"/>
+</g>
+<!-- proc~start_tag&#45;&gt;proc~attributes -->
+<g id="proc~~initialize~2~~CallsGraph_edge50" class="edge">
+<title>proc~start_tag&#45;&gt;proc~attributes</title>
+<path fill="none" stroke="#000000" d="M1033.69,-130.25C1040.36,-127.41 1046.68,-123.73 1052,-119 1082.95,-91.45 1058.11,-61.7 1088,-33 1089.27,-31.78 1090.62,-30.63 1092.03,-29.54"/>
+<polygon fill="#000000" stroke="#000000" points="1094.13,-32.35 1100.67,-24.02 1090.36,-26.46 1094.13,-32.35"/>
 </g>
 </g>
 </svg>
-</div>          <div>
+</div>                <script>
+                  var panprocinitialize2CallsGraph = svgPanZoom('#procinitialize2CallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
             <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
           </div>
           <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-lg" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-<p>Nodes of different colours represent the following: </p>
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
- "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Generated by graphviz version 2.43.0 (0)
- -->
-<!-- Title: Graph Key Pages: 1 -->
-<svg width="641pt" height="28pt"
- viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
-<title>Graph Key</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
-<!-- Subroutine -->
-<g id="node1" class="node">
-<title>Subroutine</title>
-<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
-<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
-</g>
-<!-- Function -->
-<g id="node2" class="node">
-<title>Function</title>
-<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
-<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
-</g>
-<!-- Interface -->
-<g id="node3" class="node">
-<title>Interface</title>
-<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
-<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
-</g>
-<!-- Type Bound Procedure -->
-<g id="node4" class="node">
-<title>Type Bound Procedure</title>
-<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
-<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
-</g>
-<!-- Unknown Procedure Type -->
-<g id="node5" class="node">
-<title>Unknown Procedure Type</title>
-<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
-<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
-</g>
-<!-- Program -->
-<g id="node6" class="node">
-<title>Program</title>
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
-<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
-</g>
-<!-- This Page&#39;s Entity -->
-<g id="node7" class="node">
-<title>This Page&#39;s Entity</title>
-<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
-<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
-</g>
-</g>
-</svg>
-
-<p>Solid arrows point from a procedure to one which it calls. Dashed 
-arrows point from an interface to procedures which implement that interface.
-This could include the module procedures in a generic interface or the
-implementation in a submodule of an interface in a parent module.
-</p>
- </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-header">
-  <h3 class="card-title">Called by</h3>
-      </div>
-      <div class="card-body">
-  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
- "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Generated by graphviz version 2.43.0 (0)
- -->
-<!-- Title: proc~~initialize~2~~CalledByGraph Pages: 1 -->
-<svg id="procinitialize2CalledByGraph" width="457pt" height="326pt"
- viewBox="0.00 0.00 457.00 326.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="proc~~initialize~2~~CalledByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 322)">
-<title>proc~~initialize~2~~CalledByGraph</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-322 453,-322 453,4 -4,4"/>
-<!-- proc~initialize~2 -->
-<g id="proc~~initialize~2~~CalledByGraph_node1" class="node">
-<title>proc~initialize~2</title>
-<polygon fill="none" stroke="black" points="449,-171 345,-171 345,-147 449,-147 449,-171"/>
-<text text-anchor="middle" x="397" y="-156.6" font-family="Helvetica,sans-Serif" font-size="10.50">vtk_file%initialize</text>
-</g>
-<!-- proc~write_check -->
-<g id="proc~~initialize~2~~CalledByGraph_node2" class="node">
-<title>proc~write_check</title>
-<g id="a_proc~~initialize~2~~CalledByGraph_node2"><a xlink:href="../proc/write_check.html" xlink:title="write_check">
-<polygon fill="#d9534f" stroke="#d9534f" points="283.5,-318 207.5,-318 207.5,-294 283.5,-294 283.5,-318"/>
-<text text-anchor="middle" x="245.5" y="-303.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_check</text>
-</a>
-</g>
-</g>
-<!-- proc~write_check&#45;&gt;proc~initialize~2 -->
-<g id="proc~~initialize~2~~CalledByGraph_edge1" class="edge">
-<title>proc~write_check&#45;&gt;proc~initialize~2</title>
-<path fill="none" stroke="#000000" d="M283.8,-297.79C292.62,-294.73 301.59,-290.58 309,-285 346.07,-257.09 373.04,-208.66 386.44,-180.67"/>
-<polygon fill="#000000" stroke="#000000" points="389.73,-181.9 390.76,-171.36 383.38,-178.95 389.73,-181.9"/>
-</g>
-<!-- proc~write_slave -->
-<g id="proc~~initialize~2~~CalledByGraph_node3" class="node">
-<title>proc~write_slave</title>
-<g id="a_proc~~initialize~2~~CalledByGraph_node3"><a xlink:href="../proc/write_slave.html" xlink:title="write_slave">
-<polygon fill="#d9534f" stroke="#d9534f" points="281.5,-276 209.5,-276 209.5,-252 281.5,-252 281.5,-276"/>
-<text text-anchor="middle" x="245.5" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_slave</text>
-</a>
-</g>
-</g>
-<!-- proc~write_slave&#45;&gt;proc~initialize~2 -->
-<g id="proc~~initialize~2~~CalledByGraph_edge2" class="edge">
-<title>proc~write_slave&#45;&gt;proc~initialize~2</title>
-<path fill="none" stroke="#000000" d="M281.77,-255.17C291,-252.06 300.68,-248.05 309,-243 337.45,-225.72 364.03,-197.62 380.14,-178.74"/>
-<polygon fill="#000000" stroke="#000000" points="382.86,-180.94 386.58,-171.02 377.49,-176.46 382.86,-180.94"/>
-</g>
-<!-- proc~write_vts -->
-<g id="proc~~initialize~2~~CalledByGraph_node4" class="node">
-<title>proc~write_vts</title>
-<g id="a_proc~~initialize~2~~CalledByGraph_node4"><a xlink:href="../proc/write_vts.html" xlink:title="write_vts">
-<polygon fill="#d9534f" stroke="#d9534f" points="275,-234 216,-234 216,-210 275,-210 275,-234"/>
-<text text-anchor="middle" x="245.5" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">write_vts</text>
-</a>
-</g>
-</g>
-<!-- proc~write_vts&#45;&gt;proc~initialize~2 -->
-<g id="proc~~initialize~2~~CalledByGraph_edge3" class="edge">
-<title>proc~write_vts&#45;&gt;proc~initialize~2</title>
-<path fill="none" stroke="#000000" d="M275.09,-213.23C285.83,-209.72 298.08,-205.45 309,-201 327.57,-193.43 347.76,-183.78 364.02,-175.63"/>
-<polygon fill="#000000" stroke="#000000" points="365.75,-178.68 373.09,-171.04 362.59,-172.43 365.75,-178.68"/>
-</g>
-<!-- program~vtk_fortran_write_vtm -->
-<g id="proc~~initialize~2~~CalledByGraph_node5" class="node">
-<title>program~vtk_fortran_write_vtm</title>
-<g id="a_proc~~initialize~2~~CalledByGraph_node5"><a xlink:href="../program/vtk_fortran_write_vtm.html" xlink:title="vtk_fortran_write_vtm">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="309,-192 182,-192 182,-168 309,-168 309,-192"/>
-<text text-anchor="middle" x="245.5" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">vtk_fortran_write_vtm</text>
-</a>
-</g>
-</g>
-<!-- program~vtk_fortran_write_vtm&#45;&gt;proc~initialize~2 -->
-<g id="proc~~initialize~2~~CalledByGraph_edge4" class="edge">
-<title>program~vtk_fortran_write_vtm&#45;&gt;proc~initialize~2</title>
-<path fill="none" stroke="#000000" d="M309.04,-171.22C317.45,-170.03 326.09,-168.82 334.49,-167.64"/>
-<polygon fill="#000000" stroke="#000000" points="335.17,-171.08 344.59,-166.22 334.2,-164.15 335.17,-171.08"/>
-</g>
-<!-- program~vtk_fortran_write_vtr -->
-<g id="proc~~initialize~2~~CalledByGraph_node6" class="node">
-<title>program~vtk_fortran_write_vtr</title>
-<g id="a_proc~~initialize~2~~CalledByGraph_node6"><a xlink:href="../program/vtk_fortran_write_vtr.html" xlink:title="vtk_fortran_write_vtr">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="306,-150 185,-150 185,-126 306,-126 306,-150"/>
-<text text-anchor="middle" x="245.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">vtk_fortran_write_vtr</text>
-</a>
-</g>
-</g>
-<!-- program~vtk_fortran_write_vtr&#45;&gt;proc~initialize~2 -->
-<g id="proc~~initialize~2~~CalledByGraph_edge5" class="edge">
-<title>program~vtk_fortran_write_vtr&#45;&gt;proc~initialize~2</title>
-<path fill="none" stroke="#000000" d="M306.02,-146.36C315.46,-147.69 325.25,-149.06 334.74,-150.39"/>
-<polygon fill="#000000" stroke="#000000" points="334.5,-153.89 344.89,-151.82 335.47,-146.96 334.5,-153.89"/>
-</g>
-<!-- program~vtk_fortran_write_vts -->
-<g id="proc~~initialize~2~~CalledByGraph_node7" class="node">
-<title>program~vtk_fortran_write_vts</title>
-<g id="a_proc~~initialize~2~~CalledByGraph_node7"><a xlink:href="../program/vtk_fortran_write_vts.html" xlink:title="vtk_fortran_write_vts">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="306.5,-108 184.5,-108 184.5,-84 306.5,-84 306.5,-108"/>
-<text text-anchor="middle" x="245.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">vtk_fortran_write_vts</text>
-</a>
-</g>
-</g>
-<!-- program~vtk_fortran_write_vts&#45;&gt;proc~initialize~2 -->
-<g id="proc~~initialize~2~~CalledByGraph_edge6" class="edge">
-<title>program~vtk_fortran_write_vts&#45;&gt;proc~initialize~2</title>
-<path fill="none" stroke="#000000" d="M284.79,-108.02C292.85,-110.78 301.26,-113.85 309,-117 327.57,-124.57 347.76,-134.22 364.02,-142.37"/>
-<polygon fill="#000000" stroke="#000000" points="362.59,-145.57 373.09,-146.96 365.75,-139.32 362.59,-145.57"/>
-</g>
-<!-- program~vtk_fortran_write_vtu -->
-<g id="proc~~initialize~2~~CalledByGraph_node8" class="node">
-<title>program~vtk_fortran_write_vtu</title>
-<g id="a_proc~~initialize~2~~CalledByGraph_node8"><a xlink:href="../program/vtk_fortran_write_vtu.html" xlink:title="vtk_fortran_write_vtu">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="307.5,-66 183.5,-66 183.5,-42 307.5,-42 307.5,-66"/>
-<text text-anchor="middle" x="245.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">vtk_fortran_write_vtu</text>
-</a>
-</g>
-</g>
-<!-- program~vtk_fortran_write_vtu&#45;&gt;proc~initialize~2 -->
-<g id="proc~~initialize~2~~CalledByGraph_edge7" class="edge">
-<title>program~vtk_fortran_write_vtu&#45;&gt;proc~initialize~2</title>
-<path fill="none" stroke="#000000" d="M290.65,-66.07C297.02,-68.59 303.33,-71.55 309,-75 337.45,-92.28 364.03,-120.38 380.14,-139.26"/>
-<polygon fill="#000000" stroke="#000000" points="377.49,-141.54 386.58,-146.98 382.86,-137.06 377.49,-141.54"/>
-</g>
-<!-- program~vtk_fortran_write_vtu~2 -->
-<g id="proc~~initialize~2~~CalledByGraph_node9" class="node">
-<title>program~vtk_fortran_write_vtu~2</title>
-<g id="a_proc~~initialize~2~~CalledByGraph_node9"><a xlink:href="../program/vtk_fortran_write_vtu~2.html" xlink:title="vtk_fortran_write_vtu">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="307.5,-24 183.5,-24 183.5,0 307.5,0 307.5,-24"/>
-<text text-anchor="middle" x="245.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">vtk_fortran_write_vtu</text>
-</a>
-</g>
-</g>
-<!-- program~vtk_fortran_write_vtu~2&#45;&gt;proc~initialize~2 -->
-<g id="proc~~initialize~2~~CalledByGraph_edge8" class="edge">
-<title>program~vtk_fortran_write_vtu~2&#45;&gt;proc~initialize~2</title>
-<path fill="none" stroke="#000000" d="M293.57,-24.08C299.05,-26.54 304.34,-29.49 309,-33 346.07,-60.91 373.04,-109.34 386.44,-137.33"/>
-<polygon fill="#000000" stroke="#000000" points="383.38,-139.05 390.76,-146.64 389.73,-136.1 383.38,-139.05"/>
-</g>
-<!-- program~vtk_fortran_write_pvts -->
-<g id="proc~~initialize~2~~CalledByGraph_node10" class="node">
-<title>program~vtk_fortran_write_pvts</title>
-<g id="a_proc~~initialize~2~~CalledByGraph_node10"><a xlink:href="../program/vtk_fortran_write_pvts.html" xlink:title="vtk_fortran_write_pvts">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="137.5,-234 8.5,-234 8.5,-210 137.5,-210 137.5,-234"/>
-<text text-anchor="middle" x="73" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">vtk_fortran_write_pvts</text>
-</a>
-</g>
-</g>
-<!-- program~vtk_fortran_write_pvts&#45;&gt;proc~write_vts -->
-<g id="proc~~initialize~2~~CalledByGraph_edge11" class="edge">
-<title>program~vtk_fortran_write_pvts&#45;&gt;proc~write_vts</title>
-<path fill="none" stroke="#000000" d="M137.97,-222C160.72,-222 185.63,-222 205.63,-222"/>
-<polygon fill="#000000" stroke="#000000" points="205.91,-225.5 215.91,-222 205.91,-218.5 205.91,-225.5"/>
-</g>
-<!-- program~vtk_fortran_write_volatile -->
-<g id="proc~~initialize~2~~CalledByGraph_node11" class="node">
-<title>program~vtk_fortran_write_volatile</title>
-<g id="a_proc~~initialize~2~~CalledByGraph_node11"><a xlink:href="../program/vtk_fortran_write_volatile.html" xlink:title="vtk_fortran_write_volatile">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="146,-297 0,-297 0,-273 146,-273 146,-297"/>
-<text text-anchor="middle" x="73" y="-282.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">vtk_fortran_write_volatile</text>
-</a>
-</g>
-</g>
-<!-- program~vtk_fortran_write_volatile&#45;&gt;proc~write_check -->
-<g id="proc~~initialize~2~~CalledByGraph_edge9" class="edge">
-<title>program~vtk_fortran_write_volatile&#45;&gt;proc~write_check</title>
-<path fill="none" stroke="#000000" d="M146.31,-293.91C163.58,-296.03 181.58,-298.25 197.38,-300.2"/>
-<polygon fill="#000000" stroke="#000000" points="197.06,-303.68 207.41,-301.43 197.91,-296.74 197.06,-303.68"/>
-</g>
-<!-- program~vtk_fortran_write_volatile&#45;&gt;proc~write_slave -->
-<g id="proc~~initialize~2~~CalledByGraph_edge10" class="edge">
-<title>program~vtk_fortran_write_volatile&#45;&gt;proc~write_slave</title>
-<path fill="none" stroke="#000000" d="M146.31,-276.09C164.18,-273.89 182.82,-271.6 199,-269.6"/>
-<polygon fill="#000000" stroke="#000000" points="199.75,-273.04 209.25,-268.34 198.9,-266.09 199.75,-273.04"/>
-</g>
-</g>
-</svg>
-</div>          <div>
-            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
-          </div>
-          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-lg" role="document">
               <div class="modal-content">
                 <div class="modal-header">
@@ -825,68 +1116,40 @@ implementation in a submodule of an interface in a parent module.
     
     <section>
     <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="hl codehilite"><pre><span></span><span class="w">   </span><span class="k">function </span><span class="n">initialize</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="k">format</span><span class="p">,</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">mesh_topology</span><span class="p">,</span><span class="w"> </span><span class="n">is_volatile</span><span class="p">,</span><span class="w"> </span><span class="n">nx1</span><span class="p">,</span><span class="w"> </span><span class="n">nx2</span><span class="p">,</span><span class="w"> </span><span class="n">ny1</span><span class="p">,</span><span class="w"> </span><span class="n">ny2</span><span class="p">,</span><span class="w"> </span><span class="n">nz1</span><span class="p">,</span><span class="w"> </span><span class="n">nz2</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
-<span class="w">   </span><span class="c">!&lt; Initialize file (writer).</span>
-<span class="w">   </span><span class="c">!&lt;</span>
-<span class="w">   </span><span class="c">!&lt; @note This function must be the first to be called.</span>
-<span class="w">   </span><span class="c">!&lt;</span>
-<span class="w">   </span><span class="c">!&lt;### Supported output formats are (the passed specifier value is case insensitive):</span>
-<span class="w">   </span><span class="c">!&lt;</span>
-<span class="w">   </span><span class="c">!&lt;- ASCII: data are saved in ASCII format;</span>
-<span class="w">   </span><span class="c">!&lt;- BINARY: data are saved in base64 encoded format;</span>
-<span class="w">   </span><span class="c">!&lt;- RAW: data are saved in raw-binary format in the appended tag of the XML file;</span>
-<span class="w">   </span><span class="c">!&lt;- BINARY-APPENDED: data are saved in base64 encoded format in the appended tag of the XML file.</span>
-<span class="w">   </span><span class="c">!&lt;</span>
-<span class="w">   </span><span class="c">!&lt;### Supported topologies are:</span>
-<span class="w">   </span><span class="c">!&lt;</span>
-<span class="w">   </span><span class="c">!&lt;- RectilinearGrid;</span>
-<span class="w">   </span><span class="c">!&lt;- StructuredGrid;</span>
-<span class="w">   </span><span class="c">!&lt;- UnstructuredGrid.</span>
-<span class="w">   </span><span class="c">!&lt;</span>
-<span class="w">   </span><span class="c">!&lt;### Example of usage</span>
-<span class="w">   </span><span class="c">!&lt;</span>
-<span class="w">   </span><span class="c">!&lt;```fortran</span>
-<span class="w">   </span><span class="c">!&lt; type(vtk_file) :: vtk</span>
-<span class="w">   </span><span class="c">!&lt; integer(I4P)   :: nx1, nx2, ny1, ny2, nz1, nz2</span>
-<span class="w">   </span><span class="c">!&lt; ...</span>
-<span class="w">   </span><span class="c">!&lt; error = vtk%initialize(&#39;BINARY&#39;,&#39;XML_RECT_BINARY.vtr&#39;,&#39;RectilinearGrid&#39;,nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)</span>
-<span class="w">   </span><span class="c">!&lt; ...</span>
-<span class="w">   </span><span class="c">!&lt;```</span>
-<span class="w">   </span><span class="c">!&lt; @note The file extension is necessary in the file name. The XML standard has different extensions for each</span>
-<span class="w">   </span><span class="c">!&lt; different topologies (e.g. *vtr* for rectilinear topology). See the VTK-standard file for more information.</span>
-<span class="w">   </span><span class="k">class</span><span class="p">(</span><span class="n">vtk_file</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w">        </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w">          </span><span class="c">!&lt; VTK file.</span>
-<span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">           </span><span class="kd">::</span><span class="w"> </span><span class="k">format</span><span class="w">        </span><span class="c">!&lt; File format: ASCII, BINARY, RAW or BINARY-APPENDED.</span>
-<span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">           </span><span class="kd">::</span><span class="w"> </span><span class="n">filename</span><span class="w">      </span><span class="c">!&lt; File name.</span>
-<span class="w">   </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">           </span><span class="kd">::</span><span class="w"> </span><span class="n">mesh_topology</span><span class="w"> </span><span class="c">!&lt; Mesh topology.</span>
-<span class="w">   </span><span class="kt">logical</span><span class="p">,</span><span class="w">         </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">is_volatile</span><span class="w">   </span><span class="c">!&lt; Flag to check volatile writer.</span>
-<span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nx1</span><span class="w">           </span><span class="c">!&lt; Initial node of x axis.</span>
-<span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nx2</span><span class="w">           </span><span class="c">!&lt; Final node of x axis.</span>
-<span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ny1</span><span class="w">           </span><span class="c">!&lt; Initial node of y axis.</span>
-<span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ny2</span><span class="w">           </span><span class="c">!&lt; Final node of y axis.</span>
-<span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nz1</span><span class="w">           </span><span class="c">!&lt; Initial node of z axis.</span>
-<span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nz2</span><span class="w">           </span><span class="c">!&lt; Final node of z axis.</span>
-<span class="w">   </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                          </span><span class="kd">::</span><span class="w"> </span><span class="n">error</span><span class="w">         </span><span class="c">!&lt; Error status.</span>
-<span class="w">   </span><span class="k">type</span><span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="w">                          </span><span class="kd">::</span><span class="w"> </span><span class="n">fformat</span><span class="w">       </span><span class="c">!&lt; File format.</span>
+    <div class="hl codehilite"><pre><span></span><span class="w">  </span><span class="k">function </span><span class="n">initialize</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="k">format</span><span class="p">,</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">mesh_topology</span><span class="p">,</span><span class="w"> </span><span class="n">nx1</span><span class="p">,</span><span class="w"> </span><span class="n">nx2</span><span class="p">,</span><span class="w"> </span><span class="n">ny1</span><span class="p">,</span><span class="w"> </span><span class="n">ny2</span><span class="p">,</span><span class="w"> </span><span class="n">nz1</span><span class="p">,</span><span class="w"> </span><span class="n">nz2</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">                      </span><span class="n">is_volatile</span><span class="p">,</span><span class="w"> </span><span class="n">mesh_kind</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+<span class="w">  </span><span class="c">!&lt; Initialize writer.</span>
+<span class="w">  </span><span class="k">class</span><span class="p">(</span><span class="n">xml_writer_appended</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w">        </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="w">          </span><span class="c">!&lt; Writer.</span>
+<span class="w">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">               </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">           </span><span class="kd">::</span><span class="w"> </span><span class="k">format</span><span class="w">        </span><span class="c">!&lt; File format: ASCII.</span>
+<span class="w">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">               </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">           </span><span class="kd">::</span><span class="w"> </span><span class="n">filename</span><span class="w">      </span><span class="c">!&lt; File name.</span>
+<span class="w">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">               </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">           </span><span class="kd">::</span><span class="w"> </span><span class="n">mesh_topology</span><span class="w"> </span><span class="c">!&lt; Mesh topology.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">               </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nx1</span><span class="w">           </span><span class="c">!&lt; Initial node of x axis.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">               </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nx2</span><span class="w">           </span><span class="c">!&lt; Final node of x axis.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">               </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ny1</span><span class="w">           </span><span class="c">!&lt; Initial node of y axis.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">               </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ny2</span><span class="w">           </span><span class="c">!&lt; Final node of y axis.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">               </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nz1</span><span class="w">           </span><span class="c">!&lt; Initial node of z axis.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">),</span><span class="w">               </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nz2</span><span class="w">           </span><span class="c">!&lt; Final node of z axis.</span>
+<span class="w">  </span><span class="kt">character</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w">               </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">mesh_kind</span><span class="w">     </span><span class="c">!&lt; Kind of mesh data: Float64, Float32, ecc.</span>
+<span class="w">  </span><span class="kt">logical</span><span class="p">,</span><span class="w">                    </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">is_volatile</span><span class="w">   </span><span class="c">!&lt; Flag to check volatile writer.</span>
+<span class="w">  </span><span class="kt">integer</span><span class="p">(</span><span class="n">I4P</span><span class="p">)</span><span class="w">                                     </span><span class="kd">::</span><span class="w"> </span><span class="n">error</span><span class="w">         </span><span class="c">!&lt; Error status.</span>
 
-<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">is_initialized</span><span class="p">)</span><span class="w"> </span><span class="k">call </span><span class="n">penf_init</span>
-<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(.</span><span class="nb">not</span><span class="p">.</span><span class="n">is_b64_initialized</span><span class="p">)</span><span class="w"> </span><span class="k">call </span><span class="n">b64_init</span>
-<span class="w">   </span><span class="n">fformat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="k">format</span><span class="p">))</span>
-<span class="w">   </span><span class="n">fformat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fformat</span><span class="p">%</span><span class="n">upper</span><span class="p">()</span>
-<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">allocated</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">))</span><span class="w"> </span><span class="k">deallocate</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">)</span>
-<span class="w">   </span><span class="k">select case</span><span class="p">(</span><span class="n">fformat</span><span class="p">%</span><span class="n">chars</span><span class="p">())</span>
-<span class="w">   </span><span class="k">case</span><span class="p">(</span><span class="s1">&#39;ASCII&#39;</span><span class="p">)</span>
-<span class="w">      </span><span class="k">allocate</span><span class="p">(</span><span class="n">xml_writer_ascii_local</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">)</span>
-<span class="w">   </span><span class="k">case</span><span class="p">(</span><span class="s1">&#39;BINARY-APPENDED&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;RAW&#39;</span><span class="p">)</span>
-<span class="w">      </span><span class="k">allocate</span><span class="p">(</span><span class="n">xml_writer_appended</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">)</span>
-<span class="w">   </span><span class="k">case</span><span class="p">(</span><span class="s1">&#39;BINARY&#39;</span><span class="p">)</span>
-<span class="w">      </span><span class="k">allocate</span><span class="p">(</span><span class="n">xml_writer_binary_local</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">)</span>
-<span class="w">   </span><span class="k">case </span><span class="n">default</span>
-<span class="w">      </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">   </span><span class="k">endselect</span>
-<span class="k">   </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">%</span><span class="n">initialize</span><span class="p">(</span><span class="k">format</span><span class="o">=</span><span class="k">format</span><span class="p">,</span><span class="w"> </span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">mesh_topology</span><span class="o">=</span><span class="n">mesh_topology</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
-<span class="w">                                      </span><span class="n">is_volatile</span><span class="o">=</span><span class="n">is_volatile</span><span class="p">,</span><span class="w">                                       </span><span class="p">&amp;</span>
-<span class="w">                                      </span><span class="n">nx1</span><span class="o">=</span><span class="n">nx1</span><span class="p">,</span><span class="w"> </span><span class="n">nx2</span><span class="o">=</span><span class="n">nx2</span><span class="p">,</span><span class="w"> </span><span class="n">ny1</span><span class="o">=</span><span class="n">ny1</span><span class="p">,</span><span class="w"> </span><span class="n">ny2</span><span class="o">=</span><span class="n">ny2</span><span class="p">,</span><span class="w"> </span><span class="n">nz1</span><span class="o">=</span><span class="n">nz1</span><span class="p">,</span><span class="w"> </span><span class="n">nz2</span><span class="o">=</span><span class="n">nz2</span><span class="p">)</span>
-<span class="w">   </span><span class="k">endfunction </span><span class="n">initialize</span>
+<span class="w">  </span><span class="n">self</span><span class="p">%</span><span class="n">topology</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">mesh_topology</span><span class="p">))</span>
+<span class="w">  </span><span class="n">self</span><span class="p">%</span><span class="n">format_ch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;appended&#39;</span>
+<span class="w">  </span><span class="n">self</span><span class="p">%</span><span class="n">encoding</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">format</span>
+<span class="k">  </span><span class="n">self</span><span class="p">%</span><span class="n">encoding</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">encoding</span><span class="p">%</span><span class="n">upper</span><span class="p">()</span>
+<span class="w">  </span><span class="k">select case</span><span class="p">(</span><span class="n">self</span><span class="p">%</span><span class="n">encoding</span><span class="p">%</span><span class="n">chars</span><span class="p">())</span>
+<span class="w">  </span><span class="k">case</span><span class="p">(</span><span class="s1">&#39;RAW&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">self</span><span class="p">%</span><span class="n">encoding</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;raw&#39;</span>
+<span class="w">  </span><span class="k">case</span><span class="p">(</span><span class="s1">&#39;BINARY-APPENDED&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">self</span><span class="p">%</span><span class="n">encoding</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;base64&#39;</span>
+<span class="w">  </span><span class="k">endselect</span>
+<span class="k">  call </span><span class="n">self</span><span class="p">%</span><span class="n">open_xml_file</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+<span class="w">  </span><span class="k">call </span><span class="n">self</span><span class="p">%</span><span class="n">write_header_tag</span>
+<span class="w">  </span><span class="k">call </span><span class="n">self</span><span class="p">%</span><span class="n">write_topology_tag</span><span class="p">(</span><span class="n">nx1</span><span class="o">=</span><span class="n">nx1</span><span class="p">,</span><span class="w"> </span><span class="n">nx2</span><span class="o">=</span><span class="n">nx2</span><span class="p">,</span><span class="w"> </span><span class="n">ny1</span><span class="o">=</span><span class="n">ny1</span><span class="p">,</span><span class="w"> </span><span class="n">ny2</span><span class="o">=</span><span class="n">ny2</span><span class="p">,</span><span class="w"> </span><span class="n">nz1</span><span class="o">=</span><span class="n">nz1</span><span class="p">,</span><span class="w"> </span><span class="n">nz2</span><span class="o">=</span><span class="n">nz2</span><span class="p">,</span><span class="w"> </span><span class="n">mesh_kind</span><span class="o">=</span><span class="n">mesh_kind</span><span class="p">)</span>
+<span class="w">  </span><span class="n">self</span><span class="p">%</span><span class="n">ioffset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="k">call </span><span class="n">self</span><span class="p">%</span><span class="n">open_scratch_file</span>
+<span class="w">  </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">self</span><span class="p">%</span><span class="n">error</span>
+<span class="w">  </span><span class="k">endfunction </span><span class="n">initialize</span>
 </pre></div>
 
     </section>
@@ -903,7 +1166,7 @@ implementation in a submodule of an interface in a parent module.
           <div class="col">
             <p>
               Lib_VTK_IO
- was developed by Stefano Zaghi<br>              &copy; 2025 
+ was developed by Stefano Zaghi<br>              &copy; 2026 
 </p>
           </div>
           <div class="col">

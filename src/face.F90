@@ -133,6 +133,7 @@ contains
    enddo
    endsubroutine styles_samples
 
+#if defined ASCII_SUPPORTED && defined ASCII_NEQ_DEFAULT
    ! private procedures
    pure function colorize_ascii(string, color_fg, color_bg, style) result(colorized)
    !< Colorize and stylize strings, ASCII kind.
@@ -173,7 +174,7 @@ contains
       endif
    endif
    endfunction colorize_ascii
-
+#else
    pure function colorize_default(string, color_fg, color_bg, style) result(colorized)
    !< Colorize and stylize strings, DEFAULT kind.
    character(len=*), intent(in)           :: string    !< Input string.
@@ -197,7 +198,8 @@ contains
       if (i>0) colorized = CODE_START//trim(STYLES(2, i))//CODE_END//colorized//CODE_CLEAR
    endif
    endfunction colorize_default
-
+#endif
+#ifdef UCS4_SUPPORTED
    pure function colorize_ucs4(string, color_fg, color_bg, style) result(colorized)
    !< Colorize and stylize strings, UCS4 kind.
    character(len=*, kind=UCS4), intent(in)           :: string    !< Input string.
@@ -237,7 +239,7 @@ contains
       endif
    endif
    endfunction colorize_ucs4
-
+#endif
    elemental function color_index(color)
    !< Return the array-index corresponding to the queried color.
    !<

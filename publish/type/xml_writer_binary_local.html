@@ -142,9 +142,9 @@
             <a class="list-group-item" href="../type/xml_writer_binary_local.html#variable-ioffset">ioffset</a>
             <a class="list-group-item" href="../type/xml_writer_binary_local.html#variable-xml">xml</a>
             <a class="list-group-item" href="../type/xml_writer_binary_local.html#variable-vtm_block">vtm_block</a>
-            <a class="list-group-item" href="../type/xml_writer_binary_local.html#variable-error~29">error</a>
-            <a class="list-group-item" href="../type/xml_writer_binary_local.html#variable-tag~5">tag</a>
-            <a class="list-group-item" href="../type/xml_writer_binary_local.html#variable-is_volatile">is_volatile</a>
+            <a class="list-group-item" href="../type/xml_writer_binary_local.html#variable-error~73">error</a>
+            <a class="list-group-item" href="../type/xml_writer_binary_local.html#variable-tag">tag</a>
+            <a class="list-group-item" href="../type/xml_writer_binary_local.html#variable-is_volatile~2">is_volatile</a>
             <a class="list-group-item" href="../type/xml_writer_binary_local.html#variable-xml_volatile">xml_volatile</a>
         </div>
       </div>
@@ -174,7 +174,7 @@
         <div class="list-group list-group-flush">
             <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-close_xml_file">close_xml_file</a>
             <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-open_xml_file">open_xml_file</a>
-            <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-free~2">free</a>
+            <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-free">free</a>
             <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-get_xml_volatile">get_xml_volatile</a>
             <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-write_connectivity">write_connectivity</a>
             <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-write_dataarray_location_tag">write_dataarray_location_tag</a>
@@ -191,12 +191,12 @@
             <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-write_tag">write_tag</a>
             <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-write_topology_tag">write_topology_tag</a>
             <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-write_dataarray~2">write_dataarray</a>
-            <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-write_fielddata~3">write_fielddata</a>
-            <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-write_geo~3">write_geo</a>
+            <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-write_fielddata~2">write_fielddata</a>
+            <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-write_geo~2">write_geo</a>
             <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-write_parallel_block_files~2">write_parallel_block_files</a>
-            <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-write_piece~4">write_piece</a>
+            <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-write_piece~2">write_piece</a>
             <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-initialize~6">initialize</a>
-            <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-finalize~8">finalize</a>
+            <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-finalize~7">finalize</a>
             <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-write_dataarray1_rank1_r8p~3">write_dataarray1_rank1_R8P</a>
             <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-write_dataarray1_rank1_r4p~3">write_dataarray1_rank1_R4P</a>
             <a class="list-group-item" href="../type/xml_writer_binary_local.html#boundprocedure-write_dataarray1_rank1_i8p~3">write_dataarray1_rank1_I8P</a>
@@ -517,7 +517,7 @@ said component(s).
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-error~29"></span>
+              <span class="anchor" id="variable-error~73"></span>
               integer(kind=I4P),
             </td>
               <td>public</td>
@@ -534,7 +534,7 @@ said component(s).
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-tag~5"></span>
+              <span class="anchor" id="variable-tag"></span>
               type(<a href='xml_tag.html'>xml_tag</a>),
             </td>
               <td>public</td>
@@ -551,7 +551,7 @@ said component(s).
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-is_volatile"></span>
+              <span class="anchor" id="variable-is_volatile~2"></span>
               logical,
             </td>
               <td>public</td>
@@ -719,7 +719,7 @@ said component(s).
           <div class="row">
               <div class="card mt-3">
     <div class="card-header codesum">
-      <span class="anchor" id="boundprocedure-free~2"></span>
+      <span class="anchor" id="boundprocedure-free"></span>
       <h3>
           procedure, public, pass(self) ::
   <strong>free</strong>
@@ -729,7 +729,7 @@ said component(s).
       <ul class="list-group">
           <li class="list-group-item">
                     <h3>
-    private elemental subroutine <a href='../proc/free~2.html'>free</a>(self, error)  
+    private elemental subroutine <a href='../proc/free.html'>free</a>(self, error)  
 </h3>
     
 
@@ -8194,7 +8194,7 @@ said component(s).
           <div class="row">
               <div class="card mt-3">
     <div class="card-header codesum">
-      <span class="anchor" id="boundprocedure-write_fielddata~3"></span>
+      <span class="anchor" id="boundprocedure-write_fielddata~2"></span>
       <h3>
           generic, public ::
   <strong>write_fielddata</strong> => <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_writer_abstract.html#boundprocedure-write_fielddata1_rank0'>write_fielddata1_rank0</a>, <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_writer_abstract.html#boundprocedure-write_fielddata_tag'>write_fielddata_tag</a>
@@ -8342,7 +8342,7 @@ said component(s).
           <div class="row">
               <div class="card mt-3">
     <div class="card-header codesum">
-      <span class="anchor" id="boundprocedure-write_geo~3"></span>
+      <span class="anchor" id="boundprocedure-write_geo~2"></span>
       <h3>
           generic, public ::
   <strong>write_geo</strong> => <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_writer_abstract.html#boundprocedure-write_geo_strg_data1_rank2_r8p'>write_geo_strg_data1_rank2_R8P</a>, <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_writer_abstract.html#boundprocedure-write_geo_strg_data1_rank2_r4p'>write_geo_strg_data1_rank2_R4P</a>, <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_writer_abstract.html#boundprocedure-write_geo_strg_data1_rank4_r8p'>write_geo_strg_data1_rank4_R8P</a>, <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_writer_abstract.html#boundprocedure-write_geo_strg_data1_rank4_r4p'>write_geo_strg_data1_rank4_R4P</a>, <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_writer_abstract.html#boundprocedure-write_geo_strg_data3_rank1_r8p'>write_geo_strg_data3_rank1_R8P</a>, <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_writer_abstract.html#boundprocedure-write_geo_strg_data3_rank1_r4p'>write_geo_strg_data3_rank1_R4P</a>, <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_writer_abstract.html#boundprocedure-write_geo_strg_data3_rank3_r8p'>write_geo_strg_data3_rank3_R8P</a>, <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_writer_abstract.html#boundprocedure-write_geo_strg_data3_rank3_r4p'>write_geo_strg_data3_rank3_R4P</a>, <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_writer_abstract.html#boundprocedure-write_geo_rect_data3_rank1_r8p'>write_geo_rect_data3_rank1_R8P</a>, <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_writer_abstract.html#boundprocedure-write_geo_rect_data3_rank1_r4p'>write_geo_rect_data3_rank1_R4P</a>, <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_writer_abstract.html#boundprocedure-write_geo_unst_data1_rank2_r8p'>write_geo_unst_data1_rank2_R8P</a>, <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_writer_abstract.html#boundprocedure-write_geo_unst_data1_rank2_r4p'>write_geo_unst_data1_rank2_R4P</a>, <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_writer_abstract.html#boundprocedure-write_geo_unst_data3_rank1_r8p'>write_geo_unst_data3_rank1_R8P</a>, <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_writer_abstract.html#boundprocedure-write_geo_unst_data3_rank1_r4p'>write_geo_unst_data3_rank1_R4P</a>
@@ -9870,7 +9870,7 @@ said component(s).
           <div class="row">
               <div class="card mt-3">
     <div class="card-header codesum">
-      <span class="anchor" id="boundprocedure-write_piece~4"></span>
+      <span class="anchor" id="boundprocedure-write_piece~2"></span>
       <h3>
           generic, public ::
   <strong>write_piece</strong> => <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_writer_abstract.html#boundprocedure-write_piece_start_tag'>write_piece_start_tag</a>, <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_writer_abstract.html#boundprocedure-write_piece_start_tag_unst'>write_piece_start_tag_unst</a>, <a href='/home/runner/work/VTKFortran/VTKFortran/doc/html/publish/type/xml_writer_abstract.html#boundprocedure-write_piece_end_tag'>write_piece_end_tag</a>
@@ -10361,7 +10361,7 @@ said component(s).
           <div class="row">
               <div class="card mt-3">
     <div class="card-header codesum">
-      <span class="anchor" id="boundprocedure-finalize~8"></span>
+      <span class="anchor" id="boundprocedure-finalize~7"></span>
       <h3>
           procedure, public, pass(self) ::
   <strong>finalize</strong>
@@ -10371,7 +10371,7 @@ said component(s).
       <ul class="list-group">
           <li class="list-group-item">
                     <h3>
-    private  function <a href='../proc/finalize~7.html'>finalize</a>(self) result(error)  
+    private  function <a href='../proc/finalize~6.html'>finalize</a>(self) result(error)  
 </h3>
     
 
@@ -17068,7 +17068,7 @@ said component(s).
           <div class="col">
             <p>
               Lib_VTK_IO
- was developed by Stefano Zaghi<br>              &copy; 2025 
+ was developed by Stefano Zaghi<br>              &copy; 2026 
 </p>
           </div>
           <div class="col">

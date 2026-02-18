@@ -94,7 +94,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 0.5% of total for modules and submodules.">174 statements</a>
+                 title=" 0.3% of total for modules and submodules.">100 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
@@ -135,8 +135,8 @@
       </a>
       <div id="vars-0" class="collapse">
         <div class="list-group list-group-flush">
-            <a class="list-group-item" href="../module/face~2.html#variable-ascii~10">ASCII</a>
-            <a class="list-group-item" href="../module/face~2.html#variable-ucs4~10">UCS4</a>
+            <a class="list-group-item" href="../module/face~2.html#variable-ascii~9">ASCII</a>
+            <a class="list-group-item" href="../module/face~2.html#variable-ucs4~9">UCS4</a>
             <a class="list-group-item" href="../module/face~2.html#variable-upper_alphabet~6">UPPER_ALPHABET</a>
             <a class="list-group-item" href="../module/face~2.html#variable-lower_alphabet~6">LOWER_ALPHABET</a>
             <a class="list-group-item" href="../module/face~2.html#variable-nl~4">NL</a>
@@ -178,9 +178,7 @@
       </a>
       <div id="funcs-0" class="collapse">
         <div class="list-group list-group-flush">
-            <a class="list-group-item" href="../module/face~2.html#proc-colorize_ascii~3">colorize_ascii</a>
             <a class="list-group-item" href="../module/face~2.html#proc-colorize_default~4">colorize_default</a>
-            <a class="list-group-item" href="../module/face~2.html#proc-colorize_ucs4~3">colorize_ucs4</a>
             <a class="list-group-item" href="../module/face~2.html#proc-color_index~4">color_index</a>
             <a class="list-group-item" href="../module/face~2.html#proc-style_index~4">style_index</a>
             <a class="list-group-item" href="../module/face~2.html#proc-upper~6">upper</a>
@@ -353,7 +351,7 @@ modules which it uses.
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-ascii~10"></span>
+              <span class="anchor" id="variable-ascii~9"></span>
               integer,
             </td>
               <td>public,</td>
@@ -370,7 +368,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-ucs4~10"></span>
+              <span class="anchor" id="variable-ucs4~9"></span>
               integer,
             </td>
               <td>public,</td>
@@ -592,286 +590,8 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-string~64"></span>
+              <span class="anchor" id="variable-string~57"></span>
               character(len=*),
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>string</strong></td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-color_fg~11"></span>
-              character(len=*),
-            </td>
-<td>intent(in),</td>
-              <td>optional</td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>color_fg</strong></td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-color_bg~11"></span>
-              character(len=*),
-            </td>
-<td>intent(in),</td>
-              <td>optional</td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>color_bg</strong></td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-style~14"></span>
-              character(len=*),
-            </td>
-<td>intent(in),</td>
-              <td>optional</td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>style</strong></td>
-            <td>
-
-            </td>
-        </tr>
-    </tbody>
-  </table>
-
-    <h4>
-    Return Value
-    <small>character(len=:), allocatable</small>
-    </h4>
-    
-
-          </li>
-    </ul>
-  </div>
-
-        </section>
-        <br>
-
-
-
-        <section>
-          <h2>Functions</h2>
-              <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-colorize_ascii~3"></span> <h3>private pure function <a href='../proc/colorize_ascii~3.html'>colorize_ascii</a>(string, color_fg, color_bg, style) result(colorized)  
-</h3></div>
-    <div class="card-body">
-          
-  
-
-  <h4>Arguments</h4>
-      <table class="table table-striped varlist">
-    <thead>
-      <tr>
-        <th scope="col">Type</th>
-<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
-        <th scope="col"></th>
-        <th scope="col">Name</th>
-        <th scope="col"></th>
-    </thead>
-    <tbody>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-string~63"></span>
-              character(kind=ASCII, len=*),
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>string</strong></td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-color_fg~10"></span>
-              character(len=*),
-            </td>
-<td>intent(in),</td>
-              <td>optional</td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>color_fg</strong></td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-color_bg~10"></span>
-              character(len=*),
-            </td>
-<td>intent(in),</td>
-              <td>optional</td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>color_bg</strong></td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-style~13"></span>
-              character(len=*),
-            </td>
-<td>intent(in),</td>
-              <td>optional</td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>style</strong></td>
-            <td>
-
-            </td>
-        </tr>
-    </tbody>
-  </table>
-
-    <h4>
-    Return Value
-    <small>character(kind=ASCII, len=:), allocatable</small>
-    </h4>
-    
-
-    </div>
-  </div>
-
-              <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-colorize_default~4"></span> <h3>private pure function <a href='../proc/colorize_default~4.html'>colorize_default</a>(string, color_fg, color_bg, style) result(colorized)  
-</h3></div>
-    <div class="card-body">
-          
-  
-
-  <h4>Arguments</h4>
-      <table class="table table-striped varlist">
-    <thead>
-      <tr>
-        <th scope="col">Type</th>
-<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
-        <th scope="col"></th>
-        <th scope="col">Name</th>
-        <th scope="col"></th>
-    </thead>
-    <tbody>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-string~64"></span>
-              character(len=*),
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>string</strong></td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-color_fg~11"></span>
-              character(len=*),
-            </td>
-<td>intent(in),</td>
-              <td>optional</td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>color_fg</strong></td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-color_bg~11"></span>
-              character(len=*),
-            </td>
-<td>intent(in),</td>
-              <td>optional</td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>color_bg</strong></td>
-            <td>
-
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-style~14"></span>
-              character(len=*),
-            </td>
-<td>intent(in),</td>
-              <td>optional</td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>style</strong></td>
-            <td>
-
-            </td>
-        </tr>
-    </tbody>
-  </table>
-
-    <h4>
-    Return Value
-    <small>character(len=:), allocatable</small>
-    </h4>
-    
-
-    </div>
-  </div>
-
-              <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-colorize_ucs4~3"></span> <h3>private pure function <a href='../proc/colorize_ucs4~3.html'>colorize_ucs4</a>(string, color_fg, color_bg, style) result(colorized)  
-</h3></div>
-    <div class="card-body">
-          
-  
-
-  <h4>Arguments</h4>
-      <table class="table table-striped varlist">
-    <thead>
-      <tr>
-        <th scope="col">Type</th>
-<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
-        <th scope="col"></th>
-        <th scope="col">Name</th>
-        <th scope="col"></th>
-    </thead>
-    <tbody>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-string~65"></span>
-              character(kind=UCS4, len=*),
             </td>
 <td>intent(in)</td>
               <td></td>            <td>
@@ -933,7 +653,105 @@ parameter
 
     <h4>
     Return Value
-    <small>character(kind=UCS4, len=:), allocatable</small>
+    <small>character(len=:), allocatable</small>
+    </h4>
+    
+
+          </li>
+    </ul>
+  </div>
+
+        </section>
+        <br>
+
+
+
+        <section>
+          <h2>Functions</h2>
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-colorize_default~4"></span> <h3>private pure function <a href='../proc/colorize_default~4.html'>colorize_default</a>(string, color_fg, color_bg, style) result(colorized)  
+</h3></div>
+    <div class="card-body">
+          
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-string~57"></span>
+              character(len=*),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>string</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-color_fg~12"></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>color_fg</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-color_bg~12"></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>color_bg</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-style~15"></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>style</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>character(len=:), allocatable</small>
     </h4>
     
 
@@ -1050,7 +868,7 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-string~66"></span>
+              <span class="anchor" id="variable-string~58"></span>
               character(len=*),
             </td>
 <td>intent(in)</td>
@@ -1122,7 +940,7 @@ parameter
           <div class="col">
             <p>
               Lib_VTK_IO
- was developed by Stefano Zaghi<br>              &copy; 2025 
+ was developed by Stefano Zaghi<br>              &copy; 2026 
 </p>
           </div>
           <div class="col">
