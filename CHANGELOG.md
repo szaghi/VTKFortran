@@ -1,5 +1,6 @@
 # Changelog
-## [Unreleased]
+## [v2.0.4](https://github.com/szaghi/FLAP/tree/v2.0.4) (2026-02-20)
+[Full Changelog](https://github.com/szaghi/FLAP/compare/v2.0.3...v2.0.4)
 ### Bug fixes
 - Update submodules ([`0960a74`](https://github.com/szaghi/FLAP/commit/0960a741c681bf542dc6cc25678b44d501da7476))
 - Fix issue [#45](https://github.com/szaghi/FLAP/issues/45) ([`e3ee0b9`](https://github.com/szaghi/FLAP/commit/e3ee0b989f5b99ae9404f8b199272253ad264be7))
@@ -39,6 +40,9 @@ Use https for submodule ([`1b3585c`](https://github.com/szaghi/FLAP/commit/1b358
 Fix to CMakeLists file
 
 Note: some CI actions fails, to be investigated ([`233d53e`](https://github.com/szaghi/FLAP/commit/233d53e54ffae71e914f2b44bbf5fd90a669bf32))
+
+### New features
+- Add vitepress docs site and modernize project infrastructure ([`2d5d983`](https://github.com/szaghi/FLAP/commit/2d5d983dd1e2bc66a1e35e57e1e5c51b48fff7ce))
 
 ## [v2.0.3](https://github.com/szaghi/FLAP/tree/v2.0.3) (2022-07-05)
 [Full Changelog](https://github.com/szaghi/FLAP/compare/v2.0.2...v2.0.3)
