@@ -1,309 +1,77 @@
-
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-US" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-      <meta name="description" content="Pure Fortran (2003+) library to write and read data conforming the VTK standard">
-    <meta name="author" content="Stefano Zaghi" >
-    <link rel="icon" href="./favicon.png">
-
-    <title> Lib_VTK_IO </title>
-
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <!-- Font Awesome -->
-    <link href="./css/fontawesome.min.css" rel="stylesheet">
-    <link href="./css/brands.min.css" rel="stylesheet">
-    <link href="./css/regular.min.css" rel="stylesheet">
-    <link href="./css/solid.min.css" rel="stylesheet">
-    <link href="./css/v4-font-face.min.css" rel="stylesheet">
-    <link href="./css/v4-shims.min.css" rel="stylesheet">
-    <!-- MathJax -->
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        TeX: { equationNumbers: { autoNumber: "AMS" } }
-      });
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
-            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
-    <!-- Other scripts and stylesheets -->
-    <link href="./css/local.css" rel="stylesheet">
-    <link href="./css/pygments.css" rel="stylesheet">
-    <script src="./js/svg-pan-zoom.min.js"></script>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>VTKFortran Documentation</title>
+    <meta name="description" content="A VitePress site">
+    <meta name="generator" content="VitePress v1.6.4">
+    <link rel="preload stylesheet" href="/VTKFortran/assets/style.BfPaFOp_.css" as="style">
+    <link rel="preload stylesheet" href="/VTKFortran/vp-icons.css" as="style">
+    
+    <script type="module" src="/VTKFortran/assets/app.DwAgpFSc.js"></script>
+    <link rel="preload" href="/VTKFortran/assets/inter-roman-latin.Di8DUHzh.woff2" as="font" type="font/woff2" crossorigin="">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/framework.BXL42d4u.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/theme.DvqJGrOi.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/katex.CBSAILhF.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/dagre-6UL2VRFP.CmlPnVw4.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/cose-bilkent-S5V4N54A.DoLXsbCN.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/c4Diagram-YG6GDRKO.DGzOssRD.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/flowDiagram-NV44I4VS.C7nGkcZD.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/erDiagram-Q2GNP2WA.CjDrZXI2.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/gitGraphDiagram-V2S2FVAM.JA4ik5lR.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/ganttDiagram-JELNMOA3.CGn-0Y4L.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/infoDiagram-HS3SLOUP.BYh-W2VJ.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/pieDiagram-ADFJNKIX.7Bu2pVlM.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/quadrantDiagram-AYHSOK5B.fWecA17k.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/xychartDiagram-PRI3JC2R.78NO4jD6.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/requirementDiagram-UZGBJVZJ.s9Jt7a2E.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/sequenceDiagram-WL72ISMW.DzlsW45p.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/classDiagram-2ON5EDUG.TfLWWL0W.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/classDiagram-v2-WZHVMYZB.TfLWWL0W.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/stateDiagram-FKZM4ZOC.beayTiEY.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/stateDiagram-v2-4FDKWEC3.NjaondAc.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/journeyDiagram-XKPGCS4Q.qg9toWl8.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/timeline-definition-IT6M3QCI.CeweKq6M.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/mindmap-definition-VGOIOE7T.Da5I9Urx.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/kanban-definition-3W4ZIXB7.Cd8-CBEv.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/sankeyDiagram-TZEHDZUN.D1oxVtNo.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/diagram-S2PKOQOG.DEbNGigh.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/diagram-QEK2KX5R.CPt53Z6E.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/blockDiagram-VD42YOAC.Dpnaq60U.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/architectureDiagram-VXUJARFQ.Cj1vampt.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/diagram-PSM6KHXK.CNnhXCvP.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/chunks/virtual_mermaid-config.DDnGl6nM.js">
+    <link rel="modulepreload" href="/VTKFortran/assets/index.md.BxZnrj_F.lean.js">
+    <script id="check-dark-mode">(()=>{const e=localStorage.getItem("vitepress-theme-appearance")||"auto",a=window.matchMedia("(prefers-color-scheme: dark)").matches;(!e||e==="auto"?a:e==="dark")&&document.documentElement.classList.add("dark")})();</script>
+    <script id="check-mac-os">document.documentElement.classList.toggle("mac",/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
   </head>
-
   <body>
-
-    <!-- Fixed navbar -->
-    <div class="container-fluid mb-sm-4 mb-xl-2">
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container">
-          <a class="navbar-brand" href="./index.html">Lib_VTK_IO </a>
-          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
-                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
-                  <span class="navbar-toggler-icon">
-          </button>
-
-          <div id="navbar" class="navbar-collapse collapse">
-            <ul class="navbar-nav">
-                  <li class="nav-item">
-                    <a class="nav-link" href="./lists/files.html">Source Files</a>
-                  </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="./lists/modules.html">Modules</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="./lists/procedures.html">Procedures</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="./lists/absint.html">Abstract Interfaces</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="./lists/types.html">Derived Types</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="./lists/programs.html">Programs</a>
-                </li>
-            </ul>
-              <div class="d-flex align-items-end flex-grow-1">
-                <form action="./search.html" role="search" class="ms-auto">
-                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
-                </form>
-              </div>
-          </div><!--/.nav-collapse -->
-        </div>
-      </nav>
-    </div>
-
-    <div class="container">
-  <!-- Main component for a primary marketing message or call to action -->
-    <div class="p-5 mb-4 bg-light border rounded-3" id="jumbotron">
-      <p>Pure Fortran (2003+) library to write and read data conforming the VTK standard</p>
-        <p> Find us on&hellip;</p>
-      <p>
-        <a class="btn btn-lg btn-primary" href="https://github.com/szaghi/Lib_VTK_IO" role="button">GitHub</a>
-        
-        
-        
-        
-      </p>
-    </div>
-
-      <div class="row" id='text'>
-        <div class=col-md-8>
-          <h1>Lib_VTK_IO</h1>
-          <p><a name="top"></a></p>
-<h1 id="vtkfortran">VTKFortran <a href="https://github.com/szaghi/VTKFortran/releases"><img alt="GitHub tag" src="https://img.shields.io/github/tag/szaghi/VTKFortran.svg"></a></h1>
-<p><a href="https://gitter.im/szaghi/VTKFortran?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img alt="Join the chat at https://gitter.im/szaghi/VTKFortran" src="https://badges.gitter.im/Join%20Chat.svg"></a></p>
-<p><a href=""><img alt="License" src="https://img.shields.io/badge/license-GNU%20GeneraL%20Public%20License%20v3,%20GPLv3-blue.svg"></a>
-<a href=""><img alt="License" src="https://img.shields.io/badge/license-BSD2-red.svg"></a>
-<a href=""><img alt="License" src="https://img.shields.io/badge/license-BSD3-red.svg"></a>
-<a href=""><img alt="License" src="https://img.shields.io/badge/license-MIT-red.svg"></a></p>
-<p><a href=""><img alt="Status" src="https://img.shields.io/badge/status-stable-brightgreen.svg"></a>
-<a href="https://github.com/szaghi/VTKFortran/actions"><img alt="CI Status" src="https://github.com/szaghi/VTKFortran/actions/workflows/ci.yml/badge.svg"></a>
-<a href="https://app.codecov.io/gh/szaghi/VTKFortran"><img alt="Coverage Status" src="https://img.shields.io/codecov/c/github/szaghi/VTKFortran.svg"></a></p>
-<h3 id="vtkfortran-pure-fortran-vtk-xml-api">VTKFortran, pure Fortran VTK (XML) API</h3>
-<p>A KISS pure Fortran Library to parse and emit files conforming VTK (XML) standard</p>
-<ul>
-<li>VTKFortran is a pure Fortran library to parse and emit VTK files, <a href="http://www.vtk.org/">VTK standard</a>;</li>
-<li>VTKFortran is Fortran 2003+ standard compliant;</li>
-<li>VTKFortran supports parallel architectures, it being threads-safe;</li>
-<li>VTKFortran supports <em>ascii</em>, <em>binary</em> (Base64 encoding) and <em>raw</em> file formats;</li>
-<li>VTKFortran is a Free, Open Source Project.</li>
-</ul>
-<h4 id="issues">Issues</h4>
-<p><a href=""><img alt="GitHub issues" src="https://img.shields.io/github/issues/szaghi/VTKFortran.svg"></a></p>
-<h4 id="compiler-support">Compiler Support</h4>
-<p><a href=""><img alt="Compiler" src="https://img.shields.io/badge/GNU-pass%20(v6.0.1+)-brightgreen.svg"></a>
-<a href=""><img alt="Compiler" src="https://img.shields.io/badge/Intel-pass%20(v16.x+)-brightgreen.svg"></a>
-<a href=""><img alt="Compiler" src="https://img.shields.io/badge/IBM%20XL-not%20tested-yellow.svg"></a>
-<a href=""><img alt="Compiler" src="https://img.shields.io/badge/g95-not%20tested-yellow.svg"></a>
-<a href=""><img alt="Compiler" src="https://img.shields.io/badge/NAG-not%20tested-yellow.svg"></a>
-<a href=""><img alt="Compiler" src="https://img.shields.io/badge/PGI-not%20tested-yellow.svg"></a></p>
-<hr>
-<p><a href="#main-features">Main features</a> | <a href="#copyrights">Copyrights</a> | <a href="#documentation">Documentation</a> | <a href="#a-taste-of-vtkfortran">A Taste of VTKFortran</a></p>
-<hr>
-<h2 id="main-features">Main features</h2>
-<h3 id="vtk-features">VTK features</h3>
-<h4 id="exporters">Exporters</h4>
-<h5 id="legacy-standard">Legacy standard</h5>
-<ul>
-<li>[x] Structured Points;</li>
-<li>[x] Structured Grid;</li>
-<li>[x] Unstructured Grid;</li>
-<li>[ ] Polydata;</li>
-<li>[x] Rectilinear Grid;</li>
-<li>[ ] Field;</li>
-</ul>
-<h5 id="xml-standard">XML standard</h5>
-<ul>
-<li>[ ] serial dataset:<ul>
-<li>[ ] Image Data;</li>
-<li>[ ] Polydata;</li>
-<li>[x] Rectilinear Grid;</li>
-<li>[x] Structured Grid;</li>
-<li>[x] Unstructured Grid;</li>
-</ul>
-</li>
-<li>[ ] parallel (partitioned) dataset:<ul>
-<li>[ ] Image Data;</li>
-<li>[ ] Polydata;</li>
-<li>[x] Rectilinear Grid;</li>
-<li>[x] Structured Grid;</li>
-<li>[x] Unstructured Grid;</li>
-</ul>
-</li>
-<li>[x] composite dataset:<ul>
-<li>[x] vtkMultiBlockDataSet.</li>
-</ul>
-</li>
-</ul>
-<h4 id="importers">Importers</h4>
-<p>The importers are under developing.</p>
-<h3 id="parallel-support">Parallel Support</h3>
-<p>VTKFortran can be safely used in parallel <em>environments</em>, handling multiple concurrent files: it is <strong>thread/processor-safe</strong>, meaning that it can be safely used into parallel architectures using OpenMP and/or MPI paradigms.</p>
-<h2 id="copyrights">Copyrights</h2>
-<p>VTKFortran is an open source project, it is distributed under a multi-licensing system:</p>
-<ul>
-<li>for FOSS projects:</li>
-<li><a href="http://www.gnu.org/licenses/gpl-3.0.html">GPL v3</a>;</li>
-<li>for closed source/commercial projects:</li>
-<li><a href="http://opensource.org/licenses/BSD-2-Clause">BSD 2-Clause</a>;</li>
-<li><a href="http://opensource.org/licenses/BSD-3-Clause">BSD 3-Clause</a>;</li>
-<li><a href="http://opensource.org/licenses/MIT">MIT</a>.</li>
-</ul>
-<p>Anyone is interest to use, to develop or to contribute to VTKFortran is welcome, feel free to select the license that best matches your soul!</p>
-<p>More details can be found on <a href="https://github.com/szaghi/VTKFortran/wiki/Copyrights">wiki</a>.</p>
-<p>Go to <a href="#top">Top</a></p>
-<h2 id="documentation">Documentation</h2>
-<p>Besides this README file the VTKFortran documentation is contained into its own <a href="https://github.com/szaghi/VTKFortran/wiki">wiki</a>. Detailed documentation of the API is contained into the <a href="http://szaghi.github.io/VTKFortran/index.html">GitHub Pages</a> that can also be created locally by means of <a href="https://github.com/cmacmackin/ford">ford tool</a>.</p>
-<p>Go to <a href="#top">Top</a></p>
-<h3 id="a-taste-of-vtkfortran">A taste of VTKFortran</h3>
-<p>Let us assume our aim being to save our pure Fortran data into a VTK structured grid file in binary XML form. This is simple as</p>
-<div class="codehilite"><pre><span></span><code><span class="k">use </span><span class="n">vtk_fortran</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">vtk_file</span>
-
-<span class="k">type</span><span class="p">(</span><span class="n">vtk_file</span><span class="p">)</span><span class="w">     </span><span class="kd">::</span><span class="w"> </span><span class="n">a_vtk_file</span><span class="w">                             </span><span class="c">! A VTK file.</span>
-<span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nx1</span><span class="o">=</span><span class="mi">0_I4P</span><span class="w">                              </span><span class="c">! X lower bound extent.</span>
-<span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nx2</span><span class="o">=</span><span class="mi">9_I4P</span><span class="w">                              </span><span class="c">! X upper bound extent.</span>
-<span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ny1</span><span class="o">=</span><span class="mi">0_I4P</span><span class="w">                              </span><span class="c">! Y lower bound extent.</span>
-<span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ny2</span><span class="o">=</span><span class="mi">5_I4P</span><span class="w">                              </span><span class="c">! Y upper bound extent.</span>
-<span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nz1</span><span class="o">=</span><span class="mi">0_I4P</span><span class="w">                              </span><span class="c">! Z lower bound extent.</span>
-<span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nz2</span><span class="o">=</span><span class="mi">5_I4P</span><span class="w">                              </span><span class="c">! Z upper bound extent.</span>
-<span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nn</span><span class="o">=</span><span class="p">(</span><span class="n">nx2</span><span class="o">-</span><span class="n">nx1</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">ny2</span><span class="o">-</span><span class="n">ny1</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">nz2</span><span class="o">-</span><span class="n">nz1</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="c">! Number of elements.</span>
-<span class="kt">real</span><span class="w">               </span><span class="kd">::</span><span class="w"> </span><span class="n">x</span><span class="p">(</span><span class="n">nx1</span><span class="p">:</span><span class="n">nx2</span><span class="p">,</span><span class="n">ny1</span><span class="p">:</span><span class="n">ny2</span><span class="p">,</span><span class="n">nz1</span><span class="p">:</span><span class="n">nz2</span><span class="p">)</span><span class="w">             </span><span class="c">! X coordinates.</span>
-<span class="kt">real</span><span class="w">               </span><span class="kd">::</span><span class="w"> </span><span class="n">y</span><span class="p">(</span><span class="n">nx1</span><span class="p">:</span><span class="n">nx2</span><span class="p">,</span><span class="n">ny1</span><span class="p">:</span><span class="n">ny2</span><span class="p">,</span><span class="n">nz1</span><span class="p">:</span><span class="n">nz2</span><span class="p">)</span><span class="w">             </span><span class="c">! Y coordinates.</span>
-<span class="kt">real</span><span class="w">               </span><span class="kd">::</span><span class="w"> </span><span class="n">z</span><span class="p">(</span><span class="n">nx1</span><span class="p">:</span><span class="n">nx2</span><span class="p">,</span><span class="n">ny1</span><span class="p">:</span><span class="n">ny2</span><span class="p">,</span><span class="n">nz1</span><span class="p">:</span><span class="n">nz2</span><span class="p">)</span><span class="w">             </span><span class="c">! Z coordinates.</span>
-<span class="kt">real</span><span class="w">               </span><span class="kd">::</span><span class="w"> </span><span class="n">v</span><span class="p">(</span><span class="n">nx1</span><span class="p">:</span><span class="n">nx2</span><span class="p">,</span><span class="n">ny1</span><span class="p">:</span><span class="n">ny2</span><span class="p">,</span><span class="n">nz1</span><span class="p">:</span><span class="n">nz2</span><span class="p">)</span><span class="w">             </span><span class="c">! Variable at coordinates.</span>
-<span class="kt">integer</span><span class="w">            </span><span class="kd">::</span><span class="w"> </span><span class="n">error</span><span class="w">                                  </span><span class="c">! Error status.</span>
-
-<span class="c">! initialize the data...</span>
-
-<span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a_vtk_file</span><span class="p">%</span><span class="n">initialize</span><span class="p">(</span><span class="k">format</span><span class="o">=</span><span class="s1">&#39;binary&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;XML_STRG-binary.vts&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
-<span class="w">                              </span><span class="n">mesh_topology</span><span class="o">=</span><span class="s1">&#39;StructuredGrid&#39;</span><span class="p">,</span><span class="w">                  </span><span class="p">&amp;</span>
-<span class="w">                              </span><span class="n">nx1</span><span class="o">=</span><span class="n">nx1</span><span class="p">,</span><span class="w"> </span><span class="n">nx2</span><span class="o">=</span><span class="n">nx2</span><span class="p">,</span><span class="w"> </span><span class="n">ny1</span><span class="o">=</span><span class="n">ny1</span><span class="p">,</span><span class="w"> </span><span class="n">ny2</span><span class="o">=</span><span class="n">ny2</span><span class="p">,</span><span class="w"> </span><span class="n">nz1</span><span class="o">=</span><span class="n">nz1</span><span class="p">,</span><span class="w"> </span><span class="n">nz2</span><span class="o">=</span><span class="n">nz2</span><span class="p">)</span>
-<span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a_vtk_file</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">%</span><span class="n">write_piece</span><span class="p">(</span><span class="n">nx1</span><span class="o">=</span><span class="n">nx1</span><span class="p">,</span><span class="w"> </span><span class="n">nx2</span><span class="o">=</span><span class="n">nx2</span><span class="p">,</span><span class="w"> </span><span class="n">ny1</span><span class="o">=</span><span class="n">ny1</span><span class="p">,</span><span class="w"> </span><span class="n">ny2</span><span class="o">=</span><span class="n">ny2</span><span class="p">,</span><span class="w"> </span><span class="n">nz1</span><span class="o">=</span><span class="n">nz1</span><span class="p">,</span><span class="w"> </span><span class="n">nz2</span><span class="o">=</span><span class="n">nz2</span><span class="p">)</span>
-<span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a_vtk_file</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">%</span><span class="n">write_geo</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">nn</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">)</span>
-<span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a_vtk_file</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">%</span><span class="n">write_dataarray</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s1">&#39;node&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;open&#39;</span><span class="p">)</span>
-<span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a_vtk_file</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">%</span><span class="n">write_dataarray</span><span class="p">(</span><span class="n">data_name</span><span class="o">=</span><span class="s1">&#39;float64_scalar&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="o">=</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">one_component</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.)</span>
-<span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a_vtk_file</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">%</span><span class="n">write_dataarray</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s1">&#39;node&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;close&#39;</span><span class="p">)</span>
-<span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a_vtk_file</span><span class="p">%</span><span class="n">xml_writer</span><span class="p">%</span><span class="n">write_piece</span><span class="p">()</span>
-<span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a_vtk_file</span><span class="p">%</span><span class="n">finalize</span><span class="p">()</span>
-</code></pre></div>
-
-<p>Note that all VTKFortran functions return an error code that can be used for sophisticated error trapping algorithms.</p>
-        </div>
-          <div class="col-md-4">
-            <div class="card card-body bg-light">
-              <h2 class="card-title">Developer Info</h2>
-              <h4 class="card-text">Stefano Zaghi</h4>
-              <p class="card-text"></p>
-                <div class="text-center"><div class="btn-group" role="group">
-                      <a class="btn btn-lg btn-primary" href="mailto:stefano.zaghi@gmail.com"><i class="fa fa-envelope fa-lg"></i></a>
-                    
-                    <a class="btn btn-lg btn-primary" href="https://github.com/szaghi"><i class="fa fa-github fa-lg"></i></a>
-                    
-                    
-                    
-                    
-                    
-                    
-                </div></div>
-            </div>
-          </div>
-      </div>
-        <div class="row">
-          <hr>
-          <div class="col-xs-6 col-sm-3">
-            <div>
-              <h3>Source Files</h3>
-              <ul><li><a href='sourcefile/befor64-doctest-1.f90.html'>befor64-doctest-1.f90</a></li><li><a href='sourcefile/befor64-doctest-1.f90~2.html'>befor64-doctest-1.f90</a></li><li><a href='sourcefile/befor64-doctest-1.f90~3.html'>befor64-doctest-1.f90</a></li><li><a href='sourcefile/befor64-doctest-1.f90~4.html'>befor64-doctest-1.f90</a></li><li><a href='sourcefile/befor64-doctest-10.f90.html'>befor64-doctest-10.f90</a></li><li><a href='sourcefile/befor64-doctest-10.f90~2.html'>befor64-doctest-10.f90</a></li><li><a href='sourcefile/befor64-doctest-10.f90~3.html'>befor64-doctest-10.f90</a></li><li><a href='sourcefile/befor64-doctest-10.f90~4.html'>befor64-doctest-10.f90</a></li><li><a href='sourcefile/befor64-doctest-11.f90.html'>befor64-doctest-11.f90</a></li><li><a href='sourcefile/befor64-doctest-11.f90~2.html'>befor64-doctest-11.f90</a></li></ul>
-            </div>
-            <div>
-              <ul>
-                <li><a href="./lists/files.html"><em>All source files&hellip;</em></a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-xs-6 col-sm-3">
-            <div>
-              <h3>Modules</h3>
-              <ul><li><a href='module/befor64.html'>befor64</a></li><li><a href='module/befor64~3.html'>befor64</a></li><li><a href='module/befor64~2.html'>befor64</a></li><li><a href='module/befor64~4.html'>befor64</a></li><li><a href='module/befor64_pack_data_m~4.html'>befor64_pack_data_m</a></li><li><a href='module/befor64_pack_data_m~3.html'>befor64_pack_data_m</a></li><li><a href='module/befor64_pack_data_m~2.html'>befor64_pack_data_m</a></li><li><a href='module/befor64_pack_data_m.html'>befor64_pack_data_m</a></li><li><a href='module/face.html'>face</a></li><li><a href='module/face~3.html'>face</a></li></ul>
-            </div>
-            <div>
-              <ul>
-                <li><a href="./lists/modules.html"><em>All modules&hellip;</em></a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-xs-6 col-sm-3">
-            <div>
-              <h3>Procedures</h3>
-              <ul><li><a href='proc/add_child.html'>add_child</a></li><li><a href='proc/add_child_id.html'>add_child_id</a></li><li><a href='proc/add_multiple_attributes.html'>add_multiple_attributes</a></li><li><a href='proc/add_single_attribute.html'>add_single_attribute</a></li><li><a href='proc/add_stream_attributes.html'>add_stream_attributes</a></li><li><a href='proc/add_tag.html'>add_tag</a></li><li><a href='interface/adjustl.html'>adjustl</a></li><li><a href='interface/adjustl~2.html'>adjustl</a></li><li><a href='interface/adjustr.html'>adjustr</a></li><li><a href='interface/adjustr~2.html'>adjustr</a></li></ul>
-            </div>
-            <div>
-              <ul>
-                <li><a href="./lists/procedures.html"><em>All procedures&hellip;</em></a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-xs-6 col-sm-3">
-            <div>
-              <h3>Derived Types</h3>
-              <ul><li><a href='type/pvtk_file.html'>pvtk_file</a></li><li><a href='type/string.html'>string</a></li><li><a href='type/string~2.html'>string</a></li><li><a href='type/vtk_file.html'>vtk_file</a></li><li><a href='type/vtm_file.html'>vtm_file</a></li><li><a href='type/xml_file.html'>xml_file</a></li><li><a href='type/xml_tag.html'>xml_tag</a></li><li><a href='type/xml_writer_abstract.html'>xml_writer_abstract</a></li><li><a href='type/xml_writer_appended.html'>xml_writer_appended</a></li><li><a href='type/xml_writer_ascii_local.html'>xml_writer_ascii_local</a></li></ul>
-            </div>
-            <div>
-              <ul>
-                <li><a href="./lists/types.html"><em>All derived types&hellip;</em></a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      <hr>
-    </div> <!-- /container -->
-    <footer>
-      <div class="container">
-        <div class="row justify-content-between">
-          <div class="col">
-            <p>
-              Lib_VTK_IO
- was developed by Stefano Zaghi<br>              &copy; 2026 
-</p>
-          </div>
-          <div class="col">
-            <p class="text-end">
-              Documentation generated by
-              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
-            </p>
-          </div>
-        </div>
-        <br>
-      </div> <!-- /container -->
-    </footer>
+    <div id="app"><div class="Layout" data-v-d8b57b2d><!--[--><!--]--><!--[--><span tabindex="-1" data-v-fcbfc0e0></span><a href="#VPContent" class="VPSkipLink visually-hidden" data-v-fcbfc0e0>Skip to content</a><!--]--><!----><header class="VPNav" data-v-d8b57b2d data-v-7ad780c2><div class="VPNavBar" data-v-7ad780c2 data-v-9fd4d1dd><div class="wrapper" data-v-9fd4d1dd><div class="container" data-v-9fd4d1dd><div class="title" data-v-9fd4d1dd><div class="VPNavBarTitle" data-v-9fd4d1dd data-v-9f43907a><a class="title" href="/VTKFortran/" data-v-9f43907a><!--[--><!--]--><!----><span data-v-9f43907a>VTKFortran Documentation</span><!--[--><!--]--></a></div></div><div class="content" data-v-9fd4d1dd><div class="content-body" data-v-9fd4d1dd><!--[--><!--]--><div class="VPNavBarSearch search" data-v-9fd4d1dd><!--[--><!----><div id="local-search"><button type="button" class="DocSearch DocSearch-Button" aria-label="Search"><span class="DocSearch-Button-Container"><span class="vp-icon DocSearch-Search-Icon"></span><span class="DocSearch-Button-Placeholder">Search</span></span><span class="DocSearch-Button-Keys"><kbd class="DocSearch-Button-Key"></kbd><kbd class="DocSearch-Button-Key">K</kbd></span></button></div><!--]--></div><nav aria-labelledby="main-nav-aria-label" class="VPNavBarMenu menu" data-v-9fd4d1dd data-v-afb2845e><span id="main-nav-aria-label" class="visually-hidden" data-v-afb2845e> Main Navigation </span><!--[--><!--[--><a class="VPLink link VPNavBarMenuLink active" href="/VTKFortran/" tabindex="0" data-v-afb2845e data-v-815115f5><!--[--><span data-v-815115f5>Home</span><!--]--></a><!--]--><!--[--><div class="VPFlyout VPNavBarMenuGroup" data-v-afb2845e data-v-bfe7971f><button type="button" class="button" aria-haspopup="true" aria-expanded="false" data-v-bfe7971f><span class="text" data-v-bfe7971f><!----><span data-v-bfe7971f>Guide</span><span class="vpi-chevron-down text-icon" data-v-bfe7971f></span></span></button><div class="menu" data-v-bfe7971f><div class="VPMenu" data-v-bfe7971f data-v-20ed86d6><div class="items" data-v-20ed86d6><!--[--><!--[--><div class="VPMenuLink" data-v-20ed86d6 data-v-7eeeb2dc><a class="VPLink link" href="/VTKFortran/guide/" data-v-7eeeb2dc><!--[--><span data-v-7eeeb2dc>About</span><!--]--></a></div><!--]--><!--[--><div class="VPMenuLink" data-v-20ed86d6 data-v-7eeeb2dc><a class="VPLink link" href="/VTKFortran/guide/features.html" data-v-7eeeb2dc><!--[--><span data-v-7eeeb2dc>Features</span><!--]--></a></div><!--]--><!--[--><div class="VPMenuLink" data-v-20ed86d6 data-v-7eeeb2dc><a class="VPLink link" href="/VTKFortran/guide/installation.html" data-v-7eeeb2dc><!--[--><span data-v-7eeeb2dc>Installation</span><!--]--></a></div><!--]--><!--[--><div class="VPMenuLink" data-v-20ed86d6 data-v-7eeeb2dc><a class="VPLink link" href="/VTKFortran/guide/usage.html" data-v-7eeeb2dc><!--[--><span data-v-7eeeb2dc>Usage</span><!--]--></a></div><!--]--><!--[--><div class="VPMenuLink" data-v-20ed86d6 data-v-7eeeb2dc><a class="VPLink link" href="/VTKFortran/guide/api-reference.html" data-v-7eeeb2dc><!--[--><span data-v-7eeeb2dc>API Reference</span><!--]--></a></div><!--]--><!--[--><div class="VPMenuLink" data-v-20ed86d6 data-v-7eeeb2dc><a class="VPLink link" href="/VTKFortran/guide/contributing.html" data-v-7eeeb2dc><!--[--><span data-v-7eeeb2dc>Contributing</span><!--]--></a></div><!--]--><!--[--><div class="VPMenuLink" data-v-20ed86d6 data-v-7eeeb2dc><a class="VPLink link" href="/VTKFortran/guide/coverage-analysis.html" data-v-7eeeb2dc><!--[--><span data-v-7eeeb2dc>Coverage Analysis</span><!--]--></a></div><!--]--><!--[--><div class="VPMenuLink" data-v-20ed86d6 data-v-7eeeb2dc><a class="VPLink link" href="/VTKFortran/guide/changelog.html" data-v-7eeeb2dc><!--[--><span data-v-7eeeb2dc>Changelog</span><!--]--></a></div><!--]--><!--]--></div><!--[--><!--]--></div></div></div><!--]--><!--[--><a class="VPLink link VPNavBarMenuLink" href="/VTKFortran/api/" tabindex="0" data-v-afb2845e data-v-815115f5><!--[--><span data-v-815115f5>API</span><!--]--></a><!--]--><!--[--><a class="VPLink link vp-external-link-icon VPNavBarMenuLink" href="https://github.com/szaghi/VTKFortran" target="_blank" rel="noreferrer" tabindex="0" data-v-afb2845e data-v-815115f5><!--[--><span data-v-815115f5>GitHub</span><!--]--></a><!--]--><!--]--></nav><!----><div class="VPNavBarAppearance appearance" data-v-9fd4d1dd data-v-3f90c1a5><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-3f90c1a5 data-v-be9742d9 data-v-b4ccac88><span class="check" data-v-b4ccac88><span class="icon" data-v-b4ccac88><!--[--><span class="vpi-sun sun" data-v-be9742d9></span><span class="vpi-moon moon" data-v-be9742d9></span><!--]--></span></span></button></div><!----><div class="VPFlyout VPNavBarExtra extra" data-v-9fd4d1dd data-v-f953d92f data-v-bfe7971f><button type="button" class="button" aria-haspopup="true" aria-expanded="false" aria-label="extra navigation" data-v-bfe7971f><span class="vpi-more-horizontal icon" data-v-bfe7971f></span></button><div class="menu" data-v-bfe7971f><div class="VPMenu" data-v-bfe7971f data-v-20ed86d6><!----><!--[--><!--[--><!----><div class="group" data-v-f953d92f><div class="item appearance" data-v-f953d92f><p class="label" data-v-f953d92f>Appearance</p><div class="appearance-action" data-v-f953d92f><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-f953d92f data-v-be9742d9 data-v-b4ccac88><span class="check" data-v-b4ccac88><span class="icon" data-v-b4ccac88><!--[--><span class="vpi-sun sun" data-v-be9742d9></span><span class="vpi-moon moon" data-v-be9742d9></span><!--]--></span></span></button></div></div></div><!----><!--]--><!--]--></div></div></div><!--[--><!--]--><button type="button" class="VPNavBarHamburger hamburger" aria-label="mobile navigation" aria-expanded="false" aria-controls="VPNavScreen" data-v-9fd4d1dd data-v-6bee1efd><span class="container" data-v-6bee1efd><span class="top" data-v-6bee1efd></span><span class="middle" data-v-6bee1efd></span><span class="bottom" data-v-6bee1efd></span></span></button></div></div></div></div><div class="divider" data-v-9fd4d1dd><div class="divider-line" data-v-9fd4d1dd></div></div></div><!----></header><!----><!----><div class="VPContent is-home" id="VPContent" data-v-d8b57b2d data-v-9a6c75ad><div class="VPHome" data-v-9a6c75ad data-v-e07eaea7><!--[--><!--]--><div class="VPHero VPHomeHero" data-v-e07eaea7 data-v-dd8814ff><div class="container" data-v-dd8814ff><div class="main" data-v-dd8814ff><!--[--><!--]--><!--[--><h1 class="heading" data-v-dd8814ff><span class="name clip" data-v-dd8814ff>VTKFortran</span><span class="text" data-v-dd8814ff>VTK XML API</span></h1><p class="tagline" data-v-dd8814ff>A pure Fortran 2003+ library to parse and emit files conforming the VTK XML standard.</p><!--]--><!--[--><!--]--><div class="actions" data-v-dd8814ff><!--[--><div class="action" data-v-dd8814ff><a class="VPButton medium brand" href="/VTKFortran/guide/" data-v-dd8814ff data-v-93dc4167>Guide</a></div><div class="action" data-v-dd8814ff><a class="VPButton medium alt" href="/VTKFortran/api/" data-v-dd8814ff data-v-93dc4167>API Reference</a></div><div class="action" data-v-dd8814ff><a class="VPButton medium alt" href="https://github.com/szaghi/VTKFortran" target="_blank" rel="noreferrer" data-v-dd8814ff data-v-93dc4167>View on GitHub</a></div><!--]--></div><!--[--><!--]--></div><!----></div></div><!--[--><!--]--><!--[--><!--]--><div class="VPFeatures VPHomeFeatures" data-v-e07eaea7 data-v-b1eea84a><div class="container" data-v-b1eea84a><div class="items" data-v-b1eea84a><!--[--><div class="grid-6 item" data-v-b1eea84a><div class="VPLink no-icon VPFeature" data-v-b1eea84a data-v-bd37d1a2><!--[--><article class="box" data-v-bd37d1a2><div class="icon" data-v-bd37d1a2>📐</div><h2 class="title" data-v-bd37d1a2>VTK XML Support</h2><p class="details" data-v-bd37d1a2>Write Rectilinear, Structured, and Unstructured grids in the VTK XML format. Composite multi-block datasets (VTM) and parallel partitioned files (PVTS) are also supported.</p><!----></article><!--]--></div></div><div class="grid-6 item" data-v-b1eea84a><div class="VPLink no-icon VPFeature" data-v-b1eea84a data-v-bd37d1a2><!--[--><article class="box" data-v-bd37d1a2><div class="icon" data-v-bd37d1a2>🗜️</div><h2 class="title" data-v-bd37d1a2>Multiple Output Formats</h2><p class="details" data-v-bd37d1a2>Choose between ASCII, binary (Base64-encoded), and raw binary appended formats. All procedures return an integer error code for flexible error trapping.</p><!----></article><!--]--></div></div><div class="grid-6 item" data-v-b1eea84a><div class="VPLink no-icon VPFeature" data-v-b1eea84a data-v-bd37d1a2><!--[--><article class="box" data-v-bd37d1a2><div class="icon" data-v-bd37d1a2>⚡</div><h2 class="title" data-v-bd37d1a2>Parallel Safe</h2><p class="details" data-v-bd37d1a2>Handle multiple concurrent files safely. Thread and processor safe — works with OpenMP and MPI paradigms without coordination overhead.</p><!----></article><!--]--></div></div><div class="grid-6 item" data-v-b1eea84a><div class="VPLink no-icon VPFeature" data-v-b1eea84a data-v-bd37d1a2><!--[--><article class="box" data-v-bd37d1a2><div class="icon" data-v-bd37d1a2>🛠️</div><h2 class="title" data-v-bd37d1a2>Multi Build System</h2><p class="details" data-v-bd37d1a2>Build with CMake (preferred), FoBiS.py, FPM, or GNU Make. Integrate into CMake projects via add_subdirectory and target_link_libraries.</p><!----></article><!--]--></div></div><div class="grid-6 item" data-v-b1eea84a><div class="VPLink no-icon VPFeature" data-v-b1eea84a data-v-bd37d1a2><!--[--><article class="box" data-v-bd37d1a2><div class="icon" data-v-bd37d1a2>🧱</div><h2 class="title" data-v-bd37d1a2>OOP Design</h2><p class="details" data-v-bd37d1a2>A polymorphic xml_writer component is allocated at runtime based on the chosen format. The vtk_file, pvtk_file, and vtm_file types expose a clean, consistent type-bound-procedure API.</p><!----></article><!--]--></div></div><div class="grid-6 item" data-v-b1eea84a><div class="VPLink no-icon VPFeature" data-v-b1eea84a data-v-bd37d1a2><!--[--><article class="box" data-v-bd37d1a2><div class="icon" data-v-bd37d1a2>🆓</div><h2 class="title" data-v-bd37d1a2>Free & Open Source</h2><p class="details" data-v-bd37d1a2>Multi-licensed — GPLv3 for FOSS projects, BSD 2/3-Clause or MIT for commercial use. Fortran 2003+ standard compliant.</p><!----></article><!--]--></div></div><!--]--></div></div></div><!--[--><!--]--><div class="vp-doc container" style="" data-v-e07eaea7 data-v-c141a4bd><!--[--><div style="position:relative;" data-v-e07eaea7><div><h2 id="quick-start" tabindex="-1">Quick start <a class="header-anchor" href="#quick-start" aria-label="Permalink to &quot;Quick start&quot;">​</a></h2><p>Write a structured grid in binary XML format:</p><div class="language-fortran vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">fortran</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">use</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> vtk_fortran</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">only :</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> vtk_file</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">use</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> penf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,        </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">only :</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> I4P, R8P</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">type</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">vtk_file</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)     </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> a_vtk_file</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">integer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">parameter</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> ::</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> nx1</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, nx2</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">9</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, ny1</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, ny2</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">5</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, nz1</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, nz2</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">5</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">integer</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">parameter</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> ::</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> nn</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(nx2</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">nx1</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">+1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ny2</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">ny1</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">+1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(nz2</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">nz1</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">+1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">real</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(R8P)          </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> x(nx1:nx2,ny1:ny2,nz1:nz2)</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">real</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(R8P)          </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> y(nx1:nx2,ny1:ny2,nz1:nz2)</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">real</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(R8P)          </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> z(nx1:nx2,ny1:ny2,nz1:nz2)</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">real</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(R8P)          </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">::</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> v(nx1:nx2,ny1:ny2,nz1:nz2)</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">integer</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">            ::</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> error</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">! ... fill x, y, z, v ...</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">error </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> a_vtk_file</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">%</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">initialize(</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">format</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&#39;binary&#39;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> filename</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&#39;output.vts&#39;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span></span>
+<span class="line"><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">                              mesh_topology</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&#39;StructuredGrid&#39;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,          </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span></span>
+<span class="line"><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">                              nx1</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">nx1,</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> nx2</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">nx2,</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> ny1</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">ny1,</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> ny2</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">ny2,</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> nz1</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">nz1,</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> nz2</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">nz2)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">error </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> a_vtk_file</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">%</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">xml_writer</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">%</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">write_piece(</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">nx1</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">nx1,</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> nx2</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">nx2,</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> ny1</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">ny1,</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> ny2</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">ny2,</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> nz1</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">nz1,</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> nz2</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">nz2)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">error </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> a_vtk_file</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">%</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">xml_writer</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">%</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">write_geo(</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">n</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">nn,</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> x</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">x,</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> y</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">y,</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> z</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">z)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">error </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> a_vtk_file</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">%</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">xml_writer</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">%</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">write_dataarray(</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">location</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&#39;node&#39;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> action</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&#39;open&#39;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">error </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> a_vtk_file</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">%</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">xml_writer</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">%</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">write_dataarray(</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">data_name</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&#39;velocity&#39;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> x</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">v,</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> one_component</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">.true.</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">error </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> a_vtk_file</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">%</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">xml_writer</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">%</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">write_dataarray(</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">location</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&#39;node&#39;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> action</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&#39;close&#39;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">error </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> a_vtk_file</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">%</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">xml_writer</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">%</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">write_piece()</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">error </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> a_vtk_file</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">%</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">finalize()</span></span></code></pre></div><p>All procedures return an integer error code — zero means success.</p><h2 id="authors" tabindex="-1">Authors <a class="header-anchor" href="#authors" aria-label="Permalink to &quot;Authors&quot;">​</a></h2><ul><li>Stefano Zaghi — <a href="https://github.com/szaghi" target="_blank" rel="noreferrer">@szaghi</a></li></ul><p>Contributions are welcome — see the <a href="/VTKFortran/guide/contributing.html">Contributing</a> page.</p><h2 id="copyrights" tabindex="-1">Copyrights <a class="header-anchor" href="#copyrights" aria-label="Permalink to &quot;Copyrights&quot;">​</a></h2><p>VTKFortran is distributed under a multi-licensing system:</p><table tabindex="0"><thead><tr><th>Use case</th><th>License</th></tr></thead><tbody><tr><td>FOSS projects</td><td><a href="http://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noreferrer">GPL v3</a></td></tr><tr><td>Closed source / commercial</td><td><a href="http://opensource.org/licenses/BSD-2-Clause" target="_blank" rel="noreferrer">BSD 2-Clause</a></td></tr><tr><td>Closed source / commercial</td><td><a href="http://opensource.org/licenses/BSD-3-Clause" target="_blank" rel="noreferrer">BSD 3-Clause</a></td></tr><tr><td>Closed source / commercial</td><td><a href="http://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT</a></td></tr></tbody></table><blockquote><p>Anyone interested in using, developing, or contributing to VTKFortran is welcome — pick the license that best fits your needs.</p></blockquote></div></div><!--]--></div></div></div><!----><!--[--><!--]--></div></div>
+    <script>window.__VP_HASH_MAP__=JSON.parse("{\"api_index.md\":\"oggrjpjM\",\"api_src_lib_vtk_fortran.md\":\"kZA0OpQU\",\"api_src_lib_vtk_fortran_dataarray_encoder.md\":\"Gz_fzqnR\",\"api_src_lib_vtk_fortran_parameters.md\":\"BPR9gjV7\",\"api_src_lib_vtk_fortran_pvtk_file.md\":\"DCsOSQ5t\",\"api_src_lib_vtk_fortran_vtk_file.md\":\"CnWBB4F3\",\"api_src_lib_vtk_fortran_vtk_file_xml_writer_abstract.md\":\"BbeYWdwh\",\"api_src_lib_vtk_fortran_vtk_file_xml_writer_appended.md\":\"DoJ794BV\",\"api_src_lib_vtk_fortran_vtk_file_xml_writer_ascii_local.md\":\"Xi7ZBrNM\",\"api_src_lib_vtk_fortran_vtk_file_xml_writer_binary_local.md\":\"DCHXGg2l\",\"api_src_lib_vtk_fortran_vtm_file.md\":\"DO3zpdj7\",\"ford.md\":\"Df5-q19X\",\"guide_api-reference.md\":\"BIuwdxQG\",\"guide_changelog.md\":\"DtyPQV_i\",\"guide_contributing.md\":\"D9sY0H6r\",\"guide_coverage-analysis.md\":\"H5jCC0pH\",\"guide_features.md\":\"YoYs0WrR\",\"guide_index.md\":\"DUCe0U-O\",\"guide_installation.md\":\"C46Sj6qk\",\"guide_usage.md\":\"Cw85EJhu\",\"guide_vtk_fortran.f90.gcov.md\":\"cPZQwHHL\",\"guide_vtk_fortran_dataarray_encoder.f90.gcov.md\":\"z557kjmJ\",\"guide_vtk_fortran_pvtk_file.f90.gcov.md\":\"C2-Wzgtn\",\"guide_vtk_fortran_vtk_file.f90.gcov.md\":\"S8J_wPwq\",\"guide_vtk_fortran_vtk_file_xml_writer_abstract.f90.gcov.md\":\"UWb0t8dh\",\"guide_vtk_fortran_vtk_file_xml_writer_appended.f90.gcov.md\":\"CHUSkfsC\",\"guide_vtk_fortran_vtk_file_xml_writer_ascii_local.f90.gcov.md\":\"CjUo3-R2\",\"guide_vtk_fortran_vtk_file_xml_writer_binary_local.f90.gcov.md\":\"C6sT1O4V\",\"index.md\":\"BxZnrj_F\"}");window.__VP_SITE_DATA__=JSON.parse("{\"lang\":\"en-US\",\"dir\":\"ltr\",\"title\":\"VTKFortran Documentation\",\"description\":\"A VitePress site\",\"base\":\"/VTKFortran/\",\"head\":[],\"router\":{\"prefetchLinks\":true},\"appearance\":true,\"themeConfig\":{\"nav\":[{\"text\":\"Home\",\"link\":\"/\"},{\"text\":\"Guide\",\"items\":[{\"text\":\"About\",\"link\":\"/guide/\"},{\"text\":\"Features\",\"link\":\"/guide/features\"},{\"text\":\"Installation\",\"link\":\"/guide/installation\"},{\"text\":\"Usage\",\"link\":\"/guide/usage\"},{\"text\":\"API Reference\",\"link\":\"/guide/api-reference\"},{\"text\":\"Contributing\",\"link\":\"/guide/contributing\"},{\"text\":\"Coverage Analysis\",\"link\":\"/guide/coverage-analysis\"},{\"text\":\"Changelog\",\"link\":\"/guide/changelog\"}]},{\"text\":\"API\",\"link\":\"/api/\"},{\"text\":\"GitHub\",\"link\":\"https://github.com/szaghi/VTKFortran\"}],\"sidebar\":{\"/guide/\":[{\"text\":\"Introduction\",\"items\":[{\"text\":\"About\",\"link\":\"/guide/\"},{\"text\":\"Features\",\"link\":\"/guide/features\"}]},{\"text\":\"Getting Started\",\"items\":[{\"text\":\"Installation\",\"link\":\"/guide/installation\"},{\"text\":\"Usage\",\"link\":\"/guide/usage\"},{\"text\":\"API Reference\",\"link\":\"/guide/api-reference\"}]},{\"text\":\"Project\",\"items\":[{\"text\":\"Contributing\",\"link\":\"/guide/contributing\"},{\"text\":\"Coverage Analysis\",\"link\":\"/guide/coverage-analysis\"},{\"text\":\"Changelog\",\"link\":\"/guide/changelog\"}]}],\"/api/\":[{\"text\":\"API Reference\",\"items\":[{\"text\":\"Overview\",\"link\":\"/api/\"}]},{\"text\":\"src/lib\",\"collapsed\":true,\"items\":[{\"text\":\"vtk_fortran\",\"link\":\"/api/src/lib/vtk_fortran\"},{\"text\":\"vtk_fortran_dataarray_encoder\",\"link\":\"/api/src/lib/vtk_fortran_dataarray_encoder\"},{\"text\":\"vtk_fortran_parameters\",\"link\":\"/api/src/lib/vtk_fortran_parameters\"},{\"text\":\"vtk_fortran_pvtk_file\",\"link\":\"/api/src/lib/vtk_fortran_pvtk_file\"},{\"text\":\"vtk_fortran_vtk_file\",\"link\":\"/api/src/lib/vtk_fortran_vtk_file\"},{\"text\":\"vtk_fortran_vtk_file_xml_writer_abstract\",\"link\":\"/api/src/lib/vtk_fortran_vtk_file_xml_writer_abstract\"},{\"text\":\"vtk_fortran_vtk_file_xml_writer_appended\",\"link\":\"/api/src/lib/vtk_fortran_vtk_file_xml_writer_appended\"},{\"text\":\"vtk_fortran_vtk_file_xml_writer_ascii_local\",\"link\":\"/api/src/lib/vtk_fortran_vtk_file_xml_writer_ascii_local\"},{\"text\":\"vtk_fortran_vtk_file_xml_writer_binary_local\",\"link\":\"/api/src/lib/vtk_fortran_vtk_file_xml_writer_binary_local\"},{\"text\":\"vtk_fortran_vtm_file\",\"link\":\"/api/src/lib/vtk_fortran_vtm_file\"}]}]},\"search\":{\"provider\":\"local\"}},\"locales\":{},\"scrollOffset\":134,\"cleanUrls\":false}");</script>
+    
   </body>
 </html>
