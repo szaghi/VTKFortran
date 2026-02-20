@@ -45,3 +45,8 @@ openmp_speedup.lay
 diagnostic_messages
 error_messages
 run_diff
+
+# VitePress
+docs/node_modules/
+docs/.vitepress/dist/
+docs/.vitepress/cache/

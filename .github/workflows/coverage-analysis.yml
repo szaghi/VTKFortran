@@ -1,0 +1,38 @@
+name: Coverage Analysis
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    secrets:
+      CODECOV_TOKEN:
+        required: false
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: 'true'
+
+    - name: Setup build environment
+      uses: ./.github/actions/setup-build-env
+
+    - name: Run coverage analysis
+      run: FoBiS.py rule -ex makecoverage-analysis
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+
+    - name: Upload coverage analysis report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-analysis-report
+        path: docs/guide/coverage-analysis.md

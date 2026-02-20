@@ -1,0 +1,55 @@
+name: Docs
+
+on:
+  push:
+    branches: ["master"]
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+
+  coverage:
+    uses: ./.github/workflows/coverage-analysis.yml
+    secrets: inherit
+    permissions:
+      contents: read
+
+  deploy:
+    needs: [coverage]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: 'true'
+
+    - name: Download coverage analysis report
+      uses: actions/download-artifact@v4
+      with:
+        name: coverage-analysis-report
+        path: docs/guide/
+
+    - name: Setup build environment
+      uses: ./.github/actions/setup-build-env
+      with:
+        extra-pip-packages: formal-ford2vitepress
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Build documentation
+      run: |
+        formal generate --mirror-sources --diagrams --project docs/ford.md --output docs/api
+        cd docs && npm ci && npm run docs:build
+
+    - name: Deploy docs to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        branch: gh-pages
+        folder: docs/.vitepress/dist

@@ -1,140 +1,95 @@
-<a name="top"></a>
+# VTKFortran
 
-# VTKFortran [![GitHub tag](https://img.shields.io/github/tag/szaghi/VTKFortran.svg)](https://github.com/szaghi/VTKFortran/releases)
+**Pure Fortran VTK XML API** — a pure Fortran 2003+ OOP library for writing and reading files conforming the [VTK](http://www.vtk.org/) XML standard.
 
-[![Join the chat at https://gitter.im/szaghi/VTKFortran](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/szaghi/VTKFortran?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-[![License](https://img.shields.io/badge/license-GNU%20GeneraL%20Public%20License%20v3,%20GPLv3-blue.svg)]()
-[![License](https://img.shields.io/badge/license-BSD2-red.svg)]()
-[![License](https://img.shields.io/badge/license-BSD3-red.svg)]()
-[![License](https://img.shields.io/badge/license-MIT-red.svg)]()
-
-[![Status](https://img.shields.io/badge/status-stable-brightgreen.svg)]()
-[![CI Status](https://github.com/szaghi/VTKFortran/actions/workflows/ci.yml/badge.svg)](https://github.com/szaghi/VTKFortran/actions)
-[![Coverage Status](https://img.shields.io/codecov/c/github/szaghi/VTKFortran.svg)](https://app.codecov.io/gh/szaghi/VTKFortran)
-
-### VTKFortran, pure Fortran VTK (XML) API
-
-A KISS pure Fortran Library to parse and emit files conforming VTK (XML) standard
-
-+ VTKFortran is a pure Fortran library to parse and emit VTK files, [VTK standard](http://www.vtk.org/);
-+ VTKFortran is Fortran 2003+ standard compliant;
-+ VTKFortran supports parallel architectures, it being threads-safe;
-+ VTKFortran supports _ascii_, _binary_ (Base64 encoding) and _raw_ file formats;
-+ VTKFortran is a Free, Open Source Project.
-
-#### Issues
-
-[![GitHub issues](https://img.shields.io/github/issues/szaghi/VTKFortran.svg)]()
-
-#### Compiler Support
-
-[![Compiler](https://img.shields.io/badge/GNU-pass%20(v6.0.1+)-brightgreen.svg)]()
-[![Compiler](https://img.shields.io/badge/Intel-pass%20(v16.x+)-brightgreen.svg)]()
-[![Compiler](https://img.shields.io/badge/IBM%20XL-not%20tested-yellow.svg)]()
-[![Compiler](https://img.shields.io/badge/g95-not%20tested-yellow.svg)]()
-[![Compiler](https://img.shields.io/badge/NAG-not%20tested-yellow.svg)]()
-[![Compiler](https://img.shields.io/badge/PGI-not%20tested-yellow.svg)]()
+[![CI](https://github.com/szaghi/VTKFortran/actions/workflows/ci.yml/badge.svg)](https://github.com/szaghi/VTKFortran/actions)
+[![Coverage](https://img.shields.io/codecov/c/github/szaghi/VTKFortran.svg)](https://app.codecov.io/gh/szaghi/VTKFortran)
+[![GitHub tag](https://img.shields.io/github/tag/szaghi/VTKFortran.svg)](https://github.com/szaghi/VTKFortran/releases)
+[![License](https://img.shields.io/badge/license-GPLv3%20%7C%20BSD%20%7C%20MIT-blue.svg)](#copyrights)
 
 ---
 
-[Main features](#main-features) | [Copyrights](#copyrights) | [Documentation](#documentation) | [A Taste of VTKFortran](#a-taste-of-vtkfortran)
+## Features
+
+- Write Rectilinear, Structured, and Unstructured grids in the VTK XML format
+- Composite multi-block datasets (`.vtm`) and parallel partitioned files (`.pvts`) supported
+- Output formats: ASCII, binary (Base64-encoded), and raw binary appended
+- Thread and processor safe — multiple files can be written concurrently under OpenMP or MPI
+- OOP design — polymorphic `xml_writer` allocated at runtime; `vtk_file`, `pvtk_file`, `vtm_file` types expose a clean type-bound-procedure API
+- All procedures return an integer error code — zero means success
+
+**[Documentation](https://szaghi.github.io/VTKFortran/)** | **[API Reference](https://szaghi.github.io/VTKFortran/api/)**
 
 ---
 
-## Main features
+## Authors
 
-### VTK features
+- Stefano Zaghi — [@szaghi](https://github.com/szaghi)
 
-#### Exporters
-
-##### Legacy standard
-* [x] Structured Points;
-* [x] Structured Grid;
-* [x] Unstructured Grid;
-* [ ] Polydata;
-* [x] Rectilinear Grid;
-* [ ] Field;
-
-##### XML standard
-* [ ] serial dataset:
-    * [ ] Image Data;
-    * [ ] Polydata;
-    * [x] Rectilinear Grid;
-    * [x] Structured Grid;
-    * [x] Unstructured Grid;
-* [ ] parallel (partitioned) dataset:
-    * [ ] Image Data;
-    * [ ] Polydata;
-    * [x] Rectilinear Grid;
-    * [x] Structured Grid;
-    * [x] Unstructured Grid;
-* [x] composite dataset:
-    * [x] vtkMultiBlockDataSet.
-
-#### Importers
-The importers are under developing.
-
-### Parallel Support
-
-VTKFortran can be safely used in parallel *environments*, handling multiple concurrent files: it is **thread/processor-safe**, meaning that it can be safely used into parallel architectures using OpenMP and/or MPI paradigms.
+Contributions are welcome — see the [Contributing](https://szaghi.github.io/VTKFortran/guide/contributing) page.
 
 ## Copyrights
 
-VTKFortran is an open source project, it is distributed under a multi-licensing system:
+This project is distributed under a multi-licensing system:
 
-+ for FOSS projects:
-  - [GPL v3](http://www.gnu.org/licenses/gpl-3.0.html);
-+ for closed source/commercial projects:
-  - [BSD 2-Clause](http://opensource.org/licenses/BSD-2-Clause);
-  - [BSD 3-Clause](http://opensource.org/licenses/BSD-3-Clause);
-  - [MIT](http://opensource.org/licenses/MIT).
+- **FOSS projects**: [GPL v3](http://www.gnu.org/licenses/gpl-3.0.html)
+- **Closed source / commercial**: [BSD 2-Clause](http://opensource.org/licenses/BSD-2-Clause), [BSD 3-Clause](http://opensource.org/licenses/BSD-3-Clause), or [MIT](http://opensource.org/licenses/MIT)
 
-Anyone is interest to use, to develop or to contribute to VTKFortran is welcome, feel free to select the license that best matches your soul!
+> Anyone interested in using, developing, or contributing to this project is welcome — pick the license that best fits your needs.
 
-More details can be found on [wiki](https://github.com/szaghi/VTKFortran/wiki/Copyrights).
+---
 
-Go to [Top](#top)
+## Quick start
 
-## Documentation
-
-Besides this README file the VTKFortran documentation is contained into its own [wiki](https://github.com/szaghi/VTKFortran/wiki). Detailed documentation of the API is contained into the [GitHub Pages](http://szaghi.github.io/VTKFortran/index.html) that can also be created locally by means of [ford tool](https://github.com/cmacmackin/ford).
-
-Go to [Top](#top)
-
-### A taste of VTKFortran
-
-Let us assume our aim being to save our pure Fortran data into a VTK structured grid file in binary XML form. This is simple as
+Write a structured grid in binary XML format:
 
 ```fortran
 use vtk_fortran, only : vtk_file
+use penf,        only : I4P, R8P
+implicit none
+type(vtk_file)     :: a_vtk_file
+integer, parameter :: nx1=0, nx2=9, ny1=0, ny2=5, nz1=0, nz2=5
+integer, parameter :: nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
+real(R8P)          :: x(nx1:nx2,ny1:ny2,nz1:nz2)
+real(R8P)          :: y(nx1:nx2,ny1:ny2,nz1:nz2)
+real(R8P)          :: z(nx1:nx2,ny1:ny2,nz1:nz2)
+real(R8P)          :: v(nx1:nx2,ny1:ny2,nz1:nz2)
+integer            :: error
 
-type(vtk_file)     :: a_vtk_file                             ! A VTK file.
-integer, parameter :: nx1=0_I4P                              ! X lower bound extent.
-integer, parameter :: nx2=9_I4P                              ! X upper bound extent.
-integer, parameter :: ny1=0_I4P                              ! Y lower bound extent.
-integer, parameter :: ny2=5_I4P                              ! Y upper bound extent.
-integer, parameter :: nz1=0_I4P                              ! Z lower bound extent.
-integer, parameter :: nz2=5_I4P                              ! Z upper bound extent.
-integer, parameter :: nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1) ! Number of elements.
-real               :: x(nx1:nx2,ny1:ny2,nz1:nz2)             ! X coordinates.
-real               :: y(nx1:nx2,ny1:ny2,nz1:nz2)             ! Y coordinates.
-real               :: z(nx1:nx2,ny1:ny2,nz1:nz2)             ! Z coordinates.
-real               :: v(nx1:nx2,ny1:ny2,nz1:nz2)             ! Variable at coordinates.
-integer            :: error                                  ! Error status.
-
-! initialize the data...
-
-error = a_vtk_file%initialize(format='binary', filename='XML_STRG-binary.vts', &
-                              mesh_topology='StructuredGrid',                  &
+error = a_vtk_file%initialize(format='binary', filename='output.vts', &
+                              mesh_topology='StructuredGrid',          &
                               nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
 error = a_vtk_file%xml_writer%write_piece(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
 error = a_vtk_file%xml_writer%write_geo(n=nn, x=x, y=y, z=z)
 error = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
-error = a_vtk_file%xml_writer%write_dataarray(data_name='float64_scalar', x=v, one_component=.true.)
+error = a_vtk_file%xml_writer%write_dataarray(data_name='pressure', x=v, one_component=.true.)
 error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
 error = a_vtk_file%xml_writer%write_piece()
 error = a_vtk_file%finalize()
 ```
 
-Note that all VTKFortran functions return an error code that can be used for sophisticated error trapping algorithms.
+---
+
+## Install
+
+### Clone and build with CMake
+
+```sh
+git clone https://github.com/szaghi/VTKFortran --recursive
+cd VTKFortran
+cmake -S . -B build -DBUILD_TESTING=ON
+cmake --build build && ctest --test-dir build
+```
+
+### CMake subdirectory integration
+
+```cmake
+add_subdirectory(VTKFortran)
+target_link_libraries(your_target VTKFortran::VTKFortran)
+```
+
+| Tool | Command |
+|------|---------|
+| CMake | `cmake -S . -B build && cmake --build build` |
+| FoBiS.py | `FoBiS.py build -mode static-gnu` |
+| FPM | `fpm build` |
