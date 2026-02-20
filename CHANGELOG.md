@@ -1,4 +1,9 @@
 # Changelog
+## [v2.0.5](https://github.com/szaghi/FLAP/tree/v2.0.5) (2026-02-20)
+[Full Changelog](https://github.com/szaghi/FLAP/compare/v2.0.4...v2.0.5)
+### Documentation
+- Update coverage stats and fix page frontmatter ([`40b94f1`](https://github.com/szaghi/FLAP/commit/40b94f1d9a6ecd73e79c9e0baccb10506b339963))
+
 ## [v2.0.4](https://github.com/szaghi/FLAP/tree/v2.0.4) (2026-02-20)
 [Full Changelog](https://github.com/szaghi/FLAP/compare/v2.0.3...v2.0.4)
 ### Bug fixes
