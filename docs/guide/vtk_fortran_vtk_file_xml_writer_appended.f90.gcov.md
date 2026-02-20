@@ -3,42 +3,37 @@
 |Lines| | |
 | --- | --- | --- |
 |Executable lines            |782| |
-|Executed lines              |0|0%|
-|Unexecuted lines            |782|100%|
-|Average hits / executed     |0| |
+|Executed lines              |191|24%|
+|Unexecuted lines            |591|76%|
+|Average hits / executed     |176.48167539267016| |
 
 ```mermaid
 pie showData
-    title Lines (0% covered)
-    "Executed" : 0
-    "Unexecuted" : 782
+    title Lines (24% covered)
+    "Executed" : 191
+    "Unexecuted" : 591
 ```
 
 |Procedures| | |
 | --- | --- | --- |
 |Total procedures            |96| |
-|Executed procedures         |0|0%|
-|Unexecuted procedures       |96|100%|
-|Average hits / executed     |0| |
+|Executed procedures         |24|25%|
+|Unexecuted procedures       |72|75%|
+|Average hits / executed     |7.791666666666667| |
 
 ```mermaid
 pie showData
-    title Procedures (0% covered)
-    "Executed" : 0
-    "Unexecuted" : 96
+    title Procedures (25% covered)
+    "Executed" : 24
+    "Unexecuted" : 72
 ```
 
 
 #### Unexecuted procedures
 
- + *function* **finalize**, line 193
- + *function* **initialize**, line 158
- + *function* **write_dataarray1_rank1_I1P**, line 328
  + *function* **write_dataarray1_rank1_I2P**, line 310
- + *function* **write_dataarray1_rank1_I4P**, line 292
  + *function* **write_dataarray1_rank1_I8P**, line 274
  + *function* **write_dataarray1_rank1_R4P**, line 256
- + *function* **write_dataarray1_rank1_R8P**, line 238
  + *function* **write_dataarray1_rank2_I1P**, line 456
  + *function* **write_dataarray1_rank2_I2P**, line 434
  + *function* **write_dataarray1_rank2_I4P**, line 412
@@ -50,7 +45,6 @@ pie showData
  + *function* **write_dataarray1_rank3_I4P**, line 544
  + *function* **write_dataarray1_rank3_I8P**, line 522
  + *function* **write_dataarray1_rank3_R4P**, line 500
- + *function* **write_dataarray1_rank3_R8P**, line 478
  + *function* **write_dataarray1_rank4_I1P**, line 720
  + *function* **write_dataarray1_rank4_I2P**, line 698
  + *function* **write_dataarray1_rank4_I4P**, line 676
@@ -59,19 +53,14 @@ pie showData
  + *function* **write_dataarray1_rank4_R8P**, line 610
  + *function* **write_dataarray3_rank1_I1P**, line 842
  + *function* **write_dataarray3_rank1_I2P**, line 822
- + *function* **write_dataarray3_rank1_I4P**, line 802
  + *function* **write_dataarray3_rank1_I8P**, line 782
- + *function* **write_dataarray3_rank1_R4P**, line 762
- + *function* **write_dataarray3_rank1_R8P**, line 742
  + *function* **write_dataarray3_rank3_I1P**, line 962
  + *function* **write_dataarray3_rank3_I2P**, line 942
  + *function* **write_dataarray3_rank3_I4P**, line 922
  + *function* **write_dataarray3_rank3_I8P**, line 902
  + *function* **write_dataarray3_rank3_R4P**, line 882
- + *function* **write_dataarray3_rank3_R8P**, line 862
  + *function* **write_dataarray6_rank1_I1P**, line 1097
  + *function* **write_dataarray6_rank1_I2P**, line 1074
- + *function* **write_dataarray6_rank1_I4P**, line 1051
  + *function* **write_dataarray6_rank1_I8P**, line 1028
  + *function* **write_dataarray6_rank1_R4P**, line 1005
  + *function* **write_dataarray6_rank1_R8P**, line 982
@@ -81,16 +70,11 @@ pie showData
  + *function* **write_dataarray6_rank3_I8P**, line 1166
  + *function* **write_dataarray6_rank3_R4P**, line 1143
  + *function* **write_dataarray6_rank3_R8P**, line 1120
- + *function* **write_on_scratch_dataarray1_rank1**, line 1368
  + *function* **write_on_scratch_dataarray1_rank2**, line 1404
- + *function* **write_on_scratch_dataarray1_rank3**, line 1440
  + *function* **write_on_scratch_dataarray1_rank4**, line 1476
  + *function* **write_on_scratch_dataarray3_rank1_I1P**, line 1572
  + *function* **write_on_scratch_dataarray3_rank1_I2P**, line 1560
- + *function* **write_on_scratch_dataarray3_rank1_I4P**, line 1548
  + *function* **write_on_scratch_dataarray3_rank1_I8P**, line 1536
- + *function* **write_on_scratch_dataarray3_rank1_R4P**, line 1524
- + *function* **write_on_scratch_dataarray3_rank1_R8P**, line 1512
  + *function* **write_on_scratch_dataarray3_rank2_I1P**, line 1649
  + *function* **write_on_scratch_dataarray3_rank2_I2P**, line 1636
  + *function* **write_on_scratch_dataarray3_rank2_I4P**, line 1623
@@ -102,10 +86,8 @@ pie showData
  + *function* **write_on_scratch_dataarray3_rank3_I4P**, line 1707
  + *function* **write_on_scratch_dataarray3_rank3_I8P**, line 1692
  + *function* **write_on_scratch_dataarray3_rank3_R4P**, line 1677
- + *function* **write_on_scratch_dataarray3_rank3_R8P**, line 1662
  + *function* **write_on_scratch_dataarray6_rank1_I1P**, line 1827
  + *function* **write_on_scratch_dataarray6_rank1_I2P**, line 1812
- + *function* **write_on_scratch_dataarray6_rank1_I4P**, line 1797
  + *function* **write_on_scratch_dataarray6_rank1_I8P**, line 1782
  + *function* **write_on_scratch_dataarray6_rank1_R4P**, line 1767
  + *function* **write_on_scratch_dataarray6_rank1_R8P**, line 1752
@@ -121,16 +103,33 @@ pie showData
  + *function* **write_on_scratch_dataarray6_rank3_I8P**, line 1981
  + *function* **write_on_scratch_dataarray6_rank3_R4P**, line 1963
  + *function* **write_on_scratch_dataarray6_rank3_R8P**, line 1944
- + *subroutine* **close_scratch_file**, line 230
- + *subroutine* **ioffset_update**, line 206
- + *subroutine* **open_scratch_file**, line 218
- + *subroutine* **read_dataarray_from_scratch**, line 1285
- + *subroutine* **write_dataarray_appended**, line 1258
- + *subroutine* **write_dataarray_on_xml**, line 1317
 
 #### Executed procedures
 
- + *none*
+ + *subroutine* **read_dataarray_from_scratch**: tested **30** times
+ + *subroutine* **ioffset_update**: tested **23** times
+ + *subroutine* **write_dataarray_on_xml**: tested **23** times
+ + *function* **write_on_scratch_dataarray1_rank1**: tested **18** times
+ + *function* **write_dataarray3_rank3_R8P**: tested **10** times
+ + *function* **write_on_scratch_dataarray3_rank3_R8P**: tested **10** times
+ + *function* **initialize**: tested **7** times
+ + *function* **finalize**: tested **7** times
+ + *subroutine* **open_scratch_file**: tested **7** times
+ + *subroutine* **close_scratch_file**: tested **7** times
+ + *subroutine* **write_dataarray_appended**: tested **7** times
+ + *function* **write_dataarray1_rank3_R8P**: tested **5** times
+ + *function* **write_on_scratch_dataarray1_rank3**: tested **5** times
+ + *function* **write_dataarray1_rank1_I4P**: tested **4** times
+ + *function* **write_dataarray3_rank1_R4P**: tested **4** times
+ + *function* **write_on_scratch_dataarray3_rank1_R4P**: tested **4** times
+ + *function* **write_dataarray1_rank1_R8P**: tested **2** times
+ + *function* **write_dataarray1_rank1_I1P**: tested **2** times
+ + *function* **write_dataarray3_rank1_R8P**: tested **2** times
+ + *function* **write_dataarray3_rank1_I4P**: tested **2** times
+ + *function* **write_dataarray6_rank1_I4P**: tested **2** times
+ + *function* **write_on_scratch_dataarray3_rank1_R8P**: tested **2** times
+ + *function* **write_on_scratch_dataarray3_rank1_I4P**: tested **2** times
+ + *function* **write_on_scratch_dataarray6_rank1_I4P**: tested **2** times
 
  --- 
  Report generated by [FoBiS.py](https://github.com/szaghi/FoBiS)

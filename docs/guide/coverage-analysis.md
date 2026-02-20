@@ -1,37 +1,33 @@
----
-title: Coverage Analysis
----
-
-# Coverage Analysis
+### coverage-analysis
 
 #### [[vtk_fortran_vtk_file_xml_writer_binary_local.f90.gcov]]
 
 |Lines| | |
 | --- | --- | --- |
 |Executable lines            |535| |
-|Executed lines              |0|0%|
-|Unexecuted lines            |535|100%|
-|Average hits / executed     |0| |
+|Executed lines              |129|24%|
+|Unexecuted lines            |406|76%|
+|Average hits / executed     |4.790697674418604| |
 
 ```mermaid
 pie showData
-    title Lines (0% covered)
-    "Executed" : 0
-    "Unexecuted" : 535
+    title Lines (24% covered)
+    "Executed" : 129
+    "Unexecuted" : 406
 ```
 
 |Procedures| | |
 | --- | --- | --- |
 |Total procedures            |51| |
-|Executed procedures         |0|0%|
-|Unexecuted procedures       |51|100%|
-|Average hits / executed     |0| |
+|Executed procedures         |13|25%|
+|Unexecuted procedures       |38|75%|
+|Average hits / executed     |5.3076923076923075| |
 
 ```mermaid
 pie showData
-    title Procedures (0% covered)
-    "Executed" : 0
-    "Unexecuted" : 51
+    title Procedures (25% covered)
+    "Executed" : 13
+    "Unexecuted" : 38
 ```
 
 
@@ -40,29 +36,29 @@ pie showData
 |Lines| | |
 | --- | --- | --- |
 |Executable lines            |534| |
-|Executed lines              |0|0%|
-|Unexecuted lines            |534|100%|
-|Average hits / executed     |0| |
+|Executed lines              |85|16%|
+|Unexecuted lines            |449|84%|
+|Average hits / executed     |2.4705882352941178| |
 
 ```mermaid
 pie showData
-    title Lines (0% covered)
-    "Executed" : 0
-    "Unexecuted" : 534
+    title Lines (16% covered)
+    "Executed" : 85
+    "Unexecuted" : 449
 ```
 
 |Procedures| | |
 | --- | --- | --- |
 |Total procedures            |51| |
-|Executed procedures         |0|0%|
-|Unexecuted procedures       |51|100%|
-|Average hits / executed     |0| |
+|Executed procedures         |9|18%|
+|Unexecuted procedures       |42|82%|
+|Average hits / executed     |2.888888888888889| |
 
 ```mermaid
 pie showData
-    title Procedures (0% covered)
-    "Executed" : 0
-    "Unexecuted" : 51
+    title Procedures (18% covered)
+    "Executed" : 9
+    "Unexecuted" : 42
 ```
 
 
@@ -71,29 +67,29 @@ pie showData
 |Lines| | |
 | --- | --- | --- |
 |Executable lines            |26| |
-|Executed lines              |0|0%|
-|Unexecuted lines            |26|100%|
-|Average hits / executed     |0| |
+|Executed lines              |25|96%|
+|Unexecuted lines            |1|4%|
+|Average hits / executed     |17.2| |
 
 ```mermaid
 pie showData
-    title Lines (0% covered)
-    "Executed" : 0
-    "Unexecuted" : 26
+    title Lines (96% covered)
+    "Executed" : 25
+    "Unexecuted" : 1
 ```
 
 |Procedures| | |
 | --- | --- | --- |
 |Total procedures            |4| |
-|Executed procedures         |0|0%|
-|Unexecuted procedures       |4|100%|
-|Average hits / executed     |0| |
+|Executed procedures         |4|100%|
+|Unexecuted procedures       |0|0%|
+|Average hits / executed     |10.25| |
 
 ```mermaid
 pie showData
-    title Procedures (0% covered)
-    "Executed" : 0
-    "Unexecuted" : 4
+    title Procedures (100% covered)
+    "Executed" : 4
+    "Unexecuted" : 0
 ```
 
 
@@ -102,29 +98,29 @@ pie showData
 |Lines| | |
 | --- | --- | --- |
 |Executable lines            |938| |
-|Executed lines              |0|0%|
-|Unexecuted lines            |938|100%|
-|Average hits / executed     |0| |
+|Executed lines              |145|15%|
+|Unexecuted lines            |793|85%|
+|Average hits / executed     |1558.3241379310346| |
 
 ```mermaid
 pie showData
-    title Lines (0% covered)
-    "Executed" : 0
-    "Unexecuted" : 938
+    title Lines (15% covered)
+    "Executed" : 145
+    "Unexecuted" : 793
 ```
 
 |Procedures| | |
 | --- | --- | --- |
 |Total procedures            |97| |
-|Executed procedures         |0|0%|
-|Unexecuted procedures       |97|100%|
-|Average hits / executed     |0| |
+|Executed procedures         |18|19%|
+|Unexecuted procedures       |79|81%|
+|Average hits / executed     |3.8333333333333335| |
 
 ```mermaid
 pie showData
-    title Procedures (0% covered)
-    "Executed" : 0
-    "Unexecuted" : 97
+    title Procedures (19% covered)
+    "Executed" : 18
+    "Unexecuted" : 79
 ```
 
 
@@ -133,29 +129,29 @@ pie showData
 |Lines| | |
 | --- | --- | --- |
 |Executable lines            |13| |
-|Executed lines              |0|0%|
-|Unexecuted lines            |13|100%|
-|Average hits / executed     |0| |
+|Executed lines              |11|85%|
+|Unexecuted lines            |2|15%|
+|Average hits / executed     |1.4545454545454546| |
 
 ```mermaid
 pie showData
-    title Lines (0% covered)
-    "Executed" : 0
-    "Unexecuted" : 13
+    title Lines (85% covered)
+    "Executed" : 11
+    "Unexecuted" : 2
 ```
 
 |Procedures| | |
 | --- | --- | --- |
 |Total procedures            |2| |
-|Executed procedures         |0|0%|
-|Unexecuted procedures       |2|100%|
-|Average hits / executed     |0| |
+|Executed procedures         |2|100%|
+|Unexecuted procedures       |0|0%|
+|Average hits / executed     |1.0| |
 
 ```mermaid
 pie showData
-    title Procedures (0% covered)
-    "Executed" : 0
-    "Unexecuted" : 2
+    title Procedures (100% covered)
+    "Executed" : 2
+    "Unexecuted" : 0
 ```
 
 
@@ -164,29 +160,29 @@ pie showData
 |Lines| | |
 | --- | --- | --- |
 |Executable lines            |782| |
-|Executed lines              |0|0%|
-|Unexecuted lines            |782|100%|
-|Average hits / executed     |0| |
+|Executed lines              |191|24%|
+|Unexecuted lines            |591|76%|
+|Average hits / executed     |176.48167539267016| |
 
 ```mermaid
 pie showData
-    title Lines (0% covered)
-    "Executed" : 0
-    "Unexecuted" : 782
+    title Lines (24% covered)
+    "Executed" : 191
+    "Unexecuted" : 591
 ```
 
 |Procedures| | |
 | --- | --- | --- |
 |Total procedures            |96| |
-|Executed procedures         |0|0%|
-|Unexecuted procedures       |96|100%|
-|Average hits / executed     |0| |
+|Executed procedures         |24|25%|
+|Unexecuted procedures       |72|75%|
+|Average hits / executed     |7.791666666666667| |
 
 ```mermaid
 pie showData
-    title Procedures (0% covered)
-    "Executed" : 0
-    "Unexecuted" : 96
+    title Procedures (25% covered)
+    "Executed" : 24
+    "Unexecuted" : 72
 ```
 
 
@@ -195,29 +191,29 @@ pie showData
 |Lines| | |
 | --- | --- | --- |
 |Executable lines            |340| |
-|Executed lines              |0|0%|
-|Unexecuted lines            |340|100%|
-|Average hits / executed     |0| |
+|Executed lines              |218|64%|
+|Unexecuted lines            |122|36%|
+|Average hits / executed     |23.88532110091743| |
 
 ```mermaid
 pie showData
-    title Lines (0% covered)
-    "Executed" : 0
-    "Unexecuted" : 340
+    title Lines (64% covered)
+    "Executed" : 218
+    "Unexecuted" : 122
 ```
 
 |Procedures| | |
 | --- | --- | --- |
 |Total procedures            |40| |
-|Executed procedures         |0|0%|
-|Unexecuted procedures       |40|100%|
-|Average hits / executed     |0| |
+|Executed procedures         |28|70%|
+|Unexecuted procedures       |12|30%|
+|Average hits / executed     |21.75| |
 
 ```mermaid
 pie showData
-    title Procedures (0% covered)
-    "Executed" : 0
-    "Unexecuted" : 40
+    title Procedures (70% covered)
+    "Executed" : 28
+    "Unexecuted" : 12
 ```
 
 
@@ -226,28 +222,28 @@ pie showData
 |Lines| | |
 | --- | --- | --- |
 |Executable lines            |4| |
-|Executed lines              |0|0%|
-|Unexecuted lines            |4|100%|
-|Average hits / executed     |0| |
+|Executed lines              |4|100%|
+|Unexecuted lines            |0|0%|
+|Average hits / executed     |2.0| |
 
 ```mermaid
 pie showData
-    title Lines (0% covered)
-    "Executed" : 0
-    "Unexecuted" : 4
+    title Lines (100% covered)
+    "Executed" : 4
+    "Unexecuted" : 0
 ```
 
 |Procedures| | |
 | --- | --- | --- |
 |Total procedures            |1| |
-|Executed procedures         |0|0%|
-|Unexecuted procedures       |1|100%|
-|Average hits / executed     |0| |
+|Executed procedures         |1|100%|
+|Unexecuted procedures       |0|0%|
+|Average hits / executed     |2.0| |
 
 ```mermaid
 pie showData
-    title Procedures (0% covered)
-    "Executed" : 0
-    "Unexecuted" : 1
+    title Procedures (100% covered)
+    "Executed" : 1
+    "Unexecuted" : 0
 ```
 

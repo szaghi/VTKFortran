@@ -215,7 +215,7 @@ rule = tar --xform="s%^%VTKFortran/%" -czf VTKFortran.tar.gz *
 help   = Rule for performing coverage analysis
 rule_1 = FoBiS.py clean -mode tests-gnu-debug
 rule_2 = FoBiS.py build -mode tests-gnu-debug -coverage
-rule_3 = ./run_tests.sh
+rule_3 = ./scripts/run_tests.sh
 rule_4 = rm -f exe/obj/befor64* exe/obj/face* exe/obj/foxy* exe/obj/penf* exe/obj/stringifor*
 rule_5 = gcov -o exe/obj/ src/lib/vtk_fortran*.f90
 
