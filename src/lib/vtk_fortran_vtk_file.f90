@@ -43,6 +43,7 @@ contains
    !<- ASCII: data are saved in ASCII format;
    !<- BINARY: data are saved in base64 encoded format;
    !<- RAW: data are saved in raw-binary format in the appended tag of the XML file;
+   !<- RAW-ZLIB: data are saved in raw-binary format in the appended tag of the XML file using VTK internal zlib compression;
    !<- BINARY-APPENDED: data are saved in base64 encoded format in the appended tag of the XML file.
    !<
    !<### Supported topologies are:
@@ -84,7 +85,7 @@ contains
    select case(fformat%chars())
    case('ASCII')
       allocate(xml_writer_ascii_local :: self%xml_writer)
-   case('BINARY-APPENDED', 'RAW')
+   case('BINARY-APPENDED', 'RAW', 'RAW-ZLIB')
       allocate(xml_writer_appended :: self%xml_writer)
    case('BINARY')
       allocate(xml_writer_binary_local :: self%xml_writer)

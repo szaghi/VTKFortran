@@ -6,6 +6,9 @@ add_executable(vtk_fortran_write_vtr vtk_fortran_write_vtr.f90)
 add_executable(vtk_fortran_write_vts vtk_fortran_write_vts.f90)
 add_executable(vtk_fortran_write_vtu vtk_fortran_write_vtu.f90)
 add_executable(vtk_fortran_write_vtu_tensor vtk_fortran_write_vtu_tensor.f90)
+if (VTKFORTRAN_USE_ZLIB)
+  add_executable(vtk_fortran_write_vtu_zlib vtk_fortran_write_vtu_zlib.f90)
+endif()
 
 
 
@@ -17,3 +20,6 @@ target_link_libraries(vtk_fortran_write_vtr PRIVATE VTKFortran)
 target_link_libraries(vtk_fortran_write_vts PRIVATE VTKFortran)
 target_link_libraries(vtk_fortran_write_vtu PRIVATE VTKFortran)
 target_link_libraries(vtk_fortran_write_vtu_tensor PRIVATE VTKFortran)
+if (VTKFORTRAN_USE_ZLIB)
+  target_link_libraries(vtk_fortran_write_vtu_zlib PRIVATE VTKFortran)
+endif()
