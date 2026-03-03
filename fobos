@@ -1,3 +1,20 @@
+[project]
+name       = VTKFortran
+version    = VERSION
+summary    = Pure Fortran VTK (XML) API
+repository = https://github.com/szaghi/VTKFortran
+website    = https://szaghi.github.io/VTKFortran
+email      = stefano.zaghi@gmail.it
+authors    = Stefano Zaghi
+
+[dependencies]
+deps_dir   = src/third_party
+BeFoR64    = https://github.com/szaghi/BeFoR64
+FACE       = https://github.com/szaghi/FACE
+FoXy       = https://github.com/Fortran-FOSS-Programmers/FoXy
+PENF       = https://github.com/szaghi/PENF
+StringiFor = https://github.com/szaghi/StringiFor
+
 [modes]
 modes = shared-gnu static-gnu tests-gnu
         shared-gnu-debug static-gnu-debug tests-gnu-debug
@@ -198,6 +215,16 @@ quiet        = False
 log          = True
 jobs         = 10
 
+[rule-delexe]
+help = Delete exes
+rule = rm -rf exe/
+
+[rule-clean]
+help = Clean the project tree
+rule_1 = FoBiS.py rule -ex deldoc
+rule_2 = FoBiS.py rule -ex delexe
+rule_3 = rm -f *.gcov
+
 [rule-makedoc]
 help   = Build documentation with formal + VitePress
 rule_1 = formal generate --mirror-sources --diagrams --project docs/ford.md --output docs/api
@@ -213,11 +240,11 @@ rule = tar --xform="s%^%VTKFortran/%" -czf VTKFortran.tar.gz *
 
 [rule-makecoverage]
 help   = Rule for performing coverage analysis
-rule_1 = FoBiS.py clean -mode tests-gnu-debug
+rule_1 = FoBiS.py rule -ex delexe
 rule_2 = FoBiS.py build -mode tests-gnu-debug -coverage
 rule_3 = ./scripts/run_tests.sh
 rule_4 = rm -f exe/obj/befor64* exe/obj/face* exe/obj/foxy* exe/obj/penf* exe/obj/stringifor*
-rule_5 = gcov -o exe/obj/ src/lib/vtk_fortran*.f90
+rule_5 = ./scripts/compute-coverage.sh
 
 [rule-makecoverage-analysis]
 help   = Rule for performing coverage analysis and saving reports in markdown

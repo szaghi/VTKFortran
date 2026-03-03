@@ -124,6 +124,8 @@ FoBiS.py rule -ex makecoverage   # build + run tests + gcov report
 FoBiS.py rule -ex makedoc        # build FORD API documentation
 ```
 
+`makecoverage` calls `scripts/compute-coverage.sh`, which automatically selects the `gcov-N` binary that matches the installed `gfortran` version. If you run the script directly, ensure that `gfortran` is on `$PATH` so the version is detected correctly.
+
 ## Build with FPM
 
 ```bash

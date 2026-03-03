@@ -5,7 +5,7 @@
 |Executable lines            |782| |
 |Executed lines              |191|24%|
 |Unexecuted lines            |591|76%|
-|Average hits / executed     |176.48167539267016| |
+|Average hits / executed     |176.6020942408377| |
 
 ```mermaid
 pie showData

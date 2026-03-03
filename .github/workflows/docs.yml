@@ -2,36 +2,33 @@ name: Docs
 
 on:
   push:
-    branches: ["master"]
+    branches: ["**"]
+    tags-ignore: ["**"]   # tags are handled by release.yml
   workflow_dispatch:
   workflow_call:
 
+# Permissions required by the deploy job (OIDC-based GitHub Pages deployment).
+# The caller (release.yml) must grant at least these same permissions.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one Pages deployment at a time; do not cancel in-progress deployments.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
 
-  coverage:
-    uses: ./.github/workflows/coverage-analysis.yml
-    secrets: inherit
-    permissions:
-      contents: read
-
-  deploy:
-    needs: [coverage]
+  build:
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
 
     - name: Checkout repository
       uses: actions/checkout@v4
-      with:
-        submodules: 'true'
-
-    - name: Download coverage analysis report
-      uses: actions/download-artifact@v4
-      with:
-        name: coverage-analysis-report
-        path: docs/guide/
 
     - name: Setup build environment
       uses: ./.github/actions/setup-build-env
@@ -43,13 +40,38 @@ jobs:
       with:
         node-version: '20'
 
+    - name: Fetch dependencies
+      if: hashFiles('**/.deps_config.ini') != ''
+      run: FoBiS.py fetch
+
+    - name: Run coverage analysis
+      id: cov
+      uses: ./.github/actions/run-coverage-analysis
+
     - name: Build documentation
+      env:
+        COVERAGE_PCT: ${{ steps.cov.outputs.pct }}
       run: |
         formal generate --mirror-sources --diagrams --project docs/ford.md --output docs/api
         cd docs && npm ci && npm run docs:build
 
-    - name: Deploy docs to GitHub Pages
-      uses: JamesIves/github-pages-deploy-action@v4
+    - name: Upload Pages artifact
+      uses: actions/upload-pages-artifact@v3
       with:
-        branch: gh-pages
-        folder: docs/.vitepress/dist
+        path: docs/.vitepress/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4

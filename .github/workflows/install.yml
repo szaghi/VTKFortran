@@ -1,28 +1,41 @@
 name: Test (alternative) Install Methods
 
 on:
-  release:
-    types: [published]
+  workflow_run:
+    workflows: ["Release"]
+    types: [completed]
 
 jobs:
   install:
+    if: github.event.workflow_run.conclusion == 'success'
 
     runs-on: ubuntu-latest
     permissions:
       contents: read
     env:
-      TAG: ${{ github.event.release.tag_name }}
+      TAG: ${{ github.event.workflow_run.head_branch }}
 
     steps:
-    - name: INSTALL SCRIPT + make
+    - name: Install FoBiS.py
+      run: pip install FoBiS.py
+
+    - name: INSTALL SCRIPT + fobis
       run: |
         WORKDIR=$(mktemp -d)
         cd "$WORKDIR"
         wget $(curl -s https://api.github.com/repos/$GITHUB_REPOSITORY/releases/tags/$TAG | jq -r '.assets[] | select(.name | test("install.sh"; "i")) | .browser_download_url')
         chmod +x install.sh
-        ./install.sh --download wget --build make
+        ./install.sh --download wget --build fobis
+
+    - name: Check for CMake config
+      id: cmake_check
+      run: |
+        STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+          "https://api.github.com/repos/$GITHUB_REPOSITORY/contents/CMakeLists.txt?ref=$TAG")
+        echo "exists=$([ "$STATUS" = "200" ] && echo true || echo false)" >> $GITHUB_OUTPUT
 
     - name: INSTALL SCRIPT + cmake
+      if: steps.cmake_check.outputs.exists == 'true'
       run: |
         WORKDIR=$(mktemp -d)
         cd "$WORKDIR"
@@ -35,10 +48,12 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: FPM
+    - name: INSTALL SCRIPT + fpm
       run: |
         WORKDIR=$(mktemp -d)
         cd "$WORKDIR"
-        git clone https://github.com/$GITHUB_REPOSITORY ./
-        fpm build --profile release
-    
+        wget $(curl -s https://api.github.com/repos/$GITHUB_REPOSITORY/releases/tags/$TAG | jq -r '.assets[] | select(.name | test("install.sh"; "i")) | .browser_download_url')
+        chmod +x install.sh
+        ./install.sh --download git --build fpm
+
+

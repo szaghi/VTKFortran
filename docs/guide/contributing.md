@@ -73,6 +73,29 @@ feat!: rename check_endian to init_endian
 
 ---
 
+## Repository maintenance
+
+### Removing a submodule
+
+Use `scripts/remove_submodule.sh` to fully remove a git submodule in one step:
+
+```bash
+scripts/remove_submodule.sh <submodule-path>
+
+# Example — remove FACE:
+scripts/remove_submodule.sh src/third_party/FACE
+```
+
+The script:
+1. Validates that the path is a registered submodule
+2. Runs `git submodule deinit -f`
+3. Removes the path with `git rm -f`
+4. Deletes the cached module data under `.git/modules/`
+
+After running it, stage and commit the resulting changes to `.gitmodules`.
+
+---
+
 ## Creating a release
 
 Releases are fully automated via `scripts/bump.sh` and GitHub Actions. The only steps needed are:
