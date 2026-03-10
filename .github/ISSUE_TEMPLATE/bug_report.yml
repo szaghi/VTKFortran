@@ -1,0 +1,78 @@
+name: Bug report
+description: Something is not working as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to report a bug.
+        Please fill in all required fields so we can reproduce the issue quickly.
+
+  - type: input
+    id: version
+    attributes:
+      label: VTKFortran version
+      description: Git tag or commit hash (e.g. `git describe --tags`)
+      placeholder: "v2.0.7 / abc1234"
+    validations:
+      required: true
+
+  - type: input
+    id: compiler
+    attributes:
+      label: Fortran compiler and version
+      description: Run `gfortran --version` or `ifort --version`, etc.
+      placeholder: "GNU Fortran 13.2.0 / Intel oneAPI 2024.1"
+    validations:
+      required: true
+
+  - type: input
+    id: build_tool
+    attributes:
+      label: Build tool and version
+      description: CMake, FoBiS.py, or FPM — and its version
+      placeholder: "cmake 3.28.1 / FoBiS.py 3.0.0 / fpm 0.9.0"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: "Ubuntu 24.04 / macOS 14 / Windows 11"
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: >
+        The exact build command(s) and the Fortran snippet (or test name) that
+        triggers the bug. The shorter, the better.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: output
+    attributes:
+      label: Full output / error message
+      description: Paste the complete compiler or runtime output, including any tracebacks.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: VTK file produced (if any), relevant fobos/CMake options, etc.
