@@ -34,6 +34,17 @@ v = [0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0,16.0,
      18.0,19.0,20.0,21.0,22.0,23.0,24.0,25.0,26.0]
 
 error = a_vtk_file%initialize(format='raw-zlib', filename='XML_UNST-zlib.vtu', mesh_topology='UnstructuredGrid')
+#ifndef VTKFORTRAN_USE_ZLIB
+if (error /= 0_I4P) then
+  print "(A)", new_line('a')//'VTKFORTRAN_USE_ZLIB not enabled: skipping RAW-ZLIB test.'
+  stop 0
+endif
+#else
+if (error /= 0_I4P) then
+  print "(A,I0)", new_line('a')//'Unexpected error initializing RAW-ZLIB test, error=', error
+  stop 1
+endif
+#endif
 error = a_vtk_file%xml_writer%write_piece(np=np, nc=nc)
 error = a_vtk_file%xml_writer%write_geo(np=np, nc=nc, x=x, y=y, z=z)
 error = a_vtk_file%xml_writer%write_connectivity(nc=nc, connectivity=connect, offset=offset, cell_type=cell_type)
