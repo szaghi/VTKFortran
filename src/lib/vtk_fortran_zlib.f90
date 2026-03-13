@@ -58,14 +58,14 @@ contains
 #ifndef VTKFORTRAN_USE_ZLIB
   dst_len = 0_c_long
   ret = -1_c_int
-  return
-#endif
+#else
   if (src_len == 0_c_long) then
     dst_len = 0_c_long
     ret = 0_c_int
     return
   endif
   ret = compress2(c_loc(dst(1)), c_loc(dst_len), c_loc(src(1)), src_len, level)
+#endif
   end function zlib_compress2
 
 end module vtk_fortran_zlib
