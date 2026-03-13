@@ -82,6 +82,7 @@ contains
    fformat = trim(adjustl(format))
    fformat = fformat%upper()
    if (allocated(self%xml_writer)) deallocate(self%xml_writer)
+   error = 0_I4P
    select case(fformat%chars())
    case('ASCII')
       allocate(xml_writer_ascii_local :: self%xml_writer)
@@ -92,6 +93,7 @@ contains
    case default
       error = 1
    endselect
+   if (error /= 0_I4P) return
    error = self%xml_writer%initialize(format=format, filename=filename, mesh_topology=mesh_topology, &
                                       is_volatile=is_volatile,                                       &
                                       nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)

@@ -14,6 +14,7 @@ integer(c_int), parameter :: Z_DEFAULT_COMPRESSION = -1_c_int
 integer(c_int), parameter :: Z_BEST_SPEED         =  1_c_int
 integer(c_int), parameter :: Z_BEST_COMPRESSION   =  9_c_int
 
+#ifdef VTKFORTRAN_USE_ZLIB
 interface
   function compressBound(sourceLen) bind(C, name='compressBound') result(bound)
     import :: c_long
@@ -31,13 +32,18 @@ interface
     integer(c_int)         :: ret
   end function compress2
 end interface
+#endif
 
 contains
 
   function zlib_compress_bound(n) result(bound)
   integer(c_long), value :: n
   integer(c_long)        :: bound
+#ifdef VTKFORTRAN_USE_ZLIB
   bound = compressBound(n)
+#else
+  bound = 0_c_long
+#endif
   end function zlib_compress_bound
 
   function zlib_compress2(dst, dst_len, src, src_len, level) result(ret)
@@ -49,12 +55,17 @@ contains
   integer(c_int),           intent(in)            :: level
   integer(c_int)                                 :: ret
 
+#ifndef VTKFORTRAN_USE_ZLIB
+  dst_len = 0_c_long
+  ret = -1_c_int
+#else
   if (src_len == 0_c_long) then
     dst_len = 0_c_long
     ret = 0_c_int
     return
   endif
   ret = compress2(c_loc(dst(1)), c_loc(dst_len), c_loc(src(1)), src_len, level)
+#endif
   end function zlib_compress2
 
 end module vtk_fortran_zlib
