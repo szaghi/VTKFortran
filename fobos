@@ -273,5 +273,5 @@ rule_3 = ./scripts/run_tests.sh
 [rule-makecoverage-analysis]
 help   = Rule for performing coverage analysis and saving reports in markdown
 rule_1 = FoBiS.py rule -ex makecoverage
-rule_2 = FoBiS.py rule -gcov_analyzer docs/guide/ coverage-analysis
+rule_2 = FoBiS.py rule -gcov_analyzer docs/guide/
 rule_3 = rm -f *.gcov
