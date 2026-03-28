@@ -43,6 +43,7 @@ contains
    !<- ASCII: data are saved in ASCII format;
    !<- BINARY: data are saved in base64 encoded format;
    !<- RAW: data are saved in raw-binary format in the appended tag of the XML file;
+   !<- RAW-ZLIB: data are saved in raw-binary format in the appended tag of the XML file using VTK internal zlib compression;
    !<- BINARY-APPENDED: data are saved in base64 encoded format in the appended tag of the XML file.
    !<
    !<### Supported topologies are:
@@ -81,16 +82,18 @@ contains
    fformat = trim(adjustl(format))
    fformat = fformat%upper()
    if (allocated(self%xml_writer)) deallocate(self%xml_writer)
+   error = 0_I4P
    select case(fformat%chars())
    case('ASCII')
       allocate(xml_writer_ascii_local :: self%xml_writer)
-   case('BINARY-APPENDED', 'RAW')
+   case('BINARY-APPENDED', 'RAW', 'RAW-ZLIB')
       allocate(xml_writer_appended :: self%xml_writer)
    case('BINARY')
       allocate(xml_writer_binary_local :: self%xml_writer)
    case default
       error = 1
    endselect
+   if (error /= 0_I4P) return
    error = self%xml_writer%initialize(format=format, filename=filename, mesh_topology=mesh_topology, &
                                       is_volatile=is_volatile,                                       &
                                       nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)

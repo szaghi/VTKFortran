@@ -118,40 +118,51 @@ if((main_project AND BUILD_TESTING) OR BUILD_TESTING_${PROJECT_NAME})
     add_subdirectory(src/tests)
 endif()
 
-# generate package config files
-include(GNUInstallDirs)
-set(project_config "${PROJECT_NAME}Config.cmake")
-set(cmake_files_dir "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles")
-set(config_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
-set(config_build_dir "${CMAKE_CURRENT_BINARY_DIR}/${config_install_dir}")
-
-# export targets for install
-install(EXPORT ${TARGETS_EXPORT_NAME}
-    NAMESPACE
-        ${NAMESPACE}
-    DESTINATION
-        ${config_install_dir}
-    COMPONENT Development
+# ---------- package/export (standalone builds) ----------
+# When VTKFortran is added via add_subdirectory (e.g. superprojects),
+# exporting can fail if the consumer provides non-exported dependency targets
+# (e.g. an in-tree zlib target). Default OFF for subprojects.
+option(VTKFORTRAN_ENABLE_PACKAGE_EXPORT
+  "Generate and export CMake package files for VTKFortran (install + build-tree export)."
+  ${main_project}
 )
 
-# export targets into build
-export(EXPORT ${TARGETS_EXPORT_NAME}
-    NAMESPACE
-        ${NAMESPACE}
-    FILE
-        ${config_build_dir}/${TARGETS_EXPORT_NAME}.cmake
-)
+if (VTKFORTRAN_ENABLE_PACKAGE_EXPORT)
+  # generate package config files
+  include(GNUInstallDirs)
+  set(project_config "${PROJECT_NAME}Config.cmake")
+  set(cmake_files_dir "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles")
+  set(config_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
+  set(config_build_dir "${CMAKE_CURRENT_BINARY_DIR}/${config_install_dir}")
 
-#create package config
-include(CMakePackageConfigHelpers)
-configure_package_config_file(cmake/PackageConfig.cmake.in ${cmake_files_dir}/${project_config}
-    INSTALL_DESTINATION ${config_install_dir}
-)
-install(FILES ${cmake_files_dir}/${project_config}
-    DESTINATION ${config_install_dir}
-)
+  # export targets for install
+  install(EXPORT ${TARGETS_EXPORT_NAME}
+      NAMESPACE
+          ${NAMESPACE}
+      DESTINATION
+          ${config_install_dir}
+      COMPONENT Development
+  )
 
-configure_package_config_file(cmake/PackageConfig.cmake.in ${config_build_dir}/${project_config}
-    INSTALL_DESTINATION ${config_build_dir}
-    INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}
-)
+  # export targets into build
+  export(EXPORT ${TARGETS_EXPORT_NAME}
+      NAMESPACE
+          ${NAMESPACE}
+      FILE
+          ${config_build_dir}/${TARGETS_EXPORT_NAME}.cmake
+  )
+
+  #create package config
+  include(CMakePackageConfigHelpers)
+  configure_package_config_file(cmake/PackageConfig.cmake.in ${cmake_files_dir}/${project_config}
+      INSTALL_DESTINATION ${config_install_dir}
+  )
+  install(FILES ${cmake_files_dir}/${project_config}
+      DESTINATION ${config_install_dir}
+  )
+
+  configure_package_config_file(cmake/PackageConfig.cmake.in ${config_build_dir}/${project_config}
+      INSTALL_DESTINATION ${config_build_dir}
+      INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}
+  )
+endif()

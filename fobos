@@ -18,6 +18,7 @@ StringiFor = https://github.com/szaghi/StringiFor
 [modes]
 modes = shared-gnu static-gnu tests-gnu
         shared-gnu-debug static-gnu-debug tests-gnu-debug
+        tests-gnu-debug-zlib
         shared-intel static-intel tests-intel
         shared-intel-debug static-intel-debug tests-intel-debug
 
@@ -72,6 +73,10 @@ mklib     = static
 
 [tests-gnu-debug]
 template  = template-static-gnu-debug
+build_dir = exe
+
+[tests-gnu-debug-zlib]
+template  = template-static-gnu-debug-zlib
 build_dir = exe
 
 [shared-intel]
@@ -163,6 +168,19 @@ quiet        = False
 log          = True
 jobs         = 10
 
+[template-static-gnu-debug-zlib]
+compiler     = gnu
+cflags       = $CSTATIC_GNU $DEBUG_GNU -DVTKFORTRAN_USE_ZLIB
+lflags       = $DEBUG_GNU -lz
+mod_dir      = ./mod/
+obj_dir      = ./obj/
+src          = ./src/
+exclude_dirs = $EXDIRS
+colors       = True
+quiet        = False
+log          = True
+jobs         = 10
+
 [template-shared-intel]
 compiler     = intel
 cflags       = $CSHARED_INT $OPTIMIZE
@@ -245,6 +263,12 @@ rule_2 = FoBiS.py build -mode tests-gnu-debug -coverage
 rule_3 = ./scripts/run_tests.sh
 rule_4 = rm -f exe/obj/befor64* exe/obj/face* exe/obj/foxy* exe/obj/penf* exe/obj/stringifor*
 rule_5 = ./scripts/compute-coverage.sh
+
+[rule-maketests-zlib]
+help   = Build and run tests with VTKFORTRAN_USE_ZLIB enabled (no coverage).
+rule_1 = FoBiS.py clean -mode tests-gnu-debug-zlib
+rule_2 = FoBiS.py build -mode tests-gnu-debug-zlib
+rule_3 = ./scripts/run_tests.sh
 
 [rule-makecoverage-analysis]
 help   = Rule for performing coverage analysis and saving reports in markdown

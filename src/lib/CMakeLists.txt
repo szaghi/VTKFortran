@@ -21,6 +21,18 @@ add_library(${LIB}
 	)
 
 target_link_libraries(${LIB} PENF::PENF BeFoR64::BeFoR64 FACE::FACE StringiFor::StringiFor FoXy::FoXy)
+
+option(VTKFORTRAN_USE_ZLIB "Enable VTK XML internal zlib compression for RAW-ZLIB output." OFF)
+if (VTKFORTRAN_USE_ZLIB)
+  if (NOT TARGET ZLIB::ZLIB)
+    find_package(ZLIB REQUIRED)
+  endif()
+  target_sources(${LIB} PRIVATE vtk_fortran_zlib.f90)
+  target_compile_definitions(${LIB} PRIVATE VTKFORTRAN_USE_ZLIB)
+  # Keep plain-signature linking to avoid mixing keyword/plain signatures for this target.
+  target_link_libraries(${LIB} ZLIB::ZLIB)
+endif()
+
 add_library(${NAMESPACE}${LIB} ALIAS ${LIB})
 
 target_include_directories(${LIB}
