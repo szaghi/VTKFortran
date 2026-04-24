@@ -13,6 +13,37 @@ source-dir = "src/lib"
 [install]
 library = true
 
+[features]
+#optimization
+opt.gfortran.flags = "-O3"
+opt.ifx.flags = "-O3 -ipo -inline-level=2 -heap-arrays 0"
+
+#check
+check.gfortran.flags = "-fcheck=all"
+check.ifx.flags = """-check all"""
+
+#warn
+warn.gfortran.flags = """-fmax-errors=0 -Wall -Wno-array-temporaries \
+-Warray-bounds -Wcharacter-truncation -Wline-truncation -Wconversion-extra \
+-Wimplicit-interface -Wimplicit-procedure -Wunderflow -Wextra -Wuninitialized"""
+warn.ifx.flags = "-warn all"
+
+#debug
+debug.gfortran.flags = """-fmodule-private -ffree-line-length-132 -fimplicit-none \
+-ffpe-trap=invalid,overflow -fbacktrace -fdump-core -finit-real=nan"""
+debug.ifx.flags = """-g -extend-source 132 -fpe0 -fstack-protector-all -no-ftz -traceback"""
+
+#optional openmp
+omp.gfortran.flags = "-fopenmp"
+omp.ifx.flags = "-qopenmp"
+#optional enforce 2003 standard
+std03.gfortran.flags = "-std=f2003 -fall-intrinsics"
+std03.ifx.flags = "-std03"
+
+[profiles]
+release = ["opt", "warn", "check", "debug"]
+release-omp = ["opt", "warn", "check", "debug", "omp"]
+
 [dependencies]
 [dependencies.FoXy]
 git = "https://github.com/Fortran-FOSS-Programmers/FoXy"

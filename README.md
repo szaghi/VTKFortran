@@ -96,11 +96,17 @@ bash scripts/run_tests.sh         # run tests
 ```
 
 ### fpm
+Requires at least version v0.13.0!
 
+Building library in current directory
 ```bash
-fpm build
-fpm test
+fpm build --compiler gfortran/ifx/... --profile release
 ```
+The library may be installed to a custom location with
+```bash
+fpm install --compiler gfortran/ifx/... --profile release --prefix /target_path
+```
+Please refer to the `fpm.toml` file for further available profiles and features.
 
 ### GNU Make
 
