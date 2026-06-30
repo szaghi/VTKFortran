@@ -15,3 +15,10 @@ updates:
       # the real-world exposure is negligible. Remove this ignore once vitepress
       # 2.x is stable and vitepress-plugin-mermaid declares vitepress ^2 support.
       - dependency-name: "vite"
+      # markdown-it-mathjax3 5.x is a rewrite (pulls in @se-oss/deasync +
+      # mathxyjax3) and breaks the ^4 API that vitepress integrates against.
+      # Every vitepress release through 2.0.0-alpha pins this peer to ^4, so v5
+      # is unresolvable here and only produces failing docs builds. Lift this
+      # ignore once vitepress widens its markdown-it-mathjax3 peer range to ^5.
+      - dependency-name: "markdown-it-mathjax3"
+        versions: [">=5"]
