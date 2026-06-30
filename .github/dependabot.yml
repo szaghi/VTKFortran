@@ -1,0 +1,17 @@
+version: 2
+updates:
+  # Documentation site (VitePress) npm dependencies.
+  - package-ecosystem: "npm"
+    directory: "/docs"
+    schedule:
+      interval: "weekly"
+    ignore:
+      # vitepress (stable 1.x) pins vite to ^5.4.14, which caps vite below every
+      # version that patches the current vite security advisories. No resolvable,
+      # advisory-clean, mermaid-plugin-compatible vite exists under that cap, so
+      # Dependabot security updates for vite can never succeed and only produce
+      # failing runs. vite here is a docs-build-only devDependency (static site
+      # shipped to GitHub Pages; `vitepress dev` is never run in production), so
+      # the real-world exposure is negligible. Remove this ignore once vitepress
+      # 2.x is stable and vitepress-plugin-mermaid declares vitepress ^2 support.
+      - dependency-name: "vite"
