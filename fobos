@@ -7,6 +7,9 @@ website    = https://szaghi.github.io/VTKFortran
 email      = stefano.zaghi@gmail.it
 authors    = Stefano Zaghi
 
+[scaffold]
+apt_packages = zlib1g-dev
+
 [dependencies]
 deps_dir   = src/third_party
 BeFoR64    = https://github.com/szaghi/BeFoR64
