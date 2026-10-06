@@ -1,5 +1,5 @@
 name = "VTKFortran"
-version = "2.0.9"
+version = "2.0.10"
 author = "Stefano Zaghi"
 copyright = "Copyright © 2022, Stefano Zaghi"
 license = "Multiple licenses"

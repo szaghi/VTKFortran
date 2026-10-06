@@ -4,6 +4,11 @@ All notable changes to this project are documented here.
 Versions follow [Semantic Versioning](https://semver.org/).
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.0.10] — 2026-10-06
+### Fixed
+- **ci**: Drop stale coverage page, pin fpm for the install smoke test
+
+
 ## [2.0.9] — 2026-10-06
 ### Fixed
 - **build**: Exclude dependency examples from tests, drop stale makefile
