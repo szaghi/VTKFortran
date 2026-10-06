@@ -4,6 +4,11 @@ All notable changes to this project are documented here.
 Versions follow [Semantic Versioning](https://semver.org/).
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.0.9] — 2026-10-06
+### Fixed
+- **build**: Exclude dependency examples from tests, drop stale makefile
+
+
 ## [2.0.8] — 2026-10-06
 ### Fixed
 - **zlib**: Compile when disabled
