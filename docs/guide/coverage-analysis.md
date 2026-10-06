@@ -1,6 +1,6 @@
 ### coverage-analysis
 
-#### [[vtk_fortran_vtk_file_xml_writer_appended.f90.gcov]]
+#### [[vtk_fortran_vtk_file_xml_writer_appended.F90.gcov]]
 
 |Lines| | |
 | --- | --- | --- |

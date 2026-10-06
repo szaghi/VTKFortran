@@ -77,6 +77,8 @@ jobs:
       if: hashFiles('fpm.toml') != ''
       uses: fortran-lang/setup-fpm@v9
       with:
+        # the v9 default (v0.12.0) rejects the [features] table of fpm.toml manifests
+        fpm-version: v0.13.0
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: FPM
