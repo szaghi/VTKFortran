@@ -15,6 +15,13 @@ implicit none
 private
 public :: xml_writer_appended
 
+#ifdef VTKFORTRAN_USE_ZLIB
+interface to_bytes
+  !< Copy a dataarray into a bytes stream, element by element (a whole-array transfer result can be placed on the stack).
+  module procedure to_bytes_R8P, to_bytes_R4P, to_bytes_I8P, to_bytes_I4P, to_bytes_I2P, to_bytes_I1P
+endinterface to_bytes
+#endif
+
 type, extends(xml_writer_abstract) :: xml_writer_appended
   !< VTK file XML writer, appended.
   type(string) :: encoding      !< Appended data encoding: "raw" or "base64".
@@ -260,7 +267,7 @@ contains
   elseif (self%encoding=='raw') then
     self%ioffset = self%ioffset + BYI4P + n_byte
   else
-    self%ioffset = self%ioffset + ((n_byte + BYI4P + 2_I4P)/3_I4P)*4_I4P
+    self%ioffset = self%ioffset + ((int(n_byte, I8P) + BYI4P + 2_I8P)/3_I8P)*4_I8P
   endif
   endsubroutine ioffset_update
 
@@ -1547,13 +1554,13 @@ contains
   nn = size(x, dim=1)
   select type(x)
   type is(real(R8P))
-    n_byte = nn*BYR8P
+    n_byte = bytes_count(size(x, kind=I8P)*BYR8P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        call to_bytes(x=x, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1566,13 +1573,13 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(real(R4P))
-    n_byte = nn*BYR4P
+    n_byte = bytes_count(size(x, kind=I8P)*BYR4P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        call to_bytes(x=x, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1585,13 +1592,13 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I8P))
-    n_byte = nn*BYI8P
+    n_byte = bytes_count(size(x, kind=I8P)*BYI8P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        call to_bytes(x=x, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1604,13 +1611,13 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I4P))
-    n_byte = nn*BYI4P
+    n_byte = bytes_count(size(x, kind=I8P)*BYI4P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        call to_bytes(x=x, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1623,13 +1630,13 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I2P))
-    n_byte = nn*BYI2P
+    n_byte = bytes_count(size(x, kind=I8P)*BYI2P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        call to_bytes(x=x, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1642,13 +1649,13 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I1P))
-    n_byte = nn*BYI1P
+    n_byte = bytes_count(size(x, kind=I8P)*BYI1P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        call to_bytes(x=x, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1674,13 +1681,15 @@ contains
   nn = size(x, dim=1)*size(x, dim=2)
   select type(x)
   type is(real(R8P))
-    n_byte = nn*BYR8P
+    n_byte = bytes_count(size(x, kind=I8P)*BYR8P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
+        real(R8P), allocatable :: xx(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        xx = reshape(x, [size(x, kind=I8P)])
+        call to_bytes(x=xx, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1692,13 +1701,15 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(real(R4P))
-    n_byte = nn*BYR4P
+    n_byte = bytes_count(size(x, kind=I8P)*BYR4P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
+        real(R4P), allocatable :: xx(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        xx = reshape(x, [size(x, kind=I8P)])
+        call to_bytes(x=xx, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1710,13 +1721,15 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I8P))
-    n_byte = nn*BYI8P
+    n_byte = bytes_count(size(x, kind=I8P)*BYI8P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
+        integer(I8P), allocatable :: xx(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        xx = reshape(x, [size(x, kind=I8P)])
+        call to_bytes(x=xx, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1728,13 +1741,15 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I4P))
-    n_byte = nn*BYI4P
+    n_byte = bytes_count(size(x, kind=I8P)*BYI4P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
+        integer(I4P), allocatable :: xx(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        xx = reshape(x, [size(x, kind=I8P)])
+        call to_bytes(x=xx, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1746,13 +1761,15 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I2P))
-    n_byte = nn*BYI2P
+    n_byte = bytes_count(size(x, kind=I8P)*BYI2P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
+        integer(I2P), allocatable :: xx(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        xx = reshape(x, [size(x, kind=I8P)])
+        call to_bytes(x=xx, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1764,13 +1781,15 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I1P))
-    n_byte = nn*BYI1P
+    n_byte = bytes_count(size(x, kind=I8P)*BYI1P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
+        integer(I1P), allocatable :: xx(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        xx = reshape(x, [size(x, kind=I8P)])
+        call to_bytes(x=xx, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1795,13 +1814,15 @@ contains
   nn = size(x, dim=1)*size(x, dim=2)*size(x, dim=3)
   select type(x)
   type is(real(R8P))
-    n_byte = nn*BYR8P
+    n_byte = bytes_count(size(x, kind=I8P)*BYR8P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
+        real(R8P), allocatable :: xx(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        xx = reshape(x, [size(x, kind=I8P)])
+        call to_bytes(x=xx, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1813,13 +1834,15 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(real(R4P))
-    n_byte = nn*BYR4P
+    n_byte = bytes_count(size(x, kind=I8P)*BYR4P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
+        real(R4P), allocatable :: xx(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        xx = reshape(x, [size(x, kind=I8P)])
+        call to_bytes(x=xx, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1831,13 +1854,15 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I8P))
-    n_byte = nn*BYI8P
+    n_byte = bytes_count(size(x, kind=I8P)*BYI8P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
+        integer(I8P), allocatable :: xx(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        xx = reshape(x, [size(x, kind=I8P)])
+        call to_bytes(x=xx, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1849,13 +1874,15 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I4P))
-    n_byte = nn*BYI4P
+    n_byte = bytes_count(size(x, kind=I8P)*BYI4P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
+        integer(I4P), allocatable :: xx(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        xx = reshape(x, [size(x, kind=I8P)])
+        call to_bytes(x=xx, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1867,13 +1894,15 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I2P))
-    n_byte = nn*BYI2P
+    n_byte = bytes_count(size(x, kind=I8P)*BYI2P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
+        integer(I2P), allocatable :: xx(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        xx = reshape(x, [size(x, kind=I8P)])
+        call to_bytes(x=xx, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1885,13 +1914,15 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I1P))
-    n_byte = nn*BYI1P
+    n_byte = bytes_count(size(x, kind=I8P)*BYI1P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
+        integer(I1P), allocatable :: xx(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        xx = reshape(x, [size(x, kind=I8P)])
+        call to_bytes(x=xx, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1916,13 +1947,15 @@ contains
   nn = size(x, dim=1)*size(x, dim=2)*size(x, dim=3)*size(x, dim=4)
   select type(x)
   type is(real(R8P))
-    n_byte = nn*BYR8P
+    n_byte = bytes_count(size(x, kind=I8P)*BYR8P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
+        real(R8P), allocatable :: xx(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        xx = reshape(x, [size(x, kind=I8P)])
+        call to_bytes(x=xx, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1934,13 +1967,15 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(real(R4P))
-    n_byte = nn*BYR4P
+    n_byte = bytes_count(size(x, kind=I8P)*BYR4P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
+        real(R4P), allocatable :: xx(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        xx = reshape(x, [size(x, kind=I8P)])
+        call to_bytes(x=xx, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1952,13 +1987,15 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I8P))
-    n_byte = nn*BYI8P
+    n_byte = bytes_count(size(x, kind=I8P)*BYI8P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
+        integer(I8P), allocatable :: xx(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        xx = reshape(x, [size(x, kind=I8P)])
+        call to_bytes(x=xx, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1970,13 +2007,15 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I4P))
-    n_byte = nn*BYI4P
+    n_byte = bytes_count(size(x, kind=I8P)*BYI4P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
+        integer(I4P), allocatable :: xx(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        xx = reshape(x, [size(x, kind=I8P)])
+        call to_bytes(x=xx, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -1988,13 +2027,15 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I2P))
-    n_byte = nn*BYI2P
+    n_byte = bytes_count(size(x, kind=I8P)*BYI2P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
+        integer(I2P), allocatable :: xx(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        xx = reshape(x, [size(x, kind=I8P)])
+        call to_bytes(x=xx, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -2006,13 +2047,15 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I1P))
-    n_byte = nn*BYI1P
+    n_byte = bytes_count(size(x, kind=I8P)*BYI1P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
+        integer(I1P), allocatable :: xx(:)
         allocate(bytes(1:n_byte))
-        bytes = transfer(x, bytes)
+        xx = reshape(x, [size(x, kind=I8P)])
+        call to_bytes(x=xx, bytes=bytes)
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
@@ -2033,9 +2076,15 @@ contains
   real(R8P),                  intent(in)    :: y(1:)  !< Y component.
   real(R8P),                  intent(in)    :: z(1:)  !< Z component.
   integer(I4P)                              :: n_byte !< Number of bytes
-  integer(I4P)                              :: n      !< Counter.
+  real(R8P), allocatable                    :: buf(:) !< Interleaved components.
+  integer(I8P)                              :: nn     !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(x(n), y(n), z(n), n=1,size(x, dim=1))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:3*nn))
+  buf(1::3) = x
+  buf(2::3) = y
+  buf(3::3) = z
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray3_rank1_R8P
 
   function write_on_scratch_dataarray3_rank1_R4P(self, x, y, z) result(n_byte)
@@ -2045,9 +2094,15 @@ contains
   real(R4P),                  intent(in)    :: y(1:)  !< Y component.
   real(R4P),                  intent(in)    :: z(1:)  !< Z component.
   integer(I4P)                              :: n_byte !< Number of bytes
-  integer(I4P)                              :: n      !< Counter.
+  real(R4P), allocatable                    :: buf(:) !< Interleaved components.
+  integer(I8P)                              :: nn     !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(x(n), y(n), z(n), n=1,size(x, dim=1))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:3*nn))
+  buf(1::3) = x
+  buf(2::3) = y
+  buf(3::3) = z
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray3_rank1_R4P
 
   function write_on_scratch_dataarray3_rank1_I8P(self, x, y, z) result(n_byte)
@@ -2057,9 +2112,15 @@ contains
   integer(I8P),               intent(in)    :: y(1:)  !< Y component.
   integer(I8P),               intent(in)    :: z(1:)  !< Z component.
   integer(I4P)                              :: n_byte !< Number of bytes
-  integer(I4P)                              :: n      !< Counter.
+  integer(I8P), allocatable                 :: buf(:) !< Interleaved components.
+  integer(I8P)                              :: nn     !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(x(n), y(n), z(n), n=1,size(x, dim=1))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:3*nn))
+  buf(1::3) = x
+  buf(2::3) = y
+  buf(3::3) = z
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray3_rank1_I8P
 
   function write_on_scratch_dataarray3_rank1_I4P(self, x, y, z) result(n_byte)
@@ -2069,9 +2130,15 @@ contains
   integer(I4P),               intent(in)    :: y(1:)  !< Y component.
   integer(I4P),               intent(in)    :: z(1:)  !< Z component.
   integer(I4P)                              :: n_byte !< Number of bytes
-  integer(I4P)                              :: n      !< Counter.
+  integer(I4P), allocatable                 :: buf(:) !< Interleaved components.
+  integer(I8P)                              :: nn     !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(x(n), y(n), z(n), n=1,size(x, dim=1))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:3*nn))
+  buf(1::3) = x
+  buf(2::3) = y
+  buf(3::3) = z
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray3_rank1_I4P
 
   function write_on_scratch_dataarray3_rank1_I2P(self, x, y, z) result(n_byte)
@@ -2081,9 +2148,15 @@ contains
   integer(I2P),               intent(in)    :: y(1:)  !< Y component.
   integer(I2P),               intent(in)    :: z(1:)  !< Z component.
   integer(I4P)                              :: n_byte !< Number of bytes
-  integer(I4P)                              :: n      !< Counter.
+  integer(I2P), allocatable                 :: buf(:) !< Interleaved components.
+  integer(I8P)                              :: nn     !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(x(n), y(n), z(n), n=1,size(x, dim=1))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:3*nn))
+  buf(1::3) = x
+  buf(2::3) = y
+  buf(3::3) = z
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray3_rank1_I2P
 
   function write_on_scratch_dataarray3_rank1_I1P(self, x, y, z) result(n_byte)
@@ -2093,9 +2166,15 @@ contains
   integer(I1P),               intent(in)    :: y(1:)  !< Y component.
   integer(I1P),               intent(in)    :: z(1:)  !< Z component.
   integer(I4P)                              :: n_byte !< Number of bytes
-  integer(I4P)                              :: n      !< Counter.
+  integer(I1P), allocatable                 :: buf(:) !< Interleaved components.
+  integer(I8P)                              :: nn     !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(x(n), y(n), z(n), n=1,size(x, dim=1))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:3*nn))
+  buf(1::3) = x
+  buf(2::3) = y
+  buf(3::3) = z
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray3_rank1_I1P
 
   function write_on_scratch_dataarray3_rank2_R8P(self, x, y, z) result(n_byte)
@@ -2105,10 +2184,15 @@ contains
   real(R8P),                  intent(in)    :: y(1:,1:) !< Y component.
   real(R8P),                  intent(in)    :: z(1:,1:) !< Z component.
   integer(I4P)                              :: n_byte   !< Number of bytes
-  integer(I4P)                              :: n1       !< Counter.
-  integer(I4P)                              :: n2       !< Counter.
+  real(R8P), allocatable                    :: buf(:)   !< Interleaved components.
+  integer(I8P)                              :: nn       !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[((x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:3*nn))
+  buf(1::3) = reshape(x, [nn])
+  buf(2::3) = reshape(y, [nn])
+  buf(3::3) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray3_rank2_R8P
 
   function write_on_scratch_dataarray3_rank2_R4P(self, x, y, z) result(n_byte)
@@ -2118,10 +2202,15 @@ contains
   real(R4P),                  intent(in)    :: y(1:,1:) !< Y component.
   real(R4P),                  intent(in)    :: z(1:,1:) !< Z component.
   integer(I4P)                              :: n_byte   !< Number of bytes
-  integer(I4P)                              :: n1       !< Counter.
-  integer(I4P)                              :: n2       !< Counter.
+  real(R4P), allocatable                    :: buf(:)   !< Interleaved components.
+  integer(I8P)                              :: nn       !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[((x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:3*nn))
+  buf(1::3) = reshape(x, [nn])
+  buf(2::3) = reshape(y, [nn])
+  buf(3::3) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray3_rank2_R4P
 
   function write_on_scratch_dataarray3_rank2_I8P(self, x, y, z) result(n_byte)
@@ -2131,10 +2220,15 @@ contains
   integer(I8P),               intent(in)    :: y(1:,1:) !< Y component.
   integer(I8P),               intent(in)    :: z(1:,1:) !< Z component.
   integer(I4P)                              :: n_byte   !< Number of bytes
-  integer(I4P)                              :: n1       !< Counter.
-  integer(I4P)                              :: n2       !< Counter.
+  integer(I8P), allocatable                 :: buf(:)   !< Interleaved components.
+  integer(I8P)                              :: nn       !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[((x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:3*nn))
+  buf(1::3) = reshape(x, [nn])
+  buf(2::3) = reshape(y, [nn])
+  buf(3::3) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray3_rank2_I8P
 
   function write_on_scratch_dataarray3_rank2_I4P(self, x, y, z) result(n_byte)
@@ -2144,10 +2238,15 @@ contains
   integer(I4P),               intent(in)    :: y(1:,1:) !< Y component.
   integer(I4P),               intent(in)    :: z(1:,1:) !< Z component.
   integer(I4P)                              :: n_byte   !< Number of bytes
-  integer(I4P)                              :: n1       !< Counter.
-  integer(I4P)                              :: n2       !< Counter.
+  integer(I4P), allocatable                 :: buf(:)   !< Interleaved components.
+  integer(I8P)                              :: nn       !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[((x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:3*nn))
+  buf(1::3) = reshape(x, [nn])
+  buf(2::3) = reshape(y, [nn])
+  buf(3::3) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray3_rank2_I4P
 
   function write_on_scratch_dataarray3_rank2_I2P(self, x, y, z) result(n_byte)
@@ -2157,10 +2256,15 @@ contains
   integer(I2P),               intent(in)    :: y(1:,1:) !< Y component.
   integer(I2P),               intent(in)    :: z(1:,1:) !< Z component.
   integer(I4P)                              :: n_byte   !< Number of bytes
-  integer(I4P)                              :: n1       !< Counter.
-  integer(I4P)                              :: n2       !< Counter.
+  integer(I2P), allocatable                 :: buf(:)   !< Interleaved components.
+  integer(I8P)                              :: nn       !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[((x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:3*nn))
+  buf(1::3) = reshape(x, [nn])
+  buf(2::3) = reshape(y, [nn])
+  buf(3::3) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray3_rank2_I2P
 
   function write_on_scratch_dataarray3_rank2_I1P(self, x, y, z) result(n_byte)
@@ -2170,10 +2274,15 @@ contains
   integer(I1P),               intent(in)    :: y(1:,1:) !< Y component.
   integer(I1P),               intent(in)    :: z(1:,1:) !< Z component.
   integer(I4P)                              :: n_byte   !< Number of bytes
-  integer(I4P)                              :: n1       !< Counter.
-  integer(I4P)                              :: n2       !< Counter.
+  integer(I1P), allocatable                 :: buf(:)   !< Interleaved components.
+  integer(I8P)                              :: nn       !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[((x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:3*nn))
+  buf(1::3) = reshape(x, [nn])
+  buf(2::3) = reshape(y, [nn])
+  buf(3::3) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray3_rank2_I1P
 
   function write_on_scratch_dataarray3_rank3_R8P(self, x, y, z) result(n_byte)
@@ -2183,12 +2292,15 @@ contains
   real(R8P),                  intent(in)    :: y(1:,1:,1:) !< Y component.
   real(R8P),                  intent(in)    :: z(1:,1:,1:) !< Z component.
   integer(I4P)                              :: n_byte      !< Number of bytes
-  integer(I4P)                              :: n1          !< Counter.
-  integer(I4P)                              :: n2          !< Counter.
-  integer(I4P)                              :: n3          !< Counter.
+  real(R8P), allocatable                    :: buf(:)      !< Interleaved components.
+  integer(I8P)                              :: nn          !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(((x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
-                                           n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:3*nn))
+  buf(1::3) = reshape(x, [nn])
+  buf(2::3) = reshape(y, [nn])
+  buf(3::3) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray3_rank3_R8P
 
   function write_on_scratch_dataarray3_rank3_R4P(self, x, y, z) result(n_byte)
@@ -2198,12 +2310,15 @@ contains
   real(R4P),                  intent(in)    :: y(1:,1:,1:) !< Y component.
   real(R4P),                  intent(in)    :: z(1:,1:,1:) !< Z component.
   integer(I4P)                              :: n_byte      !< Number of bytes
-  integer(I4P)                              :: n1          !< Counter.
-  integer(I4P)                              :: n2          !< Counter.
-  integer(I4P)                              :: n3          !< Counter.
+  real(R4P), allocatable                    :: buf(:)      !< Interleaved components.
+  integer(I8P)                              :: nn          !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(((x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
-                                           n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:3*nn))
+  buf(1::3) = reshape(x, [nn])
+  buf(2::3) = reshape(y, [nn])
+  buf(3::3) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray3_rank3_R4P
 
   function write_on_scratch_dataarray3_rank3_I8P(self, x, y, z) result(n_byte)
@@ -2213,12 +2328,15 @@ contains
   integer(I8P),               intent(in)    :: y(1:,1:,1:) !< Y component.
   integer(I8P),               intent(in)    :: z(1:,1:,1:) !< Z component.
   integer(I4P)                              :: n_byte      !< Number of bytes
-  integer(I4P)                              :: n1          !< Counter.
-  integer(I4P)                              :: n2          !< Counter.
-  integer(I4P)                              :: n3          !< Counter.
+  integer(I8P), allocatable                 :: buf(:)      !< Interleaved components.
+  integer(I8P)                              :: nn          !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(((x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
-                                           n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:3*nn))
+  buf(1::3) = reshape(x, [nn])
+  buf(2::3) = reshape(y, [nn])
+  buf(3::3) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray3_rank3_I8P
 
   function write_on_scratch_dataarray3_rank3_I4P(self, x, y, z) result(n_byte)
@@ -2228,12 +2346,15 @@ contains
   integer(I4P),               intent(in)    :: y(1:,1:,1:) !< Y component.
   integer(I4P),               intent(in)    :: z(1:,1:,1:) !< Z component.
   integer(I4P)                              :: n_byte      !< Number of bytes
-  integer(I4P)                              :: n1          !< Counter.
-  integer(I4P)                              :: n2          !< Counter.
-  integer(I4P)                              :: n3          !< Counter.
+  integer(I4P), allocatable                 :: buf(:)      !< Interleaved components.
+  integer(I8P)                              :: nn          !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(((x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
-                                           n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:3*nn))
+  buf(1::3) = reshape(x, [nn])
+  buf(2::3) = reshape(y, [nn])
+  buf(3::3) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray3_rank3_I4P
 
   function write_on_scratch_dataarray3_rank3_I2P(self, x, y, z) result(n_byte)
@@ -2243,12 +2364,15 @@ contains
   integer(I2P),               intent(in)    :: y(1:,1:,1:) !< Y component.
   integer(I2P),               intent(in)    :: z(1:,1:,1:) !< Z component.
   integer(I4P)                              :: n_byte      !< Number of bytes
-  integer(I4P)                              :: n1          !< Counter.
-  integer(I4P)                              :: n2          !< Counter.
-  integer(I4P)                              :: n3          !< Counter.
+  integer(I2P), allocatable                 :: buf(:)      !< Interleaved components.
+  integer(I8P)                              :: nn          !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(((x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
-                                           n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:3*nn))
+  buf(1::3) = reshape(x, [nn])
+  buf(2::3) = reshape(y, [nn])
+  buf(3::3) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray3_rank3_I2P
 
   function write_on_scratch_dataarray3_rank3_I1P(self, x, y, z) result(n_byte)
@@ -2258,12 +2382,15 @@ contains
   integer(I1P),               intent(in)    :: y(1:,1:,1:) !< Y component.
   integer(I1P),               intent(in)    :: z(1:,1:,1:) !< Z component.
   integer(I4P)                              :: n_byte      !< Number of bytes
-  integer(I4P)                              :: n1          !< Counter.
-  integer(I4P)                              :: n2          !< Counter.
-  integer(I4P)                              :: n3          !< Counter.
+  integer(I1P), allocatable                 :: buf(:)      !< Interleaved components.
+  integer(I8P)                              :: nn          !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(((x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
-                                           n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:3*nn))
+  buf(1::3) = reshape(x, [nn])
+  buf(2::3) = reshape(y, [nn])
+  buf(3::3) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray3_rank3_I1P
   
   function write_on_scratch_dataarray6_rank1_R8P(self, u, v, w, x, y, z) result(n_byte)
@@ -2276,9 +2403,18 @@ contains
   real(R8P),                  intent(in)    :: y(1:)  !< Y component.
   real(R8P),                  intent(in)    :: z(1:)  !< Z component.
   integer(I4P)                              :: n_byte !< Number of bytes
-  integer(I4P)                              :: n      !< Counter.
+  real(R8P), allocatable                    :: buf(:) !< Interleaved components.
+  integer(I8P)                              :: nn     !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(u(n), v(n), w(n), x(n), y(n), z(n), n=1,size(x, dim=1))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:6*nn))
+  buf(1::6) = u
+  buf(2::6) = v
+  buf(3::6) = w
+  buf(4::6) = x
+  buf(5::6) = y
+  buf(6::6) = z
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray6_rank1_R8P
 
   function write_on_scratch_dataarray6_rank1_R4P(self, u, v, w, x, y, z) result(n_byte)
@@ -2291,13 +2427,22 @@ contains
   real(R4P),                  intent(in)    :: y(1:)  !< Y component.
   real(R4P),                  intent(in)    :: z(1:)  !< Z component.
   integer(I4P)                              :: n_byte !< Number of bytes
-  integer(I4P)                              :: n      !< Counter.
+  real(R4P), allocatable                    :: buf(:) !< Interleaved components.
+  integer(I8P)                              :: nn     !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(u(n), v(n), w(n), x(n), y(n), z(n), n=1,size(x, dim=1))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:6*nn))
+  buf(1::6) = u
+  buf(2::6) = v
+  buf(3::6) = w
+  buf(4::6) = x
+  buf(5::6) = y
+  buf(6::6) = z
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray6_rank1_R4P
 
   function write_on_scratch_dataarray6_rank1_I8P(self, u, v, w, x, y, z) result(n_byte)
-  !< Write a dataarray with 3 components of rank 1 (I8P).
+  !< Write a dataarray with 6 components of rank 1 (I8P).
   class(xml_writer_appended), intent(inout) :: self   !< Writer.
   integer(I8P),               intent(in)    :: u(1:)  !< U component.
   integer(I8P),               intent(in)    :: v(1:)  !< V component.
@@ -2306,9 +2451,18 @@ contains
   integer(I8P),               intent(in)    :: y(1:)  !< Y component.
   integer(I8P),               intent(in)    :: z(1:)  !< Z component.
   integer(I4P)                              :: n_byte !< Number of bytes
-  integer(I4P)                              :: n      !< Counter.
+  integer(I8P), allocatable                 :: buf(:) !< Interleaved components.
+  integer(I8P)                              :: nn     !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(u(n), v(n), w(n), x(n), y(n), z(n), n=1,size(x, dim=1))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:6*nn))
+  buf(1::6) = u
+  buf(2::6) = v
+  buf(3::6) = w
+  buf(4::6) = x
+  buf(5::6) = y
+  buf(6::6) = z
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray6_rank1_I8P
 
   function write_on_scratch_dataarray6_rank1_I4P(self, u, v, w, x, y, z) result(n_byte)
@@ -2321,9 +2475,18 @@ contains
   integer(I4P),               intent(in)    :: y(1:)  !< Y component.
   integer(I4P),               intent(in)    :: z(1:)  !< Z component.
   integer(I4P)                              :: n_byte !< Number of bytes
-  integer(I4P)                              :: n      !< Counter.
+  integer(I4P), allocatable                 :: buf(:) !< Interleaved components.
+  integer(I8P)                              :: nn     !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(u(n), v(n), w(n), x(n), y(n), z(n), n=1,size(x, dim=1))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:6*nn))
+  buf(1::6) = u
+  buf(2::6) = v
+  buf(3::6) = w
+  buf(4::6) = x
+  buf(5::6) = y
+  buf(6::6) = z
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray6_rank1_I4P
 
   function write_on_scratch_dataarray6_rank1_I2P(self, u, v, w, x, y, z) result(n_byte)
@@ -2336,9 +2499,18 @@ contains
   integer(I2P),               intent(in)    :: y(1:)  !< Y component.
   integer(I2P),               intent(in)    :: z(1:)  !< Z component.
   integer(I4P)                              :: n_byte !< Number of bytes
-  integer(I4P)                              :: n      !< Counter.
+  integer(I2P), allocatable                 :: buf(:) !< Interleaved components.
+  integer(I8P)                              :: nn     !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(u(n), v(n), w(n), x(n), y(n), z(n), n=1,size(x, dim=1))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:6*nn))
+  buf(1::6) = u
+  buf(2::6) = v
+  buf(3::6) = w
+  buf(4::6) = x
+  buf(5::6) = y
+  buf(6::6) = z
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray6_rank1_I2P
 
   function write_on_scratch_dataarray6_rank1_I1P(self, u, v, w, x, y, z) result(n_byte)
@@ -2351,9 +2523,18 @@ contains
   integer(I1P),               intent(in)    :: y(1:)  !< Y component.
   integer(I1P),               intent(in)    :: z(1:)  !< Z component.
   integer(I4P)                              :: n_byte !< Number of bytes
-  integer(I4P)                              :: n      !< Counter.
+  integer(I1P), allocatable                 :: buf(:) !< Interleaved components.
+  integer(I8P)                              :: nn     !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(u(n), v(n), w(n), x(n), y(n), z(n), n=1,size(x, dim=1))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:6*nn))
+  buf(1::6) = u
+  buf(2::6) = v
+  buf(3::6) = w
+  buf(4::6) = x
+  buf(5::6) = y
+  buf(6::6) = z
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray6_rank1_I1P
 
   function write_on_scratch_dataarray6_rank2_R8P(self, u, v, w, x, y, z) result(n_byte)
@@ -2366,11 +2547,18 @@ contains
   real(R8P),                  intent(in)    :: y(1:,1:) !< Y component.
   real(R8P),                  intent(in)    :: z(1:,1:) !< Z component.
   integer(I4P)                              :: n_byte   !< Number of bytes
-  integer(I4P)                              :: n1       !< Counter.
-  integer(I4P)                              :: n2       !< Counter.
+  real(R8P), allocatable                    :: buf(:)   !< Interleaved components.
+  integer(I8P)                              :: nn       !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[((u(n1,n2), v(n1,n2), w(n1,n2), &
-                                                x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:6*nn))
+  buf(1::6) = reshape(u, [nn])
+  buf(2::6) = reshape(v, [nn])
+  buf(3::6) = reshape(w, [nn])
+  buf(4::6) = reshape(x, [nn])
+  buf(5::6) = reshape(y, [nn])
+  buf(6::6) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray6_rank2_R8P
 
   function write_on_scratch_dataarray6_rank2_R4P(self, u, v, w, x, y, z) result(n_byte)
@@ -2383,11 +2571,18 @@ contains
   real(R4P),                  intent(in)    :: y(1:,1:) !< Y component.
   real(R4P),                  intent(in)    :: z(1:,1:) !< Z component.
   integer(I4P)                              :: n_byte   !< Number of bytes
-  integer(I4P)                              :: n1       !< Counter.
-  integer(I4P)                              :: n2       !< Counter.
+  real(R4P), allocatable                    :: buf(:)   !< Interleaved components.
+  integer(I8P)                              :: nn       !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[((u(n1,n2), v(n1,n2), w(n1,n2), &
-                                                x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:6*nn))
+  buf(1::6) = reshape(u, [nn])
+  buf(2::6) = reshape(v, [nn])
+  buf(3::6) = reshape(w, [nn])
+  buf(4::6) = reshape(x, [nn])
+  buf(5::6) = reshape(y, [nn])
+  buf(6::6) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray6_rank2_R4P
 
   function write_on_scratch_dataarray6_rank2_I8P(self, u, v, w, x, y, z) result(n_byte)
@@ -2400,11 +2595,18 @@ contains
   integer(I8P),               intent(in)    :: y(1:,1:) !< Y component.
   integer(I8P),               intent(in)    :: z(1:,1:) !< Z component.
   integer(I4P)                              :: n_byte   !< Number of bytes
-  integer(I4P)                              :: n1       !< Counter.
-  integer(I4P)                              :: n2       !< Counter.
+  integer(I8P), allocatable                 :: buf(:)   !< Interleaved components.
+  integer(I8P)                              :: nn       !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[((u(n1,n2), v(n1,n2), w(n1,n2), &
-                                                x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:6*nn))
+  buf(1::6) = reshape(u, [nn])
+  buf(2::6) = reshape(v, [nn])
+  buf(3::6) = reshape(w, [nn])
+  buf(4::6) = reshape(x, [nn])
+  buf(5::6) = reshape(y, [nn])
+  buf(6::6) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray6_rank2_I8P
 
   function write_on_scratch_dataarray6_rank2_I4P(self, u, v, w, x, y, z) result(n_byte)
@@ -2417,11 +2619,18 @@ contains
   integer(I4P),               intent(in)    :: y(1:,1:) !< Y component.
   integer(I4P),               intent(in)    :: z(1:,1:) !< Z component.
   integer(I4P)                              :: n_byte   !< Number of bytes
-  integer(I4P)                              :: n1       !< Counter.
-  integer(I4P)                              :: n2       !< Counter.
+  integer(I4P), allocatable                 :: buf(:)   !< Interleaved components.
+  integer(I8P)                              :: nn       !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[((u(n1,n2), v(n1,n2), w(n1,n2), &
-                                                x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:6*nn))
+  buf(1::6) = reshape(u, [nn])
+  buf(2::6) = reshape(v, [nn])
+  buf(3::6) = reshape(w, [nn])
+  buf(4::6) = reshape(x, [nn])
+  buf(5::6) = reshape(y, [nn])
+  buf(6::6) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray6_rank2_I4P
 
   function write_on_scratch_dataarray6_rank2_I2P(self, u, v, w, x, y, z) result(n_byte)
@@ -2434,11 +2643,18 @@ contains
   integer(I2P),               intent(in)    :: y(1:,1:) !< Y component.
   integer(I2P),               intent(in)    :: z(1:,1:) !< Z component.
   integer(I4P)                              :: n_byte   !< Number of bytes
-  integer(I4P)                              :: n1       !< Counter.
-  integer(I4P)                              :: n2       !< Counter.
+  integer(I2P), allocatable                 :: buf(:)   !< Interleaved components.
+  integer(I8P)                              :: nn       !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[((u(n1,n2), v(n1,n2), w(n1,n2), &
-                                                x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:6*nn))
+  buf(1::6) = reshape(u, [nn])
+  buf(2::6) = reshape(v, [nn])
+  buf(3::6) = reshape(w, [nn])
+  buf(4::6) = reshape(x, [nn])
+  buf(5::6) = reshape(y, [nn])
+  buf(6::6) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray6_rank2_I2P
 
   function write_on_scratch_dataarray6_rank2_I1P(self, u, v, w, x, y, z) result(n_byte)
@@ -2451,11 +2667,18 @@ contains
   integer(I1P),               intent(in)    :: y(1:,1:) !< Y component.
   integer(I1P),               intent(in)    :: z(1:,1:) !< Z component.
   integer(I4P)                              :: n_byte   !< Number of bytes
-  integer(I4P)                              :: n1       !< Counter.
-  integer(I4P)                              :: n2       !< Counter.
+  integer(I1P), allocatable                 :: buf(:)   !< Interleaved components.
+  integer(I8P)                              :: nn       !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[((u(n1,n2), v(n1,n2), w(n1,n2), &
-                                                x(n1,n2), y(n1,n2), z(n1,n2), n1=1,size(x, dim=1)),n2=1,size(x, dim=2))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:6*nn))
+  buf(1::6) = reshape(u, [nn])
+  buf(2::6) = reshape(v, [nn])
+  buf(3::6) = reshape(w, [nn])
+  buf(4::6) = reshape(x, [nn])
+  buf(5::6) = reshape(y, [nn])
+  buf(6::6) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray6_rank2_I1P
 
   function write_on_scratch_dataarray6_rank3_R8P(self, u, v, w, x, y, z) result(n_byte)
@@ -2468,13 +2691,18 @@ contains
   real(R8P),                  intent(in)    :: y(1:,1:,1:) !< Y component.
   real(R8P),                  intent(in)    :: z(1:,1:,1:) !< Z component.
   integer(I4P)                              :: n_byte      !< Number of bytes
-  integer(I4P)                              :: n1          !< Counter.
-  integer(I4P)                              :: n2          !< Counter.
-  integer(I4P)                              :: n3          !< Counter.
+  real(R8P), allocatable                    :: buf(:)      !< Interleaved components.
+  integer(I8P)                              :: nn          !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(((u(n1,n2,n3), v(n1,n2,n3), w(n1,n2,n3), &
-                                                  x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
-                                           n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:6*nn))
+  buf(1::6) = reshape(u, [nn])
+  buf(2::6) = reshape(v, [nn])
+  buf(3::6) = reshape(w, [nn])
+  buf(4::6) = reshape(x, [nn])
+  buf(5::6) = reshape(y, [nn])
+  buf(6::6) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray6_rank3_R8P
 
   function write_on_scratch_dataarray6_rank3_R4P(self, u, v, w, x, y, z) result(n_byte)
@@ -2487,12 +2715,18 @@ contains
   real(R4P),                  intent(in)    :: y(1:,1:,1:) !< Y component.
   real(R4P),                  intent(in)    :: z(1:,1:,1:) !< Z component.
   integer(I4P)                              :: n_byte      !< Number of bytes
-  integer(I4P)                              :: n1          !< Counter.
-  integer(I4P)                              :: n2          !< Counter.
-  integer(I4P)                              :: n3          !< Counter.
+  real(R4P), allocatable                    :: buf(:)      !< Interleaved components.
+  integer(I8P)                              :: nn          !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(((u(n1,n2,n3), v(n1,n2,n3), w(n1,n2,n3), x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
-                                           n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:6*nn))
+  buf(1::6) = reshape(u, [nn])
+  buf(2::6) = reshape(v, [nn])
+  buf(3::6) = reshape(w, [nn])
+  buf(4::6) = reshape(x, [nn])
+  buf(5::6) = reshape(y, [nn])
+  buf(6::6) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray6_rank3_R4P
 
   function write_on_scratch_dataarray6_rank3_I8P(self, u, v, w, x, y, z) result(n_byte)
@@ -2505,12 +2739,18 @@ contains
   integer(I8P),               intent(in)    :: y(1:,1:,1:) !< Y component.
   integer(I8P),               intent(in)    :: z(1:,1:,1:) !< Z component.
   integer(I4P)                              :: n_byte      !< Number of bytes
-  integer(I4P)                              :: n1          !< Counter.
-  integer(I4P)                              :: n2          !< Counter.
-  integer(I4P)                              :: n3          !< Counter.
+  integer(I8P), allocatable                 :: buf(:)      !< Interleaved components.
+  integer(I8P)                              :: nn          !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(((u(n1,n2,n3), v(n1,n2,n3), w(n1,n2,n3), x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
-                                           n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:6*nn))
+  buf(1::6) = reshape(u, [nn])
+  buf(2::6) = reshape(v, [nn])
+  buf(3::6) = reshape(w, [nn])
+  buf(4::6) = reshape(x, [nn])
+  buf(5::6) = reshape(y, [nn])
+  buf(6::6) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray6_rank3_I8P
 
   function write_on_scratch_dataarray6_rank3_I4P(self, u, v, w, x, y, z) result(n_byte)
@@ -2523,12 +2763,18 @@ contains
   integer(I4P),               intent(in)    :: y(1:,1:,1:) !< Y component.
   integer(I4P),               intent(in)    :: z(1:,1:,1:) !< Z component.
   integer(I4P)                              :: n_byte      !< Number of bytes
-  integer(I4P)                              :: n1          !< Counter.
-  integer(I4P)                              :: n2          !< Counter.
-  integer(I4P)                              :: n3          !< Counter.
+  integer(I4P), allocatable                 :: buf(:)      !< Interleaved components.
+  integer(I8P)                              :: nn          !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(((u(n1,n2,n3), v(n1,n2,n3), w(n1,n2,n3), x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
-                                           n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:6*nn))
+  buf(1::6) = reshape(u, [nn])
+  buf(2::6) = reshape(v, [nn])
+  buf(3::6) = reshape(w, [nn])
+  buf(4::6) = reshape(x, [nn])
+  buf(5::6) = reshape(y, [nn])
+  buf(6::6) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray6_rank3_I4P
 
   function write_on_scratch_dataarray6_rank3_I2P(self, u, v, w, x, y, z) result(n_byte)
@@ -2541,12 +2787,18 @@ contains
   integer(I2P),               intent(in)    :: y(1:,1:,1:) !< Y component.
   integer(I2P),               intent(in)    :: z(1:,1:,1:) !< Z component.
   integer(I4P)                              :: n_byte      !< Number of bytes
-  integer(I4P)                              :: n1          !< Counter.
-  integer(I4P)                              :: n2          !< Counter.
-  integer(I4P)                              :: n3          !< Counter.
+  integer(I2P), allocatable                 :: buf(:)      !< Interleaved components.
+  integer(I8P)                              :: nn          !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(((u(n1,n2,n3), v(n1,n2,n3), w(n1,n2,n3), x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
-                                           n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:6*nn))
+  buf(1::6) = reshape(u, [nn])
+  buf(2::6) = reshape(v, [nn])
+  buf(3::6) = reshape(w, [nn])
+  buf(4::6) = reshape(x, [nn])
+  buf(5::6) = reshape(y, [nn])
+  buf(6::6) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray6_rank3_I2P
 
   function write_on_scratch_dataarray6_rank3_I1P(self, u, v, w, x, y, z) result(n_byte)
@@ -2559,11 +2811,86 @@ contains
   integer(I1P),               intent(in)    :: y(1:,1:,1:) !< Y component.
   integer(I1P),               intent(in)    :: z(1:,1:,1:) !< Z component.
   integer(I4P)                              :: n_byte      !< Number of bytes
-  integer(I4P)                              :: n1          !< Counter.
-  integer(I4P)                              :: n2          !< Counter.
-  integer(I4P)                              :: n3          !< Counter.
+  integer(I1P), allocatable                 :: buf(:)      !< Interleaved components.
+  integer(I8P)                              :: nn          !< Number of elements.
 
-  n_byte = self%write_on_scratch_dataarray(x=[(((u(n1,n2,n3), v(n1,n2,n3), w(n1,n2,n3), x(n1,n2,n3), y(n1,n2,n3), z(n1,n2,n3), &
-                                           n1=1,size(x, dim=1)),n2=1,size(x, dim=2)),n3=1,size(x, dim=3))])
+  nn = size(x, kind=I8P)
+  allocate(buf(1:6*nn))
+  buf(1::6) = reshape(u, [nn])
+  buf(2::6) = reshape(v, [nn])
+  buf(3::6) = reshape(w, [nn])
+  buf(4::6) = reshape(x, [nn])
+  buf(5::6) = reshape(y, [nn])
+  buf(6::6) = reshape(z, [nn])
+  n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray6_rank3_I1P
+
+#ifdef VTKFORTRAN_USE_ZLIB
+  ! to_bytes methods
+  pure subroutine to_bytes_R8P(x, bytes)
+  !< Copy a dataarray into a bytes stream (R8P).
+  real(R8P),              intent(in)  :: x(1:)     !< Dataarray.
+  integer(c_signed_char), intent(out) :: bytes(1:) !< Bytes stream, at least of size(x)*BYR8P elements.
+  integer(I8P)                        :: n         !< Counter.
+
+  do n=1_I8P, size(x, kind=I8P)
+    bytes((n-1_I8P)*BYR8P+1_I8P:n*BYR8P) = transfer(x(n), bytes)
+  enddo
+  endsubroutine to_bytes_R8P
+
+  pure subroutine to_bytes_R4P(x, bytes)
+  !< Copy a dataarray into a bytes stream (R4P).
+  real(R4P),              intent(in)  :: x(1:)     !< Dataarray.
+  integer(c_signed_char), intent(out) :: bytes(1:) !< Bytes stream, at least of size(x)*BYR4P elements.
+  integer(I8P)                        :: n         !< Counter.
+
+  do n=1_I8P, size(x, kind=I8P)
+    bytes((n-1_I8P)*BYR4P+1_I8P:n*BYR4P) = transfer(x(n), bytes)
+  enddo
+  endsubroutine to_bytes_R4P
+
+  pure subroutine to_bytes_I8P(x, bytes)
+  !< Copy a dataarray into a bytes stream (I8P).
+  integer(I8P),           intent(in)  :: x(1:)     !< Dataarray.
+  integer(c_signed_char), intent(out) :: bytes(1:) !< Bytes stream, at least of size(x)*BYI8P elements.
+  integer(I8P)                        :: n         !< Counter.
+
+  do n=1_I8P, size(x, kind=I8P)
+    bytes((n-1_I8P)*BYI8P+1_I8P:n*BYI8P) = transfer(x(n), bytes)
+  enddo
+  endsubroutine to_bytes_I8P
+
+  pure subroutine to_bytes_I4P(x, bytes)
+  !< Copy a dataarray into a bytes stream (I4P).
+  integer(I4P),           intent(in)  :: x(1:)     !< Dataarray.
+  integer(c_signed_char), intent(out) :: bytes(1:) !< Bytes stream, at least of size(x)*BYI4P elements.
+  integer(I8P)                        :: n         !< Counter.
+
+  do n=1_I8P, size(x, kind=I8P)
+    bytes((n-1_I8P)*BYI4P+1_I8P:n*BYI4P) = transfer(x(n), bytes)
+  enddo
+  endsubroutine to_bytes_I4P
+
+  pure subroutine to_bytes_I2P(x, bytes)
+  !< Copy a dataarray into a bytes stream (I2P).
+  integer(I2P),           intent(in)  :: x(1:)     !< Dataarray.
+  integer(c_signed_char), intent(out) :: bytes(1:) !< Bytes stream, at least of size(x)*BYI2P elements.
+  integer(I8P)                        :: n         !< Counter.
+
+  do n=1_I8P, size(x, kind=I8P)
+    bytes((n-1_I8P)*BYI2P+1_I8P:n*BYI2P) = transfer(x(n), bytes)
+  enddo
+  endsubroutine to_bytes_I2P
+
+  pure subroutine to_bytes_I1P(x, bytes)
+  !< Copy a dataarray into a bytes stream (I1P).
+  integer(I1P),           intent(in)  :: x(1:)     !< Dataarray.
+  integer(c_signed_char), intent(out) :: bytes(1:) !< Bytes stream, at least of size(x)*BYI1P elements.
+  integer(I8P)                        :: n         !< Counter.
+
+  do n=1_I8P, size(x, kind=I8P)
+    bytes((n-1_I8P)*BYI1P+1_I8P:n*BYI1P) = transfer(x(n), bytes)
+  enddo
+  endsubroutine to_bytes_I1P
+#endif
 endmodule vtk_fortran_vtk_file_xml_writer_appended

@@ -1022,7 +1022,15 @@ contains
         '" Name="'//trim(adjustl(data_name))//                              &
         '" format="'//self%format_ch//'"'
    endif
-   call self%write_tag(name='DataArray', attributes=tag_attributes%chars(), content=data_content)
+   if (present(data_content).and.(.not.self%is_volatile)) then
+      ! content written as is between start and end tags (same bytes of write_tag): building the whole tag as a single
+      ! string makes full-size copies of the content, some of them stack temporaries with some compilers (issue #70)
+      call self%write_start_tag(name='DataArray', attributes=tag_attributes%chars())
+      write(unit=self%xml, iostat=self%error)repeat(' ', self%indent), data_content, end_rec
+      call self%write_end_tag(name='DataArray')
+   else
+      call self%write_tag(name='DataArray', attributes=tag_attributes%chars(), content=data_content)
+   endif
    endsubroutine write_dataarray_tag
 
    subroutine write_dataarray_tag_appended(self, data_type, number_of_components, data_name, is_tuples)
