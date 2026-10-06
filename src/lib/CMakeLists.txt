@@ -14,7 +14,7 @@ add_library(${LIB}
 	vtk_fortran_pvtk_file.f90
 	vtk_fortran_vtk_file.f90
 	vtk_fortran_vtk_file_xml_writer_abstract.f90
-	vtk_fortran_vtk_file_xml_writer_appended.f90
+	vtk_fortran_vtk_file_xml_writer_appended.F90
 	vtk_fortran_vtk_file_xml_writer_ascii_local.f90
 	vtk_fortran_vtk_file_xml_writer_binary_local.f90
 	vtk_fortran_vtm_file.F90
@@ -27,7 +27,7 @@ if (VTKFORTRAN_USE_ZLIB)
   if (NOT TARGET ZLIB::ZLIB)
     find_package(ZLIB REQUIRED)
   endif()
-  target_sources(${LIB} PRIVATE vtk_fortran_zlib.f90)
+  target_sources(${LIB} PRIVATE vtk_fortran_zlib.F90)
   target_compile_definitions(${LIB} PRIVATE VTKFORTRAN_USE_ZLIB)
   # Keep plain-signature linking to avoid mixing keyword/plain signatures for this target.
   target_link_libraries(${LIB} ZLIB::ZLIB)
