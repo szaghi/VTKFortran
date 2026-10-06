@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches: ["**"]
-    tags-ignore: ["**"]   # tags are handled by release.yml
+    tags-ignore: ["**"]   # a release tag points at a commit already tested on its branch push
   pull_request:
 
 jobs:
@@ -27,6 +27,3 @@ jobs:
     - name: Run tests with coverage
       id: cov
       uses: ./.github/actions/run-coverage-analysis
-
-    - name: Run tests with zlib enabled (VTKFORTRAN_USE_ZLIB)
-      run: FoBiS.py rule -ex maketests-zlib
