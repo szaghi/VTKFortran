@@ -123,6 +123,37 @@ error = a_vtk_file%finalize()
 
 Supported formats for unstructured grids: `ascii`, `raw`, and `binary`.
 
+### Polyhedron cells
+
+General polyhedra (VTK cell type `42`) need two more arrays, passed to `write_connectivity` as the optional `face` and
+`faceoffset` arguments:
+
+- `face`: for each polyhedron, the number of its faces followed, for each face, by the number of its points and the point ids;
+- `faceoffset`: for each cell, the position in `face` where the description of that cell ends, or `-1` if the cell is not a
+  polyhedron.
+
+The `connectivity` of a polyhedron lists the (unique) ids of its points, as for any other cell. For example, a unit cube written
+as a polyhedron (points `0`–`7`) followed by a tetrahedron (points `8`–`11`):
+
+```fortran
+integer(I4P), parameter :: connect(12)  = [0,1,2,3,4,5,6,7, 8,9,10,11]
+integer(I4P), parameter :: offset(2)    = [8, 12]
+integer(I1P), parameter :: cell_type(2) = [42_I1P, 10_I1P]  ! polyhedron, tetrahedron
+integer(I4P), parameter :: face(31)     = [6,                &  ! the cube has 6 faces,
+                                           4, 0,1,2,3,       &  ! each made of 4 points
+                                           4, 4,5,6,7,       &
+                                           4, 0,1,5,4,       &
+                                           4, 1,2,6,5,       &
+                                           4, 2,3,7,6,       &
+                                           4, 3,0,4,7]
+integer(I4P), parameter :: faceoffset(2) = [31, -1]          ! the tetrahedron is not a polyhedron
+
+error = a_vtk_file%xml_writer%write_connectivity(nc=2, connectivity=connect, offset=offset, cell_type=cell_type, &
+                                                  face=face, faceoffset=faceoffset)
+```
+
+See `src/tests/vtk_fortran_write_vtu_polyhedron.f90` for the complete program.
+
 ## Multi-block Dataset (VTM)
 
 A VTM file is a composite wrapper that references multiple individual VTK files organised into named blocks.
@@ -199,6 +230,37 @@ end block
 ::: tip Adjacent partition extents
 Adjacent pieces must share the boundary ordinate: `nx2_p(1)` of piece 1 must equal `nx1_p(2)` of piece 2. This is required for correct rendering in ParaView.
 :::
+
+## Parallel Unstructured Grid (PVTU)
+
+The same approach works for unstructured grids: each rank writes its partition as a complete `.vtu` file, with its own points
+and a connectivity using **local** point ids (`0` to `np-1` of that piece), then one rank writes the `.pvtu` file. The `.pvtu`
+file contains no data: it declares the type of the points coordinates (`mesh_kind`) and of every data array of the pieces, and
+lists the pieces. Unstructured pieces have no extents, so `write_parallel_geo` takes only the piece file name.
+
+```fortran
+use vtk_fortran, only : pvtk_file
+use penf,        only : I4P
+
+type(pvtk_file) :: a_pvtk_file
+integer(I4P)    :: error
+
+! --- after every rank has written its own part_NN.vtu ---
+error = a_pvtk_file%initialize(filename='output.pvtu', mesh_topology='PUnstructuredGrid', mesh_kind='Float64')
+error = a_pvtk_file%xml_writer%write_dataarray(location='node', action='open')
+error = a_pvtk_file%xml_writer%write_parallel_dataarray(data_name='temperature', data_type='Float64', &
+                                                         number_of_components=1)
+error = a_pvtk_file%xml_writer%write_dataarray(location='node', action='close')
+error = a_pvtk_file%xml_writer%write_dataarray(location='cell', action='open')
+error = a_pvtk_file%xml_writer%write_parallel_dataarray(data_name='part', data_type='Int32', number_of_components=1)
+error = a_pvtk_file%xml_writer%write_dataarray(location='cell', action='close')
+error = a_pvtk_file%xml_writer%write_parallel_geo(source='part_01.vtu')
+error = a_pvtk_file%xml_writer%write_parallel_geo(source='part_02.vtu')
+error = a_pvtk_file%finalize()
+```
+
+The names, types and numbers of components declared in the `.pvtu` file must match the data arrays written in every piece. See
+`src/tests/vtk_fortran_write_pvtu.f90` for the complete program, pieces included.
 
 ## Volatile XML output
 

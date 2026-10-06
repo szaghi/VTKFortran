@@ -1508,13 +1508,13 @@ contains
    error = self%write_dataarray(data_name='connectivity', x=connectivity)
    error = self%write_dataarray(data_name='offsets', x=offset)
    error = self%write_dataarray(data_name='types', x=cell_type)
-   call self%write_end_tag(name='Cells')
-
    !< Add faces and faceoffsets to the cell block for polyhedra. If the cell is not a polyhedron, its offset must be set to -1.
+   !< They must be children of the Cells element, otherwise readers ignore them (issue #31).
    if(present(face).and. present(faceoffset)) then
         error = self%write_dataarray(data_name='faces', x=face)
         error = self%write_dataarray(data_name='faceoffsets', x=faceoffset)
    endif
+   call self%write_end_tag(name='Cells')
    endfunction write_connectivity
 
    ! write_parallel methods

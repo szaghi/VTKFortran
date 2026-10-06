@@ -24,7 +24,7 @@ title: Features
 | Parallel Polydata | `.pvtp` | — |
 | Parallel Rectilinear Grid | `.pvtr` | — |
 | Parallel Structured Grid | `.pvts` | ✅ |
-| Parallel Unstructured Grid | `.pvtu` | — |
+| Parallel Unstructured Grid | `.pvtu` | ✅ |
 
 ### Composite datasets
 
