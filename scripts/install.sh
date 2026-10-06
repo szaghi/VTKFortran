@@ -90,8 +90,11 @@ GITHUB="https://github.com/$REPO"
 [[ $VERBOSE -eq 1 ]] && info "Repository: ${BOLD}${REPO}${RESET}"
 
 # ── Dependencies ──────────────────────────────────────────────────────────────
-# Run in the project root: fetch the fobos [dependencies], if any. Only the
-# fobis build consumes them; make/cmake/fpm projects resolve their own.
+# Run in the project root: fetch the fobos [dependencies], if any. A release
+# tarball does not contain them, and the fobis build as well as a Makefile or
+# CMakeLists.txt generated alongside the fobos (building from the fetched
+# sources) need them; fpm resolves its own from fpm.toml. Called only once the
+# build is known to happen, so a skipped build never requires fobis.
 fetchdeps() {
   if [[ -f fobos ]] && grep -q '^\[dependencies\]' fobos; then
     command -v fobis &>/dev/null || error "fobis not found (needed to fetch dependencies)."
@@ -150,6 +153,7 @@ projectbuild() {
         warn "Makefile not found — skipping make build."
         return
       fi
+      fetchdeps
       make
       ;;
     cmake )
@@ -158,6 +162,7 @@ projectbuild() {
         warn "CMakeLists.txt not found — skipping cmake build."
         return
       fi
+      fetchdeps
       cmake -B build
       cmake --build build
       ;;

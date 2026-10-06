@@ -132,15 +132,3 @@ FoBiS.py rule -ex makedoc        # build FORD API documentation
 fpm build
 fpm test
 ```
-
-## Build with GNU Make
-
-```bash
-make                   # default build
-make TESTS=yes         # build with tests
-make DEBUG=yes         # debug mode
-make COMPILER=intel    # use Intel Fortran
-make OPTIMIZE=yes      # enable -O3
-make OPENMP=yes        # enable OpenMP
-make MPI=yes           # enable MPI
-```

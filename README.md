@@ -107,9 +107,3 @@ The library may be installed to a custom location with
 fpm install --compiler gfortran/ifx/... --profile release --prefix /target_path
 ```
 Please refer to the `fpm.toml` file for further available profiles and features.
-
-### GNU Make
-
-```bash
-make
-```

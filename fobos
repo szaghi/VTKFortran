@@ -40,6 +40,16 @@ $EXDIRS      = src/pre-lib/
                FoXy/src/tests/
                PENF/src/tests/
                StringiFor/src/tests/
+               BeFoR64/docs/
+               FACE/docs/
+               FoXy/docs/
+               PENF/docs/
+               StringiFor/docs/
+               BeFoR64/scripts/
+               FACE/scripts/
+               FoXy/scripts/
+               PENF/scripts/
+               StringiFor/scripts/
 
 # main modes
 [shared-gnu]
