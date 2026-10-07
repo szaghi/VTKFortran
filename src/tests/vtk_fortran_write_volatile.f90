@@ -11,6 +11,7 @@ implicit none
 character(:), allocatable :: xml_volatile_file_1 !< XML volatile file 1.
 character(:), allocatable :: xml_volatile_file_2 !< XML volatile file 2.
 integer(I4P)              :: error               !< Status error.
+logical                   :: test_passed(3)      !< List of passed tests.
 
 ! suppose that two slave processes create their own files, but they being not allowed to access to filesystem they creates
 ! "volatile" files in the form of string containing the XML-coded files
@@ -19,9 +20,17 @@ call write_slave(x_offset=6._R8P, y_offset=0._R8P, z_offset=0._R8P, xml_volatile
 
 ! now the master process can collect volatile files from slave processes and save them to filestystem
 error = write_xml_volatile(xml_volatile=xml_volatile_file_1, filename="write_volatile_slave_1.vtr")
+test_passed(1) = error == 0
 error = write_xml_volatile(xml_volatile=xml_volatile_file_2, filename="write_volatile_slave_2.vtr")
+test_passed(2) = error == 0
 
+! the file saved from the volatile string of the first slave must be identical to the same file written directly
 call write_check(filename="write_volatile_slave_1_check.vtr")
+test_passed(3) = are_identical(filename1="write_volatile_slave_1.vtr", filename2="write_volatile_slave_1_check.vtr")
+
+print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
+if (.not.all(test_passed)) error stop 'some tests failed'
+stop
 contains
    subroutine write_slave(x_offset, y_offset, z_offset, xml_volatile)
    !< Slave writer: creates *volatile* file, not a real one. This is what a slave process should do, create a volatile file (a
@@ -171,4 +180,32 @@ contains
    error = a_vtk_file%finalize()
    call a_vtk_file%free
    endsubroutine write_check
+
+   function are_identical(filename1, filename2) result(is_identical)
+   !< Check that two files have the same contents.
+   character(*), intent(in)      :: filename1    !< First file name.
+   character(*), intent(in)      :: filename2    !< Second file name.
+   logical                       :: is_identical !< Check result.
+   character(len=:), allocatable :: contents1    !< Contents of the first file.
+   character(len=:), allocatable :: contents2    !< Contents of the second file.
+
+   call read_file(filename=filename1, contents=contents1)
+   call read_file(filename=filename2, contents=contents2)
+   is_identical = len(contents1) > 0 .and. contents1 == contents2 .and. len(contents1) == len(contents2)
+   endfunction are_identical
+
+   subroutine read_file(filename, contents)
+   !< Read the whole contents of a file.
+   character(*),                  intent(in)  :: filename !< File name.
+   character(len=:), allocatable, intent(out) :: contents !< File contents.
+   integer(I4P)                               :: u        !< File unit.
+   integer(I4P)                               :: file_size !< File size.
+
+   inquire(file=filename, size=file_size)
+   allocate(character(len=max(file_size, 0)) :: contents)
+   if (file_size <= 0) return
+   open(newunit=u, file=filename, access='stream', form='unformatted', action='read')
+   read(u) contents
+   close(u)
+   endsubroutine read_file
 endprogram vtk_fortran_write_volatile

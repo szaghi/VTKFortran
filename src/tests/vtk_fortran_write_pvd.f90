@@ -65,6 +65,7 @@ test_passed(5) = pvd%initialize(filename='vtkfortran_write_pvd_missing.pvd', act
 test_passed(6) = pvd%write_dataset(filename='any.vtu', timestep=0._R8P) /= 0
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
+if (.not.all(test_passed)) error stop 'some tests failed'
 stop
 contains
   subroutine write_step(filename, value)

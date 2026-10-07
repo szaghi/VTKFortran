@@ -44,6 +44,7 @@ do f=1, size(formats)
 enddo
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
+if (.not.all(test_passed)) error stop 'some tests failed'
 stop
 contains
   function write_file(format, filename) result(is_passed)

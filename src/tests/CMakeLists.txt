@@ -1,47 +1,37 @@
-add_executable(vtk_fortran_use_module_basic vtk_fortran_use_module_basic.f90)
-add_executable(vtk_fortran_write_active_arrays vtk_fortran_write_active_arrays.f90)
-add_executable(vtk_fortran_write_compressed vtk_fortran_write_compressed.F90)
-add_executable(vtk_fortran_write_pvts vtk_fortran_write_pvts.f90)
-add_executable(vtk_fortran_write_pvtu vtk_fortran_write_pvtu.f90)
-add_executable(vtk_fortran_write_fielddata vtk_fortran_write_fielddata.f90)
-add_executable(vtk_fortran_write_header_uint64 vtk_fortran_write_header_uint64.f90)
-add_executable(vtk_fortran_write_large vtk_fortran_write_large.f90)
-add_executable(vtk_fortran_write_pvd vtk_fortran_write_pvd.f90)
-add_executable(vtk_fortran_write_volatile vtk_fortran_write_volatile.f90)
-add_executable(vtk_fortran_write_vti vtk_fortran_write_vti.f90)
-add_executable(vtk_fortran_write_vtm vtk_fortran_write_vtm.f90)
-add_executable(vtk_fortran_write_vtp vtk_fortran_write_vtp.f90)
-add_executable(vtk_fortran_write_vtr vtk_fortran_write_vtr.f90)
-add_executable(vtk_fortran_write_vts vtk_fortran_write_vts.f90)
-add_executable(vtk_fortran_write_vtu vtk_fortran_write_vtu.f90)
-add_executable(vtk_fortran_write_vtu_polyhedron vtk_fortran_write_vtu_polyhedron.f90)
-add_executable(vtk_fortran_write_vtu_tensor vtk_fortran_write_vtu_tensor.f90)
+# Test programs: each one writes its VTK files in the current directory, prints "Are all tests passed? T" (or F) and exits
+# with a non-zero status when a check fails. CTest runs each of them in its own directory under the build tree.
+set(VTKFORTRAN_TESTS
+  vtk_fortran_use_module_basic.f90
+  vtk_fortran_write_active_arrays.f90
+  vtk_fortran_write_compressed.F90
+  vtk_fortran_write_fielddata.f90
+  vtk_fortran_write_header_uint64.f90
+  vtk_fortran_write_large.f90
+  vtk_fortran_write_pvd.f90
+  vtk_fortran_write_pvts.f90
+  vtk_fortran_write_pvtu.f90
+  vtk_fortran_write_volatile.f90
+  vtk_fortran_write_vti.f90
+  vtk_fortran_write_vtm.f90
+  vtk_fortran_write_vtp.f90
+  vtk_fortran_write_vtr.f90
+  vtk_fortran_write_vts.f90
+  vtk_fortran_write_vtu.f90
+  vtk_fortran_write_vtu_polyhedron.f90
+  vtk_fortran_write_vtu_tensor.f90
+  )
 if (VTKFORTRAN_USE_ZLIB)
-  add_executable(vtk_fortran_write_vtu_zlib vtk_fortran_write_vtu_zlib.F90)
+  list(APPEND VTKFORTRAN_TESTS vtk_fortran_write_vtu_zlib.F90)
 endif()
 
-
-
-target_link_libraries(vtk_fortran_use_module_basic PRIVATE VTKFortran)
-target_link_libraries(vtk_fortran_write_active_arrays PRIVATE VTKFortran)
-target_link_libraries(vtk_fortran_write_compressed PRIVATE VTKFortran)
-target_link_libraries(vtk_fortran_write_pvts PRIVATE VTKFortran)
-target_link_libraries(vtk_fortran_write_pvtu PRIVATE VTKFortran)
-target_link_libraries(vtk_fortran_write_fielddata PRIVATE VTKFortran)
-target_link_libraries(vtk_fortran_write_header_uint64 PRIVATE VTKFortran)
-target_link_libraries(vtk_fortran_write_large PRIVATE VTKFortran)
-target_link_libraries(vtk_fortran_write_pvd PRIVATE VTKFortran)
-target_link_libraries(vtk_fortran_write_volatile PRIVATE VTKFortran)
-target_link_libraries(vtk_fortran_write_vti PRIVATE VTKFortran)
-target_link_libraries(vtk_fortran_write_vtm PRIVATE VTKFortran)
-target_link_libraries(vtk_fortran_write_vtp PRIVATE VTKFortran)
-target_link_libraries(vtk_fortran_write_vtr PRIVATE VTKFortran)
-target_link_libraries(vtk_fortran_write_vts PRIVATE VTKFortran)
-target_link_libraries(vtk_fortran_write_vtu PRIVATE VTKFortran)
-target_link_libraries(vtk_fortran_write_vtu_polyhedron PRIVATE VTKFortran)
-target_link_libraries(vtk_fortran_write_vtu_tensor PRIVATE VTKFortran)
-if (VTKFORTRAN_USE_ZLIB)
-  target_link_libraries(vtk_fortran_write_vtu_zlib PRIVATE VTKFortran)
-  target_compile_definitions(vtk_fortran_write_vtu_zlib PRIVATE VTKFORTRAN_USE_ZLIB)
-  target_compile_definitions(vtk_fortran_write_compressed PRIVATE VTKFORTRAN_USE_ZLIB)
-endif()
+foreach(test_source ${VTKFORTRAN_TESTS})
+  get_filename_component(test_name ${test_source} NAME_WE)
+  add_executable(${test_name} ${test_source})
+  target_link_libraries(${test_name} PRIVATE VTKFortran)
+  if (VTKFORTRAN_USE_ZLIB)
+    target_compile_definitions(${test_name} PRIVATE VTKFORTRAN_USE_ZLIB)
+  endif()
+  set(test_dir ${CMAKE_CURRENT_BINARY_DIR}/run/${test_name})
+  file(MAKE_DIRECTORY ${test_dir})
+  add_test(NAME ${test_name} COMMAND ${test_name} WORKING_DIRECTORY ${test_dir})
+endforeach()

@@ -39,6 +39,7 @@ test_passed(4) = a_vtk_file%xml_writer%write_polydata_cells(lines_connectivity=[
 error = a_vtk_file%finalize()
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
+if (.not.all(test_passed)) error stop 'some tests failed'
 stop
 contains
   subroutine write_vtp(format, filename)

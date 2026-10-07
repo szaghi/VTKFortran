@@ -27,6 +27,7 @@ test_passed(4) = has_line('vtkfortran_write_fielddata-ascii.vtu', &
 test_passed(5) = error == 0
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
+if (.not.all(test_passed)) error stop 'some tests failed'
 stop
 contains
   subroutine write_file(format, filename)

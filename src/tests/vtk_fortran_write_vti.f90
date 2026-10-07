@@ -55,6 +55,7 @@ test_passed(4) = a_vtk_file%initialize(format='ascii', filename='vtkfortran_writ
                                        nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, origin=origin) /= 0
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
+if (.not.all(test_passed)) error stop 'some tests failed'
 stop
 contains
   subroutine write_vti(format, filename, x1, x2, direction)

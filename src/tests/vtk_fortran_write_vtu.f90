@@ -63,6 +63,7 @@ error = a_vtk_file%finalize()
 test_passed = .true. ! nothing to test yet
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
+if (.not.all(test_passed)) error stop 'some tests failed'
 stop
 contains
   subroutine write_data

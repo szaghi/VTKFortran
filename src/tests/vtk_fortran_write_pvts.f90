@@ -28,6 +28,7 @@ integer(I4P), dimension(nx1:nx2,ny1:ny2,nz1:nz2) :: v       !< Noces-centered va
 integer(I4P)                                     :: i       !< Counter.
 integer(I4P)                                     :: j       !< Counter.
 integer(I4P)                                     :: k       !< Counter.
+logical                                          :: test_passed(1) !< List of passed tests.
 
 ! inizialize data
 do k=nz1, nz2
@@ -46,7 +47,10 @@ call write_vts(part=2, filename='vtkfortran_write_pvts_02.vts')
 call write_pvts(filename='vtkfortran_write_pvts.pvts', parts_filename=['vtkfortran_write_pvts_01.vts', &
                                                                        'vtkfortran_write_pvts_02.vts'])
 
-print "(A,L1)", new_line('a')//'Are all tests passed? ', is_ghost_level_valid(filename='vtkfortran_write_pvts.pvts')
+test_passed(1) = is_ghost_level_valid(filename='vtkfortran_write_pvts.pvts')
+print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
+if (.not.all(test_passed)) error stop 'some tests failed'
+stop
 contains
    subroutine write_vts(part, filename)
    !< Write VTS parts.

@@ -56,6 +56,7 @@ error = a_vtk_file%finalize()
 
 test_passed = (error == 0_I4P)
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
+if (.not.all(test_passed)) error stop 'some tests failed'
 stop
 endprogram vtk_fortran_write_vtu_zlib
 

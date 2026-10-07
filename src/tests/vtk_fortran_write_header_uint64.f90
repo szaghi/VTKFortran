@@ -26,6 +26,7 @@ test_passed(3) = a_vtk_file%initialize(format='raw', filename='vtkfortran_write_
                                        mesh_topology='UnstructuredGrid', header_type='UInt16') /= 0
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
+if (.not.all(test_passed)) error stop 'some tests failed'
 stop
 contains
   subroutine write_file(format, filename)

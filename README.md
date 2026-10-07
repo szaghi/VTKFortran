@@ -73,13 +73,14 @@ See [`src/tests/`](src/tests/) for more examples covering rectilinear, unstructu
 **Clone, build, and test:**
 
 ```bash
-git clone https://github.com/szaghi/VTKFortran --recursive
+git clone https://github.com/szaghi/VTKFortran
 cd VTKFortran
+fobis fetch                     # dependencies into src/third_party/ (pip install FoBiS.py)
 cmake -S . -B build -DBUILD_TESTING=ON
 cmake --build build && ctest --test-dir build
 ```
 
-**As a subdirectory dependency** — place a recursive clone alongside your sources and add to your `CMakeLists.txt`:
+**As a subdirectory dependency** — place a clone (with its dependencies fetched) alongside your sources and add to your `CMakeLists.txt`:
 
 ```cmake
 add_subdirectory(VTKFortran)
@@ -89,10 +90,11 @@ target_link_libraries(your_target VTKFortran::VTKFortran)
 ### FoBiS.py
 
 ```bash
-git clone https://github.com/szaghi/VTKFortran --recursive && cd VTKFortran
-FoBiS.py build -mode static-gnu   # static library
-FoBiS.py build -mode tests-gnu    # build and place tests in ./exe/
-bash scripts/run_tests.sh         # run tests
+git clone https://github.com/szaghi/VTKFortran && cd VTKFortran
+fobis fetch                       # dependencies into src/third_party/
+fobis build --mode static-gnu     # static library
+fobis build --mode tests-gnu      # build and place tests in ./exe/
+scripts/run_tests.sh              # run tests
 ```
 
 ### fpm

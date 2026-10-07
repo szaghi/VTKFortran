@@ -11,5 +11,6 @@ logical        :: test_passed(1) !< List of passed tests.
 test_passed = .true. ! nothing to test, just run
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
+if (.not.all(test_passed)) error stop 'some tests failed'
 stop
 endprogram vtk_fortran_use_module_basic

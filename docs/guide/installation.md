@@ -49,23 +49,23 @@ cmake -S . -B build
 cmake --build build
 ```
 
-### Build the test programs
+### Run the test suite
 
 ```bash
 cmake -S . -B build -DBUILD_TESTING=ON
 cmake --build build
+ctest --test-dir build
 ```
 
-The test programs are built in `build/src/tests/`; run one from a scratch directory (it writes its VTK files in the current
-directory):
+Run a single named test:
 
 ```bash
-mkdir -p run && cd run
-../build/src/tests/vtk_fortran_write_vtu
+ctest --test-dir build -R vtk_fortran_write_vtu --output-on-failure
 ```
 
-Each test program prints `Are all tests passed? T` (or `F`). The tests are not registered with CTest: to run the whole suite,
-use the FoBiS.py build below.
+Each test program prints `Are all tests passed? T` (or `F`) and exits with a non-zero status when a check fails. CTest
+runs each test in its own directory, `build/src/tests/run/<test name>/`, where its VTK files are left for inspection; the
+executables are in `build/src/tests/`.
 
 ### CMake subdirectory integration
 
@@ -96,7 +96,7 @@ scripts/run_tests.sh
 ```
 
 Compiled test executables are placed in `./exe/`. `scripts/run_tests.sh` runs each executable and reports pass/fail from
-its exit status.
+its exit status (it runs them in the current directory, where they write their VTK files).
 
 ### Build the library
 

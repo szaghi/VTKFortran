@@ -18,13 +18,16 @@ character(*), parameter :: pieces(2)=['vtkfortran_write_pvtu_01.vtu', &
                                       'vtkfortran_write_pvtu_02.vtu']       !< Pieces file name.
 integer(I4P)            :: p                                                !< Counter.
 integer(I4P)            :: error                                            !< Status error.
+logical                 :: test_passed(1)                                   !< List of passed tests.
 
 do p=1, size(pieces)
   call write_piece(part=p, filename=pieces(p))
 enddo
 call write_pvtu(filename='vtkfortran_write_pvtu.pvtu')
 
-print "(A,L1)", new_line('a')//'Are all tests passed? ', error==0
+test_passed(1) = error == 0
+print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
+if (.not.all(test_passed)) error stop 'some tests failed'
 stop
 contains
   subroutine write_piece(part, filename)

@@ -7,7 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### CMake (recommended)
 ```bash
 cmake -S . -B build -DBUILD_TESTING=ON   # add -DVTKFORTRAN_USE_ZLIB=ON for zlib compression
-cmake --build build                      # test programs in build/src/tests/ (not registered with CTest)
+cmake --build build
+ctest --test-dir build                   # each test runs in build/src/tests/run/<name>/
 ```
 
 ### FoBiS.py
@@ -72,4 +73,4 @@ CMake pulls all dependencies via `add_subdirectory()` and centralises `.mod` fil
 
 ## Test Infrastructure
 
-Each test program in `src/tests/` writes actual VTK XML files, then prints `"Are all tests passed? T"` or `"F"`. `scripts/run_tests.sh` judges each test by its exit status only, so a test must also exit non-zero when a check fails (`error stop`). Tests cover major topologies: VTI and PVTI (image data), VTR (rectilinear), VTS (structured), VTU (unstructured, polyhedra), VTP and PVTP (polydata), VTM (multi-block), PVTS and PVTU (parallel), PVD (time series), active arrays, large arrays, UInt64 headers, zlib compressed binary data, and volatile XML output.
+Each test program in `src/tests/` writes actual VTK XML files, then prints `"Are all tests passed? T"` or `"F"`. `scripts/run_tests.sh` and CTest judge each test by its exit status only, so every test ends with `if (.not.all(test_passed)) error stop 'some tests failed'`; a new test must be added to `src/tests/CMakeLists.txt` too. Tests cover major topologies: VTI and PVTI (image data), VTR (rectilinear), VTS (structured), VTU (unstructured, polyhedra), VTP and PVTP (polydata), VTM (multi-block), PVTS and PVTU (parallel), PVD (time series), active arrays, large arrays, UInt64 headers, zlib compressed binary data, and volatile XML output.

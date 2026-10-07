@@ -36,6 +36,7 @@ call write_file(format='raw', filename='XML_UNST-polyhedron-raw.vtu')
 test_passed(2) = types_are_uint8(filename='XML_UNST-polyhedron-ascii.vtu')
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
+if (.not.all(test_passed)) error stop 'some tests failed'
 stop
 contains
   subroutine write_file(format, filename)
