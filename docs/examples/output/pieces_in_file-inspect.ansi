@@ -1,0 +1,8 @@
+$ inspect blocks.vtr
+blocks.vtr: RectilinearGrid, pieces: 3, compressor: none
+  piece 1: 12 points, 2 cells
+     cell block              Int32 1 comp., range  1.0000E+00  1.0000E+00
+  piece 2: 12 points, 2 cells
+     cell block              Int32 1 comp., range  2.0000E+00  2.0000E+00
+  piece 3: 12 points, 2 cells
+     cell block              Int32 1 comp., range  3.0000E+00  3.0000E+00

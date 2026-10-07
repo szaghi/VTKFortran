@@ -34,8 +34,8 @@ do p=1, npieces
       else
         cycle
       endif
-      print '(4X,A6,1X,A16,1X,A8,I2,A,2(1X,ES11.4))', locations(l), names(a), data_type, ncomp, ' comp., range', &
-            minval(values), maxval(values)
+      print '(4X,A6,A16,A8,I2,A,2(1X,ES11.4))', locations(l), trim(names(a))//repeat(' ', 16), data_type, ncomp, &
+            ' comp., range', minval(values), maxval(values)
     enddo
   enddo
 enddo

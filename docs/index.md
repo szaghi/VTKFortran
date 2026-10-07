@@ -10,6 +10,9 @@ hero:
       text: Tutorial
       link: /manual/tutorial/01-first-file
     - theme: alt
+      text: Cookbook
+      link: /manual/cookbook
+    - theme: alt
       text: Quick start
       link: "#quick-start"
     - theme: alt
@@ -117,6 +120,9 @@ and cooling down, on the middle plane of the cube.
 |---|---|
 | <img src="./examples/images/heat_6.png" alt="the cube split in four pieces"> | <img src="./examples/images/heat_7.png" alt="the cube cut at the height of eight probes"> |
 | [Parallel pieces](/manual/tutorial/06-parallel), ghost cells and a checked header | [An assembly](/manual/tutorial/07-assembly) of the domain and its probes |
+
+Quick answers in the [cookbook](/manual/cookbook): every kind of dataset, data and format, parallel and composite files,
+reading.
 
 ## Authors
 

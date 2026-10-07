@@ -1,0 +1,4 @@
+$ field_data
+field data: TIME CYCLE residuals solver species
+residuals:  1.0E-02  1.0E-04  1.0E-06
+species: N2  O2  CO2

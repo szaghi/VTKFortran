@@ -1,0 +1,6 @@
+$ errors
+a missing file:        1
+a good file:           0
+a missing array:       4
+a missing piece:       4
+an unknown format:     1

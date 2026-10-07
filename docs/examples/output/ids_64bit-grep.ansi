@@ -1,0 +1,3 @@
+$ grep -o 'type="Int64"[^>]*Name="[a-z]*"' tet64.vtu
+type="Int64" NumberOfComponents="1" Name="connectivity"
+type="Int64" NumberOfComponents="1" Name="offsets"

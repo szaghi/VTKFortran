@@ -1,0 +1,4 @@
+$ read_array
+p: Float32, 1 component, 4 tuples
+p:  1.5  2.5  3.5  4.5
+p into I4P: error 5

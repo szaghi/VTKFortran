@@ -1,0 +1,2 @@
+$ compress
+big.vtr: header UInt64, compressor zlib

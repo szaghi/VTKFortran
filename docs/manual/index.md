@@ -5,8 +5,8 @@ title: The tutorial
 # The tutorial
 
 The tutorial teaches VTKFortran by building one program, step by step: `heat`, a small solver of the heat equation in a
-cube, whose output grows from a first file to a parallel, restartable time series. The [reference](/guide/features)
-has every procedure and every argument.
+cube, whose output grows from a first file to a parallel, restartable time series. The [cookbook](./cookbook) then
+collects short recipes, and the [reference](/guide/features) has every procedure and every argument.
 
 ## The chapters
 
@@ -32,6 +32,12 @@ flowchart LR
   c4 --> c5[5 unstructured] --> c6[6 parallel] --> c7[7 assembly]
   c4 --> c8[8 restart]
 ```
+
+## The cookbook
+
+[The cookbook](./cookbook) answers "how do I ...?" in a few lines each: write each kind of dataset, vectors and tensors,
+field data, ghost cells, compression, 64-bit ids, parallel headers and their check, restarts, files in memory, and reading
+arrays, meshes and files written by VTK.
 
 ## Building the examples
 

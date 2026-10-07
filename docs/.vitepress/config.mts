@@ -26,6 +26,12 @@ const docs = [
     ],
   },
   {
+    text: 'Recipes',
+    items: [
+      { text: 'Cookbook', link: '/manual/cookbook' },
+    ],
+  },
+  {
     text: 'Reference',
     items: [
       { text: 'Features',      link: '/guide/features' },
@@ -62,6 +68,7 @@ export default withMermaid({
     nav: [
       { text: 'Start here', link: '/guide/', activeMatch: '^/guide/(index|installation)' },
       { text: 'Tutorial', link: '/manual/tutorial/01-first-file', activeMatch: '^/manual/(index|tutorial/)' },
+      { text: 'Cookbook', link: '/manual/cookbook', activeMatch: '^/manual/cookbook' },
       {
         text: 'Reference',
         link: '/guide/features',

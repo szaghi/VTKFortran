@@ -78,6 +78,17 @@ def data_range(source, name: str, assoc: str, times: list[float]) -> tuple[float
     return lo, hi
 
 
+def distinct_values(source, name: str, assoc: str) -> list[int]:
+    """Return the distinct values of an integer array, sorted."""
+    from paraview import servermanager
+    from vtk.util.numpy_support import vtk_to_numpy
+    import numpy
+
+    data = servermanager.Fetch(source)
+    arrays = data.GetPointData() if assoc == 'POINTS' else data.GetCellData()
+    return [int(v) for v in numpy.unique(vtk_to_numpy(arrays.GetArray(name)))]
+
+
 def time_steps(reader) -> list[float]:
     """Return the time steps of the reader (none for a static file)."""
     times = getattr(reader, 'TimestepValues', None)
@@ -96,7 +107,7 @@ def colour(display, view, source, name: str, assoc: str, times: list[float], opt
     if opt.get('categorical') == '1':
         lut.InterpretValuesAsCategories = 1
         lut.ApplyPreset('Brewer Qualitative Set3', True)
-        values = [str(v) for v in range(int(lo), int(hi) + 1)]
+        values = [str(v) for v in distinct_values(source, name, assoc)]
         lut.Annotations = [s for v in values for s in (v, v)]
         lut.IndexedColors = lut.IndexedColors[:3 * len(values)]
     else:
@@ -119,7 +130,7 @@ def colour(display, view, source, name: str, assoc: str, times: list[float], opt
     bar.LabelFontSize = 12
     bar.ScalarBarLength = 0.5
     bar.WindowLocation = 'Any Location'
-    bar.Position = [0.87, 0.25]
+    bar.Position = [1 - 110 / view.ViewSize[0], 0.25]
     display.SetScalarBarVisibility(view, True)
 
 

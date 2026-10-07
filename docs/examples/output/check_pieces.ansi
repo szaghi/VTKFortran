@@ -1,0 +1,3 @@
+$ check_pieces
+check_pieces error 7
+piece 1 (p_1.vtu): node array "pressure" is Float32 with 1 components, declared Float64 with 1
