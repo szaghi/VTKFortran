@@ -1062,14 +1062,19 @@ contains
    call self%write_self_closing_tag(name='DataArray', attributes=tag_attributes%chars())
    endsubroutine write_dataarray_tag_appended
 
-   function write_dataarray_location_tag(self, location, action) result(error)
-   !< Write `<[/]PointData>` or `<[/]CellData>` open/close tag.
+   function write_dataarray_location_tag(self, location, action, scalars, vectors, normals, tensors, tcoords) result(error)
+   !< Write `<[/]PointData>` or `<[/]CellData>` open/close tag (`<[/]PPointData>` or `<[/]PCellData>` for parallel files).
    !<
    !< @note **must** be called before saving the data related to geometric mesh, this function initializes the
    !< saving of data variables indicating the *location* (node or cell centered) of variables that will be saved.
    !<
-   !< @note A single file can contain both cell and node centered variables. In this case the VTK_DAT_XML function must be
+   !< @note A single file can contain both cell and node centered variables. In this case this function must be
    !< called two times, before saving cell-centered variables and before saving node-centered variables.
+   !<
+   !< @note When opening, the optional `scalars`, `vectors`, `normals`, `tensors` and `tcoords` arguments designate the
+   !< *active* array of each role, written as the `Scalars`, `Vectors`, `Normals`, `Tensors` and `TCoords` attributes of the
+   !< tag: readers (e.g. ParaView) use it as the default array of that role. Each argument is the `data_name` of an array
+   !< written (or, for parallel files, declared) inside this tag; the name is not checked. They are ignored when closing.
    !<
    !<### Examples of usage
    !<
@@ -1092,12 +1097,23 @@ contains
    !<```fortran
    !< error = vtk%write_dataarray('cell','close')
    !<```
-   class(xml_writer_abstract), intent(inout) :: self      !< Writer.
-   character(*),               intent(in)    :: location  !< Location of variables: **cell** or **node** centered.
-   character(*),               intent(in)    :: action    !< Action: **open** or **close** tag.
-   integer(I4P)                              :: error     !< Error status.
-   type(string)                              :: location_ !< Location string.
-   type(string)                              :: action_   !< Action string.
+   !<
+   !<#### Opening node piece designating the active scalars and vectors
+   !<```fortran
+   !< error = vtk%write_dataarray(location='node', action='open', scalars='pressure', vectors='velocity')
+   !<```
+   class(xml_writer_abstract), intent(inout)        :: self       !< Writer.
+   character(*),               intent(in)           :: location   !< Location of variables: **cell** or **node** centered.
+   character(*),               intent(in)           :: action     !< Action: **open** or **close** tag.
+   character(*),               intent(in), optional :: scalars    !< Name of the active scalars array.
+   character(*),               intent(in), optional :: vectors    !< Name of the active vectors array.
+   character(*),               intent(in), optional :: normals    !< Name of the active normals array.
+   character(*),               intent(in), optional :: tensors    !< Name of the active tensors array.
+   character(*),               intent(in), optional :: tcoords    !< Name of the active texture coordinates array.
+   integer(I4P)                                     :: error      !< Error status.
+   type(string)                                     :: location_  !< Location string.
+   type(string)                                     :: action_    !< Action string.
+   character(len=:), allocatable                    :: attributes !< Active arrays attributes.
 
    location_ = trim(adjustl(location)) ; location_ = location_%upper()
    action_ = trim(adjustl(action)) ; action_ = action_%upper()
@@ -1113,7 +1129,17 @@ contains
    endselect
    select case(action_%chars())
    case('OPEN')
-      call self%write_start_tag(name=location_%chars())
+      attributes = ''
+      if (present(scalars)) attributes = attributes//' Scalars="'//trim(adjustl(scalars))//'"'
+      if (present(vectors)) attributes = attributes//' Vectors="'//trim(adjustl(vectors))//'"'
+      if (present(normals)) attributes = attributes//' Normals="'//trim(adjustl(normals))//'"'
+      if (present(tensors)) attributes = attributes//' Tensors="'//trim(adjustl(tensors))//'"'
+      if (present(tcoords)) attributes = attributes//' TCoords="'//trim(adjustl(tcoords))//'"'
+      if (len(attributes) > 0) then
+         call self%write_start_tag(name=location_%chars(), attributes=attributes(2:))
+      else
+         call self%write_start_tag(name=location_%chars())
+      endif
    case('CLOSE')
       call self%write_end_tag(name=location_%chars())
    endselect

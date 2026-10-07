@@ -34,14 +34,8 @@ title: Features
 
 ## VTK Legacy Exporters
 
-| Topology | Status |
-|----------|--------|
-| Structured Points | ✅ |
-| Structured Grid | ✅ |
-| Unstructured Grid | ✅ |
-| Rectilinear Grid | ✅ |
-| Polydata | — |
-| Field | — |
+The legacy (`.vtk`) format is not supported: VTKFortran writes the VTK XML formats only. Legacy writers were part of the old
+`Lib_VTK_IO` (VTKFortran 1.x) and were dropped with the OOP refactoring.
 
 ## Output Formats
 
@@ -51,6 +45,7 @@ title: Features
 | `binary` | Base64-encoded binary inside XML elements |
 | `raw` | Raw binary in the XML appended section (with byte offsets) |
 | `binary-appended` | Base64-encoded binary in the XML appended section |
+| `raw-zlib` | Raw binary in the XML appended section, zlib-compressed (`vtkZLibDataCompressor`); requires building with `VTKFORTRAN_USE_ZLIB` |
 
 The format string passed to `initialize` is case-insensitive.
 
@@ -73,6 +68,8 @@ error = a_vtk_file%xml_writer%write_fielddata(action='close')
 - **Ranks 1–4** for dense arrays
 - **Scalar, 1-component, 3-component (vector), and 6-component (symmetric tensor)** layouts
 - **Node-centered or cell-centered** placement (`location='node'` or `location='cell'`)
+- **Active arrays**: the arrays readers use by default for each role (`Scalars`, `Vectors`, `Normals`, `Tensors`, `TCoords`) can be
+  designated when opening the node/cell data, see [Usage](/guide/usage#active-arrays)
 
 ## Parallel Support
 

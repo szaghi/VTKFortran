@@ -262,6 +262,39 @@ error = a_pvtk_file%finalize()
 The names, types and numbers of components declared in the `.pvtu` file must match the data arrays written in every piece. See
 `src/tests/vtk_fortran_write_pvtu.f90` for the complete program, pieces included.
 
+## Active arrays
+
+Readers such as ParaView color a dataset by its *active* scalars and use its *active* vectors, normals, tensors and texture
+coordinates by default. Without a designation they pick the first suitable array, which is often not the one wanted. Designate
+the active array of each role when opening the node or cell data, with the optional `scalars`, `vectors`, `normals`, `tensors`
+and `tcoords` arguments: each one is the `data_name` of an array written inside that tag.
+
+```fortran
+error = a_vtk_file%xml_writer%write_dataarray(location='node', action='open', scalars='pressure', vectors='velocity')
+error = a_vtk_file%xml_writer%write_dataarray(data_name='temperature', x=t)              ! not active
+error = a_vtk_file%xml_writer%write_dataarray(data_name='pressure', x=p)                 ! active scalars
+error = a_vtk_file%xml_writer%write_dataarray(data_name='velocity', x=u, y=v, z=w)       ! active vectors
+error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
+```
+
+writes `<PointData Scalars="pressure" Vectors="velocity">` (`<CellData ...>` for `location='cell'`).
+
+| Argument | Attribute | Array components expected by readers |
+|----------|-----------|--------------------------------------|
+| `scalars` | `Scalars` | 1 (up to 4) |
+| `vectors` | `Vectors` | 3 |
+| `normals` | `Normals` | 3 |
+| `tensors` | `Tensors` | 9 (or 6, symmetric) |
+| `tcoords` | `TCoords` | 1 to 3 |
+
+- Each argument is optional and independent: omit them all and the tag is written as before, without attributes.
+- The names are written as given, not checked: make sure an array with that name is written inside the same tag.
+- The arguments apply to `action='open'` only, and are ignored when closing.
+- In parallel files the same arguments designate the active arrays in `<PPointData>`/`<PCellData>`: pass them to the
+  `pvtk_file` writer with the arrays declared by `write_parallel_dataarray`.
+
+See `src/tests/vtk_fortran_write_active_arrays.f90` for a complete program, parallel header included.
+
 ## Volatile XML output
 
 `write_xml_volatile` returns the XML content as an in-memory string instead of writing to disk. This is useful when the calling code controls I/O (e.g., HDF5-backed parallel I/O or MPI-IO).
@@ -288,6 +321,7 @@ The `format` argument to `initialize` is case-insensitive:
 | `binary` | Base64-encoded binary inside XML elements |
 | `raw` | Raw binary in the appended section |
 | `binary-appended` | Base64-encoded binary in the appended section |
+| `raw-zlib` | Raw binary in the appended section, zlib-compressed; requires building with `VTKFORTRAN_USE_ZLIB` (CMake option or `-DVTKFORTRAN_USE_ZLIB`), otherwise `initialize` returns a non-zero error |
 
 ## Mesh topology strings
 

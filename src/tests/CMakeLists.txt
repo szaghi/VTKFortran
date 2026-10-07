@@ -1,4 +1,5 @@
 add_executable(vtk_fortran_use_module_basic vtk_fortran_use_module_basic.f90)
+add_executable(vtk_fortran_write_active_arrays vtk_fortran_write_active_arrays.f90)
 add_executable(vtk_fortran_write_pvts vtk_fortran_write_pvts.f90)
 add_executable(vtk_fortran_write_pvtu vtk_fortran_write_pvtu.f90)
 add_executable(vtk_fortran_write_large vtk_fortran_write_large.f90)
@@ -16,6 +17,7 @@ endif()
 
 
 target_link_libraries(vtk_fortran_use_module_basic PRIVATE VTKFortran)
+target_link_libraries(vtk_fortran_write_active_arrays PRIVATE VTKFortran)
 target_link_libraries(vtk_fortran_write_pvts PRIVATE VTKFortran)
 target_link_libraries(vtk_fortran_write_pvtu PRIVATE VTKFortran)
 target_link_libraries(vtk_fortran_write_large PRIVATE VTKFortran)
