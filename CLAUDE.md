@@ -28,6 +28,9 @@ FC=gfortran-14 PVPYTHON=<paraview>/bin/pvpython bash scripts/docs_examples.sh   
 Programs in `docs/examples/src/` with markers (`!run`, `!region`, `!cast`, `!render`, ...); the pages include the
 generated snippets, outputs, terminal casts (`scripts/ansi2svg.py`) and ParaView renders (`scripts/render_vtk.py`, PNG or
 GIF for a `.pvd`). The *Docs examples* workflow checks all but the renders (no ParaView in CI).
+Generated, git-ignored, rebuilt by the Docs workflow: `docs/api/` (`formal generate ...`, rule `makedoc`), the coverage
+pages `docs/guide/coverage-analysis.md`, `docs/guide/*.gcov.md` and `docs/public/coverage.json` (rule
+`makecoverage-analysis`); the site builds without them.
 
 ### FPM
 ```bash
