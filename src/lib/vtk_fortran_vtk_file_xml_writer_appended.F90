@@ -218,14 +218,14 @@ contains
   subroutine write_header_tag(self)
   !< Write header tag.
   !<
-  !< When VTK internal compression is enabled for appended raw data, this adds:
-  !<   compressor="vtkZLibDataCompressor" header_type="UInt32"
+  !< The header_type (bytes count width) is always declared; when VTK internal compression is enabled for appended raw data,
+  !< the compressor is declared too: compressor="vtkZLibDataCompressor" header_type="UInt32"
   class(xml_writer_appended), intent(inout) :: self   !< Writer.
   type(string)                              :: buffer !< Buffer string.
   character(len=:), allocatable             :: attrs  !< Extra attributes.
 
   buffer = '<?xml version="1.0"?>'//end_rec
-  attrs = ''
+  attrs = ' header_type="UInt32"'
   if (self%is_compressed) then
     attrs = ' compressor="vtkZLibDataCompressor" header_type="UInt32"'
   endif

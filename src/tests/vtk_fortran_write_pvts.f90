@@ -45,6 +45,8 @@ call write_vts(part=1, filename='vtkfortran_write_pvts_01.vts')
 call write_vts(part=2, filename='vtkfortran_write_pvts_02.vts')
 call write_pvts(filename='vtkfortran_write_pvts.pvts', parts_filename=['vtkfortran_write_pvts_01.vts', &
                                                                        'vtkfortran_write_pvts_02.vts'])
+
+print "(A,L1)", new_line('a')//'Are all tests passed? ', is_ghost_level_valid(filename='vtkfortran_write_pvts.pvts')
 contains
    subroutine write_vts(part, filename)
    !< Write VTS parts.
@@ -88,4 +90,22 @@ contains
                                                      nx1=nx2_p(1), nx2=nx2_p(2), ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
    error = a_pvtk_file%finalize()
    endsubroutine write_pvts
+
+   function is_ghost_level_valid(filename) result(is_valid)
+   !< Check that the parallel header declares an integer GhostLevel (it was a literal "#").
+   character(*), intent(in) :: filename !< File name.
+   logical                  :: is_valid !< Check result.
+   character(len=1024)      :: line     !< Line buffer.
+   integer(I4P)             :: u        !< File unit.
+   integer(I4P)             :: iostat   !< IO status.
+
+   is_valid = .false.
+   open(newunit=u, file=filename, action='read')
+   do
+      read(u, '(A)', iostat=iostat) line
+      if (iostat /= 0) exit
+      if (index(line, '<PStructuredGrid ') > 0) is_valid = index(line, 'GhostLevel="0"') > 0
+   enddo
+   close(u)
+   endfunction is_ghost_level_valid
 endprogram vtk_fortran_write_pvts

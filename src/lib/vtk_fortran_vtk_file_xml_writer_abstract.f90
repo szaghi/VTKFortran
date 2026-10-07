@@ -15,6 +15,7 @@ type, abstract :: xml_writer_abstract
   type(string)  :: format_ch                       !< Output format, string code.
   type(string)  :: topology                        !< Mesh topology.
   integer(I4P)  :: indent=0_I4P                    !< Indent count.
+  integer(I4P)  :: ghost_level=0_I4P               !< Ghost level of parallel (P*) topologies.
   integer(I8P)  :: ioffset=0_I8P                   !< Offset count.
   integer(I4P)  :: xml=0_I4P                       !< XML Logical unit.
   integer(I4P)  :: vtm_block(1:2)=[-1_I4P, -1_I4P] !< Block indexes.
@@ -887,9 +888,9 @@ contains
 
    buffer = '<?xml version="1.0"?>'//end_rec
    if (endian==endianL) then
-      buffer = buffer//'<VTKFile type="'//self%topology//'" version="1.0" byte_order="LittleEndian">'
+      buffer = buffer//'<VTKFile type="'//self%topology//'" version="1.0" byte_order="LittleEndian" header_type="UInt32">'
    else
-      buffer = buffer//'<VTKFile type="'//self%topology//'" version="1.0" byte_order="BigEndian">'
+      buffer = buffer//'<VTKFile type="'//self%topology//'" version="1.0" byte_order="BigEndian" header_type="UInt32">'
    endif
    if (.not.self%is_volatile) then
       write(unit=self%xml, iostat=self%error)buffer//end_rec
@@ -968,9 +969,9 @@ contains
       buffer = 'WholeExtent="'//                             &
                trim(str(n=nx1))//' '//trim(str(n=nx2))//' '//&
                trim(str(n=ny1))//' '//trim(str(n=ny2))//' '//&
-               trim(str(n=nz1))//' '//trim(str(n=nz2))//'" GhostLevel="#"'
+               trim(str(n=nz1))//' '//trim(str(n=nz2))//'" GhostLevel="'//trim(str(self%ghost_level, .true.))//'"'
    case('PUnstructuredGrid')
-      buffer = 'GhostLevel="0"'
+      buffer = 'GhostLevel="'//trim(str(self%ghost_level, .true.))//'"'
    endselect
    call self%write_start_tag(name=self%topology%chars(), attributes=buffer%chars())
    ! parallel topologies peculiars
