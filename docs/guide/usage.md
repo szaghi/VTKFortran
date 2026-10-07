@@ -16,7 +16,7 @@ The general workflow for writing a VTK XML file is:
 6. **Close the piece**
 7. **Finalize** — flush and close the file
 
-All procedures return an integer error code. Zero means success.
+All procedures return an integer error code. Zero means success. To read a file back, see [Reading files](#reading-files).
 
 ## Image Data (VTI)
 
@@ -702,6 +702,80 @@ error = a_vtk_file%xml_writer%write_connectivity(nc=nc, connectivity=connect, of
   hexahedra); its bytes must fit the header type (`header_type='UInt64'` beyond 2 GiB).
 - The extents of structured grids (`RectilinearGrid`, `StructuredGrid`, `ImageData`) stay 32-bit per axis.
 - The test `src/tests/vtk_fortran_write_i8p.f90` writes the same meshes with both kinds, in every format.
+
+## Reading files
+
+A serial file (`.vti`, `.vtr`, `.vts`, `.vtu`, `.vtp`) is read by initializing a `vtk_file` with `action='read'`: the file is
+indexed, and its data are then read, array by array, through the `xml_reader` component.
+
+```fortran
+use vtk_fortran, only : vtk_file
+use penf
+type(vtk_file)                :: a_vtk_file
+character(len=:), allocatable :: topology, names(:)
+real(R8P),        allocatable :: x(:), y(:), z(:), pressure(:), velocity(:,:)
+integer(I4P),     allocatable :: connectivity(:), offset(:)
+integer(I1P),     allocatable :: cell_type(:)
+integer(I8P)                  :: np, nc
+integer(I4P)                  :: error
+
+error = a_vtk_file%initialize(filename='mesh.vtu', action='read')
+error = a_vtk_file%xml_reader%get_info(mesh_topology=topology)
+error = a_vtk_file%xml_reader%read_piece(np=np, nc=nc)
+error = a_vtk_file%xml_reader%read_geo(x=x, y=y, z=z)
+error = a_vtk_file%xml_reader%read_connectivity(connectivity=connectivity, offset=offset, cell_type=cell_type)
+error = a_vtk_file%xml_reader%get_dataarray_names(location='node', names=names)
+error = a_vtk_file%xml_reader%read_dataarray(location='node', data_name='pressure', x=pressure)
+error = a_vtk_file%xml_reader%read_dataarray(location='node', data_name='velocity', x=velocity) ! shape (3, np)
+error = a_vtk_file%finalize()
+```
+
+| Procedure | Returns |
+|-----------|---------|
+| `get_info(mesh_topology, npieces, header_type, compressor, nx1...nz2, origin, spacing, direction)` | dataset type, number of pieces, header type and compressor of the binary data; whole extent of structured grids; origin, spacing and direction of `ImageData` |
+| `read_piece(piece, np, nc, nx1...nz2, nverts, nlines, nstrips, npolys)` | counts (`I8P`) and extent of a piece |
+| `read_geo(x, y, z, piece)` | point coordinates (`StructuredGrid`, `UnstructuredGrid`, `PolyData`) or the coordinates along each axis (`RectilinearGrid`), `R8P` or `R4P`; `ImageData` has no stored geometry, see `get_info` |
+| `read_connectivity(connectivity, offset, cell_type, face, faceoffset, piece)` | cells of an `UnstructuredGrid`, ids `I4P` or `I8P`, cell types `I1P`, polyhedra faces if present |
+| `read_polydata_cells(block, connectivity, offset, piece)` | one block of `PolyData` cells: `block` is `'verts'`, `'lines'`, `'strips'` or `'polys'`; ids `I4P` or `I8P` |
+| `get_dataarray_names(location, names, piece)` | names of the arrays of `location`, in the order of the file |
+| `get_dataarray_info(location, data_name, piece, data_type, n_components, n_tuples)` | VTK type, components and tuples of an array, without reading it |
+| `read_dataarray(location, data_name, x, piece)` | the values of an array |
+
+- `location` is `'node'`, `'cell'` or `'field'` (field data), case insensitive. `piece` counts from 1 and defaults to 1; field
+  data belong to the dataset and ignore it. The outputs are allocatable: they are allocated by the reader.
+- `read_dataarray` returns the values flattened, rank 1 with the components interleaved, or with shape
+  `(n_components, n_tuples)` for a rank-2 output; field data strings (type `String`) go into a
+  `character(len=:), allocatable :: x(:)` output.
+- The output kind must hold every value of the array type: `Int8` reads into `I1P`...`I8P`, `Int16` into `I2P`...`I8P`,
+  `Int32` into `I4P` or `I8P`, `Int64` into `I8P`, `Float32` into `R4P` or `R8P`, `Float64` into `R8P`. The unsigned types
+  read into the signed kind of the same width with the same bits (the inverse of
+  [`write_dataarray_unsigned`](#unsigned-integer-arrays)), or into any wider kind with their values. Any other kind is an
+  error: query the type first with `get_dataarray_info`.
+- The cells ids (`read_connectivity`, `read_polydata_cells`) can be of any integer type in the file: VTK writes `Int64` ids,
+  which read into `I4P` as long as the values fit.
+- The format of each array (`ascii`, `binary`, raw or base64 appended), the header type and the compressor are taken from
+  the file. Files written by VTK and ParaView are read as well as those written by VTKFortran.
+
+**Errors.** As every procedure, the reader returns 0 on success, otherwise:
+
+| Error | Meaning |
+|-------|---------|
+| 1 | the file cannot be read |
+| 2 | not a VTK XML file: malformed XML, no `VTKFile` element or no dataset element |
+| 3 | unsupported: `BigEndian` byte order, a compressor other than zlib, a parallel or unknown dataset type |
+| 4 | not found: piece, array, geometry or cells; or the file is not open for reading |
+| 5 | the output kind cannot hold the values of the array |
+| 6 | the data do not decode: inconsistent sizes, malformed base64, zlib failure |
+
+**Memory.** `initialize` scans the file once and records where each array is; it stops at the appended data, and keeps no
+data in memory. Each read then loads and decodes only the requested array: memory use is a small multiple of the size of
+that array (while decoding, its text, its decoded bytes and the output coexist), whatever the size of the file.
+
+**Not supported:** `BigEndian` files, the LZ4 and LZMA compressors, the legacy `.vtk` format, and VTKHDF. Compressed files
+need the library built with zlib, see [Installation](/guide/installation#optional-zlib-compression). Parallel headers
+(`.pvt*`), multi-block (`.vtm`) and time series (`.pvd`) files are not read yet: their pieces and datasets can be read one
+by one as serial files. The test `src/tests/vtk_fortran_read.F90` reads every topology and format, and two files written
+by VTK.
 
 ## Mesh topology strings
 

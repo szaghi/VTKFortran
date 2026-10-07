@@ -19,7 +19,7 @@ hero:
 features:
   - icon: 📐
     title: VTK XML Support
-    details: Write Image, Rectilinear, Structured, and Unstructured grids and polygonal data in the VTK XML format. Composite multi-block datasets (VTM), parallel partitioned files (PVTI, PVTR, PVTS, PVTU, PVTP) and time series (PVD) are also supported.
+    details: Write (and read back) Image, Rectilinear, Structured, and Unstructured grids and polygonal data in the VTK XML format. Composite multi-block datasets (VTM), parallel partitioned files (PVTI, PVTR, PVTS, PVTU, PVTP) and time series (PVD) are also supported.
   - icon: 🗜️
     title: Multiple Output Formats
     details: Choose between ASCII, binary (Base64-encoded), and raw binary appended formats, with optional zlib compression of binary data. All procedures return an integer error code for flexible error trapping.

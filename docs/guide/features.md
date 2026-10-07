@@ -33,6 +33,20 @@ title: Features
 | vtkMultiBlockDataSet | `.vtm` | ✅ |
 | Time series (collection) | `.pvd` | ✅ |
 
+## VTK XML Importers
+
+Files are read with `vtk_file%initialize(filename=..., action='read')`, see [Usage](/guide/usage#reading-files): every
+format (`ascii`, `binary`, `raw`, `binary-appended`), UInt32 and UInt64 headers, zlib compressed or not, as written by
+VTKFortran or by VTK and ParaView. Only the array asked for is loaded and decoded.
+
+| Type | Extension | Status |
+|------|-----------|--------|
+| Serial datasets | `.vti`, `.vtp`, `.vtr`, `.vts`, `.vtu` | ✅ |
+| Parallel (partitioned) datasets | `.pvti`, `.pvtp`, `.pvtr`, `.pvts`, `.pvtu` | — (read the pieces as serial files) |
+| Composite datasets | `.vtm`, `.pvd` | — (read the datasets as serial files) |
+
+Not supported: `BigEndian` files and the LZ4 and LZMA compressors.
+
 ## VTK Legacy Exporters
 
 The legacy (`.vtk`) format is not supported: VTKFortran writes the VTK XML formats only. Legacy writers were part of the old

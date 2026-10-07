@@ -9,16 +9,19 @@ SET(CMAKE_Fortran_MODULE_DIRECTORY "${PROJECT_BINARY_DIR}/modules")
 set(LIB VTKFortran)
 add_library(${LIB}
 	vtk_fortran.f90
+	vtk_fortran_dataarray_decoder.f90
 	vtk_fortran_dataarray_encoder.f90
 	vtk_fortran_parameters.f90
 	vtk_fortran_pvd_file.f90
 	vtk_fortran_pvtk_file.f90
 	vtk_fortran_vtk_file.f90
+	vtk_fortran_vtk_file_xml_reader.f90
 	vtk_fortran_vtk_file_xml_writer_abstract.f90
 	vtk_fortran_vtk_file_xml_writer_appended.F90
 	vtk_fortran_vtk_file_xml_writer_ascii_local.f90
 	vtk_fortran_vtk_file_xml_writer_binary_local.f90
 	vtk_fortran_vtm_file.F90
+	vtk_fortran_xml_scanner.f90
 	vtk_fortran_zlib.F90
 	)
 

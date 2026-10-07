@@ -8,6 +8,7 @@ use vtk_fortran_vtk_file_xml_writer_abstract
 use vtk_fortran_vtk_file_xml_writer_appended
 use vtk_fortran_vtk_file_xml_writer_ascii_local
 use vtk_fortran_vtk_file_xml_writer_binary_local
+use vtk_fortran_vtk_file_xml_reader
 use vtk_fortran_zlib, only : is_zlib_enabled
 
 implicit none
@@ -18,6 +19,8 @@ type :: vtk_file
   !< VTK file class.
   private
   class(xml_writer_abstract), allocatable, public :: xml_writer !< XML writer.
+  type(xml_reader),                        public :: xml_reader !< XML reader (`initialize(..., action='read')`).
+  logical                                         :: is_reading=.false. !< The file is open for reading.
   contains
     procedure, pass(self) :: get_xml_volatile !< Return the eventual XML volatile string file.
     procedure, pass(self) :: initialize       !< Initialize file.
@@ -35,10 +38,30 @@ contains
    endsubroutine get_xml_volatile
 
    function initialize(self, format, filename, mesh_topology, is_volatile, nx1, nx2, ny1, ny2, nz1, nz2, &
-                       origin, spacing, direction, header_type, compressor) result(error)
-   !< Initialize file (writer).
+                       origin, spacing, direction, header_type, compressor, action) result(error)
+   !< Initialize file: open it for writing (default) or for reading.
    !<
    !< @note This function must be the first to be called.
+   !<
+   !<### Reading
+   !<
+   !< With `action='read'` only `filename` is used: the file is indexed and its data are then read through the `xml_reader`
+   !< component (`get_info`, `read_piece`, `read_geo`, `read_connectivity`, `read_polydata_cells`, `get_dataarray_names`,
+   !< `get_dataarray_info`, `read_dataarray`); `finalize` frees it. Its format, topology, header type and compressor come from
+   !< the file. The error codes of reading are listed in the `vtk_fortran_vtk_file_xml_reader` module.
+   !<
+   !<```fortran
+   !< type(vtk_file)         :: vtk
+   !< real(R8P), allocatable :: x(:), y(:), z(:), pressure(:)
+   !< error = vtk%initialize(filename='mesh.vtu', action='read')
+   !< error = vtk%xml_reader%read_geo(x=x, y=y, z=z)
+   !< error = vtk%xml_reader%read_dataarray(location='node', data_name='pressure', x=pressure)
+   !< error = vtk%finalize()
+   !<```
+   !<
+   !<### Writing
+   !<
+   !< `format` and `mesh_topology` are required.
    !<
    !<### Supported output formats are (the passed specifier value is case insensitive):
    !<
@@ -87,9 +110,9 @@ contains
    !< @note The file extension is necessary in the file name. The XML standard has different extensions for each
    !< different topologies (e.g. *vtr* for rectilinear topology). See the VTK-standard file for more information.
    class(vtk_file), intent(inout)        :: self          !< VTK file.
-   character(*),    intent(in)           :: format        !< File format: ASCII, BINARY, RAW, RAW-ZLIB or BINARY-APPENDED.
+   character(*),    intent(in), optional :: format        !< File format: ASCII, BINARY, RAW, RAW-ZLIB or BINARY-APPENDED.
    character(*),    intent(in)           :: filename      !< File name.
-   character(*),    intent(in)           :: mesh_topology !< Mesh topology.
+   character(*),    intent(in), optional :: mesh_topology !< Mesh topology.
    logical,         intent(in), optional :: is_volatile   !< Flag to check volatile writer.
    integer(I4P),    intent(in), optional :: nx1           !< Initial node of x axis.
    integer(I4P),    intent(in), optional :: nx2           !< Final node of x axis.
@@ -102,15 +125,32 @@ contains
    real(R8P),       intent(in), optional :: direction(9)   !< Axes directions of ImageData, row-major 3x3 matrix (default identity).
    character(*),    intent(in), optional :: header_type    !< Bytes count header of binary data: UInt32 (default) or UInt64.
    character(*),    intent(in), optional :: compressor     !< Compressor of binary data: none (default) or zlib.
+   character(*),    intent(in), optional :: action         !< Action: **write** (default) or **read**, case insensitive.
    integer(I4P)                          :: error         !< Error status.
    type(string)                          :: fformat       !< File format.
    logical                               :: is_compressed !< Compress the binary data.
 
    if (.not.is_initialized) call penf_init
    if (.not.is_b64_initialized) call b64_init
+   if (allocated(self%xml_writer)) deallocate(self%xml_writer)
+   call self%xml_reader%finalize
+   self%is_reading = .false.
+   if (present(action)) then
+      select case(upper_case(trim(adjustl(action))))
+      case('READ')
+         error = self%xml_reader%initialize(filename=filename)
+         self%is_reading = error == 0_I4P
+         return
+      case('WRITE')
+      case default
+         error = 1_I4P
+         return
+      endselect
+   endif
+   error = 1_I4P
+   if (.not.(present(format).and.present(mesh_topology))) return
    fformat = trim(adjustl(format))
    fformat = fformat%upper()
-   if (allocated(self%xml_writer)) deallocate(self%xml_writer)
    error = 0_I4P
    select case(fformat%chars())
    case('ASCII')
@@ -183,13 +223,18 @@ contains
    endfunction upper_case
 
    function finalize(self) result(error)
-   !< Finalize file (writer).
+   !< Finalize file: close the writer, or free the reader.
    class(vtk_file), intent(inout)  :: self  !< VTK file.
    integer(I4P)                    :: error !< Error status.
-   character(len=:),           allocatable :: xml_volatile !< XML volatile file.
 
    error = 1
-   if (allocated(self%xml_writer)) error = self%xml_writer%finalize()
+   if (self%is_reading) then
+      call self%xml_reader%finalize
+      self%is_reading = .false.
+      error = 0
+   elseif (allocated(self%xml_writer)) then
+      error = self%xml_writer%finalize()
+   endif
    endfunction finalize
 
    elemental subroutine free(self, error)
@@ -198,5 +243,7 @@ contains
    integer(I4P),    intent(out), optional :: error !< Error status.
 
    if (allocated(self%xml_writer)) call self%xml_writer%free(error=error)
+   call self%xml_reader%finalize
+   self%is_reading = .false.
    endsubroutine free
 endmodule vtk_fortran_vtk_file
