@@ -32,6 +32,7 @@ contains
   !<- PUnstructuredGrid;
   !<- PImageData: `origin` and `spacing` are required, `direction` is optional, `mesh_kind` is not used (the pieces have no
   !<  points coordinates).
+  !<- PPolyData: `mesh_kind` (type of the points coordinates of the pieces) is required.
   !<
   !<### Example of usage
   !<

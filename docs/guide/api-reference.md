@@ -29,9 +29,10 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 | `%initialize(format, filename, mesh_topology, ...)` | Open the file, select the writer, write the XML header; for `ImageData`/`PImageData` also `origin`, `spacing` (required) and `direction` |
 | `%finalize()` | Flush and close the file |
 | `%xml_writer%write_fielddata(...)` | Write global FieldData: scalars, rank-1 arrays (all kinds), strings and arrays of strings |
-| `%xml_writer%write_piece(...)` | Open or close a Piece element |
+| `%xml_writer%write_piece(...)` | Open or close a Piece element (extents, `np`/`nc`, or `np`/`nverts`/`nlines`/`nstrips`/`npolys` for PolyData) |
 | `%xml_writer%write_geo(...)` | Write geometry (coordinates) |
 | `%xml_writer%write_connectivity(...)` | Write unstructured connectivity, offsets, and cell types |
+| `%xml_writer%write_polydata_cells(...)` | Write the cell blocks of PolyData: vertices, lines, triangle strips, polygons |
 | `%xml_writer%write_dataarray(...)` | Write a data array (overloaded for all kinds and ranks) |
 | `%xml_writer%write_parallel_geo(...)` | Write a `<P*>` geometry piece reference (pvtk_file only) |
 | `%xml_writer%write_parallel_dataarray(...)` | Write a parallel data array descriptor (pvtk_file only) |

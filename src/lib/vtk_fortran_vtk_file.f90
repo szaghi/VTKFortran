@@ -55,6 +55,8 @@ contains
    !<- ImageData: a regular grid, defined by the extents and the `origin`, `spacing` (both required) and `direction`
    !<  (optional) arguments; the point of indexes (i,j,k) is at `origin + direction . ([i,j,k] * spacing)`. No geometry is
    !<  written (`write_geo` is not used).
+   !<- PolyData: points (`write_geo(np, nc, x, y, z)`) and up to four cell blocks (vertices, lines, triangle strips, polygons)
+   !<  written with `write_polydata_cells`; the piece is opened with `write_piece(np, nverts, nlines, nstrips, npolys)`.
    !<
    !<### Example of usage
    !<

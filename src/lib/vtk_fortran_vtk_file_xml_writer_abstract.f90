@@ -39,6 +39,7 @@ type, abstract :: xml_writer_abstract
     procedure,                                 pass(self) :: free                         !< Free allocated memory.
     procedure,                                 pass(self) :: get_xml_volatile             !< Return the XML volatile string file.
     procedure,                                 pass(self) :: write_connectivity           !< Write connectivity.
+    procedure,                                 pass(self) :: write_polydata_cells         !< Write cell blocks of polydata.
     procedure,                                 pass(self) :: write_dataarray_location_tag !< Write dataarray location tag.
     procedure,                                 pass(self) :: write_dataarray_tag          !< Write dataarray tag.
     procedure,                                 pass(self) :: write_dataarray_tag_appended !< Write dataarray appended tag.
@@ -131,6 +132,7 @@ type, abstract :: xml_writer_abstract
     generic :: write_piece =>              &
                write_piece_start_tag,      &
                write_piece_start_tag_unst, &
+               write_piece_start_tag_poly, &
                write_piece_end_tag !< Write Piece start/end tag.
     ! deferred methods
     procedure(write_dataarray1_rank1_R8P_interface), deferred, pass(self) :: write_dataarray1_rank1_R8P !< Data 1, rank 1, R8P.
@@ -204,6 +206,7 @@ type, abstract :: xml_writer_abstract
     procedure, pass(self), private :: write_geo_unst_data3_rank1_R4P    !< Write **UnstructuredGrid** mesh (data 3, rank 1, R4P).
     procedure, pass(self), private :: write_piece_start_tag             !< Write `<Piece ...>` start tag.
     procedure, pass(self), private :: write_piece_start_tag_unst        !< Write `<Piece ...>` start tag for unstructured topology.
+    procedure, pass(self), private :: write_piece_start_tag_poly        !< Write `<Piece ...>` start tag for polydata topology.
     procedure, pass(self), private :: write_piece_end_tag               !< Write `</Piece>` end tag.
     procedure, pass(self), private :: write_parallel_block_file         !< Write single file that belong to the current block.
     procedure, pass(self), private :: write_parallel_block_files_array  !< Write block list of files (array input).
@@ -984,7 +987,7 @@ contains
                trim(str(n=nx1))//' '//trim(str(n=nx2))//' '//&
                trim(str(n=ny1))//' '//trim(str(n=ny2))//' '//&
                trim(str(n=nz1))//' '//trim(str(n=nz2))//'" GhostLevel="'//trim(str(self%ghost_level, .true.))//'"'
-   case('PUnstructuredGrid')
+   case('PUnstructuredGrid', 'PPolyData')
       buffer = 'GhostLevel="'//trim(str(self%ghost_level, .true.))//'"'
    case('ImageData')
       buffer = 'WholeExtent="'//                             &
@@ -1011,7 +1014,7 @@ contains
       call self%write_self_closing_tag(name='PDataArray', attributes='type="'//trim(mesh_kind)//'"')
       call self%write_self_closing_tag(name='PDataArray', attributes='type="'//trim(mesh_kind)//'"')
       call self%write_end_tag(name='PCoordinates')
-   case('PStructuredGrid', 'PUnstructuredGrid')
+   case('PStructuredGrid', 'PUnstructuredGrid', 'PPolyData')
       if (.not.present(mesh_kind)) then
          self%error = 1
          return
@@ -1215,7 +1218,7 @@ contains
       location_ = 'PointData'
    endselect
    select case(self%topology%chars())
-   case('PRectilinearGrid', 'PStructuredGrid', 'PUnstructuredGrid', 'PImageData')
+   case('PRectilinearGrid', 'PStructuredGrid', 'PUnstructuredGrid', 'PImageData', 'PPolyData')
       location_ = 'P'//location_
    endselect
    select case(action_%chars())
@@ -1397,6 +1400,26 @@ contains
    call self%write_start_tag(name='Piece', attributes=tag_attributes%chars())
    error = self%error
    endfunction write_piece_start_tag_unst
+
+   function write_piece_start_tag_poly(self, np, nverts, nlines, nstrips, npolys) result(error)
+   !< Write `<Piece ...>` start tag for polydata topology: the number of points and of cells of each block.
+   class(xml_writer_abstract), intent(inout) :: self           !< Writer.
+   integer(I4P),               intent(in)    :: np             !< Number of points.
+   integer(I4P),               intent(in)    :: nverts         !< Number of vertex cells (block Verts).
+   integer(I4P),               intent(in)    :: nlines         !< Number of line/polyline cells (block Lines).
+   integer(I4P),               intent(in)    :: nstrips        !< Number of triangle strip cells (block Strips).
+   integer(I4P),               intent(in)    :: npolys         !< Number of polygon cells (block Polys).
+   integer(I4P)                              :: error          !< Error status.
+   type(string)                              :: tag_attributes !< Tag attributes.
+
+   tag_attributes = 'NumberOfPoints="'//trim(str(n=np, no_sign=.true.))//     &
+                    '" NumberOfVerts="'//trim(str(n=nverts, no_sign=.true.))//  &
+                    '" NumberOfLines="'//trim(str(n=nlines, no_sign=.true.))//  &
+                    '" NumberOfStrips="'//trim(str(n=nstrips, no_sign=.true.))//&
+                    '" NumberOfPolys="'//trim(str(n=npolys, no_sign=.true.))//'"'
+   call self%write_start_tag(name='Piece', attributes=tag_attributes%chars())
+   error = self%error
+   endfunction write_piece_start_tag_poly
 
    function write_piece_end_tag(self) result(error)
    !< Write `</Piece>` end tag.
@@ -1723,6 +1746,62 @@ contains
    call self%write_end_tag(name='Cells')
    endfunction write_connectivity
 
+   function write_polydata_cells(self, verts_connectivity, verts_offset, lines_connectivity, lines_offset, &
+                                 strips_connectivity, strips_offset, polys_connectivity, polys_offset) result(error)
+   !< Write the cell blocks of polydata topology: `<Verts>`, `<Lines>`, `<Strips>` and `<Polys>`.
+   !<
+   !< Each block is given by a pair of arrays, as in `write_connectivity`: the point ids (0-based) of its cells, one cell after
+   !< the other, and the cumulative offset of the end of each cell. Only the blocks passed are written (VTK readers treat an
+   !< absent block as empty); a block with only one of its two arrays is an error. The number of cells of each block must
+   !< match the counts passed to `write_piece(np, nverts, nlines, nstrips, npolys)`.
+   !<
+   !< @note Cell data of polydata are ordered by block: verts, lines, strips, polys.
+   !<
+   !<### Example of usage
+   !<
+   !<```fortran
+   !< ! a square made of two triangles and a polyline of 3 points
+   !< error = vtk%xml_writer%write_polydata_cells(lines_connectivity=[4,5,6], lines_offset=[3], &
+   !<                                            polys_connectivity=[0,1,2, 0,2,3], polys_offset=[3,6])
+   !<```
+   class(xml_writer_abstract), intent(inout)        :: self                    !< Writer.
+   integer(I4P),               intent(in), optional :: verts_connectivity(1:)  !< Vertices connectivity.
+   integer(I4P),               intent(in), optional :: verts_offset(1:)        !< Vertices offsets.
+   integer(I4P),               intent(in), optional :: lines_connectivity(1:)  !< Lines connectivity.
+   integer(I4P),               intent(in), optional :: lines_offset(1:)        !< Lines offsets.
+   integer(I4P),               intent(in), optional :: strips_connectivity(1:) !< Triangle strips connectivity.
+   integer(I4P),               intent(in), optional :: strips_offset(1:)       !< Triangle strips offsets.
+   integer(I4P),               intent(in), optional :: polys_connectivity(1:)  !< Polygons connectivity.
+   integer(I4P),               intent(in), optional :: polys_offset(1:)        !< Polygons offsets.
+   integer(I4P)                                     :: error                   !< Error status.
+
+   if ((present(verts_connectivity) .neqv. present(verts_offset)) .or. &
+       (present(lines_connectivity) .neqv. present(lines_offset)) .or. &
+       (present(strips_connectivity) .neqv. present(strips_offset)) .or. &
+       (present(polys_connectivity) .neqv. present(polys_offset))) then
+      self%error = 1
+      error = self%error
+      return
+   endif
+   if (present(verts_connectivity)) call write_block(name='Verts', connectivity=verts_connectivity, offset=verts_offset)
+   if (present(lines_connectivity)) call write_block(name='Lines', connectivity=lines_connectivity, offset=lines_offset)
+   if (present(strips_connectivity)) call write_block(name='Strips', connectivity=strips_connectivity, offset=strips_offset)
+   if (present(polys_connectivity)) call write_block(name='Polys', connectivity=polys_connectivity, offset=polys_offset)
+   error = self%error
+   contains
+      subroutine write_block(name, connectivity, offset)
+      !< Write one cell block.
+      character(*), intent(in) :: name             !< Block name.
+      integer(I4P), intent(in) :: connectivity(1:) !< Block connectivity.
+      integer(I4P), intent(in) :: offset(1:)       !< Block offsets.
+
+      call self%write_start_tag(name=name)
+      error = self%write_dataarray(data_name='connectivity', x=connectivity)
+      error = self%write_dataarray(data_name='offsets', x=offset)
+      call self%write_end_tag(name=name)
+      endsubroutine write_block
+   endfunction write_polydata_cells
+
    ! write_parallel methods
    function write_parallel_open_block(self, name) result(error)
    !< Write a block (open) container.
@@ -1789,7 +1868,7 @@ contains
                trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
                trim(str(n=ny1))//' '//trim(str(n=ny2))//' '// &
                trim(str(n=nz1))//' '//trim(str(n=nz2))//'" Source="'//trim(adjustl(source))//'"'
-   case('PUnstructuredGrid')
+   case('PUnstructuredGrid', 'PPolyData')
       buffer = 'Source="'//trim(adjustl(source))//'"'
    endselect
    call self%write_self_closing_tag(name='Piece', attributes=buffer%chars())

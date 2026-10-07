@@ -11,7 +11,7 @@ title: Features
 | Topology | Extension | Status |
 |----------|-----------|--------|
 | Image Data | `.vti` | ✅ |
-| Polydata | `.vtp` | — |
+| Polydata | `.vtp` | ✅ |
 | Rectilinear Grid | `.vtr` | ✅ |
 | Structured Grid | `.vts` | ✅ |
 | Unstructured Grid | `.vtu` | ✅ |
@@ -21,7 +21,7 @@ title: Features
 | Topology | Extension | Status |
 |----------|-----------|--------|
 | Parallel Image Data | `.pvti` | ✅ |
-| Parallel Polydata | `.pvtp` | — |
+| Parallel Polydata | `.pvtp` | ✅ |
 | Parallel Rectilinear Grid | `.pvtr` | — |
 | Parallel Structured Grid | `.pvts` | ✅ |
 | Parallel Unstructured Grid | `.pvtu` | ✅ |

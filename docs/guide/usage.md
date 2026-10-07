@@ -189,6 +189,39 @@ error = a_vtk_file%xml_writer%write_connectivity(nc=2, connectivity=connect, off
 
 See `src/tests/vtk_fortran_write_vtu_polyhedron.f90` for the complete program.
 
+## Polygonal Data (VTP)
+
+PolyData describe points and up to four blocks of cells: **vertices**, **lines** (polylines), **triangle strips** and
+**polygons**, typical of surfaces, curves and point clouds. Open the piece with the number of points and of cells of each block,
+write the points with `write_geo`, then the blocks with `write_polydata_cells`:
+
+```fortran
+use vtk_fortran, only : vtk_file
+use penf,        only : I4P, R8P
+
+type(vtk_file) :: a_vtk_file
+integer(I4P)   :: error
+real(R8P)      :: x(7), y(7), z(7)   ! a square (points 0-3) and a polyline (points 4-6)
+
+error = a_vtk_file%initialize(format='raw', filename='output.vtp', mesh_topology='PolyData')
+error = a_vtk_file%xml_writer%write_piece(np=7, nverts=0, nlines=1, nstrips=0, npolys=2)
+error = a_vtk_file%xml_writer%write_geo(np=7, nc=3, x=x, y=y, z=z)
+error = a_vtk_file%xml_writer%write_polydata_cells(lines_connectivity=[4,5,6], lines_offset=[3],          &
+                                                    polys_connectivity=[0,1,2, 0,2,3], polys_offset=[3,6])
+error = a_vtk_file%xml_writer%write_dataarray(location='cell', action='open')
+error = a_vtk_file%xml_writer%write_dataarray(data_name='id', x=[1,2,3])   ! the polyline, then the two triangles
+error = a_vtk_file%xml_writer%write_dataarray(location='cell', action='close')
+error = a_vtk_file%xml_writer%write_piece()
+error = a_vtk_file%finalize()
+```
+
+- Each block is a pair of arrays, as in `write_connectivity`: the point ids (0-based) of its cells one after the other, and the
+  cumulative offset of the end of each cell. Pass only the blocks you have; a block with only one of its two arrays is an
+  error. The number of cells of each block must match the counts given to `write_piece`.
+- **Cell data follow the VTK order of the blocks**: vertices, then lines, then strips, then polygons, whatever the order of the
+  arguments.
+- The `nc` argument of `write_geo` is not used for PolyData (it writes the points only).
+
 ## Multi-block Dataset (VTM)
 
 A VTM file is a composite wrapper that references multiple individual VTK files organised into named blocks.
@@ -377,6 +410,23 @@ error = a_pvtk_file%finalize()
 
 See `src/tests/vtk_fortran_write_vti.f90` for a complete program, serial and parallel.
 
+## Parallel Polygonal Data (PVTP)
+
+As for PVTU: each rank writes its piece as a complete `.vtp` file (local point ids), one rank writes the `.pvtp` file with the
+type of the points coordinates (`mesh_kind`, required) and of each data array, and the list of the pieces:
+
+```fortran
+error = a_pvtk_file%initialize(filename='output.pvtp', mesh_topology='PPolyData', mesh_kind='Float64')
+error = a_pvtk_file%xml_writer%write_dataarray(location='cell', action='open')
+error = a_pvtk_file%xml_writer%write_parallel_dataarray(data_name='id', data_type='Int32', number_of_components=1)
+error = a_pvtk_file%xml_writer%write_dataarray(location='cell', action='close')
+error = a_pvtk_file%xml_writer%write_parallel_geo(source='part_01.vtp')
+error = a_pvtk_file%xml_writer%write_parallel_geo(source='part_02.vtp')
+error = a_pvtk_file%finalize()
+```
+
+See `src/tests/vtk_fortran_write_vtp.f90` for a complete program with the four blocks, serial and parallel.
+
 ## Time series (PVD)
 
 A `.pvd` file is a *collection*: it lists the files of a simulation (any VTK XML file written by `vtk_file`, `pvtk_file` or
@@ -462,6 +512,8 @@ The `mesh_topology` argument is case-sensitive:
 | `RectilinearGrid` | `.vtr` file |
 | `StructuredGrid` | `.vts` file |
 | `UnstructuredGrid` | `.vtu` file |
+| `PolyData` | `.vtp` file |
 | `PStructuredGrid` | `.pvts` file (pvtk_file only) |
 | `PUnstructuredGrid` | `.pvtu` file (pvtk_file only) |
 | `PImageData` | `.pvti` file (pvtk_file only, requires `origin` and `spacing`) |
+| `PPolyData` | `.pvtp` file (pvtk_file only) |
