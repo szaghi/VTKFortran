@@ -7,7 +7,9 @@ set(VTKFORTRAN_TESTS
   vtk_fortran_write_fielddata.f90
   vtk_fortran_write_header_uint64.f90
   vtk_fortran_write_large.f90
+  vtk_fortran_write_multipiece.f90
   vtk_fortran_write_pvd.f90
+  vtk_fortran_write_pvtr.f90
   vtk_fortran_write_pvts.f90
   vtk_fortran_write_pvtu.f90
   vtk_fortran_write_volatile.f90

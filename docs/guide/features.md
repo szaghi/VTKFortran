@@ -22,7 +22,7 @@ title: Features
 |----------|-----------|--------|
 | Parallel Image Data | `.pvti` | ✅ |
 | Parallel Polydata | `.pvtp` | ✅ |
-| Parallel Rectilinear Grid | `.pvtr` | — |
+| Parallel Rectilinear Grid | `.pvtr` | ✅ |
 | Parallel Structured Grid | `.pvts` | ✅ |
 | Parallel Unstructured Grid | `.pvtu` | ✅ |
 

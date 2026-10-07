@@ -12,11 +12,11 @@ integer(I4P), parameter :: ny1=0_I4P                              !< Y lower bou
 integer(I4P), parameter :: ny2=16_I4P                             !< Y upper bound extent.
 integer(I4P), parameter :: nz1=0_I4P                              !< Z lower bound extent.
 integer(I4P), parameter :: nz2=16_I4P                             !< Z upper bound extent.
-integer(I4P), parameter :: nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1) !< Number of elements.
+integer(I4P), parameter :: nc=(nx2-nx1)*(ny2-ny1)*(nz2-nz1)       !< Number of cells.
 real(R8P)               :: x(nx1:nx2)                             !< X coordinates.
 real(R8P)               :: y(ny1:ny2)                             !< Y coordinates.
 real(R8P)               :: z(nz1:nz2)                             !< Z coordinates.
-integer(I4P)            :: v(1:nn)                                !< Variable defined at coordinates.
+integer(I4P)            :: v(1:nc)                                !< Variable defined at cells.
 integer(I4P)            :: error                                  !< Status error.
 integer(I4P)            :: i                                      !< Counter.
 integer(I4P)            :: j                                      !< Counter.
@@ -31,9 +31,9 @@ real(R8P)               :: z2=0.16_R8P                            !< Z upper ext
 logical                 :: test_passed(1)                         !< List of passed tests.
 
 n = 0
-do k=nz1,nz2
- do j=ny1,ny2
-   do i=nx1,nx2
+do k=nz1,nz2-1
+ do j=ny1,ny2-1
+   do i=nx1,nx2-1
      n = n + 1
      v(n) = i*j*k
    enddo

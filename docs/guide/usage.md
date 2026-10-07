@@ -299,6 +299,21 @@ end block
 Adjacent pieces must share the boundary ordinate: `nx2_p(1)` of piece 1 must equal `nx1_p(2)` of piece 2. This is required for correct rendering in ParaView.
 :::
 
+## Parallel Rectilinear Grid (PVTR)
+
+A `.pvtr` header is written as a `.pvts` one, with `mesh_topology='PRectilinearGrid'`: each piece is a regular `.vtr` file
+holding the coordinates of its own extent, and the header declares the coordinates type through `mesh_kind` (written as
+`PCoordinates`). The test `src/tests/vtk_fortran_write_pvtr.f90` is a complete example with point and cell data.
+
+```fortran
+error = a_pvtk_file%initialize(filename='output.pvtr', mesh_topology='PRectilinearGrid', mesh_kind='Float64', &
+                               nx1=0, nx2=4, ny1=0, ny2=2, nz1=0, nz2=2)
+! ... PPointData / PCellData as for PVTS ...
+error = a_pvtk_file%xml_writer%write_parallel_geo(source='part_01.vtr', nx1=0, nx2=2, ny1=0, ny2=2, nz1=0, nz2=2)
+error = a_pvtk_file%xml_writer%write_parallel_geo(source='part_02.vtr', nx1=2, nx2=4, ny1=0, ny2=2, nz1=0, nz2=2)
+error = a_pvtk_file%finalize()
+```
+
 ## Parallel Unstructured Grid (PVTU)
 
 The same approach works for unstructured grids: each rank writes its partition as a complete `.vtu` file, with its own points
@@ -329,6 +344,33 @@ error = a_pvtk_file%finalize()
 
 The names, types and numbers of components declared in the `.pvtu` file must match the data arrays written in every piece. See
 `src/tests/vtk_fortran_write_pvtu.f90` for the complete program, pieces included.
+
+## Multiple pieces in one file
+
+A single file can hold several pieces, e.g. the blocks of a multi-block solver written by one process without a parallel
+header: open and close each piece with `write_piece`, and write its geometry, connectivity and data in between, exactly as
+for a single-piece file. Readers (VTK, ParaView) merge the pieces into one dataset.
+
+```fortran
+error = a_vtk_file%initialize(format='raw', filename='blocks.vtu', mesh_topology='UnstructuredGrid')
+do b=1, nblocks
+  error = a_vtk_file%xml_writer%write_piece(np=np(b), nc=nc(b))
+  error = a_vtk_file%xml_writer%write_geo(np=np(b), nc=nc(b), x=..., y=..., z=...)
+  error = a_vtk_file%xml_writer%write_connectivity(nc=nc(b), connectivity=..., offset=..., cell_type=...)
+  error = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
+  error = a_vtk_file%xml_writer%write_dataarray(data_name='pressure', x=...)
+  error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
+  error = a_vtk_file%xml_writer%write_piece()
+enddo
+error = a_vtk_file%finalize()
+```
+
+- Each piece has its own points: the point ids of its connectivity (and offsets) are local to the piece, starting from 0.
+- Every piece must carry the same data arrays (same names, types and components): VTK takes the arrays of the first piece,
+  so an array missing in the first piece is dropped, and one missing in a later piece is silently filled with zeros there.
+- For structured topologies (`RectilinearGrid`, `StructuredGrid`, `ImageData`), `initialize` sets the whole extent and each
+  `write_piece(nx1=..., nx2=..., ...)` sets the extent of the piece inside it; adjacent pieces share their boundary plane.
+- It works with every format; the test `src/tests/vtk_fortran_write_multipiece.f90` writes both kinds of grids.
 
 ## Field data (global metadata)
 
