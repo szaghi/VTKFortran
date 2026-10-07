@@ -1,7 +1,7 @@
 # VTKFortran
 
 >#### Pure Fortran VTK XML API
->a pure Fortran 2003+ OOP library for writing and reading files conforming the [VTK](http://www.vtk.org/) XML standard.
+>a pure Fortran 2008 OOP library for writing and reading files conforming the [VTK](http://www.vtk.org/) XML standard.
 
 [![GitHub tag](https://img.shields.io/github/v/tag/szaghi/VTKFortran)](https://github.com/szaghi/VTKFortran/tags)
 [![GitHub issues](https://img.shields.io/github/issues/szaghi/VTKFortran)](https://github.com/szaghi/VTKFortran/issues)
@@ -9,9 +9,9 @@
 [![coverage](https://img.shields.io/endpoint?url=https://szaghi.github.io/VTKFortran/coverage.json)](https://github.com/szaghi/VTKFortran/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-GPLv3%20%7C%20BSD%20%7C%20MIT-blue.svg)](#copyrights)
 
-| 📐 **VTK Topologies**<br>Image (`.vti`), Rectilinear (`.vtr`), Structured (`.vts`), and Unstructured (`.vtu`) grids, polygonal data (`.vtp`); composite multi-block (`.vtm`), parallel partitioned (`.pvti`, `.pvtr`, `.pvts`, `.pvtu`, `.pvtp`) datasets, and time series (`.pvd`) | 🗜️ **Output Formats**<br>ASCII, Base64-encoded binary, and raw binary appended; optional zlib compression of binary data; every file read back with `action='read'` | ⚡ **Parallel Safe**<br>Thread and processor safe — multiple files can be written concurrently under OpenMP or MPI | 🎨 **OOP Design**<br>Polymorphic `xml_writer` allocated at runtime; `vtk_file`, `pvtk_file`, `vtm_file` expose a clean type-bound-procedure API |
+| 📐 **VTK Topologies**<br>Image (`.vti`), Rectilinear (`.vtr`), Structured (`.vts`), and Unstructured (`.vtu`) grids, polygonal data (`.vtp`); composite multi-block (`.vtm`), parallel partitioned (`.pvti`, `.pvtr`, `.pvts`, `.pvtu`, `.pvtp`) datasets, and time series (`.pvd`) | 🗜️ **Output Formats**<br>ASCII, Base64-encoded binary, and raw binary appended; optional zlib compression of binary data; every file read back with `action='read'` | ⚡ **Parallel Safe**<br>Thread and processor safe — multiple files can be written concurrently under OpenMP or MPI | 🎨 **OOP Design**<br>Polymorphic `xml_writer` allocated at runtime, `xml_reader` to read back; `vtk_file`, `pvtk_file`, `vtm_file`, `pvd_file` expose a clean type-bound-procedure API |
 |:---:|:---:|:---:|:---:|
-| 🔢 **All Numeric Kinds**<br>All PENF kinds (`I1P`–`I8P`, `R4P`–`R8P`) and array ranks 1–4 supported in data arrays | ✅ **Error Codes**<br>Every procedure returns an integer error code — zero means success | 🔓 **Multi-licensed**<br>GPL v3 · BSD 2/3-Clause · MIT | 📦 **Multiple build systems**<br>CMake, FoBiS.py, fpm, Make |
+| 🔢 **All Numeric Kinds**<br>All PENF kinds (`I1P`–`I8P`, `R4P`–`R8P`) and array ranks 1–4 supported in data arrays | ✅ **Error Codes**<br>Every procedure returns an integer error code — zero means success | 🔓 **Multi-licensed**<br>GPL v3 · BSD 2/3-Clause · MIT | 📦 **Multiple build systems**<br>CMake, FoBiS.py, fpm |
 
 >#### [Documentation](https://szaghi.github.io/VTKFortran/)
 > For full documentation (guide, API reference, usage examples, etc.) see the [VTKFortran website](https://szaghi.github.io/VTKFortran/).

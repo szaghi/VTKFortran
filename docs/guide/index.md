@@ -4,13 +4,14 @@ title: About VTKFortran
 
 # About VTKFortran
 
-**VTKFortran** is a pure Fortran 2003+ library for writing (and reading) data files conforming the [VTK standard](http://www.vtk.org/). It is not a wrapper around the VTK C++ source — it is an independent, pure-Fortran exporter/importer of the VTK data format, designed for Fortran programmers who want to use VTK-based visualization tools (such as [ParaView](https://www.paraview.org/)) without mixing languages.
+**VTKFortran** is a pure Fortran 2008 library for writing and reading data files conforming the [VTK standard](http://www.vtk.org/). It is not a wrapper around the VTK C++ source — it is an independent, pure-Fortran exporter/importer of the VTK data format, designed for Fortran programmers who want to use VTK-based visualization tools (such as [ParaView](https://www.paraview.org/)) without mixing languages.
 
 Key properties:
 
-- **Pure Fortran 2003+** — no C or C++ dependencies
+- **Pure Fortran 2008** — no C or C++ dependencies, except zlib (optional) for compressed data
 - **Thread and processor safe** — multiple files can be written concurrently under OpenMP or MPI
-- **Multiple output formats** — ASCII, binary (Base64), and raw binary appended
+- **Multiple output formats** — ASCII, binary (Base64), and raw binary appended, optionally zlib compressed
+- **Reading** — every file it writes (and the same files written by VTK) can be read back
 - **OOP design** — a polymorphic `xml_writer` component is selected at runtime based on the chosen format
 
 ## Why VTKFortran?

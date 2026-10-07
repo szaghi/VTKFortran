@@ -6,11 +6,11 @@ title: Installation
 
 ## Prerequisites
 
-A Fortran 2003+ compliant compiler is required:
+A Fortran 2008 compiler is required:
 
-| Compiler | Minimum version |
-|----------|----------------|
-| GNU gfortran | ≥ 6.0.1 |
+| Compiler | Version |
+|----------|---------|
+| GNU gfortran | 12 or newer (tested 12, 13, 14, 16); gfortran 11 builds, but the string form of `vtm_file%write_block` crashes |
 | Intel Fortran (ifx) | tested with 2025.3 (the fobos Intel modes run `ifx`; the discontinued ifort is not tested) |
 
 ## Download
@@ -37,7 +37,7 @@ CMake and FoBiS.py builds need the fetched dependencies; fpm fetches its own (se
 | [PENF](https://github.com/szaghi/PENF) | Portable numeric kind parameters (`I4P`, `R8P`, etc.) — used everywhere |
 | [BeFoR64](https://github.com/szaghi/BeFoR64) | Base64 encode/decode for binary XML data |
 | [StringiFor](https://github.com/szaghi/StringiFor) | OOP `string` type used throughout the writer classes |
-| [FoXy](https://github.com/Fortran-FOSS-Programmers/FoXy) | XML tag parsing and emitting |
+| [FoXy](https://github.com/Fortran-FOSS-Programmers/FoXy) | XML tags emitting (the writers; the readers have their own scanner) |
 | [FACE](https://github.com/szaghi/FACE) | ANSI terminal colour output |
 
 ## Build with CMake (preferred)
@@ -123,7 +123,7 @@ fobis build --mode tests-gnu-debug   # with zlib, as the CI
 
 ```bash
 fobis rule --ex makecoverage   # build + run tests + gcov report
-fobis rule --ex makedoc        # build the API reference (formal) and the VitePress site
+fobis rule --ex makedoc        # build the API reference (formal) and the VitePress site (needs formal and npm)
 ```
 
 `makecoverage` calls `scripts/compute-coverage.sh`, which automatically selects the `gcov-N` binary that matches the installed `gfortran` version. If you run the script directly, ensure that `gfortran` is on `$PATH` so the version is detected correctly.
@@ -131,10 +131,11 @@ fobis rule --ex makedoc        # build the API reference (formal) and the VitePr
 ## Build with FPM
 
 ```bash
-fpm build
+fpm build --profile release
 ```
 
-fpm builds the library (and fetches its dependencies); the test programs are built with CMake or FoBiS.py.
+fpm 0.13.0 or newer is required (`fpm.toml` uses the `[features]` table). fpm builds the library (and fetches its
+dependencies); the test programs are built with CMake or FoBiS.py.
 
 ## Optional zlib compression
 

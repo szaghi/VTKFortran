@@ -103,23 +103,26 @@ See [Usage](/guide/usage#field-data-global-metadata) for details.
 
 ## Parallel Support
 
-VTKFortran can safely manage multiple concurrent open files. It is thread/processor safe, suitable for use within OpenMP parallel regions and MPI programs where each rank writes its own partition file.
+VTKFortran can safely manage multiple concurrent open files: each `vtk_file` (writer or reader) keeps its state in its own
+components, so files can be written or read concurrently within OpenMP parallel regions and by MPI programs where each rank
+writes its own partition file. The dependencies PENF and BeFoR64 initialize their constant tables at the first
+`initialize`; in OpenMP, initialize one file (or call `penf_init` and `b64_init`) before the parallel region, so that two
+threads never run that initialization at the same time.
 
 ## Compiler Support
 
 | Compiler | Status |
 |----------|--------|
-| GNU gfortran ≥ 6.0.1 | ✅ Supported |
-| Intel Fortran ≥ 16.x | ✅ Supported |
-| IBM XL Fortran | Not tested |
-| g95 | Not tested |
-| NAG Fortran | Not tested |
-| PGI / NVIDIA | Not tested |
+| GNU gfortran 12, 13, 14, 16 | ✅ Tested (the CI uses gfortran 14) |
+| GNU gfortran 11 | ⚠️ Builds; the string form of `vtm_file%write_block` crashes (in StringiFor `split`) |
+| Intel ifx 2025.3 | ✅ Tested (the discontinued ifort is not tested) |
+| NAG, NVIDIA, Cray, LLVM Flang | Not tested |
 
 ## Design Principles
 
-- **Pure Fortran** — no external C libraries or system calls beyond standard I/O
-- **OOP** — polymorphic `xml_writer` allocated at runtime; `vtk_file`, `pvtk_file`, `vtm_file` expose type-bound procedures
+- **Pure Fortran** — no system calls beyond standard I/O; the only C library is zlib, optional, for compressed data
+- **OOP** — polymorphic `xml_writer` allocated at runtime, an `xml_reader` to read files back; `vtk_file`, `pvtk_file`,
+  `vtm_file`, `pvd_file` expose type-bound procedures
 - **KISS** — simple, focused API without unnecessary abstractions
 - **Error codes** — every procedure returns an integer; zero means success
 - **Free & Open Source** — multi-licensed for FOSS and commercial use

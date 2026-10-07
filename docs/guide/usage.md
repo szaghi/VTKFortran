@@ -62,7 +62,7 @@ type(vtk_file)          :: a_vtk_file
 integer(I4P), parameter :: nx1=0, nx2=16, ny1=0, ny2=16, nz1=0, nz2=16
 integer(I4P), parameter :: nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
 real(R8P)               :: x(nx1:nx2), y(ny1:ny2), z(nz1:nz2)
-integer(I4P)            :: v(1:nn)
+integer(I4P)            :: v(1:nn)   ! one value per point
 integer(I4P)            :: error
 
 ! ... fill x, y, z, v ...
@@ -78,9 +78,9 @@ error = a_vtk_file%xml_writer%write_fielddata(action='close')
 
 error = a_vtk_file%xml_writer%write_piece(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
 error = a_vtk_file%xml_writer%write_geo(x=x, y=y, z=z)
-error = a_vtk_file%xml_writer%write_dataarray(location='cell', action='open')
-error = a_vtk_file%xml_writer%write_dataarray(data_name='cell_value', x=v)
-error = a_vtk_file%xml_writer%write_dataarray(location='cell', action='close')
+error = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
+error = a_vtk_file%xml_writer%write_dataarray(data_name='node_value', x=v)
+error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
 error = a_vtk_file%xml_writer%write_piece()
 error = a_vtk_file%finalize()
 ```
@@ -153,7 +153,7 @@ error = a_vtk_file%xml_writer%write_piece()
 error = a_vtk_file%finalize()
 ```
 
-Supported formats for unstructured grids: `ascii`, `raw`, and `binary`.
+Unstructured grids are written in every format, compressed or not, as the other topologies.
 
 Cell types are passed as `integer(I1P)` and written as a `UInt8` DataArray, as the VTK XML format specifies (VTK cell type
 codes are all below 128, so the bytes are the same).
@@ -371,8 +371,9 @@ error = a_pvtk_file%xml_writer%write_parallel_geo(source='part_02.vtu')
 error = a_pvtk_file%finalize()
 ```
 
-The names, types and numbers of components declared in the `.pvtu` file must match the data arrays written in every piece. See
-`src/tests/vtk_fortran_write_pvtu.f90` for the complete program, pieces included.
+The names, types and numbers of components declared in the `.pvtu` file must match the data arrays written in every piece:
+`check_pieces` verifies it, see [Parallel headers](#parallel-headers). See `src/tests/vtk_fortran_write_pvtu.f90` for the
+complete program, pieces included.
 
 ## Multiple pieces in one file
 
@@ -427,6 +428,7 @@ error = a_vtk_file%xml_writer%write_fielddata(action='close')
 Strings are written as VTK writes them (each string followed by a NUL character), in every output format, and readers return
 them as string arrays. Trailing blanks of each string are trimmed, so a Fortran array of fixed-length strings can be passed as
 is. In ParaView, field data are listed in the Spreadsheet view (attribute *Field Data*) and are available to filters and Python.
+VTKFortran reads them back with `read_dataarray(location='field', ...)`, see [Reading files](#reading-files).
 
 ## Active arrays
 
@@ -579,19 +581,33 @@ See `src/tests/vtk_fortran_write_pvd.f90` for a complete program, restart includ
 
 ## Volatile XML output
 
-`write_xml_volatile` returns the XML content as an in-memory string instead of writing to disk. This is useful when the calling code controls I/O (e.g., HDF5-backed parallel I/O or MPI-IO).
+In some parallel setups only one process (the master) can access the file system. The other processes can write their files
+into memory instead: initialize the file with `is_volatile=.true.`, write it as usual, then get its content as a string,
+send it to the master, which writes it to disk with `write_xml_volatile`.
 
 ```fortran
-use vtk_fortran, only : write_xml_volatile
+use vtk_fortran, only : vtk_file, write_xml_volatile
 
-character(len=:), allocatable :: xml_string
-integer                       :: error
+type(vtk_file)                :: a_vtk_file
+character(len=:), allocatable :: xml_volatile
+integer(I4P)                  :: error
 
-xml_string = write_xml_volatile(format='binary', mesh_topology='UnstructuredGrid', &
-                                 np=np, nc=nc, x=x, y=y, z=z, &
-                                 connectivity=connect, offset=offset, cell_type=cell_type, &
-                                 error=error)
+! on a process without access to the file system
+error = a_vtk_file%initialize(format='binary', filename='part_01.vtr', mesh_topology='RectilinearGrid', &
+                              is_volatile=.true., nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
+! ... write_piece / write_geo / write_dataarray / write_piece, as usual ...
+error = a_vtk_file%finalize()
+call a_vtk_file%get_xml_volatile(xml_volatile) ! the whole file, as a string
+call a_vtk_file%free                           ! free the memory of the volatile file
+! ... send xml_volatile to the master ...
+
+! on the master
+error = write_xml_volatile(xml_volatile=xml_volatile, filename='part_01.vtr')
 ```
+
+- Only the `binary` format supports volatile files: the other formats ignore `is_volatile` and write the file to disk.
+- The string is the exact content of the file: written by the master, it is identical to the file written directly (the
+  test `src/tests/vtk_fortran_write_volatile.f90` checks it).
 
 ## Output format selection
 
@@ -841,6 +857,7 @@ The `mesh_topology` argument is case-sensitive:
 | `StructuredGrid` | `.vts` file |
 | `UnstructuredGrid` | `.vtu` file |
 | `PolyData` | `.vtp` file |
+| `PRectilinearGrid` | `.pvtr` file (pvtk_file only) |
 | `PStructuredGrid` | `.pvts` file (pvtk_file only) |
 | `PUnstructuredGrid` | `.pvtu` file (pvtk_file only) |
 | `PImageData` | `.pvti` file (pvtk_file only, requires `origin` and `spacing`) |

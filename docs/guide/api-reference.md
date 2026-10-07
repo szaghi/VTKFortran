@@ -33,6 +33,7 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 | `%initialize(format, filename, mesh_topology, ...)` | Open the file, select the writer, write the XML header; for `ImageData`/`PImageData` also `origin`, `spacing` (required) and `direction`; `header_type='UInt64'` for binary arrays larger than 2 GiB; `compressor='zlib'` to compress binary data (`vtk_file` only) |
 | `%initialize(filename=..., action='read')` | Open a file for reading through `%xml_reader`: a serial file (`vtk_file`) or a parallel header (`pvtk_file`), see below |
 | `%finalize()` | Flush and close the file (or free the reader) |
+| `%get_xml_volatile(xml_volatile)`, `%free()` | Return the file written with `is_volatile=.true.` as a string, then free its memory (`vtk_file` only) |
 | `%xml_writer%write_fielddata(...)` | Write global FieldData: scalars, rank-1 arrays (all kinds), strings and arrays of strings |
 | `%xml_writer%write_piece(...)` | Open or close a Piece element (extents, `np`/`nc`, or `np`/`nverts`/`nlines`/`nstrips`/`npolys` for PolyData; counts `I4P` or `I8P`) |
 | `%xml_writer%write_geo(...)` | Write geometry (coordinates; unstructured `np`/`nc` counts `I4P` or `I8P`) |
@@ -65,7 +66,7 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 | `%initialize(filename)` | Create the `.vtm` wrapper file |
 | `%initialize(filename, action='read')` | Open a `.vtm` file for reading |
 | `%get_entries(level, kind, index, name, file)` | Blocks and datasets of a file read, flattened depth first |
-| `%write_block(filenames, names, name)` | Add a named block referencing one or more partition files |
+| `%write_block(filenames, names, name, action)` | Add a named block of files; `action='open'`/`'close'` to nest blocks, `'write'` to add datasets to the current block (filenames and names as arrays or blank-separated strings) |
 | `%finalize()` | Close the `.vtm` file |
 
 ### `pvd_file`
@@ -79,4 +80,6 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 
 ### `write_xml_volatile`
 
-A module-level function (not a type-bound procedure) that returns the full XML output as an allocatable character string instead of writing to disk. Useful for parallel I/O workflows where the calling code controls file access.
+A module-level function (not a type-bound procedure), `write_xml_volatile(xml_volatile, filename)`: it writes to disk a file
+held in memory, as returned by `get_xml_volatile`. Useful for parallel workflows where only one process accesses the file
+system, see [Usage](/guide/usage#volatile-xml-output).

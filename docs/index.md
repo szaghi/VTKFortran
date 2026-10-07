@@ -4,7 +4,7 @@ layout: home
 hero:
   name: VTKFortran
   text: VTK XML API
-  tagline: A pure Fortran 2003+ library to parse and emit files conforming the VTK XML standard.
+  tagline: A pure Fortran 2008 library to write and read files conforming the VTK XML standard.
   actions:
     - theme: brand
       text: Guide
@@ -31,10 +31,10 @@ features:
     details: Build with CMake (preferred), FoBiS.py, or FPM. Integrate into CMake projects via add_subdirectory and target_link_libraries.
   - icon: 🧱
     title: OOP Design
-    details: A polymorphic xml_writer component is allocated at runtime based on the chosen format. The vtk_file, pvtk_file, vtm_file, and pvd_file types expose a clean, consistent type-bound-procedure API.
+    details: A polymorphic xml_writer component is allocated at runtime based on the chosen format, an xml_reader reads files back. The vtk_file, pvtk_file, vtm_file, and pvd_file types expose a clean, consistent type-bound-procedure API.
   - icon: 🆓
     title: Free & Open Source
-    details: Multi-licensed — GPLv3 for FOSS projects, BSD 2/3-Clause or MIT for commercial use. Fortran 2003+ standard compliant.
+    details: Multi-licensed — GPLv3 for FOSS projects, BSD 2/3-Clause or MIT for commercial use. Fortran 2008 standard compliant.
 ---
 
 ## Quick start
@@ -62,7 +62,7 @@ error = a_vtk_file%initialize(format='binary', filename='output.vts', &
 error = a_vtk_file%xml_writer%write_piece(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
 error = a_vtk_file%xml_writer%write_geo(n=nn, x=x, y=y, z=z)
 error = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
-error = a_vtk_file%xml_writer%write_dataarray(data_name='velocity', x=v, one_component=.true.)
+error = a_vtk_file%xml_writer%write_dataarray(data_name='pressure', x=v, one_component=.true.)
 error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
 error = a_vtk_file%xml_writer%write_piece()
 error = a_vtk_file%finalize()

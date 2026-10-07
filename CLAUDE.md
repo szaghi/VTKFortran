@@ -31,7 +31,7 @@ zlib compression (`compressor='zlib'`, `raw-zlib`) is optional: CMake `-DVTKFORT
 
 ## Architecture
 
-VTKFortran is a Fortran 2003+ library for reading/writing VTK XML format files. It uses a **polymorphic writer pattern**: the user-facing `vtk_file` type holds a polymorphic `xml_writer` component that is allocated at runtime based on the requested format.
+VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. It uses a **polymorphic writer pattern**: the user-facing `vtk_file` type holds a polymorphic `xml_writer` component that is allocated at runtime based on the requested format.
 
 ### Module hierarchy
 
