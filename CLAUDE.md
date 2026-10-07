@@ -46,7 +46,7 @@ VTKFortran is a Fortran 2003+ library for reading/writing VTK XML format files. 
   - `vtk_fortran_vtk_file_xml_writer_binary_local` — Base64-encoded binary inside XML elements
   - `vtk_fortran_vtk_file_xml_writer_appended` — raw binary in appended section with offsets
 - `vtk_fortran_dataarray_encoder` — overloaded encoding routines for ASCII and Base64 (optionally zlib-compressed), covering all PENF numeric kinds and ranks 1–4
-- `vtk_fortran_zlib` — zlib bindings and VTK block compression (`zlib_compress_blocks`); always compiled, stubs without `VTKFORTRAN_USE_ZLIB`
+- `vtk_fortran_zlib` — zlib bindings, VTK block compression and decompression (`zlib_compress_blocks`, `zlib_uncompress_blocks`); always compiled, stubs without `VTKFORTRAN_USE_ZLIB`
 - `vtk_fortran_parameters` — shared constants (`stderr`, `stdout`, `end_rec`)
 
 Source lives in `src/lib/` (library) and `src/tests/` (integration test programs).

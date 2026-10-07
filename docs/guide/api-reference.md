@@ -18,7 +18,7 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 - [vtk_fortran_vtk_file_xml_writer_binary_local](/api/src/lib/vtk_fortran_vtk_file_xml_writer_binary_local) — Base64-encoded binary writer
 - [vtk_fortran_vtk_file_xml_writer_appended](/api/src/lib/vtk_fortran_vtk_file_xml_writer_appended) — raw binary appended writer
 - [vtk_fortran_dataarray_encoder](/api/src/lib/vtk_fortran_dataarray_encoder) — encoding routines for ASCII and Base64 data arrays (optionally zlib-compressed)
-- [vtk_fortran_zlib](/api/src/lib/vtk_fortran_zlib) — zlib bindings and VTK block compression (stubs when built without `VTKFORTRAN_USE_ZLIB`)
+- [vtk_fortran_zlib](/api/src/lib/vtk_fortran_zlib) — zlib bindings, VTK block compression and decompression (stubs when built without `VTKFORTRAN_USE_ZLIB`)
 - [vtk_fortran_parameters](/api/src/lib/vtk_fortran_parameters) — shared constants
 
 ## Key type-bound procedures

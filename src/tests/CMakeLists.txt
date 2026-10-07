@@ -24,6 +24,7 @@ set(VTKFORTRAN_TESTS
   vtk_fortran_write_vtu.f90
   vtk_fortran_write_vtu_polyhedron.f90
   vtk_fortran_write_vtu_tensor.f90
+  vtk_fortran_zlib_blocks.F90
   )
 if (VTKFORTRAN_USE_ZLIB)
   list(APPEND VTKFORTRAN_TESTS vtk_fortran_write_vtu_zlib.F90)

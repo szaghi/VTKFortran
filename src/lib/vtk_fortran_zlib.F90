@@ -1,6 +1,6 @@
 !< Minimal zlib bindings used for VTK XML internal compression (vtkZLibDataCompressor).
 module vtk_fortran_zlib
-!< Minimal zlib bindings used for VTK XML internal compression (vtkZLibDataCompressor).
+!< Minimal zlib bindings used for VTK XML internal compression (vtkZLibDataCompressor), compression and decompression.
 !<
 !< The module is always compiled: without `VTKFORTRAN_USE_ZLIB` the procedures are stubs returning an error, and
 !< `is_zlib_enabled` is `.false.`. With it, the library must be linked with zlib (`-lz`).
@@ -13,6 +13,8 @@ public :: is_zlib_enabled
 public :: zlib_compress_blocks
 public :: zlib_compress_bound
 public :: zlib_compress2
+public :: zlib_uncompress
+public :: zlib_uncompress_blocks
 public :: Z_DEFAULT_COMPRESSION
 public :: Z_BEST_SPEED
 public :: Z_BEST_COMPRESSION
@@ -46,6 +48,16 @@ interface
     integer(c_int),  value :: level     !< Compression level.
     integer(c_int)         :: ret       !< zlib return code: 0 (Z_OK) on success.
   end function compress2
+
+  function uncompress(dest, destLen, source, sourceLen) bind(C, name='uncompress') result(ret)
+    !< zlib `uncompress`: decompress `sourceLen` bytes of `source` into `dest`.
+    import :: c_ptr, c_int, c_long
+    type(c_ptr),     value :: dest      !< Uncompressed buffer.
+    type(c_ptr),     value :: destLen   !< Size of the uncompressed buffer on input, uncompressed size on output.
+    type(c_ptr),     value :: source    !< Compressed buffer.
+    integer(c_long), value :: sourceLen !< Compressed size in bytes.
+    integer(c_int)         :: ret       !< zlib return code: 0 (Z_OK) on success.
+  end function uncompress
 end interface
 #endif
 
@@ -150,6 +162,92 @@ contains
   grown(1:n_out) = blocks(1:n_out)
   call move_alloc(from=grown, to=blocks)
   endsubroutine zlib_compress_blocks
+
+  function zlib_uncompress(dst, dst_len, src, src_len) result(ret)
+  !< Decompress a byte buffer with zlib uncompress (an error without zlib).
+  integer(c_signed_char), intent(inout), target :: dst(:)  !< Uncompressed buffer.
+  integer(c_long),        intent(inout), target :: dst_len !< Size of `dst` on input, uncompressed size on output.
+  integer(c_signed_char), intent(in),    target :: src(:)  !< Compressed buffer.
+  integer(c_long),        intent(in)            :: src_len !< Compressed size in bytes.
+  integer(c_int)                                :: ret     !< zlib return code: 0 on success, non-zero on error.
+
+#ifndef VTKFORTRAN_USE_ZLIB
+  dst_len = 0_c_long
+  ret = -1_c_int
+#else
+  if (dst_len == 0_c_long) then
+    ! nothing to decompress (an empty block): src can be empty too
+    ret = 0_c_int
+    return
+  endif
+  if (src_len <= 0_c_long) then
+    dst_len = 0_c_long
+    ret = -3_c_int ! Z_DATA_ERROR
+    return
+  endif
+  ret = uncompress(c_loc(dst(1)), c_loc(dst_len), c_loc(src(1)), src_len)
+#endif
+  end function zlib_uncompress
+
+  subroutine zlib_uncompress_blocks(header, blocks, bytes, error)
+  !< Decompress VTK compressed blocks (vtkZLibDataCompressor layout) into a bytes stream: the inverse of
+  !< [[zlib_compress_blocks]].
+  !<
+  !< The header, read from the file as UInt32 or UInt64 words and passed as I8P, is
+  !<
+  !<```
+  !< header = [number of blocks, block size, last block size, compressed size of each block]
+  !<```
+  !<
+  !< where a last block size of 0 means that the last block is full. `blocks` holds the compressed blocks, concatenated (it
+  !< can be longer than their total). The header is checked before decompressing: an inconsistent header, a block that
+  !< does not decompress to its declared size, or a library built without zlib return a non-zero error.
+  integer(I8P),                        intent(in)  :: header(1:) !< VTK header of the compressed data.
+  integer(c_signed_char),              intent(in)  :: blocks(1:) !< Compressed blocks.
+  integer(c_signed_char), allocatable, intent(out) :: bytes(:)   !< Uncompressed bytes.
+  integer,                             intent(out) :: error      !< Error status: 0 on success.
+  integer(I8P)                                     :: nb         !< Number of blocks.
+  integer(I8P)                                     :: block_size !< Uncompressed block size.
+  integer(I8P)                                     :: last       !< Size of the last block.
+  integer(I8P)                                     :: n_out      !< Expected size of the current uncompressed block.
+  integer(I8P)                                     :: first_in   !< First compressed byte of the current block.
+  integer(I8P)                                     :: first_out  !< First uncompressed byte of the current block.
+  integer(I8P)                                     :: i          !< Counter.
+  integer(c_long)                                  :: dst_len    !< Uncompressed size of the current block.
+
+  error = 1
+  allocate(bytes(1:0))
+  if (size(header, kind=I8P) < 3_I8P) return
+  nb = header(1) ; block_size = header(2) ; last = header(3)
+  if (nb < 0_I8P .or. size(header, kind=I8P) < 3_I8P + nb) return
+  if (nb == 0_I8P) then
+    error = 0
+    return
+  endif
+  if (block_size <= 0_I8P .or. last < 0_I8P .or. last > block_size) return
+  if (any(header(4_I8P:3_I8P+nb) < 0_I8P)) return
+  if (sum(header(4_I8P:3_I8P+nb)) > size(blocks, kind=I8P)) return
+  if (.not.is_zlib_enabled) return
+  if (last == 0_I8P) last = block_size
+  deallocate(bytes)
+  allocate(bytes(1:(nb - 1_I8P) * block_size + last))
+  first_in = 1_I8P
+  first_out = 1_I8P
+  do i=1_I8P, nb
+    n_out = merge(last, block_size, i == nb)
+    dst_len = int(n_out, c_long)
+    ! decompress in place into the output: the sections are contiguous
+    error = zlib_uncompress(dst=bytes(first_out:first_out+n_out-1_I8P), dst_len=dst_len,              &
+                            src=blocks(first_in:first_in+header(3_I8P+i)-1_I8P), src_len=int(header(3_I8P+i), c_long))
+    if (error /= 0) return
+    if (int(dst_len, I8P) /= n_out) then
+      error = 1
+      return
+    endif
+    first_in = first_in + header(3_I8P+i)
+    first_out = first_out + n_out
+  enddo
+  endsubroutine zlib_uncompress_blocks
 
 end module vtk_fortran_zlib
 
