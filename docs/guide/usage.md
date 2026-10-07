@@ -671,8 +671,37 @@ error = a_vtk_file%initialize(format='raw', filename='large.vtu', mesh_topology=
   select their own header type.
 - The number of elements of an array is not limited to 32 bits: an array can hold more than 2^31 values (e.g. the
   connectivity of more than about 270 million hexahedra) in every format, provided its bytes fit the header type.
-- The limit concerns the bytes of a single array: the number of points and cells of a piece is still a 32-bit integer
-  (more than 2.1 billion points or cells in one piece are not supported).
+- The limit concerns the bytes of a single array; for pieces with more than 2^31-1 points or cells, see
+  [Large meshes](#large-meshes-64-bit-counts-and-connectivity).
+
+## Large meshes (64-bit counts and connectivity)
+
+A piece with more than 2^31-1 points or cells, or whose point ids exceed `huge(1_I4P)`, needs 64-bit counts and ids. The
+mesh procedures accept `I8P` arguments: the kind passed selects the version, so existing `I4P` calls are unchanged.
+
+```fortran
+integer(I8P) :: np, nc, connect(:), offset(:), face(:), faceoffset(:) ! allocatable in a real code
+...
+error = a_vtk_file%xml_writer%write_piece(np=np, nc=nc)
+error = a_vtk_file%xml_writer%write_geo(np=np, nc=nc, x=x, y=y, z=z)
+error = a_vtk_file%xml_writer%write_connectivity(nc=nc, connectivity=connect, offset=offset, cell_type=cell_type)
+```
+
+| Procedure | 64-bit version |
+|-----------|----------------|
+| `write_piece(np, nc)` | `np`, `nc` as `I8P` |
+| `write_piece(np, nverts, nlines, nstrips, npolys)` | all counts as `I8P` |
+| `write_geo(np, nc, x, y, z)`, `write_geo(np, nc, xyz)` | `np`, `nc` as `I8P` |
+| `write_connectivity(nc, connectivity, offset, cell_type, face, faceoffset)` | `nc`, ids, offsets and faces as `I8P`; `cell_type` stays `I1P` |
+| `write_polydata_cells(...)` | the arrays of each block as `I8P` (each block can use `I4P` or `I8P`) |
+
+- `I8P` connectivity, offsets and faces are written as `Int64`, as VTK's own writer does; `I4P` ones as `Int32`. Readers
+  accept both, and the mesh is the same.
+- Counts and ids can be mixed: e.g. `I4P` counts in `write_piece` with `I8P` connectivity.
+- An array with more than 2^31 elements works in either kind (e.g. an `I4P` connectivity of more than about 270 million
+  hexahedra); its bytes must fit the header type (`header_type='UInt64'` beyond 2 GiB).
+- The extents of structured grids (`RectilinearGrid`, `StructuredGrid`, `ImageData`) stay 32-bit per axis.
+- The test `src/tests/vtk_fortran_write_i8p.f90` writes the same meshes with both kinds, in every format.
 
 ## Mesh topology strings
 

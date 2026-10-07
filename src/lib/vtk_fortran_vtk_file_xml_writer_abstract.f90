@@ -40,7 +40,9 @@ type, abstract :: xml_writer_abstract
     procedure,                                 pass(self) :: open_xml_file                !< Open xml file.
     procedure,                                 pass(self) :: free                         !< Free allocated memory.
     procedure,                                 pass(self) :: get_xml_volatile             !< Return the XML volatile string file.
-    procedure,                                 pass(self) :: write_connectivity           !< Write connectivity.
+    generic                                               :: write_connectivity =>        &
+                                                             write_connectivity_I4P,      &
+                                                             write_connectivity_I8P !< Write connectivity.
     procedure,                                 pass(self) :: write_polydata_cells         !< Write cell blocks of polydata.
     procedure,                                 pass(self) :: write_dataarray_location_tag !< Write dataarray location tag.
     procedure,                                 pass(self) :: write_dataarray_tag          !< Write dataarray tag.
@@ -131,7 +133,11 @@ type, abstract :: xml_writer_abstract
                write_geo_unst_data1_rank2_R8P, &
                write_geo_unst_data1_rank2_R4P, &
                write_geo_unst_data3_rank1_R8P, &
-               write_geo_unst_data3_rank1_R4P !< Write mesh.
+               write_geo_unst_data3_rank1_R4P, &
+               write_geo_unst_data1_rank2_R8P_I8P, &
+               write_geo_unst_data1_rank2_R4P_I8P, &
+               write_geo_unst_data3_rank1_R8P_I8P, &
+               write_geo_unst_data3_rank1_R4P_I8P !< Write mesh.
     generic :: write_parallel_block_files =>     &
                write_parallel_block_file,        &
                write_parallel_block_files_array, &
@@ -140,6 +146,8 @@ type, abstract :: xml_writer_abstract
                write_piece_start_tag,      &
                write_piece_start_tag_unst, &
                write_piece_start_tag_poly, &
+               write_piece_start_tag_unst_I8P, &
+               write_piece_start_tag_poly_I8P, &
                write_piece_end_tag !< Write Piece start/end tag.
     ! deferred methods
     procedure(write_dataarray1_rank1_R8P_interface), deferred, pass(self) :: write_dataarray1_rank1_R8P !< Data 1, rank 1, R8P.
@@ -216,9 +224,17 @@ type, abstract :: xml_writer_abstract
     procedure, pass(self), private :: write_geo_unst_data1_rank2_R4P    !< Write **UnstructuredGrid** mesh (data 1, rank 2, R4P).
     procedure, pass(self), private :: write_geo_unst_data3_rank1_R8P    !< Write **UnstructuredGrid** mesh (data 3, rank 1, R8P).
     procedure, pass(self), private :: write_geo_unst_data3_rank1_R4P    !< Write **UnstructuredGrid** mesh (data 3, rank 1, R4P).
+    procedure, pass(self), private :: write_geo_unst_data1_rank2_R8P_I8P !< Write **UnstructuredGrid** mesh, I8P counts.
+    procedure, pass(self), private :: write_geo_unst_data1_rank2_R4P_I8P !< Write **UnstructuredGrid** mesh, I8P counts.
+    procedure, pass(self), private :: write_geo_unst_data3_rank1_R8P_I8P !< Write **UnstructuredGrid** mesh, I8P counts.
+    procedure, pass(self), private :: write_geo_unst_data3_rank1_R4P_I8P !< Write **UnstructuredGrid** mesh, I8P counts.
+    procedure, pass(self), private :: write_connectivity_I4P            !< Write connectivity (I4P ids).
+    procedure, pass(self), private :: write_connectivity_I8P            !< Write connectivity (I8P ids).
     procedure, pass(self), private :: write_piece_start_tag             !< Write `<Piece ...>` start tag.
     procedure, pass(self), private :: write_piece_start_tag_unst        !< Write `<Piece ...>` start tag for unstructured topology.
     procedure, pass(self), private :: write_piece_start_tag_poly        !< Write `<Piece ...>` start tag for polydata topology.
+    procedure, pass(self), private :: write_piece_start_tag_unst_I8P    !< Write `<Piece ...>` start tag, unstructured, I8P counts.
+    procedure, pass(self), private :: write_piece_start_tag_poly_I8P    !< Write `<Piece ...>` start tag, polydata, I8P counts.
     procedure, pass(self), private :: write_piece_end_tag               !< Write `</Piece>` end tag.
     procedure, pass(self), private :: write_parallel_block_file         !< Write single file that belong to the current block.
     procedure, pass(self), private :: write_parallel_block_files_array  !< Write block list of files (array input).
@@ -1408,25 +1424,49 @@ contains
 
    function write_piece_start_tag_unst(self, np, nc) result(error)
    !< Write `<Piece ...>` start tag for unstructured topology.
+   class(xml_writer_abstract), intent(inout) :: self  !< Writer.
+   integer(I4P),               intent(in)    :: np    !< Number of points.
+   integer(I4P),               intent(in)    :: nc    !< Number of cells.
+   integer(I4P)                              :: error !< Error status.
+
+   error = self%write_piece_start_tag_unst_I8P(np=int(np, I8P), nc=int(nc, I8P))
+   endfunction write_piece_start_tag_unst
+
+   function write_piece_start_tag_unst_I8P(self, np, nc) result(error)
+   !< Write `<Piece ...>` start tag for unstructured topology, 64-bit counts (more than 2^31-1 points or cells).
    class(xml_writer_abstract), intent(inout) :: self           !< Writer.
-   integer(I4P),               intent(in)    :: np             !< Number of points.
-   integer(I4P),               intent(in)    :: nc             !< Number of cells.
+   integer(I8P),               intent(in)    :: np             !< Number of points.
+   integer(I8P),               intent(in)    :: nc             !< Number of cells.
    integer(I4P)                              :: error          !< Error status.
    type(string)                              :: tag_attributes !< Tag attributes.
 
    tag_attributes = 'NumberOfPoints="'//trim(str(n=np))//'" NumberOfCells="'//trim(str(n=nc))//'"'
    call self%write_start_tag(name='Piece', attributes=tag_attributes%chars())
    error = self%error
-   endfunction write_piece_start_tag_unst
+   endfunction write_piece_start_tag_unst_I8P
 
    function write_piece_start_tag_poly(self, np, nverts, nlines, nstrips, npolys) result(error)
    !< Write `<Piece ...>` start tag for polydata topology: the number of points and of cells of each block.
+   class(xml_writer_abstract), intent(inout) :: self    !< Writer.
+   integer(I4P),               intent(in)    :: np      !< Number of points.
+   integer(I4P),               intent(in)    :: nverts  !< Number of vertex cells (block Verts).
+   integer(I4P),               intent(in)    :: nlines  !< Number of line/polyline cells (block Lines).
+   integer(I4P),               intent(in)    :: nstrips !< Number of triangle strip cells (block Strips).
+   integer(I4P),               intent(in)    :: npolys  !< Number of polygon cells (block Polys).
+   integer(I4P)                              :: error   !< Error status.
+
+   error = self%write_piece_start_tag_poly_I8P(np=int(np, I8P), nverts=int(nverts, I8P), nlines=int(nlines, I8P), &
+                                               nstrips=int(nstrips, I8P), npolys=int(npolys, I8P))
+   endfunction write_piece_start_tag_poly
+
+   function write_piece_start_tag_poly_I8P(self, np, nverts, nlines, nstrips, npolys) result(error)
+   !< Write `<Piece ...>` start tag for polydata topology, 64-bit counts (more than 2^31-1 points or cells).
    class(xml_writer_abstract), intent(inout) :: self           !< Writer.
-   integer(I4P),               intent(in)    :: np             !< Number of points.
-   integer(I4P),               intent(in)    :: nverts         !< Number of vertex cells (block Verts).
-   integer(I4P),               intent(in)    :: nlines         !< Number of line/polyline cells (block Lines).
-   integer(I4P),               intent(in)    :: nstrips        !< Number of triangle strip cells (block Strips).
-   integer(I4P),               intent(in)    :: npolys         !< Number of polygon cells (block Polys).
+   integer(I8P),               intent(in)    :: np             !< Number of points.
+   integer(I8P),               intent(in)    :: nverts         !< Number of vertex cells (block Verts).
+   integer(I8P),               intent(in)    :: nlines         !< Number of line/polyline cells (block Lines).
+   integer(I8P),               intent(in)    :: nstrips        !< Number of triangle strip cells (block Strips).
+   integer(I8P),               intent(in)    :: npolys         !< Number of polygon cells (block Polys).
    integer(I4P)                              :: error          !< Error status.
    type(string)                              :: tag_attributes !< Tag attributes.
 
@@ -1437,7 +1477,7 @@ contains
                     '" NumberOfPolys="'//trim(str(n=npolys, no_sign=.true.))//'"'
    call self%write_start_tag(name='Piece', attributes=tag_attributes%chars())
    error = self%error
-   endfunction write_piece_start_tag_poly
+   endfunction write_piece_start_tag_poly_I8P
 
    function write_piece_end_tag(self) result(error)
    !< Write `</Piece>` end tag.
@@ -1619,7 +1659,18 @@ contains
    real(R8P),                  intent(in)    :: xyz(1:,1:) !< X, y, z coordinates [1:3,:].
    integer(I4P)                              :: error      !< Error status.
 
-   if (np/=size(xyz, dim=2)) then
+   error = self%write_geo_unst_data1_rank2_R8P_I8P(np=int(np, I8P), nc=int(nc, I8P), xyz=xyz)
+   endfunction write_geo_unst_data1_rank2_R8P
+
+   function write_geo_unst_data1_rank2_R8P_I8P(self, np, nc, xyz) result(error)
+   !< Write mesh with **UnstructuredGrid** topology, 64-bit counts (data 1, rank 2, R8P).
+   class(xml_writer_abstract), intent(inout) :: self       !< Writer.
+   integer(I8P),               intent(in)    :: np         !< Number of points.
+   integer(I8P),               intent(in)    :: nc         !< Number of cells.
+   real(R8P),                  intent(in)    :: xyz(1:,1:) !< X, y, z coordinates [1:3,:].
+   integer(I4P)                              :: error      !< Error status.
+
+   if (np/=size(xyz, dim=2, kind=I8P)) then
       error = 1 ; self%error = error
       return
    endif
@@ -1627,7 +1678,7 @@ contains
    error = self%write_dataarray(data_name='Points', x=xyz)
    call self%write_end_tag(name='Points')
    error = self%error
-   endfunction write_geo_unst_data1_rank2_R8P
+   endfunction write_geo_unst_data1_rank2_R8P_I8P
 
    function write_geo_unst_data1_rank2_R4P(self, np, nc, xyz) result(error)
    !< Write mesh with **UnstructuredGrid** topology (data 1, rank 2, R4P).
@@ -1637,7 +1688,18 @@ contains
    real(R4P),                  intent(in)    :: xyz(1:,1:) !< X, y, z coordinates [1:3,:].
    integer(I4P)                              :: error      !< Error status.
 
-   if (np/=size(xyz, dim=2)) then
+   error = self%write_geo_unst_data1_rank2_R4P_I8P(np=int(np, I8P), nc=int(nc, I8P), xyz=xyz)
+   endfunction write_geo_unst_data1_rank2_R4P
+
+   function write_geo_unst_data1_rank2_R4P_I8P(self, np, nc, xyz) result(error)
+   !< Write mesh with **UnstructuredGrid** topology, 64-bit counts (data 1, rank 2, R4P).
+   class(xml_writer_abstract), intent(inout) :: self       !< Writer.
+   integer(I8P),               intent(in)    :: np         !< Number of points.
+   integer(I8P),               intent(in)    :: nc         !< Number of cells.
+   real(R4P),                  intent(in)    :: xyz(1:,1:) !< X, y, z coordinates [1:3,:].
+   integer(I4P)                              :: error      !< Error status.
+
+   if (np/=size(xyz, dim=2, kind=I8P)) then
       error = 1 ; self%error = error
       return
    endif
@@ -1645,7 +1707,7 @@ contains
    error = self%write_dataarray(data_name='Points', x=xyz)
    call self%write_end_tag(name='Points')
    error = self%error
-   endfunction write_geo_unst_data1_rank2_R4P
+   endfunction write_geo_unst_data1_rank2_R4P_I8P
 
    function write_geo_unst_data3_rank1_R8P(self, np, nc, x, y, z) result(error)
    !< Write mesh with **UnstructuredGrid** topology (data 3, rank 1, R8P).
@@ -1657,7 +1719,20 @@ contains
    real(R8P),                  intent(in)    :: z(1:) !< Z coordinates.
    integer(I4P)                              :: error !< Error status.
 
-   if ((np/=size(x, dim=1)).or.(np/=size(y, dim=1)).or.(np/=size(z, dim=1))) then
+   error = self%write_geo_unst_data3_rank1_R8P_I8P(np=int(np, I8P), nc=int(nc, I8P), x=x, y=y, z=z)
+   endfunction write_geo_unst_data3_rank1_R8P
+
+   function write_geo_unst_data3_rank1_R8P_I8P(self, np, nc, x, y, z) result(error)
+   !< Write mesh with **UnstructuredGrid** topology, 64-bit counts (data 3, rank 1, R8P).
+   class(xml_writer_abstract), intent(inout) :: self  !< Writer.
+   integer(I8P),               intent(in)    :: np    !< Number of points.
+   integer(I8P),               intent(in)    :: nc    !< Number of cells.
+   real(R8P),                  intent(in)    :: x(1:) !< X coordinates.
+   real(R8P),                  intent(in)    :: y(1:) !< Y coordinates.
+   real(R8P),                  intent(in)    :: z(1:) !< Z coordinates.
+   integer(I4P)                              :: error !< Error status.
+
+   if ((np/=size(x, dim=1, kind=I8P)).or.(np/=size(y, dim=1, kind=I8P)).or.(np/=size(z, dim=1, kind=I8P))) then
       error = 1 ; self%error = error
       return
    endif
@@ -1665,7 +1740,7 @@ contains
    error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
    call self%write_end_tag(name='Points')
    error = self%error
-   endfunction write_geo_unst_data3_rank1_R8P
+   endfunction write_geo_unst_data3_rank1_R8P_I8P
 
    function write_geo_unst_data3_rank1_R4P(self, np, nc, x, y, z) result(error)
    !< Write mesh with **UnstructuredGrid** topology (data 3, rank 1, R4P).
@@ -1677,7 +1752,20 @@ contains
    real(R4P),                  intent(in)    :: z(1:) !< Z coordinates.
    integer(I4P)                              :: error !< Error status.
 
-   if ((np/=size(x, dim=1)).or.(np/=size(y, dim=1)).or.(np/=size(z, dim=1))) then
+   error = self%write_geo_unst_data3_rank1_R4P_I8P(np=int(np, I8P), nc=int(nc, I8P), x=x, y=y, z=z)
+   endfunction write_geo_unst_data3_rank1_R4P
+
+   function write_geo_unst_data3_rank1_R4P_I8P(self, np, nc, x, y, z) result(error)
+   !< Write mesh with **UnstructuredGrid** topology, 64-bit counts (data 3, rank 1, R4P).
+   class(xml_writer_abstract), intent(inout) :: self  !< Writer.
+   integer(I8P),               intent(in)    :: np    !< Number of points.
+   integer(I8P),               intent(in)    :: nc    !< Number of cells.
+   real(R4P),                  intent(in)    :: x(1:) !< X coordinates.
+   real(R4P),                  intent(in)    :: y(1:) !< Y coordinates.
+   real(R4P),                  intent(in)    :: z(1:) !< Z coordinates.
+   integer(I4P)                              :: error !< Error status.
+
+   if ((np/=size(x, dim=1, kind=I8P)).or.(np/=size(y, dim=1, kind=I8P)).or.(np/=size(z, dim=1, kind=I8P))) then
       error = 1 ; self%error = error
       return
    endif
@@ -1685,10 +1773,13 @@ contains
    error = self%write_dataarray(data_name='Points', x=x, y=y, z=z)
    call self%write_end_tag(name='Points')
    error = self%error
-   endfunction write_geo_unst_data3_rank1_R4P
+   endfunction write_geo_unst_data3_rank1_R4P_I8P
 
-   function write_connectivity(self, nc, connectivity, offset, cell_type, face, faceoffset) result(error)
+   function write_connectivity_I4P(self, nc, connectivity, offset, cell_type, face, faceoffset) result(error)
    !< Write mesh connectivity.
+   !<
+   !< Connectivity, offsets and faces are given as I4P (written as Int32) or, with the 64-bit version, as I8P (written as
+   !< Int64, as VTK does), for pieces with more than 2^31-1 points or connectivity entries; cell types are always I1P.
    !<
    !< **Must** be used when unstructured grid is used, it saves the connectivity of the unstructured gird.
    !< @note The vector **connect** must follow the VTK-XML standard. It is passed as *assumed-shape array*
@@ -1762,7 +1853,32 @@ contains
         error = self%write_dataarray(data_name='faceoffsets', x=faceoffset)
    endif
    call self%write_end_tag(name='Cells')
-   endfunction write_connectivity
+   endfunction write_connectivity_I4P
+
+   function write_connectivity_I8P(self, nc, connectivity, offset, cell_type, face, faceoffset) result(error)
+   !< Write mesh connectivity, 64-bit ids and offsets (written as Int64): see the I4P version.
+   class(xml_writer_abstract), intent(inout) :: self             !< Writer.
+   integer(I8P),               intent(in)    :: nc               !< Number of cells.
+   integer(I8P),               intent(in)    :: connectivity(1:) !< Mesh connectivity.
+   integer(I8P),               intent(in)    :: offset(1:)       !< Cell offset.
+   integer(I8P),   optional,   intent(in)    :: face(1:)         !< face composing the polyhedra.
+   integer(I8P),   optional,   intent(in)    :: faceoffset(1:)   !< face offset.
+   integer(I1P),               intent(in)    :: cell_type(1:)    !< VTK cell type.
+   integer(I4P)                              :: error            !< Error status.
+
+   call self%write_start_tag(name='Cells')
+   error = self%write_dataarray(data_name='connectivity', x=connectivity)
+   error = self%write_dataarray(data_name='offsets', x=offset)
+   ! cell types are written as UInt8, as the VTK XML format specifies (same bytes of Int8, cell type codes are < 128)
+   self%data_type_override = 'UInt8'
+   error = self%write_dataarray(data_name='types', x=cell_type)
+   ! faces and faceoffsets of polyhedra are children of the Cells element (issue #31)
+   if (present(face).and.present(faceoffset)) then
+      error = self%write_dataarray(data_name='faces', x=face)
+      error = self%write_dataarray(data_name='faceoffsets', x=faceoffset)
+   endif
+   call self%write_end_tag(name='Cells')
+   endfunction write_connectivity_I8P
 
    ! write_dataarray_unsigned methods
    !
@@ -1859,6 +1975,10 @@ contains
    !< absent block as empty); a block with only one of its two arrays is an error. The number of cells of each block must
    !< match the counts passed to `write_piece(np, nverts, nlines, nstrips, npolys)`.
    !<
+   !< The arrays are I4P (written as Int32) or I8P (written as Int64, for more than 2^31-1 points or entries); any other type
+   !< is an error. They are declared `class(*)`: a generic could not tell an I4P version from an I8P one, all arguments being
+   !< optional.
+   !<
    !< @note Cell data of polydata are ordered by block: verts, lines, strips, polys.
    !<
    !<### Example of usage
@@ -1869,22 +1989,34 @@ contains
    !<                                            polys_connectivity=[0,1,2, 0,2,3], polys_offset=[3,6])
    !<```
    class(xml_writer_abstract), intent(inout)        :: self                    !< Writer.
-   integer(I4P),               intent(in), optional :: verts_connectivity(1:)  !< Vertices connectivity.
-   integer(I4P),               intent(in), optional :: verts_offset(1:)        !< Vertices offsets.
-   integer(I4P),               intent(in), optional :: lines_connectivity(1:)  !< Lines connectivity.
-   integer(I4P),               intent(in), optional :: lines_offset(1:)        !< Lines offsets.
-   integer(I4P),               intent(in), optional :: strips_connectivity(1:) !< Triangle strips connectivity.
-   integer(I4P),               intent(in), optional :: strips_offset(1:)       !< Triangle strips offsets.
-   integer(I4P),               intent(in), optional :: polys_connectivity(1:)  !< Polygons connectivity.
-   integer(I4P),               intent(in), optional :: polys_offset(1:)        !< Polygons offsets.
+   class(*),                   intent(in), optional :: verts_connectivity(1:)  !< Vertices connectivity.
+   class(*),                   intent(in), optional :: verts_offset(1:)        !< Vertices offsets.
+   class(*),                   intent(in), optional :: lines_connectivity(1:)  !< Lines connectivity.
+   class(*),                   intent(in), optional :: lines_offset(1:)        !< Lines offsets.
+   class(*),                   intent(in), optional :: strips_connectivity(1:) !< Triangle strips connectivity.
+   class(*),                   intent(in), optional :: strips_offset(1:)       !< Triangle strips offsets.
+   class(*),                   intent(in), optional :: polys_connectivity(1:)  !< Polygons connectivity.
+   class(*),                   intent(in), optional :: polys_offset(1:)        !< Polygons offsets.
    integer(I4P)                                     :: error                   !< Error status.
 
+   error = 0
    if ((present(verts_connectivity) .neqv. present(verts_offset)) .or. &
        (present(lines_connectivity) .neqv. present(lines_offset)) .or. &
        (present(strips_connectivity) .neqv. present(strips_offset)) .or. &
        (present(polys_connectivity) .neqv. present(polys_offset))) then
       self%error = 1
       error = self%error
+      return
+   endif
+   ! check the types before writing anything
+   if (present(verts_connectivity)) then ; if (.not.(is_ids(verts_connectivity).and.is_ids(verts_offset))) error = 1 ; endif
+   if (present(lines_connectivity)) then ; if (.not.(is_ids(lines_connectivity).and.is_ids(lines_offset))) error = 1 ; endif
+   if (present(strips_connectivity)) then
+      if (.not.(is_ids(strips_connectivity).and.is_ids(strips_offset))) error = 1
+   endif
+   if (present(polys_connectivity)) then ; if (.not.(is_ids(polys_connectivity).and.is_ids(polys_offset))) error = 1 ; endif
+   if (error /= 0) then
+      self%error = error
       return
    endif
    if (present(verts_connectivity)) call write_block(name='Verts', connectivity=verts_connectivity, offset=verts_offset)
@@ -1896,14 +2028,42 @@ contains
       subroutine write_block(name, connectivity, offset)
       !< Write one cell block.
       character(*), intent(in) :: name             !< Block name.
-      integer(I4P), intent(in) :: connectivity(1:) !< Block connectivity.
-      integer(I4P), intent(in) :: offset(1:)       !< Block offsets.
+      class(*),     intent(in) :: connectivity(1:) !< Block connectivity.
+      class(*),     intent(in) :: offset(1:)       !< Block offsets.
 
       call self%write_start_tag(name=name)
-      error = self%write_dataarray(data_name='connectivity', x=connectivity)
-      error = self%write_dataarray(data_name='offsets', x=offset)
+      call write_ids(data_name='connectivity', ids=connectivity)
+      call write_ids(data_name='offsets', ids=offset)
       call self%write_end_tag(name=name)
       endsubroutine write_block
+
+      subroutine write_ids(data_name, ids)
+      !< Write an array of ids (or offsets), I4P or I8P.
+      character(*), intent(in) :: data_name !< Data name.
+      class(*),     intent(in) :: ids(1:)   !< Ids.
+
+      select type(ids)
+      type is(integer(I4P))
+         error = self%write_dataarray(data_name=data_name, x=ids)
+      type is(integer(I8P))
+         error = self%write_dataarray(data_name=data_name, x=ids)
+      endselect
+      endsubroutine write_ids
+
+      pure function is_ids(ids) result(is_valid)
+      !< Return true if the array holds ids of a supported kind (I4P or I8P).
+      class(*), intent(in) :: ids(1:)  !< Ids.
+      logical              :: is_valid !< Check result.
+
+      select type(ids)
+      type is(integer(I4P))
+         is_valid = .true.
+      type is(integer(I8P))
+         is_valid = .true.
+      class default
+         is_valid = .false.
+      endselect
+      endfunction is_ids
    endfunction write_polydata_cells
 
    ! write_parallel methods
