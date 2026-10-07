@@ -29,37 +29,37 @@ features:
   - icon: 📐
     title: Every VTK XML dataset
     details: "Image data, rectilinear, structured and unstructured grids (polyhedra included), polygonal data with vertices, lines, strips and polygons."
-    link: /guide/usage#image-data-vti
+    link: /guide/topologies#image-data-vti
     linkText: Topologies
   - icon: 🗜️
     title: Any format, zlib too
     details: "ASCII to read by eye, base64 binary inline, raw binary appended for speed; the binary formats compressed as VTK does, byte for byte."
-    link: /guide/usage#output-format-selection
+    link: /guide/formats#output-format-selection
     linkText: Formats
   - icon: 🧩
     title: Parallel pieces
     details: "Each rank writes its own piece, one rank writes the .pvtu, .pvts, .pvtr, .pvti or .pvtp header; ghost cells marked as ParaView expects."
-    link: /guide/usage#parallel-structured-grid-pvts
+    link: /guide/parallel#parallel-structured-grid-pvts
     linkText: Parallel files
   - icon: 🎞️
     title: Time series
     details: "A .pvd collection valid after every step, so a crashed run still opens in ParaView; restarts append to it."
-    link: /guide/usage#time-series-pvd
+    link: /guide/parallel#time-series-pvd
     linkText: Time series
   - icon: 🗂️
     title: Assemblies
     details: "Multi-block .vtm files with blocks nested to any depth, mirroring the parts of a model."
-    link: /guide/usage#nested-blocks
+    link: /guide/parallel#nested-blocks
     linkText: Multi-block
   - icon: 📖
     title: Read them back
     details: "Every file VTKFortran writes, and the same files written by VTK, read array by array without loading the whole file; parallel headers checked against their pieces."
-    link: /guide/usage#reading-files
+    link: /guide/reading
     linkText: Reading
   - icon: 🏷️
     title: Field data and metadata
     details: "Time, cycle, solver name and any global array or string attached to the dataset; active scalars and vectors chosen for the reader."
-    link: /guide/usage#field-data-global-metadata
+    link: /guide/data#field-data-global-metadata
     linkText: Field data
   - icon: 🔢
     title: All kinds, all ranks
@@ -69,7 +69,7 @@ features:
   - icon: 🐘
     title: Big data
     details: "Arrays beyond 2 GiB with UInt64 headers, more than 2^31 elements, 64-bit connectivity; appended data kept on disk while writing."
-    link: /guide/usage#large-meshes-64-bit-counts-and-connectivity
+    link: /guide/formats#large-meshes-64-bit-counts-and-connectivity
     linkText: Large meshes
   - icon: ⚡
     title: Thread and process safe

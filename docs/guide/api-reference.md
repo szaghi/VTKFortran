@@ -82,4 +82,4 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 
 A module-level function (not a type-bound procedure), `write_xml_volatile(xml_volatile, filename)`: it writes to disk a file
 held in memory, as returned by `get_xml_volatile`. Useful for parallel workflows where only one process accesses the file
-system, see [Usage](/guide/usage#volatile-xml-output).
+system, see [Volatile XML output](/guide/parallel#volatile-xml-output).

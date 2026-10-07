@@ -4,6 +4,17 @@ title: Features
 
 # Features
 
+## Feature map
+
+| Topic | Reference | Complete programs |
+|---|---|---|
+| Image, rectilinear, structured, unstructured grids, polydata, polyhedra | [Topologies](/guide/topologies) | [cookbook](/manual/cookbook#write-each-kind-of-dataset), [tutorial 1](/manual/tutorial/01-first-file), [5](/manual/tutorial/05-unstructured) |
+| Field data, vectors, tensors, active arrays, unsigned and ghost arrays | [Data arrays](/guide/data) | [cookbook](/manual/cookbook#write-data), [tutorial 3](/manual/tutorial/03-more-data) |
+| ASCII, binary, raw, zlib; UInt64 headers, 64-bit ids | [Formats and large data](/guide/formats) | [cookbook](/manual/cookbook#choose-the-format), [tutorial 2](/manual/tutorial/02-formats) |
+| Parallel headers, multi-block, time series, volatile files | [Parallel and composite files](/guide/parallel) | [cookbook](/manual/cookbook#parallel-and-composite-files), [tutorial 4](/manual/tutorial/04-time-series), [6](/manual/tutorial/06-parallel), [7](/manual/tutorial/07-assembly) |
+| Reading every file back, checking parallel pieces | [Reading files](/guide/reading) | [cookbook](/manual/cookbook#read-files), [tutorial 8](/manual/tutorial/08-restart) |
+| Every procedure and its arguments | [Procedures summary](/guide/api-reference), [API](/api/) | |
+
 ## VTK XML Exporters
 
 ### Serial datasets
@@ -35,7 +46,7 @@ title: Features
 
 ## VTK XML Importers
 
-Files are read with `initialize(filename=..., action='read')`, see [Usage](/guide/usage#reading-files): every
+Files are read with `initialize(filename=..., action='read')`, see [Reading files](/guide/reading): every
 format (`ascii`, `binary`, `raw`, `binary-appended`), UInt32 and UInt64 headers, zlib compressed or not, as written by
 VTKFortran or by VTK and ParaView. Only the array asked for is loaded and decoded.
 
@@ -63,14 +74,14 @@ The legacy (`.vtk`) format is not supported: VTKFortran writes the VTK XML forma
 | `raw-zlib` | Shorthand for `raw` with `compressor='zlib'` |
 
 The format string passed to `initialize` is case-insensitive. Binary arrays are prefixed by a UInt32 bytes count by default
-(2 GiB per array); `header_type='UInt64'` lifts the limit, see [Usage](/guide/usage#large-data-arrays-uint64-headers).
+(2 GiB per array); `header_type='UInt64'` lifts the limit, see [Large data arrays](/guide/formats#large-data-arrays-uint64-headers).
 
 ### Compression
 
 The three binary formats (`binary`, `raw`, `binary-appended`) can be zlib-compressed with `compressor='zlib'`, the layout
 VTK and ParaView write (`vtkZLibDataCompressor`, 32 KiB blocks): the encoded arrays are byte-identical to VTK's own writer at
 the same compression level. zlib is optional: it needs the library built with `VTKFORTRAN_USE_ZLIB`, see
-[Usage](/guide/usage#compressed-binary-data-zlib) and [Installation](/guide/installation#optional-zlib-compression).
+[Compressed binary data](/guide/formats#compressed-binary-data-zlib) and [Installation](/guide/installation#optional-zlib-compression).
 
 ## Global Field Data
 
@@ -86,7 +97,7 @@ error = a_vtk_file%xml_writer%write_fielddata(x='my solver v1.2', data_name='sol
 error = a_vtk_file%xml_writer%write_fielddata(action='close')
 ```
 
-See [Usage](/guide/usage#field-data-global-metadata) for details.
+See [Field data](/guide/data#field-data-global-metadata) for details.
 
 ## Data Arrays
 
@@ -97,9 +108,9 @@ See [Usage](/guide/usage#field-data-global-metadata) for details.
 - **Scalar, 1-component, 3-component (vector), and 6-component (symmetric tensor)** layouts
 - **Node-centered or cell-centered** placement (`location='node'` or `location='cell'`)
 - **Active arrays**: the arrays readers use by default for each role (`Scalars`, `Vectors`, `Normals`, `Tensors`, `TCoords`) can be
-  designated when opening the node/cell data, see [Usage](/guide/usage#active-arrays)
+  designated when opening the node/cell data, see [Active arrays](/guide/data#active-arrays)
 - **Unsigned integers** (`UInt8`, `UInt16`, `UInt32`, `UInt64`, e.g. `vtkGhostType`) with `write_dataarray_unsigned`, see
-  [Usage](/guide/usage#unsigned-integer-arrays)
+  [Unsigned integer arrays](/guide/data#unsigned-integer-arrays)
 
 ## Parallel Support
 

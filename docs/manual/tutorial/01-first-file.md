@@ -39,7 +39,7 @@ Opened in ParaView (here with a few isosurfaces of the temperature, cut in half)
 
 ::: tip What you learned
 A file is `initialize`, then pieces with their geometry and data, then `finalize`. Reference:
-[Rectilinear Grid](/guide/usage#rectilinear-grid-vtr).
+[Rectilinear Grid](/guide/topologies#rectilinear-grid-vtr).
 :::
 
 Next: [2. Formats](./02-formats).

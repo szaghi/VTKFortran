@@ -30,8 +30,8 @@ The assembly in ParaView, cut at the height of the probes:
 
 ::: tip What you learned
 `write_block` with `action='open'`/`'close'` nests blocks; `get_entries` reads the tree back; a piece is read with
-`action='read'` and `read_geo`, `read_dataarray`. Reference: [Nested blocks](/guide/usage#nested-blocks),
-[Reading files](/guide/usage#reading-files).
+`action='read'` and `read_geo`, `read_dataarray`. Reference: [Nested blocks](/guide/parallel#nested-blocks),
+[Reading files](/guide/reading).
 :::
 
 Next: [8. Restart](./08-restart).

@@ -26,7 +26,7 @@ The cells, coloured by their temperature, cut in half:
 
 ::: tip What you learned
 Points, connectivity, offsets and types make an unstructured grid; cell data are written between `open` and `close` of the
-`cell` location. Reference: [Unstructured Grid](/guide/usage#unstructured-grid-vtu).
+`cell` location. Reference: [Unstructured Grid](/guide/topologies#unstructured-grid-vtu).
 :::
 
 Next: [6. Going parallel](./06-parallel).

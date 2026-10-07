@@ -35,7 +35,7 @@ makes readers drop arrays or fill them with zeros. `check_pieces` reads the head
 ::: tip What you learned
 Each process writes its piece with `vtk_file`, one writes the header with `pvtk_file`; ghost cells are marked with
 `write_dataarray_unsigned`; `check_pieces` verifies the result. Reference:
-[Parallel Unstructured Grid](/guide/usage#parallel-unstructured-grid-pvtu), [Parallel headers](/guide/usage#parallel-headers).
+[Parallel Unstructured Grid](/guide/parallel#parallel-unstructured-grid-pvtu), [Parallel headers](/guide/reading#parallel-headers).
 :::
 
 Next: [7. An assembly](./07-assembly).

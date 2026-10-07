@@ -29,7 +29,7 @@ The temperature on a cut of the cube, with the heat flux flowing out of the blob
 
 ::: tip What you learned
 `write_fielddata` for global values, `write_dataarray(x, y, z)` for vectors, the active arrays chosen when opening the data.
-Reference: [Field data](/guide/usage#field-data-global-metadata), [Active arrays](/guide/usage#active-arrays).
+Reference: [Field data](/guide/data#field-data-global-metadata), [Active arrays](/guide/data#active-arrays).
 :::
 
 Next: [4. A time series](./04-time-series).

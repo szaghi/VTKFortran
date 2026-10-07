@@ -31,8 +31,8 @@ The last output, on the same scale as the animation of chapter 4: the cube has a
 
 ::: tip What you learned
 Every file VTKFortran writes can be read back: `action='read'`, then `read_geo`, `read_dataarray` and the other readers;
-`pvd_file` reads and appends to a collection. Reference: [Reading files](/guide/usage#reading-files),
-[Multi-block and time series files](/guide/usage#multi-block-and-time-series-files).
+`pvd_file` reads and appends to a collection. Reference: [Reading files](/guide/reading),
+[Multi-block and time series files](/guide/reading#multi-block-and-time-series-files).
 :::
 
 This is the end of the tutorial: the [reference](/guide/features) has every procedure and argument.

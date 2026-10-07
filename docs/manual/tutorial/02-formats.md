@@ -20,7 +20,7 @@ format:
 - `compressor='zlib'` compresses the binary formats as VTK does (blocks of 32 KiB): smooth fields such as this one shrink,
   noisy ones much less. It needs the library built with zlib, see [Installation](/guide/installation#optional-zlib-compression).
 - The appended formats keep the data in a scratch file until `finalize`: memory does not grow with the file.
-- Arrays larger than 2 GiB need `header_type='UInt64'`, see [Large data arrays](/guide/usage#large-data-arrays-uint64-headers).
+- Arrays larger than 2 GiB need `header_type='UInt64'`, see [Large data arrays](/guide/formats#large-data-arrays-uint64-headers).
 
 From now on `heat` writes `raw` data compressed with zlib.
 
@@ -30,7 +30,7 @@ From now on `heat` writes `raw` data compressed with zlib.
 
 ::: tip What you learned
 The format is one argument of `initialize`: `ascii` to look at the data, `raw` (with `compressor='zlib'`) for real runs.
-Reference: [Output format selection](/guide/usage#output-format-selection), [Compressed binary data](/guide/usage#compressed-binary-data-zlib).
+Reference: [Output format selection](/guide/formats#output-format-selection), [Compressed binary data](/guide/formats#compressed-binary-data-zlib).
 :::
 
 Next: [3. More data](./03-more-data).

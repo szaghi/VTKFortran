@@ -31,7 +31,7 @@ and the cube cools down.
 
 ::: tip What you learned
 One file per output, listed by a `pvd_file` with its time: the collection is always valid. Reference:
-[Time series](/guide/usage#time-series-pvd).
+[Time series](/guide/parallel#time-series-pvd).
 :::
 
 Next: [5. An unstructured mesh](./05-unstructured), or jump to [8. Restart](./08-restart).

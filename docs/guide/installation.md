@@ -140,7 +140,7 @@ dependencies); the test programs are built with CMake or FoBiS.py.
 ## Optional zlib compression
 
 The compression of binary data (`compressor='zlib'`, `format='raw-zlib'`, see
-[Usage](/guide/usage#compressed-binary-data-zlib)) needs [zlib](https://zlib.net) and the preprocessor macro
+[Compressed binary data](/guide/formats#compressed-binary-data-zlib)) needs [zlib](https://zlib.net) and the preprocessor macro
 `VTKFORTRAN_USE_ZLIB` at build time. Without it the library builds and works as usual, and requesting zlib makes
 `initialize` return a non-zero error. Install the zlib development files first (e.g. `apt install zlib1g-dev`).
 

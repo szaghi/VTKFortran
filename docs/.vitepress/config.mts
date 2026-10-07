@@ -34,9 +34,13 @@ const docs = [
   {
     text: 'Reference',
     items: [
-      { text: 'Features',      link: '/guide/features' },
-      { text: 'Usage',         link: '/guide/usage' },
-      { text: 'API Reference', link: '/guide/api-reference' },
+      { text: 'Features',                     link: '/guide/features' },
+      { text: 'Topologies',                   link: '/guide/topologies' },
+      { text: 'Data arrays',                  link: '/guide/data' },
+      { text: 'Formats and large data',       link: '/guide/formats' },
+      { text: 'Parallel and composite files', link: '/guide/parallel' },
+      { text: 'Reading files',                link: '/guide/reading' },
+      { text: 'Procedures summary',           link: '/guide/api-reference' },
     ],
   },
   {
@@ -72,7 +76,7 @@ export default withMermaid({
       {
         text: 'Reference',
         link: '/guide/features',
-        activeMatch: '^/guide/(features|usage|api-reference)',
+        activeMatch: '^/guide/(features|topologies|data|formats|parallel|reading|api-reference)',
       },
       { text: 'API', link: '/api/' },
       {
