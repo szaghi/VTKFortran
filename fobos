@@ -85,7 +85,7 @@ output    = libvtkfortran.a
 mklib     = static
 
 [tests-gnu-debug]
-template  = template-static-gnu-debug
+template  = template-static-gnu-debug-zlib
 build_dir = exe
 
 [tests-gnu-debug-zlib]

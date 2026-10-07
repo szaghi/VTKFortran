@@ -17,7 +17,8 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 - [vtk_fortran_vtk_file_xml_writer_ascii_local](/api/src/lib/vtk_fortran_vtk_file_xml_writer_ascii_local) — ASCII writer
 - [vtk_fortran_vtk_file_xml_writer_binary_local](/api/src/lib/vtk_fortran_vtk_file_xml_writer_binary_local) — Base64-encoded binary writer
 - [vtk_fortran_vtk_file_xml_writer_appended](/api/src/lib/vtk_fortran_vtk_file_xml_writer_appended) — raw binary appended writer
-- [vtk_fortran_dataarray_encoder](/api/src/lib/vtk_fortran_dataarray_encoder) — encoding routines for ASCII and Base64 data arrays
+- [vtk_fortran_dataarray_encoder](/api/src/lib/vtk_fortran_dataarray_encoder) — encoding routines for ASCII and Base64 data arrays (optionally zlib-compressed)
+- [vtk_fortran_zlib](/api/src/lib/vtk_fortran_zlib) — zlib bindings and VTK block compression (stubs when built without `VTKFORTRAN_USE_ZLIB`)
 - [vtk_fortran_parameters](/api/src/lib/vtk_fortran_parameters) — shared constants
 
 ## Key type-bound procedures
@@ -26,7 +27,7 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 
 | Procedure | Description |
 |-----------|-------------|
-| `%initialize(format, filename, mesh_topology, ...)` | Open the file, select the writer, write the XML header; for `ImageData`/`PImageData` also `origin`, `spacing` (required) and `direction`; `header_type='UInt64'` for binary arrays larger than 2 GiB |
+| `%initialize(format, filename, mesh_topology, ...)` | Open the file, select the writer, write the XML header; for `ImageData`/`PImageData` also `origin`, `spacing` (required) and `direction`; `header_type='UInt64'` for binary arrays larger than 2 GiB; `compressor='zlib'` to compress binary data (`vtk_file` only) |
 | `%finalize()` | Flush and close the file |
 | `%xml_writer%write_fielddata(...)` | Write global FieldData: scalars, rank-1 arrays (all kinds), strings and arrays of strings |
 | `%xml_writer%write_piece(...)` | Open or close a Piece element (extents, `np`/`nc`, or `np`/`nverts`/`nlines`/`nstrips`/`npolys` for PolyData) |

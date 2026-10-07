@@ -19,16 +19,17 @@ add_library(${LIB}
 	vtk_fortran_vtk_file_xml_writer_ascii_local.f90
 	vtk_fortran_vtk_file_xml_writer_binary_local.f90
 	vtk_fortran_vtm_file.F90
+	vtk_fortran_zlib.F90
 	)
 
 target_link_libraries(${LIB} PENF::PENF BeFoR64::BeFoR64 FACE::FACE StringiFor::StringiFor FoXy::FoXy)
 
-option(VTKFORTRAN_USE_ZLIB "Enable VTK XML internal zlib compression for RAW-ZLIB output." OFF)
+# vtk_fortran_zlib.F90 is always compiled: without VTKFORTRAN_USE_ZLIB it only holds stubs (compression unavailable).
+option(VTKFORTRAN_USE_ZLIB "Enable VTK XML internal zlib compression of binary data (compressor='zlib', RAW-ZLIB)." OFF)
 if (VTKFORTRAN_USE_ZLIB)
   if (NOT TARGET ZLIB::ZLIB)
     find_package(ZLIB REQUIRED)
   endif()
-  target_sources(${LIB} PRIVATE vtk_fortran_zlib.F90)
   target_compile_definitions(${LIB} PRIVATE VTKFORTRAN_USE_ZLIB)
   # Keep plain-signature linking to avoid mixing keyword/plain signatures for this target.
   target_link_libraries(${LIB} ZLIB::ZLIB)

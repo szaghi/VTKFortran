@@ -1,39 +1,26 @@
 !< VTK file XMl writer, appended.
 module vtk_fortran_vtk_file_xml_writer_appended
 !< VTK file XMl writer, appended.
-use, intrinsic :: iso_c_binding, only : c_int, c_loc, c_long, c_signed_char
+use, intrinsic :: iso_c_binding, only : c_signed_char
 use penf
 use stringifor
 use vtk_fortran_dataarray_encoder
 use vtk_fortran_parameters
 use vtk_fortran_vtk_file_xml_writer_abstract
-#ifdef VTKFORTRAN_USE_ZLIB
-use vtk_fortran_zlib, only : zlib_compress_bound, zlib_compress2, Z_DEFAULT_COMPRESSION
-#endif
+use vtk_fortran_zlib, only : zlib_compress_blocks
 
 implicit none
 private
 public :: xml_writer_appended
 
-#ifdef VTKFORTRAN_USE_ZLIB
-interface to_bytes
-  !< Copy a dataarray into a bytes stream, element by element (a whole-array transfer result can be placed on the stack).
-  module procedure to_bytes_R8P, to_bytes_R4P, to_bytes_I8P, to_bytes_I4P, to_bytes_I2P, to_bytes_I1P
-endinterface to_bytes
-#endif
-
 type, extends(xml_writer_abstract) :: xml_writer_appended
   !< VTK file XML writer, appended.
   type(string) :: encoding      !< Appended data encoding: "raw" or "base64".
   integer(I4P) :: scratch=0_I4P !< Scratch logical unit.
-  logical      :: is_compressed = .false.     !< Enable VTK internal zlib compression for appended raw data.
-  integer(I4P) :: compression_level = 6_I4P   !< zlib compression level [1..9], 6 is a reasonable default.
-  integer(I4P) :: compression_block_size = 32768_I4P !< Uncompressed block size in bytes (VTK compressed blocks).
   contains
     ! deferred methods
     procedure, pass(self) :: initialize                 !< Initialize writer.
     procedure, pass(self) :: finalize                   !< Finalize writer.
-    procedure, pass(self) :: write_header_tag           !< Write header tag (override to add compression attributes).
     procedure, pass(self) :: write_dataarray1_rank1_R8P !< Write dataarray 1, rank 1, R8P.
     procedure, pass(self) :: write_dataarray1_rank1_R4P !< Write dataarray 1, rank 1, R4P.
     procedure, pass(self) :: write_dataarray1_rank1_I8P !< Write dataarray 1, rank 1, I8P.
@@ -192,21 +179,14 @@ contains
   self%format_ch = 'appended'
   self%encoding = format
   self%encoding = self%encoding%upper()
-  self%is_compressed = .false.
   select case(self%encoding%chars())
   case('RAW')
     self%encoding = 'raw'
   case('BINARY-APPENDED')
     self%encoding = 'base64'
-  case('RAW-ZLIB')
-#ifdef VTKFORTRAN_USE_ZLIB
+  case('RAW-ZLIB') ! shorthand of RAW with zlib compression
     self%encoding = 'raw'
     self%is_compressed = .true.
-#else
-    self%error = 1
-    error = self%error
-    return
-#endif
   endselect
   call self%open_xml_file(filename=filename)
   call self%write_header_tag
@@ -215,31 +195,6 @@ contains
   call self%open_scratch_file
   error = self%error
   endfunction initialize
-
-  subroutine write_header_tag(self)
-  !< Write header tag.
-  !<
-  !< The header_type (bytes count width) is always declared; when VTK internal compression is enabled for appended raw data,
-  !< the compressor is declared too: compressor="vtkZLibDataCompressor" header_type="UInt32"
-  class(xml_writer_appended), intent(inout) :: self   !< Writer.
-  type(string)                              :: buffer !< Buffer string.
-  character(len=:), allocatable             :: attrs  !< Extra attributes.
-
-  buffer = '<?xml version="1.0"?>'//end_rec
-  attrs = ' header_type="'//trim(merge('UInt64', 'UInt32', self%is_uint64))//'"'
-  if (self%is_compressed) attrs = ' compressor="vtkZLibDataCompressor"'//attrs
-  if (endian==endianL) then
-     buffer = buffer//'<VTKFile type="'//self%topology//'" version="1.0" byte_order="LittleEndian"'//attrs//'>'
-  else
-     buffer = buffer//'<VTKFile type="'//self%topology//'" version="1.0" byte_order="BigEndian"'//attrs//'>'
-  endif
-  if (.not.self%is_volatile) then
-     write(unit=self%xml, iostat=self%error)buffer//end_rec
-  else
-     self%xml_volatile = self%xml_volatile//buffer//end_rec
-  endif
-  self%indent = 2
-  endsubroutine write_header_tag
 
    function finalize(self) result(error)
    !< Finalize writer.
@@ -1326,7 +1281,7 @@ contains
   endfunction write_dataarray6_rank3_I1P
 
   subroutine write_dataarray_appended(self)
-  !< Do nothing, ascii data cannot be appended.
+  !< Write the appended section: the data saved on the scratch file, raw or base64 encoded.
   class(xml_writer_appended), intent(inout) :: self              !< Writer.
   type(string)                              :: tag_attributes    !< Tag attributes.
   integer(I8P)                              :: n_byte            !< Bytes count.
@@ -1338,54 +1293,51 @@ contains
   integer(I4P), allocatable                 :: dataarray_I4P(:)  !< Dataarray buffer of I4P.
   integer(I2P), allocatable                 :: dataarray_I2P(:)  !< Dataarray buffer of I2P.
   integer(I1P), allocatable                 :: dataarray_I1P(:)  !< Dataarray buffer of I1P.
+  logical                                   :: is_uint64         !< Use a UInt64 header, local copy of the component.
 
+  ! the encoders are passed a local copy of is_uint64: with a component of the polymorphic self as actual argument, ifx copies
+  ! the (large) encoded string returned by the encoder onto the stack (issue #70)
+  is_uint64 = self%is_uint64
   if (self%is_compressed) then
-    ! In compressed mode, scratch contains a sequence of VTK compressed-block payloads:
-    !   UInt32 numBlocks, blockSize, lastBlockSize
-    !   UInt32 compressedSize[numBlocks]
-    !   Byte  compressedBlockData...
-    ! We stream them to the XML file preserving binary representation by reading/writing
-    ! the same types.
+    ! scratch holds, for each dataarray, the VTK header of the compressed data (I8P words) and the compressed blocks
+    ! (see write_zlib_compressed_payload_from_bytes): the header is written with the width of the file header_type,
+    ! raw or base64 encoded (header and blocks as two separate base64 streams)
     block
-      integer(I8P)                    :: nb, bs, last, i
-      integer(I8P), allocatable       :: comp_sizes(:)
-      integer(c_signed_char), allocatable :: buf(:)
+      integer(I8P)                        :: header3(3)  !< Number of blocks, block size, last block size.
+      integer(I8P),           allocatable :: header(:)   !< VTK header of the compressed data.
+      integer(c_signed_char), allocatable :: blocks(:)   !< Compressed blocks.
+      character(len=:),       allocatable :: code        !< Base64 encoded dataarray.
 
-      call self%write_start_tag(name='AppendedData', attributes='encoding="raw"')
+      call self%write_start_tag(name='AppendedData', attributes='encoding="'//self%encoding%chars()//'"')
       write(unit=self%xml, iostat=self%error)'_'
       endfile(unit=self%scratch, iostat=self%error)
       rewind(unit=self%scratch, iostat=self%error)
       do
-        read(unit=self%scratch, iostat=self%error) nb
-        if (is_iostat_end(self%error)) exit
+        read(unit=self%scratch, iostat=self%error) header3
+        if (self%error /= 0) exit ! end of file (no more dataarrays) or error
+        if (allocated(header)) deallocate(header)
+        allocate(header(1:3_I8P+header3(1)))
+        header(1:3) = header3
+        if (header3(1) > 0_I8P) read(unit=self%scratch, iostat=self%error) header(4:)
         if (self%error /= 0) exit
-        read(unit=self%scratch, iostat=self%error) bs
+        if (allocated(blocks)) deallocate(blocks)
+        allocate(blocks(1:sum(header(4:))))
+        if (size(blocks, kind=I8P) > 0_I8P) read(unit=self%scratch, iostat=self%error) blocks
         if (self%error /= 0) exit
-        read(unit=self%scratch, iostat=self%error) last
-        if (self%error /= 0) exit
-        if (allocated(comp_sizes)) deallocate(comp_sizes)
-        allocate(comp_sizes(1:nb))
-        read(unit=self%scratch, iostat=self%error) comp_sizes
-        if (self%error /= 0) exit
-
-        if (self%is_uint64) then
-          write(unit=self%xml, iostat=self%error) nb, bs, last, comp_sizes
+        if (self%encoding == 'raw') then
+          if (self%is_uint64) then
+            write(unit=self%xml, iostat=self%error) header
+          else
+            write(unit=self%xml, iostat=self%error) int(header, I4P)
+          endif
+          if (size(blocks, kind=I8P) > 0_I8P) write(unit=self%xml, iostat=self%error) blocks
         else
-          write(unit=self%xml, iostat=self%error) int(nb, I4P), int(bs, I4P), int(last, I4P), int(comp_sizes, I4P)
+          code = encode_compressed_blocks(header=header, blocks=blocks, is_uint64=is_uint64)
+          write(unit=self%xml, iostat=self%error) code
         endif
         if (self%error /= 0) exit
-        do i = 1, nb
-          if (allocated(buf)) deallocate(buf)
-          allocate(buf(1:comp_sizes(i)))
-          read(unit=self%scratch, iostat=self%error) buf
-          if (self%error /= 0) exit
-          write(unit=self%xml, iostat=self%error) buf
-          if (self%error /= 0) exit
-        enddo
-        if (self%error /= 0) exit
       enddo
-      if (allocated(comp_sizes)) deallocate(comp_sizes)
-      if (allocated(buf)) deallocate(buf)
+      if (is_iostat_end(self%error)) self%error = 0
       close(unit=self%scratch, iostat=self%error)
       write(unit=self%xml, iostat=self%error)end_rec
       call self%write_end_tag(name='AppendedData')
@@ -1472,22 +1424,22 @@ contains
     else
       select case(dataarray_type)
       case('R8')
-        code = encode_binary_dataarray(x=dataarray_R8P, is_uint64=self%is_uint64)
+        code = encode_binary_dataarray(x=dataarray_R8P, is_uint64=is_uint64)
         write(unit=self%xml, iostat=self%error)code
       case('R4')
-        code = encode_binary_dataarray(x=dataarray_R4P, is_uint64=self%is_uint64)
+        code = encode_binary_dataarray(x=dataarray_R4P, is_uint64=is_uint64)
         write(unit=self%xml, iostat=self%error)code
       case('I8')
-        code = encode_binary_dataarray(x=dataarray_I8P, is_uint64=self%is_uint64)
+        code = encode_binary_dataarray(x=dataarray_I8P, is_uint64=is_uint64)
         write(unit=self%xml, iostat=self%error)code
       case('I4')
-        code = encode_binary_dataarray(x=dataarray_I4P, is_uint64=self%is_uint64)
+        code = encode_binary_dataarray(x=dataarray_I4P, is_uint64=is_uint64)
         write(unit=self%xml, iostat=self%error)code
       case('I2')
-        code = encode_binary_dataarray(x=dataarray_I2P, is_uint64=self%is_uint64)
+        code = encode_binary_dataarray(x=dataarray_I2P, is_uint64=is_uint64)
         write(unit=self%xml, iostat=self%error)code
       case('I1')
-        code = encode_binary_dataarray(x=dataarray_I1P, is_uint64=self%is_uint64)
+        code = encode_binary_dataarray(x=dataarray_I1P, is_uint64=is_uint64)
         write(unit=self%xml, iostat=self%error)code
       endselect
     endif
@@ -1504,85 +1456,42 @@ contains
     endsubroutine write_n_byte
   endsubroutine write_dataarray_appended
 
-#ifdef VTKFORTRAN_USE_ZLIB
   function write_zlib_compressed_payload_from_bytes(self, bytes) result(n_written)
-  !< Write a VTK "compressed blocks" payload to the main scratch stream.
+  !< Compress (zlib) a dataarray and write it to the scratch file, return its size in the appended section.
   !<
-  !< Payload layout (UIntXX is UInt32 or UInt64, as the header_type of the file):
-  !<   UIntXX numBlocks
-  !<   UIntXX blockSize
-  !<   UIntXX lastBlockSize
-  !<   UIntXX compressedSize[numBlocks]
-  !<   Byte   compressedBlockData...
+  !< Scratch layout of each dataarray: the VTK header of the compressed data as I8P words, then the compressed blocks:
   !<
-  !< The header values are stored on the scratch file as I8P and written with the width of the file header when the appended
-  !< section is written; offsets are 64-bit, so payloads larger than 2 GiB are handled.
-  class(xml_writer_appended), intent(inout)   :: self          !< Writer.
-  integer(c_signed_char),     intent(in)      :: bytes(1:)     !< Uncompressed payload bytes.
-  integer(I8P)                                :: n_written     !< Total payload bytes written.
-  integer(I8P)                                :: bs            !< Block size.
-  integer(I8P)                                :: nb            !< Number of blocks.
-  integer(I8P)                                :: last          !< Size of the last block.
-  integer(I8P)                                :: i             !< Counter.
-  integer(I8P)                                :: n_read        !< Bytes of the current block.
-  integer(I8P), allocatable                   :: comp_sizes(:) !< Compressed size of each block.
-  integer(c_signed_char), allocatable, target :: inbuf(:)      !< Uncompressed block.
-  integer(c_signed_char), allocatable, target :: outbuf(:)     !< Compressed block.
-  integer(c_long)                             :: bound         !< Bound of compressed block size.
-  integer(c_long), target                     :: destLen       !< Compressed block size.
-  integer(c_int)                              :: zret          !< zlib return code.
+  !<```
+  !< numBlocks, blockSize, lastBlockSize, compressedSize[numBlocks], compressedBlockData...
+  !<```
+  !<
+  !< The header is written in the file with the width of its header_type (UInt32 or UInt64) when the appended section is
+  !< written. The returned size, used for the offsets, counts bytes (raw encoding) or base64 characters (base64 encoding:
+  !< header and blocks are two separate base64 streams).
+  class(xml_writer_appended), intent(inout) :: self      !< Writer.
+  integer(c_signed_char),     intent(in)    :: bytes(1:) !< Uncompressed dataarray bytes.
+  integer(I8P)                              :: n_written !< Size of the dataarray in the appended section.
+  integer(I8P),           allocatable       :: header(:) !< VTK header of the compressed data.
+  integer(c_signed_char), allocatable       :: blocks(:) !< Compressed blocks.
+  integer(I8P)                              :: nh        !< Bytes of the header in the file.
+  integer                                   :: error     !< Compression error status.
 
-  bs = int(self%compression_block_size, I8P)
-  if (bs <= 0_I8P) bs = 32768_I8P
-  nb = (size(bytes, dim=1, kind=I8P) + bs - 1_I8P) / bs
-  last = size(bytes, dim=1, kind=I8P) - (nb - 1_I8P) * bs
-  if (nb < 1_I8P) nb = 1_I8P
-  if (last < 0_I8P) last = 0_I8P
-
-  allocate(comp_sizes(1:nb))
-  allocate(inbuf(1:bs))
-  bound = zlib_compress_bound(int(bs, c_long))
-  allocate(outbuf(1:int(bound, I8P)))
-
-  ! Pass 1: compute compressed sizes per block
-  do i = 1_I8P, nb
-    n_read = merge(bs, last, i < nb)
-    if (n_read <= 0_I8P) n_read = 0_I8P
-    if (n_read > 0_I8P) inbuf(1:n_read) = bytes((i-1_I8P)*bs + 1_I8P : (i-1_I8P)*bs + n_read)
-    destLen = int(size(outbuf), c_long)
-    zret = zlib_compress2(dst=outbuf, dst_len=destLen, src=inbuf, src_len=int(n_read, c_long), level=self%compression_level)
-    if (zret /= 0) then
-      self%error = 1
-      exit
-    endif
-    comp_sizes(i) = int(destLen, I8P)
-  enddo
-
-  ! Header
-  write(unit=self%scratch, iostat=self%error) nb
-  write(unit=self%scratch, iostat=self%error) bs
-  write(unit=self%scratch, iostat=self%error) last
-  write(unit=self%scratch, iostat=self%error) comp_sizes
-
-  ! Pass 2: write compressed blocks
-  do i = 1_I8P, nb
-    n_read = merge(bs, last, i < nb)
-    if (n_read <= 0_I8P) n_read = 0_I8P
-    if (n_read > 0_I8P) inbuf(1:n_read) = bytes((i-1_I8P)*bs + 1_I8P : (i-1_I8P)*bs + n_read)
-    destLen = int(size(outbuf), c_long)
-    zret = zlib_compress2(dst=outbuf, dst_len=destLen, src=inbuf, src_len=int(n_read, c_long), level=self%compression_level)
-    if (zret /= 0) then
-      self%error = 1
-      exit
-    endif
-    write(unit=self%scratch, iostat=self%error) outbuf(1:int(destLen, I8P))
-    if (self%error /= 0) exit
-  enddo
-
-  n_written = (3_I8P + nb) * merge(int(BYI8P, I8P), int(BYI4P, I8P), self%is_uint64) + sum(comp_sizes)
-  deallocate(comp_sizes, inbuf, outbuf)
+  call zlib_compress_blocks(bytes=bytes, block_size=zlib_block_size, level=zlib_level, header=header, blocks=blocks, &
+                            error=error)
+  if (error /= 0) then
+    self%error = error
+    n_written = 0_I8P
+    return
+  endif
+  write(unit=self%scratch, iostat=self%error) header
+  if (size(blocks, kind=I8P) > 0_I8P) write(unit=self%scratch, iostat=self%error) blocks
+  nh = size(header, kind=I8P) * merge(int(BYI8P, I8P), int(BYI4P, I8P), self%is_uint64)
+  if (self%encoding == 'raw') then
+    n_written = nh + size(blocks, kind=I8P)
+  else
+    n_written = ((nh + 2_I8P) / 3_I8P) * 4_I8P + ((size(blocks, kind=I8P) + 2_I8P) / 3_I8P) * 4_I8P
+  endif
   endfunction write_zlib_compressed_payload_from_bytes
-#endif
 
   ! write_on_scratch_dataarray methods
   function write_on_scratch_dataarray1_rank1(self, x) result(n_byte)
@@ -1598,7 +1507,6 @@ contains
   type is(real(R8P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYR8P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         allocate(bytes(1:n_byte))
@@ -1606,10 +1514,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1
-      n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'R8', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -1617,7 +1521,6 @@ contains
   type is(real(R4P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYR4P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         allocate(bytes(1:n_byte))
@@ -1625,10 +1528,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1
-      n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'R4', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -1636,7 +1535,6 @@ contains
   type is(integer(I8P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYI8P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         allocate(bytes(1:n_byte))
@@ -1644,10 +1542,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1
-      n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'I8', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -1655,7 +1549,6 @@ contains
   type is(integer(I4P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYI4P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         allocate(bytes(1:n_byte))
@@ -1663,10 +1556,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1
-      n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'I4', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -1674,7 +1563,6 @@ contains
   type is(integer(I2P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYI2P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         allocate(bytes(1:n_byte))
@@ -1682,10 +1570,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1
-      n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'I2', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -1693,7 +1577,6 @@ contains
   type is(integer(I1P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYI1P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         allocate(bytes(1:n_byte))
@@ -1701,10 +1584,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1
-      n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'I1', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -1725,7 +1604,6 @@ contains
   type is(real(R8P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYR8P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         real(R8P), allocatable :: xx(:)
@@ -1735,9 +1613,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1 ; n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'R8', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -1745,7 +1620,6 @@ contains
   type is(real(R4P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYR4P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         real(R4P), allocatable :: xx(:)
@@ -1755,9 +1629,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1 ; n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'R4', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -1765,7 +1636,6 @@ contains
   type is(integer(I8P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYI8P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         integer(I8P), allocatable :: xx(:)
@@ -1775,9 +1645,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1 ; n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'I8', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -1785,7 +1652,6 @@ contains
   type is(integer(I4P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYI4P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         integer(I4P), allocatable :: xx(:)
@@ -1795,9 +1661,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1 ; n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'I4', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -1805,7 +1668,6 @@ contains
   type is(integer(I2P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYI2P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         integer(I2P), allocatable :: xx(:)
@@ -1815,9 +1677,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1 ; n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'I2', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -1825,7 +1684,6 @@ contains
   type is(integer(I1P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYI1P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         integer(I1P), allocatable :: xx(:)
@@ -1835,9 +1693,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1 ; n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'I1', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -1858,7 +1713,6 @@ contains
   type is(real(R8P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYR8P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         real(R8P), allocatable :: xx(:)
@@ -1868,9 +1722,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1 ; n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'R8', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -1878,7 +1729,6 @@ contains
   type is(real(R4P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYR4P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         real(R4P), allocatable :: xx(:)
@@ -1888,9 +1738,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1 ; n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'R4', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -1898,7 +1745,6 @@ contains
   type is(integer(I8P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYI8P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         integer(I8P), allocatable :: xx(:)
@@ -1908,9 +1754,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1 ; n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'I8', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -1918,7 +1761,6 @@ contains
   type is(integer(I4P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYI4P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         integer(I4P), allocatable :: xx(:)
@@ -1928,9 +1770,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1 ; n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'I4', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -1938,7 +1777,6 @@ contains
   type is(integer(I2P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYI2P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         integer(I2P), allocatable :: xx(:)
@@ -1948,9 +1786,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1 ; n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'I2', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -1958,7 +1793,6 @@ contains
   type is(integer(I1P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYI1P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         integer(I1P), allocatable :: xx(:)
@@ -1968,9 +1802,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1 ; n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'I1', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -1991,7 +1822,6 @@ contains
   type is(real(R8P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYR8P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         real(R8P), allocatable :: xx(:)
@@ -2001,9 +1831,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1 ; n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'R8', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -2011,7 +1838,6 @@ contains
   type is(real(R4P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYR4P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         real(R4P), allocatable :: xx(:)
@@ -2021,9 +1847,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1 ; n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'R4', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -2031,7 +1854,6 @@ contains
   type is(integer(I8P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYI8P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         integer(I8P), allocatable :: xx(:)
@@ -2041,9 +1863,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1 ; n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'I8', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -2051,7 +1870,6 @@ contains
   type is(integer(I4P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYI4P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         integer(I4P), allocatable :: xx(:)
@@ -2061,9 +1879,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1 ; n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'I4', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -2071,7 +1886,6 @@ contains
   type is(integer(I2P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYI2P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         integer(I2P), allocatable :: xx(:)
@@ -2081,9 +1895,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1 ; n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'I2', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -2091,7 +1902,6 @@ contains
   type is(integer(I1P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYI1P)
     if (self%is_compressed) then
-#ifdef VTKFORTRAN_USE_ZLIB
       block
         integer(c_signed_char), allocatable :: bytes(:)
         integer(I1P), allocatable :: xx(:)
@@ -2101,9 +1911,6 @@ contains
         n_byte = write_zlib_compressed_payload_from_bytes(self=self, bytes=bytes)
         deallocate(bytes)
       endblock
-#else
-      self%error = 1 ; n_byte = 0
-#endif
     else
       write(unit=self%scratch, iostat=self%error)n_byte, 'I1', nn
       write(unit=self%scratch, iostat=self%error)x
@@ -2866,73 +2673,4 @@ contains
   buf(6::6) = reshape(z, [nn])
   n_byte = self%write_on_scratch_dataarray(x=buf)
   endfunction write_on_scratch_dataarray6_rank3_I1P
-
-#ifdef VTKFORTRAN_USE_ZLIB
-  ! to_bytes methods
-  pure subroutine to_bytes_R8P(x, bytes)
-  !< Copy a dataarray into a bytes stream (R8P).
-  real(R8P),              intent(in)  :: x(1:)     !< Dataarray.
-  integer(c_signed_char), intent(out) :: bytes(1:) !< Bytes stream, at least of size(x)*BYR8P elements.
-  integer(I8P)                        :: n         !< Counter.
-
-  do n=1_I8P, size(x, kind=I8P)
-    bytes((n-1_I8P)*BYR8P+1_I8P:n*BYR8P) = transfer(x(n), bytes)
-  enddo
-  endsubroutine to_bytes_R8P
-
-  pure subroutine to_bytes_R4P(x, bytes)
-  !< Copy a dataarray into a bytes stream (R4P).
-  real(R4P),              intent(in)  :: x(1:)     !< Dataarray.
-  integer(c_signed_char), intent(out) :: bytes(1:) !< Bytes stream, at least of size(x)*BYR4P elements.
-  integer(I8P)                        :: n         !< Counter.
-
-  do n=1_I8P, size(x, kind=I8P)
-    bytes((n-1_I8P)*BYR4P+1_I8P:n*BYR4P) = transfer(x(n), bytes)
-  enddo
-  endsubroutine to_bytes_R4P
-
-  pure subroutine to_bytes_I8P(x, bytes)
-  !< Copy a dataarray into a bytes stream (I8P).
-  integer(I8P),           intent(in)  :: x(1:)     !< Dataarray.
-  integer(c_signed_char), intent(out) :: bytes(1:) !< Bytes stream, at least of size(x)*BYI8P elements.
-  integer(I8P)                        :: n         !< Counter.
-
-  do n=1_I8P, size(x, kind=I8P)
-    bytes((n-1_I8P)*BYI8P+1_I8P:n*BYI8P) = transfer(x(n), bytes)
-  enddo
-  endsubroutine to_bytes_I8P
-
-  pure subroutine to_bytes_I4P(x, bytes)
-  !< Copy a dataarray into a bytes stream (I4P).
-  integer(I4P),           intent(in)  :: x(1:)     !< Dataarray.
-  integer(c_signed_char), intent(out) :: bytes(1:) !< Bytes stream, at least of size(x)*BYI4P elements.
-  integer(I8P)                        :: n         !< Counter.
-
-  do n=1_I8P, size(x, kind=I8P)
-    bytes((n-1_I8P)*BYI4P+1_I8P:n*BYI4P) = transfer(x(n), bytes)
-  enddo
-  endsubroutine to_bytes_I4P
-
-  pure subroutine to_bytes_I2P(x, bytes)
-  !< Copy a dataarray into a bytes stream (I2P).
-  integer(I2P),           intent(in)  :: x(1:)     !< Dataarray.
-  integer(c_signed_char), intent(out) :: bytes(1:) !< Bytes stream, at least of size(x)*BYI2P elements.
-  integer(I8P)                        :: n         !< Counter.
-
-  do n=1_I8P, size(x, kind=I8P)
-    bytes((n-1_I8P)*BYI2P+1_I8P:n*BYI2P) = transfer(x(n), bytes)
-  enddo
-  endsubroutine to_bytes_I2P
-
-  pure subroutine to_bytes_I1P(x, bytes)
-  !< Copy a dataarray into a bytes stream (I1P).
-  integer(I1P),           intent(in)  :: x(1:)     !< Dataarray.
-  integer(c_signed_char), intent(out) :: bytes(1:) !< Bytes stream, at least of size(x)*BYI1P elements.
-  integer(I8P)                        :: n         !< Counter.
-
-  do n=1_I8P, size(x, kind=I8P)
-    bytes((n-1_I8P)*BYI1P+1_I8P:n*BYI1P) = transfer(x(n), bytes)
-  enddo
-  endsubroutine to_bytes_I1P
-#endif
 endmodule vtk_fortran_vtk_file_xml_writer_appended

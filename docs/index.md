@@ -19,16 +19,16 @@ hero:
 features:
   - icon: 📐
     title: VTK XML Support
-    details: Write Rectilinear, Structured, and Unstructured grids in the VTK XML format. Composite multi-block datasets (VTM) and parallel partitioned files (PVTS) are also supported.
+    details: Write Image, Rectilinear, Structured, and Unstructured grids and polygonal data in the VTK XML format. Composite multi-block datasets (VTM), parallel partitioned files (PVTI, PVTS, PVTU, PVTP) and time series (PVD) are also supported.
   - icon: 🗜️
     title: Multiple Output Formats
-    details: Choose between ASCII, binary (Base64-encoded), and raw binary appended formats. All procedures return an integer error code for flexible error trapping.
+    details: Choose between ASCII, binary (Base64-encoded), and raw binary appended formats, with optional zlib compression of binary data. All procedures return an integer error code for flexible error trapping.
   - icon: ⚡
     title: Parallel Safe
     details: Handle multiple concurrent files safely. Thread and processor safe — works with OpenMP and MPI paradigms without coordination overhead.
   - icon: 🛠️
     title: Multi Build System
-    details: Build with CMake (preferred), FoBiS.py, FPM, or GNU Make. Integrate into CMake projects via add_subdirectory and target_link_libraries.
+    details: Build with CMake (preferred), FoBiS.py, or FPM. Integrate into CMake projects via add_subdirectory and target_link_libraries.
   - icon: 🧱
     title: OOP Design
     details: A polymorphic xml_writer component is allocated at runtime based on the chosen format. The vtk_file, pvtk_file, vtm_file, and pvd_file types expose a clean, consistent type-bound-procedure API.

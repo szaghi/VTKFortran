@@ -7,6 +7,10 @@ module vtk_fortran_vtk_file_xml_writer_binary_local
 !< used also on (slave) processes that have not access to filesystem: the volatile string can be easily sent to other (master)
 !< processes having access to filesytem. The volatile writer mode is designed to facilitate the use of the library in parallel
 !< envinroments wehere not all processes/threads have access to filesystem.
+!<
+!< @note The encoders are passed local copies of the `is_uint64` and `is_compressed` components: with a component of the
+!< polymorphic `self` as actual argument, ifx copies the (large) encoded string returned by the encoder onto the stack,
+!< overflowing it for large dataarrays (issue #70).
 use penf
 use stringifor
 use vtk_fortran_dataarray_encoder
@@ -122,10 +126,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Float64'
    n_components = 1
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -141,10 +148,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Float32'
    n_components = 1
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -160,10 +170,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int64'
    n_components = 1
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -179,10 +192,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int32'
    n_components = 1
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -198,10 +214,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int16'
    n_components = 1
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -217,10 +236,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int8'
    n_components = 1
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -237,13 +259,16 @@ contains
    character(len=:), allocatable                        :: data_type     !< Data type.
    integer(I4P)                                         :: n_components  !< Number of components.
    character(len=:), allocatable                        :: code          !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Float64'
    n_components = size(x, dim=1)
    if (present(one_component)) then
      if (one_component) n_components = 1
    endif
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -260,13 +285,16 @@ contains
    character(len=:), allocatable                        :: data_type     !< Data type.
    integer(I4P)                                         :: n_components  !< Number of components.
    character(len=:), allocatable                        :: code          !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Float32'
    n_components = size(x, dim=1)
    if (present(one_component)) then
      if (one_component) n_components = 1
    endif
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -283,13 +311,16 @@ contains
    character(len=:), allocatable                        :: data_type     !< Data type.
    integer(I4P)                                         :: n_components  !< Number of components.
    character(len=:), allocatable                        :: code          !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int64'
    n_components = size(x, dim=1)
    if (present(one_component)) then
      if (one_component) n_components = 1
    endif
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -306,13 +337,16 @@ contains
    character(len=:), allocatable                        :: data_type     !< Data type.
    integer(I4P)                                         :: n_components  !< Number of components.
    character(len=:), allocatable                        :: code          !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int32'
    n_components = size(x, dim=1)
    if (present(one_component)) then
      if (one_component) n_components = 1
    endif
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -329,13 +363,16 @@ contains
    character(len=:), allocatable                        :: data_type     !< Data type.
    integer(I4P)                                         :: n_components  !< Number of components.
    character(len=:), allocatable                        :: code          !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int16'
    n_components = size(x, dim=1)
    if (present(one_component)) then
      if (one_component) n_components = 1
    endif
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -352,13 +389,16 @@ contains
    character(len=:), allocatable                        :: data_type     !< Data type.
    integer(I4P)                                         :: n_components  !< Number of components.
    character(len=:), allocatable                        :: code          !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int8'
    n_components = size(x, dim=1)
    if (present(one_component)) then
      if (one_component) n_components = 1
    endif
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -375,13 +415,16 @@ contains
    character(len=:), allocatable                        :: data_type     !< Data type.
    integer(I4P)                                         :: n_components  !< Number of components.
    character(len=:), allocatable                        :: code          !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Float64'
    n_components = size(x, dim=1)
    if (present(one_component)) then
      if (one_component) n_components = 1
    endif
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -398,13 +441,16 @@ contains
    character(len=:), allocatable                        :: data_type     !< Data type.
    integer(I4P)                                         :: n_components  !< Number of components.
    character(len=:), allocatable                        :: code          !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Float32'
    n_components = size(x, dim=1)
    if (present(one_component)) then
      if (one_component) n_components = 1
    endif
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -421,13 +467,16 @@ contains
    character(len=:), allocatable                        :: data_type     !< Data type.
    integer(I4P)                                         :: n_components  !< Number of components.
    character(len=:), allocatable                        :: code          !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int64'
    n_components = size(x, dim=1)
    if (present(one_component)) then
      if (one_component) n_components = 1
    endif
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -444,13 +493,16 @@ contains
    character(len=:), allocatable                        :: data_type     !< Data type.
    integer(I4P)                                         :: n_components  !< Number of components.
    character(len=:), allocatable                        :: code          !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int32'
    n_components = size(x, dim=1)
    if (present(one_component)) then
      if (one_component) n_components = 1
    endif
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -467,13 +519,16 @@ contains
    character(len=:), allocatable                       :: data_type     !< Data type.
    integer(I4P)                                        :: n_components  !< Number of components.
    character(len=:), allocatable                       :: code          !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int16'
    n_components = size(x, dim=1)
    if (present(one_component)) then
      if (one_component) n_components = 1
    endif
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -490,13 +545,16 @@ contains
    character(len=:), allocatable                        :: data_type     !< Data type.
    integer(I4P)                                         :: n_components  !< Number of components.
    character(len=:), allocatable                        :: code          !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int8'
    n_components = size(x, dim=1)
    if (present(one_component)) then
      if (one_component) n_components = 1
    endif
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -513,13 +571,16 @@ contains
    character(len=:), allocatable                        :: data_type      !< Data type.
    integer(I4P)                                         :: n_components   !< Number of components.
    character(len=:), allocatable                        :: code           !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Float64'
    n_components = size(x, dim=1)
    if (present(one_component)) then
      if (one_component) n_components = 1
    endif
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -536,13 +597,16 @@ contains
    character(len=:), allocatable                        :: data_type      !< Data type.
    integer(I4P)                                         :: n_components   !< Number of components.
    character(len=:), allocatable                        :: code           !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Float32'
    n_components = size(x, dim=1)
    if (present(one_component)) then
      if (one_component) n_components = 1
    endif
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -559,13 +623,16 @@ contains
    character(len=:), allocatable                        :: data_type      !< Data type.
    integer(I4P)                                         :: n_components   !< Number of components.
    character(len=:), allocatable                        :: code           !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int64'
    n_components = size(x, dim=1)
    if (present(one_component)) then
      if (one_component) n_components = 1
    endif
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -582,13 +649,16 @@ contains
    character(len=:), allocatable                        :: data_type      !< Data type.
    integer(I4P)                                         :: n_components   !< Number of components.
    character(len=:), allocatable                        :: code           !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int32'
    n_components = size(x, dim=1)
    if (present(one_component)) then
      if (one_component) n_components = 1
    endif
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -605,13 +675,16 @@ contains
    character(len=:), allocatable                        :: data_type      !< Data type.
    integer(I4P)                                         :: n_components   !< Number of components.
    character(len=:), allocatable                        :: code           !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int16'
    n_components = size(x, dim=1)
    if (present(one_component)) then
      if (one_component) n_components = 1
    endif
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -628,13 +701,16 @@ contains
    character(len=:), allocatable                        :: data_type      !< Data type.
    integer(I4P)                                         :: n_components   !< Number of components.
    character(len=:), allocatable                        :: code           !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int8'
    n_components = size(x, dim=1)
    if (present(one_component)) then
      if (one_component) n_components = 1
    endif
-   code = encode_binary_dataarray(x=x, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -652,10 +728,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Float64'
    n_components = 3
-   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -673,10 +752,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Float32'
    n_components = 3
-   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -694,10 +776,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int64'
    n_components = 3
-   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -715,10 +800,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int32'
    n_components = 3
-   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -736,10 +824,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int16'
    n_components = 3
-   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -757,10 +848,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int8'
    n_components = 3
-   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -778,10 +872,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Float64'
    n_components = 3
-   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -799,10 +896,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Float32'
    n_components = 3
-   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -820,10 +920,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int64'
    n_components = 3
-   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -841,10 +944,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int32'
    n_components = 3
-   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -862,10 +968,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int16'
    n_components = 3
-   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -883,10 +992,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int8'
    n_components = 3
-   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -907,10 +1019,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Float64'
    n_components = 6
-   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -931,10 +1046,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Float32'
    n_components = 6
-   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -955,10 +1073,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int64'
    n_components = 6
-   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -979,10 +1100,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int32'
    n_components = 6
-   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -1003,10 +1127,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int16'
    n_components = 6
-   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -1027,10 +1154,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int8'
    n_components = 6
-   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -1051,10 +1181,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Float64'
    n_components = 6
-   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -1075,10 +1208,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Float32'
    n_components = 6
-   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -1099,10 +1235,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int64'
    n_components = 6
-   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -1123,10 +1262,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int32'
    n_components = 6
-   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -1147,10 +1289,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int16'
    n_components = 6
-   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -1171,10 +1316,13 @@ contains
    character(len=:), allocatable                        :: data_type    !< Data type.
    integer(I4P)                                         :: n_components !< Number of components.
    character(len=:), allocatable                        :: code         !< Data variable encoded, binary or Base64 codec.
+   logical                                              :: is_uint64     !< Use a UInt64 header, local copy (see module note).
+   logical                                              :: is_compressed !< Compress the data, local copy (see module note).
 
    data_type = 'Int8'
    n_components = 6
-   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=self%is_uint64)
+   is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
+   code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error

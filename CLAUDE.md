@@ -6,24 +6,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### CMake (recommended)
 ```bash
-cmake -S . -B build -DBUILD_TESTING=ON
-cmake --build build
-ctest --test-dir build
+cmake -S . -B build -DBUILD_TESTING=ON   # add -DVTKFORTRAN_USE_ZLIB=ON for zlib compression
+cmake --build build                      # test programs in build/src/tests/ (not registered with CTest)
 ```
 
 ### FoBiS.py
 ```bash
-FoBiS.py build -mode tests-gnu       # Build and place test executables in ./exe/
-FoBiS.py build -mode static-gnu      # Build static library
-FoBiS.py build -lmodes               # List all available modes
-bash run_tests.sh                     # Run all executables in ./exe/ and check pass/fail
+fobis fetch                          # Fetch the dependencies into src/third_party/ (needed by CMake and FoBiS builds)
+fobis build --mode tests-gnu         # Build and place test executables in ./exe/
+fobis build --mode tests-gnu-debug   # As the CI: debug, with zlib (VTKFORTRAN_USE_ZLIB)
+fobis build --mode static-gnu        # Build static library
+fobis build --lmodes                 # List all available modes
+scripts/run_tests.sh                 # Run all executables in ./exe/: pass/fail from the exit status
 ```
 
 ### FPM
 ```bash
-fpm build
-fpm test
+fpm build   # library only; zlib: --flag "-DVTKFORTRAN_USE_ZLIB" --link-flag "-Wl,--no-as-needed -lz"
 ```
+
+zlib compression (`compressor='zlib'`, `raw-zlib`) is optional: CMake `-DVTKFORTRAN_USE_ZLIB=ON`, FoBiS
+`-DVTKFORTRAN_USE_ZLIB` + `ext_libs = z`. Without it `vtk_fortran_zlib` holds stubs and requesting zlib is an error.
 
 ## Architecture
 
@@ -41,12 +44,13 @@ VTKFortran is a Fortran 2003+ library for reading/writing VTK XML format files. 
   - `vtk_fortran_vtk_file_xml_writer_ascii_local` — human-readable ASCII
   - `vtk_fortran_vtk_file_xml_writer_binary_local` — Base64-encoded binary inside XML elements
   - `vtk_fortran_vtk_file_xml_writer_appended` — raw binary in appended section with offsets
-- `vtk_fortran_dataarray_encoder` — overloaded encoding routines for ASCII and Base64, covering all PENF numeric kinds and ranks 1–4
+- `vtk_fortran_dataarray_encoder` — overloaded encoding routines for ASCII and Base64 (optionally zlib-compressed), covering all PENF numeric kinds and ranks 1–4
+- `vtk_fortran_zlib` — zlib bindings and VTK block compression (`zlib_compress_blocks`); always compiled, stubs without `VTKFORTRAN_USE_ZLIB`
 - `vtk_fortran_parameters` — shared constants (`stderr`, `stdout`, `end_rec`)
 
 Source lives in `src/lib/` (library) and `src/tests/` (integration test programs).
 
-### Third-party dependencies (git submodules in `src/third_party/`)
+### Third-party dependencies (fetched by `fobis fetch` into `src/third_party/`)
 
 | Library | Purpose |
 |---------|---------|
@@ -56,7 +60,7 @@ Source lives in `src/lib/` (library) and `src/tests/` (integration test programs
 | **FoXy** | XML tag parsing/emitting |
 | **FACE** | ANSI terminal colour output |
 
-CMake pulls all submodules via `add_subdirectory()` and centralises `.mod` files under `${PROJECT_BINARY_DIR}/src/third_party/<LIB>/modules/`.
+CMake pulls all dependencies via `add_subdirectory()` and centralises `.mod` files under `${PROJECT_BINARY_DIR}/src/third_party/<LIB>/modules/`.
 
 ## Coding Conventions (from CONTRIBUTING.md)
 
@@ -68,4 +72,4 @@ CMake pulls all submodules via `add_subdirectory()` and centralises `.mod` files
 
 ## Test Infrastructure
 
-Each test program in `src/tests/` writes actual VTK XML files, then prints `"Are all tests passed? T"` or `"F"`. `run_tests.sh` collects these results and exits non-zero if any test fails. Tests cover major topologies: VTI and PVTI (image data), VTR (rectilinear), VTS (structured), VTU (unstructured, polyhedra), VTP and PVTP (polydata), VTM (multi-block), PVTS and PVTU (parallel), PVD (time series), active arrays, large arrays, UInt64 headers, and volatile XML output.
+Each test program in `src/tests/` writes actual VTK XML files, then prints `"Are all tests passed? T"` or `"F"`. `scripts/run_tests.sh` judges each test by its exit status only, so a test must also exit non-zero when a check fails (`error stop`). Tests cover major topologies: VTI and PVTI (image data), VTR (rectilinear), VTS (structured), VTU (unstructured, polyhedra), VTP and PVTP (polydata), VTM (multi-block), PVTS and PVTU (parallel), PVD (time series), active arrays, large arrays, UInt64 headers, zlib compressed binary data, and volatile XML output.

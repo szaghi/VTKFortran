@@ -8,6 +8,7 @@ use vtk_fortran_vtk_file_xml_writer_abstract
 use vtk_fortran_vtk_file_xml_writer_appended
 use vtk_fortran_vtk_file_xml_writer_ascii_local
 use vtk_fortran_vtk_file_xml_writer_binary_local
+use vtk_fortran_zlib, only : is_zlib_enabled
 
 implicit none
 private
@@ -34,7 +35,7 @@ contains
    endsubroutine get_xml_volatile
 
    function initialize(self, format, filename, mesh_topology, is_volatile, nx1, nx2, ny1, ny2, nz1, nz2, &
-                       origin, spacing, direction, header_type) result(error)
+                       origin, spacing, direction, header_type, compressor) result(error)
    !< Initialize file (writer).
    !<
    !< @note This function must be the first to be called.
@@ -44,12 +45,20 @@ contains
    !<- ASCII: data are saved in ASCII format;
    !<- BINARY: data are saved in base64 encoded format;
    !<- RAW: data are saved in raw-binary format in the appended tag of the XML file;
-   !<- RAW-ZLIB: data are saved in raw-binary format in the appended tag of the XML file using VTK internal zlib compression;
+   !<- RAW-ZLIB: shorthand of RAW with `compressor='zlib'`;
    !<- BINARY-APPENDED: data are saved in base64 encoded format in the appended tag of the XML file.
+   !<
+   !<### Compression of binary data
+   !<
+   !< The optional `compressor` compresses the data of the binary formats (BINARY, RAW, BINARY-APPENDED) as VTK does
+   !< (`vtkZLibDataCompressor`, blocks of 32 KiB): **none** (default) or **zlib**, case insensitive; it is ignored by the ASCII
+   !< format. zlib needs the library built with `VTKFORTRAN_USE_ZLIB`: otherwise, as for an unknown compressor, `initialize`
+   !< returns a non-zero error. RAW-ZLIB with `compressor='none'` is an error too.
    !<
    !<### Bytes count header of binary data
    !<
-   !< Each binary DataArray (formats BINARY, RAW, RAW-ZLIB, BINARY-APPENDED) is prefixed by its bytes count. The optional
+   !< Each binary DataArray (formats BINARY, RAW, RAW-ZLIB, BINARY-APPENDED) is prefixed by its bytes count (by the header of
+   !< its compressed blocks, when compressed). The optional
    !< `header_type` selects its width: **UInt32** (default) limits each DataArray to 2 GiB (larger ones stop the execution with
    !< an explicit error), **UInt64** lifts the limit; it is case insensitive and ignored by the ASCII format.
    !<
@@ -72,11 +81,13 @@ contains
    !< ...
    !< error = vtk%initialize('BINARY','XML_RECT_BINARY.vtr','RectilinearGrid',nx1=nx1,nx2=nx2,ny1=ny1,ny2=ny2,nz1=nz1,nz2=nz2)
    !< ...
+   !< error = vtk%initialize('BINARY','XML_UNST_ZLIB.vtu','UnstructuredGrid',compressor='zlib')
+   !< ...
    !<```
    !< @note The file extension is necessary in the file name. The XML standard has different extensions for each
    !< different topologies (e.g. *vtr* for rectilinear topology). See the VTK-standard file for more information.
    class(vtk_file), intent(inout)        :: self          !< VTK file.
-   character(*),    intent(in)           :: format        !< File format: ASCII, BINARY, RAW or BINARY-APPENDED.
+   character(*),    intent(in)           :: format        !< File format: ASCII, BINARY, RAW, RAW-ZLIB or BINARY-APPENDED.
    character(*),    intent(in)           :: filename      !< File name.
    character(*),    intent(in)           :: mesh_topology !< Mesh topology.
    logical,         intent(in), optional :: is_volatile   !< Flag to check volatile writer.
@@ -90,8 +101,10 @@ contains
    real(R8P),       intent(in), optional :: spacing(3)     !< Spacing of ImageData along each axis.
    real(R8P),       intent(in), optional :: direction(9)   !< Axes directions of ImageData, row-major 3x3 matrix (default identity).
    character(*),    intent(in), optional :: header_type    !< Bytes count header of binary data: UInt32 (default) or UInt64.
+   character(*),    intent(in), optional :: compressor     !< Compressor of binary data: none (default) or zlib.
    integer(I4P)                          :: error         !< Error status.
    type(string)                          :: fformat       !< File format.
+   logical                               :: is_compressed !< Compress the binary data.
 
    if (.not.is_initialized) call penf_init
    if (.not.is_b64_initialized) call b64_init
@@ -121,6 +134,24 @@ contains
          return
       endselect
    endif
+   is_compressed = fformat == 'RAW-ZLIB'
+   if (present(compressor)) then
+      select case(upper_case(trim(adjustl(compressor))))
+      case('NONE')
+         if (is_compressed) error = 1_I4P ! RAW-ZLIB is always compressed
+      case('ZLIB')
+         is_compressed = .true.
+      case default
+         error = 1_I4P
+      endselect
+      if (error /= 0_I4P) return
+   endif
+   if (fformat == 'ASCII') is_compressed = .false.
+   if (is_compressed .and. .not. is_zlib_enabled) then
+      error = 1_I4P
+      return
+   endif
+   self%xml_writer%is_compressed = is_compressed
    if (index(mesh_topology, 'ImageData') > 0) then
       ! ImageData grids are defined by extents, origin and spacing (direction is optional)
       if (.not.(present(origin).and.present(spacing))) then

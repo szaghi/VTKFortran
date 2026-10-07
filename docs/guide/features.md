@@ -46,10 +46,17 @@ The legacy (`.vtk`) format is not supported: VTKFortran writes the VTK XML forma
 | `binary` | Base64-encoded binary inside XML elements |
 | `raw` | Raw binary in the XML appended section (with byte offsets) |
 | `binary-appended` | Base64-encoded binary in the XML appended section |
-| `raw-zlib` | Raw binary in the XML appended section, zlib-compressed (`vtkZLibDataCompressor`); requires building with `VTKFORTRAN_USE_ZLIB` |
+| `raw-zlib` | Shorthand for `raw` with `compressor='zlib'` |
 
 The format string passed to `initialize` is case-insensitive. Binary arrays are prefixed by a UInt32 bytes count by default
 (2 GiB per array); `header_type='UInt64'` lifts the limit, see [Usage](/guide/usage#large-data-arrays-uint64-headers).
+
+### Compression
+
+The three binary formats (`binary`, `raw`, `binary-appended`) can be zlib-compressed with `compressor='zlib'`, the layout
+VTK and ParaView write (`vtkZLibDataCompressor`, 32 KiB blocks): the encoded arrays are byte-identical to VTK's own writer at
+the same compression level. zlib is optional: it needs the library built with `VTKFORTRAN_USE_ZLIB`, see
+[Usage](/guide/usage#compressed-binary-data-zlib) and [Installation](/guide/installation#optional-zlib-compression).
 
 ## Global Field Data
 
