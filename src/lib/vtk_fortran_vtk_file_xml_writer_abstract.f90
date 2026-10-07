@@ -16,6 +16,7 @@ type, abstract :: xml_writer_abstract
   type(string)  :: topology                        !< Mesh topology.
   integer(I4P)  :: indent=0_I4P                    !< Indent count.
   integer(I4P)  :: ghost_level=0_I4P               !< Ghost level of parallel (P*) topologies.
+  type(string)  :: data_type_override              !< If set, type of the next DataArray tag (then unset).
   integer(I8P)  :: ioffset=0_I8P                   !< Offset count.
   integer(I4P)  :: xml=0_I4P                       !< XML Logical unit.
   integer(I4P)  :: vtm_block(1:2)=[-1_I4P, -1_I4P] !< Block indexes.
@@ -1009,16 +1010,22 @@ contains
    logical,                    intent(in), optional :: is_tuples            !< Use "NumberOfTuples".
    type(string)                                     :: tag_attributes       !< Tag attributes.
    logical                                          :: is_tuples_           !< Use "NumberOfTuples".
+   character(len=:), allocatable                    :: data_type_           !< Type of dataarray, actually written.
 
+   data_type_ = trim(adjustl(data_type))
+   if (self%data_type_override%is_allocated()) then
+      data_type_ = self%data_type_override%chars()
+      call self%data_type_override%free
+   endif
    is_tuples_ = .false.
    if (present(is_tuples)) is_tuples_ = is_tuples
    if (is_tuples_) then
-      tag_attributes = 'type="'//trim(adjustl(data_type))//             &
+      tag_attributes = 'type="'//data_type_//             &
         '" NumberOfTuples="'//trim(str(number_of_components, .true.))// &
         '" Name="'//trim(adjustl(data_name))//                          &
         '" format="'//self%format_ch//'"'
    else
-      tag_attributes = 'type="'//trim(adjustl(data_type))//                 &
+      tag_attributes = 'type="'//data_type_//                 &
         '" NumberOfComponents="'//trim(str(number_of_components, .true.))// &
         '" Name="'//trim(adjustl(data_name))//                              &
         '" format="'//self%format_ch//'"'
@@ -1043,17 +1050,23 @@ contains
    logical,                    intent(in), optional :: is_tuples            !< Use "NumberOfTuples".
    type(string)                                     :: tag_attributes       !< Tag attributes.
    logical                                          :: is_tuples_           !< Use "NumberOfTuples".
+   character(len=:), allocatable                    :: data_type_           !< Type of dataarray, actually written.
 
+   data_type_ = trim(adjustl(data_type))
+   if (self%data_type_override%is_allocated()) then
+      data_type_ = self%data_type_override%chars()
+      call self%data_type_override%free
+   endif
    is_tuples_ = .false.
    if (present(is_tuples)) is_tuples_ = is_tuples
    if (is_tuples_) then
-      tag_attributes =  'type="'//trim(adjustl(data_type))//            &
+      tag_attributes =  'type="'//data_type_//            &
         '" NumberOfTuples="'//trim(str(number_of_components, .true.))// &
         '" Name="'//trim(adjustl(data_name))//                          &
         '" format="'//self%format_ch//                                  &
         '" offset="'//trim(str(self%ioffset, .true.))//'"'
    else
-      tag_attributes = 'type="'//trim(adjustl(data_type))//                 &
+      tag_attributes = 'type="'//data_type_//                 &
         '" NumberOfComponents="'//trim(str(number_of_components, .true.))// &
         '" Name="'//trim(adjustl(data_name))//                              &
         '" format="'//self%format_ch//                                      &
@@ -1534,6 +1547,8 @@ contains
    call self%write_start_tag(name='Cells')
    error = self%write_dataarray(data_name='connectivity', x=connectivity)
    error = self%write_dataarray(data_name='offsets', x=offset)
+   ! cell types are written as UInt8, as the VTK XML format specifies (same bytes of Int8, cell type codes are < 128)
+   self%data_type_override = 'UInt8'
    error = self%write_dataarray(data_name='types', x=cell_type)
    !< Add faces and faceoffsets to the cell block for polyhedra. If the cell is not a polyhedron, its offset must be set to -1.
    !< They must be children of the Cells element, otherwise readers ignore them (issue #31).

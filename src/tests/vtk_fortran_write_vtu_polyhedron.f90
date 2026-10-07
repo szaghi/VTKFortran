@@ -4,7 +4,7 @@ program vtk_fortran_write_vtu_polyhedron
 !<
 !< A unit cube described as a general polyhedron (VTK_POLYHEDRON = 42) and a tetrahedron (VTK_TETRA = 10). The `faces` and
 !< `faceoffsets` DataArrays describing the polyhedra **must** be children of the `Cells` element: the test checks it in the ASCII
-!< output, then writes the binary and raw files too.
+!< output, then writes the binary and raw files too. It also checks that the cell types are written as UInt8.
 use penf
 use vtk_fortran, only : vtk_file
 
@@ -33,7 +33,7 @@ call write_file(format='ascii', filename='XML_UNST-polyhedron-ascii.vtu')
 test_passed(1) = faces_inside_cells(filename='XML_UNST-polyhedron-ascii.vtu')
 call write_file(format='binary', filename='XML_UNST-polyhedron-binary.vtu')
 call write_file(format='raw', filename='XML_UNST-polyhedron-raw.vtu')
-test_passed(2) = .true. ! binary and raw are checked by VTK readers, outside this test
+test_passed(2) = types_are_uint8(filename='XML_UNST-polyhedron-ascii.vtu')
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 stop
@@ -79,4 +79,22 @@ contains
   close(u)
   is_inside = found == 2
   endfunction faces_inside_cells
+
+  function types_are_uint8(filename) result(is_uint8)
+  !< Check that the cell types DataArray is written as UInt8, as the VTK XML format specifies.
+  character(*), intent(in) :: filename !< File name.
+  logical                  :: is_uint8 !< Check result.
+  character(len=1024)      :: line     !< Line buffer.
+  integer(I4P)             :: u        !< File unit.
+  integer(I4P)             :: iostat   !< IO status.
+
+  is_uint8 = .false.
+  open(newunit=u, file=filename, action='read')
+  do
+    read(u, '(A)', iostat=iostat) line
+    if (iostat /= 0) exit
+    if (index(line, 'Name="types"') > 0) is_uint8 = index(line, 'type="UInt8"') > 0
+  enddo
+  close(u)
+  endfunction types_are_uint8
 endprogram vtk_fortran_write_vtu_polyhedron

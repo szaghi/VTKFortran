@@ -123,6 +123,9 @@ error = a_vtk_file%finalize()
 
 Supported formats for unstructured grids: `ascii`, `raw`, and `binary`.
 
+Cell types are passed as `integer(I1P)` and written as a `UInt8` DataArray, as the VTK XML format specifies (VTK cell type
+codes are all below 128, so the bytes are the same).
+
 ### Polyhedron cells
 
 General polyhedra (VTK cell type `42`) need two more arrays, passed to `write_connectivity` as the optional `face` and
