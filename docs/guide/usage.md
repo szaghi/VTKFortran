@@ -255,6 +255,35 @@ error = a_vtm_file%write_block(filenames=[filenames(3), filenames(4)], &
 error = a_vtm_file%finalize()
 ```
 
+### Nested blocks
+
+Blocks can contain both datasets and other blocks, to any depth, e.g. to mirror the parts and assemblies of a CAD model.
+Build the hierarchy step by step with the `action` argument of `write_block`:
+
+| Call | Effect |
+|------|--------|
+| `write_block(action='open', name=...)` | open a child block of the current block (or a top-level block) |
+| `write_block(filenames=[...], names=[...], action='write')` | write the files as datasets of the current block |
+| `write_block(filenames=[...], names=[...], name=...)` | write the files wrapped in a new child block |
+| `write_block(action='close')` | close the current block |
+
+```fortran
+error = a_vtm_file%initialize(filename='machine.vtm')
+error = a_vtm_file%write_block(action='open', name='assembly')                              ! Block 0
+error = a_vtm_file%write_block(filenames=['a.vtu', 'b.vtu'], names=['a', 'b'], action='write') !   DataSet 0, 1
+error = a_vtm_file%write_block(filenames=['b1.vtu', 'b2.vtu'], name='bolts')                  !   Block 2: DataSet 0, 1
+error = a_vtm_file%write_block(action='open', name='sub-assembly')                          !   Block 3
+error = a_vtm_file%write_block(filenames=['n.vtu'], name='nuts')                              !     Block 0: DataSet 0
+error = a_vtm_file%write_block(action='close')                                              !   (end of Block 3)
+error = a_vtm_file%write_block(action='close')                                              ! (end of Block 0)
+error = a_vtm_file%finalize()
+```
+
+- The children of a block (blocks and datasets together) get the indexes 0, 1, 2, … in the order they are written, as VTK
+  numbers the children of a multi-block dataset. Every `action='open'` needs its `action='close'`.
+- The string form (`filenames='a.vtu b.vtu'`, names separated by blanks) accepts the same `action` values.
+- The test `src/tests/vtk_fortran_write_vtm_nested.f90` writes the hierarchy of issue #25, checked with VTK's reader.
+
 ## Parallel Structured Grid (PVTS)
 
 For MPI-parallel codes, each rank writes its own partition as a regular VTS file, then a single PVTS header file references all partitions.

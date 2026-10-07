@@ -29,7 +29,7 @@ type, abstract :: xml_writer_abstract
   logical       :: is_compressed=.false.           !< Compress (zlib) the binary data.
   integer(I8P)  :: ioffset=0_I8P                   !< Offset count.
   integer(I4P)  :: xml=0_I4P                       !< XML Logical unit.
-  integer(I4P)  :: vtm_block(1:2)=[-1_I4P, -1_I4P] !< Block indexes.
+  integer(I4P), allocatable :: vtm_index(:)       !< Next child index of each open level of a multi-block file.
   integer(I4P)  :: error=0_I4P                     !< IO Error status.
   type(xml_tag) :: tag                             !< XML tags handler.
   logical       :: is_volatile=.false.             !< Flag to check volatile writer.
@@ -200,6 +200,7 @@ type, abstract :: xml_writer_abstract
     procedure, pass(self), private :: write_fielddata1_rank1            !< Write FieldData tag (data 1, rank 1).
     procedure, pass(self), private :: write_fielddata_strings           !< Write FieldData tag (strings).
     procedure, pass(self), private :: dataarray_tag_overrides           !< Apply the one-shot overrides of DataArray tag.
+    procedure, pass(self), private :: next_vtm_index                    !< Return (and count) the next multi-block child index.
     procedure, pass(self), private :: write_fielddata_tag               !< Write FieldData tag.
     procedure, pass(self), private :: write_geo_strg_data1_rank2_R8P    !< Write **StructuredGrid** mesh (data 1, rank 2, R8P).
     procedure, pass(self), private :: write_geo_strg_data1_rank2_R4P    !< Write **StructuredGrid** mesh (data 1, rank 2, R4P).
@@ -876,7 +877,7 @@ contains
    self%indent=0_I4P
    self%ioffset=0_I8P
    self%xml=0_I4P
-   self%vtm_block(1:2)=[-1_I4P, -1_I4P]
+   if (allocated(self%vtm_index)) deallocate(self%vtm_index)
    self%error=0_I4P
    call self%tag%free
    self%is_volatile=.false.
@@ -1908,17 +1909,19 @@ contains
    ! write_parallel methods
    function write_parallel_open_block(self, name) result(error)
    !< Write a block (open) container.
+   !<
+   !< Blocks can be nested: each open block is a new level. The children of a level (blocks and datasets) are indexed from 0
+   !< in the order they are written, as VTK numbers the children of a multi-block dataset.
    class(xml_writer_abstract), intent(inout)        :: self   !< Writer.
    character(*),               intent(in), optional :: name   !< Block name.
    integer(I4P)                                     :: error  !< Error status.
    type(string)                                     :: buffer !< Buffer string.
+   integer(I4P)                                     :: child  !< Index of the block in its level.
 
-   self%vtm_block = self%vtm_block + 1
-   if (present(name)) then
-      buffer = 'index="'//trim(str((self%vtm_block(1) + self%vtm_block(2)),.true.))//'" name="'//trim(adjustl(name))//'"'
-   else
-      buffer = 'index="'//trim(str((self%vtm_block(1) + self%vtm_block(2)),.true.))//'"'
-   endif
+   child = self%next_vtm_index()
+   buffer = 'index="'//trim(str(child, .true.))//'"'
+   if (present(name)) buffer = buffer//' name="'//trim(adjustl(name))//'"'
+   self%vtm_index = [self%vtm_index, 0_I4P] ! a new level, its children start from 0
    call self%write_start_tag(name='Block', attributes=buffer%chars())
    error = self%error
    endfunction write_parallel_open_block
@@ -1928,10 +1931,22 @@ contains
    class(xml_writer_abstract), intent(inout) :: self  !< Writer.
    integer(I4P)                              :: error !< Error status.
 
-   self%vtm_block(2) = -1
+   if (allocated(self%vtm_index)) then
+      if (size(self%vtm_index) > 1) self%vtm_index = self%vtm_index(1:size(self%vtm_index)-1)
+   endif
    call self%write_end_tag(name='Block')
    error = self%error
    endfunction write_parallel_close_block
+
+   function next_vtm_index(self) result(vtm_index)
+   !< Return the index of the next child (block or dataset) of the current level of a multi-block file, and count it.
+   class(xml_writer_abstract), intent(inout) :: self      !< Writer.
+   integer(I4P)                              :: vtm_index !< Index of the next child.
+
+   if (.not.allocated(self%vtm_index)) self%vtm_index = [0_I4P] ! root level
+   vtm_index = self%vtm_index(size(self%vtm_index))
+   self%vtm_index(size(self%vtm_index)) = vtm_index + 1_I4P
+   endfunction next_vtm_index
 
    function write_parallel_dataarray(self, data_name, data_type, number_of_components) result(error)
    !< Write parallel (partitioned) VTK-XML dataarray info.
@@ -1986,6 +2001,9 @@ contains
    character(*),               intent(in), optional :: name       !< Names attributed to wrapped file.
    integer(I4P)                                     :: error      !< Error status.
 
+   ! the explicit index is used, and the next child of the current level follows it
+   if (.not.allocated(self%vtm_index)) self%vtm_index = [0_I4P]
+   self%vtm_index(size(self%vtm_index)) = file_index + 1_I4P
    if (present(name)) then
       call self%write_self_closing_tag(name='DataSet',                                      &
                                        attributes='index="'//trim(str(file_index, .true.))//&
@@ -2017,20 +2035,23 @@ contains
    character(*),               intent(in), optional :: names(:)     !< List names attributed to wrapped files.
    integer(I4P)                                     :: error        !< Error status.
    integer(I4P)                                     :: f            !< File counter.
+   integer(I4P)                                     :: child         !< Index of the dataset in its level.
 
    if (present(names)) then
       if (size(names, dim=1)==size(filenames, dim=1)) then
          do f=1, size(filenames, dim=1)
+            child = self%next_vtm_index()
             call self%write_self_closing_tag(name='DataSet',                                     &
-                                             attributes='index="'//trim(str(f-1, .true.))//      &
+                                             attributes='index="'//trim(str(child, .true.))//               &
                                                        '" file="'//trim(adjustl(filenames(f)))// &
                                                        '" name="'//trim(adjustl(names(f)))//'"')
          enddo
       endif
    else
       do f=1,size(filenames, dim=1)
+         child = self%next_vtm_index()
          call self%write_self_closing_tag(name='DataSet',                                &
-                                          attributes='index="'//trim(str(f-1, .true.))// &
+                                          attributes='index="'//trim(str(child, .true.))//               &
                                                     '" file="'//trim(adjustl(filenames(f)))//'"')
       enddo
    endif
@@ -2060,6 +2081,7 @@ contains
    type(string)                                     :: delimiter_    !< Delimiter character.
    type(string)                                     :: buffer        !< A string buffer.
    integer(I4P)                                     :: f             !< File counter.
+   integer(I4P)                                     :: child         !< Index of the dataset in its level.
 
    delimiter_ = ' ' ; if (present(delimiter)) delimiter_ = delimiter
    buffer = filenames
@@ -2069,16 +2091,18 @@ contains
       call buffer%split(tokens=names_, sep=delimiter_%chars())
       if (size(names_, dim=1)==size(filenames_, dim=1)) then
          do f=1, size(filenames_, dim=1)
+            child = self%next_vtm_index()
             call self%write_self_closing_tag(name='DataSet',                                      &
-                                             attributes='index="'//trim(str(f-1, .true.))//       &
+                                             attributes='index="'//trim(str(child, .true.))//               &
                                                        '" file="'//trim(adjustl(filenames_(f)))// &
                                                        '" name="'//trim(adjustl(names_(f)))//'"')
          enddo
       endif
    else
       do f=1,size(filenames_, dim=1)
+         child = self%next_vtm_index()
          call self%write_self_closing_tag(name='DataSet',                               &
-                                          attributes='index="'//trim(str(f-1,.true.))// &
+                                          attributes='index="'//trim(str(child, .true.))//               &
                                                     '" file="'//trim(adjustl(filenames_(f)))//'"')
       enddo
    endif

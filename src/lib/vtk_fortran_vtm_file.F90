@@ -64,8 +64,11 @@ contains
   endfunction finalize
 
   ! private methods
-  function write_block_array(self, filenames, names, name) result(error)
+  function write_block_array(self, filenames, names, name, action) result(error)
   !< Write one block dataset (array input).
+  !<
+  !< By default the files are wrapped in a new block; with `action='write'` they are written as datasets of the current
+  !< (open) block, without a new block.
   !<
   !<#### Example of usage: 3 files blocks
   !<```fortran
@@ -77,19 +80,35 @@ contains
   !< error = vtm%write_block(filenames=['file_1.vts', 'file_2.vts', 'file_3.vtu'], &
   !<                         names=['block-bar', 'block-foo', 'block-baz'], name='my_block')
   !<```
+  !<
+  !<#### Example of usage: nested blocks
+  !<```fortran
+  !< error = vtm%write_block(action='open', name='assembly')
+  !< error = vtm%write_block(filenames=['part_1.vtu', 'part_2.vtu'], action='write') ! datasets 0, 1 of assembly
+  !< error = vtm%write_block(filenames=['bolt_1.vtu', 'bolt_2.vtu'], name='bolts')  ! block 2 of assembly
+  !< error = vtm%write_block(action='close')
+  !<```
   class(vtm_file), intent(inout)        :: self          !< VTM file.
   character(*),    intent(in)           :: filenames(1:) !< File names of VTK files grouped into current block.
   character(*),    intent(in), optional :: names(1:)     !< Auxiliary names attributed to each files.
   character(*),    intent(in), optional :: name          !< Block name
+  character(*),    intent(in), optional :: action        !< Action: 'write' (datasets of the current block) or default.
   integer(I4P)                          :: error         !< Error status.
+  logical                               :: is_new_block  !< Wrap the files in a new block.
 
-  error = self%xml_writer%write_parallel_open_block(name=name)
+  is_new_block = .true.
+  if (present(action)) is_new_block = trim(adjustl(action)) /= 'write' .and. trim(adjustl(action)) /= 'WRITE'
+  if (is_new_block) error = self%xml_writer%write_parallel_open_block(name=name)
   error = self%xml_writer%write_parallel_block_files(filenames=filenames, names=names)
-  error = self%xml_writer%write_parallel_close_block()
+  if (is_new_block) error = self%xml_writer%write_parallel_close_block()
   endfunction write_block_array
 
    function write_block_string(self, action, filenames, names, name) result(error)
    !< Write one block dataset (string input).
+   !<
+   !< With `action` the block is written in steps, so blocks can be nested: `'open'` opens a (child) block, `'write'` writes the
+   !< files as datasets of the current block, `'close'` closes it. The children of a block (blocks and datasets) are indexed
+   !< from 0 in the order they are written.
    !<
    !<#### Example of usage: 3 files blocks
    !<```fortran
