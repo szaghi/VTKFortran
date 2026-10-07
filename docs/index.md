@@ -7,6 +7,9 @@ hero:
   tagline: "Write the VTK XML formats that ParaView and VisIt read: image, rectilinear, structured and unstructured grids, polygonal data, parallel pieces, multi-block assemblies, time series. ASCII, binary, raw or zlib compressed. Then read them back. Pure Fortran 2008, no VTK to install."
   actions:
     - theme: brand
+      text: Tutorial
+      link: /manual/tutorial/01-first-file
+    - theme: alt
       text: Quick start
       link: "#quick-start"
     - theme: alt
@@ -101,6 +104,19 @@ Reading is as short: `initialize` with `action='read'`, then ask for what you ne
 <<< @/examples/snippets/inspect.f90
 
 Every example on these pages is a program compiled and run to produce the output and the images shown.
+
+## Grows with your simulation
+
+From a first file to a parallel, restartable time series: the [tutorial](/manual/tutorial/01-first-file) builds `heat`, a
+small solver of the heat equation, chapter by chapter. This is its time series played in ParaView: two hot blobs merging
+and cooling down, on the middle plane of the cube.
+
+<p align="center"><img src="./examples/images/heat_4.gif" alt="an animation of the temperature on the middle plane of a cube: two peaks merging and decaying"></p>
+
+| | |
+|---|---|
+| <img src="./examples/images/heat_6.png" alt="the cube split in four pieces"> | <img src="./examples/images/heat_7.png" alt="the cube cut at the height of eight probes"> |
+| [Parallel pieces](/manual/tutorial/06-parallel), ghost cells and a checked header | [An assembly](/manual/tutorial/07-assembly) of the domain and its probes |
 
 ## Authors
 

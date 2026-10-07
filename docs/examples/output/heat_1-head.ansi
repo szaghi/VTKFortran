@@ -1,0 +1,7 @@
+$ head -n 6 heat.vtr
+<?xml version="1.0"?>
+<VTKFile type="RectilinearGrid" version="1.0" byte_order="LittleEndian" header_type="UInt32">
+  <RectilinearGrid WholeExtent="+1 +24 +1 +24 +1 +24">
+    <Piece Extent="+1 +24 +1 +24 +1 +24">
+      <Coordinates>
+        <DataArray type="Float64" NumberOfComponents="1" Name="X" format="ascii">

@@ -1,0 +1,3 @@
+$ heat
+restart from heat_0036.vtr: cycle 36, time  1.021E-02
+heat.pvd: 37 files, until time  2.042E-02, maximum temperature  0.216

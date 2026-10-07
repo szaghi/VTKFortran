@@ -1,0 +1,9 @@
+$ heat
+block solver 
+  block domain 
+    dataset piece-1 heat_1.vtu
+    dataset piece-2 heat_2.vtu
+    dataset piece-3 heat_3.vtu
+    dataset piece-4 heat_4.vtu
+  block sensors 
+    dataset probes probes.vtp

@@ -66,7 +66,16 @@ for src in "$ex"/src/*.f90; do
   "$fc" -I"$root/static/mod" -o "$build/bin/$(basename "$src" .f90)" "$src" "$root/static/libvtkfortran.a" -lz
 done
 
-# runs, in the order of the files and of the lines
+# runs, in the order of the files and of the lines; the renders of a program follow its runs (a later program can
+# change the files: the restart of the tutorial appends to the time series)
+renders=0
+render() { # render ID FILE [OPTIONS]
+  local id=$1 file=$2; shift 2
+  # shellcheck disable=SC2068 # the options are KEY=VALUE words
+  "$pvpython" --force-offscreen-rendering "$root/scripts/render_vtk.py" "$run_dir/$file" "$ex/images/$id" $@ < /dev/null \
+    > "$build/render-$id.log" 2>&1 || { cat "$build/render-$id.log"; echo "docs_examples: render $id failed" >&2; exit 1; }
+  renders=$((renders + 1))
+}
 if [ -d "$ex/files" ]; then cp -R "$ex/files/." "$run_dir/"; fi
 path=$build/bin
 run() { # run [-s] ID COMMAND
@@ -94,6 +103,12 @@ for src in "$ex"/src/*.f90; do
     if [ "${line%% *}" = -s ]; then line=${line#-s }; run -s "${line%% *}" "${line#* }"
     else run "${line%% *}" "${line#* }"; fi
   done < <(grep -E '^ *!run ' "$src" || true)
+  if [ -n "$pvpython" ]; then
+    while read -r id file options; do
+      # shellcheck disable=SC2086 # the options are KEY=VALUE words
+      render "$id" "$file" $options
+    done < <(sed -n 's/^ *!render \(.*\)/\1/p' "$src")
+  fi
 done
 # terminal images
 for id in $(sed -n 's/^ *!image \([A-Za-z0-9_-]*\).*/\1/p' "$ex"/src/*.f90); do
@@ -104,16 +119,5 @@ while read -r name ids; do
   for id in $ids; do captures+=("$ex/output/$id.ansi"); done
   python3 "$root/scripts/ansi2svg.py" --cast "$ex/images/$name.svg" "${captures[@]}"
 done < <(sed -n 's/^ *!cast \(.*\)/\1/p' "$ex"/src/*.f90)
-# renders
-renders=0
-if [ -n "$pvpython" ]; then
-  while read -r id file options; do
-    # shellcheck disable=SC2086 # the options are KEY=VALUE words
-    "$pvpython" --force-offscreen-rendering "$root/scripts/render_vtk.py" "$run_dir/$file" "$ex/images/$id" $options \
-      > "$build/render-$id.log" 2>&1 || { cat "$build/render-$id.log"; echo "docs_examples: render $id failed" >&2; exit 1; }
-    renders=$((renders + 1))
-  done < <(sed -n 's/^ *!render \(.*\)/\1/p' "$ex"/src/*.f90)
-else
-  echo "docs_examples: no pvpython (set PVPYTHON): the renders are not regenerated" >&2
-fi
+if [ -z "$pvpython" ]; then echo "docs_examples: no pvpython (set PVPYTHON): the renders are not regenerated" >&2; fi
 echo "docs_examples: $(ls "$ex"/src/*.f90 | wc -l) programs, $(ls "$ex"/output/*.ansi | wc -l) runs, $renders renders"

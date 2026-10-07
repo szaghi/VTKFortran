@@ -1,0 +1,7 @@
+$ heat
+file                           format           compressor    bytes
+heat-ascii-none.vtr            ascii            none         362098
+heat-binary-none.vtr           binary           none         149062
+heat-raw-none.vtr              raw              none         111976
+heat-raw-zlib.vtr              raw              zlib          82211
+heat-binary-appended-zlib.vtr  binary-appended  zlib         109354

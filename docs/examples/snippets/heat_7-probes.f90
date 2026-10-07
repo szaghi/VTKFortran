@@ -1,0 +1,10 @@
+! the probes: a polydata of points, one vertex each
+error = a_vtk_file%initialize(format='ascii', filename='probes.vtp', mesh_topology='PolyData')
+error = a_vtk_file%xml_writer%write_piece(np=probes, nverts=probes, nlines=0, nstrips=0, npolys=0)
+error = a_vtk_file%xml_writer%write_geo(np=probes, nc=probes, x=px, y=py, z=pz)
+error = a_vtk_file%xml_writer%write_polydata_cells(verts_connectivity=[(e - 1, e=1, probes)], verts_offset=[(e, e=1, probes)])
+error = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
+error = a_vtk_file%xml_writer%write_dataarray(data_name='temperature', x=tp)
+error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
+error = a_vtk_file%xml_writer%write_piece()
+error = a_vtk_file%finalize()
