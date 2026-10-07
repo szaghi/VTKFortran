@@ -4,6 +4,67 @@ All notable changes to this project are documented here.
 Versions follow [Semantic Versioning](https://semver.org/).
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [3.0.0] — 2026-10-07
+### Added
+- **writers**: Designate active arrays of point and cell data
+
+- **pvd**: Add pvd_file writer for time series collections
+
+- **writers**: Write FieldData arrays and strings
+
+- **writers**: Add ImageData (vti) and PImageData (pvti) topologies
+
+- **writers**: Add PolyData (vtp) and PPolyData (pvtp) topologies
+
+- **writers**: Opt-in UInt64 bytes count headers for large arrays
+
+- **writers**: Zlib compression for binary and binary-appended data
+
+- **writers**: Write unsigned integer arrays
+
+- **writers**: 64-bit counts and connectivity for large meshes
+
+- **zlib**: Decompress VTK zlib blocks
+
+- **readers**: Read serial VTK XML files
+
+- **readers**: Read parallel headers, multi-block and time series files
+
+
+### Documentation
+- **usage**: Document the scratch file of the appended formats
+
+- **contributing**: Document release.sh as the only release tool
+
+- Fix stale and missing documentation
+
+- Build the documentation examples, new landing page
+
+- Add the heat tutorial, in eight chapters
+
+- Add the cookbook
+
+- Split the usage page into reference topics
+
+
+### Fixed
+- **writers**: Write polyhedron faces inside the Cells element
+
+- **writers**: Write a valid GhostLevel and declare header_type
+
+- **writers**: Write cell types as UInt8
+
+- **vtm**: Index nested blocks and datasets per level
+
+- **writers**: Count array elements in 64 bits
+
+- **writers**: Separate the last value of each row of ASCII arrays
+
+- **tests**: Write the volatile test variable as point data
+
+- **writers**: Close write_xml_volatile, volatile files in ascii too
+
+
 ## [2.0.10] — 2026-10-06
 ### Fixed
 - **ci**: Drop stale coverage page, pin fpm for the install smoke test
