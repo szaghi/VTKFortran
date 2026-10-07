@@ -1286,7 +1286,7 @@ contains
   type(string)                              :: tag_attributes    !< Tag attributes.
   integer(I8P)                              :: n_byte            !< Bytes count.
   character(len=2)                          :: dataarray_type    !< Dataarray type = R8,R4,I8,I4,I2,I1.
-  integer(I4P)                              :: dataarray_dim     !< Dataarray dimension.
+  integer(I8P)                              :: dataarray_dim     !< Dataarray dimension (number of elements).
   real(R8P),    allocatable                 :: dataarray_R8P(:)  !< Dataarray buffer of R8P.
   real(R4P),    allocatable                 :: dataarray_R4P(:)  !< Dataarray buffer of R4P.
   integer(I8P), allocatable                 :: dataarray_I8P(:)  !< Dataarray buffer of I8P.
@@ -1499,10 +1499,10 @@ contains
   class(xml_writer_appended), intent(inout) :: self   !< Writer.
   class(*),                   intent(in)    :: x(1:)  !< Data variable.
   integer(I8P)                              :: n_byte !< Number of bytes
-  integer(I4P)                              :: nn     !< Number of elements.
+  integer(I8P)                              :: nn     !< Number of elements.
   integer(I4P)                              :: tmp    !< Temporary stream unit.
 
-  nn = size(x, dim=1)
+  nn = size(x, kind=I8P)
   select type(x)
   type is(real(R8P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYR8P)
@@ -1596,10 +1596,10 @@ contains
   class(xml_writer_appended), intent(inout) :: self     !< Writer.
   class(*),                   intent(in)    :: x(1:,1:) !< Data variable.
   integer(I8P)                              :: n_byte   !< Number of bytes
-  integer(I4P)                              :: nn       !< Number of elements.
+  integer(I8P)                              :: nn       !< Number of elements.
   integer(I4P)                              :: tmp      !< Temporary stream unit.
 
-  nn = size(x, dim=1)*size(x, dim=2)
+  nn = size(x, kind=I8P)
   select type(x)
   type is(real(R8P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYR8P)
@@ -1705,10 +1705,10 @@ contains
   class(xml_writer_appended), intent(inout) :: self        !< Writer.
   class(*),                   intent(in)    :: x(1:,1:,1:) !< Data variable.
   integer(I8P)                              :: n_byte      !< Number of bytes
-  integer(I4P)                              :: nn          !< Number of elements.
+  integer(I8P)                              :: nn          !< Number of elements.
   integer(I4P)                              :: tmp         !< Temporary stream unit.
 
-  nn = size(x, dim=1)*size(x, dim=2)*size(x, dim=3)
+  nn = size(x, kind=I8P)
   select type(x)
   type is(real(R8P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYR8P)
@@ -1814,10 +1814,10 @@ contains
   class(xml_writer_appended), intent(inout) :: self           !< Writer.
   class(*),                   intent(in)    :: x(1:,1:,1:,1:) !< Data variable.
   integer(I8P)                              :: n_byte         !< Number of bytes
-  integer(I4P)                              :: nn             !< Number of elements.
+  integer(I8P)                              :: nn             !< Number of elements.
   integer(I4P)                              :: tmp            !< Temporary stream unit.
 
-  nn = size(x, dim=1)*size(x, dim=2)*size(x, dim=3)*size(x, dim=4)
+  nn = size(x, kind=I8P)
   select type(x)
   type is(real(R8P))
     n_byte = self%n_bytes(size(x, kind=I8P)*BYR8P)

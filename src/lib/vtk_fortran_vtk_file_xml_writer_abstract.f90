@@ -1577,9 +1577,9 @@ contains
    real(R8P),                  intent(in)    :: z(1:,1:,1:) !< Z coordinates.
    integer(I4P)                              :: error       !< Error status.
 
-   if ((n/=size(x, dim=1)*size(x, dim=2)*size(x, dim=3)).or.&
-       (n/=size(y, dim=1)*size(y, dim=2)*size(y, dim=3)).or.&
-       (n/=size(z, dim=1)*size(z, dim=2)*size(z, dim=3))) then
+   if ((n/=size(x, kind=I8P)).or.&
+       (n/=size(y, kind=I8P)).or.&
+       (n/=size(z, kind=I8P))) then
       error = 1 ; self%error = error
       return
    endif
@@ -1598,9 +1598,9 @@ contains
    real(R4P),                  intent(in)    :: z(1:,1:,1:) !< Z coordinates.
    integer(I4P)                              :: error       !< Error status.
 
-   if ((n/=size(x, dim=1)*size(x, dim=2)*size(x, dim=3)).or.&
-       (n/=size(y, dim=1)*size(y, dim=2)*size(y, dim=3)).or.&
-       (n/=size(z, dim=1)*size(z, dim=2)*size(z, dim=3))) then
+   if ((n/=size(x, kind=I8P)).or.&
+       (n/=size(y, kind=I8P)).or.&
+       (n/=size(z, kind=I8P))) then
       error = 1 ; self%error = error
       return
    endif

@@ -669,6 +669,8 @@ error = a_vtk_file%initialize(format='raw', filename='large.vtu', mesh_topology=
   blocks headers) are 8 bytes wide, as written by VTK itself; ParaView and VTK read these files.
 - The default keeps the files exactly as before. Parallel (`P*`) and multi-block files contain no binary data: their pieces
   select their own header type.
+- The number of elements of an array is not limited to 32 bits: an array can hold more than 2^31 values (e.g. the
+  connectivity of more than about 270 million hexahedra) in every format, provided its bytes fit the header type.
 - The limit concerns the bytes of a single array: the number of points and cells of a piece is still a 32-bit integer
   (more than 2.1 billion points or cells in one piece are not supported).
 

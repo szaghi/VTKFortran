@@ -172,12 +172,12 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 1 (R8P).
   real(R8P),       intent(in)   :: x(1:) !< Data variable.
   character(len=:), allocatable :: code  !< Encoded base64 dataarray.
-  integer(I4P)                  :: n     !< Counter.
+  integer(I8P)                  :: n     !< Counter.
   integer(I8P)                  :: l     !< Length.
   integer(I8P)                  :: sp    !< String pointer.
-  integer(I4P)                  :: size_n!< Dimension size.
+  integer(I8P)                  :: size_n!< Dimension size.
 
-  size_n = size(x,dim=1)
+  size_n = size(x, dim=1, kind=I8P)
   l = DR8P+1
   sp = 0
   allocate(character(len=l*size_n) :: code)
@@ -192,12 +192,12 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 1 (R4P).
   real(R4P),       intent(in)   :: x(1:) !< Data variable.
   character(len=:), allocatable :: code  !< Encoded base64 dataarray.
-  integer(I4P)                  :: n     !< Counter.
+  integer(I8P)                  :: n     !< Counter.
   integer(I8P)                  :: l     !< Length.
   integer(I8P)                  :: sp    !< String pointer.
-  integer(I4P)                  :: size_n!< Dimension size.
+  integer(I8P)                  :: size_n!< Dimension size.
 
-  size_n = size(x,dim=1)
+  size_n = size(x, dim=1, kind=I8P)
   l = DR4P+1
   sp = 0
   allocate(character(len=l*size_n) :: code)
@@ -212,12 +212,12 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 1 (I8P).
   integer(I8P),    intent(in)   :: x(1:) !< Data variable.
   character(len=:), allocatable :: code  !< Encoded base64 dataarray.
-  integer(I4P)                  :: n     !< Counter.
+  integer(I8P)                  :: n     !< Counter.
   integer(I8P)                  :: l     !< Length.
   integer(I8P)                  :: sp    !< String pointer.
-  integer(I4P)                  :: size_n!< Dimension size.
+  integer(I8P)                  :: size_n!< Dimension size.
 
-  size_n = size(x,dim=1)
+  size_n = size(x, dim=1, kind=I8P)
   l = DI8P+1
   sp = 0
   allocate(character(len=l*size_n) :: code)
@@ -232,12 +232,12 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 1 (I4P).
   integer(I4P),    intent(in)   :: x(1:) !< Data variable.
   character(len=:), allocatable :: code  !< Encoded base64 dataarray.
-  integer(I4P)                  :: n     !< Counter.
+  integer(I8P)                  :: n     !< Counter.
   integer(I8P)                  :: l     !< Length.
   integer(I8P)                  :: sp    !< String pointer.
-  integer(I4P)                  :: size_n!< Dimension size.
+  integer(I8P)                  :: size_n!< Dimension size.
 
-  size_n = size(x,dim=1)
+  size_n = size(x, dim=1, kind=I8P)
   l = DI4P+1
   sp = 0
   allocate(character(len=l*size_n) :: code)
@@ -252,12 +252,12 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 1 (I2P).
   integer(I2P),    intent(in)   :: x(1:) !< Data variable.
   character(len=:), allocatable :: code  !< Encoded base64 dataarray.
-  integer(I4P)                  :: n     !< Counter.
+  integer(I8P)                  :: n     !< Counter.
   integer(I8P)                  :: l     !< Length.
   integer(I8P)                  :: sp    !< String pointer.
-  integer(I4P)                  :: size_n!< Dimension size.
+  integer(I8P)                  :: size_n!< Dimension size.
 
-  size_n = size(x,dim=1)
+  size_n = size(x, dim=1, kind=I8P)
   l = DI2P+1
   sp = 0
   allocate(character(len=l*size_n) :: code)
@@ -272,12 +272,12 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 1 (I1P).
   integer(I1P),    intent(in)   :: x(1:) !< Data variable.
   character(len=:), allocatable :: code  !< Encoded base64 dataarray.
-  integer(I4P)                  :: n     !< Counter.
+  integer(I8P)                  :: n     !< Counter.
   integer(I8P)                  :: l     !< Length.
   integer(I8P)                  :: sp    !< String pointer.
-  integer(I4P)                  :: size_n!< Dimension size.
+  integer(I8P)                  :: size_n!< Dimension size.
 
-  size_n = size(x,dim=1)
+  size_n = size(x, dim=1, kind=I8P)
   l = DI1P+1
   sp = 0
   allocate(character(len=l*size_n) :: code)
@@ -292,25 +292,25 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 2 (R16P).
   real(R16P),      intent(in)   :: x(1:,1:) !< Data variable
   character(len=:), allocatable :: code     !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1       !< Counter.
-  integer(I4P)                  :: n2       !< Counter.
+  integer(I8P)                  :: n1       !< Counter.
+  integer(I8P)                  :: n2       !< Counter.
   integer(I8P)                  :: l        !< Length.
   integer(I8P)                  :: sp       !< String pointer.
-  integer(I4P)                  :: size_n1  !< Dimension 1 size.
-  integer(I4P)                  :: size_n2  !< Dimension 2 size.
+  integer(I8P)                  :: size_n1  !< Dimension 1 size.
+  integer(I8P)                  :: size_n2  !< Dimension 2 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
   l = DR16P + 1
   sp = 0
   allocate(character(len=l*size_n1*size_n2) :: code)
   code(:) = ''
-  do n2=1, size(x, dim=2)
-    do n1=1, size(x, dim=1)-1
+  do n2=1, size(x, dim=2, kind=I8P)
+    do n1=1, size(x, dim=1, kind=I8P)-1
       code(sp+1:sp+l) = str(n=x(n1, n2))//' '
       sp = sp + l
     enddo
-    code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1), n2))
+    code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2))
     sp = sp + l
   enddo
   endfunction encode_ascii_dataarray1_rank2_R16P
@@ -319,25 +319,25 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 2 (R8P).
   real(R8P),       intent(in)   :: x(1:,1:) !< Data variable
   character(len=:), allocatable :: code     !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1       !< Counter.
-  integer(I4P)                  :: n2       !< Counter.
+  integer(I8P)                  :: n1       !< Counter.
+  integer(I8P)                  :: n2       !< Counter.
   integer(I8P)                  :: l        !< Length.
   integer(I8P)                  :: sp       !< String pointer.
-  integer(I4P)                  :: size_n1  !< Dimension 1 size.
-  integer(I4P)                  :: size_n2  !< Dimension 2 size.
+  integer(I8P)                  :: size_n1  !< Dimension 1 size.
+  integer(I8P)                  :: size_n2  !< Dimension 2 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
   l = DR8P + 1
   sp = 0
   allocate(character(len=l*size_n1*size_n2) :: code)
   code(:) = ''
-  do n2=1, size(x, dim=2)
-    do n1=1, size(x, dim=1)-1
+  do n2=1, size(x, dim=2, kind=I8P)
+    do n1=1, size(x, dim=1, kind=I8P)-1
       code(sp+1:sp+l) = str(n=x(n1, n2))//' '
       sp = sp + l
     enddo
-    code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1), n2))
+    code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2))
     sp = sp + l
   enddo
   endfunction encode_ascii_dataarray1_rank2_R8P
@@ -346,25 +346,25 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 2 (R4P).
   real(R4P),       intent(in)   :: x(1:,1:) !< Data variable
   character(len=:), allocatable :: code     !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1       !< Counter.
-  integer(I4P)                  :: n2       !< Counter.
+  integer(I8P)                  :: n1       !< Counter.
+  integer(I8P)                  :: n2       !< Counter.
   integer(I8P)                  :: l        !< Length.
   integer(I8P)                  :: sp       !< String pointer.
-  integer(I4P)                  :: size_n1  !< Dimension 1 size.
-  integer(I4P)                  :: size_n2  !< Dimension 2 size.
+  integer(I8P)                  :: size_n1  !< Dimension 1 size.
+  integer(I8P)                  :: size_n2  !< Dimension 2 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
   l = DR4P + 1
   sp = 0
   allocate(character(len=l*size_n1*size_n2) :: code)
   code(:) = ''
-  do n2=1, size(x, dim=2)
-    do n1=1, size(x, dim=1)-1
+  do n2=1, size(x, dim=2, kind=I8P)
+    do n1=1, size(x, dim=1, kind=I8P)-1
       code(sp+1:sp+l) = str(n=x(n1, n2))//' '
       sp = sp + l
     enddo
-    code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1), n2))
+    code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2))
     sp = sp + l
   enddo
   endfunction encode_ascii_dataarray1_rank2_R4P
@@ -373,25 +373,25 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 2 (I8P).
   integer(I8P),    intent(in)   :: x(1:,1:) !< Data variable
   character(len=:), allocatable :: code     !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1       !< Counter.
-  integer(I4P)                  :: n2       !< Counter.
+  integer(I8P)                  :: n1       !< Counter.
+  integer(I8P)                  :: n2       !< Counter.
   integer(I8P)                  :: l        !< Length.
   integer(I8P)                  :: sp       !< String pointer.
-  integer(I4P)                  :: size_n1  !< Dimension 1 size.
-  integer(I4P)                  :: size_n2  !< Dimension 2 size.
+  integer(I8P)                  :: size_n1  !< Dimension 1 size.
+  integer(I8P)                  :: size_n2  !< Dimension 2 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
   l = DI8P + 1
   sp = 0
   allocate(character(len=l*size_n1*size_n2) :: code)
   code(:) = ''
-  do n2=1, size(x, dim=2)
-    do n1=1, size(x, dim=1)-1
+  do n2=1, size(x, dim=2, kind=I8P)
+    do n1=1, size(x, dim=1, kind=I8P)-1
       code(sp+1:sp+l) = str(n=x(n1, n2))//' '
       sp = sp + l
     enddo
-    code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1), n2))
+    code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2))
     sp = sp + l
   enddo
   endfunction encode_ascii_dataarray1_rank2_I8P
@@ -400,25 +400,25 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 2 (I4P).
   integer(I4P),    intent(in)   :: x(1:,1:) !< Data variable
   character(len=:), allocatable :: code     !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1       !< Counter.
-  integer(I4P)                  :: n2       !< Counter.
+  integer(I8P)                  :: n1       !< Counter.
+  integer(I8P)                  :: n2       !< Counter.
   integer(I8P)                  :: l        !< Length.
   integer(I8P)                  :: sp       !< String pointer.
-  integer(I4P)                  :: size_n1  !< Dimension 1 size.
-  integer(I4P)                  :: size_n2  !< Dimension 2 size.
+  integer(I8P)                  :: size_n1  !< Dimension 1 size.
+  integer(I8P)                  :: size_n2  !< Dimension 2 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
   l = DI4P + 1
   sp = 0
   allocate(character(len=l*size_n1*size_n2) :: code)
   code(:) = ''
-  do n2=1, size(x, dim=2)
-    do n1=1, size(x, dim=1)-1
+  do n2=1, size(x, dim=2, kind=I8P)
+    do n1=1, size(x, dim=1, kind=I8P)-1
       code(sp+1:sp+l) = str(n=x(n1, n2))//' '
       sp = sp + l
     enddo
-    code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1), n2))
+    code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2))
     sp = sp + l
   enddo
   endfunction encode_ascii_dataarray1_rank2_I4P
@@ -427,25 +427,25 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 2 (I2P).
   integer(I2P),    intent(in)   :: x(1:,1:) !< Data variable
   character(len=:), allocatable :: code     !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1       !< Counter.
-  integer(I4P)                  :: n2       !< Counter.
+  integer(I8P)                  :: n1       !< Counter.
+  integer(I8P)                  :: n2       !< Counter.
   integer(I8P)                  :: l        !< Length.
   integer(I8P)                  :: sp       !< String pointer.
-  integer(I4P)                  :: size_n1  !< Dimension 1 size.
-  integer(I4P)                  :: size_n2  !< Dimension 2 size.
+  integer(I8P)                  :: size_n1  !< Dimension 1 size.
+  integer(I8P)                  :: size_n2  !< Dimension 2 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
   l = DI4P + 1
   sp = 0
   allocate(character(len=l*size_n1*size_n2) :: code)
   code(:) = ''
-  do n2=1, size(x, dim=2)
-    do n1=1, size(x, dim=1)-1
+  do n2=1, size(x, dim=2, kind=I8P)
+    do n1=1, size(x, dim=1, kind=I8P)-1
       code(sp+1:sp+l) = str(n=x(n1, n2))//' '
       sp = sp + l
     enddo
-    code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1), n2))
+    code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2))
     sp = sp + l
   enddo
   endfunction encode_ascii_dataarray1_rank2_I2P
@@ -454,25 +454,25 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 2 (I2P).
   integer(I1P),    intent(in)   :: x(1:,1:) !< Data variable
   character(len=:), allocatable :: code     !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1       !< Counter.
-  integer(I4P)                  :: n2       !< Counter.
+  integer(I8P)                  :: n1       !< Counter.
+  integer(I8P)                  :: n2       !< Counter.
   integer(I8P)                  :: l        !< Length.
   integer(I8P)                  :: sp       !< String pointer.
-  integer(I4P)                  :: size_n1  !< Dimension 1 size.
-  integer(I4P)                  :: size_n2  !< Dimension 2 size.
+  integer(I8P)                  :: size_n1  !< Dimension 1 size.
+  integer(I8P)                  :: size_n2  !< Dimension 2 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
   l = DI1P + 1
   sp = 0
   allocate(character(len=l*size_n1*size_n2) :: code)
   code(:) = ''
-  do n2=1, size(x, dim=2)
-    do n1=1, size(x, dim=1)-1
+  do n2=1, size(x, dim=2, kind=I8P)
+    do n1=1, size(x, dim=1, kind=I8P)-1
       code(sp+1:sp+l) = str(n=x(n1, n2))//' '
       sp = sp + l
     enddo
-    code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1), n2))
+    code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2))
     sp = sp + l
   enddo
   endfunction encode_ascii_dataarray1_rank2_I1P
@@ -481,30 +481,30 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 3 (R16P).
   real(R16P),      intent(in)   :: x(1:,1:,1:) !< Data variable
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1          !< Counter.
-  integer(I4P)                  :: n2          !< Counter.
-  integer(I4P)                  :: n3          !< Counter.
+  integer(I8P)                  :: n1          !< Counter.
+  integer(I8P)                  :: n2          !< Counter.
+  integer(I8P)                  :: n3          !< Counter.
   integer(I8P)                  :: l           !< Length.
   integer(I8P)                  :: sp          !< String pointer.
-  integer(I4P)                  :: size_n1     !< Dimension 1 size.
-  integer(I4P)                  :: size_n2     !< Dimension 2 size.
-  integer(I4P)                  :: size_n3     !< Dimension 3 size.
+  integer(I8P)                  :: size_n1     !< Dimension 1 size.
+  integer(I8P)                  :: size_n2     !< Dimension 2 size.
+  integer(I8P)                  :: size_n3     !< Dimension 3 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
 
   l = DR16P + 1
   sp = 0
   allocate(character(len=l*size_n1*size_n2*size_n3) :: code)
   code(:) = ''
-  do n3=1, size(x, dim=3)
-    do n2=1, size(x, dim=2)
-      do n1=1, size(x, dim=1)-1
+  do n3=1, size(x, dim=3, kind=I8P)
+    do n2=1, size(x, dim=2, kind=I8P)
+      do n1=1, size(x, dim=1, kind=I8P)-1
         code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '
         sp = sp + 1
       enddo
-      code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1), n2, n3))
+      code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2, n3))
     enddo
   enddo
   endfunction encode_ascii_dataarray1_rank3_R16P
@@ -513,30 +513,30 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 3 (R8P).
   real(R8P),       intent(in)   :: x(1:,1:,1:) !< Data variable
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1          !< Counter.
-  integer(I4P)                  :: n2          !< Counter.
-  integer(I4P)                  :: n3          !< Counter.
+  integer(I8P)                  :: n1          !< Counter.
+  integer(I8P)                  :: n2          !< Counter.
+  integer(I8P)                  :: n3          !< Counter.
   integer(I8P)                  :: l           !< Length.
   integer(I8P)                  :: sp          !< String pointer.
-  integer(I4P)                  :: size_n1     !< Dimension 1 size.
-  integer(I4P)                  :: size_n2     !< Dimension 2 size.
-  integer(I4P)                  :: size_n3     !< Dimension 3 size.
+  integer(I8P)                  :: size_n1     !< Dimension 1 size.
+  integer(I8P)                  :: size_n2     !< Dimension 2 size.
+  integer(I8P)                  :: size_n3     !< Dimension 3 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
 
   l = DR8P + 1
   sp = 0
   allocate(character(len=l*size_n1*size_n2*size_n3) :: code)
   code(:) = ''
-  do n3=1, size(x, dim=3)
-    do n2=1, size(x, dim=2)
-      do n1=1, size(x, dim=1)-1
+  do n3=1, size(x, dim=3, kind=I8P)
+    do n2=1, size(x, dim=2, kind=I8P)
+      do n1=1, size(x, dim=1, kind=I8P)-1
         code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '
         sp = sp + l
       enddo
-      code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1), n2, n3))
+      code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2, n3))
       sp = sp + l
     enddo
   enddo
@@ -546,30 +546,30 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 3 (R4P).
   real(R4P),       intent(in)   :: x(1:,1:,1:) !< Data variable
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1          !< Counter.
-  integer(I4P)                  :: n2          !< Counter.
-  integer(I4P)                  :: n3          !< Counter.
+  integer(I8P)                  :: n1          !< Counter.
+  integer(I8P)                  :: n2          !< Counter.
+  integer(I8P)                  :: n3          !< Counter.
   integer(I8P)                  :: l           !< Length.
   integer(I8P)                  :: sp          !< String pointer.
-  integer(I4P)                  :: size_n1     !< Dimension 1 size.
-  integer(I4P)                  :: size_n2     !< Dimension 2 size.
-  integer(I4P)                  :: size_n3     !< Dimension 3 size.
+  integer(I8P)                  :: size_n1     !< Dimension 1 size.
+  integer(I8P)                  :: size_n2     !< Dimension 2 size.
+  integer(I8P)                  :: size_n3     !< Dimension 3 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
 
   l = DR4P + 1
   sp = 0
   allocate(character(len=l*size_n1*size_n2*size_n3) :: code)
   code(:) = ''
-  do n3=1, size(x, dim=3)
-    do n2=1, size(x, dim=2)
-      do n1=1, size(x, dim=1)-1
+  do n3=1, size(x, dim=3, kind=I8P)
+    do n2=1, size(x, dim=2, kind=I8P)
+      do n1=1, size(x, dim=1, kind=I8P)-1
         code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '
         sp = sp + l
       enddo
-      code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1), n2, n3))
+      code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2, n3))
       sp = sp + l
     enddo
   enddo
@@ -579,30 +579,30 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 3 (I8P).
   integer(I8P),    intent(in)   :: x(1:,1:,1:) !< Data variable
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1          !< Counter.
-  integer(I4P)                  :: n2          !< Counter.
-  integer(I4P)                  :: n3          !< Counter.
+  integer(I8P)                  :: n1          !< Counter.
+  integer(I8P)                  :: n2          !< Counter.
+  integer(I8P)                  :: n3          !< Counter.
   integer(I8P)                  :: l           !< Length.
   integer(I8P)                  :: sp          !< String pointer.
-  integer(I4P)                  :: size_n1     !< Dimension 1 size.
-  integer(I4P)                  :: size_n2     !< Dimension 2 size.
-  integer(I4P)                  :: size_n3     !< Dimension 3 size.
+  integer(I8P)                  :: size_n1     !< Dimension 1 size.
+  integer(I8P)                  :: size_n2     !< Dimension 2 size.
+  integer(I8P)                  :: size_n3     !< Dimension 3 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
 
   l = DI8P + 1
   sp = 0
   allocate(character(len=l*size_n1*size_n2*size_n3) :: code)
   code(:) = ''
-  do n3=1, size(x, dim=3)
-    do n2=1, size(x, dim=2)
-      do n1=1, size(x, dim=1)-1
+  do n3=1, size(x, dim=3, kind=I8P)
+    do n2=1, size(x, dim=2, kind=I8P)
+      do n1=1, size(x, dim=1, kind=I8P)-1
         code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '
         sp = sp + l
       enddo
-      code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1), n2, n3))
+      code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2, n3))
       sp = sp + l
     enddo
   enddo
@@ -612,30 +612,30 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 3 (I4P).
   integer(I4P),    intent(in)   :: x(1:,1:,1:) !< Data variable
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1          !< Counter.
-  integer(I4P)                  :: n2          !< Counter.
-  integer(I4P)                  :: n3          !< Counter.
+  integer(I8P)                  :: n1          !< Counter.
+  integer(I8P)                  :: n2          !< Counter.
+  integer(I8P)                  :: n3          !< Counter.
   integer(I8P)                  :: l           !< Length.
   integer(I8P)                  :: sp          !< String pointer.
-  integer(I4P)                  :: size_n1     !< Dimension 1 size.
-  integer(I4P)                  :: size_n2     !< Dimension 2 size.
-  integer(I4P)                  :: size_n3     !< Dimension 3 size.
+  integer(I8P)                  :: size_n1     !< Dimension 1 size.
+  integer(I8P)                  :: size_n2     !< Dimension 2 size.
+  integer(I8P)                  :: size_n3     !< Dimension 3 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
 
   l = DI4P + 1
   sp = 0
   allocate(character(len=l*size_n1*size_n2*size_n3) :: code)
   code(:) = ''
-  do n3=1, size(x, dim=3)
-    do n2=1, size(x, dim=2)
-      do n1=1, size(x, dim=1)-1
+  do n3=1, size(x, dim=3, kind=I8P)
+    do n2=1, size(x, dim=2, kind=I8P)
+      do n1=1, size(x, dim=1, kind=I8P)-1
         code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '
         sp = sp + l
       enddo
-      code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1), n2, n3))
+      code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2, n3))
       sp = sp + l
     enddo
   enddo
@@ -645,30 +645,30 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 3 (I2P).
   integer(I2P),    intent(in)   :: x(1:,1:,1:) !< Data variable
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1          !< Counter.
-  integer(I4P)                  :: n2          !< Counter.
-  integer(I4P)                  :: n3          !< Counter.
+  integer(I8P)                  :: n1          !< Counter.
+  integer(I8P)                  :: n2          !< Counter.
+  integer(I8P)                  :: n3          !< Counter.
   integer(I8P)                  :: l           !< Length.
   integer(I8P)                  :: sp          !< String pointer.
-  integer(I4P)                  :: size_n1     !< Dimension 1 size.
-  integer(I4P)                  :: size_n2     !< Dimension 2 size.
-  integer(I4P)                  :: size_n3     !< Dimension 3 size.
+  integer(I8P)                  :: size_n1     !< Dimension 1 size.
+  integer(I8P)                  :: size_n2     !< Dimension 2 size.
+  integer(I8P)                  :: size_n3     !< Dimension 3 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
 
   l = DI2P + 1
   sp = 0
   allocate(character(len=l*size_n1*size_n2*size_n3) :: code)
   code(:) = ''
-  do n3=1, size(x, dim=3)
-    do n2=1, size(x, dim=2)
-      do n1=1, size(x, dim=1)-1
+  do n3=1, size(x, dim=3, kind=I8P)
+    do n2=1, size(x, dim=2, kind=I8P)
+      do n1=1, size(x, dim=1, kind=I8P)-1
         code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '
         sp = sp + l
       enddo
-      code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1), n2, n3))
+      code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2, n3))
       sp = sp + l
     enddo
   enddo
@@ -678,30 +678,30 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 3 (I1P).
   integer(I1P),    intent(in)   :: x(1:,1:,1:) !< Data variable
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1          !< Counter.
-  integer(I4P)                  :: n2          !< Counter.
-  integer(I4P)                  :: n3          !< Counter.
+  integer(I8P)                  :: n1          !< Counter.
+  integer(I8P)                  :: n2          !< Counter.
+  integer(I8P)                  :: n3          !< Counter.
   integer(I8P)                  :: l           !< Length.
   integer(I8P)                  :: sp          !< String pointer.
-  integer(I4P)                  :: size_n1     !< Dimension 1 size.
-  integer(I4P)                  :: size_n2     !< Dimension 2 size.
-  integer(I4P)                  :: size_n3     !< Dimension 3 size.
+  integer(I8P)                  :: size_n1     !< Dimension 1 size.
+  integer(I8P)                  :: size_n2     !< Dimension 2 size.
+  integer(I8P)                  :: size_n3     !< Dimension 3 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
 
   l = DI1P + 1
   sp = 0
   allocate(character(len=l*size_n1*size_n2*size_n3) :: code)
   code(:) = ''
-  do n3=1, size(x, dim=3)
-    do n2=1, size(x, dim=2)
-      do n1=1, size(x, dim=1)-1
+  do n3=1, size(x, dim=3, kind=I8P)
+    do n2=1, size(x, dim=2, kind=I8P)
+      do n1=1, size(x, dim=1, kind=I8P)-1
         code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '
         sp = sp + l
       enddo
-      code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1), n2, n3))
+      code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2, n3))
       sp = sp + l
     enddo
   enddo
@@ -711,30 +711,30 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 4 (R16P).
   real(R16P),      intent(in)   :: x(1:,1:,1:,1:) !< Data variable.
   character(len=:), allocatable :: code           !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1             !< Counter.
-  integer(I4P)                  :: n2             !< Counter.
-  integer(I4P)                  :: n3             !< Counter.
-  integer(I4P)                  :: n4             !< Counter.
+  integer(I8P)                  :: n1             !< Counter.
+  integer(I8P)                  :: n2             !< Counter.
+  integer(I8P)                  :: n3             !< Counter.
+  integer(I8P)                  :: n4             !< Counter.
   integer(I8P)                  :: l              !< Length.
   integer(I8P)                  :: sp             !< String pointer.
-  integer(I4P)                  :: size_n1        !< Dimension 1 size.
-  integer(I4P)                  :: size_n2        !< Dimension 2 size.
-  integer(I4P)                  :: size_n3        !< Dimension 3 size.
-  integer(I4P)                  :: size_n4        !< Dimension 4 size.
+  integer(I8P)                  :: size_n1        !< Dimension 1 size.
+  integer(I8P)                  :: size_n2        !< Dimension 2 size.
+  integer(I8P)                  :: size_n3        !< Dimension 3 size.
+  integer(I8P)                  :: size_n4        !< Dimension 4 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
-  size_n4 = size(x, dim=4)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
+  size_n4 = size(x, dim=4, kind=I8P)
 
   l = DR16P + 1
   sp = 0
   allocate(character(len=l*size_n1*size_n2*size_n3*size_n4) :: code)
   code(:) = ''
-  do n4=1, size(x, dim=4)
-    do n3=1, size(x, dim=3)
-      do n2=1, size(x, dim=2)
-        do n1=1, size(x, dim=1)
+  do n4=1, size(x, dim=4, kind=I8P)
+    do n3=1, size(x, dim=3, kind=I8P)
+      do n2=1, size(x, dim=2, kind=I8P)
+        do n1=1, size(x, dim=1, kind=I8P)
           code(sp+1:sp+l) = str(n=x(n1, n2, n3, n4))//' '
           sp = sp + l
         enddo
@@ -747,30 +747,30 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 4 (R8P).
   real(R8P),       intent(in)   :: x(1:,1:,1:,1:) !< Data variable.
   character(len=:), allocatable :: code           !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1             !< Counter.
-  integer(I4P)                  :: n2             !< Counter.
-  integer(I4P)                  :: n3             !< Counter.
-  integer(I4P)                  :: n4             !< Counter.
+  integer(I8P)                  :: n1             !< Counter.
+  integer(I8P)                  :: n2             !< Counter.
+  integer(I8P)                  :: n3             !< Counter.
+  integer(I8P)                  :: n4             !< Counter.
   integer(I8P)                  :: l              !< Length.
   integer(I8P)                  :: sp             !< String pointer.
-  integer(I4P)                  :: size_n1        !< Dimension 1 size.
-  integer(I4P)                  :: size_n2        !< Dimension 2 size.
-  integer(I4P)                  :: size_n3        !< Dimension 3 size.
-  integer(I4P)                  :: size_n4        !< Dimension 4 size.
+  integer(I8P)                  :: size_n1        !< Dimension 1 size.
+  integer(I8P)                  :: size_n2        !< Dimension 2 size.
+  integer(I8P)                  :: size_n3        !< Dimension 3 size.
+  integer(I8P)                  :: size_n4        !< Dimension 4 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
-  size_n4 = size(x, dim=4)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
+  size_n4 = size(x, dim=4, kind=I8P)
 
   l = DR8P + 1
   sp = 0
   allocate(character(len=l*size_n1*size_n2*size_n3*size_n4) :: code)
   code(:) = ''
-  do n4=1, size(x, dim=4)
-    do n3=1, size(x, dim=3)
-      do n2=1, size(x, dim=2)
-        do n1=1, size(x, dim=1)
+  do n4=1, size(x, dim=4, kind=I8P)
+    do n3=1, size(x, dim=3, kind=I8P)
+      do n2=1, size(x, dim=2, kind=I8P)
+        do n1=1, size(x, dim=1, kind=I8P)
           code(sp+1:sp+l) = str(n=x(n1, n2, n3, n4))//' '
           sp = sp + l
         enddo
@@ -783,30 +783,30 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 4 (R4P).
   real(R4P),       intent(in)   :: x(1:,1:,1:,1:) !< Data variable.
   character(len=:), allocatable :: code           !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1             !< Counter.
-  integer(I4P)                  :: n2             !< Counter.
-  integer(I4P)                  :: n3             !< Counter.
-  integer(I4P)                  :: n4             !< Counter.
+  integer(I8P)                  :: n1             !< Counter.
+  integer(I8P)                  :: n2             !< Counter.
+  integer(I8P)                  :: n3             !< Counter.
+  integer(I8P)                  :: n4             !< Counter.
   integer(I8P)                  :: l              !< Length.
   integer(I8P)                  :: sp             !< String pointer.
-  integer(I4P)                  :: size_n1        !< Dimension 1 size.
-  integer(I4P)                  :: size_n2        !< Dimension 2 size.
-  integer(I4P)                  :: size_n3        !< Dimension 3 size.
-  integer(I4P)                  :: size_n4        !< Dimension 4 size.
+  integer(I8P)                  :: size_n1        !< Dimension 1 size.
+  integer(I8P)                  :: size_n2        !< Dimension 2 size.
+  integer(I8P)                  :: size_n3        !< Dimension 3 size.
+  integer(I8P)                  :: size_n4        !< Dimension 4 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
-  size_n4 = size(x, dim=4)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
+  size_n4 = size(x, dim=4, kind=I8P)
 
   l = DR4P + 1
   sp = 0
   allocate(character(len=l*size_n1*size_n2*size_n3*size_n4) :: code)
   code(:) = ''
-  do n4=1, size(x, dim=4)
-    do n3=1, size(x, dim=3)
-      do n2=1, size(x, dim=2)
-        do n1=1, size(x, dim=1)
+  do n4=1, size(x, dim=4, kind=I8P)
+    do n3=1, size(x, dim=3, kind=I8P)
+      do n2=1, size(x, dim=2, kind=I8P)
+        do n1=1, size(x, dim=1, kind=I8P)
           code(sp+1:sp+l) = str(n=x(n1, n2, n3, n4))//' '
           sp = sp + l
         enddo
@@ -819,30 +819,30 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 4 (I8P).
   integer(I8P),    intent(in)   :: x(1:,1:,1:,1:) !< Data variable.
   character(len=:), allocatable :: code           !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1             !< Counter.
-  integer(I4P)                  :: n2             !< Counter.
-  integer(I4P)                  :: n3             !< Counter.
-  integer(I4P)                  :: n4             !< Counter.
+  integer(I8P)                  :: n1             !< Counter.
+  integer(I8P)                  :: n2             !< Counter.
+  integer(I8P)                  :: n3             !< Counter.
+  integer(I8P)                  :: n4             !< Counter.
   integer(I8P)                  :: l              !< Length.
   integer(I8P)                  :: sp             !< String pointer.
-  integer(I4P)                  :: size_n1        !< Dimension 1 size.
-  integer(I4P)                  :: size_n2        !< Dimension 2 size.
-  integer(I4P)                  :: size_n3        !< Dimension 3 size.
-  integer(I4P)                  :: size_n4        !< Dimension 4 size.
+  integer(I8P)                  :: size_n1        !< Dimension 1 size.
+  integer(I8P)                  :: size_n2        !< Dimension 2 size.
+  integer(I8P)                  :: size_n3        !< Dimension 3 size.
+  integer(I8P)                  :: size_n4        !< Dimension 4 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
-  size_n4 = size(x, dim=4)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
+  size_n4 = size(x, dim=4, kind=I8P)
 
   l = DI8P + 1
   sp = 0
   allocate(character(len=l*size_n1*size_n2*size_n3*size_n4) :: code)
   code(:) = ''
-  do n4=1, size(x, dim=4)
-    do n3=1, size(x, dim=3)
-      do n2=1, size(x, dim=2)
-        do n1=1, size(x, dim=1)
+  do n4=1, size(x, dim=4, kind=I8P)
+    do n3=1, size(x, dim=3, kind=I8P)
+      do n2=1, size(x, dim=2, kind=I8P)
+        do n1=1, size(x, dim=1, kind=I8P)
           code(sp+1:sp+l) = str(n=x(n1, n2, n3, n4))//' '
           sp = sp + l
         enddo
@@ -855,30 +855,30 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 4 (I4P).
   integer(I4P),    intent(in)   :: x(1:,1:,1:,1:) !< Data variable.
   character(len=:), allocatable :: code           !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1             !< Counter.
-  integer(I4P)                  :: n2             !< Counter.
-  integer(I4P)                  :: n3             !< Counter.
-  integer(I4P)                  :: n4             !< Counter.
+  integer(I8P)                  :: n1             !< Counter.
+  integer(I8P)                  :: n2             !< Counter.
+  integer(I8P)                  :: n3             !< Counter.
+  integer(I8P)                  :: n4             !< Counter.
   integer(I8P)                  :: l              !< Length.
   integer(I8P)                  :: sp             !< String pointer.
-  integer(I4P)                  :: size_n1        !< Dimension 1 size.
-  integer(I4P)                  :: size_n2        !< Dimension 2 size.
-  integer(I4P)                  :: size_n3        !< Dimension 3 size.
-  integer(I4P)                  :: size_n4        !< Dimension 4 size.
+  integer(I8P)                  :: size_n1        !< Dimension 1 size.
+  integer(I8P)                  :: size_n2        !< Dimension 2 size.
+  integer(I8P)                  :: size_n3        !< Dimension 3 size.
+  integer(I8P)                  :: size_n4        !< Dimension 4 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
-  size_n4 = size(x, dim=4)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
+  size_n4 = size(x, dim=4, kind=I8P)
 
   l = DI4P + 1
   sp = 0
   allocate(character(len=l*size_n1*size_n2*size_n3*size_n4) :: code)
   code(:) = ''
-  do n4=1, size(x, dim=4)
-    do n3=1, size(x, dim=3)
-      do n2=1, size(x, dim=2)
-        do n1=1, size(x, dim=1)
+  do n4=1, size(x, dim=4, kind=I8P)
+    do n3=1, size(x, dim=3, kind=I8P)
+      do n2=1, size(x, dim=2, kind=I8P)
+        do n1=1, size(x, dim=1, kind=I8P)
           code(sp+1:sp+l) = str(n=x(n1, n2, n3, n4))//' '
           sp = sp + l
         enddo
@@ -891,30 +891,30 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 4 (I2P).
   integer(I2P),    intent(in)   :: x(1:,1:,1:,1:) !< Data variable.
   character(len=:), allocatable :: code           !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1             !< Counter.
-  integer(I4P)                  :: n2             !< Counter.
-  integer(I4P)                  :: n3             !< Counter.
-  integer(I4P)                  :: n4             !< Counter.
+  integer(I8P)                  :: n1             !< Counter.
+  integer(I8P)                  :: n2             !< Counter.
+  integer(I8P)                  :: n3             !< Counter.
+  integer(I8P)                  :: n4             !< Counter.
   integer(I8P)                  :: l              !< Length.
   integer(I8P)                  :: sp             !< String pointer.
-  integer(I4P)                  :: size_n1        !< Dimension 1 size.
-  integer(I4P)                  :: size_n2        !< Dimension 2 size.
-  integer(I4P)                  :: size_n3        !< Dimension 3 size.
-  integer(I4P)                  :: size_n4        !< Dimension 4 size.
+  integer(I8P)                  :: size_n1        !< Dimension 1 size.
+  integer(I8P)                  :: size_n2        !< Dimension 2 size.
+  integer(I8P)                  :: size_n3        !< Dimension 3 size.
+  integer(I8P)                  :: size_n4        !< Dimension 4 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
-  size_n4 = size(x, dim=4)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
+  size_n4 = size(x, dim=4, kind=I8P)
 
   l = DI2P + 1
   sp = 0
   allocate(character(len=l*size_n1*size_n2*size_n3*size_n4) :: code)
   code(:) = ''
-  do n4=1, size(x, dim=4)
-    do n3=1, size(x, dim=3)
-      do n2=1, size(x, dim=2)
-        do n1=1, size(x, dim=1)
+  do n4=1, size(x, dim=4, kind=I8P)
+    do n3=1, size(x, dim=3, kind=I8P)
+      do n2=1, size(x, dim=2, kind=I8P)
+        do n1=1, size(x, dim=1, kind=I8P)
           code(sp+1:sp+l) = str(n=x(n1, n2, n3, n4))//' '
           sp = sp + l
         enddo
@@ -927,30 +927,30 @@ contains
   !< Encode (Base64) a dataarray with 1 components of rank 4 (I1P).
   integer(I1P),    intent(in)   :: x(1:,1:,1:,1:) !< Data variable.
   character(len=:), allocatable :: code           !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1             !< Counter.
-  integer(I4P)                  :: n2             !< Counter.
-  integer(I4P)                  :: n3             !< Counter.
-  integer(I4P)                  :: n4             !< Counter.
+  integer(I8P)                  :: n1             !< Counter.
+  integer(I8P)                  :: n2             !< Counter.
+  integer(I8P)                  :: n3             !< Counter.
+  integer(I8P)                  :: n4             !< Counter.
   integer(I8P)                  :: l              !< Length.
   integer(I8P)                  :: sp             !< String pointer.
-  integer(I4P)                  :: size_n1        !< Dimension 1 size.
-  integer(I4P)                  :: size_n2        !< Dimension 2 size.
-  integer(I4P)                  :: size_n3        !< Dimension 3 size.
-  integer(I4P)                  :: size_n4        !< Dimension 4 size.
+  integer(I8P)                  :: size_n1        !< Dimension 1 size.
+  integer(I8P)                  :: size_n2        !< Dimension 2 size.
+  integer(I8P)                  :: size_n3        !< Dimension 3 size.
+  integer(I8P)                  :: size_n4        !< Dimension 4 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
-  size_n4 = size(x, dim=4)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
+  size_n4 = size(x, dim=4, kind=I8P)
 
   l = DI1P + 1
   sp = 0
   allocate(character(len=l*size_n1*size_n2*size_n3*size_n4) :: code)
   code(:) = ''
-  do n4=1, size(x, dim=4)
-    do n3=1, size(x, dim=3)
-      do n2=1, size(x, dim=2)
-        do n1=1, size(x, dim=1)
+  do n4=1, size(x, dim=4, kind=I8P)
+    do n3=1, size(x, dim=3, kind=I8P)
+      do n2=1, size(x, dim=2, kind=I8P)
+        do n1=1, size(x, dim=1, kind=I8P)
           code(sp+1:sp+l) = str(n=x(n1, n2, n3, n4))//' '
           sp = sp + l
         enddo
@@ -965,12 +965,12 @@ contains
   real(R16P),      intent(in)   :: y(1:) !< Y component.
   real(R16P),      intent(in)   :: z(1:) !< Z component.
   character(len=:), allocatable :: code  !< Encoded base64 dataarray.
-  integer(I4P)                  :: n     !< Counter.
+  integer(I8P)                  :: n     !< Counter.
   integer(I8P)                  :: l     !< Length.
   integer(I8P)                  :: sp    !< String pointer.
-  integer(I4P)                  :: size_n!< Dimension 1 size.
+  integer(I8P)                  :: size_n!< Dimension 1 size.
 
-  size_n = size(x, dim=1)
+  size_n = size(x, dim=1, kind=I8P)
   l = DR16P*3 + 3
   sp = 0
   allocate(character(len=l*size_n) :: code)
@@ -987,12 +987,12 @@ contains
   real(R8P),       intent(in)   :: y(1:) !< Y component.
   real(R8P),       intent(in)   :: z(1:) !< Z component.
   character(len=:), allocatable :: code  !< Encoded base64 dataarray.
-  integer(I4P)                  :: n     !< Counter.
+  integer(I8P)                  :: n     !< Counter.
   integer(I8P)                  :: l     !< Length.
   integer(I8P)                  :: sp    !< String pointer.
-  integer(I4P)                  :: size_n!< Dimension 1 size.
+  integer(I8P)                  :: size_n!< Dimension 1 size.
 
-  size_n = size(x, dim=1)
+  size_n = size(x, dim=1, kind=I8P)
   l = DR8P*3 + 3
   sp = 0
   allocate(character(len=l*size_n) :: code)
@@ -1009,12 +1009,12 @@ contains
   real(R4P),       intent(in)   :: y(1:) !< Y component.
   real(R4P),       intent(in)   :: z(1:) !< Z component.
   character(len=:), allocatable :: code  !< Encoded base64 dataarray.
-  integer(I4P)                  :: n     !< Counter.
+  integer(I8P)                  :: n     !< Counter.
   integer(I8P)                  :: l     !< Length.
   integer(I8P)                  :: sp    !< String pointer.
-  integer(I4P)                  :: size_n!< Dimension 1 size.
+  integer(I8P)                  :: size_n!< Dimension 1 size.
 
-  size_n = size(x, dim=1)
+  size_n = size(x, dim=1, kind=I8P)
   l = DR4P*3 + 3
   sp = 0
   allocate(character(len=l*size_n) :: code)
@@ -1031,12 +1031,12 @@ contains
   integer(I8P),    intent(in)   :: y(1:) !< Y component.
   integer(I8P),    intent(in)   :: z(1:) !< Z component.
   character(len=:), allocatable :: code  !< Encoded base64 dataarray.
-  integer(I4P)                  :: n     !< Counter.
+  integer(I8P)                  :: n     !< Counter.
   integer(I8P)                  :: l     !< Length.
   integer(I8P)                  :: sp    !< String pointer.
-  integer(I4P)                  :: size_n!< Dimension 1 size.
+  integer(I8P)                  :: size_n!< Dimension 1 size.
 
-  size_n = size(x, dim=1)
+  size_n = size(x, dim=1, kind=I8P)
   l = DI8P*3 + 3
   sp = 0
   allocate(character(len=l*size_n) :: code)
@@ -1053,12 +1053,12 @@ contains
   integer(I4P),    intent(in)   :: y(1:) !< Y component.
   integer(I4P),    intent(in)   :: z(1:) !< Z component.
   character(len=:), allocatable :: code  !< Encoded base64 dataarray.
-  integer(I4P)                  :: n     !< Counter.
+  integer(I8P)                  :: n     !< Counter.
   integer(I8P)                  :: l     !< Length.
   integer(I8P)                  :: sp    !< String pointer.
-  integer(I4P)                  :: size_n!< Dimension 1 size.
+  integer(I8P)                  :: size_n!< Dimension 1 size.
 
-  size_n = size(x, dim=1)
+  size_n = size(x, dim=1, kind=I8P)
   l = DI4P*3 + 3
   sp = 0
   allocate(character(len=l*size_n) :: code)
@@ -1075,12 +1075,12 @@ contains
   integer(I2P),    intent(in)   :: y(1:) !< Y component.
   integer(I2P),    intent(in)   :: z(1:) !< Z component.
   character(len=:), allocatable :: code  !< Encoded base64 dataarray.
-  integer(I4P)                  :: n     !< Counter.
+  integer(I8P)                  :: n     !< Counter.
   integer(I8P)                  :: l     !< Length.
   integer(I8P)                  :: sp    !< String pointer.
-  integer(I4P)                  :: size_n!< Dimension 1 size.
+  integer(I8P)                  :: size_n!< Dimension 1 size.
 
-  size_n = size(x, dim=1)
+  size_n = size(x, dim=1, kind=I8P)
   l = DI2P*3 + 3
   sp = 0
   allocate(character(len=l*size_n) :: code)
@@ -1097,12 +1097,12 @@ contains
   integer(I1P),    intent(in)   :: y(1:) !< Y component.
   integer(I1P),    intent(in)   :: z(1:) !< Z component.
   character(len=:), allocatable :: code  !< Encoded base64 dataarray.
-  integer(I4P)                  :: n     !< Counter.
+  integer(I8P)                  :: n     !< Counter.
   integer(I8P)                  :: l     !< Length.
   integer(I8P)                  :: sp    !< String pointer.
-  integer(I4P)                  :: size_n!< Dimension 1 size.
+  integer(I8P)                  :: size_n!< Dimension 1 size.
 
-  size_n = size(x, dim=1)
+  size_n = size(x, dim=1, kind=I8P)
   l = DI1P*3 + 3
   sp = 0
   allocate(character(len=l*size_n) :: code)
@@ -1119,26 +1119,26 @@ contains
   real(R16P),      intent(in)   :: y(1:,1:,1:) !< Y component.
   real(R16P),      intent(in)   :: z(1:,1:,1:) !< Z component.
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1          !< Counter.
-  integer(I4P)                  :: n2          !< Counter.
-  integer(I4P)                  :: n3          !< Counter.
+  integer(I8P)                  :: n1          !< Counter.
+  integer(I8P)                  :: n2          !< Counter.
+  integer(I8P)                  :: n3          !< Counter.
   integer(I8P)                  :: l           !< Length.
   integer(I8P)                  :: sp          !< String pointer.
-  integer(I4P)                  :: size_n1     !< Dimension 1 size.
-  integer(I4P)                  :: size_n2     !< Dimension 2 size.
-  integer(I4P)                  :: size_n3     !< Dimension 3 size.
+  integer(I8P)                  :: size_n1     !< Dimension 1 size.
+  integer(I8P)                  :: size_n2     !< Dimension 2 size.
+  integer(I8P)                  :: size_n3     !< Dimension 3 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
 
   l = DR16P*3 + 3
   sp = 0
   allocate(character(len=l*size_n1*size_n2*size_n3) :: code)
   code(:) = ''
-  do n3=1, size(x, dim=3)
-    do n2=1, size(x, dim=2)
-      do n1=1, size(x, dim=1)
+  do n3=1, size(x, dim=3, kind=I8P)
+    do n2=1, size(x, dim=2, kind=I8P)
+      do n1=1, size(x, dim=1, kind=I8P)
         code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))
         sp = sp + l
       enddo
@@ -1152,26 +1152,26 @@ contains
   real(R8P),       intent(in)   :: y(1:,1:,1:) !< Y component.
   real(R8P),       intent(in)   :: z(1:,1:,1:) !< Z component.
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1          !< Counter.
-  integer(I4P)                  :: n2          !< Counter.
-  integer(I4P)                  :: n3          !< Counter.
+  integer(I8P)                  :: n1          !< Counter.
+  integer(I8P)                  :: n2          !< Counter.
+  integer(I8P)                  :: n3          !< Counter.
   integer(I8P)                  :: l           !< Length.
   integer(I8P)                  :: sp          !< String pointer.
-  integer(I4P)                  :: size_n1     !< Dimension 1 size.
-  integer(I4P)                  :: size_n2     !< Dimension 2 size.
-  integer(I4P)                  :: size_n3     !< Dimension 3 size.
+  integer(I8P)                  :: size_n1     !< Dimension 1 size.
+  integer(I8P)                  :: size_n2     !< Dimension 2 size.
+  integer(I8P)                  :: size_n3     !< Dimension 3 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
 
   l = DR8P*3 + 3
   sp = 0
   allocate(character(len=l*size_n1*size_n2*size_n3) :: code)
   code(:) = ''
-  do n3=1, size(x, dim=3)
-    do n2=1, size(x, dim=2)
-      do n1=1, size(x, dim=1)
+  do n3=1, size(x, dim=3, kind=I8P)
+    do n2=1, size(x, dim=2, kind=I8P)
+      do n1=1, size(x, dim=1, kind=I8P)
         code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))
         sp = sp + l
       enddo
@@ -1185,26 +1185,26 @@ contains
   real(R4P),       intent(in)   :: y(1:,1:,1:) !< Y component.
   real(R4P),       intent(in)   :: z(1:,1:,1:) !< Z component.
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1          !< Counter.
-  integer(I4P)                  :: n2          !< Counter.
-  integer(I4P)                  :: n3          !< Counter.
+  integer(I8P)                  :: n1          !< Counter.
+  integer(I8P)                  :: n2          !< Counter.
+  integer(I8P)                  :: n3          !< Counter.
   integer(I8P)                  :: l           !< Length.
   integer(I8P)                  :: sp          !< String pointer.
-  integer(I4P)                  :: size_n1     !< Dimension 1 size.
-  integer(I4P)                  :: size_n2     !< Dimension 2 size.
-  integer(I4P)                  :: size_n3     !< Dimension 3 size.
+  integer(I8P)                  :: size_n1     !< Dimension 1 size.
+  integer(I8P)                  :: size_n2     !< Dimension 2 size.
+  integer(I8P)                  :: size_n3     !< Dimension 3 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
 
   l = DR4P*3 + 3
   sp = 0
   allocate(character(len=l*size_n1*size_n2*size_n3) :: code)
   code(:) = ''
-  do n3=1, size(x, dim=3)
-    do n2=1, size(x, dim=2)
-      do n1=1, size(x, dim=1)
+  do n3=1, size(x, dim=3, kind=I8P)
+    do n2=1, size(x, dim=2, kind=I8P)
+      do n1=1, size(x, dim=1, kind=I8P)
         code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))
         sp = sp + l
       enddo
@@ -1218,26 +1218,26 @@ contains
   integer(I8P),    intent(in)   :: y(1:,1:,1:) !< Y component.
   integer(I8P),    intent(in)   :: z(1:,1:,1:) !< Z component.
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1          !< Counter.
-  integer(I4P)                  :: n2          !< Counter.
-  integer(I4P)                  :: n3          !< Counter.
+  integer(I8P)                  :: n1          !< Counter.
+  integer(I8P)                  :: n2          !< Counter.
+  integer(I8P)                  :: n3          !< Counter.
   integer(I8P)                  :: l           !< Length.
   integer(I8P)                  :: sp          !< String pointer.
-  integer(I4P)                  :: size_n1     !< Dimension 1 size.
-  integer(I4P)                  :: size_n2     !< Dimension 2 size.
-  integer(I4P)                  :: size_n3     !< Dimension 3 size.
+  integer(I8P)                  :: size_n1     !< Dimension 1 size.
+  integer(I8P)                  :: size_n2     !< Dimension 2 size.
+  integer(I8P)                  :: size_n3     !< Dimension 3 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
 
   l = DI8P*3 + 3
   sp = 0
   allocate(character(len=l*size_n1*size_n2*size_n3) :: code)
   code(:) = ''
-  do n3=1, size(x, dim=3)
-    do n2=1, size(x, dim=2)
-      do n1=1, size(x, dim=1)
+  do n3=1, size(x, dim=3, kind=I8P)
+    do n2=1, size(x, dim=2, kind=I8P)
+      do n1=1, size(x, dim=1, kind=I8P)
         code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))
         sp = sp + l
       enddo
@@ -1251,26 +1251,26 @@ contains
   integer(I4P),    intent(in)   :: y(1:,1:,1:) !< Y component.
   integer(I4P),    intent(in)   :: z(1:,1:,1:) !< Z component.
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1          !< Counter.
-  integer(I4P)                  :: n2          !< Counter.
-  integer(I4P)                  :: n3          !< Counter.
+  integer(I8P)                  :: n1          !< Counter.
+  integer(I8P)                  :: n2          !< Counter.
+  integer(I8P)                  :: n3          !< Counter.
   integer(I8P)                  :: l           !< Length.
   integer(I8P)                  :: sp          !< String pointer.
-  integer(I4P)                  :: size_n1     !< Dimension 1 size.
-  integer(I4P)                  :: size_n2     !< Dimension 2 size.
-  integer(I4P)                  :: size_n3     !< Dimension 3 size.
+  integer(I8P)                  :: size_n1     !< Dimension 1 size.
+  integer(I8P)                  :: size_n2     !< Dimension 2 size.
+  integer(I8P)                  :: size_n3     !< Dimension 3 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
 
   l = DI4P*3 + 3
   sp = 0
   allocate(character(len=l*size_n1*size_n2*size_n3) :: code)
   code(:) = ''
-  do n3=1, size(x, dim=3)
-    do n2=1, size(x, dim=2)
-      do n1=1, size(x, dim=1)
+  do n3=1, size(x, dim=3, kind=I8P)
+    do n2=1, size(x, dim=2, kind=I8P)
+      do n1=1, size(x, dim=1, kind=I8P)
         code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))
         sp = sp + l
       enddo
@@ -1284,26 +1284,26 @@ contains
   integer(I2P),    intent(in)   :: y(1:,1:,1:) !< Y component.
   integer(I2P),    intent(in)   :: z(1:,1:,1:) !< Z component.
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1          !< Counter.
-  integer(I4P)                  :: n2          !< Counter.
-  integer(I4P)                  :: n3          !< Counter.
+  integer(I8P)                  :: n1          !< Counter.
+  integer(I8P)                  :: n2          !< Counter.
+  integer(I8P)                  :: n3          !< Counter.
   integer(I8P)                  :: l           !< Length.
   integer(I8P)                  :: sp          !< String pointer.
-  integer(I4P)                  :: size_n1     !< Dimension 1 size.
-  integer(I4P)                  :: size_n2     !< Dimension 2 size.
-  integer(I4P)                  :: size_n3     !< Dimension 3 size.
+  integer(I8P)                  :: size_n1     !< Dimension 1 size.
+  integer(I8P)                  :: size_n2     !< Dimension 2 size.
+  integer(I8P)                  :: size_n3     !< Dimension 3 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
 
   l = DI2P*3 + 3
   sp = 0
   allocate(character(len=l*size_n1*size_n2*size_n3) :: code)
   code(:) = ''
-  do n3=1, size(x, dim=3)
-    do n2=1, size(x, dim=2)
-      do n1=1, size(x, dim=1)
+  do n3=1, size(x, dim=3, kind=I8P)
+    do n2=1, size(x, dim=2, kind=I8P)
+      do n1=1, size(x, dim=1, kind=I8P)
         code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))
         sp = sp + l
       enddo
@@ -1317,26 +1317,26 @@ contains
   integer(I1P),    intent(in)   :: y(1:,1:,1:) !< Y component.
   integer(I1P),    intent(in)   :: z(1:,1:,1:) !< Z component.
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1          !< Counter.
-  integer(I4P)                  :: n2          !< Counter.
-  integer(I4P)                  :: n3          !< Counter.
+  integer(I8P)                  :: n1          !< Counter.
+  integer(I8P)                  :: n2          !< Counter.
+  integer(I8P)                  :: n3          !< Counter.
   integer(I8P)                  :: l           !< Length.
   integer(I8P)                  :: sp          !< String pointer.
-  integer(I4P)                  :: size_n1     !< Dimension 1 size.
-  integer(I4P)                  :: size_n2     !< Dimension 2 size.
-  integer(I4P)                  :: size_n3     !< Dimension 3 size.
+  integer(I8P)                  :: size_n1     !< Dimension 1 size.
+  integer(I8P)                  :: size_n2     !< Dimension 2 size.
+  integer(I8P)                  :: size_n3     !< Dimension 3 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
 
   l = DI1P*3 + 3
   sp = 0
   allocate(character(len=l*size_n1*size_n2*size_n3) :: code)
   code(:) = ''
-  do n3=1, size(x, dim=3)
-    do n2=1, size(x, dim=2)
-      do n1=1, size(x, dim=1)
+  do n3=1, size(x, dim=3, kind=I8P)
+    do n2=1, size(x, dim=2, kind=I8P)
+      do n1=1, size(x, dim=1, kind=I8P)
         code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))
         sp = sp + l
       enddo
@@ -1353,12 +1353,12 @@ contains
   real(R16P),      intent(in)   :: y(1:) !< Y component.
   real(R16P),      intent(in)   :: z(1:) !< Z component.
   character(len=:), allocatable :: code  !< Encoded base64 dataarray.
-  integer(I4P)                  :: n     !< Counter.
+  integer(I8P)                  :: n     !< Counter.
   integer(I8P)                  :: l     !< Length.
   integer(I8P)                  :: sp    !< String pointer.
-  integer(I4P)                  :: size_n!< Dimension 1 size.
+  integer(I8P)                  :: size_n!< Dimension 1 size.
 
-  size_n = size(x, dim=1)
+  size_n = size(x, dim=1, kind=I8P)
   l = DR16P*6 + 6
   sp = 0
   allocate(character(len=l*size_n) :: code)
@@ -1379,12 +1379,12 @@ contains
   real(R8P),       intent(in)   :: y(1:) !< Y component.
   real(R8P),       intent(in)   :: z(1:) !< Z component.
   character(len=:), allocatable :: code  !< Encoded base64 dataarray.
-  integer(I4P)                  :: n     !< Counter.
+  integer(I8P)                  :: n     !< Counter.
   integer(I8P)                  :: l     !< Length.
   integer(I8P)                  :: sp    !< String pointer.
-  integer(I4P)                  :: size_n!< Dimension 1 size.
+  integer(I8P)                  :: size_n!< Dimension 1 size.
 
-  size_n = size(x, dim=1)
+  size_n = size(x, dim=1, kind=I8P)
   l = DR8P*6 + 6
   sp = 0
   allocate(character(len=l*size_n) :: code)
@@ -1405,12 +1405,12 @@ contains
   real(R4P),       intent(in)   :: y(1:) !< Y component.
   real(R4P),       intent(in)   :: z(1:) !< Z component.
   character(len=:), allocatable :: code  !< Encoded base64 dataarray.
-  integer(I4P)                  :: n     !< Counter.
+  integer(I8P)                  :: n     !< Counter.
   integer(I8P)                  :: l     !< Length.
   integer(I8P)                  :: sp    !< String pointer.
-  integer(I4P)                  :: size_n!< Dimension 1 size.
+  integer(I8P)                  :: size_n!< Dimension 1 size.
 
-  size_n = size(x, dim=1)
+  size_n = size(x, dim=1, kind=I8P)
   l = DR4P*6 + 6
   sp = 0
   allocate(character(len=l*size_n) :: code)
@@ -1431,12 +1431,12 @@ contains
   integer(I8P),    intent(in)   :: y(1:) !< Y component.
   integer(I8P),    intent(in)   :: z(1:) !< Z component.
   character(len=:), allocatable :: code  !< Encoded base64 dataarray.
-  integer(I4P)                  :: n     !< Counter.
+  integer(I8P)                  :: n     !< Counter.
   integer(I8P)                  :: l     !< Length.
   integer(I8P)                  :: sp    !< String pointer.
-  integer(I4P)                  :: size_n!< Dimension 1 size.
+  integer(I8P)                  :: size_n!< Dimension 1 size.
 
-  size_n = size(x, dim=1)
+  size_n = size(x, dim=1, kind=I8P)
   l = DI8P*6 + 6
   sp = 0
   allocate(character(len=l*size_n) :: code)
@@ -1457,12 +1457,12 @@ contains
   integer(I4P),    intent(in)   :: y(1:) !< Y component.
   integer(I4P),    intent(in)   :: z(1:) !< Z component.
   character(len=:), allocatable :: code  !< Encoded base64 dataarray.
-  integer(I4P)                  :: n     !< Counter.
+  integer(I8P)                  :: n     !< Counter.
   integer(I8P)                  :: l     !< Length.
   integer(I8P)                  :: sp    !< String pointer.
-  integer(I4P)                  :: size_n!< Dimension 1 size.
+  integer(I8P)                  :: size_n!< Dimension 1 size.
 
-  size_n = size(x, dim=1)
+  size_n = size(x, dim=1, kind=I8P)
   l = DI4P*6 + 6
   sp = 0
   allocate(character(len=l*size_n) :: code)
@@ -1483,12 +1483,12 @@ contains
   integer(I2P),    intent(in)   :: y(1:) !< Y component.
   integer(I2P),    intent(in)   :: z(1:) !< Z component.
   character(len=:), allocatable :: code  !< Encoded base64 dataarray.
-  integer(I4P)                  :: n     !< Counter.
+  integer(I8P)                  :: n     !< Counter.
   integer(I8P)                  :: l     !< Length.
   integer(I8P)                  :: sp    !< String pointer.
-  integer(I4P)                  :: size_n!< Dimension 1 size.
+  integer(I8P)                  :: size_n!< Dimension 1 size.
 
-  size_n = size(x, dim=1)
+  size_n = size(x, dim=1, kind=I8P)
   l = DI2P*6 + 6
   sp = 0
   allocate(character(len=l*size_n) :: code)
@@ -1509,12 +1509,12 @@ contains
   integer(I1P),    intent(in)   :: y(1:) !< Y component.
   integer(I1P),    intent(in)   :: z(1:) !< Z component.
   character(len=:), allocatable :: code  !< Encoded base64 dataarray.
-  integer(I4P)                  :: n     !< Counter.
+  integer(I8P)                  :: n     !< Counter.
   integer(I8P)                  :: l     !< Length.
   integer(I8P)                  :: sp    !< String pointer.
-  integer(I4P)                  :: size_n!< Dimension 1 size.
+  integer(I8P)                  :: size_n!< Dimension 1 size.
 
-  size_n = size(x, dim=1)
+  size_n = size(x, dim=1, kind=I8P)
   l = DI1P*6 + 6
   sp = 0
   allocate(character(len=l*size_n) :: code)
@@ -1535,18 +1535,18 @@ contains
   real(R16P),      intent(in)   :: y(1:,1:,1:) !< Y component.
   real(R16P),      intent(in)   :: z(1:,1:,1:) !< Z component.
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1          !< Counter.
-  integer(I4P)                  :: n2          !< Counter.
-  integer(I4P)                  :: n3          !< Counter.
+  integer(I8P)                  :: n1          !< Counter.
+  integer(I8P)                  :: n2          !< Counter.
+  integer(I8P)                  :: n3          !< Counter.
   integer(I8P)                  :: l           !< Length.
   integer(I8P)                  :: sp          !< String pointer.
-  integer(I4P)                  :: size_n1     !< Dimension 1 size.
-  integer(I4P)                  :: size_n2     !< Dimension 2 size.
-  integer(I4P)                  :: size_n3     !< Dimension 3 size.
+  integer(I8P)                  :: size_n1     !< Dimension 1 size.
+  integer(I8P)                  :: size_n2     !< Dimension 2 size.
+  integer(I8P)                  :: size_n3     !< Dimension 3 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
 
   l = DR16P*6 + 6
   sp = 0
@@ -1572,18 +1572,18 @@ contains
   real(R8P),       intent(in)   :: y(1:,1:,1:) !< Y component.
   real(R8P),       intent(in)   :: z(1:,1:,1:) !< Z component.
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1          !< Counter.
-  integer(I4P)                  :: n2          !< Counter.
-  integer(I4P)                  :: n3          !< Counter.
+  integer(I8P)                  :: n1          !< Counter.
+  integer(I8P)                  :: n2          !< Counter.
+  integer(I8P)                  :: n3          !< Counter.
   integer(I8P)                  :: l           !< Length.
   integer(I8P)                  :: sp          !< String pointer.
-  integer(I4P)                  :: size_n1     !< Dimension 1 size.
-  integer(I4P)                  :: size_n2     !< Dimension 2 size.
-  integer(I4P)                  :: size_n3     !< Dimension 3 size.
+  integer(I8P)                  :: size_n1     !< Dimension 1 size.
+  integer(I8P)                  :: size_n2     !< Dimension 2 size.
+  integer(I8P)                  :: size_n3     !< Dimension 3 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
 
   l = DR8P*6 + 6
   sp = 0
@@ -1609,18 +1609,18 @@ contains
   real(R4P),       intent(in)   :: y(1:,1:,1:) !< Y component.
   real(R4P),       intent(in)   :: z(1:,1:,1:) !< Z component.
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1          !< Counter.
-  integer(I4P)                  :: n2          !< Counter.
-  integer(I4P)                  :: n3          !< Counter.
+  integer(I8P)                  :: n1          !< Counter.
+  integer(I8P)                  :: n2          !< Counter.
+  integer(I8P)                  :: n3          !< Counter.
   integer(I8P)                  :: l           !< Length.
   integer(I8P)                  :: sp          !< String pointer.
-  integer(I4P)                  :: size_n1     !< Dimension 1 size.
-  integer(I4P)                  :: size_n2     !< Dimension 2 size.
-  integer(I4P)                  :: size_n3     !< Dimension 3 size.
+  integer(I8P)                  :: size_n1     !< Dimension 1 size.
+  integer(I8P)                  :: size_n2     !< Dimension 2 size.
+  integer(I8P)                  :: size_n3     !< Dimension 3 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
 
   l = DR4P*6 + 6
   sp = 0
@@ -1646,18 +1646,18 @@ contains
   integer(I8P),    intent(in)   :: y(1:,1:,1:) !< Y component.
   integer(I8P),    intent(in)   :: z(1:,1:,1:) !< Z component.
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1          !< Counter.
-  integer(I4P)                  :: n2          !< Counter.
-  integer(I4P)                  :: n3          !< Counter.
+  integer(I8P)                  :: n1          !< Counter.
+  integer(I8P)                  :: n2          !< Counter.
+  integer(I8P)                  :: n3          !< Counter.
   integer(I8P)                  :: l           !< Length.
   integer(I8P)                  :: sp          !< String pointer.
-  integer(I4P)                  :: size_n1     !< Dimension 1 size.
-  integer(I4P)                  :: size_n2     !< Dimension 2 size.
-  integer(I4P)                  :: size_n3     !< Dimension 3 size.
+  integer(I8P)                  :: size_n1     !< Dimension 1 size.
+  integer(I8P)                  :: size_n2     !< Dimension 2 size.
+  integer(I8P)                  :: size_n3     !< Dimension 3 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
 
   l = DI8P*6 + 6
   sp = 0
@@ -1683,18 +1683,18 @@ contains
   integer(I4P),    intent(in)   :: y(1:,1:,1:) !< Y component.
   integer(I4P),    intent(in)   :: z(1:,1:,1:) !< Z component.
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1          !< Counter.
-  integer(I4P)                  :: n2          !< Counter.
-  integer(I4P)                  :: n3          !< Counter.
+  integer(I8P)                  :: n1          !< Counter.
+  integer(I8P)                  :: n2          !< Counter.
+  integer(I8P)                  :: n3          !< Counter.
   integer(I8P)                  :: l           !< Length.
   integer(I8P)                  :: sp          !< String pointer.
-  integer(I4P)                  :: size_n1     !< Dimension 1 size.
-  integer(I4P)                  :: size_n2     !< Dimension 2 size.
-  integer(I4P)                  :: size_n3     !< Dimension 3 size.
+  integer(I8P)                  :: size_n1     !< Dimension 1 size.
+  integer(I8P)                  :: size_n2     !< Dimension 2 size.
+  integer(I8P)                  :: size_n3     !< Dimension 3 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
 
   l = DI4P*6 + 6
   sp = 0
@@ -1720,18 +1720,18 @@ contains
   integer(I2P),    intent(in)   :: y(1:,1:,1:) !< Y component.
   integer(I2P),    intent(in)   :: z(1:,1:,1:) !< Z component.
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1          !< Counter.
-  integer(I4P)                  :: n2          !< Counter.
-  integer(I4P)                  :: n3          !< Counter.
+  integer(I8P)                  :: n1          !< Counter.
+  integer(I8P)                  :: n2          !< Counter.
+  integer(I8P)                  :: n3          !< Counter.
   integer(I8P)                  :: l           !< Length.
   integer(I8P)                  :: sp          !< String pointer.
-  integer(I4P)                  :: size_n1     !< Dimension 1 size.
-  integer(I4P)                  :: size_n2     !< Dimension 2 size.
-  integer(I4P)                  :: size_n3     !< Dimension 3 size.
+  integer(I8P)                  :: size_n1     !< Dimension 1 size.
+  integer(I8P)                  :: size_n2     !< Dimension 2 size.
+  integer(I8P)                  :: size_n3     !< Dimension 3 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
 
   l = DI2P*6 + 6
   sp = 0
@@ -1757,18 +1757,18 @@ contains
   integer(I1P),    intent(in)   :: y(1:,1:,1:) !< Y component.
   integer(I1P),    intent(in)   :: z(1:,1:,1:) !< Z component.
   character(len=:), allocatable :: code        !< Encoded base64 dataarray.
-  integer(I4P)                  :: n1          !< Counter.
-  integer(I4P)                  :: n2          !< Counter.
-  integer(I4P)                  :: n3          !< Counter.
+  integer(I8P)                  :: n1          !< Counter.
+  integer(I8P)                  :: n2          !< Counter.
+  integer(I8P)                  :: n3          !< Counter.
   integer(I8P)                  :: l           !< Length.
   integer(I8P)                  :: sp          !< String pointer.
-  integer(I4P)                  :: size_n1     !< Dimension 1 size.
-  integer(I4P)                  :: size_n2     !< Dimension 2 size.
-  integer(I4P)                  :: size_n3     !< Dimension 3 size.
+  integer(I8P)                  :: size_n1     !< Dimension 1 size.
+  integer(I8P)                  :: size_n2     !< Dimension 2 size.
+  integer(I8P)                  :: size_n3     !< Dimension 3 size.
 
-  size_n1 = size(x, dim=1)
-  size_n2 = size(x, dim=2)
-  size_n3 = size(x, dim=3)
+  size_n1 = size(x, dim=1, kind=I8P)
+  size_n2 = size(x, dim=2, kind=I8P)
+  size_n3 = size(x, dim=3, kind=I8P)
 
   l = DI1P*6 + 6
   sp = 0
