@@ -271,6 +271,7 @@ call a_vtk_file%free                           ! free the memory of the volatile
 error = write_xml_volatile(xml_volatile=xml_volatile, filename='part_01.vtr')
 ```
 
-- Only the `binary` format supports volatile files: the other formats ignore `is_volatile` and write the file to disk.
+- The `binary` and `ascii` formats support volatile files. The appended formats (`raw`, `raw-zlib`, `binary-appended`)
+  write their data to the file directly: with `is_volatile=.true.`, `initialize` returns a non-zero error.
 - The string is the exact content of the file: written by the master, it is identical to the file written directly (the
   test `src/tests/vtk_fortran_write_volatile.f90` checks it).

@@ -33,6 +33,12 @@ contains
         action='WRITE',               &
         status='REPLACE',             &
         iostat=error)
+   if (error /= 0) return
    write(unit=xml_unit, iostat=error) xml_volatile
+   if (error /= 0) then
+      close(unit=xml_unit)
+      return
+   endif
+   close(unit=xml_unit, iostat=error)
    endfunction write_xml_volatile
 endmodule vtk_fortran

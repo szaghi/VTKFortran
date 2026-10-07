@@ -152,7 +152,8 @@ Blocks nested to any depth, read back with `get_entries`: see [chapter 7](./tuto
 
 <<< @/examples/output/volatile.ansi{ansi}
 
-For the processes that cannot access the file system: only the `binary` format supports volatile files.
+For the processes that cannot access the file system: the `binary` and `ascii` formats support volatile files; the
+appended ones (`raw`, `raw-zlib`, `binary-appended`) write their data to the file directly, and `initialize` refuses them.
 
 ## Read files
 

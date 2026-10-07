@@ -11,7 +11,7 @@ implicit none
 character(:), allocatable :: xml_volatile_file_1 !< XML volatile file 1.
 character(:), allocatable :: xml_volatile_file_2 !< XML volatile file 2.
 integer(I4P)              :: error               !< Status error.
-logical                   :: test_passed(3)      !< List of passed tests.
+logical                   :: test_passed(5)      !< List of passed tests.
 
 ! suppose that two slave processes create their own files, but they being not allowed to access to filesystem they creates
 ! "volatile" files in the form of string containing the XML-coded files
@@ -27,6 +27,13 @@ test_passed(2) = error == 0
 ! the file saved from the volatile string of the first slave must be identical to the same file written directly
 call write_check(filename="write_volatile_slave_1_check.vtr")
 test_passed(3) = are_identical(filename1="write_volatile_slave_1.vtr", filename2="write_volatile_slave_1_check.vtr")
+
+! the ascii format supports volatile files too; the appended formats refuse them
+test_passed(4) = write_tiny(format='ascii', filename='write_volatile_ascii_check.vtr', is_volatile=.false.) == 0 .and. &
+                 write_tiny(format='ascii', filename='write_volatile_ascii.vtr', is_volatile=.true.) == 0
+if (test_passed(4)) test_passed(4) = are_identical(filename1='write_volatile_ascii.vtr', &
+                                                   filename2='write_volatile_ascii_check.vtr')
+test_passed(5) = write_tiny(format='raw', filename='write_volatile_raw.vtr', is_volatile=.true.) /= 0
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 if (.not.all(test_passed)) error stop 'some tests failed'
@@ -180,6 +187,33 @@ contains
    error = a_vtk_file%finalize()
    call a_vtk_file%free
    endsubroutine write_check
+
+   function write_tiny(format, filename, is_volatile) result(error)
+   !< Write a tiny rectilinear grid, to the file directly or through a volatile file saved by write_xml_volatile.
+   character(*), intent(in)      :: format       !< File format.
+   character(*), intent(in)      :: filename     !< File name.
+   logical,      intent(in)      :: is_volatile  !< Write through a volatile file.
+   integer(I4P)                  :: error        !< Status error.
+   type(vtk_file)                :: a_vtk_file   !< A VTK file.
+   character(len=:), allocatable :: xml_volatile !< XML volatile file.
+
+   error = a_vtk_file%initialize(format=format, filename=filename, mesh_topology='RectilinearGrid', &
+                                 is_volatile=is_volatile, nx1=1, nx2=2, ny1=1, ny2=2, nz1=1, nz2=2)
+   if (error /= 0) return
+   error = a_vtk_file%xml_writer%write_piece(nx1=1, nx2=2, ny1=1, ny2=2, nz1=1, nz2=2)
+   error = a_vtk_file%xml_writer%write_geo(x=[0._R8P, 1._R8P], y=[0._R8P, 1._R8P], z=[0._R8P, 1._R8P])
+   error = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
+   error = a_vtk_file%xml_writer%write_dataarray(data_name='v', x=[1._R8P, 2._R8P, 3._R8P, 4._R8P, 5._R8P, 6._R8P, 7._R8P, &
+                                                                 8._R8P])
+   error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
+   error = a_vtk_file%xml_writer%write_piece()
+   error = a_vtk_file%finalize()
+   if (is_volatile) then
+      call a_vtk_file%get_xml_volatile(xml_volatile)
+      call a_vtk_file%free
+      error = write_xml_volatile(xml_volatile=xml_volatile, filename=filename)
+   endif
+   endfunction write_tiny
 
    function are_identical(filename1, filename2) result(is_identical)
    !< Check that two files have the same contents.

@@ -113,7 +113,7 @@ contains
    character(*),    intent(in), optional :: format        !< File format: ASCII, BINARY, RAW, RAW-ZLIB or BINARY-APPENDED.
    character(*),    intent(in)           :: filename      !< File name.
    character(*),    intent(in), optional :: mesh_topology !< Mesh topology.
-   logical,         intent(in), optional :: is_volatile   !< Flag to check volatile writer.
+   logical,         intent(in), optional :: is_volatile   !< Write into memory (get_xml_volatile): ascii and binary only.
    integer(I4P),    intent(in), optional :: nx1           !< Initial node of x axis.
    integer(I4P),    intent(in), optional :: nx2           !< Final node of x axis.
    integer(I4P),    intent(in), optional :: ny1           !< Initial node of y axis.
@@ -156,7 +156,11 @@ contains
    case('ASCII')
       allocate(xml_writer_ascii_local :: self%xml_writer)
    case('BINARY-APPENDED', 'RAW', 'RAW-ZLIB')
-      allocate(xml_writer_appended :: self%xml_writer)
+      ! the appended data are written to the file directly: a volatile (in memory) file is not supported
+      if (present(is_volatile)) then
+         if (is_volatile) error = 1
+      endif
+      if (error == 0) allocate(xml_writer_appended :: self%xml_writer)
    case('BINARY')
       allocate(xml_writer_binary_local :: self%xml_writer)
    case default
