@@ -504,6 +504,13 @@ The `format` argument to `initialize` is case-insensitive:
 
 Binary arrays larger than 2 GiB need `header_type='UInt64'`, see [Large data arrays](#large-data-arrays-uint64-headers).
 
+The appended formats (`raw`, `raw-zlib`, `binary-appended`) write the XML metadata of each array first and its data only at
+`finalize`, in the appended section after all the metadata. Until then the data are held in a **scratch file**, so memory use
+does not grow with the file size and the arrays can be deallocated after each `write_dataarray`. The cost is writing the data
+once more to the scratch file and reading them back. The scratch file is opened in the temporary directory of the Fortran
+runtime: set `TMPDIR` (or `GFORTRAN_TMPDIR` for gfortran, `FORT_TMPDIR` for Intel ifx) to move it to a disk with enough free
+space, e.g. off a small `/tmp` on HPC nodes. The `binary` format writes inline, with no scratch file.
+
 ## Large data arrays (UInt64 headers)
 
 In the binary formats (`binary`, `raw`, `raw-zlib`, `binary-appended`) each DataArray is prefixed by its size in bytes. By
