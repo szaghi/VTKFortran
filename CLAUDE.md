@@ -68,4 +68,4 @@ CMake pulls all submodules via `add_subdirectory()` and centralises `.mod` files
 
 ## Test Infrastructure
 
-Each test program in `src/tests/` writes actual VTK XML files, then prints `"Are all tests passed? T"` or `"F"`. `run_tests.sh` collects these results and exits non-zero if any test fails. Tests cover major topologies: VTR (rectilinear), VTS (structured), VTU (unstructured, polyhedra), VTM (multi-block), PVTS and PVTU (parallel), PVD (time series), active arrays, large arrays, and volatile XML output.
+Each test program in `src/tests/` writes actual VTK XML files, then prints `"Are all tests passed? T"` or `"F"`. `run_tests.sh` collects these results and exits non-zero if any test fails. Tests cover major topologies: VTI and PVTI (image data), VTR (rectilinear), VTS (structured), VTU (unstructured, polyhedra), VTM (multi-block), PVTS and PVTU (parallel), PVD (time series), active arrays, large arrays, and volatile XML output.

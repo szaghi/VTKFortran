@@ -19,6 +19,12 @@ type, abstract :: xml_writer_abstract
   type(string)  :: data_type_override              !< If set, type of the next DataArray tag (then unset).
   type(string)  :: tag_name_override               !< If set, element name of the next DataArray tag (then unset).
   integer(I8P)  :: tuples_override=-1_I8P          !< If >= 0, number of tuples of the next DataArray tag (then unset).
+  real(R8P)     :: origin(3)=0._R8P                !< Origin of ImageData topologies.
+  real(R8P)     :: spacing(3)=1._R8P               !< Spacing of ImageData topologies.
+  real(R8P)     :: direction(9)=[1._R8P, 0._R8P, 0._R8P, &
+                                 0._R8P, 1._R8P, 0._R8P, &
+                                 0._R8P, 0._R8P, 1._R8P] !< Axes directions of ImageData topologies (row-major 3x3).
+  logical       :: is_direction_set=.false.        !< Write the Direction of ImageData topologies.
   integer(I8P)  :: ioffset=0_I8P                   !< Offset count.
   integer(I4P)  :: xml=0_I4P                       !< XML Logical unit.
   integer(I4P)  :: vtm_block(1:2)=[-1_I4P, -1_I4P] !< Block indexes.
@@ -46,6 +52,7 @@ type, abstract :: xml_writer_abstract
     procedure,                                 pass(self) :: write_start_tag              !< Write start tag.
     procedure,                                 pass(self) :: write_tag                    !< Write tag.
     procedure,                                 pass(self) :: write_topology_tag           !< Write topology tag.
+    procedure,                                 pass(self) :: image_attributes             !< Return ImageData attributes.
     procedure(initialize_interface), deferred, pass(self) :: initialize                   !< Initialize writer.
     procedure(finalize_interface),   deferred, pass(self) :: finalize                     !< Finalize writer.
     generic :: write_dataarray =>          &
@@ -979,6 +986,17 @@ contains
                trim(str(n=nz1))//' '//trim(str(n=nz2))//'" GhostLevel="'//trim(str(self%ghost_level, .true.))//'"'
    case('PUnstructuredGrid')
       buffer = 'GhostLevel="'//trim(str(self%ghost_level, .true.))//'"'
+   case('ImageData')
+      buffer = 'WholeExtent="'//                             &
+               trim(str(n=nx1))//' '//trim(str(n=nx2))//' '//&
+               trim(str(n=ny1))//' '//trim(str(n=ny2))//' '//&
+               trim(str(n=nz1))//' '//trim(str(n=nz2))//'"'//self%image_attributes()
+   case('PImageData')
+      buffer = 'WholeExtent="'//                             &
+               trim(str(n=nx1))//' '//trim(str(n=nx2))//' '//&
+               trim(str(n=ny1))//' '//trim(str(n=ny2))//' '//&
+               trim(str(n=nz1))//' '//trim(str(n=nz2))//'" GhostLevel="'//trim(str(self%ghost_level, .true.))//'"'// &
+               self%image_attributes()
    endselect
    call self%write_start_tag(name=self%topology%chars(), attributes=buffer%chars())
    ! parallel topologies peculiars
@@ -1004,6 +1022,33 @@ contains
       call self%write_end_tag(name='PPoints')
    endselect
    endsubroutine write_topology_tag
+
+   function image_attributes(self) result(attributes)
+   !< Return the ` Origin="..." Spacing="..." [Direction="..."]` attributes of ImageData topologies.
+   !<
+   !< Values are written in the shortest form that reads back exactly.
+   class(xml_writer_abstract), intent(in) :: self       !< Writer.
+   character(len=:), allocatable          :: attributes !< Attributes, with a leading blank.
+
+   attributes = ' Origin="'//reals(self%origin)//'" Spacing="'//reals(self%spacing)//'"'
+   if (self%is_direction_set) attributes = attributes//' Direction="'//reals(self%direction)//'"'
+   contains
+      function reals(x) result(values)
+      !< Return space separated values, without the `+` of positive values (PENF `no_sign` would drop `-` too).
+      real(R8P), intent(in)         :: x(:)   !< Values.
+      character(len=:), allocatable :: values !< Space separated values.
+      character(len=:), allocatable :: value  !< One value.
+      integer                       :: i      !< Counter.
+
+      values = ''
+      do i=1, size(x)
+         value = trim(str(n=x(i), compact=.true.))
+         if (value(1:1) == '+') value = value(2:)
+         values = values//' '//value
+      enddo
+      values = values(2:)
+      endfunction reals
+   endfunction image_attributes
 
    ! write_dataarray
    subroutine write_dataarray_tag(self, data_type, number_of_components, data_name, data_content, is_tuples)
@@ -1170,7 +1215,7 @@ contains
       location_ = 'PointData'
    endselect
    select case(self%topology%chars())
-   case('PRectilinearGrid', 'PStructuredGrid', 'PUnstructuredGrid')
+   case('PRectilinearGrid', 'PStructuredGrid', 'PUnstructuredGrid', 'PImageData')
       location_ = 'P'//location_
    endselect
    select case(action_%chars())
@@ -1739,7 +1784,7 @@ contains
    type(string)                                     :: buffer !< Buffer string.
 
    select case (self%topology%chars())
-   case('PRectilinearGrid', 'PStructuredGrid')
+   case('PRectilinearGrid', 'PStructuredGrid', 'PImageData')
       buffer = 'Extent="'// &
                trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
                trim(str(n=ny1))//' '//trim(str(n=ny2))//' '// &

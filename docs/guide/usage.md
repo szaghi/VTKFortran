@@ -18,6 +18,38 @@ The general workflow for writing a VTK XML file is:
 
 All procedures return an integer error code. Zero means success.
 
+## Image Data (VTI)
+
+A regular grid with uniform spacing along each axis needs no geometry at all: it is defined by its extents, the coordinates of
+its origin and its spacing. The point of indexes `(i,j,k)` is at `origin + [i,j,k] * spacing` (the origin is the point of
+indexes `(0,0,0)`, also when the extents do not start at 0).
+
+```fortran
+use vtk_fortran, only : vtk_file
+use penf,        only : I4P, R8P
+
+type(vtk_file) :: a_vtk_file
+integer(I4P)   :: error
+real(R8P)      :: phi(0:63,0:63,0:31)   ! point data, one value per grid point
+
+error = a_vtk_file%initialize(format='raw', filename='output.vti', mesh_topology='ImageData', &
+                              nx1=0, nx2=63, ny1=0, ny2=63, nz1=0, nz2=31,                   &
+                              origin=[0._R8P, 0._R8P, 0._R8P], spacing=[0.1_R8P, 0.1_R8P, 0.2_R8P])
+error = a_vtk_file%xml_writer%write_piece(nx1=0, nx2=63, ny1=0, ny2=63, nz1=0, nz2=31)
+error = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
+error = a_vtk_file%xml_writer%write_dataarray(data_name='phi', x=phi, one_component=.true.)
+error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
+error = a_vtk_file%xml_writer%write_piece()
+error = a_vtk_file%finalize()
+```
+
+- `origin` and `spacing` are required for `ImageData`: without them `initialize` returns a non-zero error (and no file is
+  written).
+- `direction` (optional) orients the grid axes, as a row-major 3x3 matrix: the point `(i,j,k)` is at
+  `origin + direction . ([i,j,k] * spacing)`. Default: identity.
+- `write_geo` is not used. Point data have one value per grid point, cell data one value per cell, written with the usual
+  `write_dataarray` calls in any format.
+
 ## Rectilinear Grid (VTR)
 
 A rectilinear grid has independent 1-D coordinate arrays along each axis.
@@ -325,6 +357,26 @@ writes `<PointData Scalars="pressure" Vectors="velocity">` (`<CellData ...>` for
 
 See `src/tests/vtk_fortran_write_active_arrays.f90` for a complete program, parallel header included.
 
+## Parallel Image Data (PVTI)
+
+Each rank writes its piece as a `.vti` file with the **same** `origin` and `spacing` of the whole grid and the extents of the
+piece (adjacent pieces share the boundary index, as for PVTS); one rank writes the `.pvti` file with the whole extents, the
+same `origin` and `spacing`, and the extents of each piece. `mesh_kind` is not needed: image pieces have no points coordinates.
+
+```fortran
+error = a_pvtk_file%initialize(filename='output.pvti', mesh_topology='PImageData',        &
+                                nx1=0, nx2=63, ny1=0, ny2=63, nz1=0, nz2=31,               &
+                                origin=[0._R8P, 0._R8P, 0._R8P], spacing=[0.1_R8P, 0.1_R8P, 0.2_R8P])
+error = a_pvtk_file%xml_writer%write_dataarray(location='node', action='open')
+error = a_pvtk_file%xml_writer%write_parallel_dataarray(data_name='phi', data_type='Float64', number_of_components=1)
+error = a_pvtk_file%xml_writer%write_dataarray(location='node', action='close')
+error = a_pvtk_file%xml_writer%write_parallel_geo(source='part_01.vti', nx1=0,  nx2=32, ny1=0, ny2=63, nz1=0, nz2=31)
+error = a_pvtk_file%xml_writer%write_parallel_geo(source='part_02.vti', nx1=32, nx2=63, ny1=0, ny2=63, nz1=0, nz2=31)
+error = a_pvtk_file%finalize()
+```
+
+See `src/tests/vtk_fortran_write_vti.f90` for a complete program, serial and parallel.
+
 ## Time series (PVD)
 
 A `.pvd` file is a *collection*: it lists the files of a simulation (any VTK XML file written by `vtk_file`, `pvtk_file` or
@@ -406,8 +458,10 @@ The `mesh_topology` argument is case-sensitive:
 
 | Value | Produces |
 |-------|---------|
+| `ImageData` | `.vti` file (requires `origin` and `spacing`) |
 | `RectilinearGrid` | `.vtr` file |
 | `StructuredGrid` | `.vts` file |
 | `UnstructuredGrid` | `.vtu` file |
 | `PStructuredGrid` | `.pvts` file (pvtk_file only) |
 | `PUnstructuredGrid` | `.pvtu` file (pvtk_file only) |
+| `PImageData` | `.pvti` file (pvtk_file only, requires `origin` and `spacing`) |

@@ -33,7 +33,8 @@ contains
    call self%xml_writer%get_xml_volatile(xml_volatile=xml_volatile, error=error)
    endsubroutine get_xml_volatile
 
-   function initialize(self, format, filename, mesh_topology, is_volatile, nx1, nx2, ny1, ny2, nz1, nz2) result(error)
+   function initialize(self, format, filename, mesh_topology, is_volatile, nx1, nx2, ny1, ny2, nz1, nz2, &
+                       origin, spacing, direction) result(error)
    !< Initialize file (writer).
    !<
    !< @note This function must be the first to be called.
@@ -50,7 +51,10 @@ contains
    !<
    !<- RectilinearGrid;
    !<- StructuredGrid;
-   !<- UnstructuredGrid.
+   !<- UnstructuredGrid;
+   !<- ImageData: a regular grid, defined by the extents and the `origin`, `spacing` (both required) and `direction`
+   !<  (optional) arguments; the point of indexes (i,j,k) is at `origin + direction . ([i,j,k] * spacing)`. No geometry is
+   !<  written (`write_geo` is not used).
    !<
    !<### Example of usage
    !<
@@ -74,6 +78,9 @@ contains
    integer(I4P),    intent(in), optional :: ny2           !< Final node of y axis.
    integer(I4P),    intent(in), optional :: nz1           !< Initial node of z axis.
    integer(I4P),    intent(in), optional :: nz2           !< Final node of z axis.
+   real(R8P),       intent(in), optional :: origin(3)      !< Origin of ImageData: coordinates of the point of indexes (0,0,0).
+   real(R8P),       intent(in), optional :: spacing(3)     !< Spacing of ImageData along each axis.
+   real(R8P),       intent(in), optional :: direction(9)   !< Axes directions of ImageData, row-major 3x3 matrix (default identity).
    integer(I4P)                          :: error         !< Error status.
    type(string)                          :: fformat       !< File format.
 
@@ -94,6 +101,19 @@ contains
       error = 1
    endselect
    if (error /= 0_I4P) return
+   if (index(mesh_topology, 'ImageData') > 0) then
+      ! ImageData grids are defined by extents, origin and spacing (direction is optional)
+      if (.not.(present(origin).and.present(spacing))) then
+         error = 1_I4P
+         return
+      endif
+   endif
+   if (present(origin)) self%xml_writer%origin = origin
+   if (present(spacing)) self%xml_writer%spacing = spacing
+   if (present(direction)) then
+      self%xml_writer%direction = direction
+      self%xml_writer%is_direction_set = .true.
+   endif
    error = self%xml_writer%initialize(format=format, filename=filename, mesh_topology=mesh_topology, &
                                       is_volatile=is_volatile,                                       &
                                       nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)

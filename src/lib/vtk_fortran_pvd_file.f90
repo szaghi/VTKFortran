@@ -128,6 +128,7 @@ contains
    character(*),    intent(in), optional :: name     !< Name of the dataset.
    integer(I4P)                          :: error    !< Error status.
    character(len=:), allocatable         :: entry    !< Dataset entry.
+   character(len=:), allocatable         :: time     !< Time step, string.
    integer(I4P)                          :: part_    !< Part, local variable.
 
    if (self%unit == 0_I4P) then
@@ -135,7 +136,9 @@ contains
       return
    endif
    part_ = 0_I4P ; if (present(part)) part_ = part
-   entry = '    <DataSet timestep="'//trim(str(n=timestep, no_sign=.true., compact=.true.))//'"'
+   ! the `+` of positive values is dropped by hand: PENF `no_sign` would drop the `-` of negative ones too
+   time = trim(str(n=timestep, compact=.true.)) ; if (time(1:1) == '+') time = time(2:)
+   entry = '    <DataSet timestep="'//time//'"'
    if (present(group)) entry = entry//' group="'//trim(adjustl(group))//'"'
    entry = entry//' part="'//trim(str(n=part_, no_sign=.true.))//'"'
    if (present(name)) entry = entry//' name="'//trim(adjustl(name))//'"'

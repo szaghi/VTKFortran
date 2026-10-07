@@ -10,7 +10,7 @@ title: Features
 
 | Topology | Extension | Status |
 |----------|-----------|--------|
-| Image Data | `.vti` | — |
+| Image Data | `.vti` | ✅ |
 | Polydata | `.vtp` | — |
 | Rectilinear Grid | `.vtr` | ✅ |
 | Structured Grid | `.vts` | ✅ |
@@ -20,7 +20,7 @@ title: Features
 
 | Topology | Extension | Status |
 |----------|-----------|--------|
-| Parallel Image Data | `.pvti` | — |
+| Parallel Image Data | `.pvti` | ✅ |
 | Parallel Polydata | `.pvtp` | — |
 | Parallel Rectilinear Grid | `.pvtr` | — |
 | Parallel Structured Grid | `.pvts` | ✅ |

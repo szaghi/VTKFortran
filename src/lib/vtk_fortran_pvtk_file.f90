@@ -19,7 +19,8 @@ type :: pvtk_file
     procedure, pass(self) :: finalize   !< Finalize file.
 endtype pvtk_file
 contains
-  function initialize(self, filename, mesh_topology, mesh_kind, nx1, nx2, ny1, ny2, nz1, nz2, ghost_level) result(error)
+  function initialize(self, filename, mesh_topology, mesh_kind, nx1, nx2, ny1, ny2, nz1, nz2, ghost_level, &
+                      origin, spacing, direction) result(error)
   !< Initialize file (writer).
   !<
   !< @note This function must be the first to be called.
@@ -28,7 +29,9 @@ contains
   !<
   !<- PRectilinearGrid;
   !<- PStructuredGrid;
-  !<- PUnstructuredGrid.
+  !<- PUnstructuredGrid;
+  !<- PImageData: `origin` and `spacing` are required, `direction` is optional, `mesh_kind` is not used (the pieces have no
+  !<  points coordinates).
   !<
   !<### Example of usage
   !<
@@ -46,7 +49,7 @@ contains
   class(pvtk_file), intent(inout)         :: self          !< VTK file.
   character(*),     intent(in)            :: filename      !< File name.
   character(*),     intent(in)            :: mesh_topology !< Mesh topology.
-  character(*),     intent(in)            :: mesh_kind     !< Kind of mesh data: Float64, Float32, ecc.
+  character(*),     intent(in),  optional :: mesh_kind     !< Kind of points coordinates: Float64, Float32 (not for PImageData).
   integer(I4P),     intent(in),  optional :: nx1           !< Initial node of x axis.
   integer(I4P),     intent(in),  optional :: nx2           !< Final node of x axis.
   integer(I4P),     intent(in),  optional :: ny1           !< Initial node of y axis.
@@ -54,6 +57,9 @@ contains
   integer(I4P),     intent(in),  optional :: nz1           !< Initial node of z axis.
   integer(I4P),     intent(in),  optional :: nz2           !< Final node of z axis.
   integer(I4P),     intent(in),  optional :: ghost_level   !< Number of ghost levels of the pieces (default 0).
+  real(R8P),        intent(in),  optional :: origin(3)      !< Origin of ImageData: coordinates of the point of indexes (0,0,0).
+  real(R8P),        intent(in),  optional :: spacing(3)     !< Spacing of ImageData along each axis.
+  real(R8P),        intent(in),  optional :: direction(9)   !< Axes directions of ImageData, row-major 3x3 matrix (default identity).
   integer(I4P)                            :: error         !< Error status.
 
   if (.not.is_initialized) call penf_init
@@ -61,6 +67,19 @@ contains
   if (allocated(self%xml_writer)) deallocate(self%xml_writer)
   allocate(xml_writer_ascii_local :: self%xml_writer)
   if (present(ghost_level)) self%xml_writer%ghost_level = ghost_level
+  if (index(mesh_topology, 'ImageData') > 0) then
+     ! ImageData grids are defined by extents, origin and spacing (direction is optional)
+     if (.not.(present(origin).and.present(spacing))) then
+        error = 1_I4P
+        return
+     endif
+  endif
+  if (present(origin)) self%xml_writer%origin = origin
+  if (present(spacing)) self%xml_writer%spacing = spacing
+  if (present(direction)) then
+     self%xml_writer%direction = direction
+     self%xml_writer%is_direction_set = .true.
+  endif
   error = self%xml_writer%initialize(format='ascii', filename=filename, mesh_topology=mesh_topology, &
                                      nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, mesh_kind=mesh_kind)
   endfunction initialize

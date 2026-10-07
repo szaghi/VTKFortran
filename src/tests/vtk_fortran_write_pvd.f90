@@ -11,7 +11,7 @@ use vtk_fortran, only : pvd_file, vtk_file
 implicit none
 type(pvd_file)          :: pvd                                  !< A PVD file.
 character(*), parameter :: pvd_name='vtkfortran_write_pvd.pvd'  !< PVD file name.
-real(R8P),    parameter :: times(3)=[0._R8P, 0.1_R8P, 0.25_R8P] !< Time steps.
+real(R8P),    parameter :: times(3)=[-0.5_R8P, 0.1_R8P, 0.25_R8P] !< Time steps (a negative one included).
 character(len=32)       :: step_name(3)                         !< Dataset (step) file names.
 integer(I4P)            :: error                                !< Status error.
 integer(I4P)            :: s                                    !< Counter.
@@ -43,7 +43,7 @@ error = pvd%initialize(filename='vtkfortran_write_pvd_attributes.pvd')
 error = pvd%write_dataset(filename=trim(step_name(1)), timestep=times(1), part=1, group='fluid', name='mesh')
 error = pvd%finalize()
 test_passed(3) = has_line('vtkfortran_write_pvd_attributes.pvd', &
-                          '<DataSet timestep="0.0" group="fluid" part="1" name="mesh" file="'//trim(step_name(1))//'"/>')
+                          '<DataSet timestep="-0.5" group="fluid" part="1" name="mesh" file="'//trim(step_name(1))//'"/>')
 
 ! append to a file with content after its closing tags (e.g. edited by hand): the content is dropped
 open(newunit=u, file='vtkfortran_write_pvd_edited.pvd', action='write', status='replace')
