@@ -11,7 +11,7 @@ A Fortran 2003+ compliant compiler is required:
 | Compiler | Minimum version |
 |----------|----------------|
 | GNU gfortran | ≥ 6.0.1 |
-| Intel Fortran (ifort) | ≥ 16.x |
+| Intel Fortran (ifx) | tested with 2025.3 (the fobos Intel modes run `ifx`; the discontinued ifort is not tested) |
 
 ## Download
 

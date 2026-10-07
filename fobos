@@ -198,6 +198,7 @@ jobs         = 10
 
 [template-shared-intel]
 compiler     = intel
+fc           = ifx
 cflags       = $CSHARED_INT $OPTIMIZE
 lflags       = $LSHARED $OPTIMIZE
 mod_dir      = ./mod/
@@ -211,6 +212,7 @@ jobs         = 10
 
 [template-static-intel]
 compiler     = intel
+fc           = ifx
 cflags       = $CSTATIC_INT $OPTIMIZE
 lflags       = $OPTIMIZE
 mod_dir      = ./mod/
@@ -224,6 +226,7 @@ jobs         = 10
 
 [template-shared-intel-debug]
 compiler     = intel
+fc           = ifx
 cflags       = $CSHARED_INT $DEBUG_INT
 lflags       = $LSHARED $DEBUG_INT
 mod_dir      = ./mod/
@@ -237,6 +240,7 @@ jobs         = 10
 
 [template-static-intel-debug]
 compiler     = intel
+fc           = ifx
 cflags       = $CSTATIC_INT $DEBUG_INT
 lflags       = $DEBUG_INT
 mod_dir      = ./mod/

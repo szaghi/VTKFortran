@@ -21,7 +21,7 @@ body:
     id: compiler
     attributes:
       label: Fortran compiler and version
-      description: Run `gfortran --version` or `ifort --version`, etc.
+      description: Run `gfortran --version` or `ifx --version`, etc.
       placeholder: "GNU Fortran 13.2.0 / Intel oneAPI 2024.1"
     validations:
       required: true
