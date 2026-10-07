@@ -310,7 +310,7 @@ contains
       code(sp+1:sp+l) = str(n=x(n1, n2))//' '
       sp = sp + l
     enddo
-    code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2))
+    code(sp+1:sp+l) = str(n=x(size(x, dim=1, kind=I8P), n2))//' '
     sp = sp + l
   enddo
   endfunction encode_ascii_dataarray1_rank2_R16P
@@ -337,7 +337,7 @@ contains
       code(sp+1:sp+l) = str(n=x(n1, n2))//' '
       sp = sp + l
     enddo
-    code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2))
+    code(sp+1:sp+l) = str(n=x(size(x, dim=1, kind=I8P), n2))//' '
     sp = sp + l
   enddo
   endfunction encode_ascii_dataarray1_rank2_R8P
@@ -364,7 +364,7 @@ contains
       code(sp+1:sp+l) = str(n=x(n1, n2))//' '
       sp = sp + l
     enddo
-    code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2))
+    code(sp+1:sp+l) = str(n=x(size(x, dim=1, kind=I8P), n2))//' '
     sp = sp + l
   enddo
   endfunction encode_ascii_dataarray1_rank2_R4P
@@ -391,7 +391,7 @@ contains
       code(sp+1:sp+l) = str(n=x(n1, n2))//' '
       sp = sp + l
     enddo
-    code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2))
+    code(sp+1:sp+l) = str(n=x(size(x, dim=1, kind=I8P), n2))//' '
     sp = sp + l
   enddo
   endfunction encode_ascii_dataarray1_rank2_I8P
@@ -418,7 +418,7 @@ contains
       code(sp+1:sp+l) = str(n=x(n1, n2))//' '
       sp = sp + l
     enddo
-    code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2))
+    code(sp+1:sp+l) = str(n=x(size(x, dim=1, kind=I8P), n2))//' '
     sp = sp + l
   enddo
   endfunction encode_ascii_dataarray1_rank2_I4P
@@ -445,7 +445,7 @@ contains
       code(sp+1:sp+l) = str(n=x(n1, n2))//' '
       sp = sp + l
     enddo
-    code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2))
+    code(sp+1:sp+l) = str(n=x(size(x, dim=1, kind=I8P), n2))//' '
     sp = sp + l
   enddo
   endfunction encode_ascii_dataarray1_rank2_I2P
@@ -472,7 +472,7 @@ contains
       code(sp+1:sp+l) = str(n=x(n1, n2))//' '
       sp = sp + l
     enddo
-    code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2))
+    code(sp+1:sp+l) = str(n=x(size(x, dim=1, kind=I8P), n2))//' '
     sp = sp + l
   enddo
   endfunction encode_ascii_dataarray1_rank2_I1P
@@ -504,7 +504,7 @@ contains
         code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '
         sp = sp + 1
       enddo
-      code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2, n3))
+      code(sp+1:sp+l) = str(n=x(size(x, dim=1, kind=I8P), n2, n3))//' '
     enddo
   enddo
   endfunction encode_ascii_dataarray1_rank3_R16P
@@ -536,7 +536,7 @@ contains
         code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '
         sp = sp + l
       enddo
-      code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2, n3))
+      code(sp+1:sp+l) = str(n=x(size(x, dim=1, kind=I8P), n2, n3))//' '
       sp = sp + l
     enddo
   enddo
@@ -569,7 +569,7 @@ contains
         code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '
         sp = sp + l
       enddo
-      code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2, n3))
+      code(sp+1:sp+l) = str(n=x(size(x, dim=1, kind=I8P), n2, n3))//' '
       sp = sp + l
     enddo
   enddo
@@ -602,7 +602,7 @@ contains
         code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '
         sp = sp + l
       enddo
-      code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2, n3))
+      code(sp+1:sp+l) = str(n=x(size(x, dim=1, kind=I8P), n2, n3))//' '
       sp = sp + l
     enddo
   enddo
@@ -635,7 +635,7 @@ contains
         code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '
         sp = sp + l
       enddo
-      code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2, n3))
+      code(sp+1:sp+l) = str(n=x(size(x, dim=1, kind=I8P), n2, n3))//' '
       sp = sp + l
     enddo
   enddo
@@ -668,7 +668,7 @@ contains
         code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '
         sp = sp + l
       enddo
-      code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2, n3))
+      code(sp+1:sp+l) = str(n=x(size(x, dim=1, kind=I8P), n2, n3))//' '
       sp = sp + l
     enddo
   enddo
@@ -701,7 +701,7 @@ contains
         code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '
         sp = sp + l
       enddo
-      code(sp+1:sp+l) = ' '//str(n=x(size(x, dim=1, kind=I8P), n2, n3))
+      code(sp+1:sp+l) = str(n=x(size(x, dim=1, kind=I8P), n2, n3))//' '
       sp = sp + l
     enddo
   enddo
