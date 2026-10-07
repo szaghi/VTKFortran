@@ -68,60 +68,41 @@ Use [Conventional Commits](https://www.conventionalcommits.org/) so that `CHANGE
 Append `!` for breaking changes (`feat!:`, `fix!:`). Reference issues with `#123` — they are auto-linked.
 
 ```
-feat: add R32P kind parameter
-fix: correct byte_size for character arrays (#42)
-feat!: rename check_endian to init_endian
+feat(writers): add PolyData (vtp) and PPolyData (pvtp) topologies
+fix(appended): correct the offsets of base64 compressed arrays (#123)
+feat!: rename write_geo to write_geometry
 ```
-
----
-
-## Repository maintenance
-
-### Removing a submodule
-
-Use `scripts/remove_submodule.sh` to fully remove a git submodule in one step:
-
-```bash
-scripts/remove_submodule.sh <submodule-path>
-
-# Example — remove FACE:
-scripts/remove_submodule.sh src/third_party/FACE
-```
-
-The script:
-1. Validates that the path is a registered submodule
-2. Runs `git submodule deinit -f`
-3. Removes the path with `git rm -f`
-4. Deletes the cached module data under `.git/modules/`
-
-After running it, stage and commit the resulting changes to `.gitmodules`.
 
 ---
 
 ## Creating a release
 
-Releases are fully automated via `scripts/bump.sh` and GitHub Actions. The only steps needed are:
+Releases are made from `master` (trunk based) with `scripts/release.sh`, which needs
+[git-cliff](https://git-cliff.org/) (`cargo install git-cliff`, or a binary from its releases page):
 
 ```bash
-# Install git-cliff once
-npx git-cliff@latest
-
-# Then, to release:
-scripts/bump.sh patch   # v1.2.3 → v1.2.4
-scripts/bump.sh minor   # v1.2.3 → v1.3.0
-scripts/bump.sh major   # v1.2.3 → v2.0.0
-scripts/bump.sh v2.1.0  # explicit version
+scripts/release.sh --patch    # X.Y.Z → X.Y.Z+1
+scripts/release.sh --minor    # X.Y.Z → X.Y+1.0
+scripts/release.sh --major    # X.Y.Z → X+1.0.0
+scripts/release.sh v2.1.0     # explicit version (the v prefix is optional)
 ```
 
-`bump.sh` will ask for confirmation, then:
+The script first checks that you are on `master`, up to date with `origin`, with a clean working tree, and that the new tag
+does not exist yet. After your confirmation it:
 
-1. Regenerate `CHANGELOG.md` from the git log via [git-cliff](https://git-cliff.org/)
-2. Commit with `chore(release): vX.Y.Z`
-3. Create an annotated git tag
-4. Push commit + tag
+1. Regenerates `CHANGELOG.md` from the git log with git-cliff
+2. Updates `VERSION`, and the `version` of `fpm.toml` (without the `v` prefix)
+3. Commits them with `chore(release): vX.Y.Z`
+4. Creates the annotated tag `vX.Y.Z`
+5. Pushes `master` and the new tag
 
-Pushing the tag triggers the GitHub Actions release workflow, which automatically:
-- Runs the full test suite and uploads coverage to Codecov
-- Builds this documentation site and deploys it to GitHub Pages
-- Packages a versioned tarball `PENF-vX.Y.Z.tar.gz`
-- Publishes a GitHub release with the changelog section as release notes
+If a step fails, it prints the commands to resume or to undo what was done.
+
+Pushing `master` runs the CI (tests and coverage) and the Docs workflow (deploys this site) on the release commit, as for
+any push. Pushing the tag runs the release workflow (`.github/workflows/release.yml`), which:
+
+- Packages the source tarball `VTKFortran-vX.Y.Z.tar.gz`
+- Publishes a GitHub release with the `CHANGELOG.md` section of the version as release notes, the tarball and
+  `scripts/install.sh` attached
+- Smoke-tests the published release (`.github/workflows/install.yml`): `install.sh` with the CMake and FoBiS.py builds,
+  and an fpm build of the tag

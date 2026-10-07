@@ -9,6 +9,7 @@ authors    = Stefano Zaghi
 
 [scaffold]
 apt_packages = zlib1g-dev
+skip         = docs/guide/contributing.md
 
 [dependencies]
 deps_dir   = src/third_party
