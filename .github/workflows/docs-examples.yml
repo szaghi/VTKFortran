@@ -1,0 +1,43 @@
+name: Docs examples
+
+# Project-owned workflow (not managed by `fobis scaffold`): the programs of docs/examples are built and run, and
+# their snippets, outputs and terminal images regenerated; the committed ones, included by the documentation, must
+# match what the code produces. The ParaView renders (images/*.png, *.gif) are regenerated locally only: without
+# pvpython, scripts/docs_examples.sh keeps the committed ones.
+
+on:
+  push:
+    branches: ["**"]
+    tags-ignore: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  docs-examples:
+    name: docs examples / gfortran-14
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup build environment
+      uses: ./.github/actions/setup-build-env
+      with:
+        gcc-version: '14'
+
+    - name: Fetch dependencies
+      run: fobis fetch
+
+    - name: Build and run the examples
+      run: bash scripts/docs_examples.sh
+
+    - name: Check the committed snippets, outputs and images
+      run: |
+        git add --intent-to-add docs/examples
+        git diff --exit-code -- docs/examples || {
+          echo "::error::docs/examples is out of date: run 'bash scripts/docs_examples.sh' and commit the result"
+          exit 1
+        }

@@ -20,7 +20,7 @@ PENF       = https://github.com/szaghi/PENF
 StringiFor = https://github.com/szaghi/StringiFor
 
 [modes]
-modes = shared-gnu static-gnu tests-gnu
+modes = shared-gnu static-gnu static-gnu-zlib tests-gnu
         shared-gnu-debug static-gnu-debug tests-gnu-debug
         tests-gnu-debug-zlib
         shared-intel static-intel tests-intel
@@ -62,6 +62,13 @@ mklib     = shared
 
 [static-gnu]
 template  = template-static-gnu
+target    = src/lib/vtk_fortran.f90
+build_dir = ./static/
+output    = libvtkfortran.a
+mklib     = static
+
+[static-gnu-zlib]
+template  = template-static-gnu-zlib
 target    = src/lib/vtk_fortran.f90
 build_dir = ./static/
 output    = libvtkfortran.a
@@ -173,6 +180,20 @@ jobs         = 10
 compiler     = gnu
 cflags       = $CSTATIC_GNU $DEBUG_GNU
 lflags       = $DEBUG_GNU
+mod_dir      = ./mod/
+obj_dir      = ./obj/
+src          = ./src/
+exclude_dirs = $EXDIRS
+colors       = True
+quiet        = False
+log          = True
+jobs         = 10
+
+[template-static-gnu-zlib]
+compiler     = gnu
+cflags       = $CSTATIC_GNU $OPTIMIZE -DVTKFORTRAN_USE_ZLIB
+lflags       = $OPTIMIZE
+ext_libs     = z
 mod_dir      = ./mod/
 obj_dir      = ./obj/
 src          = ./src/

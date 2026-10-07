@@ -1,0 +1,5 @@
+$ inspect torus.vts
+torus.vts: StructuredGrid, pieces: 1, compressor: none
+  piece 1: 3456 points, 2162 cells
+     node       temperature  Float64 1 comp., range  2.5003E+02  3.4997E+02
+     node       velocity     Float64 3 comp., range -9.9944E-01  1.0000E+00

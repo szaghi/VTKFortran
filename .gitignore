@@ -28,6 +28,8 @@
 src/pre-lib/
 OLD/
 static/
+# docs examples scratch builds and runs
+build/
 shared/
 doc/html/
 wiki/

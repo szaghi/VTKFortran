@@ -1,0 +1,8 @@
+$ head -n 7 torus.vts
+<?xml version="1.0"?>
+<VTKFile type="StructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt32">
+  <StructuredGrid WholeExtent="+1 +48 +1 +24 +1 +3">
+    <Piece Extent="+1 +48 +1 +24 +1 +3">
+      <Points>
+        <DataArray type="Float64" NumberOfComponents="3" Name="Points" format="appended" offset="0"/>
+      </Points>

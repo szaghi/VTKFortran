@@ -3,14 +3,17 @@ layout: home
 
 hero:
   name: VTKFortran
-  text: VTK XML API
-  tagline: A pure Fortran 2008 library to write and read files conforming the VTK XML standard.
+  text: VTK files from pure Fortran
+  tagline: "Write the VTK XML formats that ParaView and VisIt read: image, rectilinear, structured and unstructured grids, polygonal data, parallel pieces, multi-block assemblies, time series. ASCII, binary, raw or zlib compressed. Then read them back. Pure Fortran 2008, no VTK to install."
   actions:
     - theme: brand
-      text: Guide
-      link: /guide/
+      text: Quick start
+      link: "#quick-start"
     - theme: alt
-      text: API Reference
+      text: Reference
+      link: /guide/features
+    - theme: alt
+      text: API
       link: /api/
     - theme: alt
       text: View on GitHub
@@ -18,57 +21,86 @@ hero:
 
 features:
   - icon: 📐
-    title: VTK XML Support
-    details: Write (and read back) Image, Rectilinear, Structured, and Unstructured grids and polygonal data in the VTK XML format. Composite multi-block datasets (VTM), parallel partitioned files (PVTI, PVTR, PVTS, PVTU, PVTP) and time series (PVD) are also supported.
+    title: Every VTK XML dataset
+    details: "Image data, rectilinear, structured and unstructured grids (polyhedra included), polygonal data with vertices, lines, strips and polygons."
+    link: /guide/usage#image-data-vti
+    linkText: Topologies
   - icon: 🗜️
-    title: Multiple Output Formats
-    details: Choose between ASCII, binary (Base64-encoded), and raw binary appended formats, with optional zlib compression of binary data. All procedures return an integer error code for flexible error trapping.
+    title: Any format, zlib too
+    details: "ASCII to read by eye, base64 binary inline, raw binary appended for speed; the binary formats compressed as VTK does, byte for byte."
+    link: /guide/usage#output-format-selection
+    linkText: Formats
+  - icon: 🧩
+    title: Parallel pieces
+    details: "Each rank writes its own piece, one rank writes the .pvtu, .pvts, .pvtr, .pvti or .pvtp header; ghost cells marked as ParaView expects."
+    link: /guide/usage#parallel-structured-grid-pvts
+    linkText: Parallel files
+  - icon: 🎞️
+    title: Time series
+    details: "A .pvd collection valid after every step, so a crashed run still opens in ParaView; restarts append to it."
+    link: /guide/usage#time-series-pvd
+    linkText: Time series
+  - icon: 🗂️
+    title: Assemblies
+    details: "Multi-block .vtm files with blocks nested to any depth, mirroring the parts of a model."
+    link: /guide/usage#nested-blocks
+    linkText: Multi-block
+  - icon: 📖
+    title: Read them back
+    details: "Every file VTKFortran writes, and the same files written by VTK, read array by array without loading the whole file; parallel headers checked against their pieces."
+    link: /guide/usage#reading-files
+    linkText: Reading
+  - icon: 🏷️
+    title: Field data and metadata
+    details: "Time, cycle, solver name and any global array or string attached to the dataset; active scalars and vectors chosen for the reader."
+    link: /guide/usage#field-data-global-metadata
+    linkText: Field data
+  - icon: 🔢
+    title: All kinds, all ranks
+    details: "Every PENF kind from I1P to R8P, ranks 1 to 4, scalars, vectors and tensors; unsigned arrays such as vtkGhostType."
+    link: /guide/features#data-arrays
+    linkText: Data arrays
+  - icon: 🐘
+    title: Big data
+    details: "Arrays beyond 2 GiB with UInt64 headers, more than 2^31 elements, 64-bit connectivity; appended data kept on disk while writing."
+    link: /guide/usage#large-meshes-64-bit-counts-and-connectivity
+    linkText: Large meshes
   - icon: ⚡
-    title: Parallel Safe
-    details: Handle multiple concurrent files safely. Thread and processor safe — works with OpenMP and MPI paradigms without coordination overhead.
+    title: Thread and process safe
+    details: "Every file keeps its own state: write them concurrently from OpenMP threads or MPI ranks."
+    link: /guide/features#parallel-support
+    linkText: Parallel support
   - icon: 🛠️
-    title: Multi Build System
-    details: Build with CMake (preferred), FoBiS.py, or FPM. Integrate into CMake projects via add_subdirectory and target_link_libraries.
-  - icon: 🧱
-    title: OOP Design
-    details: A polymorphic xml_writer component is allocated at runtime based on the chosen format, an xml_reader reads files back. The vtk_file, pvtk_file, vtm_file, and pvd_file types expose a clean, consistent type-bound-procedure API.
-  - icon: 🆓
-    title: Free & Open Source
-    details: Multi-licensed — GPLv3 for FOSS projects, BSD 2/3-Clause or MIT for commercial use. Fortran 2008 standard compliant.
+    title: Any build
+    details: "CMake, FoBiS.py or fpm; gfortran and Intel ifx. Small dependencies, fetched for you; zlib optional."
+    link: /guide/installation
+    linkText: Installation
+  - icon: 🔓
+    title: Multi-licensed
+    details: "GPL v3 for FOSS projects; BSD 2-Clause, BSD 3-Clause or MIT for closed source and commercial ones."
+    link: "#copyrights"
+    linkText: Copyrights
 ---
+
+<p align="center"><img src="./examples/images/quickstart.png" alt="a torus, written by the quick start program, rendered by ParaView: a structured grid coloured by its temperature"></p>
 
 ## Quick start
 
-Write a structured grid in binary XML format:
+A real session: a short program writes a torus as a structured grid with a temperature and a velocity field, then a
+second one reads the file back and prints what it holds.
 
-```fortran
-use vtk_fortran, only : vtk_file
-use penf,        only : I4P, R8P
+<p align="center"><img src="./examples/images/quickstart-cast.svg" alt="a terminal session: the quick start program writes torus.vts, the head of the file is shown, the inspect program lists its arrays"></p>
 
-type(vtk_file)     :: a_vtk_file
-integer, parameter :: nx1=0, nx2=9, ny1=0, ny2=5, nz1=0, nz2=5
-integer, parameter :: nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
-real(R8P)          :: x(nx1:nx2,ny1:ny2,nz1:nz2)
-real(R8P)          :: y(nx1:nx2,ny1:ny2,nz1:nz2)
-real(R8P)          :: z(nx1:nx2,ny1:ny2,nz1:nz2)
-real(R8P)          :: v(nx1:nx2,ny1:ny2,nz1:nz2)
-integer            :: error
+This is the whole program: compute the points and the fields, then one call for each part of the file. The torus above
+is `torus.vts` opened in ParaView.
 
-! ... fill x, y, z, v ...
+<<< @/examples/snippets/quickstart.f90
 
-error = a_vtk_file%initialize(format='binary', filename='output.vts', &
-                              mesh_topology='StructuredGrid',          &
-                              nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
-error = a_vtk_file%xml_writer%write_piece(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
-error = a_vtk_file%xml_writer%write_geo(n=nn, x=x, y=y, z=z)
-error = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
-error = a_vtk_file%xml_writer%write_dataarray(data_name='pressure', x=v, one_component=.true.)
-error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
-error = a_vtk_file%xml_writer%write_piece()
-error = a_vtk_file%finalize()
-```
+Reading is as short: `initialize` with `action='read'`, then ask for what you need. The `inspect` program of the session:
 
-All procedures return an integer error code — zero means success.
+<<< @/examples/snippets/inspect.f90
+
+Every example on these pages is a program compiled and run to produce the output and the images shown.
 
 ## Authors
 

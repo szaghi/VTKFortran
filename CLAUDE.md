@@ -21,6 +21,14 @@ fobis build --lmodes                 # List all available modes
 scripts/run_tests.sh                 # Run all executables in ./exe/: pass/fail from the exit status
 ```
 
+### Documentation examples
+```bash
+FC=gfortran-14 PVPYTHON=<paraview>/bin/pvpython bash scripts/docs_examples.sh   # regenerate docs/examples (commit them)
+```
+Programs in `docs/examples/src/` with markers (`!run`, `!region`, `!cast`, `!render`, ...); the pages include the
+generated snippets, outputs, terminal casts (`scripts/ansi2svg.py`) and ParaView renders (`scripts/render_vtk.py`, PNG or
+GIF for a `.pvd`). The *Docs examples* workflow checks all but the renders (no ParaView in CI).
+
 ### FPM
 ```bash
 fpm build   # library only; zlib: --flag "-DVTKFORTRAN_USE_ZLIB" --link-flag "-Wl,--no-as-needed -lz"
