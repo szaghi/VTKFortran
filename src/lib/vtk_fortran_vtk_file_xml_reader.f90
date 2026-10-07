@@ -10,6 +10,10 @@ module vtk_fortran_vtk_file_xml_reader
 !< VTKFortran or by VTK, in every format (ascii, binary, raw and base64 appended), uncompressed or zlib compressed
 !< (`vtkZLibDataCompressor`), with UInt32 or UInt64 headers. BigEndian files and other compressors are not supported.
 !<
+!< It reads the parallel headers too (PImageData, PRectilinearGrid, PStructuredGrid, PUnstructuredGrid, PPolyData): their
+!< information, the declared arrays (`get_dataarray_names`, `get_dataarray_info`), the pieces (`get_sources`, `read_piece`
+!< for their extents) and the check of the pieces against the header (`check_pieces`). They hold no data.
+!<
 !< All procedures return an error status:
 !<
 !<| Error | Meaning                                                                                  |
@@ -21,6 +25,7 @@ module vtk_fortran_vtk_file_xml_reader
 !<| 4     | not found (piece, data array, geometry or cells absent), or the reader is not initialized |
 !<| 5     | the output kind cannot hold the values of the data array                                 |
 !<| 6     | the data do not decode (inconsistent sizes, malformed base64, zlib failure)              |
+!<| 7     | the pieces of a parallel header do not match it (see `check_pieces`)                     |
 use penf
 use vtk_fortran_dataarray_decoder
 use vtk_fortran_xml_scanner
@@ -43,12 +48,15 @@ type :: xml_reader
   integer(I4P)                  :: pieces_number=0         !< Number of pieces.
   logical                       :: is_appended_raw=.true.  !< The appended data are raw (base64 otherwise).
   integer(I8P)                  :: appended_start=0_I8P    !< Position of the first byte of the appended data, 0 if none.
+  logical                       :: is_parallel=.false.     !< The file is a parallel header (P* dataset type).
   contains
     ! public methods
+    procedure, pass(self) :: check_pieces         !< Check the pieces of a parallel header against it.
     procedure, pass(self) :: finalize             !< Finalize the reader (free memory).
     procedure, pass(self) :: get_dataarray_info   !< Return the type, components and tuples of a dataarray.
     procedure, pass(self) :: get_dataarray_names  !< Return the names of the dataarrays of a location.
     procedure, pass(self) :: get_info             !< Return the information of the dataset.
+    procedure, pass(self) :: get_sources          !< Return the files of the pieces of a parallel header.
     procedure, pass(self) :: initialize           !< Initialize the reader: index the file.
     generic               :: read_connectivity => read_connectivity_I4P, read_connectivity_I8P !< Read the cells.
     generic               :: read_dataarray => read_dataarray_rank1_R8P, read_dataarray_rank1_R4P, &
@@ -113,6 +121,9 @@ contains
   error = 3
   select case(self%mesh_topology)
   case('ImageData', 'RectilinearGrid', 'StructuredGrid', 'UnstructuredGrid', 'PolyData')
+    self%is_parallel = .false.
+  case('PImageData', 'PRectilinearGrid', 'PStructuredGrid', 'PUnstructuredGrid', 'PPolyData')
+    self%is_parallel = .true.
   case default
     return
   endselect
@@ -177,14 +188,16 @@ contains
   self%pieces_number = 0
   self%is_appended_raw = .true.
   self%appended_start = 0_I8P
+  self%is_parallel = .false.
   endsubroutine finalize
 
   function get_info(self, mesh_topology, npieces, header_type, compressor, nx1, nx2, ny1, ny2, nz1, nz2, &
-                    origin, spacing, direction) result(error)
+                    origin, spacing, direction, ghost_level) result(error)
   !< Return the information of the dataset.
   !<
   !< The whole extent (`nx1...nz2`) is returned for the structured topologies (ImageData, RectilinearGrid, StructuredGrid);
-  !< `origin`, `spacing` and `direction` for ImageData (`direction` is the identity when the file has none).
+  !< `origin`, `spacing` and `direction` for ImageData (`direction` is the identity when the file has none); `ghost_level`
+  !< for parallel headers (0 when the file has none).
   class(xml_reader),             intent(in)            :: self          !< XML reader.
   character(len=:), allocatable, intent(out), optional :: mesh_topology !< Dataset type, e.g. UnstructuredGrid.
   integer(I4P),                  intent(out), optional :: npieces       !< Number of pieces.
@@ -199,6 +212,7 @@ contains
   real(R8P),                     intent(out), optional :: origin(3)     !< Origin of ImageData.
   real(R8P),                     intent(out), optional :: spacing(3)    !< Spacing of ImageData.
   real(R8P),                     intent(out), optional :: direction(9)  !< Axes directions of ImageData (row-major).
+  integer(I4P),                  intent(out), optional :: ghost_level   !< Number of ghost levels of a parallel header.
   integer(I4P)                                         :: error         !< Error status.
   character(len=:), allocatable                        :: value         !< Attribute value.
   integer(I4P)                                         :: extent(6)     !< Extent.
@@ -240,6 +254,12 @@ contains
     direction = [1._R8P, 0._R8P, 0._R8P, 0._R8P, 1._R8P, 0._R8P, 0._R8P, 0._R8P, 1._R8P]
     call self%xml%element(self%dataset)%get_attribute(name='Direction', value=value)
     if (len(value) > 0) read(value, *, iostat=iostat) direction
+    if (iostat /= 0) error = 6
+  endif
+  if (present(ghost_level)) then
+    ghost_level = 0
+    call self%xml%element(self%dataset)%get_attribute(name='GhostLevel', value=value)
+    if (len(value) > 0) read(value, *, iostat=iostat) ghost_level
     if (iostat /= 0) error = 6
   endif
   endfunction get_info
@@ -306,7 +326,10 @@ contains
   error = 4
   select case(lower_case(trim(adjustl(location))))
   case('node', 'cell')
-    error = self%piece_element(piece=piece, id=id) ; if (error /= 0) return
+    if (.not.self%is_parallel) then
+      error = self%piece_element(piece=piece, id=id) ; if (error /= 0) return
+    endif
+    if (.not.self%is_initialized) return
   case('field')
     if (.not.self%is_initialized) return
   case default
@@ -339,7 +362,7 @@ contains
   !< Return the VTK type, the number of components and the number of tuples of a dataarray, without reading it.
   !<
   !< The number of tuples is the `NumberOfTuples` attribute when present, otherwise the number of points or cells of the
-  !< piece; -1 when unknown (field data without `NumberOfTuples`).
+  !< piece; -1 when unknown (field data without `NumberOfTuples`, arrays declared by a parallel header).
   class(xml_reader),             intent(in)            :: self         !< XML reader.
   character(*),                  intent(in)            :: location     !< Location: node, cell or field.
   character(*),                  intent(in)            :: data_name    !< Name of the dataarray.
@@ -370,7 +393,7 @@ contains
     call self%xml%element(id)%get_attribute(name='NumberOfTuples', value=value)
     if (len(value) > 0) then
       read(value, *, iostat=iostat) n_tuples
-    elseif (self%xml%element(section)%name /= 'FieldData') then
+    elseif (self%xml%element(section)%name /= 'FieldData' .and. .not.self%is_parallel) then
       p = self%xml%element(section)%parent
       call piece_counts(element=self%xml%element(p), mesh_topology=self%mesh_topology, counts=counts, extent=extent, &
                         error=error)
@@ -564,6 +587,152 @@ contains
   error = to_I4P(ids, offset)
   endfunction read_polydata_cells_I4P
 
+  function get_sources(self, sources) result(error)
+  !< Return the files of the pieces of a parallel header (the `Source` attributes), as written in the file.
+  !<
+  !< Relative paths are relative to the directory of the header. The names are blank padded to the length of the longest
+  !< one. The extents of the pieces of structured grids are returned by `read_piece(piece, nx1, ...)`.
+  class(xml_reader),             intent(in)  :: self       !< XML reader.
+  character(len=:), allocatable, intent(out) :: sources(:) !< Files of the pieces.
+  integer(I4P)                               :: error      !< Error status.
+  character(len=:), allocatable              :: value      !< Attribute value.
+  integer(I4P)                               :: p          !< Counter.
+  integer(I4P)                               :: l          !< Length of the longest source.
+
+  allocate(character(len=0) :: sources(1:0))
+  error = 4
+  if (.not.self%is_initialized .or. .not.self%is_parallel) return
+  l = 0
+  do p=1, self%pieces_number
+    call self%xml%element(self%xml%find_child(parent=self%dataset, name='Piece', n=p))%get_attribute(name='Source', &
+                                                                                                    value=value)
+    l = max(l, len(value))
+  enddo
+  deallocate(sources)
+  allocate(character(len=l) :: sources(1:self%pieces_number))
+  do p=1, self%pieces_number
+    call self%xml%element(self%xml%find_child(parent=self%dataset, name='Piece', n=p))%get_attribute(name='Source', &
+                                                                                                    value=value)
+    sources(p) = value
+  enddo
+  error = 0
+  endfunction get_sources
+
+  function check_pieces(self, message) result(error)
+  !< Check the pieces of a parallel header against it.
+  !<
+  !< Each piece file is read (its index only, not its data) and must be a dataset of the type of the header (e.g. an
+  !< UnstructuredGrid for a PUnstructuredGrid), with points or coordinates of the declared type (`PPoints`, `PCoordinates`)
+  !< and, in every one of its pieces, every array declared by `PPointData` and `PCellData` with the same type and number of
+  !< components (a piece can hold more arrays). VTK readers otherwise drop arrays, fill them with zeros or fail.
+  !<
+  !< The error is 0 when all the pieces match, 7 when one does not, or the error of reading a piece (1, 2, 3); `message`
+  !< then describes the first mismatch found.
+  class(xml_reader),             intent(in)            :: self      !< XML reader.
+  character(len=:), allocatable, intent(out), optional :: message   !< Description of the first mismatch, empty if none.
+  integer(I4P)                                         :: error     !< Error status.
+  type(xml_reader)                                     :: piece     !< Reader of a piece.
+  character(len=:), allocatable                        :: header    !< File name of the header.
+  character(len=:), allocatable                        :: source    !< File of a piece, as written in the header.
+  character(len=:), allocatable                        :: path      !< File of a piece.
+  character(len=:), allocatable                        :: msg       !< Description of the mismatch.
+  character(len=:), allocatable                        :: name      !< Name of a declared array.
+  character(len=:), allocatable                        :: dtype     !< Type of a declared array.
+  character(len=:), allocatable                        :: ptype     !< Type of an array of a piece.
+  character(len=:), allocatable                        :: value     !< Attribute value.
+  integer(I4P)                                         :: p         !< Counter.
+  integer(I4P)                                         :: q         !< Counter.
+  integer(I4P)                                         :: l         !< Counter.
+  integer(I4P)                                         :: c         !< Counter.
+  integer(I4P)                                         :: s         !< Index of a section element.
+  integer(I4P)                                         :: a         !< Index of a declared array element.
+  integer(I4P)                                         :: nc        !< Number of components of a declared array.
+  integer(I4P)                                         :: pnc       !< Number of components of an array of a piece.
+  integer(I4P)                                         :: id(3)     !< Indexes of the geometry elements of a piece.
+  integer(I4P)                                         :: n         !< Number of geometry elements of a piece.
+  integer(I4P)                                         :: iostat    !< IO status.
+  character(len=10), parameter                         :: sections(2)=['PPointData', 'PCellData '] !< Data sections.
+  character(len=4),  parameter                         :: locations(2)=['node', 'cell'] !< Locations of the sections.
+
+  msg = ''
+  error = 4
+  if (.not.self%is_initialized .or. .not.self%is_parallel) then
+    msg = 'the file is not a parallel header open for reading'
+    if (present(message)) message = msg
+    return
+  endif
+  header = self%filename
+  pieces_loop: do p=1, self%pieces_number
+    call self%xml%element(self%xml%find_child(parent=self%dataset, name='Piece', n=p))%get_attribute(name='Source', &
+                                                                                                    value=source)
+    path = source
+    if (source(1:min(1, len(source))) /= '/') path = header(1:index(header, '/', back=.true.))//source
+    error = piece%initialize(filename=path)
+    if (error /= 0) then
+      msg = 'piece '//trim(str(p, no_sign=.true.))//' ('//source//') cannot be read'
+      exit pieces_loop
+    endif
+    error = 7
+    if (piece%mesh_topology /= self%mesh_topology(2:)) then
+      msg = 'piece '//trim(str(p, no_sign=.true.))//' ('//source//') is a '//piece%mesh_topology//', not a '// &
+            self%mesh_topology(2:)
+      exit pieces_loop
+    endif
+    ! type of the points or coordinates
+    s = self%xml%find_child(parent=self%dataset, name='PPoints')
+    if (s == 0) s = self%xml%find_child(parent=self%dataset, name='PCoordinates')
+    if (s > 0) then
+      a = self%xml%find_child(parent=s, name='PDataArray')
+      if (a > 0) then
+        call self%xml%element(a)%get_attribute(name='type', value=dtype)
+        do q=1, piece%pieces_number
+          if (piece%geometry_dataarrays(piece=q, id=id, n=n) /= 0) cycle
+          do c=1, n
+            call piece%xml%element(id(c))%get_attribute(name='type', value=ptype)
+            if (ptype /= dtype) then
+              msg = 'piece '//trim(str(p, no_sign=.true.))//' ('//source//'): coordinates of type '//ptype// &
+                    ', declared '//dtype
+              exit pieces_loop
+            endif
+          enddo
+        enddo
+      endif
+    endif
+    ! declared arrays
+    do l=1, size(sections)
+      s = self%xml%find_child(parent=self%dataset, name=trim(sections(l)))
+      if (s == 0) cycle
+      do c=1, self%xml%element(s)%children_number
+        a = self%xml%element(s)%child(c)
+        if (.not.is_dataarray(self%xml%element(a)%name)) cycle
+        call self%xml%element(a)%get_attribute(name='Name', value=name)
+        call self%xml%element(a)%get_attribute(name='type', value=dtype)
+        nc = 1
+        call self%xml%element(a)%get_attribute(name='NumberOfComponents', value=value)
+        if (len(value) > 0) read(value, *, iostat=iostat) nc
+        do q=1, piece%pieces_number
+          if (piece%get_dataarray_info(location=trim(locations(l)), data_name=name, piece=q, data_type=ptype, &
+                                       n_components=pnc) /= 0) then
+            msg = 'piece '//trim(str(p, no_sign=.true.))//' ('//source//'): '//trim(locations(l))//' array "'//name// &
+                  '" declared but missing'
+            exit pieces_loop
+          endif
+          if (ptype /= dtype .or. pnc /= nc) then
+            msg = 'piece '//trim(str(p, no_sign=.true.))//' ('//source//'): '//trim(locations(l))//' array "'//name// &
+                  '" is '//ptype//' with '//trim(str(pnc, no_sign=.true.))//' components, declared '//dtype//' with '// &
+                  trim(str(nc, no_sign=.true.))
+            exit pieces_loop
+          endif
+        enddo
+      enddo
+    enddo
+    call piece%finalize
+    error = 0
+  enddo pieces_loop
+  call piece%finalize
+  if (present(message)) message = msg
+  endfunction check_pieces
+
   ! private methods
   function dataarray_bytes(self, id, bytes, data_type, n_components) result(error)
   !< Return the bytes (native byte order), the VTK type and the number of components of a dataarray element.
@@ -655,11 +824,19 @@ contains
   if (.not.self%is_initialized) return
   select case(lower_case(trim(adjustl(location))))
   case('node')
-    error = self%piece_element(piece=piece, id=p) ; if (error /= 0) return
-    section = self%xml%find_child(parent=p, name='PointData')
+    if (self%is_parallel) then
+      section = self%xml%find_child(parent=self%dataset, name='PPointData')
+    else
+      error = self%piece_element(piece=piece, id=p) ; if (error /= 0) return
+      section = self%xml%find_child(parent=p, name='PointData')
+    endif
   case('cell')
-    error = self%piece_element(piece=piece, id=p) ; if (error /= 0) return
-    section = self%xml%find_child(parent=p, name='CellData')
+    if (self%is_parallel) then
+      section = self%xml%find_child(parent=self%dataset, name='PCellData')
+    else
+      error = self%piece_element(piece=piece, id=p) ; if (error /= 0) return
+      section = self%xml%find_child(parent=p, name='CellData')
+    endif
   case('field')
     section = self%xml%find_child(parent=self%dataset, name='FieldData')
   endselect
@@ -784,6 +961,9 @@ contains
   n_components = 1
   error = self%find_dataarray(location=location, data_name=data_name, piece=piece, id=id, section=section)
   if (error /= 0) return
+  ! the arrays of a parallel header hold no data
+  error = 4
+  if (self%is_parallel) return
   error = self%dataarray_bytes(id=id, bytes=bytes, data_type=data_type, n_components=n_components)
   endfunction read_named_dataarray
 
@@ -1251,7 +1431,7 @@ contains
   extent = 0
   error = 0
   select case(mesh_topology)
-  case('ImageData', 'RectilinearGrid', 'StructuredGrid')
+  case('ImageData', 'RectilinearGrid', 'StructuredGrid', 'PImageData', 'PRectilinearGrid', 'PStructuredGrid')
     call element%get_attribute(name='Extent', value=value)
     read(value, *, iostat=iostat) extent
     if (iostat /= 0) error = 6
@@ -1363,11 +1543,11 @@ contains
   endfunction to_I4P
 
   elemental function is_dataarray(name) result(is_array)
-  !< Return .true. if an element name is a data array: DataArray, or Array (field data strings).
+  !< Return .true. if an element name is a data array: DataArray, Array (field data strings) or PDataArray (parallel).
   character(*), intent(in) :: name     !< Element name.
   logical                  :: is_array !< Inquire result.
 
-  is_array = name == 'DataArray' .or. name == 'Array'
+  is_array = name == 'DataArray' .or. name == 'Array' .or. name == 'PDataArray'
   endfunction is_dataarray
 
   pure function lower_case(string) result(lower)

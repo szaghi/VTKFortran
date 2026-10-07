@@ -35,15 +35,15 @@ title: Features
 
 ## VTK XML Importers
 
-Files are read with `vtk_file%initialize(filename=..., action='read')`, see [Usage](/guide/usage#reading-files): every
+Files are read with `initialize(filename=..., action='read')`, see [Usage](/guide/usage#reading-files): every
 format (`ascii`, `binary`, `raw`, `binary-appended`), UInt32 and UInt64 headers, zlib compressed or not, as written by
 VTKFortran or by VTK and ParaView. Only the array asked for is loaded and decoded.
 
 | Type | Extension | Status |
 |------|-----------|--------|
 | Serial datasets | `.vti`, `.vtp`, `.vtr`, `.vts`, `.vtu` | ✅ |
-| Parallel (partitioned) datasets | `.pvti`, `.pvtp`, `.pvtr`, `.pvts`, `.pvtu` | — (read the pieces as serial files) |
-| Composite datasets | `.vtm`, `.pvd` | — (read the datasets as serial files) |
+| Parallel (partitioned) headers, with the check of the pieces | `.pvti`, `.pvtp`, `.pvtr`, `.pvts`, `.pvtu` | ✅ |
+| Multi-block entries and time series datasets | `.vtm`, `.pvd` | ✅ |
 
 Not supported: `BigEndian` files and the LZ4 and LZMA compressors.
 

@@ -6,6 +6,7 @@ use penf
 use stringifor
 use vtk_fortran_vtk_file_xml_writer_abstract
 use vtk_fortran_vtk_file_xml_writer_ascii_local
+use vtk_fortran_xml_scanner
 
 implicit none
 private
@@ -15,10 +16,13 @@ type :: vtm_file
    !< VTM file class.
    class(xml_writer_abstract), allocatable, public :: xml_writer      !< XML writer.
    integer(I4P), allocatable                       :: scratch_unit(:) !< Scratch units for very large list of named blocks.
+   type(xml_scanner),          private             :: xml             !< Index of the file read (`action='read'`).
+   logical,                    private             :: is_reading=.false. !< The file is open for reading.
    contains
       ! public methods
       procedure, pass(self) :: initialize          !< Initialize file.
       procedure, pass(self) :: finalize            !< Finalize file.
+      procedure, pass(self) :: get_entries         !< Return the blocks and datasets of a file read.
       generic               :: write_block =>      &
                                write_block_array,  &
                                write_block_string, &
@@ -32,16 +36,46 @@ type :: vtm_file
 endtype vtm_file
 contains
   ! public methods
-  function initialize(self, filename, scratch_units_number) result(error)
-  !< Initialize file (writer).
+  function initialize(self, filename, scratch_units_number, action) result(error)
+  !< Initialize file: open it for writing (default) or for reading.
+  !<
+  !< With `action='read'` (case insensitive) the file is indexed: its blocks and datasets are returned by `get_entries`, and
+  !< each dataset file can then be read with `vtk_file` (or `pvtk_file`); `finalize` frees the index. The error is 1 if the
+  !< file cannot be read, 2 if it is not a multi-block file (`vtkMultiBlockDataSet`).
   class(vtm_file), intent(inout)        :: self                  !< VTM file.
   character(*),    intent(in)           :: filename              !< File name of output VTM file.
   integer(I4P),    intent(in), optional :: scratch_units_number  !< Number of scratch units for very large list of named blocks.
+  character(*),    intent(in), optional :: action                !< Action: **write** (default) or **read**.
   integer(I4P)                          :: scratch_units_number_ !< Number of scratch units for very large list of named blocks.
   integer(I4P)                          :: error                 !< Error status.
+  character(len=:), allocatable         :: value                 !< Attribute value.
+  integer(I4P)                          :: root                  !< Index of the VTKFile element.
+  type(string)                          :: action_               !< Action, upper case.
 
   if (.not.is_initialized) call penf_init
   if (.not.is_b64_initialized) call b64_init
+  if (present(action)) then
+     action_ = trim(adjustl(action)) ; action_ = action_%upper()
+     select case(action_%chars())
+     case('READ')
+        error = self%finalize()
+        call self%xml%scan(filename=filename, error=error)
+        if (error /= 0) return
+        error = 2
+        root = self%xml%find_child(parent=0, name='VTKFile')
+        if (root == 0) return
+        call self%xml%element(root)%get_attribute(name='type', value=value)
+        if (value /= 'vtkMultiBlockDataSet') return
+        if (self%xml%find_child(parent=root, name='vtkMultiBlockDataSet') == 0) return
+        self%is_reading = .true.
+        error = 0
+        return
+     case('WRITE')
+     case default
+        error = 1
+        return
+     endselect
+  endif
   scratch_units_number_ = 0_I4P ; if (present(scratch_units_number)) scratch_units_number_ = scratch_units_number
   error = self%finalize()
   if (allocated(self%xml_writer)) deallocate(self%xml_writer)
@@ -56,12 +90,117 @@ contains
   integer(I4P)                   :: error !< Error status.
 
   error = 1
+  if (self%is_reading) then
+     call self%xml%free
+     self%is_reading = .false.
+     error = 0
+     return
+  endif
   if (allocated(self%scratch_unit)) then
      error = self%parse_scratch_files()
      deallocate(self%scratch_unit)
   endif
-  if (allocated(self%xml_writer)) error = self%xml_writer%finalize()
+  if (allocated(self%xml_writer)) then
+     error = self%xml_writer%finalize()
+     ! a finalized writer is dropped: finalizing it again (e.g. by a new initialize) would write the closing tags twice
+     deallocate(self%xml_writer)
+  endif
   endfunction finalize
+
+  function get_entries(self, level, kind, index, name, file) result(error)
+  !< Return the blocks and datasets of a file read (`initialize(..., action='read')`), in the order of the file.
+  !<
+  !< The hierarchy is flattened depth first: each entry has its nesting level (1 for the children of the root), its kind
+  !< (**block**, **dataset**, or **piece** for the pieces of a `vtkMultiPieceDataSet` written by VTK), its index among the
+  !< children of its parent (-1 if the file has none), its name and, for datasets, its file (empty for blocks and pieces,
+  !< or for datasets without file). The children of an entry are the following entries of the next level. The names and files
+  !< are blank padded to the longest one; relative files are relative to the directory of the `.vtm` file.
+  !<
+  !<```fortran
+  !< type(vtm_file)                :: vtm
+  !< integer(I4P),     allocatable :: level(:)
+  !< character(len=:), allocatable :: kind(:), file(:)
+  !< error = vtm%initialize(filename='assembly.vtm', action='read')
+  !< error = vtm%get_entries(level=level, kind=kind, file=file)
+  !< error = vtm%finalize()
+  !<```
+  class(vtm_file),               intent(in)            :: self     !< VTM file.
+  integer(I4P),     allocatable, intent(out), optional :: level(:) !< Nesting level of the entries, from 1.
+  character(len=:), allocatable, intent(out), optional :: kind(:)  !< Kind of the entries: block, dataset or piece.
+  integer(I4P),     allocatable, intent(out), optional :: index(:) !< Index of the entries among their siblings.
+  character(len=:), allocatable, intent(out), optional :: name(:)  !< Name of the entries.
+  character(len=:), allocatable, intent(out), optional :: file(:)  !< File of the datasets.
+  integer(I4P)                                         :: error    !< Error status: 0, or 4 if no file is open for reading.
+  integer(I4P),     allocatable                        :: ids(:)   !< Indexes of the entry elements.
+  character(len=:), allocatable                        :: value    !< Attribute value.
+  integer(I4P)                                         :: base     !< Level of the multi-block element.
+  integer(I4P)                                         :: n        !< Number of entries.
+  integer(I4P)                                         :: e        !< Counter.
+  integer(I4P)                                         :: ln       !< Length of the longest name.
+  integer(I4P)                                         :: lf       !< Length of the longest file.
+  integer(I4P)                                         :: iostat   !< IO status.
+
+  error = 4
+  if (.not.self%is_reading) return
+  base = self%xml%element(self%xml%find_child(parent=self%xml%find_child(parent=0, name='VTKFile'), &
+                                              name='vtkMultiBlockDataSet'))%level
+  allocate(ids(1:self%xml%elements_number))
+  n = 0 ; ln = 0 ; lf = 0
+  do e=1, self%xml%elements_number
+     if (self%xml%element(e)%level <= base) cycle
+     select case(self%xml%element(e)%name)
+     case('Block', 'DataSet', 'Piece')
+        n = n + 1
+        ids(n) = e
+        call self%xml%element(e)%get_attribute(name='name', value=value)
+        ln = max(ln, len(value))
+        call self%xml%element(e)%get_attribute(name='file', value=value)
+        lf = max(lf, len(value))
+     endselect
+  enddo
+  if (present(level)) then
+     allocate(level(1:n))
+     do e=1, n
+        level(e) = self%xml%element(ids(e))%level - base
+     enddo
+  endif
+  if (present(kind)) then
+     allocate(character(len=7) :: kind(1:n))
+     do e=1, n
+        select case(self%xml%element(ids(e))%name)
+        case('Block')
+           kind(e) = 'block'
+        case('DataSet')
+           kind(e) = 'dataset'
+        case default
+           kind(e) = 'piece'
+        endselect
+     enddo
+  endif
+  if (present(index)) then
+     allocate(index(1:n))
+     do e=1, n
+        index(e) = -1
+        call self%xml%element(ids(e))%get_attribute(name='index', value=value)
+        if (len(value) > 0) read(value, *, iostat=iostat) index(e)
+     enddo
+  endif
+  if (present(name)) then
+     allocate(character(len=ln) :: name(1:n))
+     do e=1, n
+        call self%xml%element(ids(e))%get_attribute(name='name', value=value)
+        name(e) = value
+     enddo
+  endif
+  if (present(file)) then
+     allocate(character(len=lf) :: file(1:n))
+     do e=1, n
+        call self%xml%element(ids(e))%get_attribute(name='file', value=value)
+        file(e) = value
+     enddo
+  endif
+  error = 0
+  endfunction get_entries
 
   ! private methods
   function write_block_array(self, filenames, names, name, action) result(error)

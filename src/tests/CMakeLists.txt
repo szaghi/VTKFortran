@@ -2,6 +2,7 @@
 # with a non-zero status when a check fails. CTest runs each of them in its own directory under the build tree.
 set(VTKFORTRAN_TESTS
   vtk_fortran_read.F90
+  vtk_fortran_read_composite.f90
   vtk_fortran_use_module_basic.f90
   vtk_fortran_write_active_arrays.f90
   vtk_fortran_write_compressed.F90

@@ -9,6 +9,7 @@ module vtk_fortran_pvd_file
 !< again after it. Therefore a run that stops before `finalize` (crash, killed job) still leaves a readable collection of all the
 !< datasets written so far, and a restarted run can continue an existing collection with `action='append'`.
 use penf
+use vtk_fortran_xml_scanner
 
 implicit none
 private
@@ -19,8 +20,11 @@ type :: pvd_file
    private
    integer(I4P) :: unit=0_I4P      !< Logical unit, 0 when the file is not open.
    integer(I8P) :: pos_close=0_I8P !< Stream position of the closing tags, i.e. where the next dataset is written.
+   type(xml_scanner) :: xml        !< Index of the file read (`action='read'`).
+   logical      :: is_reading=.false. !< The file is open for reading.
    contains
       ! public methods
+      procedure, pass(self) :: get_datasets  !< Return the datasets of a file read.
       procedure, pass(self) :: initialize    !< Initialize (create or append to) the file.
       procedure, pass(self) :: write_dataset !< Write one dataset entry.
       procedure, pass(self) :: finalize      !< Finalize (close) the file.
@@ -42,23 +46,42 @@ contains
    !< ...
    !< error = pvd%initialize(filename='simulation.pvd')                  ! new collection (an existing file is replaced)
    !< error = pvd%initialize(filename='simulation.pvd', action='append') ! continue an existing collection (e.g. restart)
+   !< error = pvd%initialize(filename='simulation.pvd', action='read')   ! read the collection, see get_datasets
    !< ...
    !<```
    !< @note With `action='append'` the file must exist and be a VTK collection (`<Collection>`): the datasets already listed
    !< are kept and the new ones are written after them.
+   !< @note With `action='read'` the file is indexed, its datasets are returned by `get_datasets` and `finalize` frees the
+   !< index: the error is 1 if the file cannot be read, 2 if it is not a VTK collection.
    class(pvd_file), intent(inout)        :: self      !< PVD file.
    character(*),    intent(in)           :: filename  !< File name, with the `.pvd` extension.
-   character(*),    intent(in), optional :: action    !< Action: **new** (default) or **append**.
+   character(*),    intent(in), optional :: action    !< Action: **new** (default), **append** or **read**.
    integer(I4P)                          :: error     !< Error status.
    character(len=:), allocatable         :: action_   !< Action, upper case.
    character(len=:), allocatable         :: buffer    !< Content of an existing file.
    character(len=:), allocatable         :: header    !< Header of a new file.
    integer(I8P)                          :: file_size !< Size of an existing file.
    integer(I8P)                          :: c         !< Character position.
+   integer(I4P)                          :: root      !< Index of the VTKFile element.
+   character(len=:), allocatable         :: value     !< Attribute value.
 
    if (self%unit /= 0_I4P) error = self%finalize()
+   call self%xml%free
+   self%is_reading = .false.
    action_ = 'NEW' ; if (present(action)) action_ = upper(trim(adjustl(action)))
    select case(action_)
+   case('READ')
+      call self%xml%scan(filename=trim(adjustl(filename)), error=error)
+      if (error /= 0) return
+      error = 2_I4P
+      root = self%xml%find_child(parent=0, name='VTKFile')
+      if (root == 0) return
+      call self%xml%element(root)%get_attribute(name='type', value=value)
+      if (value /= 'Collection') return
+      if (self%xml%find_child(parent=root, name='Collection') == 0) return
+      self%is_reading = .true.
+      error = 0_I4P
+      return
    case('NEW')
       open(newunit=self%unit, file=trim(adjustl(filename)), access='stream', form='unformatted', status='replace', &
            action='readwrite', iostat=error)
@@ -158,7 +181,87 @@ contains
    if (self%unit /= 0_I4P) close(unit=self%unit, iostat=error)
    self%unit = 0_I4P
    self%pos_close = 0_I8P
+   call self%xml%free
+   self%is_reading = .false.
    endfunction finalize
+
+   function get_datasets(self, timestep, part, group, name, file) result(error)
+   !< Return the datasets of a file read (`initialize(..., action='read')`), in the order of the file.
+   !<
+   !< Missing attributes are returned as 0 (`timestep`, `part`) or empty (`group`, `name`, `file`). The strings are blank
+   !< padded to the longest one; relative files are relative to the directory of the `.pvd` file.
+   !<
+   !<```fortran
+   !< type(pvd_file)                :: pvd
+   !< real(R8P),        allocatable :: timestep(:)
+   !< character(len=:), allocatable :: file(:)
+   !< error = pvd%initialize(filename='simulation.pvd', action='read')
+   !< error = pvd%get_datasets(timestep=timestep, file=file)
+   !< error = pvd%finalize()
+   !<```
+   class(pvd_file),               intent(in)            :: self        !< PVD file.
+   real(R8P),        allocatable, intent(out), optional :: timestep(:) !< Time step of the datasets.
+   integer(I4P),     allocatable, intent(out), optional :: part(:)     !< Part of the datasets.
+   character(len=:), allocatable, intent(out), optional :: group(:)    !< Group of the datasets.
+   character(len=:), allocatable, intent(out), optional :: name(:)     !< Name of the datasets.
+   character(len=:), allocatable, intent(out), optional :: file(:)     !< File of the datasets.
+   integer(I4P)                                         :: error       !< Error status: 0, or 4 if no file is open for reading.
+   integer(I4P)                                         :: collection  !< Index of the Collection element.
+   integer(I4P)                                         :: n           !< Number of datasets.
+   integer(I4P)                                         :: d           !< Counter.
+   integer(I4P)                                         :: iostat      !< IO status.
+   character(len=:), allocatable                        :: value       !< Attribute value.
+
+   error = 4_I4P
+   if (.not.self%is_reading) return
+   collection = self%xml%find_child(parent=self%xml%find_child(parent=0, name='VTKFile'), name='Collection')
+   n = 0
+   do while (self%xml%find_child(parent=collection, name='DataSet', n=n+1) > 0)
+      n = n + 1
+   enddo
+   if (present(timestep)) then
+      allocate(timestep(1:n))
+      do d=1, n
+         timestep(d) = 0._R8P
+         call self%xml%element(self%xml%find_child(parent=collection, name='DataSet', n=d))%get_attribute( &
+              name='timestep', value=value)
+         if (len(value) > 0) read(value, *, iostat=iostat) timestep(d)
+      enddo
+   endif
+   if (present(part)) then
+      allocate(part(1:n))
+      do d=1, n
+         part(d) = 0
+         call self%xml%element(self%xml%find_child(parent=collection, name='DataSet', n=d))%get_attribute( &
+              name='part', value=value)
+         if (len(value) > 0) read(value, *, iostat=iostat) part(d)
+      enddo
+   endif
+   if (present(group)) call dataset_strings(attribute='group', strings=group)
+   if (present(name)) call dataset_strings(attribute='name', strings=name)
+   if (present(file)) call dataset_strings(attribute='file', strings=file)
+   error = 0_I4P
+   contains
+      subroutine dataset_strings(attribute, strings)
+      !< Return an attribute of the datasets, blank padded to the longest one.
+      character(*),                  intent(in)  :: attribute  !< Attribute name.
+      character(len=:), allocatable, intent(out) :: strings(:) !< Attribute values.
+      integer(I4P)                               :: l          !< Length of the longest value.
+
+      l = 0
+      do d=1, n
+         call self%xml%element(self%xml%find_child(parent=collection, name='DataSet', n=d))%get_attribute( &
+              name=attribute, value=value)
+         l = max(l, len(value))
+      enddo
+      allocate(character(len=l) :: strings(1:n))
+      do d=1, n
+         call self%xml%element(self%xml%find_child(parent=collection, name='DataSet', n=d))%get_attribute( &
+              name=attribute, value=value)
+         strings(d) = value
+      enddo
+      endsubroutine dataset_strings
+   endfunction get_datasets
 
    ! private methods
    subroutine write_closing_tags(self, error)

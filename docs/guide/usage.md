@@ -766,16 +766,69 @@ error = a_vtk_file%finalize()
 | 4 | not found: piece, array, geometry or cells; or the file is not open for reading |
 | 5 | the output kind cannot hold the values of the array |
 | 6 | the data do not decode: inconsistent sizes, malformed base64, zlib failure |
+| 7 | the pieces of a parallel header do not match it (`check_pieces`) |
 
 **Memory.** `initialize` scans the file once and records where each array is; it stops at the appended data, and keeps no
 data in memory. Each read then loads and decodes only the requested array: memory use is a small multiple of the size of
 that array (while decoding, its text, its decoded bytes and the output coexist), whatever the size of the file.
 
 **Not supported:** `BigEndian` files, the LZ4 and LZMA compressors, the legacy `.vtk` format, and VTKHDF. Compressed files
-need the library built with zlib, see [Installation](/guide/installation#optional-zlib-compression). Parallel headers
-(`.pvt*`), multi-block (`.vtm`) and time series (`.pvd`) files are not read yet: their pieces and datasets can be read one
-by one as serial files. The test `src/tests/vtk_fortran_read.F90` reads every topology and format, and two files written
-by VTK.
+need the library built with zlib, see [Installation](/guide/installation#optional-zlib-compression). The test
+`src/tests/vtk_fortran_read.F90` reads every topology and format, and two files written by VTK.
+
+### Parallel headers
+
+A parallel header (`.pvti`, `.pvtr`, `.pvts`, `.pvtu`, `.pvtp`) is read with `pvtk_file`, through the same `xml_reader`: it
+holds no data, only the declaration of the arrays and the list of the pieces, each one a serial file read with `vtk_file`.
+
+```fortran
+type(pvtk_file)               :: a_pvtk_file
+character(len=:), allocatable :: sources(:), names(:), message
+
+error = a_pvtk_file%initialize(filename='mesh.pvtu', action='read')
+error = a_pvtk_file%xml_reader%get_sources(sources)                          ! files of the pieces
+error = a_pvtk_file%xml_reader%get_dataarray_names(location='node', names=names) ! declared point arrays
+error = a_pvtk_file%xml_reader%check_pieces(message=message)                 ! 0, or 7 and the first mismatch
+error = a_pvtk_file%finalize()
+```
+
+- `get_info` returns the dataset type (e.g. `PUnstructuredGrid`), the number of pieces, the whole extent and `ghost_level`;
+  `read_piece(piece, nx1, ...)` the extent of a piece of a structured grid; `get_dataarray_info` the type and components of
+  a declared array. `read_dataarray`, `read_geo` and the cells readers return 4: the data are in the pieces.
+- `get_sources` returns the files as written in the header; relative paths are relative to the directory of the header.
+- `check_pieces` reads the index of every piece (not its data) and checks that it is a dataset of the type of the header,
+  with coordinates of the declared type, and that each of its pieces holds every declared point and cell array with the
+  same type and number of components (a piece can hold more arrays). It returns 7 and describes the first mismatch in
+  `message`, e.g. `piece 2 (part_02.vtu): node array "pressure" declared but missing`: VTK readers would otherwise drop the
+  array, fill it with zeros or fail. A piece that cannot be read returns its own error (1, 2, 3).
+
+### Multi-block and time series files
+
+The entries of a `.vtm` file and the datasets of a `.pvd` file are read with `vtm_file` and `pvd_file`; each dataset file is
+then read with `vtk_file` (or `pvtk_file`). Relative files are relative to the directory of the `.vtm` or `.pvd` file.
+
+```fortran
+type(vtm_file)                :: a_vtm_file
+type(pvd_file)                :: a_pvd_file
+integer(I4P),     allocatable :: level(:), index(:)
+character(len=:), allocatable :: kind(:), name(:), file(:)
+real(R8P),        allocatable :: timestep(:)
+
+error = a_vtm_file%initialize(filename='assembly.vtm', action='read')
+error = a_vtm_file%get_entries(level=level, kind=kind, index=index, name=name, file=file)
+error = a_vtm_file%finalize()
+
+error = a_pvd_file%initialize(filename='simulation.pvd', action='read')
+error = a_pvd_file%get_datasets(timestep=timestep, file=file)  ! also part, group, name
+error = a_pvd_file%finalize()
+```
+
+- `get_entries` flattens the hierarchy depth first: `level` is the nesting level (1 for the children of the root), `kind` is
+  `block`, `dataset`, or `piece` (the pieces of a `vtkMultiPieceDataSet` written by VTK), `index` the index among the
+  siblings, `file` empty for blocks. The children of an entry are the entries that follow it with the next level.
+- `get_datasets` returns the attributes of each `DataSet` of the collection; missing ones are 0 (`timestep`, `part`) or empty.
+- All outputs are optional and allocatable; strings are blank padded to the longest one. `initialize` returns 1 if the file
+  cannot be read, 2 if it is not a multi-block file or a collection.
 
 ## Mesh topology strings
 
