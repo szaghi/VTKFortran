@@ -17,6 +17,8 @@ type, abstract :: xml_writer_abstract
   integer(I4P)  :: indent=0_I4P                    !< Indent count.
   integer(I4P)  :: ghost_level=0_I4P               !< Ghost level of parallel (P*) topologies.
   type(string)  :: data_type_override              !< If set, type of the next DataArray tag (then unset).
+  type(string)  :: tag_name_override               !< If set, element name of the next DataArray tag (then unset).
+  integer(I8P)  :: tuples_override=-1_I8P          !< If >= 0, number of tuples of the next DataArray tag (then unset).
   integer(I8P)  :: ioffset=0_I8P                   !< Offset count.
   integer(I4P)  :: xml=0_I4P                       !< XML Logical unit.
   integer(I4P)  :: vtm_block(1:2)=[-1_I4P, -1_I4P] !< Block indexes.
@@ -98,6 +100,7 @@ type, abstract :: xml_writer_abstract
                write_dataarray_location_tag !< Write data (array).
     generic :: write_fielddata =>      &
                write_fielddata1_rank0, &
+               write_fielddata1_rank1, &
                write_fielddata_tag !< Write FieldData tag.
     generic :: write_geo =>                    &
                write_geo_strg_data1_rank2_R8P, &
@@ -173,7 +176,10 @@ type, abstract :: xml_writer_abstract
     procedure(write_dataarray6_rank3_I1P_interface), deferred, pass(self) :: write_dataarray6_rank3_I1P !< Data 3, rank 3, I1P.
     procedure(write_dataarray_appended_interface),   deferred, pass(self) :: write_dataarray_appended   !< Write appended.
     ! private methods
-    procedure, pass(self), private :: write_fielddata1_rank0            !< Write FieldData tag (data 1, rank 0, R8P).
+    procedure, pass(self), private :: write_fielddata1_rank0            !< Write FieldData tag (data 1, rank 0).
+    procedure, pass(self), private :: write_fielddata1_rank1            !< Write FieldData tag (data 1, rank 1).
+    procedure, pass(self), private :: write_fielddata_strings           !< Write FieldData tag (strings).
+    procedure, pass(self), private :: dataarray_tag_overrides           !< Apply the one-shot overrides of DataArray tag.
     procedure, pass(self), private :: write_fielddata_tag               !< Write FieldData tag.
     procedure, pass(self), private :: write_geo_strg_data1_rank2_R8P    !< Write **StructuredGrid** mesh (data 1, rank 2, R8P).
     procedure, pass(self), private :: write_geo_strg_data1_rank2_R4P    !< Write **StructuredGrid** mesh (data 1, rank 2, R4P).
@@ -1011,33 +1017,32 @@ contains
    type(string)                                     :: tag_attributes       !< Tag attributes.
    logical                                          :: is_tuples_           !< Use "NumberOfTuples".
    character(len=:), allocatable                    :: data_type_           !< Type of dataarray, actually written.
+   character(len=:), allocatable                    :: tag_name             !< Element name, actually written.
+   character(len=:), allocatable                    :: count                !< Components (or tuples) count, actually written.
 
-   data_type_ = trim(adjustl(data_type))
-   if (self%data_type_override%is_allocated()) then
-      data_type_ = self%data_type_override%chars()
-      call self%data_type_override%free
-   endif
+   call self%dataarray_tag_overrides(data_type=data_type, number_of_components=number_of_components, &
+                                     tag_name=tag_name, data_type_=data_type_, count=count)
    is_tuples_ = .false.
    if (present(is_tuples)) is_tuples_ = is_tuples
    if (is_tuples_) then
       tag_attributes = 'type="'//data_type_//             &
-        '" NumberOfTuples="'//trim(str(number_of_components, .true.))// &
+        '" NumberOfTuples="'//count// &
         '" Name="'//trim(adjustl(data_name))//                          &
         '" format="'//self%format_ch//'"'
    else
       tag_attributes = 'type="'//data_type_//                 &
-        '" NumberOfComponents="'//trim(str(number_of_components, .true.))// &
+        '" NumberOfComponents="'//count// &
         '" Name="'//trim(adjustl(data_name))//                              &
         '" format="'//self%format_ch//'"'
    endif
    if (present(data_content).and.(.not.self%is_volatile)) then
       ! content written as is between start and end tags (same bytes of write_tag): building the whole tag as a single
       ! string makes full-size copies of the content, some of them stack temporaries with some compilers (issue #70)
-      call self%write_start_tag(name='DataArray', attributes=tag_attributes%chars())
+      call self%write_start_tag(name=tag_name, attributes=tag_attributes%chars())
       write(unit=self%xml, iostat=self%error)repeat(' ', self%indent), data_content, end_rec
-      call self%write_end_tag(name='DataArray')
+      call self%write_end_tag(name=tag_name)
    else
-      call self%write_tag(name='DataArray', attributes=tag_attributes%chars(), content=data_content)
+      call self%write_tag(name=tag_name, attributes=tag_attributes%chars(), content=data_content)
    endif
    endsubroutine write_dataarray_tag
 
@@ -1051,29 +1056,57 @@ contains
    type(string)                                     :: tag_attributes       !< Tag attributes.
    logical                                          :: is_tuples_           !< Use "NumberOfTuples".
    character(len=:), allocatable                    :: data_type_           !< Type of dataarray, actually written.
+   character(len=:), allocatable                    :: tag_name             !< Element name, actually written.
+   character(len=:), allocatable                    :: count                !< Components (or tuples) count, actually written.
 
-   data_type_ = trim(adjustl(data_type))
-   if (self%data_type_override%is_allocated()) then
-      data_type_ = self%data_type_override%chars()
-      call self%data_type_override%free
-   endif
+   call self%dataarray_tag_overrides(data_type=data_type, number_of_components=number_of_components, &
+                                     tag_name=tag_name, data_type_=data_type_, count=count)
    is_tuples_ = .false.
    if (present(is_tuples)) is_tuples_ = is_tuples
    if (is_tuples_) then
       tag_attributes =  'type="'//data_type_//            &
-        '" NumberOfTuples="'//trim(str(number_of_components, .true.))// &
+        '" NumberOfTuples="'//count// &
         '" Name="'//trim(adjustl(data_name))//                          &
         '" format="'//self%format_ch//                                  &
         '" offset="'//trim(str(self%ioffset, .true.))//'"'
    else
       tag_attributes = 'type="'//data_type_//                 &
-        '" NumberOfComponents="'//trim(str(number_of_components, .true.))// &
+        '" NumberOfComponents="'//count// &
         '" Name="'//trim(adjustl(data_name))//                              &
         '" format="'//self%format_ch//                                      &
         '" offset="'//trim(str(self%ioffset, .true.))//'"'
    endif
-   call self%write_self_closing_tag(name='DataArray', attributes=tag_attributes%chars())
+   call self%write_self_closing_tag(name=tag_name, attributes=tag_attributes%chars())
    endsubroutine write_dataarray_tag_appended
+
+   subroutine dataarray_tag_overrides(self, data_type, number_of_components, tag_name, data_type_, count)
+   !< Return element name, type and count of the next DataArray tag, applying (then unsetting) the one-shot overrides.
+   !<
+   !< The overrides let a caller tag specially one array written through the generic DataArray writers: cell types as UInt8,
+   !< strings as `<Array type="String" NumberOfTuples="n">` (bytes written as Int8), field data arrays with their tuples count.
+   class(xml_writer_abstract),    intent(inout) :: self                 !< Writer.
+   character(*),                  intent(in)    :: data_type            !< Type of dataarray.
+   integer(I4P),                  intent(in)    :: number_of_components !< Number of dataarray components.
+   character(len=:), allocatable, intent(out)   :: tag_name             !< Element name.
+   character(len=:), allocatable, intent(out)   :: data_type_           !< Type of dataarray.
+   character(len=:), allocatable, intent(out)   :: count                !< Components (or tuples) count.
+
+   tag_name = 'DataArray'
+   if (self%tag_name_override%is_allocated()) then
+      tag_name = self%tag_name_override%chars()
+      call self%tag_name_override%free
+   endif
+   data_type_ = trim(adjustl(data_type))
+   if (self%data_type_override%is_allocated()) then
+      data_type_ = self%data_type_override%chars()
+      call self%data_type_override%free
+   endif
+   count = trim(str(number_of_components, .true.))
+   if (self%tuples_override >= 0_I8P) then
+      count = trim(str(self%tuples_override, .true.))
+      self%tuples_override = -1_I8P
+   endif
+   endsubroutine dataarray_tag_overrides
 
    function write_dataarray_location_tag(self, location, action, scalars, vectors, normals, tensors, tcoords) result(error)
    !< Write `<[/]PointData>` or `<[/]CellData>` open/close tag (`<[/]PPointData>` or `<[/]PCellData>` for parallel files).
@@ -1161,7 +1194,19 @@ contains
 
    ! write_fielddata methods
    function write_fielddata1_rank0(self, data_name, x) result(error)
-   !< Write `<DataArray... NumberOfTuples="..."...>...</DataArray>` tag (R8P).
+   !< Write one FieldData value: a number (any kind) or a string.
+   !<
+   !< A number is written as `<DataArray ... NumberOfTuples="1">`, a string as `<Array type="String" NumberOfTuples="1">`
+   !< (its characters followed by a NUL, as VTK writes strings; trailing blanks are trimmed).
+   !<
+   !<### Example of usage
+   !<
+   !<```fortran
+   !< error = vtk%xml_writer%write_fielddata(action='open')
+   !< error = vtk%xml_writer%write_fielddata(data_name='TIME', x=0.1_R8P)
+   !< error = vtk%xml_writer%write_fielddata(data_name='solver', x='my solver v1.2')
+   !< error = vtk%xml_writer%write_fielddata(action='close')
+   !<```
    class(xml_writer_abstract), intent(inout) :: self      !< Writer.
    character(*),               intent(in)    :: data_name !< Data name.
    class(*),                   intent(in)    :: x         !< Data variable.
@@ -1180,9 +1225,83 @@ contains
       self%error = self%write_dataarray(data_name=data_name, x=[x], is_tuples=.true.)
    type is(integer(I1P))
       self%error = self%write_dataarray(data_name=data_name, x=[x], is_tuples=.true.)
+   type is(character(*))
+      self%error = self%write_fielddata_strings(data_name=data_name, x=[x])
    endselect
    error = self%error
    endfunction write_fielddata1_rank0
+
+   function write_fielddata1_rank1(self, data_name, x) result(error)
+   !< Write a FieldData array: numbers (any kind) or strings, one tuple per element.
+   !<
+   !< Numbers are written as `<DataArray ... NumberOfTuples="size(x)">` (one component per tuple), strings as
+   !< `<Array type="String" NumberOfTuples="size(x)">` (each string followed by a NUL, as VTK writes strings; trailing blanks
+   !< of each element are trimmed).
+   !<
+   !<### Example of usage
+   !<
+   !<```fortran
+   !< error = vtk%xml_writer%write_fielddata(data_name='residuals', x=[1.e-3_R8P, 1.e-4_R8P, 1.e-5_R8P])
+   !< error = vtk%xml_writer%write_fielddata(data_name='species', x=['N2', 'O2'])
+   !<```
+   class(xml_writer_abstract), intent(inout) :: self      !< Writer.
+   character(*),               intent(in)    :: data_name !< Data name.
+   class(*),                   intent(in)    :: x(1:)     !< Data variable.
+   integer(I4P)                              :: error     !< Error status.
+
+   select type(x)
+   type is(character(*))
+      self%error = self%write_fielddata_strings(data_name=data_name, x=x)
+   class default
+      self%tuples_override = size(x, kind=I8P)
+      select type(x)
+      type is(real(R8P))
+         self%error = self%write_dataarray(data_name=data_name, x=x, is_tuples=.true.)
+      type is(real(R4P))
+         self%error = self%write_dataarray(data_name=data_name, x=x, is_tuples=.true.)
+      type is(integer(I8P))
+         self%error = self%write_dataarray(data_name=data_name, x=x, is_tuples=.true.)
+      type is(integer(I4P))
+         self%error = self%write_dataarray(data_name=data_name, x=x, is_tuples=.true.)
+      type is(integer(I2P))
+         self%error = self%write_dataarray(data_name=data_name, x=x, is_tuples=.true.)
+      type is(integer(I1P))
+         self%error = self%write_dataarray(data_name=data_name, x=x, is_tuples=.true.)
+      class default
+         self%tuples_override = -1_I8P
+         self%error = 1
+      endselect
+   endselect
+   error = self%error
+   endfunction write_fielddata1_rank1
+
+   function write_fielddata_strings(self, data_name, x) result(error)
+   !< Write FieldData strings as VTK does: `<Array type="String" NumberOfTuples="size(x)">`, the bytes of each string (trailing
+   !< blanks trimmed) followed by a NUL, encoded as any Int8 data in the selected format.
+   class(xml_writer_abstract), intent(inout) :: self      !< Writer.
+   character(*),               intent(in)    :: data_name !< Data name.
+   character(*),               intent(in)    :: x(1:)     !< Strings.
+   integer(I4P)                              :: error     !< Error status.
+   integer(I1P), allocatable                 :: bytes(:)  !< Strings bytes, NUL terminated.
+   integer(I4P)                              :: i         !< Counter.
+   integer(I4P)                              :: c         !< Counter.
+   integer(I4P)                              :: b         !< Counter.
+
+   allocate(bytes(1:sum(len_trim(x)) + size(x)))
+   b = 0
+   do i=1, size(x)
+      do c=1, len_trim(x(i))
+         b = b + 1
+         bytes(b) = transfer(x(i)(c:c), 0_I1P)
+      enddo
+      b = b + 1
+      bytes(b) = 0_I1P
+   enddo
+   self%tag_name_override = 'Array'
+   self%data_type_override = 'String'
+   self%tuples_override = size(x, kind=I8P)
+   error = self%write_dataarray(data_name=data_name, x=bytes, is_tuples=.true.)
+   endfunction write_fielddata_strings
 
    function write_fielddata_tag(self, action) result(error)
    !< Write `<FieldData>`/`</FieldData>` start/end tag.

@@ -265,6 +265,33 @@ error = a_pvtk_file%finalize()
 The names, types and numbers of components declared in the `.pvtu` file must match the data arrays written in every piece. See
 `src/tests/vtk_fortran_write_pvtu.f90` for the complete program, pieces included.
 
+## Field data (global metadata)
+
+FieldData holds values that belong to the whole dataset rather than to points or cells: time, cycle number, solver name and
+version, a history of residuals, etc. Write it right after `initialize`, before the first piece, between an `open` and a
+`close` call:
+
+```fortran
+error = a_vtk_file%xml_writer%write_fielddata(action='open')
+error = a_vtk_file%xml_writer%write_fielddata(data_name='TIME',      x=0.5_R8P)                     ! scalar
+error = a_vtk_file%xml_writer%write_fielddata(data_name='CYCLE',     x=7_I8P)                       ! scalar
+error = a_vtk_file%xml_writer%write_fielddata(data_name='residuals', x=[1.e-3_R8P, 1.e-4_R8P])      ! rank-1 array
+error = a_vtk_file%xml_writer%write_fielddata(data_name='solver',    x='my solver v1.2')            ! string
+error = a_vtk_file%xml_writer%write_fielddata(data_name='species',   x=['N2', 'O2'])                ! array of strings
+error = a_vtk_file%xml_writer%write_fielddata(action='close')
+```
+
+| `x` | Written as |
+|-----|------------|
+| scalar of any PENF kind (`R8P`, `R4P`, `I8P`, `I4P`, `I2P`, `I1P`) | `DataArray` with 1 tuple |
+| rank-1 array of any PENF kind | `DataArray` with `size(x)` tuples, one component each |
+| `character` scalar | `Array type="String"` with 1 tuple |
+| `character` rank-1 array | `Array type="String"` with `size(x)` tuples, one string each |
+
+Strings are written as VTK writes them (each string followed by a NUL character), in every output format, and readers return
+them as string arrays. Trailing blanks of each string are trimmed, so a Fortran array of fixed-length strings can be passed as
+is. In ParaView, field data are listed in the Spreadsheet view (attribute *Field Data*) and are available to filters and Python.
+
 ## Active arrays
 
 Readers such as ParaView color a dataset by its *active* scalars and use its *active* vectors, normals, tensors and texture

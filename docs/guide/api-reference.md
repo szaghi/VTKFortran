@@ -28,7 +28,7 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 |-----------|-------------|
 | `%initialize(format, filename, mesh_topology, ...)` | Open the file, select the writer, write the XML header |
 | `%finalize()` | Flush and close the file |
-| `%xml_writer%write_fielddata(...)` | Write global FieldData (time, cycle, etc.) |
+| `%xml_writer%write_fielddata(...)` | Write global FieldData: scalars, rank-1 arrays (all kinds), strings and arrays of strings |
 | `%xml_writer%write_piece(...)` | Open or close a Piece element |
 | `%xml_writer%write_geo(...)` | Write geometry (coordinates) |
 | `%xml_writer%write_connectivity(...)` | Write unstructured connectivity, offsets, and cell types |

@@ -52,14 +52,19 @@ The format string passed to `initialize` is case-insensitive.
 
 ## Global Field Data
 
-Optional simulation metadata (time, cycle number, dataset name, etc.) can be attached before the first piece via `write_fielddata`:
+Optional simulation metadata (time, cycle number, solver name, residuals history, etc.) can be attached before the first piece
+via `write_fielddata`: scalars and rank-1 arrays of all PENF kinds, strings and arrays of strings.
 
 ```fortran
 error = a_vtk_file%xml_writer%write_fielddata(action='open')
 error = a_vtk_file%xml_writer%write_fielddata(x=0._R8P, data_name='TIME')
 error = a_vtk_file%xml_writer%write_fielddata(x=1_I8P,  data_name='CYCLE')
+error = a_vtk_file%xml_writer%write_fielddata(x=residuals, data_name='residuals')  ! rank-1 array
+error = a_vtk_file%xml_writer%write_fielddata(x='my solver v1.2', data_name='solver')
 error = a_vtk_file%xml_writer%write_fielddata(action='close')
 ```
+
+See [Usage](/guide/usage#field-data-global-metadata) for details.
 
 ## Data Arrays
 
