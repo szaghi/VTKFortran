@@ -25,6 +25,7 @@ type, abstract :: xml_writer_abstract
                                  0._R8P, 1._R8P, 0._R8P, &
                                  0._R8P, 0._R8P, 1._R8P] !< Axes directions of ImageData topologies (row-major 3x3).
   logical       :: is_direction_set=.false.        !< Write the Direction of ImageData topologies.
+  logical       :: is_uint64=.false.               !< Use UInt64 (instead of UInt32) bytes count headers.
   integer(I8P)  :: ioffset=0_I8P                   !< Offset count.
   integer(I4P)  :: xml=0_I4P                       !< XML Logical unit.
   integer(I4P)  :: vtm_block(1:2)=[-1_I4P, -1_I4P] !< Block indexes.
@@ -905,9 +906,11 @@ contains
 
    buffer = '<?xml version="1.0"?>'//end_rec
    if (endian==endianL) then
-      buffer = buffer//'<VTKFile type="'//self%topology//'" version="1.0" byte_order="LittleEndian" header_type="UInt32">'
+      buffer = buffer//'<VTKFile type="'//self%topology//'" version="1.0" byte_order="LittleEndian" header_type="'// &
+               trim(merge('UInt64', 'UInt32', self%is_uint64))//'">'
    else
-      buffer = buffer//'<VTKFile type="'//self%topology//'" version="1.0" byte_order="BigEndian" header_type="UInt32">'
+      buffer = buffer//'<VTKFile type="'//self%topology//'" version="1.0" byte_order="BigEndian" header_type="'// &
+               trim(merge('UInt64', 'UInt32', self%is_uint64))//'">'
    endif
    if (.not.self%is_volatile) then
       write(unit=self%xml, iostat=self%error)buffer//end_rec

@@ -60,7 +60,7 @@ contains
   integer(I4P),     intent(in),  optional :: ghost_level   !< Number of ghost levels of the pieces (default 0).
   real(R8P),        intent(in),  optional :: origin(3)      !< Origin of ImageData: coordinates of the point of indexes (0,0,0).
   real(R8P),        intent(in),  optional :: spacing(3)     !< Spacing of ImageData along each axis.
-  real(R8P),        intent(in),  optional :: direction(9)   !< Axes directions of ImageData, row-major 3x3 matrix (default identity).
+  real(R8P),        intent(in),  optional :: direction(9)   !< Axes directions of ImageData, row-major 3x3 (default identity).
   integer(I4P)                            :: error         !< Error status.
 
   if (.not.is_initialized) call penf_init

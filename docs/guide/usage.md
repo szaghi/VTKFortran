@@ -502,6 +502,28 @@ The `format` argument to `initialize` is case-insensitive:
 | `binary-appended` | Base64-encoded binary in the appended section |
 | `raw-zlib` | Raw binary in the appended section, zlib-compressed; requires building with `VTKFORTRAN_USE_ZLIB` (CMake option or `-DVTKFORTRAN_USE_ZLIB`), otherwise `initialize` returns a non-zero error |
 
+Binary arrays larger than 2 GiB need `header_type='UInt64'`, see [Large data arrays](#large-data-arrays-uint64-headers).
+
+## Large data arrays (UInt64 headers)
+
+In the binary formats (`binary`, `raw`, `raw-zlib`, `binary-appended`) each DataArray is prefixed by its size in bytes. By
+default the prefix is a 32-bit integer (`header_type="UInt32"`), which limits **each DataArray to 2 GiB**: for example a
+3-component `R8P` field of more than about 89 million points. A larger array stops the execution with an explicit error that
+suggests the fix. Select 64-bit prefixes when initializing the file:
+
+```fortran
+error = a_vtk_file%initialize(format='raw', filename='large.vtu', mesh_topology='UnstructuredGrid', header_type='UInt64')
+```
+
+- `header_type` is `'UInt32'` (default) or `'UInt64'`, case insensitive; any other value makes `initialize` return a
+  non-zero error. It applies to the whole file, so choose it before writing any array; the ASCII format ignores it.
+- With `'UInt64'` the file declares `header_type="UInt64"` and the size prefixes (and, for `raw-zlib`, the compressed blocks
+  headers) are 8 bytes wide, as written by VTK itself; ParaView and VTK read these files.
+- The default keeps the files exactly as before. Parallel (`P*`) and multi-block files contain no binary data: their pieces
+  select their own header type.
+- The limit concerns the bytes of a single array: the number of points and cells of a piece is still a 32-bit integer
+  (more than 2.1 billion points or cells in one piece are not supported).
+
 ## Mesh topology strings
 
 The `mesh_topology` argument is case-sensitive:

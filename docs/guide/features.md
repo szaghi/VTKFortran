@@ -48,7 +48,8 @@ The legacy (`.vtk`) format is not supported: VTKFortran writes the VTK XML forma
 | `binary-appended` | Base64-encoded binary in the XML appended section |
 | `raw-zlib` | Raw binary in the XML appended section, zlib-compressed (`vtkZLibDataCompressor`); requires building with `VTKFORTRAN_USE_ZLIB` |
 
-The format string passed to `initialize` is case-insensitive.
+The format string passed to `initialize` is case-insensitive. Binary arrays are prefixed by a UInt32 bytes count by default
+(2 GiB per array); `header_type='UInt64'` lifts the limit, see [Usage](/guide/usage#large-data-arrays-uint64-headers).
 
 ## Global Field Data
 

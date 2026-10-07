@@ -34,7 +34,7 @@ contains
    endsubroutine get_xml_volatile
 
    function initialize(self, format, filename, mesh_topology, is_volatile, nx1, nx2, ny1, ny2, nz1, nz2, &
-                       origin, spacing, direction) result(error)
+                       origin, spacing, direction, header_type) result(error)
    !< Initialize file (writer).
    !<
    !< @note This function must be the first to be called.
@@ -46,6 +46,12 @@ contains
    !<- RAW: data are saved in raw-binary format in the appended tag of the XML file;
    !<- RAW-ZLIB: data are saved in raw-binary format in the appended tag of the XML file using VTK internal zlib compression;
    !<- BINARY-APPENDED: data are saved in base64 encoded format in the appended tag of the XML file.
+   !<
+   !<### Bytes count header of binary data
+   !<
+   !< Each binary DataArray (formats BINARY, RAW, RAW-ZLIB, BINARY-APPENDED) is prefixed by its bytes count. The optional
+   !< `header_type` selects its width: **UInt32** (default) limits each DataArray to 2 GiB (larger ones stop the execution with
+   !< an explicit error), **UInt64** lifts the limit; it is case insensitive and ignored by the ASCII format.
    !<
    !<### Supported topologies are:
    !<
@@ -83,6 +89,7 @@ contains
    real(R8P),       intent(in), optional :: origin(3)      !< Origin of ImageData: coordinates of the point of indexes (0,0,0).
    real(R8P),       intent(in), optional :: spacing(3)     !< Spacing of ImageData along each axis.
    real(R8P),       intent(in), optional :: direction(9)   !< Axes directions of ImageData, row-major 3x3 matrix (default identity).
+   character(*),    intent(in), optional :: header_type    !< Bytes count header of binary data: UInt32 (default) or UInt64.
    integer(I4P)                          :: error         !< Error status.
    type(string)                          :: fformat       !< File format.
 
@@ -103,6 +110,17 @@ contains
       error = 1
    endselect
    if (error /= 0_I4P) return
+   if (present(header_type)) then
+      select case(upper_case(trim(adjustl(header_type))))
+      case('UINT32')
+         self%xml_writer%is_uint64 = .false.
+      case('UINT64')
+         self%xml_writer%is_uint64 = .true.
+      case default
+         error = 1_I4P
+         return
+      endselect
+   endif
    if (index(mesh_topology, 'ImageData') > 0) then
       ! ImageData grids are defined by extents, origin and spacing (direction is optional)
       if (.not.(present(origin).and.present(spacing))) then
@@ -120,6 +138,18 @@ contains
                                       is_volatile=is_volatile,                                       &
                                       nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
    endfunction initialize
+
+   pure function upper_case(string) result(upper)
+   !< Return a string in upper case (ASCII letters only).
+   character(*), intent(in) :: string !< Input string.
+   character(len(string))   :: upper  !< Upper case string.
+   integer                  :: i      !< Counter.
+
+   upper = string
+   do i=1, len(string)
+      if (string(i:i) >= 'a' .and. string(i:i) <= 'z') upper(i:i) = achar(iachar(string(i:i)) - 32)
+   enddo
+   endfunction upper_case
 
    function finalize(self) result(error)
    !< Finalize file (writer).

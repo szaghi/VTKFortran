@@ -85,6 +85,7 @@ type, extends(xml_writer_abstract) :: xml_writer_appended
     procedure, pass(self) :: write_dataarray_appended   !< Write appended.
     ! private methods
     procedure, pass(self), private :: ioffset_update     !< Update ioffset count.
+    procedure, pass(self), private :: n_bytes            !< Return the checked bytes count of a dataarray.
     procedure, pass(self), private :: open_scratch_file  !< Open scratch file.
     procedure, pass(self), private :: close_scratch_file !< Close scratch file.
     generic, private :: write_on_scratch_dataarray =>          &
@@ -225,10 +226,8 @@ contains
   character(len=:), allocatable             :: attrs  !< Extra attributes.
 
   buffer = '<?xml version="1.0"?>'//end_rec
-  attrs = ' header_type="UInt32"'
-  if (self%is_compressed) then
-    attrs = ' compressor="vtkZLibDataCompressor" header_type="UInt32"'
-  endif
+  attrs = ' header_type="'//trim(merge('UInt64', 'UInt32', self%is_uint64))//'"'
+  if (self%is_compressed) attrs = ' compressor="vtkZLibDataCompressor"'//attrs
   if (endian==endianL) then
      buffer = buffer//'<VTKFile type="'//self%topology//'" version="1.0" byte_order="LittleEndian"'//attrs//'>'
   else
@@ -255,19 +254,34 @@ contains
    error = self%error
    endfunction finalize
 
+  function n_bytes(self, n_byte) result(n)
+  !< Return the bytes count of a dataarray, checked against the bytes count header of the file (UInt32 or UInt64).
+  class(xml_writer_appended), intent(in) :: self   !< Writer.
+  integer(I8P),               intent(in) :: n_byte !< Bytes count, computed in I8P.
+  integer(I8P)                           :: n      !< Checked bytes count.
+
+  if (self%is_uint64) then
+    n = n_byte
+  else
+    n = int(bytes_count(n_byte), I8P) ! stops with an explicit error beyond the UInt32 header limit
+  endif
+  endfunction n_bytes
+
   elemental subroutine ioffset_update(self, n_byte)
   !< Update ioffset count.
   class(xml_writer_appended), intent(inout) :: self  !< Writer.
-  integer(I4P),               intent(in)    :: n_byte !< Number of bytes saved.
+  integer(I8P),               intent(in)    :: n_byte !< Number of bytes saved.
+  integer(I8P)                              :: hb     !< Bytes of the bytes count header (4 for UInt32, 8 for UInt64).
 
+  hb = merge(int(BYI8P, I8P), int(BYI4P, I8P), self%is_uint64)
   if (self%is_compressed) then
     ! n_byte is already the exact payload byte-size for this DataArray in the <AppendedData> section
     ! (VTK "compressed blocks" header + compressed data).
     self%ioffset = self%ioffset + n_byte
   elseif (self%encoding=='raw') then
-    self%ioffset = self%ioffset + BYI4P + n_byte
+    self%ioffset = self%ioffset + hb + n_byte
   else
-    self%ioffset = self%ioffset + ((int(n_byte, I8P) + BYI4P + 2_I8P)/3_I8P)*4_I8P
+    self%ioffset = self%ioffset + ((n_byte + hb + 2_I8P)/3_I8P)*4_I8P
   endif
   endsubroutine ioffset_update
 
@@ -1315,7 +1329,7 @@ contains
   !< Do nothing, ascii data cannot be appended.
   class(xml_writer_appended), intent(inout) :: self              !< Writer.
   type(string)                              :: tag_attributes    !< Tag attributes.
-  integer(I4P)                              :: n_byte            !< Bytes count.
+  integer(I8P)                              :: n_byte            !< Bytes count.
   character(len=2)                          :: dataarray_type    !< Dataarray type = R8,R4,I8,I4,I2,I1.
   integer(I4P)                              :: dataarray_dim     !< Dataarray dimension.
   real(R8P),    allocatable                 :: dataarray_R8P(:)  !< Dataarray buffer of R8P.
@@ -1333,8 +1347,8 @@ contains
     ! We stream them to the XML file preserving binary representation by reading/writing
     ! the same types.
     block
-      integer(I4P)                    :: nb, bs, last, i
-      integer(I4P), allocatable       :: comp_sizes(:)
+      integer(I8P)                    :: nb, bs, last, i
+      integer(I8P), allocatable       :: comp_sizes(:)
       integer(c_signed_char), allocatable :: buf(:)
 
       call self%write_start_tag(name='AppendedData', attributes='encoding="raw"')
@@ -1354,7 +1368,11 @@ contains
         read(unit=self%scratch, iostat=self%error) comp_sizes
         if (self%error /= 0) exit
 
-        write(unit=self%xml, iostat=self%error) nb, bs, last, comp_sizes
+        if (self%is_uint64) then
+          write(unit=self%xml, iostat=self%error) nb, bs, last, comp_sizes
+        else
+          write(unit=self%xml, iostat=self%error) int(nb, I4P), int(bs, I4P), int(last, I4P), int(comp_sizes, I4P)
+        endif
         if (self%error /= 0) exit
         do i = 1, nb
           if (allocated(buf)) deallocate(buf)
@@ -1427,117 +1445,141 @@ contains
     if (self%encoding=='raw') then
       select case(dataarray_type)
       case('R8')
-        write(unit=self%xml, iostat=self%error)n_byte, dataarray_R8P
+        call write_n_byte
+        write(unit=self%xml, iostat=self%error)dataarray_R8P
         deallocate(dataarray_R8P)
       case('R4')
-        write(unit=self%xml, iostat=self%error)n_byte, dataarray_R4P
+        call write_n_byte
+        write(unit=self%xml, iostat=self%error)dataarray_R4P
         deallocate(dataarray_R4P)
       case('I8')
-        write(unit=self%xml, iostat=self%error)n_byte, dataarray_I8P
+        call write_n_byte
+        write(unit=self%xml, iostat=self%error)dataarray_I8P
         deallocate(dataarray_I8P)
       case('I4')
-        write(unit=self%xml, iostat=self%error)n_byte, dataarray_I4P
+        call write_n_byte
+        write(unit=self%xml, iostat=self%error)dataarray_I4P
         deallocate(dataarray_I4P)
       case('I2')
-        write(unit=self%xml, iostat=self%error)n_byte, dataarray_I2P
+        call write_n_byte
+        write(unit=self%xml, iostat=self%error)dataarray_I2P
         deallocate(dataarray_I2P)
       case('I1')
-        write(unit=self%xml, iostat=self%error)n_byte, dataarray_I1P
+        call write_n_byte
+        write(unit=self%xml, iostat=self%error)dataarray_I1P
         deallocate(dataarray_I1P)
       endselect
     else
       select case(dataarray_type)
       case('R8')
-        code = encode_binary_dataarray(x=dataarray_R8P)
+        code = encode_binary_dataarray(x=dataarray_R8P, is_uint64=self%is_uint64)
         write(unit=self%xml, iostat=self%error)code
       case('R4')
-        code = encode_binary_dataarray(x=dataarray_R4P)
+        code = encode_binary_dataarray(x=dataarray_R4P, is_uint64=self%is_uint64)
         write(unit=self%xml, iostat=self%error)code
       case('I8')
-        code = encode_binary_dataarray(x=dataarray_I8P)
+        code = encode_binary_dataarray(x=dataarray_I8P, is_uint64=self%is_uint64)
         write(unit=self%xml, iostat=self%error)code
       case('I4')
-        code = encode_binary_dataarray(x=dataarray_I4P)
+        code = encode_binary_dataarray(x=dataarray_I4P, is_uint64=self%is_uint64)
         write(unit=self%xml, iostat=self%error)code
       case('I2')
-        code = encode_binary_dataarray(x=dataarray_I2P)
+        code = encode_binary_dataarray(x=dataarray_I2P, is_uint64=self%is_uint64)
         write(unit=self%xml, iostat=self%error)code
       case('I1')
-        code = encode_binary_dataarray(x=dataarray_I1P)
+        code = encode_binary_dataarray(x=dataarray_I1P, is_uint64=self%is_uint64)
         write(unit=self%xml, iostat=self%error)code
       endselect
     endif
     endsubroutine write_dataarray_on_xml
+
+    subroutine write_n_byte
+    !< Write the bytes count header of the current raw dataarray, UInt32 or UInt64.
+
+    if (self%is_uint64) then
+      write(unit=self%xml, iostat=self%error)n_byte
+    else
+      write(unit=self%xml, iostat=self%error)int(n_byte, I4P)
+    endif
+    endsubroutine write_n_byte
   endsubroutine write_dataarray_appended
 
 #ifdef VTKFORTRAN_USE_ZLIB
   function write_zlib_compressed_payload_from_bytes(self, bytes) result(n_written)
   !< Write a VTK "compressed blocks" payload to the main scratch stream.
   !<
-  !< Payload layout (header_type = UInt32):
-  !<   UInt32 numBlocks
-  !<   UInt32 blockSize
-  !<   UInt32 lastBlockSize
-  !<   UInt32 compressedSize[numBlocks]
+  !< Payload layout (UIntXX is UInt32 or UInt64, as the header_type of the file):
+  !<   UIntXX numBlocks
+  !<   UIntXX blockSize
+  !<   UIntXX lastBlockSize
+  !<   UIntXX compressedSize[numBlocks]
   !<   Byte   compressedBlockData...
-  class(xml_writer_appended), intent(inout) :: self           !< Writer.
-  integer(c_signed_char),     intent(in)    :: bytes(1:)      !< Uncompressed payload bytes.
-  integer(I4P)                              :: n_written      !< Total payload bytes written.
-  integer(I4P)                              :: bs, nb, last, i, n_read
-  integer(I4P), allocatable                 :: comp_sizes(:)
-  integer(c_signed_char), allocatable, target :: inbuf(:), outbuf(:)
-  integer(c_long)                              :: bound
-  integer(c_long), target                      :: destLen
-  integer(c_int)                                :: zret
+  !<
+  !< The header values are stored on the scratch file as I8P and written with the width of the file header when the appended
+  !< section is written; offsets are 64-bit, so payloads larger than 2 GiB are handled.
+  class(xml_writer_appended), intent(inout)   :: self          !< Writer.
+  integer(c_signed_char),     intent(in)      :: bytes(1:)     !< Uncompressed payload bytes.
+  integer(I8P)                                :: n_written     !< Total payload bytes written.
+  integer(I8P)                                :: bs            !< Block size.
+  integer(I8P)                                :: nb            !< Number of blocks.
+  integer(I8P)                                :: last          !< Size of the last block.
+  integer(I8P)                                :: i             !< Counter.
+  integer(I8P)                                :: n_read        !< Bytes of the current block.
+  integer(I8P), allocatable                   :: comp_sizes(:) !< Compressed size of each block.
+  integer(c_signed_char), allocatable, target :: inbuf(:)      !< Uncompressed block.
+  integer(c_signed_char), allocatable, target :: outbuf(:)     !< Compressed block.
+  integer(c_long)                             :: bound         !< Bound of compressed block size.
+  integer(c_long), target                     :: destLen       !< Compressed block size.
+  integer(c_int)                              :: zret          !< zlib return code.
 
-  bs = self%compression_block_size
-  if (bs <= 0) bs = 32768_I4P
-  nb = (size(bytes, dim=1) + bs - 1_I4P) / bs
-  last = size(bytes, dim=1) - (nb - 1_I4P) * bs
-  if (nb < 1_I4P) nb = 1_I4P
-  if (last < 0_I4P) last = 0_I4P
+  bs = int(self%compression_block_size, I8P)
+  if (bs <= 0_I8P) bs = 32768_I8P
+  nb = (size(bytes, dim=1, kind=I8P) + bs - 1_I8P) / bs
+  last = size(bytes, dim=1, kind=I8P) - (nb - 1_I8P) * bs
+  if (nb < 1_I8P) nb = 1_I8P
+  if (last < 0_I8P) last = 0_I8P
 
   allocate(comp_sizes(1:nb))
   allocate(inbuf(1:bs))
   bound = zlib_compress_bound(int(bs, c_long))
-  allocate(outbuf(1:int(bound, I4P)))
+  allocate(outbuf(1:int(bound, I8P)))
 
   ! Pass 1: compute compressed sizes per block
-  do i = 1, nb
+  do i = 1_I8P, nb
     n_read = merge(bs, last, i < nb)
-    if (n_read <= 0) n_read = 0
-    if (n_read > 0) inbuf(1:n_read) = bytes((i-1_I4P)*bs + 1_I4P : (i-1_I4P)*bs + n_read)
+    if (n_read <= 0_I8P) n_read = 0_I8P
+    if (n_read > 0_I8P) inbuf(1:n_read) = bytes((i-1_I8P)*bs + 1_I8P : (i-1_I8P)*bs + n_read)
     destLen = int(size(outbuf), c_long)
     zret = zlib_compress2(dst=outbuf, dst_len=destLen, src=inbuf, src_len=int(n_read, c_long), level=self%compression_level)
     if (zret /= 0) then
       self%error = 1
       exit
     endif
-    comp_sizes(i) = int(destLen, I4P)
+    comp_sizes(i) = int(destLen, I8P)
   enddo
 
   ! Header
-  write(unit=self%scratch, iostat=self%error) int(nb, I4P)
-  write(unit=self%scratch, iostat=self%error) int(bs, I4P)
-  write(unit=self%scratch, iostat=self%error) int(last, I4P)
+  write(unit=self%scratch, iostat=self%error) nb
+  write(unit=self%scratch, iostat=self%error) bs
+  write(unit=self%scratch, iostat=self%error) last
   write(unit=self%scratch, iostat=self%error) comp_sizes
 
   ! Pass 2: write compressed blocks
-  do i = 1, nb
+  do i = 1_I8P, nb
     n_read = merge(bs, last, i < nb)
-    if (n_read <= 0) n_read = 0
-    if (n_read > 0) inbuf(1:n_read) = bytes((i-1_I4P)*bs + 1_I4P : (i-1_I4P)*bs + n_read)
+    if (n_read <= 0_I8P) n_read = 0_I8P
+    if (n_read > 0_I8P) inbuf(1:n_read) = bytes((i-1_I8P)*bs + 1_I8P : (i-1_I8P)*bs + n_read)
     destLen = int(size(outbuf), c_long)
     zret = zlib_compress2(dst=outbuf, dst_len=destLen, src=inbuf, src_len=int(n_read, c_long), level=self%compression_level)
     if (zret /= 0) then
       self%error = 1
       exit
     endif
-    write(unit=self%scratch, iostat=self%error) outbuf(1:int(destLen, I4P))
+    write(unit=self%scratch, iostat=self%error) outbuf(1:int(destLen, I8P))
     if (self%error /= 0) exit
   enddo
 
-  n_written = (3_I4P + nb) * BYI4P + sum(comp_sizes)
+  n_written = (3_I8P + nb) * merge(int(BYI8P, I8P), int(BYI4P, I8P), self%is_uint64) + sum(comp_sizes)
   deallocate(comp_sizes, inbuf, outbuf)
   endfunction write_zlib_compressed_payload_from_bytes
 #endif
@@ -1547,14 +1589,14 @@ contains
   !< Write a dataarray with 1 components of rank 1.
   class(xml_writer_appended), intent(inout) :: self   !< Writer.
   class(*),                   intent(in)    :: x(1:)  !< Data variable.
-  integer(I4P)                              :: n_byte !< Number of bytes
+  integer(I8P)                              :: n_byte !< Number of bytes
   integer(I4P)                              :: nn     !< Number of elements.
   integer(I4P)                              :: tmp    !< Temporary stream unit.
 
   nn = size(x, dim=1)
   select type(x)
   type is(real(R8P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYR8P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYR8P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -1573,7 +1615,7 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(real(R4P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYR4P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYR4P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -1592,7 +1634,7 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I8P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYI8P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYI8P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -1611,7 +1653,7 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I4P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYI4P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYI4P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -1630,7 +1672,7 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I2P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYI2P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYI2P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -1649,7 +1691,7 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I1P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYI1P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYI1P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -1674,14 +1716,14 @@ contains
   !< Write a dataarray with 1 components of rank 2.
   class(xml_writer_appended), intent(inout) :: self     !< Writer.
   class(*),                   intent(in)    :: x(1:,1:) !< Data variable.
-  integer(I4P)                              :: n_byte   !< Number of bytes
+  integer(I8P)                              :: n_byte   !< Number of bytes
   integer(I4P)                              :: nn       !< Number of elements.
   integer(I4P)                              :: tmp      !< Temporary stream unit.
 
   nn = size(x, dim=1)*size(x, dim=2)
   select type(x)
   type is(real(R8P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYR8P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYR8P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -1701,7 +1743,7 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(real(R4P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYR4P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYR4P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -1721,7 +1763,7 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I8P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYI8P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYI8P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -1741,7 +1783,7 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I4P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYI4P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYI4P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -1761,7 +1803,7 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I2P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYI2P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYI2P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -1781,7 +1823,7 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I1P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYI1P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYI1P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -1807,14 +1849,14 @@ contains
   !< Write a dataarray with 1 components of rank 3.
   class(xml_writer_appended), intent(inout) :: self        !< Writer.
   class(*),                   intent(in)    :: x(1:,1:,1:) !< Data variable.
-  integer(I4P)                              :: n_byte      !< Number of bytes
+  integer(I8P)                              :: n_byte      !< Number of bytes
   integer(I4P)                              :: nn          !< Number of elements.
   integer(I4P)                              :: tmp         !< Temporary stream unit.
 
   nn = size(x, dim=1)*size(x, dim=2)*size(x, dim=3)
   select type(x)
   type is(real(R8P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYR8P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYR8P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -1834,7 +1876,7 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(real(R4P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYR4P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYR4P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -1854,7 +1896,7 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I8P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYI8P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYI8P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -1874,7 +1916,7 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I4P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYI4P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYI4P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -1894,7 +1936,7 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I2P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYI2P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYI2P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -1914,7 +1956,7 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I1P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYI1P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYI1P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -1940,14 +1982,14 @@ contains
   !< Write a dataarray with 1 components of rank 4.
   class(xml_writer_appended), intent(inout) :: self           !< Writer.
   class(*),                   intent(in)    :: x(1:,1:,1:,1:) !< Data variable.
-  integer(I4P)                              :: n_byte         !< Number of bytes
+  integer(I8P)                              :: n_byte         !< Number of bytes
   integer(I4P)                              :: nn             !< Number of elements.
   integer(I4P)                              :: tmp            !< Temporary stream unit.
 
   nn = size(x, dim=1)*size(x, dim=2)*size(x, dim=3)*size(x, dim=4)
   select type(x)
   type is(real(R8P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYR8P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYR8P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -1967,7 +2009,7 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(real(R4P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYR4P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYR4P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -1987,7 +2029,7 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I8P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYI8P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYI8P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -2007,7 +2049,7 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I4P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYI4P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYI4P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -2027,7 +2069,7 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I2P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYI2P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYI2P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -2047,7 +2089,7 @@ contains
       write(unit=self%scratch, iostat=self%error)x
     endif
   type is(integer(I1P))
-    n_byte = bytes_count(size(x, kind=I8P)*BYI1P)
+    n_byte = self%n_bytes(size(x, kind=I8P)*BYI1P)
     if (self%is_compressed) then
 #ifdef VTKFORTRAN_USE_ZLIB
       block
@@ -2075,7 +2117,7 @@ contains
   real(R8P),                  intent(in)    :: x(1:)  !< X component.
   real(R8P),                  intent(in)    :: y(1:)  !< Y component.
   real(R8P),                  intent(in)    :: z(1:)  !< Z component.
-  integer(I4P)                              :: n_byte !< Number of bytes
+  integer(I8P)                              :: n_byte !< Number of bytes
   real(R8P), allocatable                    :: buf(:) !< Interleaved components.
   integer(I8P)                              :: nn     !< Number of elements.
 
@@ -2093,7 +2135,7 @@ contains
   real(R4P),                  intent(in)    :: x(1:)  !< X component.
   real(R4P),                  intent(in)    :: y(1:)  !< Y component.
   real(R4P),                  intent(in)    :: z(1:)  !< Z component.
-  integer(I4P)                              :: n_byte !< Number of bytes
+  integer(I8P)                              :: n_byte !< Number of bytes
   real(R4P), allocatable                    :: buf(:) !< Interleaved components.
   integer(I8P)                              :: nn     !< Number of elements.
 
@@ -2111,7 +2153,7 @@ contains
   integer(I8P),               intent(in)    :: x(1:)  !< X component.
   integer(I8P),               intent(in)    :: y(1:)  !< Y component.
   integer(I8P),               intent(in)    :: z(1:)  !< Z component.
-  integer(I4P)                              :: n_byte !< Number of bytes
+  integer(I8P)                              :: n_byte !< Number of bytes
   integer(I8P), allocatable                 :: buf(:) !< Interleaved components.
   integer(I8P)                              :: nn     !< Number of elements.
 
@@ -2129,7 +2171,7 @@ contains
   integer(I4P),               intent(in)    :: x(1:)  !< X component.
   integer(I4P),               intent(in)    :: y(1:)  !< Y component.
   integer(I4P),               intent(in)    :: z(1:)  !< Z component.
-  integer(I4P)                              :: n_byte !< Number of bytes
+  integer(I8P)                              :: n_byte !< Number of bytes
   integer(I4P), allocatable                 :: buf(:) !< Interleaved components.
   integer(I8P)                              :: nn     !< Number of elements.
 
@@ -2147,7 +2189,7 @@ contains
   integer(I2P),               intent(in)    :: x(1:)  !< X component.
   integer(I2P),               intent(in)    :: y(1:)  !< Y component.
   integer(I2P),               intent(in)    :: z(1:)  !< Z component.
-  integer(I4P)                              :: n_byte !< Number of bytes
+  integer(I8P)                              :: n_byte !< Number of bytes
   integer(I2P), allocatable                 :: buf(:) !< Interleaved components.
   integer(I8P)                              :: nn     !< Number of elements.
 
@@ -2165,7 +2207,7 @@ contains
   integer(I1P),               intent(in)    :: x(1:)  !< X component.
   integer(I1P),               intent(in)    :: y(1:)  !< Y component.
   integer(I1P),               intent(in)    :: z(1:)  !< Z component.
-  integer(I4P)                              :: n_byte !< Number of bytes
+  integer(I8P)                              :: n_byte !< Number of bytes
   integer(I1P), allocatable                 :: buf(:) !< Interleaved components.
   integer(I8P)                              :: nn     !< Number of elements.
 
@@ -2183,7 +2225,7 @@ contains
   real(R8P),                  intent(in)    :: x(1:,1:) !< X component.
   real(R8P),                  intent(in)    :: y(1:,1:) !< Y component.
   real(R8P),                  intent(in)    :: z(1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte   !< Number of bytes
+  integer(I8P)                              :: n_byte   !< Number of bytes
   real(R8P), allocatable                    :: buf(:)   !< Interleaved components.
   integer(I8P)                              :: nn       !< Number of elements.
 
@@ -2201,7 +2243,7 @@ contains
   real(R4P),                  intent(in)    :: x(1:,1:) !< X component.
   real(R4P),                  intent(in)    :: y(1:,1:) !< Y component.
   real(R4P),                  intent(in)    :: z(1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte   !< Number of bytes
+  integer(I8P)                              :: n_byte   !< Number of bytes
   real(R4P), allocatable                    :: buf(:)   !< Interleaved components.
   integer(I8P)                              :: nn       !< Number of elements.
 
@@ -2219,7 +2261,7 @@ contains
   integer(I8P),               intent(in)    :: x(1:,1:) !< X component.
   integer(I8P),               intent(in)    :: y(1:,1:) !< Y component.
   integer(I8P),               intent(in)    :: z(1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte   !< Number of bytes
+  integer(I8P)                              :: n_byte   !< Number of bytes
   integer(I8P), allocatable                 :: buf(:)   !< Interleaved components.
   integer(I8P)                              :: nn       !< Number of elements.
 
@@ -2237,7 +2279,7 @@ contains
   integer(I4P),               intent(in)    :: x(1:,1:) !< X component.
   integer(I4P),               intent(in)    :: y(1:,1:) !< Y component.
   integer(I4P),               intent(in)    :: z(1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte   !< Number of bytes
+  integer(I8P)                              :: n_byte   !< Number of bytes
   integer(I4P), allocatable                 :: buf(:)   !< Interleaved components.
   integer(I8P)                              :: nn       !< Number of elements.
 
@@ -2255,7 +2297,7 @@ contains
   integer(I2P),               intent(in)    :: x(1:,1:) !< X component.
   integer(I2P),               intent(in)    :: y(1:,1:) !< Y component.
   integer(I2P),               intent(in)    :: z(1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte   !< Number of bytes
+  integer(I8P)                              :: n_byte   !< Number of bytes
   integer(I2P), allocatable                 :: buf(:)   !< Interleaved components.
   integer(I8P)                              :: nn       !< Number of elements.
 
@@ -2273,7 +2315,7 @@ contains
   integer(I1P),               intent(in)    :: x(1:,1:) !< X component.
   integer(I1P),               intent(in)    :: y(1:,1:) !< Y component.
   integer(I1P),               intent(in)    :: z(1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte   !< Number of bytes
+  integer(I8P)                              :: n_byte   !< Number of bytes
   integer(I1P), allocatable                 :: buf(:)   !< Interleaved components.
   integer(I8P)                              :: nn       !< Number of elements.
 
@@ -2291,7 +2333,7 @@ contains
   real(R8P),                  intent(in)    :: x(1:,1:,1:) !< X component.
   real(R8P),                  intent(in)    :: y(1:,1:,1:) !< Y component.
   real(R8P),                  intent(in)    :: z(1:,1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte      !< Number of bytes
+  integer(I8P)                              :: n_byte      !< Number of bytes
   real(R8P), allocatable                    :: buf(:)      !< Interleaved components.
   integer(I8P)                              :: nn          !< Number of elements.
 
@@ -2309,7 +2351,7 @@ contains
   real(R4P),                  intent(in)    :: x(1:,1:,1:) !< X component.
   real(R4P),                  intent(in)    :: y(1:,1:,1:) !< Y component.
   real(R4P),                  intent(in)    :: z(1:,1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte      !< Number of bytes
+  integer(I8P)                              :: n_byte      !< Number of bytes
   real(R4P), allocatable                    :: buf(:)      !< Interleaved components.
   integer(I8P)                              :: nn          !< Number of elements.
 
@@ -2327,7 +2369,7 @@ contains
   integer(I8P),               intent(in)    :: x(1:,1:,1:) !< X component.
   integer(I8P),               intent(in)    :: y(1:,1:,1:) !< Y component.
   integer(I8P),               intent(in)    :: z(1:,1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte      !< Number of bytes
+  integer(I8P)                              :: n_byte      !< Number of bytes
   integer(I8P), allocatable                 :: buf(:)      !< Interleaved components.
   integer(I8P)                              :: nn          !< Number of elements.
 
@@ -2345,7 +2387,7 @@ contains
   integer(I4P),               intent(in)    :: x(1:,1:,1:) !< X component.
   integer(I4P),               intent(in)    :: y(1:,1:,1:) !< Y component.
   integer(I4P),               intent(in)    :: z(1:,1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte      !< Number of bytes
+  integer(I8P)                              :: n_byte      !< Number of bytes
   integer(I4P), allocatable                 :: buf(:)      !< Interleaved components.
   integer(I8P)                              :: nn          !< Number of elements.
 
@@ -2363,7 +2405,7 @@ contains
   integer(I2P),               intent(in)    :: x(1:,1:,1:) !< X component.
   integer(I2P),               intent(in)    :: y(1:,1:,1:) !< Y component.
   integer(I2P),               intent(in)    :: z(1:,1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte      !< Number of bytes
+  integer(I8P)                              :: n_byte      !< Number of bytes
   integer(I2P), allocatable                 :: buf(:)      !< Interleaved components.
   integer(I8P)                              :: nn          !< Number of elements.
 
@@ -2381,7 +2423,7 @@ contains
   integer(I1P),               intent(in)    :: x(1:,1:,1:) !< X component.
   integer(I1P),               intent(in)    :: y(1:,1:,1:) !< Y component.
   integer(I1P),               intent(in)    :: z(1:,1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte      !< Number of bytes
+  integer(I8P)                              :: n_byte      !< Number of bytes
   integer(I1P), allocatable                 :: buf(:)      !< Interleaved components.
   integer(I8P)                              :: nn          !< Number of elements.
 
@@ -2402,7 +2444,7 @@ contains
   real(R8P),                  intent(in)    :: x(1:)  !< X component.
   real(R8P),                  intent(in)    :: y(1:)  !< Y component.
   real(R8P),                  intent(in)    :: z(1:)  !< Z component.
-  integer(I4P)                              :: n_byte !< Number of bytes
+  integer(I8P)                              :: n_byte !< Number of bytes
   real(R8P), allocatable                    :: buf(:) !< Interleaved components.
   integer(I8P)                              :: nn     !< Number of elements.
 
@@ -2426,7 +2468,7 @@ contains
   real(R4P),                  intent(in)    :: x(1:)  !< X component.
   real(R4P),                  intent(in)    :: y(1:)  !< Y component.
   real(R4P),                  intent(in)    :: z(1:)  !< Z component.
-  integer(I4P)                              :: n_byte !< Number of bytes
+  integer(I8P)                              :: n_byte !< Number of bytes
   real(R4P), allocatable                    :: buf(:) !< Interleaved components.
   integer(I8P)                              :: nn     !< Number of elements.
 
@@ -2450,7 +2492,7 @@ contains
   integer(I8P),               intent(in)    :: x(1:)  !< X component.
   integer(I8P),               intent(in)    :: y(1:)  !< Y component.
   integer(I8P),               intent(in)    :: z(1:)  !< Z component.
-  integer(I4P)                              :: n_byte !< Number of bytes
+  integer(I8P)                              :: n_byte !< Number of bytes
   integer(I8P), allocatable                 :: buf(:) !< Interleaved components.
   integer(I8P)                              :: nn     !< Number of elements.
 
@@ -2474,7 +2516,7 @@ contains
   integer(I4P),               intent(in)    :: x(1:)  !< X component.
   integer(I4P),               intent(in)    :: y(1:)  !< Y component.
   integer(I4P),               intent(in)    :: z(1:)  !< Z component.
-  integer(I4P)                              :: n_byte !< Number of bytes
+  integer(I8P)                              :: n_byte !< Number of bytes
   integer(I4P), allocatable                 :: buf(:) !< Interleaved components.
   integer(I8P)                              :: nn     !< Number of elements.
 
@@ -2498,7 +2540,7 @@ contains
   integer(I2P),               intent(in)    :: x(1:)  !< X component.
   integer(I2P),               intent(in)    :: y(1:)  !< Y component.
   integer(I2P),               intent(in)    :: z(1:)  !< Z component.
-  integer(I4P)                              :: n_byte !< Number of bytes
+  integer(I8P)                              :: n_byte !< Number of bytes
   integer(I2P), allocatable                 :: buf(:) !< Interleaved components.
   integer(I8P)                              :: nn     !< Number of elements.
 
@@ -2522,7 +2564,7 @@ contains
   integer(I1P),               intent(in)    :: x(1:)  !< X component.
   integer(I1P),               intent(in)    :: y(1:)  !< Y component.
   integer(I1P),               intent(in)    :: z(1:)  !< Z component.
-  integer(I4P)                              :: n_byte !< Number of bytes
+  integer(I8P)                              :: n_byte !< Number of bytes
   integer(I1P), allocatable                 :: buf(:) !< Interleaved components.
   integer(I8P)                              :: nn     !< Number of elements.
 
@@ -2546,7 +2588,7 @@ contains
   real(R8P),                  intent(in)    :: x(1:,1:) !< X component.
   real(R8P),                  intent(in)    :: y(1:,1:) !< Y component.
   real(R8P),                  intent(in)    :: z(1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte   !< Number of bytes
+  integer(I8P)                              :: n_byte   !< Number of bytes
   real(R8P), allocatable                    :: buf(:)   !< Interleaved components.
   integer(I8P)                              :: nn       !< Number of elements.
 
@@ -2570,7 +2612,7 @@ contains
   real(R4P),                  intent(in)    :: x(1:,1:) !< X component.
   real(R4P),                  intent(in)    :: y(1:,1:) !< Y component.
   real(R4P),                  intent(in)    :: z(1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte   !< Number of bytes
+  integer(I8P)                              :: n_byte   !< Number of bytes
   real(R4P), allocatable                    :: buf(:)   !< Interleaved components.
   integer(I8P)                              :: nn       !< Number of elements.
 
@@ -2594,7 +2636,7 @@ contains
   integer(I8P),               intent(in)    :: x(1:,1:) !< X component.
   integer(I8P),               intent(in)    :: y(1:,1:) !< Y component.
   integer(I8P),               intent(in)    :: z(1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte   !< Number of bytes
+  integer(I8P)                              :: n_byte   !< Number of bytes
   integer(I8P), allocatable                 :: buf(:)   !< Interleaved components.
   integer(I8P)                              :: nn       !< Number of elements.
 
@@ -2618,7 +2660,7 @@ contains
   integer(I4P),               intent(in)    :: x(1:,1:) !< X component.
   integer(I4P),               intent(in)    :: y(1:,1:) !< Y component.
   integer(I4P),               intent(in)    :: z(1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte   !< Number of bytes
+  integer(I8P)                              :: n_byte   !< Number of bytes
   integer(I4P), allocatable                 :: buf(:)   !< Interleaved components.
   integer(I8P)                              :: nn       !< Number of elements.
 
@@ -2642,7 +2684,7 @@ contains
   integer(I2P),               intent(in)    :: x(1:,1:) !< X component.
   integer(I2P),               intent(in)    :: y(1:,1:) !< Y component.
   integer(I2P),               intent(in)    :: z(1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte   !< Number of bytes
+  integer(I8P)                              :: n_byte   !< Number of bytes
   integer(I2P), allocatable                 :: buf(:)   !< Interleaved components.
   integer(I8P)                              :: nn       !< Number of elements.
 
@@ -2666,7 +2708,7 @@ contains
   integer(I1P),               intent(in)    :: x(1:,1:) !< X component.
   integer(I1P),               intent(in)    :: y(1:,1:) !< Y component.
   integer(I1P),               intent(in)    :: z(1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte   !< Number of bytes
+  integer(I8P)                              :: n_byte   !< Number of bytes
   integer(I1P), allocatable                 :: buf(:)   !< Interleaved components.
   integer(I8P)                              :: nn       !< Number of elements.
 
@@ -2690,7 +2732,7 @@ contains
   real(R8P),                  intent(in)    :: x(1:,1:,1:) !< X component.
   real(R8P),                  intent(in)    :: y(1:,1:,1:) !< Y component.
   real(R8P),                  intent(in)    :: z(1:,1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte      !< Number of bytes
+  integer(I8P)                              :: n_byte      !< Number of bytes
   real(R8P), allocatable                    :: buf(:)      !< Interleaved components.
   integer(I8P)                              :: nn          !< Number of elements.
 
@@ -2714,7 +2756,7 @@ contains
   real(R4P),                  intent(in)    :: x(1:,1:,1:) !< X component.
   real(R4P),                  intent(in)    :: y(1:,1:,1:) !< Y component.
   real(R4P),                  intent(in)    :: z(1:,1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte      !< Number of bytes
+  integer(I8P)                              :: n_byte      !< Number of bytes
   real(R4P), allocatable                    :: buf(:)      !< Interleaved components.
   integer(I8P)                              :: nn          !< Number of elements.
 
@@ -2738,7 +2780,7 @@ contains
   integer(I8P),               intent(in)    :: x(1:,1:,1:) !< X component.
   integer(I8P),               intent(in)    :: y(1:,1:,1:) !< Y component.
   integer(I8P),               intent(in)    :: z(1:,1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte      !< Number of bytes
+  integer(I8P)                              :: n_byte      !< Number of bytes
   integer(I8P), allocatable                 :: buf(:)      !< Interleaved components.
   integer(I8P)                              :: nn          !< Number of elements.
 
@@ -2762,7 +2804,7 @@ contains
   integer(I4P),               intent(in)    :: x(1:,1:,1:) !< X component.
   integer(I4P),               intent(in)    :: y(1:,1:,1:) !< Y component.
   integer(I4P),               intent(in)    :: z(1:,1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte      !< Number of bytes
+  integer(I8P)                              :: n_byte      !< Number of bytes
   integer(I4P), allocatable                 :: buf(:)      !< Interleaved components.
   integer(I8P)                              :: nn          !< Number of elements.
 
@@ -2786,7 +2828,7 @@ contains
   integer(I2P),               intent(in)    :: x(1:,1:,1:) !< X component.
   integer(I2P),               intent(in)    :: y(1:,1:,1:) !< Y component.
   integer(I2P),               intent(in)    :: z(1:,1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte      !< Number of bytes
+  integer(I8P)                              :: n_byte      !< Number of bytes
   integer(I2P), allocatable                 :: buf(:)      !< Interleaved components.
   integer(I8P)                              :: nn          !< Number of elements.
 
@@ -2810,7 +2852,7 @@ contains
   integer(I1P),               intent(in)    :: x(1:,1:,1:) !< X component.
   integer(I1P),               intent(in)    :: y(1:,1:,1:) !< Y component.
   integer(I1P),               intent(in)    :: z(1:,1:,1:) !< Z component.
-  integer(I4P)                              :: n_byte      !< Number of bytes
+  integer(I8P)                              :: n_byte      !< Number of bytes
   integer(I1P), allocatable                 :: buf(:)      !< Interleaved components.
   integer(I8P)                              :: nn          !< Number of elements.
 
