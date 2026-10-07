@@ -112,6 +112,11 @@ type, abstract :: xml_writer_abstract
                write_fielddata1_rank0, &
                write_fielddata1_rank1, &
                write_fielddata_tag !< Write FieldData tag.
+    generic :: write_dataarray_unsigned =>      &
+               write_dataarray_unsigned_I1P, &
+               write_dataarray_unsigned_I2P, &
+               write_dataarray_unsigned_I4P, &
+               write_dataarray_unsigned_I8P !< Write data (array) as unsigned integers.
     generic :: write_geo =>                    &
                write_geo_strg_data1_rank2_R8P, &
                write_geo_strg_data1_rank2_R4P, &
@@ -187,6 +192,10 @@ type, abstract :: xml_writer_abstract
     procedure(write_dataarray6_rank3_I1P_interface), deferred, pass(self) :: write_dataarray6_rank3_I1P !< Data 3, rank 3, I1P.
     procedure(write_dataarray_appended_interface),   deferred, pass(self) :: write_dataarray_appended   !< Write appended.
     ! private methods
+    procedure, pass(self), private :: write_dataarray_unsigned_I1P      !< Write data (array) as UInt8.
+    procedure, pass(self), private :: write_dataarray_unsigned_I2P      !< Write data (array) as UInt16.
+    procedure, pass(self), private :: write_dataarray_unsigned_I4P      !< Write data (array) as UInt32.
+    procedure, pass(self), private :: write_dataarray_unsigned_I8P      !< Write data (array) as UInt64.
     procedure, pass(self), private :: write_fielddata1_rank0            !< Write FieldData tag (data 1, rank 0).
     procedure, pass(self), private :: write_fielddata1_rank1            !< Write FieldData tag (data 1, rank 1).
     procedure, pass(self), private :: write_fielddata_strings           !< Write FieldData tag (strings).
@@ -1753,6 +1762,92 @@ contains
    endif
    call self%write_end_tag(name='Cells')
    endfunction write_connectivity
+
+   ! write_dataarray_unsigned methods
+   !
+   ! Fortran has no unsigned integers: the bits of a signed integer are written as the unsigned type of the same width
+   ! (I1P as UInt8, I2P as UInt16, I4P as UInt32, I8P as UInt64), e.g. 200 stored as -56_I1P is written (and read) as 200.
+   ! The binary formats write the same bytes; the ASCII format prints the unsigned values, widened to the next integer kind
+   ! (copied into a local buffer: an expression passed as actual argument can be a stack temporary, see issue #70).
+   function write_dataarray_unsigned_I1P(self, data_name, x) result(error)
+   !< Write `<DataArray type="UInt8" ...>`: the bits of `x` as unsigned integers of the same width.
+   !<
+   !<### Example of usage
+   !<
+   !<```fortran
+   !< error = vtk%xml_writer%write_dataarray(location='cell', action='open')
+   !< error = vtk%xml_writer%write_dataarray_unsigned(data_name='vtkGhostType', x=ghost) ! ghost: integer(I1P), 0 or 1
+   !< error = vtk%xml_writer%write_dataarray(location='cell', action='close')
+   !<```
+   class(xml_writer_abstract), intent(inout) :: self      !< Writer.
+   character(*),               intent(in)    :: data_name !< Data name.
+   integer(I1P),               intent(in)    :: x(1:)     !< Data variable (bits of unsigned integers).
+   integer(I4P)                              :: error     !< Error status.
+   integer(I2P), allocatable                 :: xa(:)     !< Unsigned values, for the ASCII format.
+
+   self%data_type_override = 'UInt8'
+   if (self%format_ch == 'ascii') then
+      allocate(xa(1:size(x, kind=I8P)))
+      xa = iand(int(x, I2P), 255_I2P)
+      error = self%write_dataarray(data_name=data_name, x=xa)
+   else
+      error = self%write_dataarray(data_name=data_name, x=x)
+   endif
+   endfunction write_dataarray_unsigned_I1P
+
+   function write_dataarray_unsigned_I2P(self, data_name, x) result(error)
+   !< Write `<DataArray type="UInt16" ...>`: the bits of `x` as unsigned integers of the same width.
+   class(xml_writer_abstract), intent(inout) :: self      !< Writer.
+   character(*),               intent(in)    :: data_name !< Data name.
+   integer(I2P),               intent(in)    :: x(1:)     !< Data variable (bits of unsigned integers).
+   integer(I4P)                              :: error     !< Error status.
+   integer(I4P), allocatable                 :: xa(:)     !< Unsigned values, for the ASCII format.
+
+   self%data_type_override = 'UInt16'
+   if (self%format_ch == 'ascii') then
+      allocate(xa(1:size(x, kind=I8P)))
+      xa = iand(int(x, I4P), 65535_I4P)
+      error = self%write_dataarray(data_name=data_name, x=xa)
+   else
+      error = self%write_dataarray(data_name=data_name, x=x)
+   endif
+   endfunction write_dataarray_unsigned_I2P
+
+   function write_dataarray_unsigned_I4P(self, data_name, x) result(error)
+   !< Write `<DataArray type="UInt32" ...>`: the bits of `x` as unsigned integers of the same width.
+   class(xml_writer_abstract), intent(inout) :: self      !< Writer.
+   character(*),               intent(in)    :: data_name !< Data name.
+   integer(I4P),               intent(in)    :: x(1:)     !< Data variable (bits of unsigned integers).
+   integer(I4P)                              :: error     !< Error status.
+   integer(I8P), allocatable                 :: xa(:)     !< Unsigned values, for the ASCII format.
+
+   self%data_type_override = 'UInt32'
+   if (self%format_ch == 'ascii') then
+      allocate(xa(1:size(x, kind=I8P)))
+      xa = iand(int(x, I8P), 4294967295_I8P)
+      error = self%write_dataarray(data_name=data_name, x=xa)
+   else
+      error = self%write_dataarray(data_name=data_name, x=x)
+   endif
+   endfunction write_dataarray_unsigned_I4P
+
+   function write_dataarray_unsigned_I8P(self, data_name, x) result(error)
+   !< Write `<DataArray type="UInt64" ...>`: the bits of `x` as unsigned integers of the same width.
+   !<
+   !< @note With the ASCII format, values of 2^63 or more (negative `x`) cannot be printed (there is no wider integer kind):
+   !< nothing is written and the error status is 1.
+   class(xml_writer_abstract), intent(inout) :: self      !< Writer.
+   character(*),               intent(in)    :: data_name !< Data name.
+   integer(I8P),               intent(in)    :: x(1:)     !< Data variable (bits of unsigned integers).
+   integer(I4P)                              :: error     !< Error status.
+
+   if (self%format_ch == 'ascii' .and. any(x < 0_I8P)) then
+      error = 1 ; self%error = error
+      return
+   endif
+   self%data_type_override = 'UInt64'
+   error = self%write_dataarray(data_name=data_name, x=x)
+   endfunction write_dataarray_unsigned_I8P
 
    function write_polydata_cells(self, verts_connectivity, verts_offset, lines_connectivity, lines_offset, &
                                  strips_connectivity, strips_offset, polys_connectivity, polys_offset) result(error)

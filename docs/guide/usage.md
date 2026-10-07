@@ -432,6 +432,38 @@ writes `<PointData Scalars="pressure" Vectors="velocity">` (`<CellData ...>` for
 
 See `src/tests/vtk_fortran_write_active_arrays.f90` for a complete program, parallel header included.
 
+## Unsigned integer arrays
+
+The VTK XML format has unsigned integer types (`UInt8`, `UInt16`, `UInt32`, `UInt64`), which Fortran lacks. Write a
+rank-1, one-component integer array as unsigned with `write_dataarray_unsigned`: the kind of the array selects the type of
+the same width, and its bits are written as they are.
+
+| Fortran kind | VTK type | Stored value for unsigned `v` |
+|--------------|----------|-------------------------------|
+| `I1P` | `UInt8` | `v` if `v < 128`, else `v - 256` |
+| `I2P` | `UInt16` | `v` if `v < 32768`, else `v - 65536` |
+| `I4P` | `UInt32` | `v` if `v < 2^31`, else `v - 2^32` |
+| `I8P` | `UInt64` | `v` if `v < 2^63`, else `v - 2^64` |
+
+The typical use is the ghost array of VTK, `vtkGhostType` (`UInt8` bit flags: `1` marks a duplicate, i.e. ghost, cell or
+point, `32` a hidden cell). Readers still load the ghost cells, but VTK and ParaView skip them when they extract the
+surfaces to render, so the cells a parallel piece shares with its neighbours are not drawn twice:
+
+```fortran
+integer(I1P) :: ghost(nc) ! 0 for the cells owned by this piece, 1 for the ghost cells
+...
+error = a_vtk_file%xml_writer%write_dataarray(location='cell', action='open')
+error = a_vtk_file%xml_writer%write_dataarray_unsigned(data_name='vtkGhostType', x=ghost)
+error = a_vtk_file%xml_writer%write_dataarray(location='cell', action='close')
+```
+
+- It works with every format, compression included. The binary formats write the bytes of the array; the ASCII format
+  prints the unsigned values (e.g. `200` for `-56_I1P`).
+- With the ASCII format a `UInt64` value of `2^63` or more (a negative `I8P`) cannot be printed: nothing is written and
+  the function returns a non-zero error. The binary formats write any value.
+- Only rank-1 arrays with one component; in a parallel header declare it with
+  `write_parallel_dataarray(data_name=..., data_type='UInt8', number_of_components=1)`.
+
 ## Parallel Image Data (PVTI)
 
 Each rank writes its piece as a `.vti` file with the **same** `origin` and `spacing` of the whole grid and the extents of the

@@ -84,6 +84,8 @@ See [Usage](/guide/usage#field-data-global-metadata) for details.
 - **Node-centered or cell-centered** placement (`location='node'` or `location='cell'`)
 - **Active arrays**: the arrays readers use by default for each role (`Scalars`, `Vectors`, `Normals`, `Tensors`, `TCoords`) can be
   designated when opening the node/cell data, see [Usage](/guide/usage#active-arrays)
+- **Unsigned integers** (`UInt8`, `UInt16`, `UInt32`, `UInt64`, e.g. `vtkGhostType`) with `write_dataarray_unsigned`, see
+  [Usage](/guide/usage#unsigned-integer-arrays)
 
 ## Parallel Support
 

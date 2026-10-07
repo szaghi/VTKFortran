@@ -35,6 +35,7 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 | `%xml_writer%write_connectivity(...)` | Write unstructured connectivity, offsets, and cell types |
 | `%xml_writer%write_polydata_cells(...)` | Write the cell blocks of PolyData: vertices, lines, triangle strips, polygons |
 | `%xml_writer%write_dataarray(...)` | Write a data array (overloaded for all kinds and ranks) |
+| `%xml_writer%write_dataarray_unsigned(data_name, x)` | Write a rank-1 integer array as unsigned (`I1P`…`I8P` as `UInt8`…`UInt64`) |
 | `%xml_writer%write_parallel_geo(...)` | Write a `<P*>` geometry piece reference (pvtk_file only) |
 | `%xml_writer%write_parallel_dataarray(...)` | Write a parallel data array descriptor (pvtk_file only) |
 

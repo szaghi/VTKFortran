@@ -12,6 +12,7 @@ set(VTKFORTRAN_TESTS
   vtk_fortran_write_pvtr.f90
   vtk_fortran_write_pvts.f90
   vtk_fortran_write_pvtu.f90
+  vtk_fortran_write_unsigned.f90
   vtk_fortran_write_volatile.f90
   vtk_fortran_write_vti.f90
   vtk_fortran_write_vtm.f90
