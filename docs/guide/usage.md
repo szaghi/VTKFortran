@@ -298,6 +298,53 @@ writes `<PointData Scalars="pressure" Vectors="velocity">` (`<CellData ...>` for
 
 See `src/tests/vtk_fortran_write_active_arrays.f90` for a complete program, parallel header included.
 
+## Time series (PVD)
+
+A `.pvd` file is a *collection*: it lists the files of a simulation (any VTK XML file written by `vtk_file`, `pvtk_file` or
+`vtm_file`) with their time, and ParaView loads them as a single time series. Write each time step as usual, then add it to the
+collection with `pvd_file`:
+
+```fortran
+use vtk_fortran, only : pvd_file, vtk_file
+use penf,        only : I4P, R8P, strz
+
+type(pvd_file) :: pvd
+integer(I4P)   :: error, step
+real(R8P)      :: time
+
+error = pvd%initialize(filename='simulation.pvd')
+do step = 0, nsteps
+  ! ... advance the solution to `time`, write simulation_NNNN.vtu with a vtk_file ...
+  error = pvd%write_dataset(filename='simulation_'//trim(strz(step, 4))//'.vtu', timestep=time)
+enddo
+error = pvd%finalize()
+```
+
+writes
+
+```xml
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="1.0" byte_order="LittleEndian">
+  <Collection>
+    <DataSet timestep="0.0" part="0" file="simulation_0000.vtu"/>
+    <DataSet timestep="0.1" part="0" file="simulation_0001.vtu"/>
+  </Collection>
+</VTKFile>
+```
+
+- **The file is valid at any time.** Each `write_dataset` writes its entry and the closing tags, and flushes the file: a run
+  that stops before `finalize` (crash, job killed by the scheduler) still leaves a collection that ParaView opens, with all the
+  steps written so far.
+- **Restart.** `pvd%initialize(filename='simulation.pvd', action='append')` reopens an existing collection and adds the new
+  steps after the ones already listed (the default `action='new'` replaces the file). The file must exist and be a collection,
+  otherwise `initialize` returns a non-zero error.
+- **Optional attributes.** `write_dataset` also accepts `part` (default `0`; e.g. the rank, when each process writes its own
+  file per step), `group` and `name`.
+- `timestep` is a `real(R8P)`, written with the shortest representation that reads back exactly. `filename` is written as
+  given: relative paths are relative to the directory of the `.pvd` file.
+
+See `src/tests/vtk_fortran_write_pvd.f90` for a complete program, restart included.
+
 ## Volatile XML output
 
 `write_xml_volatile` returns the XML content as an in-memory string instead of writing to disk. This is useful when the calling code controls I/O (e.g., HDF5-backed parallel I/O or MPI-IO).

@@ -31,10 +31,11 @@ VTKFortran is a Fortran 2003+ library for reading/writing VTK XML format files. 
 
 ### Module hierarchy
 
-- `vtk_fortran` — main API module (re-exports `vtk_file`, `pvtk_file`, `vtm_file`, `write_xml_volatile`)
+- `vtk_fortran` — main API module (re-exports `vtk_file`, `pvtk_file`, `vtm_file`, `pvd_file`, `write_xml_volatile`)
 - `vtk_fortran_vtk_file` — `vtk_file` type: single-file serial writer; selects and allocates the appropriate `xml_writer` concrete type
-- `vtk_fortran_pvtk_file` — `pvtk_file` type: parallel/partitioned VTK files (ASCII only)
+- `vtk_fortran_pvtk_file` — `pvtk_file` type: parallel/partitioned VTK files (`.pvtr`, `.pvts`, `.pvtu`); the header is plain XML metadata, the pieces can use any format
 - `vtk_fortran_vtm_file` — `vtm_file` type: multi-block composite datasets (`.vtm`)
+- `vtk_fortran_pvd_file` — `pvd_file` type: time series collections (`.pvd`), valid after each `write_dataset`
 - `vtk_fortran_vtk_file_xml_writer_abstract` — abstract base class defining the common interface (`initialize`, `finalize`, `write_piece`, `write_geo`, `write_connectivity`, `write_dataarray`, `get_xml_volatile`)
 - Three concrete writer implementations:
   - `vtk_fortran_vtk_file_xml_writer_ascii_local` — human-readable ASCII
@@ -43,7 +44,7 @@ VTKFortran is a Fortran 2003+ library for reading/writing VTK XML format files. 
 - `vtk_fortran_dataarray_encoder` — overloaded encoding routines for ASCII and Base64, covering all PENF numeric kinds and ranks 1–4
 - `vtk_fortran_parameters` — shared constants (`stderr`, `stdout`, `end_rec`)
 
-Source lives in `src/lib/` (library) and `src/tests/` (8 integration test programs).
+Source lives in `src/lib/` (library) and `src/tests/` (integration test programs).
 
 ### Third-party dependencies (git submodules in `src/third_party/`)
 
@@ -67,4 +68,4 @@ CMake pulls all submodules via `add_subdirectory()` and centralises `.mod` files
 
 ## Test Infrastructure
 
-Each test program in `src/tests/` writes actual VTK XML files, then prints `"Are all tests passed? T"` or `"F"`. `run_tests.sh` collects these results and exits non-zero if any test fails. Tests cover major topologies: VTR (rectilinear), VTS (structured), VTU (unstructured), VTM (multi-block), PVTS (parallel structured), and volatile XML output.
+Each test program in `src/tests/` writes actual VTK XML files, then prints `"Are all tests passed? T"` or `"F"`. `run_tests.sh` collects these results and exits non-zero if any test fails. Tests cover major topologies: VTR (rectilinear), VTS (structured), VTU (unstructured, polyhedra), VTM (multi-block), PVTS and PVTU (parallel), PVD (time series), active arrays, large arrays, and volatile XML output.

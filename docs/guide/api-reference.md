@@ -8,10 +8,11 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 
 ## src/lib
 
-- [vtk_fortran](/api/src/lib/vtk_fortran) — main module; re-exports `vtk_file`, `pvtk_file`, `vtm_file`, `write_xml_volatile`
+- [vtk_fortran](/api/src/lib/vtk_fortran) — main module; re-exports `vtk_file`, `pvtk_file`, `vtm_file`, `pvd_file`, `write_xml_volatile`
 - [vtk_fortran_vtk_file](/api/src/lib/vtk_fortran_vtk_file) — `vtk_file` derived type (serial writer)
 - [vtk_fortran_pvtk_file](/api/src/lib/vtk_fortran_pvtk_file) — `pvtk_file` derived type (parallel/partitioned writer)
 - [vtk_fortran_vtm_file](/api/src/lib/vtk_fortran_vtm_file) — `vtm_file` derived type (multi-block composite writer)
+- [vtk_fortran_pvd_file](/api/src/lib/vtk_fortran_pvd_file) — `pvd_file` derived type (time series collection writer)
 - [vtk_fortran_vtk_file_xml_writer_abstract](/api/src/lib/vtk_fortran_vtk_file_xml_writer_abstract) — abstract base class defining the common writer interface
 - [vtk_fortran_vtk_file_xml_writer_ascii_local](/api/src/lib/vtk_fortran_vtk_file_xml_writer_ascii_local) — ASCII writer
 - [vtk_fortran_vtk_file_xml_writer_binary_local](/api/src/lib/vtk_fortran_vtk_file_xml_writer_binary_local) — Base64-encoded binary writer
@@ -42,6 +43,14 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 | `%initialize(filename)` | Create the `.vtm` wrapper file |
 | `%write_block(filenames, names, name)` | Add a named block referencing one or more partition files |
 | `%finalize()` | Close the `.vtm` file |
+
+### `pvd_file`
+
+| Procedure | Description |
+|-----------|-------------|
+| `%initialize(filename, action)` | Create the `.pvd` collection (`action='new'`, default) or reopen it to add steps (`action='append'`) |
+| `%write_dataset(filename, timestep, part, group, name)` | Add a dataset (file) with its time step; the collection is valid after each call |
+| `%finalize()` | Close the `.pvd` file |
 
 ### `write_xml_volatile`
 

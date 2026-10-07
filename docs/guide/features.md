@@ -31,6 +31,7 @@ title: Features
 | Type | Extension | Status |
 |------|-----------|--------|
 | vtkMultiBlockDataSet | `.vtm` | ✅ |
+| Time series (collection) | `.pvd` | ✅ |
 
 ## VTK Legacy Exporters
 
