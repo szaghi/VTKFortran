@@ -22,3 +22,8 @@ updates:
       # ignore once vitepress widens its markdown-it-mathjax3 peer range to ^5.
       - dependency-name: "markdown-it-mathjax3"
         versions: [">=5"]
+      # vitepress-plugin-mermaid (latest 2.0.17) declares the peer mermaid
+      # "10 || 11": mermaid 12 makes npm install fail with ERESOLVE and breaks
+      # the docs build. Lift this ignore once the plugin accepts mermaid 12.
+      - dependency-name: "mermaid"
+        versions: [">=12"]
