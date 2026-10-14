@@ -21,7 +21,6 @@ add_library(${LIB}
 	vtk_fortran_vtk_file_xml_writer_ascii_local.f90
 	vtk_fortran_vtk_file_xml_writer_binary_local.f90
 	vtk_fortran_vtm_file.F90
-	vtk_fortran_xml_scanner.f90
 	vtk_fortran_zlib.F90
 	)
 

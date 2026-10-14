@@ -28,7 +28,7 @@ module vtk_fortran_vtk_file_xml_reader
 !<| 7     | the pieces of a parallel header do not match it (see `check_pieces`)                     |
 use penf
 use vtk_fortran_dataarray_decoder
-use vtk_fortran_xml_scanner
+use foxy, only : xml_index, XML_MALFORMED
 use vtk_fortran_zlib, only : zlib_uncompress_blocks
 
 implicit none
@@ -39,7 +39,7 @@ type :: xml_reader
   !< VTK file XML reader.
   private
   character(len=:), allocatable :: filename                !< File name.
-  type(xml_scanner)             :: xml                     !< Index of the XML elements.
+  type(xml_index)               :: xml                     !< Index of the XML elements (FoXy).
   character(len=:), allocatable :: mesh_topology           !< Dataset type.
   integer(I8P)                  :: word_size=4_I8P         !< Size of the binary header words: 4 (UInt32) or 8 (UInt64).
   logical                       :: is_compressed=.false.   !< The binary data are zlib compressed.
@@ -107,16 +107,18 @@ contains
   character(len=:), allocatable    :: value     !< Attribute value.
   integer(I4P)                     :: root      !< Index of the VTKFile element.
   integer(I4P)                     :: appended  !< Index of the AppendedData element.
+  integer(I4P)                     :: iostat    !< IO status.
 
   call self%finalize
-  call self%xml%scan(filename=filename, error=error, stop_at='AppendedData')
+  call self%xml%scan(filename=filename, stop_at='AppendedData', iostat=iostat)
+  error = scan_error(iostat)
   if (error /= 0) return
   error = 2
-  root = self%xml%find_child(parent=0, name='VTKFile')
+  root = self%xml%find(name='VTKFile', parent=0)
   if (root == 0) return
-  call self%xml%element(root)%get_attribute(name='type', value=value)
+  value = self%xml%attribute(id=root, name='type')
   self%mesh_topology = value
-  self%dataset = self%xml%find_child(parent=root, name=self%mesh_topology)
+  self%dataset = self%xml%find(name=self%mesh_topology, parent=root)
   if (self%dataset == 0) return
   error = 3
   select case(self%mesh_topology)
@@ -127,9 +129,9 @@ contains
   case default
     return
   endselect
-  call self%xml%element(root)%get_attribute(name='byte_order', value=value)
+  value = self%xml%attribute(id=root, name='byte_order')
   if (value == 'BigEndian') return
-  call self%xml%element(root)%get_attribute(name='header_type', value=value)
+  value = self%xml%attribute(id=root, name='header_type')
   select case(value)
   case('', 'UInt32')
     self%word_size = 4_I8P
@@ -138,7 +140,7 @@ contains
   case default
     return
   endselect
-  call self%xml%element(root)%get_attribute(name='compressor', value=value)
+  value = self%xml%attribute(id=root, name='compressor')
   select case(value)
   case('')
     self%is_compressed = .false.
@@ -147,9 +149,9 @@ contains
   case default
     return
   endselect
-  appended = self%xml%find_child(parent=root, name='AppendedData')
+  appended = self%xml%find(name='AppendedData', parent=root)
   if (appended > 0) then
-    call self%xml%element(appended)%get_attribute(name='encoding', value=value)
+    value = self%xml%attribute(id=appended, name='encoding')
     select case(value)
     case('raw')
       self%is_appended_raw = .true.
@@ -159,16 +161,13 @@ contains
       return
     endselect
     ! the appended data start after the '_' marker
-    self%appended_start = find_marker(filename=filename, pos=self%xml%element(appended)%content_start)
+    self%appended_start = find_marker(filename=filename, pos=self%xml%stop_position())
     if (self%appended_start == 0_I8P) then
       error = 2
       return
     endif
   endif
-  self%pieces_number = 0
-  do while (self%xml%find_child(parent=self%dataset, name='Piece', n=self%pieces_number+1) > 0)
-    self%pieces_number = self%pieces_number + 1
-  enddo
+  self%pieces_number = size(self%xml%find_all(name='Piece', parent=self%dataset), dim=1)
   self%filename = filename
   self%is_initialized = .true.
   error = 0
@@ -227,7 +226,7 @@ contains
   if (present(header_type)) header_type = trim(merge('UInt64', 'UInt32', self%word_size == 8_I8P))
   if (present(compressor)) compressor = trim(merge('zlib', 'none', self%is_compressed))
   extent = 0
-  call self%xml%element(self%dataset)%get_attribute(name='WholeExtent', value=value)
+  value = self%xml%attribute(id=self%dataset, name='WholeExtent')
   if (len(value) > 0) then
     read(value, *, iostat=iostat) extent
     if (iostat /= 0) error = 6
@@ -240,25 +239,25 @@ contains
   if (present(nz2)) nz2 = extent(6)
   if (present(origin)) then
     origin = 0._R8P
-    call self%xml%element(self%dataset)%get_attribute(name='Origin', value=value)
+    value = self%xml%attribute(id=self%dataset, name='Origin')
     if (len(value) > 0) read(value, *, iostat=iostat) origin
     if (iostat /= 0) error = 6
   endif
   if (present(spacing)) then
     spacing = 1._R8P
-    call self%xml%element(self%dataset)%get_attribute(name='Spacing', value=value)
+    value = self%xml%attribute(id=self%dataset, name='Spacing')
     if (len(value) > 0) read(value, *, iostat=iostat) spacing
     if (iostat /= 0) error = 6
   endif
   if (present(direction)) then
     direction = [1._R8P, 0._R8P, 0._R8P, 0._R8P, 1._R8P, 0._R8P, 0._R8P, 0._R8P, 1._R8P]
-    call self%xml%element(self%dataset)%get_attribute(name='Direction', value=value)
+    value = self%xml%attribute(id=self%dataset, name='Direction')
     if (len(value) > 0) read(value, *, iostat=iostat) direction
     if (iostat /= 0) error = 6
   endif
   if (present(ghost_level)) then
     ghost_level = 0
-    call self%xml%element(self%dataset)%get_attribute(name='GhostLevel', value=value)
+    value = self%xml%attribute(id=self%dataset, name='GhostLevel')
     if (len(value) > 0) read(value, *, iostat=iostat) ghost_level
     if (iostat /= 0) error = 6
   endif
@@ -290,7 +289,7 @@ contains
 
   error = self%piece_element(piece=piece, id=p)
   if (error /= 0) return
-  call piece_counts(element=self%xml%element(p), mesh_topology=self%mesh_topology, counts=counts, extent=extent, error=error)
+  call piece_counts(xml=self%xml, id=p, mesh_topology=self%mesh_topology, counts=counts, extent=extent, error=error)
   if (present(np)) np = counts(1)
   if (present(nc)) nc = counts(2)
   if (present(nverts)) nverts = counts(3)
@@ -320,6 +319,7 @@ contains
   integer(I4P)                                        :: l        !< Length of the longest name.
   integer(I4P)                                        :: id       !< Index of a dataarray element.
   character(len=:), allocatable                       :: value    !< Attribute value.
+  integer(I4P), allocatable                           :: kids(:)  !< Indexes of the children of the section element.
 
   allocate(character(len=0) :: names(1:0))
   ! a missing piece or an unknown location is an error, a location without arrays is not
@@ -338,21 +338,22 @@ contains
   error = self%find_dataarray(location=location, data_name='', piece=piece, id=id, section=section)
   error = 0
   if (section == 0) return
+  kids = self%xml%children(section)
   n = 0 ; l = 0
-  do c=1, self%xml%element(section)%children_number
-    id = self%xml%element(section)%child(c)
-    if (.not.is_dataarray(self%xml%element(id)%name)) cycle
-    call self%xml%element(id)%get_attribute(name='Name', value=value)
+  do c=1, size(kids, dim=1)
+    id = kids(c)
+    if (.not.is_dataarray(self%xml%name(id))) cycle
+    value = self%xml%attribute(id=id, name='Name')
     n = n + 1
     l = max(l, len(value))
   enddo
   deallocate(names)
   allocate(character(len=l) :: names(1:n))
   n = 0
-  do c=1, self%xml%element(section)%children_number
-    id = self%xml%element(section)%child(c)
-    if (.not.is_dataarray(self%xml%element(id)%name)) cycle
-    call self%xml%element(id)%get_attribute(name='Name', value=value)
+  do c=1, size(kids, dim=1)
+    id = kids(c)
+    if (.not.is_dataarray(self%xml%name(id))) cycle
+    value = self%xml%attribute(id=id, name='Name')
     n = n + 1
     names(n) = value
   enddo
@@ -382,22 +383,22 @@ contains
   error = self%find_dataarray(location=location, data_name=data_name, piece=piece, id=id, section=section)
   if (error /= 0) return
   iostat = 0
-  if (present(data_type)) call self%xml%element(id)%get_attribute(name='type', value=data_type)
+  if (present(data_type)) data_type = self%xml%attribute(id=id, name='type')
   if (present(n_components)) then
     n_components = 1
-    call self%xml%element(id)%get_attribute(name='NumberOfComponents', value=value)
+    value = self%xml%attribute(id=id, name='NumberOfComponents')
     if (len(value) > 0) read(value, *, iostat=iostat) n_components
   endif
   if (present(n_tuples)) then
     n_tuples = -1_I8P
-    call self%xml%element(id)%get_attribute(name='NumberOfTuples', value=value)
+    value = self%xml%attribute(id=id, name='NumberOfTuples')
     if (len(value) > 0) then
       read(value, *, iostat=iostat) n_tuples
-    elseif (self%xml%element(section)%name /= 'FieldData' .and. .not.self%is_parallel) then
-      p = self%xml%element(section)%parent
-      call piece_counts(element=self%xml%element(p), mesh_topology=self%mesh_topology, counts=counts, extent=extent, &
+    elseif (self%xml%name(section) /= 'FieldData' .and. .not.self%is_parallel) then
+      p = self%xml%parent(section)
+      call piece_counts(xml=self%xml, id=p, mesh_topology=self%mesh_topology, counts=counts, extent=extent, &
                         error=error)
-      n_tuples = merge(counts(1), counts(2), self%xml%element(section)%name == 'PointData')
+      n_tuples = merge(counts(1), counts(2), self%xml%name(section) == 'PointData')
     endif
   endif
   endfunction get_dataarray_info
@@ -598,21 +599,21 @@ contains
   character(len=:), allocatable              :: value      !< Attribute value.
   integer(I4P)                               :: p          !< Counter.
   integer(I4P)                               :: l          !< Length of the longest source.
+  integer(I4P), allocatable                  :: pieces(:)  !< Indexes of the piece elements.
 
   allocate(character(len=0) :: sources(1:0))
   error = 4
   if (.not.self%is_initialized .or. .not.self%is_parallel) return
+  pieces = self%xml%find_all(name='Piece', parent=self%dataset)
   l = 0
   do p=1, self%pieces_number
-    call self%xml%element(self%xml%find_child(parent=self%dataset, name='Piece', n=p))%get_attribute(name='Source', &
-                                                                                                    value=value)
+    value = self%xml%attribute(id=pieces(p), name='Source')
     l = max(l, len(value))
   enddo
   deallocate(sources)
   allocate(character(len=l) :: sources(1:self%pieces_number))
   do p=1, self%pieces_number
-    call self%xml%element(self%xml%find_child(parent=self%dataset, name='Piece', n=p))%get_attribute(name='Source', &
-                                                                                                    value=value)
+    value = self%xml%attribute(id=pieces(p), name='Source')
     sources(p) = value
   enddo
   error = 0
@@ -651,6 +652,8 @@ contains
   integer(I4P)                                         :: id(3)     !< Indexes of the geometry elements of a piece.
   integer(I4P)                                         :: n         !< Number of geometry elements of a piece.
   integer(I4P)                                         :: iostat    !< IO status.
+  integer(I4P), allocatable                            :: pieces(:) !< Indexes of the piece elements.
+  integer(I4P), allocatable                            :: kids(:)   !< Indexes of the children of a section element.
   character(len=10), parameter                         :: sections(2)=['PPointData', 'PCellData '] !< Data sections.
   character(len=4),  parameter                         :: locations(2)=['node', 'cell'] !< Locations of the sections.
 
@@ -662,9 +665,9 @@ contains
     return
   endif
   header = self%filename
+  pieces = self%xml%find_all(name='Piece', parent=self%dataset)
   pieces_loop: do p=1, self%pieces_number
-    call self%xml%element(self%xml%find_child(parent=self%dataset, name='Piece', n=p))%get_attribute(name='Source', &
-                                                                                                    value=source)
+    source = self%xml%attribute(id=pieces(p), name='Source')
     path = source
     if (source(1:min(1, len(source))) /= '/') path = header(1:index(header, '/', back=.true.))//source
     error = piece%initialize(filename=path)
@@ -679,16 +682,16 @@ contains
       exit pieces_loop
     endif
     ! type of the points or coordinates
-    s = self%xml%find_child(parent=self%dataset, name='PPoints')
-    if (s == 0) s = self%xml%find_child(parent=self%dataset, name='PCoordinates')
+    s = self%xml%find(name='PPoints', parent=self%dataset)
+    if (s == 0) s = self%xml%find(name='PCoordinates', parent=self%dataset)
     if (s > 0) then
-      a = self%xml%find_child(parent=s, name='PDataArray')
+      a = self%xml%find(name='PDataArray', parent=s)
       if (a > 0) then
-        call self%xml%element(a)%get_attribute(name='type', value=dtype)
+        dtype = self%xml%attribute(id=a, name='type')
         do q=1, piece%pieces_number
           if (piece%geometry_dataarrays(piece=q, id=id, n=n) /= 0) cycle
           do c=1, n
-            call piece%xml%element(id(c))%get_attribute(name='type', value=ptype)
+            ptype = piece%xml%attribute(id=id(c), name='type')
             if (ptype /= dtype) then
               msg = 'piece '//trim(str(p, no_sign=.true.))//' ('//source//'): coordinates of type '//ptype// &
                     ', declared '//dtype
@@ -700,15 +703,16 @@ contains
     endif
     ! declared arrays
     do l=1, size(sections)
-      s = self%xml%find_child(parent=self%dataset, name=trim(sections(l)))
+      s = self%xml%find(name=trim(sections(l)), parent=self%dataset)
       if (s == 0) cycle
-      do c=1, self%xml%element(s)%children_number
-        a = self%xml%element(s)%child(c)
-        if (.not.is_dataarray(self%xml%element(a)%name)) cycle
-        call self%xml%element(a)%get_attribute(name='Name', value=name)
-        call self%xml%element(a)%get_attribute(name='type', value=dtype)
+      kids = self%xml%children(s)
+      do c=1, size(kids, dim=1)
+        a = kids(c)
+        if (.not.is_dataarray(self%xml%name(a))) cycle
+        name = self%xml%attribute(id=a, name='Name')
+        dtype = self%xml%attribute(id=a, name='type')
         nc = 1
-        call self%xml%element(a)%get_attribute(name='NumberOfComponents', value=value)
+        value = self%xml%attribute(id=a, name='NumberOfComponents')
         if (len(value) > 0) read(value, *, iostat=iostat) nc
         do q=1, piece%pieces_number
           if (piece%get_dataarray_info(location=trim(locations(l)), data_name=name, piece=q, data_type=ptype, &
@@ -745,6 +749,8 @@ contains
   character(len=:), allocatable              :: value        !< Attribute value.
   character(len=:), allocatable              :: code         !< Text of the dataarray.
   integer(I8P)                               :: offset       !< Offset of the appended data.
+  integer(I8P)                               :: first        !< First position of the dataarray text.
+  integer(I8P)                               :: last         !< Last position of the dataarray text.
   integer(I8P)                               :: n_tuples     !< Number of tuples declared.
   integer(I8P)                               :: sz           !< Size of a value.
   integer(I4P)                               :: iostat       !< IO status.
@@ -753,33 +759,33 @@ contains
   data_type = ''
   n_components = 1
   error = 6
-  call self%xml%element(id)%get_attribute(name='type', value=data_type)
+  data_type = self%xml%attribute(id=id, name='type')
   sz = data_type_size(data_type)
   if (sz == 0_I8P) then
     error = 3
     return
   endif
-  call self%xml%element(id)%get_attribute(name='NumberOfComponents', value=value)
+  value = self%xml%attribute(id=id, name='NumberOfComponents')
   if (len(value) > 0) then
     read(value, *, iostat=iostat) n_components
     if (iostat /= 0 .or. n_components < 1) return
   endif
-  call self%xml%element(id)%get_attribute(name='format', value=value)
+  value = self%xml%attribute(id=id, name='format')
   select case(value)
   case('ascii')
-    error = read_chars(filename=self%filename, first=self%xml%element(id)%content_start, &
-                       last=self%xml%element(id)%text_end, chars=code)
+    call self%xml%text_range(id=id, first=first, last=last)
+    error = read_chars(filename=self%filename, first=first, last=last, chars=code)
     if (error /= 0) return
     call decode_ascii(text=code, data_type=data_type, bytes=bytes, error=error)
   case('binary')
-    error = read_chars(filename=self%filename, first=self%xml%element(id)%content_start, &
-                       last=self%xml%element(id)%text_end, chars=code)
+    call self%xml%text_range(id=id, first=first, last=last)
+    error = read_chars(filename=self%filename, first=first, last=last, chars=code)
     if (error /= 0) return
     call strip_spaces(code)
     call decode_base64(code=code, word_size=self%word_size, is_compressed=self%is_compressed, bytes=bytes, error=error)
   case('appended')
     if (self%appended_start == 0_I8P) return
-    call self%xml%element(id)%get_attribute(name='offset', value=value)
+    value = self%xml%attribute(id=id, name='offset')
     read(value, *, iostat=iostat) offset
     if (iostat /= 0 .or. offset < 0_I8P) return
     if (self%is_appended_raw) then
@@ -796,7 +802,7 @@ contains
   if (mod(size(bytes, kind=I8P), sz) /= 0_I8P) return
   if (data_type /= 'String') then
     if (mod(size(bytes, kind=I8P)/sz, int(n_components, I8P)) /= 0_I8P) return
-    call self%xml%element(id)%get_attribute(name='NumberOfTuples', value=value)
+    value = self%xml%attribute(id=id, name='NumberOfTuples')
     if (len(value) > 0) then
       read(value, *, iostat=iostat) n_tuples
       if (iostat /= 0 .or. n_tuples * n_components /= size(bytes, kind=I8P)/sz) return
@@ -817,6 +823,7 @@ contains
   integer(I4P)                            :: p         !< Index of the piece element.
   integer(I4P)                            :: c         !< Counter.
   character(len=:), allocatable           :: value     !< Attribute value.
+  integer(I4P), allocatable               :: kids(:)   !< Indexes of the children of the section element.
 
   id = 0
   section = 0
@@ -825,28 +832,29 @@ contains
   select case(lower_case(trim(adjustl(location))))
   case('node')
     if (self%is_parallel) then
-      section = self%xml%find_child(parent=self%dataset, name='PPointData')
+      section = self%xml%find(name='PPointData', parent=self%dataset)
     else
       error = self%piece_element(piece=piece, id=p) ; if (error /= 0) return
-      section = self%xml%find_child(parent=p, name='PointData')
+      section = self%xml%find(name='PointData', parent=p)
     endif
   case('cell')
     if (self%is_parallel) then
-      section = self%xml%find_child(parent=self%dataset, name='PCellData')
+      section = self%xml%find(name='PCellData', parent=self%dataset)
     else
       error = self%piece_element(piece=piece, id=p) ; if (error /= 0) return
-      section = self%xml%find_child(parent=p, name='CellData')
+      section = self%xml%find(name='CellData', parent=p)
     endif
   case('field')
-    section = self%xml%find_child(parent=self%dataset, name='FieldData')
+    section = self%xml%find(name='FieldData', parent=self%dataset)
   endselect
   error = 4
   if (section == 0) return
-  do c=1, self%xml%element(section)%children_number
-    if (.not.is_dataarray(self%xml%element(self%xml%element(section)%child(c))%name)) cycle
-    call self%xml%element(self%xml%element(section)%child(c))%get_attribute(name='Name', value=value)
+  kids = self%xml%children(section)
+  do c=1, size(kids, dim=1)
+    if (.not.is_dataarray(self%xml%name(kids(c)))) cycle
+    value = self%xml%attribute(id=kids(c), name='Name')
     if (value == data_name) then
-      id = self%xml%element(section)%child(c)
+      id = kids(c)
       error = 0
       return
     endif
@@ -863,6 +871,7 @@ contains
   integer(I4P)                            :: p     !< Index of the piece element.
   integer(I4P)                            :: g     !< Index of the geometry element.
   integer(I4P)                            :: c     !< Counter.
+  integer(I4P), allocatable               :: kids(:) !< Indexes of the children of the geometry element.
 
   id = 0
   n = 0
@@ -870,17 +879,18 @@ contains
   error = 4
   select case(self%mesh_topology)
   case('RectilinearGrid')
-    g = self%xml%find_child(parent=p, name='Coordinates')
+    g = self%xml%find(name='Coordinates', parent=p)
   case('StructuredGrid', 'UnstructuredGrid', 'PolyData')
-    g = self%xml%find_child(parent=p, name='Points')
+    g = self%xml%find(name='Points', parent=p)
   case default
     return
   endselect
   if (g == 0) return
-  do c=1, self%xml%element(g)%children_number
-    if (.not.is_dataarray(self%xml%element(self%xml%element(g)%child(c))%name)) cycle
+  kids = self%xml%children(g)
+  do c=1, size(kids, dim=1)
+    if (.not.is_dataarray(self%xml%name(kids(c)))) cycle
     n = n + 1
-    id(n) = self%xml%element(g)%child(c)
+    id(n) = kids(c)
     if (n == 3) exit
   enddo
   if ((self%mesh_topology == 'RectilinearGrid' .and. n == 3) .or. (self%mesh_topology /= 'RectilinearGrid' .and. n >= 1)) then
@@ -896,14 +906,17 @@ contains
   integer(I4P),      intent(out)          :: id     !< Index of the piece element.
   integer(I4P)                            :: error  !< Error status.
   integer(I4P)                            :: piece_ !< Piece, local variable.
+  integer(I4P), allocatable               :: pieces(:) !< Indexes of the piece elements.
 
   id = 0
   error = 4
   if (.not.self%is_initialized) return
   piece_ = 1 ; if (present(piece)) piece_ = piece
   if (piece_ < 1 .or. piece_ > self%pieces_number) return
-  id = self%xml%find_child(parent=self%dataset, name='Piece', n=piece_)
-  if (id > 0) error = 0
+  pieces = self%xml%find_all(name='Piece', parent=self%dataset)
+  if (piece_ > size(pieces, dim=1)) return
+  id = pieces(piece_)
+  error = 0
   endfunction piece_element
 
   function read_ids(self, piece, section, data_name, ids) result(error)
@@ -922,18 +935,20 @@ contains
   integer(I4P)                                    :: c         !< Counter.
   integer(I4P)                                    :: id        !< Index of the dataarray element.
   integer(I4P)                                    :: nc        !< Number of components.
+  integer(I4P), allocatable                       :: kids(:)   !< Indexes of the children of the section element.
 
   allocate(ids(1:0))
   error = self%piece_element(piece=piece, id=p) ; if (error /= 0) return
   error = 4
-  s = self%xml%find_child(parent=p, name=section)
+  s = self%xml%find(name=section, parent=p)
   if (s == 0) return
   id = 0
-  do c=1, self%xml%element(s)%children_number
-    if (.not.is_dataarray(self%xml%element(self%xml%element(s)%child(c))%name)) cycle
-    call self%xml%element(self%xml%element(s)%child(c))%get_attribute(name='Name', value=value)
+  kids = self%xml%children(s)
+  do c=1, size(kids, dim=1)
+    if (.not.is_dataarray(self%xml%name(kids(c)))) cycle
+    value = self%xml%attribute(id=kids(c), name='Name')
     if (value == data_name) then
-      id = self%xml%element(s)%child(c)
+      id = kids(c)
       exit
     endif
   enddo
@@ -1402,8 +1417,8 @@ contains
     return
   endselect
   error = self%piece_element(piece=piece, id=p) ; if (error /= 0) return
-  if (self%xml%find_child(parent=p, name=section) == 0) then
-    call piece_counts(element=self%xml%element(p), mesh_topology=self%mesh_topology, counts=counts, extent=extent, &
+  if (self%xml%find(name=section, parent=p) == 0) then
+    call piece_counts(xml=self%xml, id=p, mesh_topology=self%mesh_topology, counts=counts, extent=extent, &
                       error=error)
     if (error /= 0) return
     if (counts(b) > 0_I8P) then
@@ -1414,9 +1429,10 @@ contains
   endif
   endfunction polydata_section
 
-  subroutine piece_counts(element, mesh_topology, counts, extent, error)
+  subroutine piece_counts(xml, id, mesh_topology, counts, extent, error)
   !< Return the counts (points, cells, verts, lines, strips, polys) and the extent of a piece element.
-  type(xml_element), intent(in)  :: element       !< Piece element.
+  type(xml_index),   intent(in)  :: xml           !< Index of the XML elements.
+  integer(I4P),      intent(in)  :: id            !< Index of the piece element.
   character(*),      intent(in)  :: mesh_topology !< Dataset type.
   integer(I8P),      intent(out) :: counts(6)     !< Points, cells, verts, lines, strips, polys.
   integer(I4P),      intent(out) :: extent(6)     !< Extent.
@@ -1432,14 +1448,14 @@ contains
   error = 0
   select case(mesh_topology)
   case('ImageData', 'RectilinearGrid', 'StructuredGrid', 'PImageData', 'PRectilinearGrid', 'PStructuredGrid')
-    call element%get_attribute(name='Extent', value=value)
+    value = xml%attribute(id=id, name='Extent')
     read(value, *, iostat=iostat) extent
     if (iostat /= 0) error = 6
     counts(1) = product(int(extent(2::2) - extent(1::2), I8P) + 1_I8P)
     counts(2) = product(max(int(extent(2::2) - extent(1::2), I8P), 1_I8P))
   case default
     do a=1, size(names)
-      call element%get_attribute(name=trim(names(a)), value=value)
+      value = xml%attribute(id=id, name=trim(names(a)))
       if (len(value) == 0) cycle
       read(value, *, iostat=iostat) counts(a)
       if (iostat /= 0) error = 6
@@ -1447,6 +1463,20 @@ contains
     if (mesh_topology == 'PolyData') counts(2) = sum(counts(3:6))
   endselect
   endsubroutine piece_counts
+
+  elemental function scan_error(iostat) result(error)
+  !< Return the reader error of the scan of a file: 0 if scanned, 2 if malformed XML, 1 if it cannot be read.
+  integer(I4P), intent(in) :: iostat !< IO status of the scan.
+  integer(I4P)             :: error  !< Error status.
+
+  if (iostat == 0) then
+    error = 0
+  elseif (iostat == XML_MALFORMED) then
+    error = 2
+  else
+    error = 1
+  endif
+  endfunction scan_error
 
   function find_marker(filename, pos) result(start)
   !< Return the position following the '_' marker of the appended data, searched from a position (0 if not found).

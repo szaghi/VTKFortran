@@ -6,7 +6,7 @@ use penf
 use stringifor
 use vtk_fortran_vtk_file_xml_writer_abstract
 use vtk_fortran_vtk_file_xml_writer_ascii_local
-use vtk_fortran_xml_scanner
+use foxy, only : xml_index, XML_MALFORMED
 
 implicit none
 private
@@ -16,7 +16,7 @@ type :: vtm_file
    !< VTM file class.
    class(xml_writer_abstract), allocatable, public :: xml_writer      !< XML writer.
    integer(I4P), allocatable                       :: scratch_unit(:) !< Scratch units for very large list of named blocks.
-   type(xml_scanner),          private             :: xml             !< Index of the file read (`action='read'`).
+   type(xml_index),            private             :: xml             !< Index of the file read (`action='read'`, FoXy).
    logical,                    private             :: is_reading=.false. !< The file is open for reading.
    contains
       ! public methods
@@ -50,6 +50,7 @@ contains
   integer(I4P)                          :: error                 !< Error status.
   character(len=:), allocatable         :: value                 !< Attribute value.
   integer(I4P)                          :: root                  !< Index of the VTKFile element.
+  integer(I4P)                          :: iostat                !< IO status of the scan.
   type(string)                          :: action_               !< Action, upper case.
 
   if (.not.is_initialized) call penf_init
@@ -59,14 +60,17 @@ contains
      select case(action_%chars())
      case('READ')
         error = self%finalize()
-        call self%xml%scan(filename=filename, error=error)
-        if (error /= 0) return
+        call self%xml%scan(filename=filename, iostat=iostat)
+        if (iostat /= 0) then ! 2 if malformed XML, 1 if it cannot be read
+           error = merge(2_I4P, 1_I4P, iostat == XML_MALFORMED)
+           return
+        endif
         error = 2
-        root = self%xml%find_child(parent=0, name='VTKFile')
+        root = self%xml%find(name='VTKFile', parent=0)
         if (root == 0) return
-        call self%xml%element(root)%get_attribute(name='type', value=value)
+        value = self%xml%attribute(id=root, name='type')
         if (value /= 'vtkMultiBlockDataSet') return
-        if (self%xml%find_child(parent=root, name='vtkMultiBlockDataSet') == 0) return
+        if (self%xml%find(name='vtkMultiBlockDataSet', parent=root) == 0) return
         self%is_reading = .true.
         error = 0
         return
@@ -142,32 +146,35 @@ contains
 
   error = 4
   if (.not.self%is_reading) return
-  base = self%xml%element(self%xml%find_child(parent=self%xml%find_child(parent=0, name='VTKFile'), &
-                                              name='vtkMultiBlockDataSet'))%level
-  allocate(ids(1:self%xml%elements_number))
+  base = self%xml%level(self%xml%find(name='vtkMultiBlockDataSet', parent=self%xml%find(name='VTKFile', parent=0)))
+  allocate(ids(1:size(self%xml%find_all(name='Block'))+size(self%xml%find_all(name='DataSet'))+ &
+               size(self%xml%find_all(name='Piece'))))
   n = 0 ; ln = 0 ; lf = 0
-  do e=1, self%xml%elements_number
-     if (self%xml%element(e)%level <= base) cycle
-     select case(self%xml%element(e)%name)
+  e = 0
+  do ! all the elements, in document order (the name of an element past the last one is empty)
+     e = e + 1
+     if (len(self%xml%name(e)) == 0) exit
+     if (self%xml%level(e) <= base) cycle
+     select case(self%xml%name(e))
      case('Block', 'DataSet', 'Piece')
         n = n + 1
         ids(n) = e
-        call self%xml%element(e)%get_attribute(name='name', value=value)
+        value = self%xml%attribute(id=e, name='name')
         ln = max(ln, len(value))
-        call self%xml%element(e)%get_attribute(name='file', value=value)
+        value = self%xml%attribute(id=e, name='file')
         lf = max(lf, len(value))
      endselect
   enddo
   if (present(level)) then
      allocate(level(1:n))
      do e=1, n
-        level(e) = self%xml%element(ids(e))%level - base
+        level(e) = self%xml%level(ids(e)) - base
      enddo
   endif
   if (present(kind)) then
      allocate(character(len=7) :: kind(1:n))
      do e=1, n
-        select case(self%xml%element(ids(e))%name)
+        select case(self%xml%name(ids(e)))
         case('Block')
            kind(e) = 'block'
         case('DataSet')
@@ -181,21 +188,21 @@ contains
      allocate(index(1:n))
      do e=1, n
         index(e) = -1
-        call self%xml%element(ids(e))%get_attribute(name='index', value=value)
+        value = self%xml%attribute(id=ids(e), name='index')
         if (len(value) > 0) read(value, *, iostat=iostat) index(e)
      enddo
   endif
   if (present(name)) then
      allocate(character(len=ln) :: name(1:n))
      do e=1, n
-        call self%xml%element(ids(e))%get_attribute(name='name', value=value)
+        value = self%xml%attribute(id=ids(e), name='name')
         name(e) = value
      enddo
   endif
   if (present(file)) then
      allocate(character(len=lf) :: file(1:n))
      do e=1, n
-        call self%xml%element(ids(e))%get_attribute(name='file', value=value)
+        value = self%xml%attribute(id=ids(e), name='file')
         file(e) = value
      enddo
   endif

@@ -9,7 +9,7 @@ module vtk_fortran_pvd_file
 !< again after it. Therefore a run that stops before `finalize` (crash, killed job) still leaves a readable collection of all the
 !< datasets written so far, and a restarted run can continue an existing collection with `action='append'`.
 use penf
-use vtk_fortran_xml_scanner
+use foxy, only : xml_index, XML_MALFORMED
 
 implicit none
 private
@@ -20,7 +20,7 @@ type :: pvd_file
    private
    integer(I4P) :: unit=0_I4P      !< Logical unit, 0 when the file is not open.
    integer(I8P) :: pos_close=0_I8P !< Stream position of the closing tags, i.e. where the next dataset is written.
-   type(xml_scanner) :: xml        !< Index of the file read (`action='read'`).
+   type(xml_index)   :: xml        !< Index of the file read (`action='read'`, FoXy).
    logical      :: is_reading=.false. !< The file is open for reading.
    contains
       ! public methods
@@ -63,6 +63,7 @@ contains
    integer(I8P)                          :: file_size !< Size of an existing file.
    integer(I8P)                          :: c         !< Character position.
    integer(I4P)                          :: root      !< Index of the VTKFile element.
+   integer(I4P)                          :: iostat    !< IO status of the scan.
    character(len=:), allocatable         :: value     !< Attribute value.
 
    if (self%unit /= 0_I4P) error = self%finalize()
@@ -71,14 +72,17 @@ contains
    action_ = 'NEW' ; if (present(action)) action_ = upper(trim(adjustl(action)))
    select case(action_)
    case('READ')
-      call self%xml%scan(filename=trim(adjustl(filename)), error=error)
-      if (error /= 0) return
+      call self%xml%scan(filename=trim(adjustl(filename)), iostat=iostat)
+      if (iostat /= 0) then ! 2 if malformed XML, 1 if it cannot be read
+         error = merge(2_I4P, 1_I4P, iostat == XML_MALFORMED)
+         return
+      endif
       error = 2_I4P
-      root = self%xml%find_child(parent=0, name='VTKFile')
+      root = self%xml%find(name='VTKFile', parent=0)
       if (root == 0) return
-      call self%xml%element(root)%get_attribute(name='type', value=value)
+      value = self%xml%attribute(id=root, name='type')
       if (value /= 'Collection') return
-      if (self%xml%find_child(parent=root, name='Collection') == 0) return
+      if (self%xml%find(name='Collection', parent=root) == 0) return
       self%is_reading = .true.
       error = 0_I4P
       return
@@ -211,20 +215,18 @@ contains
    integer(I4P)                                         :: d           !< Counter.
    integer(I4P)                                         :: iostat      !< IO status.
    character(len=:), allocatable                        :: value       !< Attribute value.
+   integer(I4P),     allocatable                        :: datasets(:) !< Indexes of the DataSet elements.
 
    error = 4_I4P
    if (.not.self%is_reading) return
-   collection = self%xml%find_child(parent=self%xml%find_child(parent=0, name='VTKFile'), name='Collection')
-   n = 0
-   do while (self%xml%find_child(parent=collection, name='DataSet', n=n+1) > 0)
-      n = n + 1
-   enddo
+   collection = self%xml%find(name='Collection', parent=self%xml%find(name='VTKFile', parent=0))
+   datasets = self%xml%find_all(name='DataSet', parent=collection)
+   n = size(datasets, dim=1)
    if (present(timestep)) then
       allocate(timestep(1:n))
       do d=1, n
          timestep(d) = 0._R8P
-         call self%xml%element(self%xml%find_child(parent=collection, name='DataSet', n=d))%get_attribute( &
-              name='timestep', value=value)
+         value = self%xml%attribute(id=datasets(d), name='timestep')
          if (len(value) > 0) read(value, *, iostat=iostat) timestep(d)
       enddo
    endif
@@ -232,8 +234,7 @@ contains
       allocate(part(1:n))
       do d=1, n
          part(d) = 0
-         call self%xml%element(self%xml%find_child(parent=collection, name='DataSet', n=d))%get_attribute( &
-              name='part', value=value)
+         value = self%xml%attribute(id=datasets(d), name='part')
          if (len(value) > 0) read(value, *, iostat=iostat) part(d)
       enddo
    endif
@@ -250,14 +251,12 @@ contains
 
       l = 0
       do d=1, n
-         call self%xml%element(self%xml%find_child(parent=collection, name='DataSet', n=d))%get_attribute( &
-              name=attribute, value=value)
+         value = self%xml%attribute(id=datasets(d), name=attribute)
          l = max(l, len(value))
       enddo
       allocate(character(len=l) :: strings(1:n))
       do d=1, n
-         call self%xml%element(self%xml%find_child(parent=collection, name='DataSet', n=d))%get_attribute( &
-              name=attribute, value=value)
+         value = self%xml%attribute(id=datasets(d), name=attribute)
          strings(d) = value
       enddo
       endsubroutine dataset_strings

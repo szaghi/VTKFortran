@@ -56,8 +56,7 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   - `vtk_fortran_vtk_file_xml_writer_ascii_local` — human-readable ASCII
   - `vtk_fortran_vtk_file_xml_writer_binary_local` — Base64-encoded binary inside XML elements
   - `vtk_fortran_vtk_file_xml_writer_appended` — raw binary in appended section with offsets
-- `vtk_fortran_vtk_file_xml_reader` — `xml_reader` type: reader of serial files (any format, header type, zlib) and parallel headers (`check_pieces`); indexes the file once, then decodes only the arrays asked for; error codes 0–7 documented in the module. `pvtk_file` uses it too (`action='read'`); `vtm_file` and `pvd_file` read with `get_entries`/`get_datasets`
-- `vtk_fortran_xml_scanner` — XML scanner indexing elements, attributes and content positions without loading the file (depends only on PENF: meant to move into FoXy)
+- `vtk_fortran_vtk_file_xml_reader` — `xml_reader` type: reader of serial files (any format, header type, zlib) and parallel headers (`check_pieces`); indexes the file once with FoXy `xml_index` (tags and content positions, scan stopped at `AppendedData`), then decodes only the arrays asked for; error codes 0–7 documented in the module. `pvtk_file` uses it too (`action='read'`); `vtm_file` and `pvd_file` read with `get_entries`/`get_datasets`
 - `vtk_fortran_dataarray_decoder` — inverse of the encoder: ASCII/Base64/zlib data into bytes, bytes into arrays of the requested kind
 - `vtk_fortran_dataarray_encoder` — overloaded encoding routines for ASCII and Base64 (optionally zlib-compressed), covering all PENF numeric kinds and ranks 1–4
 - `vtk_fortran_zlib` — zlib bindings, VTK block compression and decompression (`zlib_compress_blocks`, `zlib_uncompress_blocks`); always compiled, stubs without `VTKFORTRAN_USE_ZLIB`
@@ -72,7 +71,7 @@ Source lives in `src/lib/` (library) and `src/tests/` (integration test programs
 | **PENF** | Portable numeric kind parameters (`I1P`, `I4P`, `R8P`, etc.) — used everywhere |
 | **BeFoR64** | Base64 encode/decode for binary XML data |
 | **StringiFor** | OOP `string` type used throughout the writer classes |
-| **FoXy** | XML tag parsing/emitting |
+| **FoXy** | XML tag emitting (writers) and file indexing (`xml_index`, readers) |
 | **FACE** | ANSI terminal colour output |
 
 CMake pulls all dependencies via `add_subdirectory()` and centralises `.mod` files under `${PROJECT_BINARY_DIR}/src/third_party/<LIB>/modules/`.

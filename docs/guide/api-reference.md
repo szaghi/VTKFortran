@@ -18,7 +18,6 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 - [vtk_fortran_vtk_file_xml_writer_binary_local](/api/src/lib/vtk_fortran_vtk_file_xml_writer_binary_local) — Base64-encoded binary writer
 - [vtk_fortran_vtk_file_xml_writer_appended](/api/src/lib/vtk_fortran_vtk_file_xml_writer_appended) — raw binary appended writer
 - [vtk_fortran_vtk_file_xml_reader](/api/src/lib/vtk_fortran_vtk_file_xml_reader) — reader of serial files (`vtk_file%xml_reader`), with its error codes
-- [vtk_fortran_xml_scanner](/api/src/lib/vtk_fortran_xml_scanner) — XML scanner: indexes the elements of a file without loading it
 - [vtk_fortran_dataarray_decoder](/api/src/lib/vtk_fortran_dataarray_decoder) — decoding routines for ASCII and Base64 data arrays (optionally zlib-compressed)
 - [vtk_fortran_dataarray_encoder](/api/src/lib/vtk_fortran_dataarray_encoder) — encoding routines for ASCII and Base64 data arrays (optionally zlib-compressed)
 - [vtk_fortran_zlib](/api/src/lib/vtk_fortran_zlib) — zlib bindings, VTK block compression and decompression (stubs when built without `VTKFORTRAN_USE_ZLIB`)
