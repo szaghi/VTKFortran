@@ -188,8 +188,7 @@ contains
      allocate(index(1:n))
      do e=1, n
         index(e) = -1
-        value = self%xml%attribute(id=ids(e), name='index')
-        if (len(value) > 0) read(value, *, iostat=iostat) index(e)
+        call self%xml%get_attribute(id=ids(e), name='index', value=index(e))
      enddo
   endif
   if (present(name)) then

@@ -226,16 +226,14 @@ contains
       allocate(timestep(1:n))
       do d=1, n
          timestep(d) = 0._R8P
-         value = self%xml%attribute(id=datasets(d), name='timestep')
-         if (len(value) > 0) read(value, *, iostat=iostat) timestep(d)
+         call self%xml%get_attribute(id=datasets(d), name='timestep', value=timestep(d))
       enddo
    endif
    if (present(part)) then
       allocate(part(1:n))
       do d=1, n
          part(d) = 0
-         value = self%xml%attribute(id=datasets(d), name='part')
-         if (len(value) > 0) read(value, *, iostat=iostat) part(d)
+         call self%xml%get_attribute(id=datasets(d), name='part', value=part(d))
       enddo
    endif
    if (present(group)) call dataset_strings(attribute='group', strings=group)

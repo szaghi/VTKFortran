@@ -28,12 +28,17 @@ module vtk_fortran_vtk_file_xml_reader
 !<| 7     | the pieces of a parallel header do not match it (see `check_pieces`)                     |
 use penf
 use vtk_fortran_dataarray_decoder
-use foxy, only : xml_index, XML_MALFORMED
+use foxy, only : xml_index, XML_MALFORMED, XML_NOT_FOUND
 use vtk_fortran_zlib, only : zlib_uncompress_blocks
 
 implicit none
 private
 public :: xml_reader
+
+interface get_fixed_attribute
+  !< Get an attribute holding a fixed number of values.
+  module procedure get_fixed_attribute_I4P, get_fixed_attribute_R8P
+endinterface get_fixed_attribute
 
 type :: xml_reader
   !< VTK file XML reader.
@@ -226,11 +231,7 @@ contains
   if (present(header_type)) header_type = trim(merge('UInt64', 'UInt32', self%word_size == 8_I8P))
   if (present(compressor)) compressor = trim(merge('zlib', 'none', self%is_compressed))
   extent = 0
-  value = self%xml%attribute(id=self%dataset, name='WholeExtent')
-  if (len(value) > 0) then
-    read(value, *, iostat=iostat) extent
-    if (iostat /= 0) error = 6
-  endif
+  call get_fixed_attribute(xml=self%xml, id=self%dataset, name='WholeExtent', values=extent, error=error)
   if (present(nx1)) nx1 = extent(1)
   if (present(nx2)) nx2 = extent(2)
   if (present(ny1)) ny1 = extent(3)
@@ -239,27 +240,20 @@ contains
   if (present(nz2)) nz2 = extent(6)
   if (present(origin)) then
     origin = 0._R8P
-    value = self%xml%attribute(id=self%dataset, name='Origin')
-    if (len(value) > 0) read(value, *, iostat=iostat) origin
-    if (iostat /= 0) error = 6
+    call get_fixed_attribute(xml=self%xml, id=self%dataset, name='Origin', values=origin, error=error)
   endif
   if (present(spacing)) then
     spacing = 1._R8P
-    value = self%xml%attribute(id=self%dataset, name='Spacing')
-    if (len(value) > 0) read(value, *, iostat=iostat) spacing
-    if (iostat /= 0) error = 6
+    call get_fixed_attribute(xml=self%xml, id=self%dataset, name='Spacing', values=spacing, error=error)
   endif
   if (present(direction)) then
     direction = [1._R8P, 0._R8P, 0._R8P, 0._R8P, 1._R8P, 0._R8P, 0._R8P, 0._R8P, 1._R8P]
-    value = self%xml%attribute(id=self%dataset, name='Direction')
-    if (len(value) > 0) read(value, *, iostat=iostat) direction
-    if (iostat /= 0) error = 6
+    call get_fixed_attribute(xml=self%xml, id=self%dataset, name='Direction', values=direction, error=error)
   endif
   if (present(ghost_level)) then
     ghost_level = 0
-    value = self%xml%attribute(id=self%dataset, name='GhostLevel')
-    if (len(value) > 0) read(value, *, iostat=iostat) ghost_level
-    if (iostat /= 0) error = 6
+    call self%xml%get_attribute(id=self%dataset, name='GhostLevel', value=ghost_level, iostat=iostat)
+    if (iostat /= 0 .and. iostat /= XML_NOT_FOUND) error = 6
   endif
   endfunction get_info
 
@@ -386,15 +380,12 @@ contains
   if (present(data_type)) data_type = self%xml%attribute(id=id, name='type')
   if (present(n_components)) then
     n_components = 1
-    value = self%xml%attribute(id=id, name='NumberOfComponents')
-    if (len(value) > 0) read(value, *, iostat=iostat) n_components
+    call self%xml%get_attribute(id=id, name='NumberOfComponents', value=n_components)
   endif
   if (present(n_tuples)) then
     n_tuples = -1_I8P
-    value = self%xml%attribute(id=id, name='NumberOfTuples')
-    if (len(value) > 0) then
-      read(value, *, iostat=iostat) n_tuples
-    elseif (self%xml%name(section) /= 'FieldData' .and. .not.self%is_parallel) then
+    call self%xml%get_attribute(id=id, name='NumberOfTuples', value=n_tuples, iostat=iostat)
+    if (iostat == XML_NOT_FOUND .and. self%xml%name(section) /= 'FieldData' .and. .not.self%is_parallel) then
       p = self%xml%parent(section)
       call piece_counts(xml=self%xml, id=p, mesh_topology=self%mesh_topology, counts=counts, extent=extent, &
                         error=error)
@@ -712,8 +703,7 @@ contains
         name = self%xml%attribute(id=a, name='Name')
         dtype = self%xml%attribute(id=a, name='type')
         nc = 1
-        value = self%xml%attribute(id=a, name='NumberOfComponents')
-        if (len(value) > 0) read(value, *, iostat=iostat) nc
+        call self%xml%get_attribute(id=a, name='NumberOfComponents', value=nc)
         do q=1, piece%pieces_number
           if (piece%get_dataarray_info(location=trim(locations(l)), data_name=name, piece=q, data_type=ptype, &
                                        n_components=pnc) /= 0) then
@@ -765,11 +755,8 @@ contains
     error = 3
     return
   endif
-  value = self%xml%attribute(id=id, name='NumberOfComponents')
-  if (len(value) > 0) then
-    read(value, *, iostat=iostat) n_components
-    if (iostat /= 0 .or. n_components < 1) return
-  endif
+  call self%xml%get_attribute(id=id, name='NumberOfComponents', value=n_components, iostat=iostat)
+  if ((iostat /= 0 .and. iostat /= XML_NOT_FOUND) .or. n_components < 1) return
   value = self%xml%attribute(id=id, name='format')
   select case(value)
   case('ascii')
@@ -785,8 +772,7 @@ contains
     call decode_base64(code=code, word_size=self%word_size, is_compressed=self%is_compressed, bytes=bytes, error=error)
   case('appended')
     if (self%appended_start == 0_I8P) return
-    value = self%xml%attribute(id=id, name='offset')
-    read(value, *, iostat=iostat) offset
+    call self%xml%get_attribute(id=id, name='offset', value=offset, iostat=iostat)
     if (iostat /= 0 .or. offset < 0_I8P) return
     if (self%is_appended_raw) then
       error = read_appended_raw(self=self, pos=self%appended_start+offset, bytes=bytes)
@@ -802,9 +788,8 @@ contains
   if (mod(size(bytes, kind=I8P), sz) /= 0_I8P) return
   if (data_type /= 'String') then
     if (mod(size(bytes, kind=I8P)/sz, int(n_components, I8P)) /= 0_I8P) return
-    value = self%xml%attribute(id=id, name='NumberOfTuples')
-    if (len(value) > 0) then
-      read(value, *, iostat=iostat) n_tuples
+    call self%xml%get_attribute(id=id, name='NumberOfTuples', value=n_tuples, iostat=iostat)
+    if (iostat /= XML_NOT_FOUND) then
       if (iostat /= 0 .or. n_tuples * n_components /= size(bytes, kind=I8P)/sz) return
     endif
   endif
@@ -1448,21 +1433,64 @@ contains
   error = 0
   select case(mesh_topology)
   case('ImageData', 'RectilinearGrid', 'StructuredGrid', 'PImageData', 'PRectilinearGrid', 'PStructuredGrid')
-    value = xml%attribute(id=id, name='Extent')
-    read(value, *, iostat=iostat) extent
-    if (iostat /= 0) error = 6
+    call get_fixed_attribute(xml=xml, id=id, name='Extent', values=extent, error=error, is_required=.true.)
     counts(1) = product(int(extent(2::2) - extent(1::2), I8P) + 1_I8P)
     counts(2) = product(max(int(extent(2::2) - extent(1::2), I8P), 1_I8P))
   case default
     do a=1, size(names)
-      value = xml%attribute(id=id, name=trim(names(a)))
-      if (len(value) == 0) cycle
-      read(value, *, iostat=iostat) counts(a)
-      if (iostat /= 0) error = 6
+      call xml%get_attribute(id=id, name=trim(names(a)), value=counts(a), iostat=iostat)
+      if (iostat /= 0 .and. iostat /= XML_NOT_FOUND) error = 6
     enddo
     if (mesh_topology == 'PolyData') counts(2) = sum(counts(3:6))
   endselect
   endsubroutine piece_counts
+
+  subroutine get_fixed_attribute_I4P(xml, id, name, values, error, is_required)
+  !< Get an attribute holding exactly size(values) integers: *values* keep their defaults if it is missing, *error* is set
+  !< to 6 if it is malformed, has another number of values or, if *is_required*, is missing.
+  type(xml_index),   intent(in)           :: xml         !< Index of the XML elements.
+  integer(I4P),      intent(in)           :: id          !< Index of the element.
+  character(*),      intent(in)           :: name        !< Attribute name.
+  integer(I4P),      intent(inout)        :: values(:)   !< Values.
+  integer(I4P),      intent(inout)        :: error       !< Error status, set to 6 on error.
+  logical,           intent(in), optional :: is_required !< The attribute must exist.
+  integer(I4P), allocatable               :: list(:)     !< Values read.
+  integer(I4P)                            :: iostat      !< IO status.
+
+  call xml%get_attribute(id=id, name=name, values=list, iostat=iostat)
+  if (iostat == XML_NOT_FOUND) then
+    if (present(is_required)) then
+      if (is_required) error = 6
+    endif
+  elseif (iostat /= 0 .or. size(list, dim=1) /= size(values, dim=1)) then
+    error = 6
+  else
+    values = list
+  endif
+  endsubroutine get_fixed_attribute_I4P
+
+  subroutine get_fixed_attribute_R8P(xml, id, name, values, error, is_required)
+  !< Get an attribute holding exactly size(values) reals (see *get_fixed_attribute_I4P*).
+  type(xml_index),   intent(in)           :: xml         !< Index of the XML elements.
+  integer(I4P),      intent(in)           :: id          !< Index of the element.
+  character(*),      intent(in)           :: name        !< Attribute name.
+  real(R8P),         intent(inout)        :: values(:)   !< Values.
+  integer(I4P),      intent(inout)        :: error       !< Error status, set to 6 on error.
+  logical,           intent(in), optional :: is_required !< The attribute must exist.
+  real(R8P), allocatable                  :: list(:)     !< Values read.
+  integer(I4P)                            :: iostat      !< IO status.
+
+  call xml%get_attribute(id=id, name=name, values=list, iostat=iostat)
+  if (iostat == XML_NOT_FOUND) then
+    if (present(is_required)) then
+      if (is_required) error = 6
+    endif
+  elseif (iostat /= 0 .or. size(list, dim=1) /= size(values, dim=1)) then
+    error = 6
+  else
+    values = list
+  endif
+  endsubroutine get_fixed_attribute_R8P
 
   elemental function scan_error(iostat) result(error)
   !< Return the reader error of the scan of a file: 0 if scanned, 2 if malformed XML, 1 if it cannot be read.
