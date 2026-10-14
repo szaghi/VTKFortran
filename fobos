@@ -51,6 +51,7 @@ $EXDIRS      = src/pre-lib/
                FoXy/scripts/
                PENF/scripts/
                StringiFor/scripts/
+               FoXy/benchmarks/
 
 # main modes
 [shared-gnu]
