@@ -14,7 +14,6 @@ type, abstract :: xml_writer_abstract
   !< VTK file abstract XML writer.
   type(string)  :: format_ch                       !< Output format, string code.
   type(string)  :: topology                        !< Mesh topology.
-  integer(I4P)  :: indent=0_I4P                    !< Indent count.
   integer(I4P)  :: ghost_level=0_I4P               !< Ghost level of parallel (P*) topologies.
   type(string)  :: data_type_override              !< If set, type of the next DataArray tag (then unset).
   type(string)  :: tag_name_override               !< If set, element name of the next DataArray tag (then unset).
@@ -31,9 +30,8 @@ type, abstract :: xml_writer_abstract
   integer(I4P)  :: xml=0_I4P                       !< XML Logical unit.
   integer(I4P), allocatable :: vtm_index(:)       !< Next child index of each open level of a multi-block file.
   integer(I4P)  :: error=0_I4P                     !< IO Error status.
-  type(xml_tag) :: tag                             !< XML tags handler.
+  type(xml_writer) :: writer                       !< FoXy streaming writer (on the file unit, or on memory if volatile).
   logical       :: is_volatile=.false.             !< Flag to check volatile writer.
-  type(string)  :: xml_volatile                    !< XML file volatile (not a physical file).
   contains
     ! public methods (some deferred)
     procedure,                                 pass(self) :: close_xml_file               !< Close xml file.
@@ -56,6 +54,7 @@ type, abstract :: xml_writer_abstract
     procedure,                                 pass(self) :: write_self_closing_tag       !< Write self closing tag.
     procedure,                                 pass(self) :: write_start_tag              !< Write start tag.
     procedure,                                 pass(self) :: write_tag                    !< Write tag.
+    procedure,                                 pass(self) :: write_attributes             !< Write the attributes of a tag.
     procedure,                                 pass(self) :: write_topology_tag           !< Write topology tag.
     procedure,                                 pass(self) :: image_attributes             !< Return ImageData attributes.
     procedure(initialize_interface), deferred, pass(self) :: initialize                   !< Initialize writer.
@@ -862,7 +861,14 @@ contains
    !< Close XML file.
    class(xml_writer_abstract), intent(inout) :: self !< Writer.
 
-   if (.not.self%is_volatile) close(unit=self%xml, iostat=self%error)
+   call self%writer%close(iostat=self%error)
+   if (.not.self%is_volatile) then
+      if (self%error==0) then
+         close(unit=self%xml, iostat=self%error)
+      else
+         close(unit=self%xml) ! the first error is kept
+      endif
+   endif
    endsubroutine close_xml_file
 
    subroutine open_xml_file(self, filename)
@@ -878,8 +884,9 @@ contains
            action='WRITE',               &
            status='REPLACE',             &
            iostat=self%error)
+      if (self%error==0) call self%writer%open(unit=self%xml, iostat=self%error)
    else
-      self%xml_volatile = ''
+      call self%writer%open(iostat=self%error)
    endif
    endsubroutine open_xml_file
 
@@ -890,14 +897,11 @@ contains
 
    call self%format_ch%free
    call self%topology%free
-   self%indent=0_I4P
    self%ioffset=0_I8P
    self%xml=0_I4P
    if (allocated(self%vtm_index)) deallocate(self%vtm_index)
    self%error=0_I4P
-   call self%tag%free
    self%is_volatile=.false.
-   call self%xml_volatile%free
    endsubroutine free
 
    pure subroutine get_xml_volatile(self, xml_volatile, error)
@@ -907,7 +911,7 @@ contains
    integer(I4P),               intent(out), optional    :: error        !< Error status.
 
    if (self%is_volatile) then
-      xml_volatile = self%xml_volatile%raw
+      xml_volatile = self%writer%string()
    endif
    endsubroutine get_xml_volatile
 
@@ -917,13 +921,7 @@ contains
    class(xml_writer_abstract), intent(inout) :: self !< Writer.
    character(*),               intent(in)    :: name !< Tag name.
 
-   self%indent = self%indent - 2
-   self%tag = xml_tag(name=name, indent=self%indent)
-   if (.not.self%is_volatile) then
-      call self%tag%write(unit=self%xml, iostat=self%error, is_indented=.true., end_record=end_rec, only_end=.true.)
-   else
-      self%xml_volatile = self%xml_volatile//self%tag%stringify(is_indented=.true., only_end=.true.)//end_rec
-   endif
+   call self%writer%end(name=name, iostat=self%error)
    endsubroutine write_end_tag
 
    subroutine write_header_tag(self)
@@ -931,24 +929,19 @@ contains
    !<
    !< The header_type (bytes count width) is always declared; when the binary data are compressed, the compressor is declared
    !< too: compressor="vtkZLibDataCompressor" header_type="UInt32".
-   class(xml_writer_abstract), intent(inout) :: self   !< Writer.
-   type(string)                              :: buffer !< Buffer string.
-   character(len=:), allocatable             :: attrs  !< Compressor and header type attributes.
+   class(xml_writer_abstract), intent(inout) :: self !< Writer.
 
-   attrs = ' header_type="'//trim(merge('UInt64', 'UInt32', self%is_uint64))//'"'
-   if (self%is_compressed) attrs = ' compressor="vtkZLibDataCompressor"'//attrs
-   buffer = '<?xml version="1.0"?>'//end_rec
+   call self%writer%declaration(iostat=self%error)
+   call self%writer%start(name='VTKFile', iostat=self%error)
+   call self%writer%attribute(name='type', value=self%topology%chars(), iostat=self%error)
+   call self%writer%attribute(name='version', value='1.0', iostat=self%error)
    if (endian==endianL) then
-      buffer = buffer//'<VTKFile type="'//self%topology//'" version="1.0" byte_order="LittleEndian"'//attrs//'>'
+      call self%writer%attribute(name='byte_order', value='LittleEndian', iostat=self%error)
    else
-      buffer = buffer//'<VTKFile type="'//self%topology//'" version="1.0" byte_order="BigEndian"'//attrs//'>'
+      call self%writer%attribute(name='byte_order', value='BigEndian', iostat=self%error)
    endif
-   if (.not.self%is_volatile) then
-      write(unit=self%xml, iostat=self%error)buffer//end_rec
-   else
-      self%xml_volatile = self%xml_volatile//buffer//end_rec
-   endif
-   self%indent = 2
+   if (self%is_compressed) call self%writer%attribute(name='compressor', value='vtkZLibDataCompressor', iostat=self%error)
+   call self%writer%attribute(name='header_type', value=trim(merge('UInt64', 'UInt32', self%is_uint64)), iostat=self%error)
    endsubroutine write_header_tag
 
    subroutine write_self_closing_tag(self, name, attributes)
@@ -957,13 +950,9 @@ contains
    character(*),               intent(in)           :: name       !< Tag name.
    character(*),               intent(in), optional :: attributes !< Tag attributes.
 
-   self%tag = xml_tag(name=name, attributes_stream=attributes, sanitize_attributes_value=.true., indent=self%indent, &
-                      is_self_closing=.true.)
-   if (.not.self%is_volatile) then
-      call self%tag%write(unit=self%xml, iostat=self%error, is_indented=.true., end_record=end_rec)
-   else
-      self%xml_volatile = self%xml_volatile//self%tag%stringify(is_indented=.true.)//end_rec
-   endif
+   call self%writer%start(name=name, iostat=self%error)
+   if (present(attributes)) call self%write_attributes(attributes=attributes)
+   call self%writer%end(name=name, iostat=self%error)
    endsubroutine write_self_closing_tag
 
    subroutine write_start_tag(self, name, attributes)
@@ -972,13 +961,9 @@ contains
    character(*),               intent(in)           :: name       !< Tag name.
    character(*),               intent(in), optional :: attributes !< Tag attributes.
 
-   self%tag = xml_tag(name=name, attributes_stream=attributes, sanitize_attributes_value=.true., indent=self%indent)
-   if (.not.self%is_volatile) then
-      call self%tag%write(unit=self%xml, iostat=self%error, is_indented=.true., end_record=end_rec, only_start=.true.)
-   else
-      self%xml_volatile = self%xml_volatile//self%tag%stringify(is_indented=.true., only_start=.true.)//end_rec
-   endif
-   self%indent = self%indent + 2
+   call self%writer%start(name=name, iostat=self%error)
+   if (present(attributes)) call self%write_attributes(attributes=attributes)
+   call self%writer%flush(iostat=self%error) ! an explicit start tag: written now, its end tag on its own line
    endsubroutine write_start_tag
 
    subroutine write_tag(self, name, attributes, content)
@@ -988,14 +973,38 @@ contains
    character(*),               intent(in), optional :: attributes !< Tag attributes.
    character(*),               intent(in), optional :: content    !< Tag content.
 
-   self%tag = xml_tag(name=name, attributes_stream=attributes, sanitize_attributes_value=.true., content=content, &
-                      indent=self%indent)
-   if (.not.self%is_volatile) then
-      call self%tag%write(unit=self%xml, iostat=self%error, is_indented=.true., is_content_indented=.true., end_record=end_rec)
-   else
-      self%xml_volatile = self%xml_volatile//self%tag%stringify(is_indented=.true., is_content_indented=.true.)//end_rec
-   endif
+   call self%writer%start(name=name, iostat=self%error)
+   if (present(attributes)) call self%write_attributes(attributes=attributes)
+   if (present(content)) call self%writer%raw(content, is_block=.true., iostat=self%error)
+   call self%writer%end(name=name, iostat=self%error)
    endsubroutine write_tag
+
+   subroutine write_attributes(self, attributes)
+   !< Write the attributes of the pending start tag, given as a `name="value" ...` string.
+   class(xml_writer_abstract), intent(inout) :: self       !< Writer.
+   character(*),               intent(in)    :: attributes !< Tag attributes, `name="value"` pairs.
+   integer(I4P)                              :: c          !< Current position.
+   integer(I4P)                              :: e          !< Position of `=` or of the closing quote.
+   character(len=:), allocatable             :: name       !< Attribute name.
+
+   c = 1
+   do
+      do while (c <= len(attributes))
+         if (attributes(c:c) /= ' ') exit
+         c = c + 1
+      enddo
+      if (c > len(attributes)) exit
+      e = index(attributes(c:), '=')
+      if (e == 0) exit
+      name = trim(attributes(c:c+e-2))
+      c = c + e ! the quote
+      if (c > len(attributes)) exit
+      e = index(attributes(c+1:), attributes(c:c))
+      if (e == 0) exit
+      call self%writer%attribute(name=name, value=trim(adjustl(attributes(c+1:c+e-1))), iostat=self%error)
+      c = c + e + 1
+   enddo
+   endsubroutine write_attributes
 
    subroutine write_topology_tag(self, nx1, nx2, ny1, ny2, nz1, nz2, mesh_kind)
    !< Write XML topology tag.
@@ -1117,15 +1126,8 @@ contains
         '" Name="'//trim(adjustl(data_name))//                              &
         '" format="'//self%format_ch//'"'
    endif
-   if (present(data_content).and.(.not.self%is_volatile)) then
-      ! content written as is between start and end tags (same bytes of write_tag): building the whole tag as a single
-      ! string makes full-size copies of the content, some of them stack temporaries with some compilers (issue #70)
-      call self%write_start_tag(name=tag_name, attributes=tag_attributes%chars())
-      write(unit=self%xml, iostat=self%error)repeat(' ', self%indent), data_content, end_rec
-      call self%write_end_tag(name=tag_name)
-   else
-      call self%write_tag(name=tag_name, attributes=tag_attributes%chars(), content=data_content)
-   endif
+   ! content streamed as is between start and end tags: no copy of it (issue #70)
+   call self%write_tag(name=tag_name, attributes=tag_attributes%chars(), content=data_content)
    endsubroutine write_dataarray_tag
 
    subroutine write_dataarray_tag_appended(self, data_type, number_of_components, data_name, is_tuples)

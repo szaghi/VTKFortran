@@ -1309,6 +1309,7 @@ contains
       character(len=:),       allocatable :: code        !< Base64 encoded dataarray.
 
       call self%write_start_tag(name='AppendedData', attributes='encoding="'//self%encoding%chars()//'"')
+      call self%writer%flush(iostat=self%error) ! the data are written directly to the unit
       write(unit=self%xml, iostat=self%error)'_'
       endfile(unit=self%scratch, iostat=self%error)
       rewind(unit=self%scratch, iostat=self%error)
@@ -1346,6 +1347,7 @@ contains
   endif
 
   call self%write_start_tag(name='AppendedData', attributes='encoding="'//self%encoding%chars()//'"')
+  call self%writer%flush(iostat=self%error) ! the data are written directly to the unit
   write(unit=self%xml, iostat=self%error)'_'
   endfile(unit=self%scratch, iostat=self%error)
   rewind(unit=self%scratch, iostat=self%error)

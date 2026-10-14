@@ -71,7 +71,7 @@ Source lives in `src/lib/` (library) and `src/tests/` (integration test programs
 | **PENF** | Portable numeric kind parameters (`I1P`, `I4P`, `R8P`, etc.) — used everywhere |
 | **BeFoR64** | Base64 encode/decode for binary XML data |
 | **StringiFor** | OOP `string` type used throughout the writer classes |
-| **FoXy** | XML tag emitting (writers) and file indexing (`xml_index`, readers) |
+| **FoXy** | XML streaming writer (`xml_writer`, writers) and file indexing (`xml_index`, readers) |
 | **FACE** | ANSI terminal colour output |
 
 CMake pulls all dependencies via `add_subdirectory()` and centralises `.mod` files under `${PROJECT_BINARY_DIR}/src/third_party/<LIB>/modules/`.
