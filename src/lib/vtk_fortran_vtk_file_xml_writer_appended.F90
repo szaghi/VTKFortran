@@ -1394,7 +1394,9 @@ contains
     !< Write the current dataaray on xml file.
     character(len=:), allocatable  :: code !< Dataarray encoded with Base64 codec.
 
-    if (self%encoding=='raw') then
+    ! compared as characters: nvfortran 25.5 rejects the overloaded == of type(string) here (NVFORTRAN-S-0099),
+    ! nvfortran 26.1 and gfortran accept it
+    if (self%encoding%chars()=='raw') then
       select case(dataarray_type)
       case('R8')
         call write_n_byte
