@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/public/hero-dark.svg">
+    <img src="docs/public/hero.svg" alt="VTKFortran: a vortex dipole brushed over an AMR grid" width="200">
+  </picture>
+</p>
+
 # VTKFortran
 
 >#### Pure Fortran VTK XML API
