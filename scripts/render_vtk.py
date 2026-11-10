@@ -26,6 +26,15 @@ one time step. The keys (all optional):
   time=1           print the time of the dataset (the time step of a .pvd) in a corner
   title=TEXT       the title of the colour bar (default: the array name; underscores read as blanks)
   size=WxH         the image size in pixels (default 800x480); fps=N the frames per second of a GIF (default 8)
+  labels=NAME      label each point with the value of its point array NAME
+  celllabels=NAME[,DZ]  label each cell with the value of its cell array NAME, at its centre moved by DZ along z
+  ghosts=show      draw the ghost cells too (marked by vtkGhostType, otherwise skipped), coloured by the array "ghost"
+                   (0 own cell, 1 ghost cell) when array=ghost
+  explode=F        for a parallel header (.pvtu): an animated GIF of its pieces moving apart from the centre (the farthest
+                   one by the fraction F of the size of the dataset, the others in proportion), and back; their ghost
+                   cells removed, so that each piece is drawn closed
+  stride=N         for a .pvd GIF: one frame every N time steps (the last one always included)
+  camera=front     a view from the front, a little from above and from the right (for galleries of cells)
 
 The renders are deterministic for a given ParaView version: the camera, colours and sizes depend only on the keys and on
 the data. Used by scripts/docs_examples.sh for the "!render" markers: the images are generated, never edited by hand.
@@ -33,15 +42,17 @@ the data. Used by scripts/docs_examples.sh for the "!render" markers: the images
 
 from __future__ import annotations
 
+import math
 import os
 import sys
 
 from paraview import simple as pv
 
-BACKGROUND = [0.106, 0.106, 0.122]  # the dark background of the site (#1b1b1f)
-SOLID = [0.392, 0.427, 0.937]  # the brand colour of the site, for uncoloured surfaces
-EDGES = [0.42, 0.42, 0.5]
-TEXT = [0.9, 0.9, 0.9]
+# the night palette of the site (Circuit Moss, docs/.vitepress/theme/custom.css)
+BACKGROUND = [0.027, 0.067, 0.059]  # ground, #07110f
+SOLID = [0.098, 0.827, 1.0]  # neon, #19d3ff, for uncoloured surfaces
+EDGES = [0.373, 0.478, 0.439]  # mesh, #5f7a70
+TEXT = [0.902, 0.937, 0.914]  # ink, #e6efe9
 
 
 def options(words: list[str]) -> dict[str, str]:
@@ -134,16 +145,124 @@ def colour(display, view, source, name: str, assoc: str, times: list[float], opt
     display.SetScalarBarVisibility(view, True)
 
 
+def show_ghosts(source):
+    """Return the dataset with its ghost cells drawn: vtkGhostType copied into "ghost", then dropped."""
+    copy = pv.Calculator(Input=source, AttributeType='Cell Data', ResultArrayName='ghost', Function='vtkGhostType',
+                         ResultArrayType='Int')
+    names = [a.Name for a in copy.CellData if a.Name != 'vtkGhostType']
+    kept = pv.PassArrays(Input=copy, CellDataArrays=names, PointDataArrays=[a.Name for a in copy.PointData])
+    kept.UpdatePipeline()
+    return kept
+
+
+def labels(view, source, name: str, assoc: str, dz: float = 0.0) -> None:
+    """Label the points (or the cell centres) with the values of an array."""
+    from paraview import servermanager
+    from vtkmodules.vtkFiltersCore import vtkCellCenters
+    from vtkmodules.vtkRenderingCore import vtkActor2D
+    from vtkmodules.vtkRenderingLabel import vtkLabeledDataMapper
+
+    data = servermanager.Fetch(source)
+    if assoc == 'CELLS':
+        centres = vtkCellCenters()
+        centres.SetInputData(data)
+        centres.Update()
+        data = centres.GetOutput()
+        for i in range(data.GetNumberOfPoints()):
+            x, y, z = data.GetPoint(i)
+            data.GetPoints().SetPoint(i, x, y, z + dz)
+    mapper = vtkLabeledDataMapper()
+    mapper.SetInputData(data)
+    mapper.SetLabelModeToLabelFieldData()
+    mapper.SetFieldDataName(name)
+    mapper.SetLabelFormat('%d')
+    text = mapper.GetLabelTextProperty()
+    text.SetColor(*(SOLID if assoc == 'CELLS' else TEXT))
+    text.SetFontSize(20 if assoc == 'CELLS' else 15)
+    text.SetBold(1 if assoc == 'CELLS' else 0)
+    text.SetItalic(0)
+    text.SetShadow(0)
+    actor = vtkActor2D()
+    actor.SetMapper(mapper)
+    view.GetRenderer().AddActor2D(actor)
+
+
+def explode(path: str, image: str, view, opt: dict[str, str], width: int, height: int) -> None:
+    """Write a GIF of the pieces of a parallel header moving apart from the centre of the dataset, and back."""
+    import xml.etree.ElementTree as ET
+    from PIL import Image  # bundled with pvpython
+
+    header = pv.OpenDataFile(path)
+    header.UpdatePipeline()
+    b = header.GetDataInformation().GetBounds()
+    centre = [(b[0] + b[1]) / 2, (b[2] + b[3]) / 2, (b[4] + b[5]) / 2]
+    size = max(b[1] - b[0], b[3] - b[2], b[5] - b[4])
+    sources = [p.get('Source') for p in ET.parse(path).getroot().iter('Piece')]
+    moved, directions = [], []
+    for source in sources:
+        piece = pv.RemoveGhostInformation(Input=pv.OpenDataFile(os.path.join(os.path.dirname(path), source)))
+        piece.UpdatePipeline()
+        p = piece.GetDataInformation().GetBounds()
+        offset = [(p[0] + p[1]) / 2 - centre[0], (p[2] + p[3]) / 2 - centre[1], (p[4] + p[5]) / 2 - centre[2]]
+        directions.append(offset)
+        display = pv.Show(piece, view)
+        display.Representation = 'Surface With Edges' if opt.get('edges') == '1' else 'Surface'
+        display.EdgeColor = EDGES
+        name = opt.get('array', '')
+        if name:
+            colour(display, view, header, name, association(header, name), [], opt)
+        moved.append(display)
+    farthest = max(max(sum(o * o for o in d) ** 0.5 for d in directions), 1e-30)
+    directions = [[o / farthest for o in d] for d in directions]  # the farthest piece moves by explode*size
+    position, up = {'xy': ([0, 0, 1], [0, 1, 0]), 'iso': ([1, -1.25, 0.9], [0, 0, 1])}[opt.get('camera', 'iso')]
+    view.CameraFocalPoint = [0, 0, 0]
+    view.CameraPosition = position
+    view.CameraViewUp = up
+    for m, d in zip(moved, directions):  # the camera frames the pieces at their farthest: the displays are moved,
+        m.Translation = [v * float(opt['explode']) * size for v in d]  # not the data (no pipeline to update)
+    view.ResetCamera()
+    view.GetActiveCamera().Zoom(float(opt.get('zoom', '1')))
+    n = 8
+    steps = [0.0] * 2 + [0.5 - 0.5 * math.cos(math.pi * k / n) for k in range(1, n + 1)] + [1.0] * 2
+    steps += steps[-2::-1]
+    shots = []
+    frame_png = image + '.frame.png'
+    for f in steps:
+        for m, d in zip(moved, directions):
+            m.Translation = [v * f * float(opt['explode']) * size for v in d]
+        view.StillRender()  # not pv.Render: its first call resets the camera
+        pv.SaveScreenshot(frame_png, view, ImageResolution=[width, height])
+        shots.append(Image.open(frame_png).convert('RGB'))
+    os.remove(frame_png)
+    palette = Image.new('RGB', (width, 2 * height))
+    palette.paste(shots[0], (0, 0))
+    palette.paste(shots[len(shots) // 2], (0, height))
+    palette = palette.quantize(colors=255, dither=Image.Dither.NONE)
+    frames = [shot.quantize(palette=palette, dither=Image.Dither.NONE) for shot in shots]
+    frames[0].save(image + '.gif', save_all=True, append_images=frames[1:], loop=0, optimize=True,
+                   duration=int(1000 / float(opt.get('fps', '8'))))
+
+
 def main() -> None:
     path, image = sys.argv[1], sys.argv[2]
     opt = options(sys.argv[3:])
     width, height = (int(v) for v in opt.get('size', '800x480').split('x'))
 
+    if 'explode' in opt:
+        view = pv.CreateView('RenderView')
+        view.ViewSize = [width, height]
+        view.OrientationAxesVisibility = 0
+        view.UseColorPaletteForBackground = 0
+        view.Background = BACKGROUND
+        explode(path, image, view, opt, width, height)
+        return
     reader = pv.OpenDataFile(path)
     times = time_steps(reader)
     reader.UpdatePipeline(times[0] if times else 0.0)
     source = pv.MergeBlocks(Input=reader) if path.endswith('.vtm') else reader
     source.UpdatePipeline(times[0] if times else 0.0)
+    if opt.get('ghosts') == 'show':
+        source = show_ghosts(source)
 
     view = pv.CreateView('RenderView')
     view.ViewSize = [width, height]
@@ -156,7 +275,7 @@ def main() -> None:
     shown = source
     bounds = source.GetDataInformation().GetBounds()
     directions = {'xy': ([0, 0, 1], [0, 1, 0]), 'xz': ([0, -1, 0], [0, 0, 1]), 'yz': ([1, 0, 0], [0, 0, 1]),
-                  'iso': ([1, -1.25, 0.9], [0, 0, 1])}
+                  'iso': ([1, -1.25, 0.9], [0, 0, 1]), 'front': ([0.3, -1, 0.35], [0, 0, 1])}
     position, up = directions[opt.get('camera', 'iso')]
     plane = None
     if 'clip' in opt:
@@ -240,6 +359,11 @@ def main() -> None:
         arrows.DiffuseColor = TEXT
         arrows.AmbientColor = TEXT
 
+    if 'labels' in opt:
+        labels(view, source, opt['labels'], 'POINTS')
+    if 'celllabels' in opt:
+        name_, _, dz = opt['celllabels'].partition(',')
+        labels(view, source, name_, 'CELLS', float(dz or 0))
     if opt.get('time') == '1':
         stamp = pv.Show(pv.AnnotateTimeFilter(Input=reader, Format='time = {time:.4f}'), view)
         stamp.FontSize = 16
@@ -256,7 +380,8 @@ def main() -> None:
 
         shots = []
         frame_png = image + '.frame.png'
-        for time in times:
+        stride = int(opt.get('stride', '1'))
+        for time in times[::stride] + ([times[-1]] if (len(times) - 1) % stride else []):
             view.ViewTime = time
             pv.SaveScreenshot(frame_png, view, ImageResolution=[width, height])
             shots.append(Image.open(frame_png).convert('RGB'))

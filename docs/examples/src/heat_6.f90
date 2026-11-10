@@ -1,6 +1,9 @@
 !as heat
 !run heat_6 heat
 !render heat_6 heat.pvtu array=piece categorical=1 edges=1 clip=Y,0.5 crinkle=1 zoom=1.15
+!render heat_6-explode heat.pvtu array=piece categorical=1 explode=0.3 zoom=0.95 size=560x336 fps=8
+!render heat_6-owned heat_2.vtu array=piece categorical=1 edges=1 zoom=1.25 size=420x300
+!render heat_6-ghosts heat_2.vtu array=ghost categorical=1 edges=1 ghosts=show zoom=1.25 size=420x300
 program heat
 !< Tutorial, chapter 6: the hexahedra split in 4 pieces, as 4 processes would write them, with a parallel header.
 use penf, only : I1P, I4P, R8P

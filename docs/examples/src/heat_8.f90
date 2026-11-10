@@ -1,7 +1,7 @@
 !as heat
 !run heat_8 heat
 !run heat_8-pvd tail -n 5 heat.pvd
-!render heat_8 heat_0072.vtr array=temperature carpet=Z,0.6 edges=1 outline=1 zoom=1.2 range=0,0.99
+!render heat_8 heat.pvd array=temperature carpet=Z,0.6 edges=1 outline=1 time=1 zoom=1.2 range=0,0.99 size=560x336 fps=5 stride=2
 program heat
 !< Tutorial, chapter 8: restart the run of chapter 4 from its last file, and continue its time series.
 use penf, only : I4P, I8P, R8P, strz

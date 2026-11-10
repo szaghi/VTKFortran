@@ -1,0 +1,19 @@
+<svg class="vtk-diagram" viewBox="0 0 760 248" role="img" aria-labelledby="size-t">
+<title id="size-t">The size of the same temperature field written in each format</title>
+<text x="250" y="20" class="d-muted">file size, the same 24 x 24 x 24 temperature field</text>
+<text x="238" y="53" class="d-mono" text-anchor="end">ascii</text>
+<rect class="d-data" x="250" y="38" width="400" height="22" rx="3"/>
+<text x="658" y="54" class="d-mono">354 KiB</text>
+<text x="238" y="93" class="d-mono" text-anchor="end">binary</text>
+<rect class="d-data" x="250" y="78" width="164.665" height="22" rx="3"/>
+<text x="422.665" y="94" class="d-mono">146 KiB</text>
+<text x="238" y="133" class="d-mono" text-anchor="end">raw</text>
+<rect class="d-data" x="250" y="118" width="123.697" height="22" rx="3"/>
+<text x="381.697" y="134" class="d-mono">109 KiB</text>
+<text x="238" y="173" class="d-mono" text-anchor="end">raw + zlib</text>
+<rect class="d-head" x="250" y="158" width="90.8163" height="22" rx="3"/>
+<text x="348.816" y="174" class="d-mono">80 KiB</text>
+<text x="238" y="213" class="d-mono" text-anchor="end">binary-appended + zlib</text>
+<rect class="d-head" x="250" y="198" width="120.8" height="22" rx="3"/>
+<text x="378.8" y="214" class="d-mono">107 KiB</text>
+</svg>

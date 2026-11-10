@@ -17,6 +17,10 @@ format:
 | `raw` | after the XML, in the appended section, as bytes | the smallest and the fastest to read |
 | `binary-appended` | in the appended section, base64 encoded | text, as `binary`, with the metadata first |
 
+The sizes printed above, drawn:
+
+<!--@include: ../../examples/images/heat_2-sizes.svg-->
+
 - `compressor='zlib'` compresses the binary formats as VTK does (blocks of 32 KiB): smooth fields such as this one shrink,
   noisy ones much less. It needs the library built with zlib, see [Installation](/guide/installation#optional-zlib-compression).
 - The appended formats keep the data in a scratch file until `finalize`: memory does not grow with the file.

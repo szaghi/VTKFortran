@@ -99,6 +99,12 @@ for the drawings, with the order of the points of every type.
 Pixels and voxels are the axis-aligned quad and hexahedron, with their points in the order `i`, then `j`, then `k`: not
 the order of the quad and hexahedron.
 
+The linear cells, each labelled with its code and its points with their position in the connectivity of the cell, as
+written by [`ref_cells.f90`](https://github.com/szaghi/VTKFortran/tree/master/docs/examples/src/ref_cells.f90) (every
+cell checked by VTK's cell validator):
+
+<p align="center"><img src="../examples/images/ref_cells.png" alt="the 14 linear VTK cells, from the vertex to the pyramid, their points numbered in VTK order"></p>
+
 ### Polyhedron cells
 
 General polyhedra (VTK cell type `42`) need two more arrays, passed to `write_connectivity` as the optional `face` and

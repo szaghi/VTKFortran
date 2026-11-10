@@ -32,6 +32,18 @@ makes readers drop arrays or fill them with zeros. `check_pieces` reads the head
 
 <p align="center"><img src="../../examples/images/heat_6.png" alt="the cube split in four pieces, each in its own colour"></p>
 
+The pieces moved apart: each one is a complete file, with its own points.
+
+<p align="center"><img src="../../examples/images/heat_6-explode.gif" alt="an animation of the four pieces of the cube moving apart along x and back together"></p>
+
+Piece 2 alone, as ParaView draws it, and with its ghost cells drawn too: one layer of cells of each neighbour, marked 1
+in `vtkGhostType` and drawn by the pieces that own them.
+
+| | |
+|---|---|
+| <img src="../../examples/images/heat_6-owned.png" alt="the second piece, its own cells only"> | <img src="../../examples/images/heat_6-ghosts.png" alt="the second piece with one layer of ghost cells on each side, in another colour"> |
+| the cells the piece owns | with its ghost cells (`vtkGhostType` = 1) |
+
 ::: tip What you learned
 Each process writes its piece with `vtk_file`, one writes the header with `pvtk_file`; ghost cells are marked with
 `write_dataarray_unsigned`; `check_pieces` verifies the result. Reference:

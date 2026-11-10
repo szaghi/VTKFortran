@@ -25,9 +25,10 @@ The end of the collection, with the restarted outputs:
 
 <<< @/examples/output/heat_8-pvd.ansi{ansi}
 
-The last output, on the same scale as the animation of chapter 4: the cube has almost cooled down.
+The whole collection played in ParaView, on the same scale as the animation of chapter 4: the outputs of the first run,
+then those of the restarted one, with no jump between them, until the cube has almost cooled down.
 
-<p align="center"><img src="../../examples/images/heat_8.png" alt="the temperature on the middle plane at the end of the restarted run, low and flat"></p>
+<p align="center"><img src="../../examples/images/heat_8.gif" alt="an animation of the temperature on the middle plane, across the restart, decaying until it is low and flat"></p>
 
 ::: tip What you learned
 Every file VTKFortran writes can be read back: `action='read'`, then `read_geo`, `read_dataarray` and the other readers;

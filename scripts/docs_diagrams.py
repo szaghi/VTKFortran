@@ -1,6 +1,9 @@
 """Draw the diagrams of the documentation: docs/diagrams/*.svg, inlined in the pages with <!--@include: -->.
 
-Usage: python3 scripts/docs_diagrams.py
+Usage: python3 scripts/docs_diagrams.py            the diagrams, docs/diagrams/*.svg
+       python3 scripts/docs_diagrams.py --charts   the charts of the example outputs, docs/examples/images/*.svg (run by
+                                                   scripts/docs_examples.sh after the examples: their numbers come from
+                                                   the outputs)
 
 The diagrams are drawn with the CSS classes of docs/.vitepress/theme/custom.css (`.vtk-diagram`, `d-*`), which take their
 colours from the theme tokens: the same SVG reads in the light and in the dark theme. Each SVG is written on lines with
@@ -13,7 +16,9 @@ from __future__ import annotations
 import math
 from pathlib import Path
 
-OUT = Path(__file__).resolve().parent.parent / 'docs' / 'diagrams'
+ROOT = Path(__file__).resolve().parent.parent
+OUT = ROOT / 'docs' / 'diagrams'
+EXAMPLES = ROOT / 'docs' / 'examples'
 
 
 def esc(text: str) -> str:
@@ -49,9 +54,9 @@ class Svg:
                  f'markerHeight="7" orient="auto-start-reverse"><path class="d-arrowhead" d="M0,0 L10,5 L0,10 z"/>'
                  f'</marker></defs>')
 
-    def write(self, name: str) -> None:
-        OUT.mkdir(parents=True, exist_ok=True)
-        (OUT / f'{name}.svg').write_text('\n'.join(self.lines + ['</svg>']) + '\n')
+    def write(self, name: str, out: Path = OUT) -> None:
+        out.mkdir(parents=True, exist_ok=True)
+        (out / f'{name}.svg').write_text('\n'.join(self.lines + ['</svg>']) + '\n')
 
 
 def anatomy() -> None:
@@ -180,7 +185,33 @@ def pieces() -> None:
     s.write('pieces')
 
 
+def sizes() -> None:
+    """The size of the file of chapter 2 of the tutorial in each format, from the output of its run."""
+    rows = []
+    for line in (EXAMPLES / 'output' / 'heat_2.ansi').read_text().splitlines():
+        words = line.split()
+        if len(words) == 4 and words[3].isdigit():
+            rows.append((words[1], words[2], int(words[3])))
+    largest = max(r[2] for r in rows)
+    s = Svg(760, 48 + 40 * len(rows), 'The size of the same temperature field written in each format', 'size')
+    x0, w = 250, 400
+    s.text(x0, 20, 'file size, the same 24 x 24 x 24 temperature field', 'd-muted')
+    for i, (fmt, compressor, size) in enumerate(rows):
+        y = 34 + 40 * i
+        label = fmt if compressor == 'none' else f'{fmt} + {compressor}'
+        s.text(x0 - 12, y + 19, label, 'd-mono', 'end')
+        s.rect(x0, y + 4, w * size / largest, 22, 'd-data' if compressor == 'none' else 'd-head', 3)
+        s.text(x0 + w * size / largest + 8, y + 20, f'{size / 1024:.0f} KiB', 'd-mono')
+    s.write('heat_2-sizes', EXAMPLES / 'images')
+
+
 if __name__ == '__main__':
+    import sys
+
+    if '--charts' in sys.argv[1:]:
+        sizes()
+        print('docs_diagrams: charts written')
+        sys.exit(0)
     anatomy()
     connectivity()
     pieces()

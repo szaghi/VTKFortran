@@ -119,5 +119,7 @@ while read -r name ids; do
   for id in $ids; do captures+=("$ex/output/$id.ansi"); done
   python3 "$root/scripts/ansi2svg.py" --cast "$ex/images/$name.svg" "${captures[@]}"
 done < <(sed -n 's/^ *!cast \(.*\)/\1/p' "$ex"/src/*.f90)
+# charts of the outputs, inlined in the pages: drawn with the theme classes, as the diagrams
+python3 "$root/scripts/docs_diagrams.py" --charts
 if [ -z "$pvpython" ]; then echo "docs_examples: no pvpython (set PVPYTHON): the renders are not regenerated" >&2; fi
 echo "docs_examples: $(ls "$ex"/src/*.f90 | wc -l) programs, $(ls "$ex"/output/*.ansi | wc -l) runs, $renders renders"
