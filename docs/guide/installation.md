@@ -169,3 +169,36 @@ that uses it:
 ```bash
 fpm build --flag "-DVTKFORTRAN_USE_ZLIB" --link-flag "-Wl,--no-as-needed -lz"
 ```
+
+## Optional HDF5 (VTKHDF, in development)
+
+The [VTKHDF format](https://docs.vtk.org/en/latest/vtk_file_formats/vtkhdf_file_format/index.html), the HDF5-based
+VTK format, is being added ([issue #51](https://github.com/szaghi/VTKFortran/issues/51)): this release has the HDF5 layer
+only, the format itself comes with the next ones. It needs the [HDF5](https://www.hdfgroup.org/solutions/hdf5/) **C**
+library, 1.10 or newer, and the preprocessor macro `VTKFORTRAN_USE_HDF5`; without it the library builds and works as
+usual. VTKFortran calls the HDF5 C API directly (`iso_c_binding`): no HDF5 Fortran module is needed, so any HDF5 build
+works with any Fortran compiler, serial or parallel (a parallel HDF5 needs the MPI libraries at link time). Install the
+HDF5 development files first (e.g. `apt install libhdf5-dev`).
+
+**CMake**: enable the option; HDF5 is found with `find_package(HDF5 COMPONENTS C)` (point it to an HDF5 with
+`-DHDF5_ROOT=...`), and MPI too when HDF5 is a parallel build.
+
+```bash
+cmake -S . -B build -DVTKFORTRAN_USE_HDF5=ON
+cmake --build build
+```
+
+**FoBiS.py**: the modes `static-gnu-hdf5` and `tests-gnu-debug-hdf5` build with zlib and HDF5. The HDF5 library is
+selected by a varset of the fobos file: the default one, `ubuntu`, is Ubuntu's `libhdf5-dev`; add one for another HDF5
+(`$HDF5_LIB` its directory, `$HDF5_EXT` the libraries to link) and select it with `--varset`:
+
+```bash
+fobis build --mode tests-gnu-debug-hdf5 --varset my_hdf5
+```
+
+**fpm**: pass the macro and link HDF5:
+
+```bash
+fpm build --flag "-DVTKFORTRAN_USE_HDF5" --link-flag "-L/path/to/hdf5/lib -lhdf5"
+```
+

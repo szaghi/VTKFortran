@@ -30,6 +30,12 @@ elseif (CMAKE_Fortran_COMPILER_ID MATCHES "NVHPC|PGI")
   add_link_options(-mp)
 endif()
 
+# VTKHDF: the HDF5 C library (src/lib/CMakeLists.txt). Finding it (and MPI for a parallel HDF5) needs the C language.
+option(VTKFORTRAN_USE_HDF5 "Enable the VTKHDF format (HDF5 C library)." OFF)
+if (VTKFORTRAN_USE_HDF5)
+  enable_language(C)
+endif()
+
 if(NOT TARGET PENF)
     add_subdirectory(src/third_party/PENF)
 endif()

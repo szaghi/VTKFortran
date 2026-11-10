@@ -11,6 +11,7 @@ add_library(${LIB}
 	vtk_fortran.f90
 	vtk_fortran_dataarray_decoder.f90
 	vtk_fortran_dataarray_encoder.f90
+	vtk_fortran_hdf5.F90
 	vtk_fortran_parameters.f90
 	vtk_fortran_pvd_file.f90
 	vtk_fortran_pvtk_file.f90
@@ -35,6 +36,20 @@ if (VTKFORTRAN_USE_ZLIB)
   target_compile_definitions(${LIB} PRIVATE VTKFORTRAN_USE_ZLIB)
   # Keep plain-signature linking to avoid mixing keyword/plain signatures for this target.
   target_link_libraries(${LIB} ZLIB::ZLIB)
+endif()
+
+# vtk_fortran_hdf5.F90 is always compiled: without VTKFORTRAN_USE_HDF5 it only holds stubs (VTKHDF unavailable). With it,
+# only the HDF5 C library is needed (the C API is bound with iso_c_binding: no HDF5 Fortran module); a parallel HDF5
+# also needs the MPI C library at link time.
+# (the option VTKFORTRAN_USE_HDF5 is declared in the top-level CMakeLists.txt, which enables C for it)
+if (VTKFORTRAN_USE_HDF5)
+  find_package(HDF5 REQUIRED COMPONENTS C)
+  target_compile_definitions(${LIB} PRIVATE VTKFORTRAN_USE_HDF5)
+  target_link_libraries(${LIB} ${HDF5_C_LIBRARIES})
+  if (HDF5_IS_PARALLEL)
+    find_package(MPI REQUIRED COMPONENTS C)
+    target_link_libraries(${LIB} MPI::MPI_C)
+  endif()
 endif()
 
 add_library(${NAMESPACE}${LIB} ALIAS ${LIB})

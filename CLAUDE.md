@@ -42,6 +42,10 @@ fpm build   # library only; zlib: --flag "-DVTKFORTRAN_USE_ZLIB" --link-flag "-W
 zlib compression (`compressor='zlib'`, `raw-zlib`) is optional: CMake `-DVTKFORTRAN_USE_ZLIB=ON`, FoBiS
 `-DVTKFORTRAN_USE_ZLIB` + `ext_libs = z`. Without it `vtk_fortran_zlib` holds stubs and requesting zlib is an error.
 
+HDF5 (VTKHDF format, issue #51, in development) is optional too: CMake `-DVTKFORTRAN_USE_HDF5=ON` (`find_package(HDF5
+COMPONENTS C)`), FoBiS modes `static-gnu-hdf5`, `tests-gnu-debug-hdf5` (varset `ubuntu` = libhdf5-dev, add one for
+another HDF5), workflow `hdf5.yml`. Only the HDF5 C library is used, bound with iso_c_binding (no `hdf5.mod`).
+
 ## Architecture
 
 VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. It uses a **polymorphic writer pattern**: the user-facing `vtk_file` type holds a polymorphic `xml_writer` component that is allocated at runtime based on the requested format.
@@ -61,6 +65,9 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
 - `vtk_fortran_vtk_file_xml_reader` — `xml_reader` type: reader of serial files (any format, header type, zlib) and parallel headers (`check_pieces`); indexes the file once with FoXy `xml_index` (tags and content positions, scan stopped at `AppendedData`), then decodes only the arrays asked for; error codes 0–7 documented in the module. `pvtk_file` uses it too (`action='read'`); `vtm_file` and `pvd_file` read with `get_entries`/`get_datasets`
 - `vtk_fortran_dataarray_decoder` — inverse of the encoder: ASCII/Base64/zlib data into bytes, bytes into arrays of the requested kind
 - `vtk_fortran_dataarray_encoder` — overloaded encoding routines for ASCII and Base64 (optionally zlib-compressed), covering all PENF numeric kinds and ranks 1–4
+- `vtk_fortran_hdf5` — HDF5 C API bindings (files, groups, links, attributes, datasets of every kind, appendable,
+  deflate, read back); always compiled, stubs without `VTKFORTRAN_USE_HDF5`. The `*_g` type globals must stay PUBLIC:
+  gfortran gives private module variables hidden visibility, even with bind(C), and they would never bind to HDF5's
 - `vtk_fortran_zlib` — zlib bindings, VTK block compression and decompression (`zlib_compress_blocks`, `zlib_uncompress_blocks`); always compiled, stubs without `VTKFORTRAN_USE_ZLIB`
 - `vtk_fortran_parameters` — shared constants (`stderr`, `stdout`, `end_rec`)
 
@@ -88,4 +95,5 @@ CMake pulls all dependencies via `add_subdirectory()` and centralises `.mod` fil
 
 ## Test Infrastructure
 
-Each test program in `src/tests/` writes actual VTK XML files, then prints `"Are all tests passed? T"` or `"F"`. `scripts/run_tests.sh` and CTest judge each test by its exit status only, so every test ends with `if (.not.all(test_passed)) error stop 'some tests failed'`; a new test must be added to `src/tests/CMakeLists.txt` too. Tests cover major topologies: VTI and PVTI (image data), VTR and PVTR (rectilinear), VTS (structured), VTU (unstructured, polyhedra), VTP and PVTP (polydata), VTM (multi-block, nested blocks, blocks filled through scratch units), PVTS and PVTU (parallel), files with several pieces, files from OpenMP threads (CMake `-DVTKFORTRAN_TEST_OPENMP=ON`, passes with ifx and nvfortran, whose builds add `-recursive` and `-mp` to the library and its dependencies; gfortran fails, GCC bug 113797), unsigned arrays, PVD (time series), active arrays, large arrays, UInt64 headers, 64-bit (I8P) counts and connectivity, zlib compressed binary data, and volatile XML output; `vtk_fortran_read.F90` reads files back (every topology and format, and two files written by VTK, embedded in the test), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.
+Each test program in `src/tests/` writes actual VTK XML files, then prints `"Are all tests passed? T"` or `"F"`. `scripts/run_tests.sh` and CTest judge each test by its exit status only, so every test ends with `if (.not.all(test_passed)) error stop 'some tests failed'`; a new test must be added to `src/tests/CMakeLists.txt` too. Tests cover major topologies: VTI and PVTI (image data), VTR and PVTR (rectilinear), VTS (structured), VTU (unstructured, polyhedra), VTP and PVTP (polydata), VTM (multi-block, nested blocks, blocks filled through scratch units), PVTS and PVTU (parallel), files with several pieces, files from OpenMP threads (CMake `-DVTKFORTRAN_TEST_OPENMP=ON`, passes with ifx and nvfortran, whose builds add `-recursive` and `-mp` to the library and its dependencies; gfortran fails, GCC bug 113797), unsigned arrays, PVD (time series), active arrays, large arrays, UInt64 headers, 64-bit (I8P) counts and connectivity, zlib compressed binary data, volatile XML output, and the HDF5 bindings (`vtk_fortran_hdf5_bindings.F90`: a small
+VTKHDF ImageData written and read back; stubs checked without HDF5); `vtk_fortran_read.F90` reads files back (every topology and format, and two files written by VTK, embedded in the test), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.

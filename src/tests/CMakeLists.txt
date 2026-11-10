@@ -3,6 +3,7 @@
 set(VTKFORTRAN_TESTS
   vtk_fortran_read.F90
   vtk_fortran_read_composite.f90
+  vtk_fortran_hdf5_bindings.F90
   vtk_fortran_use_module_basic.f90
   vtk_fortran_write_active_arrays.f90
   vtk_fortran_write_compressed.F90
@@ -40,6 +41,9 @@ foreach(test_source ${VTKFORTRAN_TESTS})
   target_link_libraries(${test_name} PRIVATE VTKFortran)
   if (VTKFORTRAN_USE_ZLIB)
     target_compile_definitions(${test_name} PRIVATE VTKFORTRAN_USE_ZLIB)
+  endif()
+  if (VTKFORTRAN_USE_HDF5)
+    target_compile_definitions(${test_name} PRIVATE VTKFORTRAN_USE_HDF5)
   endif()
   set(test_dir ${CMAKE_CURRENT_BINARY_DIR}/run/${test_name})
   file(MAKE_DIRECTORY ${test_dir})

@@ -1,0 +1,49 @@
+name: HDF5
+
+# Project-owned workflow (not managed by `fobis scaffold`): the library and the tests built with HDF5 (VTKHDF format),
+# against Ubuntu's serial libhdf5-dev (HDF5 1.10, the oldest HDF5 supported), with FoBiS and with CMake. The CI workflow
+# builds without HDF5, where the HDF5 procedures are stubs.
+
+on:
+  push:
+    branches: ["**"]
+    tags-ignore: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  hdf5:
+    name: hdf5 / gfortran-14
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup build environment
+      uses: ./.github/actions/setup-build-env
+      with:
+        gcc-version: '14'
+
+    - name: Install HDF5
+      run: sudo apt-get install -y libhdf5-dev
+
+    - name: Fetch dependencies
+      run: fobis fetch
+
+    - name: Build and run the tests (FoBiS)
+      run: |
+        fobis build --mode tests-gnu-debug-hdf5
+        bash scripts/run_tests.sh
+
+    - name: Build and run the tests (CMake)
+      run: |
+        cmake -S . -B build -DBUILD_TESTING=ON -DVTKFORTRAN_USE_ZLIB=ON -DVTKFORTRAN_USE_HDF5=ON
+        cmake --build build -j 4
+        ctest --test-dir build --output-on-failure

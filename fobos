@@ -8,7 +8,7 @@ email      = stefano.zaghi@gmail.it
 authors    = Stefano Zaghi
 
 [scaffold]
-apt_packages = zlib1g-dev
+apt_packages = zlib1g-dev libhdf5-dev
 skip         = docs/guide/contributing.md
 
 [dependencies]
@@ -23,8 +23,20 @@ StringiFor = https://github.com/szaghi/StringiFor
 modes = shared-gnu static-gnu static-gnu-zlib tests-gnu
         shared-gnu-debug static-gnu-debug tests-gnu-debug
         tests-gnu-debug-zlib
+        static-gnu-hdf5 tests-gnu-debug-hdf5
         shared-intel static-intel tests-intel
         shared-intel-debug static-intel-debug tests-intel-debug
+
+# The HDF5 modes (VTKHDF) link the HDF5 C library, nothing else of HDF5 (no headers, no Fortran modules): $HDF5_LIB is
+# its directory, $HDF5_EXT the libraries to link. The default varset is Ubuntu's libhdf5-dev (serial), as the CI; add a
+# varset for another HDF5, e.g. a parallel one ($HDF5_EXT then lists the MPI libraries too), and select it with
+#   fobis build --mode tests-gnu-debug-hdf5 --varset <name>
+[varsets]
+default = ubuntu
+
+[varset:ubuntu]
+$HDF5_LIB = /usr/lib/x86_64-linux-gnu/hdf5/serial
+$HDF5_EXT = hdf5 z
 
 [common-variables]
 $CSHARED_GNU = -cpp -c -fPIC -frealloc-lhs
@@ -95,6 +107,17 @@ mklib     = static
 
 [tests-gnu-debug]
 template  = template-static-gnu-debug-zlib
+build_dir = exe
+
+[static-gnu-hdf5]
+template  = template-static-gnu-hdf5
+target    = src/lib/vtk_fortran.f90
+build_dir = ./static/
+output    = libvtkfortran.a
+mklib     = static
+
+[tests-gnu-debug-hdf5]
+template  = template-static-gnu-debug-hdf5
 build_dir = exe
 
 [tests-gnu-debug-zlib]
@@ -195,6 +218,36 @@ compiler     = gnu
 cflags       = $CSTATIC_GNU $OPTIMIZE -DVTKFORTRAN_USE_ZLIB
 lflags       = $OPTIMIZE
 ext_libs     = z
+mod_dir      = ./mod/
+obj_dir      = ./obj/
+src          = ./src/
+exclude_dirs = $EXDIRS
+colors       = True
+quiet        = False
+log          = True
+jobs         = 10
+
+[template-static-gnu-hdf5]
+compiler     = gnu
+cflags       = $CSTATIC_GNU $OPTIMIZE -DVTKFORTRAN_USE_ZLIB -DVTKFORTRAN_USE_HDF5
+lflags       = $OPTIMIZE
+lib_dir      = $HDF5_LIB
+ext_libs     = $HDF5_EXT
+mod_dir      = ./mod/
+obj_dir      = ./obj/
+src          = ./src/
+exclude_dirs = $EXDIRS
+colors       = True
+quiet        = False
+log          = True
+jobs         = 10
+
+[template-static-gnu-debug-hdf5]
+compiler     = gnu
+cflags       = $CSTATIC_GNU $DEBUG_GNU -DVTKFORTRAN_USE_ZLIB -DVTKFORTRAN_USE_HDF5
+lflags       = $DEBUG_GNU
+lib_dir      = $HDF5_LIB
+ext_libs     = $HDF5_EXT
 mod_dir      = ./mod/
 obj_dir      = ./obj/
 src          = ./src/
