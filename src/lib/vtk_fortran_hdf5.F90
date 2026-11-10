@@ -72,7 +72,7 @@ integer(c_int),     parameter :: H5Z_FILTER_DEFLATE = 1_c_int        !< The defl
 integer(c_int),     parameter :: H5P_CRT_ORDER_TRACKED = 1_c_int     !< Track the creation order of links.
 integer(c_int),     parameter :: H5P_CRT_ORDER_INDEXED = 2_c_int     !< Index the creation order of links.
 integer(c_long_long), parameter :: H5S_UNLIMITED = -1_c_long_long    !< Unlimited dimension ((hsize_t)-1).
-integer(I8P),       parameter :: CHUNK_ROWS = 32768_I8P              !< Rows (slowest dimension) of a chunk at most.
+integer(I8P),       parameter :: CHUNK_BYTES = 1048576_I8P           !< Bytes of a chunk at most (but one row).
 
 #ifdef VTKFORTRAN_USE_HDF5
 ! the predefined types and property list classes: C globals, defined by HDF5 and valid after H5open. They must be PUBLIC:
@@ -1174,7 +1174,8 @@ contains
   if (chunked) then
     dcpl = H5Pcreate(H5P_CLS_DATASET_CREATE_ID_g)
     chunk = max(1_c_long_long, cdims)
-    chunk(1) = max(1_c_long_long, min(cdims(1), int(CHUNK_ROWS, c_long_long)))
+    ! whole rows (slowest dimension) up to CHUNK_BYTES: a rank-3 grid is chunked by planes, not as one chunk
+    chunk(1) = max(1_c_long_long, min(cdims(1), int(CHUNK_BYTES / (bytes * product(chunk(2:))), c_long_long)))
     ok = dcpl >= 0
     if (ok) ok = H5Pset_chunk(dcpl, int(size(dims), c_int), chunk) >= 0
     if (ok .and. level > 0) ok = H5Pset_deflate(dcpl, int(level, c_int)) >= 0

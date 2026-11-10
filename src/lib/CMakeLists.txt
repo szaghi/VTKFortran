@@ -16,6 +16,7 @@ add_library(${LIB}
 	vtk_fortran_pvd_file.f90
 	vtk_fortran_pvtk_file.f90
 	vtk_fortran_vtk_file.f90
+	vtk_fortran_vtk_file_vtkhdf_writer.f90
 	vtk_fortran_vtk_file_xml_reader.f90
 	vtk_fortran_vtk_file_xml_writer_abstract.f90
 	vtk_fortran_vtk_file_xml_writer_appended.F90

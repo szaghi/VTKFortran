@@ -8,6 +8,7 @@ use vtk_fortran_vtk_writer_abstract
 use vtk_fortran_vtk_file_xml_writer_appended
 use vtk_fortran_vtk_file_xml_writer_ascii_local
 use vtk_fortran_vtk_file_xml_writer_binary_local
+use vtk_fortran_vtk_file_vtkhdf_writer
 use vtk_fortran_vtk_file_xml_reader
 use vtk_fortran_zlib, only : is_zlib_enabled
 
@@ -69,21 +70,24 @@ contains
    !<- BINARY: data are saved in base64 encoded format;
    !<- RAW: data are saved in raw-binary format in the appended tag of the XML file;
    !<- RAW-ZLIB: shorthand of RAW with `compressor='zlib'`;
-   !<- BINARY-APPENDED: data are saved in base64 encoded format in the appended tag of the XML file.
+   !<- BINARY-APPENDED: data are saved in base64 encoded format in the appended tag of the XML file;
+   !<- VTKHDF: an HDF5 file in the VTKHDF layout (needs the library built with `VTKFORTRAN_USE_HDF5`), ImageData only for
+   !<  now, one piece; see the `vtk_fortran_vtk_file_vtkhdf_writer` module.
    !<
    !<### Compression of binary data
    !<
    !< The optional `compressor` compresses the data of the binary formats (BINARY, RAW, BINARY-APPENDED) as VTK does
    !< (`vtkZLibDataCompressor`, blocks of 32 KiB): **none** (default) or **zlib**, case insensitive; it is ignored by the ASCII
    !< format. zlib needs the library built with `VTKFORTRAN_USE_ZLIB`: otherwise, as for an unknown compressor, `initialize`
-   !< returns a non-zero error. RAW-ZLIB with `compressor='none'` is an error too.
+   !< returns a non-zero error. RAW-ZLIB with `compressor='none'` is an error too. With VTKHDF, zlib deflates the HDF5
+   !< datasets: it needs the deflate filter of the HDF5 library, not `VTKFORTRAN_USE_ZLIB`.
    !<
    !<### Bytes count header of binary data
    !<
    !< Each binary DataArray (formats BINARY, RAW, RAW-ZLIB, BINARY-APPENDED) is prefixed by its bytes count (by the header of
    !< its compressed blocks, when compressed). The optional
    !< `header_type` selects its width: **UInt32** (default) limits each DataArray to 2 GiB (larger ones stop the execution with
-   !< an explicit error), **UInt64** lifts the limit; it is case insensitive and ignored by the ASCII format.
+   !< an explicit error), **UInt64** lifts the limit; it is case insensitive and ignored by the ASCII and VTKHDF formats.
    !<
    !<### Supported topologies are:
    !<
@@ -110,7 +114,7 @@ contains
    !< @note The file extension is necessary in the file name. The XML standard has different extensions for each
    !< different topologies (e.g. *vtr* for rectilinear topology). See the VTK-standard file for more information.
    class(vtk_file), intent(inout)        :: self          !< VTK file.
-   character(*),    intent(in), optional :: format        !< File format: ASCII, BINARY, RAW, RAW-ZLIB or BINARY-APPENDED.
+   character(*),    intent(in), optional :: format        !< File format: ASCII, BINARY, RAW, RAW-ZLIB, BINARY-APPENDED, VTKHDF.
    character(*),    intent(in)           :: filename      !< File name.
    character(*),    intent(in), optional :: mesh_topology !< Mesh topology.
    logical,         intent(in), optional :: is_volatile   !< Write into memory (get_xml_volatile): ascii and binary only.
@@ -163,6 +167,9 @@ contains
       if (error == 0) allocate(xml_writer_appended :: self%xml_writer)
    case('BINARY')
       allocate(xml_writer_binary_local :: self%xml_writer)
+   case('VTKHDF')
+      ! an HDF5 file: the writer refuses a volatile file, and what it does not support yet
+      allocate(vtkhdf_writer :: self%xml_writer)
    case default
       error = 1
    endselect
@@ -191,7 +198,8 @@ contains
       if (error /= 0_I4P) return
    endif
    if (fformat == 'ASCII') is_compressed = .false.
-   if (is_compressed .and. .not. is_zlib_enabled) then
+   ! VTKHDF compresses with the deflate filter of HDF5, checked by its writer
+   if (is_compressed .and. .not.is_zlib_enabled .and. fformat /= 'VTKHDF') then
       error = 1_I4P
       return
    endif

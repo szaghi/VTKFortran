@@ -20,6 +20,7 @@ set(VTKFORTRAN_TESTS
   vtk_fortran_write_unsigned.f90
   vtk_fortran_write_volatile.f90
   vtk_fortran_write_vti.f90
+  vtk_fortran_write_vtkhdf.f90
   vtk_fortran_write_vtm.f90
   vtk_fortran_write_vtm_nested.f90
   vtk_fortran_write_vtm_scratch.f90
