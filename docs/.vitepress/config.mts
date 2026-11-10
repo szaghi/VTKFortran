@@ -66,6 +66,15 @@ const docs = [
 export default withMermaid({
   title: 'VTKFortran Documentation',
   base: '/VTKFortran/',
+  appearance: 'dark',
+  head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/VTKFortran/favicon.svg' }],
+    ['link', { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/VTKFortran/favicon-32.png' }],
+    ['link', { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/VTKFortran/favicon-16.png' }],
+    ['link', { rel: 'apple-touch-icon', sizes: '180x180', href: '/VTKFortran/apple-touch-icon.png' }],
+    ['meta', { name: 'theme-color', content: '#07110f', media: '(prefers-color-scheme: dark)' }],
+    ['meta', { name: 'theme-color', content: '#f2f5f1', media: '(prefers-color-scheme: light)' }],
+  ],
   ignoreDeadLinks: deadLinks.length > 0 ? deadLinks : false,
   markdown: {
     math: true,
@@ -80,6 +89,8 @@ export default withMermaid({
     },
   },
   themeConfig: {
+    logo: { light: '/logo.svg', dark: '/logo-dark.svg', alt: 'VTKFortran' },
+    siteTitle: 'VTKFortran',
     nav: [
       { text: 'Start here', link: '/guide/', activeMatch: '^/guide/(index|installation)' },
       { text: 'Tutorial', link: '/manual/tutorial/01-first-file', activeMatch: '^/manual/(index|tutorial/)' },

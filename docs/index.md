@@ -4,6 +4,10 @@ layout: home
 hero:
   name: VTKFortran
   text: VTK files from pure Fortran
+  image:
+    light: /hero.svg
+    dark: /hero-dark.svg
+    alt: VTKFortran, a vortex dipole brushed over an AMR grid
   tagline: "Write the VTK XML formats that ParaView and VisIt read: image, rectilinear, structured and unstructured grids, polygonal data, parallel pieces, multi-block assemblies, time series. ASCII, binary, raw or zlib compressed. Then read them back. Pure Fortran 2008, no VTK to install."
   actions:
     - theme: brand
@@ -26,62 +30,110 @@ hero:
       link: https://github.com/szaghi/VTKFortran
 
 features:
-  - icon: 📐
+  - icon:
+      light: /icons/datasets.svg
+      dark: /icons/datasets-dark.svg
+      width: 48
+      height: 48
     title: Every VTK XML dataset
     details: "Image data, rectilinear, structured and unstructured grids (polyhedra included), polygonal data with vertices, lines, strips and polygons."
     link: /guide/topologies#image-data-vti
     linkText: Topologies
-  - icon: 🗜️
+  - icon:
+      light: /icons/encodings.svg
+      dark: /icons/encodings-dark.svg
+      width: 48
+      height: 48
     title: Any format, zlib too
     details: "ASCII to read by eye, base64 binary inline, raw binary appended for speed; the binary formats compressed as VTK does, byte for byte."
     link: /guide/formats#output-format-selection
     linkText: Formats
-  - icon: 🧩
+  - icon:
+      light: /icons/parallel.svg
+      dark: /icons/parallel-dark.svg
+      width: 48
+      height: 48
     title: Parallel pieces
     details: "Each rank writes its own piece, one rank writes the .pvtu, .pvts, .pvtr, .pvti or .pvtp header; ghost cells marked as ParaView expects."
     link: /guide/parallel#parallel-structured-grid-pvts
     linkText: Parallel files
-  - icon: 🎞️
+  - icon:
+      light: /icons/time.svg
+      dark: /icons/time-dark.svg
+      width: 48
+      height: 48
     title: Time series
     details: "A .pvd collection valid after every step, so a crashed run still opens in ParaView; restarts append to it."
     link: /guide/parallel#time-series-pvd
     linkText: Time series
-  - icon: 🗂️
+  - icon:
+      light: /icons/assemblies.svg
+      dark: /icons/assemblies-dark.svg
+      width: 48
+      height: 48
     title: Assemblies
     details: "Multi-block .vtm files with blocks nested to any depth, mirroring the parts of a model."
     link: /guide/parallel#nested-blocks
     linkText: Multi-block
-  - icon: 📖
+  - icon:
+      light: /icons/readback.svg
+      dark: /icons/readback-dark.svg
+      width: 48
+      height: 48
     title: Read them back
     details: "Every file VTKFortran writes, and the same files written by VTK, read array by array without loading the whole file; parallel headers checked against their pieces."
     link: /guide/reading
     linkText: Reading
-  - icon: 🏷️
+  - icon:
+      light: /icons/fielddata.svg
+      dark: /icons/fielddata-dark.svg
+      width: 48
+      height: 48
     title: Field data and metadata
     details: "Time, cycle, solver name and any global array or string attached to the dataset; active scalars and vectors chosen for the reader."
     link: /guide/data#field-data-global-metadata
     linkText: Field data
-  - icon: 🔢
+  - icon:
+      light: /icons/kinds.svg
+      dark: /icons/kinds-dark.svg
+      width: 48
+      height: 48
     title: All kinds, all ranks
     details: "Every PENF kind from I1P to R8P, ranks 1 to 4, scalars, vectors and tensors; unsigned arrays such as vtkGhostType."
     link: /guide/features#data-arrays
     linkText: Data arrays
-  - icon: 🐘
+  - icon:
+      light: /icons/bigdata.svg
+      dark: /icons/bigdata-dark.svg
+      width: 48
+      height: 48
     title: Big data
     details: "Arrays beyond 2 GiB with UInt64 headers, more than 2^31 elements, 64-bit connectivity; appended data kept on disk while writing."
     link: /guide/formats#large-meshes-64-bit-counts-and-connectivity
     linkText: Large meshes
-  - icon: ⚡
+  - icon:
+      light: /icons/safe.svg
+      dark: /icons/safe-dark.svg
+      width: 48
+      height: 48
     title: Thread and process safe
     details: "Every file keeps its own state: write them concurrently from OpenMP threads or MPI ranks."
     link: /guide/features#parallel-support
     linkText: Parallel support
-  - icon: 🛠️
+  - icon:
+      light: /icons/build.svg
+      dark: /icons/build-dark.svg
+      width: 48
+      height: 48
     title: Any build
     details: "CMake, FoBiS.py or fpm; gfortran and Intel ifx. Small dependencies, fetched for you; zlib optional."
     link: /guide/installation
     linkText: Installation
-  - icon: 🔓
+  - icon:
+      light: /icons/licensed.svg
+      dark: /icons/licensed-dark.svg
+      width: 48
+      height: 48
     title: Multi-licensed
     details: "GPL v3 for FOSS projects; BSD 2-Clause, BSD 3-Clause or MIT for closed source and commercial ones."
     link: "#copyrights"

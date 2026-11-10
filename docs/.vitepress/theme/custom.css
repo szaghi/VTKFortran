@@ -1,0 +1,116 @@
+/* VTKFortran · Circuit Moss
+   The Sumi family hand (brushed marks, carved seal, AMR ground) with a neon light.
+   Night is the primary theme (appearance: 'dark' in config.mts); paper is the light theme. */
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --vp-font-family-base: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --vp-font-family-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --vtk-font-display: 'Shippori Mincho', 'Hiragino Mincho ProN', serif;
+  --vp-home-hero-image-background-image: none;
+  --vp-home-hero-image-filter: none;
+  --vp-c-bg: #f2f5f1;
+  --vp-c-bg-alt: #e7ece6;
+  --vp-c-bg-elv: #f9fbf8;
+  --vp-c-bg-soft: #e7ece6;
+  --vp-c-divider: #d3dcd3;
+  --vp-c-gutter: #e7ece6;
+  --vp-c-border: #7f9289;
+  --vp-c-text-1: #0f1d18;
+  --vp-c-text-2: #4f625a;
+  --vp-c-text-3: #4f625a;
+  --vp-c-brand-1: #0e773f;
+  --vp-c-brand-2: #0b5f32;
+  --vp-c-brand-3: #0e773f;
+  --vp-c-brand-soft: rgba(19, 163, 86, 0.14);
+  --vp-button-brand-text: #ffffff;
+  --vp-button-brand-hover-text: #ffffff;
+  --vp-button-brand-active-text: #ffffff;
+  --vp-button-brand-bg: #0e773f;
+  --vp-button-brand-hover-bg: #0b5f32;
+  --vp-button-brand-active-bg: #0b5f32;
+  --vp-button-alt-bg: #f9fbf8;
+  --vp-button-alt-text: #0f1d18;
+  --vp-button-alt-border: #7f9289;
+  --vp-button-alt-hover-bg: #e7ece6;
+  --vp-button-alt-hover-text: #0f1d18;
+  --vp-button-alt-hover-border: #0e773f;
+  --vp-code-color: #00709e;
+  --vp-code-bg: #e7ece6;
+  --vp-code-block-bg: #e7ece6;
+  --vp-home-hero-name-color: #0f1d18;
+  --vtk-seal: #13a356;
+  --vtk-neon: #0077a8;
+  --vtk-mesh: #7f9289;
+  --vtk-focus: #0f1d18;
+}
+
+.dark {
+  --vp-c-bg: #07110f;
+  --vp-c-bg-alt: #050c0b;
+  --vp-c-bg-elv: #0e1a17;
+  --vp-c-bg-soft: #050c0b;
+  --vp-c-divider: #1c2b27;
+  --vp-c-gutter: #050c0b;
+  --vp-c-border: #5f7a70;
+  --vp-c-text-1: #e6efe9;
+  --vp-c-text-2: #9db1a8;
+  --vp-c-text-3: #9db1a8;
+  --vp-c-brand-1: #39ff88;
+  --vp-c-brand-2: #2cc76a;
+  --vp-c-brand-3: #39ff88;
+  --vp-c-brand-soft: rgba(57, 255, 136, 0.14);
+  --vp-button-brand-text: #07110f;
+  --vp-button-brand-hover-text: #07110f;
+  --vp-button-brand-active-text: #07110f;
+  --vp-button-brand-bg: #39ff88;
+  --vp-button-brand-hover-bg: #2cc76a;
+  --vp-button-brand-active-bg: #2cc76a;
+  --vp-button-alt-bg: #0e1a17;
+  --vp-button-alt-text: #e6efe9;
+  --vp-button-alt-border: #5f7a70;
+  --vp-button-alt-hover-bg: #050c0b;
+  --vp-button-alt-hover-text: #e6efe9;
+  --vp-button-alt-hover-border: #39ff88;
+  --vp-code-color: #19d3ff;
+  --vp-code-bg: #050c0b;
+  --vp-code-block-bg: #050c0b;
+  --vp-home-hero-name-color: #e6efe9;
+  --vtk-seal: #39ff88;
+  --vtk-neon: #19d3ff;
+  --vtk-mesh: #5f7a70;
+  --vtk-focus: #19d3ff;
+}
+
+/* the name in capitals, in the display face, as on every Sumi family site */
+.VPHero .name, .VPHero .name .clip {
+  font-family: var(--vtk-font-display);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  -webkit-text-fill-color: var(--vp-home-hero-name-color);
+  background: none;
+}
+.VPNavBarTitle .title {
+  font-family: var(--vtk-font-display);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* the hero mark: larger, and never behind a glow or a gradient */
+.VPHero .image-container { width: 320px; height: 320px; }
+.VPHero .image-src { max-width: 320px; max-height: 320px; }
+@media (max-width: 960px) {
+  .VPHero .image-container { width: 240px; height: 240px; }
+  .VPHero .image-src { max-width: 240px; max-height: 240px; }
+}
+
+/* feature cards: the brushed icons sit on the card, not in a coloured box */
+.VPFeature { border: 1px solid var(--vp-c-divider); background-color: var(--vp-c-bg-alt); }
+.VPFeature .icon { background-color: transparent; width: 48px; height: 48px; border-radius: 0; }
+.VPFeature .icon img { width: 48px; height: 48px; }
+.VPFeature .link-text-value { color: var(--vp-c-brand-1); }
+
+/* focus: a 2px ring with a 2px gap of ground */
+:focus-visible { outline: 2px solid var(--vtk-focus); outline-offset: 2px; }
