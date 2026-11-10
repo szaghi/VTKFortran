@@ -107,7 +107,7 @@ else
   endif
 
   ! refusals
-  test_passed(3) = a_vtk_file%initialize(format='vtkhdf', filename='refused.vtkhdf', mesh_topology='UnstructuredGrid') /= 0 &
+  test_passed(3) = a_vtk_file%initialize(format='vtkhdf', filename='refused.vtkhdf', mesh_topology='StructuredGrid')   /= 0 &
              .and. a_vtk_file%initialize(format='vtkhdf', filename='refused.vtkhdf', mesh_topology='ImageData',             &
                                          nx1=0, nx2=1, ny1=0, ny2=1, nz1=0, nz2=1, origin=[0._R8P, 0._R8P, 0._R8P],        &
                                          spacing=[1._R8P, 1._R8P, 1._R8P], is_volatile=.true.) /= 0
