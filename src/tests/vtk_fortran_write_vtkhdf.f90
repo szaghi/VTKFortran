@@ -10,7 +10,7 @@ program vtk_fortran_write_vtkhdf
 !<- `vtkfortran_write_vtkhdf_2d.vtkhdf`: a 3x2x1 points grid (2D: the z axis is dropped from the datasets, as VTK
 !<  requires), compressed if HDF5 has deflate.
 !<
-!< Refusals are checked too: string field data, an array of the wrong size, a second piece, other topologies, a volatile
+!< Refusals are checked too: string field data, an array of the wrong size, a second piece, a parallel header topology, a volatile
 !< file. Without HDF5 the writer refuses to start. VTK readers open both files outside this test.
 use penf
 use vtk_fortran, only : vtk_file
@@ -107,7 +107,7 @@ else
   endif
 
   ! refusals
-  test_passed(3) = a_vtk_file%initialize(format='vtkhdf', filename='refused.vtkhdf', mesh_topology='StructuredGrid')   /= 0 &
+  test_passed(3) = a_vtk_file%initialize(format='vtkhdf', filename='refused.vtkhdf', mesh_topology='PImageData')       /= 0 &
              .and. a_vtk_file%initialize(format='vtkhdf', filename='refused.vtkhdf', mesh_topology='ImageData',             &
                                          nx1=0, nx2=1, ny1=0, ny2=1, nz1=0, nz2=1, origin=[0._R8P, 0._R8P, 0._R8P],        &
                                          spacing=[1._R8P, 1._R8P, 1._R8P], is_volatile=.true.) /= 0
