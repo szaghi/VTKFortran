@@ -19,7 +19,7 @@ The `format` argument to `initialize` is case-insensitive:
 | `raw` | Raw binary in the appended section |
 | `binary-appended` | Base64-encoded binary in the appended section |
 | `raw-zlib` | Shorthand for `raw` with `compressor='zlib'`, see [Compressed binary data](#compressed-binary-data-zlib) |
-| `vtkhdf` | HDF5 file, VTKHDF layout: ImageData, UnstructuredGrid, PolyData for now, HDF5 needed, see [VTKHDF](#vtkhdf-hdf5) |
+| `vtkhdf` | An HDF5 file in the VTKHDF layout, every topology, HDF5 needed, see [VTKHDF](#vtkhdf-hdf5) |
 
 The binary formats (`binary`, `raw`, `binary-appended`) can be zlib-compressed with `compressor='zlib'`, see
 [Compressed binary data](#compressed-binary-data-zlib). Binary arrays larger than 2 GiB need `header_type='UInt64'`, see
@@ -42,11 +42,11 @@ space, e.g. off a small `/tmp` on HPC nodes. The `binary` format writes inline, 
 [HDF5](https://www.hdfgroup.org/solutions/hdf5/): one HDF5 file, whose group `/VTKHDF` holds the dataset as attributes
 and one HDF5 dataset per array. VTK's `vtkHDFReader` and ParaView read it; any HDF5 tool (h5py, `h5dump`, HDFView) reads its
 arrays directly. It is being added step by step ([issue #51](https://github.com/szaghi/VTKFortran/issues/51)):
-**ImageData**, **UnstructuredGrid** and **PolyData** are written now; the other topologies, time series and parallel
-writing come next.
+every topology is written now (**ImageData**, **RectilinearGrid**, **StructuredGrid**, **UnstructuredGrid** but its
+polyhedra, **PolyData**); polyhedra, time series and parallel writing come next.
 
-Choose it when the files are read by HDF5 tools too, or to use HDF5 compression; stay with the XML formats for the other
-topologies, for files that VTKFortran reads back, and without an HDF5 library. It needs the library built with HDF5 (see
+Choose it when the files are read by HDF5 tools too, or to use HDF5 compression; stay with the XML formats for
+polyhedra, for files that VTKFortran reads back, and without an HDF5 library. It needs the library built with HDF5 (see
 [Installation](/guide/installation#optional-hdf5-vtkhdf)): without it `initialize` returns a non-zero error.
 
 The calls are the ones of the XML formats, with `format='vtkhdf'`; an ImageData:
@@ -63,6 +63,13 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
   `initialize`), `Origin`, `Spacing` and `Direction`, and the groups `PointData`, `CellData` and `FieldData`, one HDF5
   dataset per array, in the order written. The arrays have the type of their kind (`R8P` a 64-bit float, `I4P` a 32-bit
   integer, ...).
+- **RectilinearGrid and StructuredGrid** (VTKHDF 2.7): `Type`, and `Dimensions`, the points along x, y and z (no extent,
+  origin or spacing: the extent of a grid that does not start at 0 is not kept, the coordinates or points carry the
+  geometry). A RectilinearGrid has the datasets `XCoordinates`, `YCoordinates` and `ZCoordinates` (`write_geo(x, y,
+  z)`), a StructuredGrid the dataset `Points` of shape `[nz+1, ny+1, nx+1, 3]` (from any of its `write_geo` layouts;
+  always 4D, even for a 2D grid, as VTK requires). Arrays as for an ImageData. **They need VTK 9.7**: ParaView 6.1 (VTK
+  9.6) reads neither type. A complete program:
+  [A grid in a .vtkhdf file](/manual/cookbook#a-grid-in-a-vtkhdf-file).
 - **UnstructuredGrid** (`Type` `UnstructuredGrid`, no extent, origin or spacing): each piece is a partition. Its counts
   are one entry of `NumberOfPoints`, `NumberOfCells` and `NumberOfConnectivityIds` (64-bit integers), and its `Points`
   (shape `[np, 3]`, the kind given to `write_geo`), `Connectivity`, `Offsets`, `Types` (8-bit unsigned) and point and
@@ -79,25 +86,26 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
   `write_polydata_cells`. Each block keeps the kind of its ids (I4P or I8P; I8P when its connectivity and its offsets
   differ). Cell data follow the order of the blocks, as in the XML formats. A complete program:
   [A PolyData in a .vtkhdf file](/manual/cookbook#a-polydata-in-a-vtkhdf-file).
-- **No transposition.** An array is stored as it is in memory: a Fortran `velocity(3,0:nx,0:ny,0:nz)` is the dataset of
-  shape `[nz+1, ny+1, nx+1, 3]` in C order (the order HDF5 tools show), which is the shape VTKHDF wants. Point data have the
-  shape of the grid points, cell data of the cells; the components of a vector are the last dimension (C order). The
-  axes of one point (a 2D or 1D grid) are dropped, as VTK writes them: a `nx+1` by `ny+1` grid has arrays of shape
-  `[ny+1, nx+1]`.
-- **ImageData: one piece**, whose extent is the whole extent: `write_piece` is called once, with the extents of
-  `initialize`.
+- **No transposition.** An array is stored as it is in memory (an ImageData, RectilinearGrid or StructuredGrid): a
+  Fortran `velocity(3,0:nx,0:ny,0:nz)` is the dataset of shape `[nz+1, ny+1, nx+1, 3]` in C order (the order HDF5 tools
+  show), which is the shape VTKHDF wants. Point data have the shape of the grid points, cell data of the cells; the
+  components of a vector are the last dimension (C order). The axes of one point (a 2D or 1D grid) are dropped, as VTK
+  writes them: a `nx+1` by `ny+1` grid has arrays of shape `[ny+1, nx+1]`.
+- **ImageData, RectilinearGrid, StructuredGrid: one piece**, whose extent is the whole extent: `write_piece` is called
+  once, with the extents of `initialize`; the piece of a RectilinearGrid or StructuredGrid needs its `write_geo`.
 - **Data arrays**: every kind, rank and layout of `write_dataarray`, and `write_dataarray_unsigned` (HDF5 unsigned types).
   An array whose size does not match the grid or the piece is refused. Active arrays (`scalars=`, `vectors=`, ...)
   become the `Attribute` attribute of their dataset; field data are numeric only: a string is refused (VTK 9.7 crashes
   on string field data, or drops them). See [Data arrays](/guide/data).
 - **Compression**: `compressor='zlib'` deflates every dataset (level 6, in chunks of up to 1 MiB). It needs the deflate
   filter of the HDF5 library, not `VTKFORTRAN_USE_ZLIB`: without it `initialize` returns a non-zero error.
-- **Version**: the lowest one with the features written: 2.0, or 2.6 when an active array is designated. The files are
-  checked with VTK 9.7.2 and ParaView 6.1.1.
-- **Not supported**: the other topologies, more than one piece of an ImageData, polyhedra, a volatile file
-  (`is_volatile`), reading the file back with VTKFortran, and VTKHDF pieces in parallel (`P*`), multi-block and `.pvd`
-  files. Each refusal is a non-zero error with a message on standard error. `header_type` is ignored: HDF5 has no size
-  limit per array.
+- **Version**: the lowest one with the features written: 2.0, 2.6 when an active array is designated, 2.7 for a
+  RectilinearGrid or StructuredGrid. The files are checked with VTK 9.7.2 and ParaView 6.1.1 (but the RectilinearGrid
+  and StructuredGrid files, which ParaView 6.1 cannot read).
+- **Not supported**: more than one piece of a grid (ImageData, RectilinearGrid, StructuredGrid), polyhedra, a volatile
+  file (`is_volatile`), reading the file back with VTKFortran, and VTKHDF pieces in parallel (`P*`), multi-block and
+  `.pvd` files. Each refusal is a non-zero error with a message on standard error. `header_type` is ignored: HDF5 has no
+  size limit per array.
 
 ## Compressed binary data (zlib)
 

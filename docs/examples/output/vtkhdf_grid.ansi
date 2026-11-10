@@ -1,0 +1,7 @@
+$ vtkhdf_grid
+annulus.vtkhdf, shapes in C order (as h5dump and h5py show them):
+/VTKHDF                  Type       StructuredGrid
+                         Version    2.7
+                         Dimensions 13 7 3
+/VTKHDF/Points           shape [3,7,13,3]
+/VTKHDF/PointData/radius shape [3,7,13]

@@ -121,8 +121,7 @@ library:
 
 ParaView reads the partitions as one partitioned dataset. Every piece must hold the same arrays: an array missing from a
 piece, or new after the first one, is refused. It needs the library built with HDF5 (`initialize` returns an error
-otherwise). ImageData, UnstructuredGrid and PolyData are written for now; the layout of the file:
-[VTKHDF](/guide/formats#vtkhdf-hdf5).
+otherwise). Every topology is written, polyhedra excepted; the layout of the file: [VTKHDF](/guide/formats#vtkhdf-hdf5).
 
 ### A PolyData in a .vtkhdf file
 
@@ -139,6 +138,22 @@ not have gets zero cells there. The program reads the counts back with the HDF5 
 <p align="center"><img src="../examples/images/vtkhdf_polydata.png" alt="a hexagon with its six corner vertices, and a ribbon with a polyline above it, one colour per piece, read by ParaView from the VTKHDF file"></p>
 
 The cell data follow the order of the blocks (vertices, lines, strips, polygons), as in the XML formats.
+
+### A grid in a .vtkhdf file
+
+A StructuredGrid (here a thick quarter of an annulus) takes the calls of the XML formats too, in one piece whose extent
+is the whole extent:
+
+<<< @/examples/snippets/vtkhdf_grid-write.f90
+
+The points are one dataset, `Points`, whatever the layout given to `write_geo`; the attribute `Dimensions` holds the
+points along each axis. The program prints the layout, read back with the HDF5 bindings of the library:
+
+<<< @/examples/output/vtkhdf_grid.ansi{ansi}
+
+A RectilinearGrid is written the same way, with `write_geo(x=x, y=y, z=z)`: its coordinates are the datasets
+`XCoordinates`, `YCoordinates` and `ZCoordinates`. Both are VTKHDF 2.7: **VTK 9.7 reads them, ParaView 6.1 does not**
+(its VTK 9.6 knows neither type); use the XML formats (`.vtr`, `.vts`) for a ParaView of VTK 9.6 or older.
 
 ### More than 2^31 points or cells
 

@@ -39,14 +39,16 @@ indexes `(0,0,0)`, also when the extents do not start at 0).
 - `write_geo` is not used. Point data have one value per grid point, cell data one value per cell, written with the usual
   `write_dataarray` calls in any format.
 - ImageData is also written in the VTKHDF format (`format='vtkhdf'`, an HDF5 file), with the same calls and one piece:
-  see [VTKHDF](/guide/formats#vtkhdf-hdf5). So are UnstructuredGrid and PolyData; the other topologies are XML only,
-  for now.
+  see [VTKHDF](/guide/formats#vtkhdf-hdf5). So is every other topology (polyhedra excepted).
 
 ## Rectilinear Grid (VTR)
 
 A rectilinear grid has independent 1-D coordinate arrays along each axis.
 
 <<< @/examples/snippets/ref_topologies-vtr.f90
+
+In the VTKHDF format (`format='vtkhdf'`, one piece) the coordinates are the datasets `XCoordinates`, `YCoordinates` and
+`ZCoordinates`: see [VTKHDF](/guide/formats#vtkhdf-hdf5).
 
 ## Structured Grid (VTS)
 
@@ -58,6 +60,10 @@ Arrays of rank 2 to 4 hold the components in their **first** dimension (see
 [Writing arrays](/guide/data#writing-arrays)): without `one_component=.true.`, the rank-3 scalar `v(0:9,0:5,0:5)` would be written as an array of 10 components and 36 tuples instead of 1 component and 360
 tuples, a file that readers reject or misread. Pass `one_component=.true.` for every scalar field stored in an array of
 rank 2 to 4.
+
+In the VTKHDF format (`format='vtkhdf'`, one piece) the points are the dataset `Points`, from any of the `write_geo`
+layouts: see [VTKHDF](/guide/formats#vtkhdf-hdf5) and the recipe
+[A grid in a .vtkhdf file](/manual/cookbook#a-grid-in-a-vtkhdf-file).
 
 ## Unstructured Grid (VTU)
 
