@@ -304,11 +304,12 @@ contains
          rewind(self%scratch_unit(s))
          ! write group name
          f = 0_I4P
-         read(self%scratch_unit(s), iostat=error, fmt=*) name
+         ! edit descriptor A, not list-directed: blanks, commas and slashes are part of names and paths
+         read(self%scratch_unit(s), iostat=error, fmt='(A)') name
          error = self%write_block(action='open', name=trim(adjustl(name)))
          ! write group filenames
          parse_file_loop : do
-            read(self%scratch_unit(s), iostat=error, fmt=*) filename
+            read(self%scratch_unit(s), iostat=error, fmt='(A)') filename
             if (is_iostat_end(error)) exit parse_file_loop
             error = self%xml_writer%write_parallel_block_files(file_index=f,                     &
                                                                filename=trim(adjustl(filename)), &
