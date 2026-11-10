@@ -7,7 +7,9 @@ title: Topologies
 Write each kind of VTK XML dataset: the serial topologies, several pieces in one file. Complete programs: the
 [cookbook](/manual/cookbook#write-each-kind-of-dataset) and the [tutorial](/manual/tutorial/01-first-file).
 
-All examples use `use vtk_fortran` and `type(vtk_file)`. The general workflow for writing a VTK XML file is:
+The examples of this page are taken from
+[`ref_topologies.f90`](https://github.com/szaghi/VTKFortran/tree/master/docs/examples/src/ref_topologies.f90), compiled
+and run with the documentation; every file it writes is read back. The general workflow for writing a VTK XML file is:
 
 1. **Initialize** — open the file and select the format and mesh topology
 2. **Write field data** *(optional)* — attach global metadata (time, cycle, etc.)
@@ -28,24 +30,7 @@ A regular grid with uniform spacing along each axis needs no geometry at all: it
 its origin and its spacing. The point of indexes `(i,j,k)` is at `origin + [i,j,k] * spacing` (the origin is the point of
 indexes `(0,0,0)`, also when the extents do not start at 0).
 
-```fortran
-use vtk_fortran, only : vtk_file
-use penf,        only : I4P, R8P
-
-type(vtk_file) :: a_vtk_file
-integer(I4P)   :: error
-real(R8P)      :: phi(0:63,0:63,0:31)   ! point data, one value per grid point
-
-error = a_vtk_file%initialize(format='raw', filename='output.vti', mesh_topology='ImageData', &
-                              nx1=0, nx2=63, ny1=0, ny2=63, nz1=0, nz2=31,                   &
-                              origin=[0._R8P, 0._R8P, 0._R8P], spacing=[0.1_R8P, 0.1_R8P, 0.2_R8P])
-error = a_vtk_file%xml_writer%write_piece(nx1=0, nx2=63, ny1=0, ny2=63, nz1=0, nz2=31)
-error = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
-error = a_vtk_file%xml_writer%write_dataarray(data_name='phi', x=phi, one_component=.true.)
-error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
-error = a_vtk_file%xml_writer%write_piece()
-error = a_vtk_file%finalize()
-```
+<<< @/examples/snippets/ref_topologies-vti.f90
 
 - `origin` and `spacing` are required for `ImageData`: without them `initialize` returns a non-zero error (and no file is
   written).
@@ -58,112 +43,57 @@ error = a_vtk_file%finalize()
 
 A rectilinear grid has independent 1-D coordinate arrays along each axis.
 
-```fortran
-use vtk_fortran, only : vtk_file
-use penf,        only : I4P, I8P, R8P
-
-type(vtk_file)          :: a_vtk_file
-integer(I4P), parameter :: nx1=0, nx2=16, ny1=0, ny2=16, nz1=0, nz2=16
-integer(I4P), parameter :: nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
-real(R8P)               :: x(nx1:nx2), y(ny1:ny2), z(nz1:nz2)
-integer(I4P)            :: v(1:nn)   ! one value per point
-integer(I4P)            :: error
-
-! ... fill x, y, z, v ...
-
-error = a_vtk_file%initialize(format='binary', filename='output.vtr', &
-                              mesh_topology='RectilinearGrid',         &
-                              nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
-! optional global field data
-error = a_vtk_file%xml_writer%write_fielddata(action='open')
-error = a_vtk_file%xml_writer%write_fielddata(x=0._R8P, data_name='TIME')
-error = a_vtk_file%xml_writer%write_fielddata(x=1_I8P,  data_name='CYCLE')
-error = a_vtk_file%xml_writer%write_fielddata(action='close')
-
-error = a_vtk_file%xml_writer%write_piece(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
-error = a_vtk_file%xml_writer%write_geo(x=x, y=y, z=z)
-error = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
-error = a_vtk_file%xml_writer%write_dataarray(data_name='node_value', x=v)
-error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
-error = a_vtk_file%xml_writer%write_piece()
-error = a_vtk_file%finalize()
-```
+<<< @/examples/snippets/ref_topologies-vtr.f90
 
 ## Structured Grid (VTS)
 
 A structured grid has full 3-D coordinate arrays — each grid point has its own `(x, y, z)` position.
 
-```fortran
-use vtk_fortran, only : vtk_file
-use penf,        only : I4P, R8P
+<<< @/examples/snippets/ref_topologies-vts.f90
 
-type(vtk_file)          :: a_vtk_file
-integer(I4P), parameter :: nx1=0, nx2=9, ny1=0, ny2=5, nz1=0, nz2=5
-integer(I4P), parameter :: nn=(nx2-nx1+1)*(ny2-ny1+1)*(nz2-nz1+1)
-real(R8P)               :: x(nx1:nx2,ny1:ny2,nz1:nz2)
-real(R8P)               :: y(nx1:nx2,ny1:ny2,nz1:nz2)
-real(R8P)               :: z(nx1:nx2,ny1:ny2,nz1:nz2)
-real(R8P)               :: v(nx1:nx2,ny1:ny2,nz1:nz2)
-integer(I4P)            :: error
-
-! ... fill x, y, z, v ...
-
-error = a_vtk_file%initialize(format='binary', filename='output.vts', &
-                              mesh_topology='StructuredGrid',          &
-                              nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
-error = a_vtk_file%xml_writer%write_piece(nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2)
-error = a_vtk_file%xml_writer%write_geo(n=nn, x=x, y=y, z=z)
-error = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
-error = a_vtk_file%xml_writer%write_dataarray(data_name='pressure', x=v, one_component=.true.)
-error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
-error = a_vtk_file%xml_writer%write_piece()
-error = a_vtk_file%finalize()
-```
-
-Arrays of rank 2 to 4 hold the components in their **first** dimension: without `one_component=.true.`, the rank-3
-scalar `v(0:9,0:5,0:5)` would be written as an array of 10 components and 36 tuples instead of 1 component and 360
+Arrays of rank 2 to 4 hold the components in their **first** dimension (see
+[Writing arrays](/guide/data#writing-arrays)): without `one_component=.true.`, the rank-3 scalar `v(0:9,0:5,0:5)` would be written as an array of 10 components and 36 tuples instead of 1 component and 360
 tuples, a file that readers reject or misread. Pass `one_component=.true.` for every scalar field stored in an array of
 rank 2 to 4.
 
 ## Unstructured Grid (VTU)
 
-An unstructured grid requires explicit node coordinates, a connectivity table, cell offsets, and cell types.
+An unstructured grid requires explicit node coordinates, a connectivity table, cell offsets, and cell types. Here a unit
+cube (a hexahedron, points 0 to 7) with a pyramid on top of it (its base is the top face of the cube, its apex the point 8):
 
-```fortran
-use vtk_fortran, only : vtk_file
-use penf,        only : I1P, I4P, R4P, R8P
-
-type(vtk_file)                :: a_vtk_file
-integer(I4P), parameter       :: np = 27   ! number of points
-integer(I4P), parameter       :: nc = 11   ! number of cells
-real(R4P),    dimension(1:np) :: x, y, z   ! node coordinates
-integer(I1P), dimension(1:nc) :: cell_type ! VTK cell type code per cell
-integer(I4P), dimension(1:nc) :: offset    ! cumulative connectivity offset per cell
-integer(I4P), dimension(1:49) :: connect   ! flat connectivity list
-real(R8P),    dimension(1:np) :: v         ! scalar at nodes
-integer(I4P), dimension(1:np) :: vx, vy, vz ! vector components at nodes
-integer(I4P)                  :: error
-
-! ... fill arrays ...
-
-error = a_vtk_file%initialize(format='binary', filename='output.vtu', &
-                              mesh_topology='UnstructuredGrid')
-error = a_vtk_file%xml_writer%write_piece(np=np, nc=nc)
-error = a_vtk_file%xml_writer%write_geo(np=np, nc=nc, x=x, y=y, z=z)
-error = a_vtk_file%xml_writer%write_connectivity(nc=nc, connectivity=connect, &
-                                                  offset=offset, cell_type=cell_type)
-error = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
-error = a_vtk_file%xml_writer%write_dataarray(data_name='scalars', x=v)
-error = a_vtk_file%xml_writer%write_dataarray(data_name='vector', x=vx, y=vy, z=vz)
-error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
-error = a_vtk_file%xml_writer%write_piece()
-error = a_vtk_file%finalize()
-```
+<<< @/examples/snippets/ref_topologies-vtu.f90
 
 Unstructured grids are written in every format, compressed or not, as the other topologies.
 
 Cell types are passed as `integer(I1P)` and written as a `UInt8` DataArray, as the VTK XML format specifies (VTK cell type
 codes are all below 128, so the bytes are the same).
+
+### Cell types
+
+The VTK codes of the cells, with their number of points. The points of each cell are listed in the order VTK defines for
+its type (for the hexahedron: the bottom face counter-clockwise seen from above, then the top face in the same order);
+see figures 2 and 3 of the [VTK file formats](https://docs.vtk.org/en/latest/vtk_file_formats/vtk_legacy_file_format.html#dataset-format)
+for the drawings, with the order of the points of every type.
+
+| Code | Cell | Points | | Code | Cell | Points |
+|-----:|------|-------:|-|-----:|------|-------:|
+| 1 | vertex | 1 | | 21 | quadratic edge | 3 |
+| 2 | poly-vertex | any | | 22 | quadratic triangle | 6 |
+| 3 | line | 2 | | 23 | quadratic quad | 8 |
+| 4 | polyline | any | | 24 | quadratic tetrahedron | 10 |
+| 5 | triangle | 3 | | 25 | quadratic hexahedron | 20 |
+| 6 | triangle strip | any | | 26 | quadratic wedge | 15 |
+| 7 | polygon | any | | 27 | quadratic pyramid | 13 |
+| 8 | pixel | 4 | | 28 | bi-quadratic quad | 9 |
+| 9 | quad | 4 | | 29 | tri-quadratic hexahedron | 27 |
+| 10 | tetrahedron | 4 | | 42 | polyhedron | any, see below |
+| 11 | voxel | 8 | | | | |
+| 12 | hexahedron | 8 | | | | |
+| 13 | wedge | 6 | | | | |
+| 14 | pyramid | 5 | | | | |
+
+Pixels and voxels are the axis-aligned quad and hexahedron, with their points in the order `i`, then `j`, then `k`: not
+the order of the quad and hexahedron.
 
 ### Polyhedron cells
 
@@ -177,22 +107,7 @@ General polyhedra (VTK cell type `42`) need two more arrays, passed to `write_co
 The `connectivity` of a polyhedron lists the (unique) ids of its points, as for any other cell. For example, a unit cube written
 as a polyhedron (points `0`–`7`) followed by a tetrahedron (points `8`–`11`):
 
-```fortran
-integer(I4P), parameter :: connect(12)  = [0,1,2,3,4,5,6,7, 8,9,10,11]
-integer(I4P), parameter :: offset(2)    = [8, 12]
-integer(I1P), parameter :: cell_type(2) = [42_I1P, 10_I1P]  ! polyhedron, tetrahedron
-integer(I4P), parameter :: face(31)     = [6,                &  ! the cube has 6 faces,
-                                           4, 0,1,2,3,       &  ! each made of 4 points
-                                           4, 4,5,6,7,       &
-                                           4, 0,1,5,4,       &
-                                           4, 1,2,6,5,       &
-                                           4, 2,3,7,6,       &
-                                           4, 3,0,4,7]
-integer(I4P), parameter :: faceoffset(2) = [31, -1]          ! the tetrahedron is not a polyhedron
-
-error = a_vtk_file%xml_writer%write_connectivity(nc=2, connectivity=connect, offset=offset, cell_type=cell_type, &
-                                                  face=face, faceoffset=faceoffset)
-```
+<<< @/examples/snippets/ref_topologies-polyhedron.f90
 
 See `src/tests/vtk_fortran_write_vtu_polyhedron.f90` for the complete program.
 
@@ -202,25 +117,7 @@ PolyData describe points and up to four blocks of cells: **vertices**, **lines**
 **polygons**, typical of surfaces, curves and point clouds. Open the piece with the number of points and of cells of each block,
 write the points with `write_geo`, then the blocks with `write_polydata_cells`:
 
-```fortran
-use vtk_fortran, only : vtk_file
-use penf,        only : I4P, R8P
-
-type(vtk_file) :: a_vtk_file
-integer(I4P)   :: error
-real(R8P)      :: x(7), y(7), z(7)   ! a square (points 0-3) and a polyline (points 4-6)
-
-error = a_vtk_file%initialize(format='raw', filename='output.vtp', mesh_topology='PolyData')
-error = a_vtk_file%xml_writer%write_piece(np=7, nverts=0, nlines=1, nstrips=0, npolys=2)
-error = a_vtk_file%xml_writer%write_geo(np=7, nc=3, x=x, y=y, z=z)
-error = a_vtk_file%xml_writer%write_polydata_cells(lines_connectivity=[4,5,6], lines_offset=[3],          &
-                                                    polys_connectivity=[0,1,2, 0,2,3], polys_offset=[3,6])
-error = a_vtk_file%xml_writer%write_dataarray(location='cell', action='open')
-error = a_vtk_file%xml_writer%write_dataarray(data_name='id', x=[1,2,3])   ! the polyline, then the two triangles
-error = a_vtk_file%xml_writer%write_dataarray(location='cell', action='close')
-error = a_vtk_file%xml_writer%write_piece()
-error = a_vtk_file%finalize()
-```
+<<< @/examples/snippets/ref_topologies-vtp.f90
 
 - Each block is a pair of arrays, as in `write_connectivity`: the point ids (0-based) of its cells one after the other, and the
   cumulative offset of the end of each cell. Pass only the blocks you have; a block with only one of its two arrays is an
@@ -235,19 +132,7 @@ A single file can hold several pieces, e.g. the blocks of a multi-block solver w
 header: open and close each piece with `write_piece`, and write its geometry, connectivity and data in between, exactly as
 for a single-piece file. Readers (VTK, ParaView) merge the pieces into one dataset.
 
-```fortran
-error = a_vtk_file%initialize(format='raw', filename='blocks.vtu', mesh_topology='UnstructuredGrid')
-do b=1, nblocks
-  error = a_vtk_file%xml_writer%write_piece(np=np(b), nc=nc(b))
-  error = a_vtk_file%xml_writer%write_geo(np=np(b), nc=nc(b), x=..., y=..., z=...)
-  error = a_vtk_file%xml_writer%write_connectivity(nc=nc(b), connectivity=..., offset=..., cell_type=...)
-  error = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
-  error = a_vtk_file%xml_writer%write_dataarray(data_name='pressure', x=...)
-  error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
-  error = a_vtk_file%xml_writer%write_piece()
-enddo
-error = a_vtk_file%finalize()
-```
+<<< @/examples/snippets/ref_topologies-pieces.f90
 
 - Each piece has its own points: the point ids of its connectivity (and offsets) are local to the piece, starting from 0.
 - Every piece must carry the same data arrays (same names, types and components): VTK takes the arrays of the first piece,
@@ -255,6 +140,45 @@ error = a_vtk_file%finalize()
 - For structured topologies (`RectilinearGrid`, `StructuredGrid`, `ImageData`), `initialize` sets the whole extent and each
   `write_piece(nx1=..., nx2=..., ...)` sets the extent of the piece inside it; adjacent pieces share their boundary plane.
 - It works with every format; the test `src/tests/vtk_fortran_write_multipiece.f90` writes both kinds of grids.
+
+## Coordinates (`write_geo`)
+
+Every topology but `ImageData` stores its points; `write_geo` takes them in the form of the topology. The coordinates are
+`R8P` (written as `Float64`) or `R4P` (`Float32`).
+
+| Topology | Call | Coordinates |
+|----------|------|-------------|
+| `RectilinearGrid` | `write_geo(x, y, z)` | rank 1: the coordinates along each axis, `nx2-nx1+1`, `ny2-ny1+1`, `nz2-nz1+1` values |
+| `StructuredGrid` | `write_geo(n, x, y, z)` | rank 1 `x(n)` or rank 3 `x(i,j,k)`: `n` points, `i` varying first |
+| `StructuredGrid` | `write_geo(xyz)` | rank 2 `xyz(3,n)` or rank 4 `xyz(3,i,j,k)` |
+| `UnstructuredGrid`, `PolyData` | `write_geo(np, nc, x, y, z)` | rank 1 `x(np)`; `np` and `nc` `I4P` or `I8P` |
+| `UnstructuredGrid`, `PolyData` | `write_geo(np, nc, xyz)` | rank 2 `xyz(3,np)` |
+| `ImageData` | none | `origin`, `spacing` and `direction` of `initialize` |
+
+The packed forms, from `ref_topologies.f90`:
+
+<<< @/examples/snippets/ref_topologies-geo-packed.f90
+
+<<< @/examples/snippets/ref_topologies-geo-packed-structured.f90
+
+<<< @/examples/snippets/ref_topologies-geo-packed-unstructured.f90
+
+A count that does not match the size of the arrays (`n`, `np`) makes `write_geo` return 1, with nothing written.
+
+## Errors
+
+Every function returns an integer status: 0 on success, otherwise the file is not complete and the status says why.
+
+| Status | Cause |
+|--------|-------|
+| 1 | an argument is invalid: `initialize` with an unknown `format`, `header_type`, `compressor` or `action`, without `format` or `mesh_topology`, `format='raw-zlib'` with `compressor='none'`, `compressor='zlib'` with a library built without zlib, `is_volatile=.true.` with an appended format, `ImageData` without `origin` and `spacing`; a parallel header (`pvtk_file`) of points without `mesh_kind`; `write_geo` with counts that do not match the arrays; `write_polydata_cells` with a block given only one of its two arrays; `write_dataarray_unsigned` of an `I8P` value of `2^63` or more in ASCII |
+| other positive values | an input/output statement failed (opening, writing, closing the file: a missing directory, no permission, a full disk): the `iostat` of the compiler |
+
+Two failures stop the program instead (`error stop`, with a message on standard error): a binary array larger than the
+2 GiB of a UInt32 header (initialize the file with `header_type='UInt64'`, see
+[Large data arrays](/guide/formats#large-data-arrays-uint64-headers)), and a failure of zlib while compressing. The
+readers have codes of their own, see [Reading files](/guide/reading#serial-files). `vtm_file` and `pvd_file` return 1
+for an unknown `action` or a file that cannot be appended to, and the `iostat` of a failed input/output statement.
 
 ## Mesh topology strings
 

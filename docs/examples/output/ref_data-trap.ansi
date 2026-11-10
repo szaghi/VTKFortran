@@ -1,0 +1,2 @@
+$ grep NumberOfComponents ref_trap.vts
+        <DataArray type="Float64" NumberOfComponents="2" Name="t_wrong" format="ascii">

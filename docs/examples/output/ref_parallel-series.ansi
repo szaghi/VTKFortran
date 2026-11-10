@@ -1,0 +1,16 @@
+$ cat ref_series.vtm
+<?xml version="1.0"?>
+<VTKFile type="vtkMultiBlockDataSet" version="1.0" byte_order="LittleEndian" header_type="UInt32">
+  <vtkMultiBlockDataSet>
+    <Block index="0" name="fluid domain">
+      <DataSet index="0" file="fluid/step_1.vtu" name="fluid/step_1.vtu"/>
+      <DataSet index="1" file="fluid/step_2.vtu" name="fluid/step_2.vtu"/>
+      <DataSet index="2" file="fluid/step_3.vtu" name="fluid/step_3.vtu"/>
+    </Block>
+    <Block index="1" name="solid">
+      <DataSet index="0" file="solid/step_1.vtu" name="solid/step_1.vtu"/>
+      <DataSet index="1" file="solid/step_2.vtu" name="solid/step_2.vtu"/>
+      <DataSet index="2" file="solid/step_3.vtu" name="solid/step_3.vtu"/>
+    </Block>
+  </vtkMultiBlockDataSet>
+</VTKFile>

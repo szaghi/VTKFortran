@@ -1,0 +1,4 @@
+$ ref_formats
+ref_zlib.vtu: header_type UInt32, compressor zlib
+ref_uint64.vtu: header_type UInt64, compressor none
+ref_i8p.vtu: header_type UInt32, compressor none

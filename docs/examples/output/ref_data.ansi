@@ -1,0 +1,10 @@
+$ ref_data
+ref_shapes.vts, node data:
+  s            Float64  1 components  8 tuples
+  t            Float64  1 components  8 tuples
+  vec          Float64  3 components  8 tuples
+  vec4         Float64  3 components  8 tuples
+  v            Float64  3 components  8 tuples
+  w            Float64  3 components  8 tuples
+  sym          Float64  6 components  8 tuples
+  full         Float64  9 components  8 tuples

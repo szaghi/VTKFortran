@@ -35,9 +35,7 @@ space, e.g. off a small `/tmp` on HPC nodes. The `binary` format writes inline, 
 The binary formats can compress their data with zlib, as VTK and ParaView do (`vtkZLibDataCompressor`). Select the
 compressor when initializing the file:
 
-```fortran
-error = a_vtk_file%initialize(format='binary', filename='mesh.vtu', mesh_topology='UnstructuredGrid', compressor='zlib')
-```
+<<< @/examples/snippets/ref_formats-zlib.f90
 
 | `format` | with `compressor='zlib'` |
 |----------|--------------------------|
@@ -73,9 +71,7 @@ default the prefix is a 32-bit integer (`header_type="UInt32"`), which limits **
 3-component `R8P` field of more than about 89 million points. A larger array stops the execution with an explicit error that
 suggests the fix. Select 64-bit prefixes when initializing the file:
 
-```fortran
-error = a_vtk_file%initialize(format='raw', filename='large.vtu', mesh_topology='UnstructuredGrid', header_type='UInt64')
-```
+<<< @/examples/snippets/ref_formats-uint64.f90
 
 - `header_type` is `'UInt32'` (default) or `'UInt64'`, case insensitive; any other value makes `initialize` return a
   non-zero error. It applies to the whole file, so choose it before writing any array; the ASCII format ignores it.
@@ -93,13 +89,9 @@ error = a_vtk_file%initialize(format='raw', filename='large.vtu', mesh_topology=
 A piece with more than 2^31-1 points or cells, or whose point ids exceed `huge(1_I4P)`, needs 64-bit counts and ids. The
 mesh procedures accept `I8P` arguments: the kind passed selects the version, so existing `I4P` calls are unchanged.
 
-```fortran
-integer(I8P) :: np, nc, connect(:), offset(:), face(:), faceoffset(:) ! allocatable in a real code
-...
-error = a_vtk_file%xml_writer%write_piece(np=np, nc=nc)
-error = a_vtk_file%xml_writer%write_geo(np=np, nc=nc, x=x, y=y, z=z)
-error = a_vtk_file%xml_writer%write_connectivity(nc=nc, connectivity=connect, offset=offset, cell_type=cell_type)
-```
+<<< @/examples/snippets/ref_formats-i8p.f90
+
+<<< @/examples/snippets/ref_formats-i8p-write.f90
 
 | Procedure | 64-bit version |
 |-----------|----------------|

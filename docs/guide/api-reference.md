@@ -29,7 +29,8 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 
 | Procedure | Description |
 |-----------|-------------|
-| `%initialize(format, filename, mesh_topology, ...)` | Open the file, select the writer, write the XML header; for `ImageData`/`PImageData` also `origin`, `spacing` (required) and `direction`; `header_type='UInt64'` for binary arrays larger than 2 GiB; `compressor='zlib'` to compress binary data (`vtk_file` only) |
+| `%initialize(format, filename, mesh_topology, ...)` | Open the file, select the writer, write the XML header; for `ImageData`/`PImageData` also `origin`, `spacing` (required) and `direction`; `header_type='UInt64'` for binary arrays larger than 2 GiB; `compressor='zlib'` to compress binary data; `is_volatile=.true.` to write into memory (`vtk_file` only) |
+| `%initialize(filename, mesh_topology, mesh_kind, ..., ghost_level)` | `pvtk_file`: no `format` (a header is ASCII); `mesh_kind` (`'Float64'` or `'Float32'`) the type of the coordinates of the pieces, required but for `PImageData`; `ghost_level` the number of layers of ghost cells of the pieces (default 0) |
 | `%initialize(filename=..., action='read')` | Open a file for reading through `%xml_reader`: a serial file (`vtk_file`) or a parallel header (`pvtk_file`), see below |
 | `%finalize()` | Flush and close the file (or free the reader) |
 | `%get_xml_volatile(xml_volatile)`, `%free()` | Return the file written with `is_volatile=.true.` as a string, then free its memory (`vtk_file` only) |
@@ -38,7 +39,8 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 | `%xml_writer%write_geo(...)` | Write geometry (coordinates; unstructured `np`/`nc` counts `I4P` or `I8P`) |
 | `%xml_writer%write_connectivity(...)` | Write unstructured connectivity, offsets, and cell types (ids `I4P` or `I8P`) |
 | `%xml_writer%write_polydata_cells(...)` | Write the cell blocks of PolyData: vertices, lines, triangle strips, polygons (ids `I4P` or `I8P`) |
-| `%xml_writer%write_dataarray(...)` | Write a data array (overloaded for all kinds and ranks) |
+| `%xml_writer%write_dataarray(location, action, scalars, vectors, normals, tensors, tcoords)` | Open (`action='open'`) or close the point (`location='node'`) or cell (`'cell'`) data; designate the active arrays |
+| `%xml_writer%write_dataarray(data_name, x, one_component)`, `(data_name, x, y, z)`, `(data_name, u, v, w, x, y, z)` | Write a data array: all kinds, ranks 1 to 4, components from the shape, see [Writing arrays](/guide/data#writing-arrays) |
 | `%xml_writer%write_dataarray_unsigned(data_name, x)` | Write a rank-1 integer array as unsigned (`I1P`…`I8P` as `UInt8`…`UInt64`) |
 | `%xml_writer%write_parallel_geo(...)` | Write a `<P*>` geometry piece reference (pvtk_file only) |
 | `%xml_writer%write_parallel_dataarray(...)` | Write a parallel data array descriptor (pvtk_file only) |
@@ -62,10 +64,11 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 
 | Procedure | Description |
 |-----------|-------------|
-| `%initialize(filename)` | Create the `.vtm` wrapper file |
+| `%initialize(filename, scratch_units_number)` | Create the `.vtm` wrapper file; `scratch_units_number` blocks to fill in any order |
 | `%initialize(filename, action='read')` | Open a `.vtm` file for reading |
 | `%get_entries(level, kind, index, name, file)` | Blocks and datasets of a file read, flattened depth first |
 | `%write_block(filenames, names, name, action)` | Add a named block of files; `action='open'`/`'close'` to nest blocks, `'write'` to add datasets to the current block (filenames and names as arrays or blank-separated strings) |
+| `%write_block(scratch, action, filename, name)` | Open (`action='open'`, `name`) the block of a scratch unit, or add a file to it (`action='write'`, `filename`); the blocks are written by `finalize`, see [Blocks filled in any order](/guide/parallel#blocks-filled-in-any-order) |
 | `%finalize()` | Close the `.vtm` file |
 
 ### `pvd_file`

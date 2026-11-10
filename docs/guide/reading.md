@@ -12,27 +12,7 @@ Read back every file VTKFortran writes, and the same files written by VTK. Compl
 A serial file (`.vti`, `.vtr`, `.vts`, `.vtu`, `.vtp`) is read by initializing a `vtk_file` with `action='read'`: the file is
 indexed, and its data are then read, array by array, through the `xml_reader` component.
 
-```fortran
-use vtk_fortran, only : vtk_file
-use penf
-type(vtk_file)                :: a_vtk_file
-character(len=:), allocatable :: topology, names(:)
-real(R8P),        allocatable :: x(:), y(:), z(:), pressure(:), velocity(:,:)
-integer(I4P),     allocatable :: connectivity(:), offset(:)
-integer(I1P),     allocatable :: cell_type(:)
-integer(I8P)                  :: np, nc
-integer(I4P)                  :: error
-
-error = a_vtk_file%initialize(filename='mesh.vtu', action='read')
-error = a_vtk_file%xml_reader%get_info(mesh_topology=topology)
-error = a_vtk_file%xml_reader%read_piece(np=np, nc=nc)
-error = a_vtk_file%xml_reader%read_geo(x=x, y=y, z=z)
-error = a_vtk_file%xml_reader%read_connectivity(connectivity=connectivity, offset=offset, cell_type=cell_type)
-error = a_vtk_file%xml_reader%get_dataarray_names(location='node', names=names)
-error = a_vtk_file%xml_reader%read_dataarray(location='node', data_name='pressure', x=pressure)
-error = a_vtk_file%xml_reader%read_dataarray(location='node', data_name='velocity', x=velocity) ! shape (3, np)
-error = a_vtk_file%finalize()
-```
+<<< @/examples/snippets/ref_reading-serial.f90
 
 | Procedure | Returns |
 |-----------|---------|
@@ -85,16 +65,7 @@ need the library built with zlib, see [Installation](/guide/installation#optiona
 A parallel header (`.pvti`, `.pvtr`, `.pvts`, `.pvtu`, `.pvtp`) is read with `pvtk_file`, through the same `xml_reader`: it
 holds no data, only the declaration of the arrays and the list of the pieces, each one a serial file read with `vtk_file`.
 
-```fortran
-type(pvtk_file)               :: a_pvtk_file
-character(len=:), allocatable :: sources(:), names(:), message
-
-error = a_pvtk_file%initialize(filename='mesh.pvtu', action='read')
-error = a_pvtk_file%xml_reader%get_sources(sources)                          ! files of the pieces
-error = a_pvtk_file%xml_reader%get_dataarray_names(location='node', names=names) ! declared point arrays
-error = a_pvtk_file%xml_reader%check_pieces(message=message)                 ! 0, or 7 and the first mismatch
-error = a_pvtk_file%finalize()
-```
+<<< @/examples/snippets/ref_reading-parallel.f90
 
 - `get_info` returns the dataset type (e.g. `PUnstructuredGrid`), the number of pieces, the whole extent and `ghost_level`;
   `read_piece(piece, nx1, ...)` the extent of a piece of a structured grid; `get_dataarray_info` the type and components of
@@ -111,21 +82,7 @@ error = a_pvtk_file%finalize()
 The entries of a `.vtm` file and the datasets of a `.pvd` file are read with `vtm_file` and `pvd_file`; each dataset file is
 then read with `vtk_file` (or `pvtk_file`). Relative files are relative to the directory of the `.vtm` or `.pvd` file.
 
-```fortran
-type(vtm_file)                :: a_vtm_file
-type(pvd_file)                :: a_pvd_file
-integer(I4P),     allocatable :: level(:), index(:)
-character(len=:), allocatable :: kind(:), name(:), file(:)
-real(R8P),        allocatable :: timestep(:)
-
-error = a_vtm_file%initialize(filename='assembly.vtm', action='read')
-error = a_vtm_file%get_entries(level=level, kind=kind, index=index, name=name, file=file)
-error = a_vtm_file%finalize()
-
-error = a_pvd_file%initialize(filename='simulation.pvd', action='read')
-error = a_pvd_file%get_datasets(timestep=timestep, file=file)  ! also part, group, name
-error = a_pvd_file%finalize()
-```
+<<< @/examples/snippets/ref_reading-composite.f90
 
 - `get_entries` flattens the hierarchy depth first: `level` is the nesting level (1 for the children of the root), `kind` is
   `block`, `dataset`, or `piece` (the pieces of a `vtkMultiPieceDataSet` written by VTK), `index` the index among the

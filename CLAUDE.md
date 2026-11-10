@@ -27,7 +27,9 @@ FC=gfortran-14 PVPYTHON=<paraview>/bin/pvpython bash scripts/docs_examples.sh   
 ```
 Programs in `docs/examples/src/` with markers (`!run`, `!region`, `!cast`, `!render`, ...); the pages include the
 generated snippets, outputs, terminal casts (`scripts/ansi2svg.py`) and ParaView renders (`scripts/render_vtk.py`, PNG or
-GIF for a `.pvd`). The *Docs examples* workflow checks all but the renders (no ParaView in CI).
+GIF for a `.pvd`). The *Docs examples* workflow checks all but the renders (no ParaView in CI). The reference pages
+(`docs/guide/*.md`) hold no code of their own: their snippets are regions of `ref_<page>.f90`, programs that also read
+back what they write and stop with an error otherwise.
 Generated, git-ignored, rebuilt by the Docs workflow: `docs/api/` (`formal generate ...`, rule `makedoc`), the coverage
 pages `docs/guide/coverage-analysis.md`, `docs/guide/*.gcov.md` and `docs/public/coverage.json` (rule
 `makecoverage-analysis`); the site builds without them.
@@ -86,4 +88,4 @@ CMake pulls all dependencies via `add_subdirectory()` and centralises `.mod` fil
 
 ## Test Infrastructure
 
-Each test program in `src/tests/` writes actual VTK XML files, then prints `"Are all tests passed? T"` or `"F"`. `scripts/run_tests.sh` and CTest judge each test by its exit status only, so every test ends with `if (.not.all(test_passed)) error stop 'some tests failed'`; a new test must be added to `src/tests/CMakeLists.txt` too. Tests cover major topologies: VTI and PVTI (image data), VTR and PVTR (rectilinear), VTS (structured), VTU (unstructured, polyhedra), VTP and PVTP (polydata), VTM (multi-block, nested blocks), PVTS and PVTU (parallel), files with several pieces, unsigned arrays, PVD (time series), active arrays, large arrays, UInt64 headers, 64-bit (I8P) counts and connectivity, zlib compressed binary data, and volatile XML output; `vtk_fortran_read.F90` reads files back (every topology and format, and two files written by VTK, embedded in the test), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.
+Each test program in `src/tests/` writes actual VTK XML files, then prints `"Are all tests passed? T"` or `"F"`. `scripts/run_tests.sh` and CTest judge each test by its exit status only, so every test ends with `if (.not.all(test_passed)) error stop 'some tests failed'`; a new test must be added to `src/tests/CMakeLists.txt` too. Tests cover major topologies: VTI and PVTI (image data), VTR and PVTR (rectilinear), VTS (structured), VTU (unstructured, polyhedra), VTP and PVTP (polydata), VTM (multi-block, nested blocks, blocks filled through scratch units), PVTS and PVTU (parallel), files with several pieces, unsigned arrays, PVD (time series), active arrays, large arrays, UInt64 headers, 64-bit (I8P) counts and connectivity, zlib compressed binary data, and volatile XML output; `vtk_fortran_read.F90` reads files back (every topology and format, and two files written by VTK, embedded in the test), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.

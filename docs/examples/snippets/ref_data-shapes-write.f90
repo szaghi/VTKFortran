@@ -1,0 +1,8 @@
+error = a_vtk_file%xml_writer%write_dataarray(data_name='s',    x=s)
+error = a_vtk_file%xml_writer%write_dataarray(data_name='t',    x=t, one_component=.true.)
+error = a_vtk_file%xml_writer%write_dataarray(data_name='vec',  x=vec)
+error = a_vtk_file%xml_writer%write_dataarray(data_name='vec4', x=vec4)
+error = a_vtk_file%xml_writer%write_dataarray(data_name='v',    x=vx, y=vy, z=vz)
+error = a_vtk_file%xml_writer%write_dataarray(data_name='w',    x=wx, y=wy, z=wz)
+error = a_vtk_file%xml_writer%write_dataarray(data_name='sym',  u=txx, v=tyy, w=tzz, x=txy, y=tyz, z=txz)
+error = a_vtk_file%xml_writer%write_dataarray(data_name='full', x=full)
