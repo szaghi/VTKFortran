@@ -1,0 +1,2 @@
+$ mpirun -np 4 mpi_pieces
+mpi.pvtu: 4 pieces, check_pieces error 0

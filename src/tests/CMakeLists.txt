@@ -11,6 +11,7 @@ set(VTKFORTRAN_TESTS
   vtk_fortran_write_i8p.f90
   vtk_fortran_write_large.f90
   vtk_fortran_write_multipiece.f90
+  vtk_fortran_write_openmp.f90
   vtk_fortran_write_pvd.f90
   vtk_fortran_write_pvtr.f90
   vtk_fortran_write_pvts.f90
@@ -44,3 +45,14 @@ foreach(test_source ${VTKFORTRAN_TESTS})
   file(MAKE_DIRECTORY ${test_dir})
   add_test(NAME ${test_name} COMMAND ${test_name} WORKING_DIRECTORY ${test_dir})
 endforeach()
+
+# The OpenMP test writes and reads files from threads; by default it is built without OpenMP and runs serially. With the
+# option on it runs its threads, and passes only
+# with a library built thread-safe, ifx with -recursive or nvfortran with -mp (CMAKE_Fortran_FLAGS); no gfortran release
+# is thread-safe for it (GCC PR 113797), see the documentation of the parallel files.
+option(VTKFORTRAN_TEST_OPENMP "Run the test of files written from OpenMP threads" OFF)
+if (VTKFORTRAN_TEST_OPENMP)
+  find_package(OpenMP COMPONENTS Fortran REQUIRED)
+  target_link_libraries(vtk_fortran_write_openmp PRIVATE OpenMP::OpenMP_Fortran)
+  set_tests_properties(vtk_fortran_write_openmp PROPERTIES ENVIRONMENT "OMP_NUM_THREADS=4")
+endif()

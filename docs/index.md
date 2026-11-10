@@ -116,10 +116,10 @@ features:
       dark: /icons/safe-dark.svg
       width: 48
       height: 48
-    title: Thread and process safe
-    details: "Every file keeps its own state: write them concurrently from OpenMP threads or MPI ranks."
-    link: /guide/features#parallel-support
-    linkText: Parallel support
+    title: Parallel writers
+    details: "Every file keeps its own state: MPI ranks write their pieces at the same time; OpenMP threads too, with ifx or nvfortran."
+    link: /guide/parallel#threads-and-processes
+    linkText: Threads and processes
   - icon:
       light: /icons/build.svg
       dark: /icons/build-dark.svg

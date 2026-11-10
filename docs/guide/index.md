@@ -9,7 +9,8 @@ title: About VTKFortran
 Key properties:
 
 - **Pure Fortran 2008** — no C or C++ dependencies, except zlib (optional) for compressed data
-- **Thread and processor safe** — multiple files can be written concurrently under OpenMP or MPI
+- **Parallel writers** — MPI ranks write their own files at the same time; OpenMP threads too with ifx or nvfortran, not
+  gfortran (see [Threads and processes](/guide/parallel#threads-and-processes))
 - **Multiple output formats** — ASCII, binary (Base64), and raw binary appended, optionally zlib compressed
 - **Reading** — every file it writes (and the same files written by VTK) can be read back
 - **OOP design** — a polymorphic `xml_writer` component is selected at runtime based on the chosen format

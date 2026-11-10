@@ -13,7 +13,9 @@ with the documentation; every parallel header it writes is read back and checked
 
 ## Parallel Structured Grid (PVTS)
 
-For MPI-parallel codes, each rank writes its own partition as a regular VTS file, then a single PVTS header file references all partitions.
+For MPI-parallel codes, each rank writes its own partition as a regular VTS file, then a single PVTS header file references
+all partitions. The program below writes both from one process; the cookbook has the same with real MPI ranks,
+[Write from MPI ranks](/manual/cookbook#write-from-mpi-ranks).
 
 <<< @/examples/snippets/ref_parallel-pvts.f90
 
@@ -169,6 +171,29 @@ ParaView opens the collection as one dataset with a time axis: each time step sh
   given: relative paths are relative to the directory of the `.pvd` file.
 
 See `src/tests/vtk_fortran_write_pvd.f90` for a complete program, restart included.
+
+## Threads and processes
+
+**MPI processes** write their own files at the same time with no limitation: they share no memory. Each rank writes its
+piece, one rank the header, see [Write from MPI ranks](/manual/cookbook#write-from-mpi-ranks).
+
+**OpenMP threads** writing (or reading) different files at the same time is a matter of the compiler that builds the
+library. VTKFortran and its dependencies keep the state of each file in its own `vtk_file` and share no variable that
+changes while files are written, but for the constant tables of PENF and BeFoR64, filled by the first `initialize`:
+initialize one file (or call `penf_init` and `b64_init`) before the parallel region. Some compilers add shared variables
+of their own:
+
+| Compiler | Files from threads |
+|----------|--------------------|
+| Intel ifx 2025.3 | ✅ with the library built with `-recursive` |
+| NVIDIA nvfortran 26.9 | ✅ with the library built with `-mp` (it locks the input/output statements only in code built so) |
+| GNU gfortran, up to 16.2 | ❌ the length of a function result of deferred-length character (`character(len=:), allocatable`) is a static variable, shared by the threads ([GCC bug 113797](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=113797)); gfortran 14 and 15 also make static every variable of a type with user-defined input/output, as the strings of StringiFor. The files are corrupted, or the program crashes: write the files from one thread, or from MPI processes |
+
+The test `src/tests/vtk_fortran_write_openmp.f90` writes 8 files from 4 threads, in every format, compares them byte by
+byte with the same files written serially, and reads them back from the threads. CMake runs it with
+`-DVTKFORTRAN_TEST_OPENMP=ON` and the flags of the library, e.g.
+`cmake -S . -B build -DBUILD_TESTING=ON -DVTKFORTRAN_TEST_OPENMP=ON -DCMAKE_Fortran_COMPILER=ifx -DCMAKE_Fortran_FLAGS=-recursive`:
+it passes 10 runs out of 10 with ifx `-recursive` and nvfortran `-mp`, and fails with gfortran.
 
 ## Volatile XML output
 

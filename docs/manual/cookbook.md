@@ -129,6 +129,19 @@ Readers merge the pieces into one dataset. Every piece must hold the same arrays
 The same for `.pvtr` (`PRectilinearGrid`) and `.pvti` (`PImageData`, with origin and spacing); unstructured pieces
 (`.pvtu`, `.pvtp`) have no extent, see [chapter 6](./tutorial/06-parallel).
 
+### Write from MPI ranks
+
+Each rank writes its own piece, a complete file named after the rank; rank 0 waits for all of them, writes the header
+that lists them and checks it. No data move between the ranks: every file is written by one process.
+
+<<< @/examples/snippets/mpi_pieces.f90
+
+<<< @/examples/output/mpi_pieces.ansi{ansi}
+
+Built with the MPI compiler wrapper (`mpifort`) and run with `mpirun -np 4`. When only rank 0 can write to the file
+system, the other ranks write their pieces into memory and send them to it, see
+[Write a file into memory](#write-a-file-into-memory).
+
 ### Check a parallel header against its pieces
 
 <<< @/examples/snippets/check_pieces.f90

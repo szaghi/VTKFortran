@@ -62,6 +62,10 @@ cmake --build build
 ctest --test-dir build
 ```
 
+The test of files written from OpenMP threads runs serially by default (built without OpenMP); with
+`-DVTKFORTRAN_TEST_OPENMP=ON` it runs its threads, which needs a thread-safe build of the library, see
+[Threads and processes](/guide/parallel#threads-and-processes).
+
 Run a single named test:
 
 ```bash

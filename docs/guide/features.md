@@ -72,11 +72,10 @@ headers and 64-bit ids: see [Formats and large data](/guide/formats). Point, cel
 
 ## Parallel Support
 
-VTKFortran can safely manage multiple concurrent open files: each `vtk_file` (writer or reader) keeps its state in its own
-components, so files can be written or read concurrently within OpenMP parallel regions and by MPI programs where each rank
-writes its own partition file. The dependencies PENF and BeFoR64 initialize their constant tables at the first
-`initialize`; in OpenMP, initialize one file (or call `penf_init` and `b64_init`) before the parallel region, so that two
-threads never run that initialization at the same time.
+Each `vtk_file` (writer or reader) keeps its state in its own components. MPI processes write their files at the same
+time with no limitation. OpenMP threads do too with the library built by ifx (`-recursive`) or nvfortran (`-mp`), but not
+by gfortran, whose static variables for deferred-length string results are shared by the threads (GCC bug 113797): see
+[Threads and processes](/guide/parallel#threads-and-processes).
 
 ## Compiler Support
 
