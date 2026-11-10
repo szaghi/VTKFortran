@@ -32,7 +32,7 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 
 | Procedure | Description |
 |-----------|-------------|
-| `%initialize(format, filename, mesh_topology, ...)` | Open the file, select the writer (`format='vtkhdf'`: an HDF5 file, every topology but polyhedra), write the header; for `ImageData`/`PImageData` also `origin`, `spacing` (required) and `direction`; `header_type='UInt64'` for binary arrays larger than 2 GiB; `compressor='zlib'` to compress binary data; `is_volatile=.true.` to write into memory (`vtk_file` only) |
+| `%initialize(format, filename, mesh_topology, ...)` | Open the file, select the writer (`format='vtkhdf'`: an HDF5 file, every topology), write the header; for `ImageData`/`PImageData` also `origin`, `spacing` (required) and `direction`; `header_type='UInt64'` for binary arrays larger than 2 GiB; `compressor='zlib'` to compress binary data; `is_volatile=.true.` to write into memory (`vtk_file` only) |
 | `%initialize(filename, mesh_topology, mesh_kind, ..., ghost_level)` | `pvtk_file`: no `format` (a header is ASCII); `mesh_kind` (`'Float64'` or `'Float32'`) the type of the coordinates of the pieces, required but for `PImageData`; `ghost_level` the number of layers of ghost cells of the pieces (default 0) |
 | `%initialize(filename=..., action='read')` | Open a file for reading through `%xml_reader`: a serial file (`vtk_file`) or a parallel header (`pvtk_file`), see below |
 | `%finalize()` | Flush and close the file (or free the reader) |

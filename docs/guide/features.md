@@ -67,10 +67,9 @@ built with HDF5 ([Installation](/guide/installation#optional-hdf5-vtkhdf)). It i
 | Type | Status |
 |------|--------|
 | Image Data, one piece: point, cell and field data, active arrays, unsigned arrays, deflate | ✅ |
-| Unstructured Grid, each piece a partition: I4P and I8P ids, point, cell and field data, active arrays, deflate | ✅ |
+| Unstructured Grid, each piece a partition: polyhedra, I4P and I8P ids, point, cell and field data, active arrays, deflate | ✅ |
 | Polydata, each piece a partition: the four blocks of cells, I4P and I8P ids, point, cell and field data | ✅ |
 | Rectilinear and Structured Grids, one piece: coordinates or points, point, cell and field data (read by VTK 9.7, not ParaView 6.1) | ✅ |
-| Polyhedra of an Unstructured Grid | Planned |
 | Time series (`Steps`), partitions written from MPI ranks, multi-block (`PartitionedDataSetCollection`) | Planned |
 | Reading VTKHDF files back | Planned |
 

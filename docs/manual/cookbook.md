@@ -121,7 +121,7 @@ library:
 
 ParaView reads the partitions as one partitioned dataset. Every piece must hold the same arrays: an array missing from a
 piece, or new after the first one, is refused. It needs the library built with HDF5 (`initialize` returns an error
-otherwise). Every topology is written, polyhedra excepted; the layout of the file: [VTKHDF](/guide/formats#vtkhdf-hdf5).
+otherwise). Every topology is written, polyhedra included; the layout of the file: [VTKHDF](/guide/formats#vtkhdf-hdf5).
 
 ### A PolyData in a .vtkhdf file
 

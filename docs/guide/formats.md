@@ -42,11 +42,11 @@ space, e.g. off a small `/tmp` on HPC nodes. The `binary` format writes inline, 
 [HDF5](https://www.hdfgroup.org/solutions/hdf5/): one HDF5 file, whose group `/VTKHDF` holds the dataset as attributes
 and one HDF5 dataset per array. VTK's `vtkHDFReader` and ParaView read it; any HDF5 tool (h5py, `h5dump`, HDFView) reads its
 arrays directly. It is being added step by step ([issue #51](https://github.com/szaghi/VTKFortran/issues/51)):
-every topology is written now (**ImageData**, **RectilinearGrid**, **StructuredGrid**, **UnstructuredGrid** but its
-polyhedra, **PolyData**); polyhedra, time series and parallel writing come next.
+every topology is written now (**ImageData**, **RectilinearGrid**, **StructuredGrid**, **UnstructuredGrid** with its
+polyhedra, **PolyData**); time series and parallel writing come next.
 
-Choose it when the files are read by HDF5 tools too, or to use HDF5 compression; stay with the XML formats for
-polyhedra, for files that VTKFortran reads back, and without an HDF5 library. It needs the library built with HDF5 (see
+Choose it when the files are read by HDF5 tools too, or to use HDF5 compression; stay with the XML formats for files
+that VTKFortran reads back, and without an HDF5 library. It needs the library built with HDF5 (see
 [Installation](/guide/installation#optional-hdf5-vtkhdf)): without it `initialize` returns a non-zero error.
 
 The calls are the ones of the XML formats, with `format='vtkhdf'`; an ImageData:
@@ -78,6 +78,13 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
   Ids and offsets keep the kind of the call: `I4P` a 32-bit integer, `I8P` a 64-bit one. Every piece must write the
   same point and cell arrays: an array missing from a piece, or new after the first one, is refused. A complete
   program: [Write a .vtkhdf file](/manual/cookbook#write-a-vtkhdf-file).
+- **Polyhedra** (VTKHDF 2.5): the `face` and `faceoffset` of `write_connectivity` become `FaceConnectivity` (the point
+  ids of each face), `FaceOffsets` (from 0 in each piece), `PolyhedronToFaces` (the faces of each polyhedron, from 0 in
+  the piece) and `PolyhedronOffsets` (one per cell plus one, from 0: a cell that is not a polyhedron has no faces),
+  with the counts `NumberOfFaces`, `NumberOfFaceConnectivityIds` and `NumberOfPolyhedronToFaceIds` of each piece. Once a
+  file has polyhedra every piece has these entries, zeros for a piece without polyhedra. The faces are checked before
+  anything is written: a cell is a polyhedron (type 42) if and only if its `faceoffset` is not `-1`, each face has at
+  least 3 points, and the faces of a cell end at its `faceoffset`.
 - **PolyData** (`Type` `PolyData`): each piece is a partition too, with its entry of `NumberOfPoints` and its `Points`.
   Its cells are in four groups, `Vertices`, `Lines`, `Strips` and `Polygons`, the blocks of `write_polydata_cells`:
   each group has its own `NumberOfCells`, `NumberOfConnectivityIds`, `Connectivity` and `Offsets` (from 0 in each
@@ -99,10 +106,10 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
   on string field data, or drops them). See [Data arrays](/guide/data).
 - **Compression**: `compressor='zlib'` deflates every dataset (level 6, in chunks of up to 1 MiB). It needs the deflate
   filter of the HDF5 library, not `VTKFORTRAN_USE_ZLIB`: without it `initialize` returns a non-zero error.
-- **Version**: the lowest one with the features written: 2.0, 2.6 when an active array is designated, 2.7 for a
-  RectilinearGrid or StructuredGrid. The files are checked with VTK 9.7.2 and ParaView 6.1.1 (but the RectilinearGrid
-  and StructuredGrid files, which ParaView 6.1 cannot read).
-- **Not supported**: more than one piece of a grid (ImageData, RectilinearGrid, StructuredGrid), polyhedra, a volatile
+- **Version**: the lowest one with the features written: 2.0, 2.5 with polyhedra, 2.6 when an active array is
+  designated, 2.7 for a RectilinearGrid or StructuredGrid. The files are checked with VTK 9.7.2 and ParaView 6.1.1 (but
+  the RectilinearGrid and StructuredGrid files, which ParaView 6.1 cannot read).
+- **Not supported**: more than one piece of a grid (ImageData, RectilinearGrid, StructuredGrid), a volatile
   file (`is_volatile`), reading the file back with VTKFortran, and VTKHDF pieces in parallel (`P*`), multi-block and
   `.pvd` files. Each refusal is a non-zero error with a message on standard error. `header_type` is ignored: HDF5 has no
   size limit per array.
