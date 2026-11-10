@@ -2,11 +2,13 @@
 program vtk_fortran_write_vtkhdf_unst
 !< VTK_Fortran test: write UnstructuredGrid in the VTKHDF format (`format='vtkhdf'`), pieces as partitions.
 !<
-!< With HDF5 the test writes three meshes, each one also as a binary `.vtu` by the same calls (VTK readers compare the two
+!< With HDF5 the test writes four meshes, each one also as a binary `.vtu` by the same calls (VTK readers compare the two
 !< outside this test):
 !<
 !<- `vtkfortran_unst_mixed`: one piece of mixed cells (vertex, line, quadratic edge, triangle, quad, tetra, hexahedron,
 !<  wedge, pyramid), point and cell data, unsigned cell data, active arrays, field data;
+!<- `vtkfortran_unst_linear`: one piece of the other linear cells (poly-vertex, polyline, triangle strip, polygon, pixel,
+!<  voxel): with the mixed mesh, every cell type of the reference page but polyhedra;
 !<- `vtkfortran_unst_pieces`: two pieces (a hexahedron, then a pyramid and a tetra), the same arrays in both;
 !<- `vtkfortran_unst_i8p`: I8P counts and ids, the points as `xyz(3,np)` (R4P), compressed if HDF5 has deflate.
 !<
@@ -41,9 +43,10 @@ else
     e(f) = write_mixed(trim(formats(f)), 'vtkfortran_unst_mixed'//trim(extensions(f)))
     e(2+f) = write_pieces(trim(formats(f)), 'vtkfortran_unst_pieces'//trim(extensions(f)))
     e(4+f) = write_i8p(trim(formats(f)), 'vtkfortran_unst_i8p'//trim(extensions(f)))
+    e(6+f) = write_linear(trim(formats(f)), 'vtkfortran_unst_linear'//trim(extensions(f)))
   enddo
-  test_passed(1) = all(e(1:6) == 0)
-  if (.not.test_passed(1)) print '(A,6I2)', 'errors of the meshes (vtkhdf, vtu for each): ', e(1:6)
+  test_passed(1) = all(e(1:8) == 0)
+  if (.not.test_passed(1)) print '(A,8I2)', 'errors of the meshes (vtkhdf, vtu for each): ', e(1:8)
   test_passed(2) = refusals()
 
   ! read back the two pieces
@@ -131,6 +134,41 @@ contains
   error = max(error, abs(a_vtk_file%xml_writer%write_piece()))
   error = max(error, abs(a_vtk_file%finalize()))
   endfunction write_mixed
+
+  function write_linear(format, filename) result(error)
+  !< One piece of the linear cells not in the mixed mesh, on the 8 corners of a unit cube (point i at the corner of
+  !< coordinates the bits of i: x the lowest), with point data pd and cell data cid.
+  character(*), intent(in) :: format   !< Format.
+  character(*), intent(in) :: filename !< File name.
+  integer(I4P)             :: error    !< Error status.
+  integer(I4P), parameter  :: np=8, nc=6
+  real(R8P)                :: x(np), y(np), z(np)
+  integer(I4P)             :: connect(27), offset(nc), p
+  integer(I1P)             :: cell_type(nc)
+
+  x = [0, 1, 0, 1, 0, 1, 0, 1] ; y = [0, 0, 1, 1, 0, 0, 1, 1] ; z = [0, 0, 0, 0, 1, 1, 1, 1]
+  connect = [0, 1, 2,                    & ! poly-vertex
+             0, 1, 3, 2,                 & ! polyline
+             0, 1, 2, 3,                 & ! triangle strip
+             0, 1, 3, 2,                 & ! polygon
+             0, 1, 2, 3,                 & ! pixel
+             0, 1, 2, 3, 4, 5, 6, 7]       ! voxel
+  offset = [3, 7, 11, 15, 19, 27]
+  cell_type = [2_I1P, 4_I1P, 6_I1P, 7_I1P, 8_I1P, 11_I1P]
+  error = a_vtk_file%initialize(format=format, filename=filename, mesh_topology='UnstructuredGrid')
+  error = max(error, abs(a_vtk_file%xml_writer%write_piece(np=np, nc=nc)))
+  error = max(error, abs(a_vtk_file%xml_writer%write_geo(np=np, nc=nc, x=x, y=y, z=z)))
+  error = max(error, abs(a_vtk_file%xml_writer%write_connectivity(nc=nc, connectivity=connect, offset=offset, &
+                                                                    cell_type=cell_type)))
+  error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(location='node', action='open')))
+  error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(data_name='pd', x=[(real(p, R8P), p=1, np)])))
+  error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(location='node', action='close')))
+  error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(location='cell', action='open')))
+  error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(data_name='cid', x=[(p, p=1, nc)])))
+  error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(location='cell', action='close')))
+  error = max(error, abs(a_vtk_file%xml_writer%write_piece()))
+  error = max(error, abs(a_vtk_file%finalize()))
+  endfunction write_linear
 
   function write_pieces(format, filename) result(error)
   !< Two pieces: a hexahedron (8 points), then a pyramid and a tetra (5 points); point ids from 0 in each piece.
