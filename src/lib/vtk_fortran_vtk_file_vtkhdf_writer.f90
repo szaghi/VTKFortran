@@ -1,6 +1,6 @@
-!< VTK file VTKHDF writer: an HDF5 file in the VTKHDF layout (ImageData, UnstructuredGrid).
+!< VTK file VTKHDF writer: an HDF5 file in the VTKHDF layout (ImageData, UnstructuredGrid, PolyData).
 module vtk_fortran_vtk_file_vtkhdf_writer
-!< VTK file VTKHDF writer: an HDF5 file in the VTKHDF layout (ImageData, UnstructuredGrid).
+!< VTK file VTKHDF writer: an HDF5 file in the VTKHDF layout (ImageData, UnstructuredGrid, PolyData).
 !<
 !< The writer of `vtk_file%initialize(format='VTKHDF', ...)`: the same calls as the XML formats write the group `/VTKHDF`
 !< of an HDF5 file (VTKHDF specification 2.x, read by VTK >= 9.1 and ParaView): the attributes `Version`, `Type`,
@@ -11,6 +11,8 @@ module vtk_fortran_vtk_file_vtkhdf_writer
 !< Supported: ImageData, one piece (its extent is the whole extent); UnstructuredGrid, each piece a partition (its counts
 !< in `NumberOfPoints`, `NumberOfCells`, `NumberOfConnectivityIds`, its points, cells and arrays appended to datasets
 !< shared by the pieces; the offsets written from 0, VTKFortran's end offsets converted), ids and counts I4P or I8P;
+!< PolyData, each piece a partition as well, its cells in the four groups `Vertices`, `Lines`, `Strips`, `Polygons` (each
+!< with its own counts, connectivity and offsets; a block not given has no cells, and its group gets zero entries);
 !< data arrays of every kind and layout, unsigned arrays, active arrays (`Attribute`, VTKHDF 2.6), numeric field data.
 !< Refused (non-zero error, message on stderr): other topologies and polyhedra (not yet), a volatile file, string field
 !< data (the VTK reader crashes on them), zlib without the HDF5 deflate filter, an array missing from a piece or new
@@ -30,6 +32,8 @@ character(*), parameter :: ROLES(5) = ['Scalars', 'Vectors', 'Normals', 'Tensors
 integer(I4P), parameter :: DEFLATE_LEVEL_ZLIB = 6_I4P !< Deflate level of compressed datasets (the zlib default).
 integer(I4P), parameter :: TOPOLOGY_IMAGE = 1_I4P        !< ImageData.
 integer(I4P), parameter :: TOPOLOGY_UNSTRUCTURED = 2_I4P !< UnstructuredGrid.
+integer(I4P), parameter :: TOPOLOGY_POLY = 3_I4P         !< PolyData.
+character(*), parameter :: BLOCKS(4) = ['Vertices', 'Lines   ', 'Strips  ', 'Polygons'] !< Groups of the PolyData cells.
 character(*), parameter :: NAMES_SEPARATOR = achar(0)    !< Separator of the names of a list (a name has no NUL).
 
 type :: active_array
@@ -38,7 +42,7 @@ type :: active_array
 endtype active_array
 
 type, extends(vtk_writer_abstract) :: vtkhdf_writer
-  !< VTKHDF writer (ImageData).
+  !< VTKHDF writer (ImageData, UnstructuredGrid, PolyData).
   private
   integer(hid_kind)             :: file_id=-1_hid_kind     !< File.
   integer(hid_kind)             :: root=-1_hid_kind        !< Group /VTKHDF.
@@ -49,11 +53,12 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
   logical                       :: is_piece_open=.false.   !< A piece is open.
   integer(I8P)                  :: version_minor=0_I8P     !< Minor version needed by the features written.
   type(active_array)            :: active(5)               !< Active arrays of the open group, one per role.
-  integer(I4P)                  :: topology=0_I4P          !< Topology: TOPOLOGY_IMAGE or TOPOLOGY_UNSTRUCTURED.
-  integer(I8P)                  :: np_piece=0_I8P          !< Points of the open piece (UnstructuredGrid).
-  integer(I8P)                  :: nc_piece=0_I8P          !< Cells of the open piece (UnstructuredGrid).
-  integer(I8P)                  :: total_points=0_I8P      !< Points of the pieces started (UnstructuredGrid).
-  integer(I8P)                  :: total_cells=0_I8P       !< Cells of the pieces started (UnstructuredGrid).
+  integer(I4P)                  :: topology=0_I4P          !< Topology: TOPOLOGY_IMAGE, _UNSTRUCTURED or _POLY.
+  integer(I8P)                  :: np_piece=0_I8P          !< Points of the open piece (UnstructuredGrid, PolyData).
+  integer(I8P)                  :: nc_piece=0_I8P          !< Cells of the open piece (UnstructuredGrid, PolyData).
+  integer(I8P)                  :: block_cells(4)=0_I8P    !< Cells of each block of the open piece (PolyData).
+  integer(I8P)                  :: total_points=0_I8P      !< Points of the pieces started (UnstructuredGrid, PolyData).
+  integer(I8P)                  :: total_cells=0_I8P       !< Cells of the pieces started (UnstructuredGrid, PolyData).
   logical                       :: is_geo_written=.false.  !< The points of the open piece are written.
   logical                       :: is_connectivity_written=.false. !< The cells of the open piece are written.
   character(len=:), allocatable :: point_arrays            !< Names of the point data arrays, NUL terminated.
@@ -133,6 +138,9 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
     procedure, pass(self) :: write_connectivity_I8P
     procedure, pass(self) :: write_piece_start_tag_unst
     procedure, pass(self) :: write_piece_start_tag_unst_I8P
+    procedure, pass(self) :: write_piece_start_tag_poly
+    procedure, pass(self) :: write_piece_start_tag_poly_I8P
+    procedure, pass(self) :: write_polydata_cells
     procedure, pass(self) :: write_geo_strg_data1_rank2_R8P
     procedure, pass(self) :: write_geo_strg_data1_rank2_R4P
     procedure, pass(self) :: write_geo_strg_data1_rank4_R8P
@@ -143,21 +151,20 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
     procedure, pass(self) :: write_geo_strg_data3_rank3_R4P
     procedure, pass(self) :: write_geo_rect_data3_rank1_R8P
     procedure, pass(self) :: write_geo_rect_data3_rank1_R4P
-    procedure, pass(self) :: write_piece_start_tag_poly
-    procedure, pass(self) :: write_piece_start_tag_poly_I8P
-    procedure, pass(self) :: write_polydata_cells
     ! private helpers
     procedure, pass(self), private :: check_cells   !< Check a write_connectivity call of an UnstructuredGrid piece.
-    procedure, pass(self), private :: check_geo     !< Check a write_geo call of an UnstructuredGrid piece.
+    procedure, pass(self), private :: check_geo     !< Check a write_geo call of an UnstructuredGrid or PolyData piece.
     procedure, pass(self), private :: close_group   !< Close the open data group.
     procedure, pass(self), private :: dataset_dims  !< Shape of the dataset of a data array.
     procedure, pass(self), private :: deflate_level !< Deflate level of the datasets.
-    procedure, pass(self), private :: end_partition !< End a piece of an UnstructuredGrid: check it.
+    procedure, pass(self), private :: end_partition !< End a piece of an UnstructuredGrid or PolyData: check it.
     procedure, pass(self), private :: mark_active   !< Mark a dataset as active array.
     procedure, pass(self), private :: open_group    !< Open (or create) a data group.
+    procedure, pass(self), private :: poly_block    !< Check or write a block of cells of a PolyData piece.
+    procedure, pass(self), private :: poly_blocks   !< Check or write the four blocks of cells of a PolyData piece.
     procedure, pass(self), private :: record_array  !< Record the name of a point or cell data array.
     procedure, pass(self), private :: reset         !< Reset the state of the writer.
-    procedure, pass(self), private :: start_partition !< Start a piece of an UnstructuredGrid.
+    procedure, pass(self), private :: start_partition !< Start a piece of an UnstructuredGrid or PolyData.
 endtype vtkhdf_writer
 
 contains
@@ -166,8 +173,9 @@ contains
   !< Initialize the writer: create the file and write the header of the topology.
   !<
   !< `format` is VTKHDF (not checked here), `mesh_topology` ImageData, with its whole extent `nx1`...`nz2` (origin,
-  !< spacing and direction are set by `vtk_file%initialize`), or UnstructuredGrid. `is_volatile` is refused, `mesh_kind`
-  !< unused (the points keep the kind they are given).
+  !< spacing and direction are set by `vtk_file%initialize`), UnstructuredGrid or PolyData (its four groups of cells
+  !< created here: VTK reads none without all of them). `is_volatile` is refused, `mesh_kind` unused (the points keep
+  !< the kind they are given).
   class(vtkhdf_writer),       intent(inout)        :: self          !< Writer.
   character(*),               intent(in)           :: format        !< File format: VTKHDF.
   character(*),               intent(in)           :: filename      !< File name.
@@ -181,6 +189,8 @@ contains
   character(*),               intent(in), optional :: mesh_kind     !< Kind of mesh data: Float64, Float32, ecc.
   logical,                    intent(in), optional :: is_volatile   !< Flag to check volatile writer.
   integer(I4P)                                     :: error         !< Error status.
+  integer(hid_kind)                                :: block_group   !< Group of a block of PolyData cells.
+  integer(I4P)                                     :: b             !< Counter.
 
   self%file_id = -1_hid_kind ; self%root = -1_hid_kind ; self%group = -1_hid_kind
   call self%reset
@@ -199,8 +209,11 @@ contains
     self%topology = TOPOLOGY_IMAGE
   case('UnstructuredGrid')
     self%topology = TOPOLOGY_UNSTRUCTURED
+  case('PolyData')
+    self%topology = TOPOLOGY_POLY
   case default
-    error = refuse('topology '//trim(adjustl(mesh_topology))//': only ImageData and UnstructuredGrid are supported yet')
+    error = refuse('topology '//trim(adjustl(mesh_topology))//': only ImageData, UnstructuredGrid and PolyData '// &
+                   'are supported yet')
     return
   endselect
   if (self%topology == TOPOLOGY_IMAGE) then
@@ -227,8 +240,14 @@ contains
     if (error == 0_I4P) error = h5_attribute_write(self%root, 'Origin', self%origin)
     if (error == 0_I4P) error = h5_attribute_write(self%root, 'Spacing', self%spacing)
     if (error == 0_I4P) error = h5_attribute_write(self%root, 'Direction', self%direction)
-  else
+  elseif (self%topology == TOPOLOGY_UNSTRUCTURED) then
     if (error == 0_I4P) error = h5_attribute_write(self%root, 'Type', 'UnstructuredGrid')
+  else
+    if (error == 0_I4P) error = h5_attribute_write(self%root, 'Type', 'PolyData')
+    do b=1, size(BLOCKS)
+      if (error == 0_I4P) error = h5_group_create(self%root, trim(BLOCKS(b)), block_group)
+      if (error == 0_I4P) error = h5_group_close(block_group)
+    enddo
   endif
   endfunction initialize
 
@@ -279,7 +298,8 @@ contains
   endfunction write_piece_start_tag
 
   function write_piece_end_tag(self) result(error)
-  !< End the piece. A piece of an UnstructuredGrid needs its points and cells, and every array of the first piece.
+  !< End the piece. A piece of an UnstructuredGrid or PolyData needs its points and cells, and every array of the first
+  !< piece.
   class(vtkhdf_writer),       intent(inout) :: self
   integer(I4P)                              :: error
 
@@ -287,7 +307,7 @@ contains
   if (.not.self%is_piece_open .or. self%group >= 0_hid_kind) return
   self%is_piece_open = .false.
   error = 0_I4P
-  if (self%topology == TOPOLOGY_UNSTRUCTURED) error = self%end_partition()
+  if (self%topology /= TOPOLOGY_IMAGE) error = self%end_partition()
   endfunction write_piece_end_tag
 
   function write_dataarray_location_tag(self, location, action, scalars, vectors, normals, tensors, tcoords) result(error)
@@ -1444,7 +1464,7 @@ contains
   endfunction write_dataarray_unsigned_I1P
 
   function write_geo_unst_data1_rank2_R8P(self, np, nc, xyz) result(error)
-  !< Write the points of the piece of an UnstructuredGrid (R8P), `xyz(1:3,1:np)`.
+  !< Write the points of the piece of an UnstructuredGrid or PolyData (R8P), `xyz(1:3,1:np)`.
   class(vtkhdf_writer),       intent(inout) :: self
   integer(I4P),               intent(in)    :: np
   integer(I4P),               intent(in)    :: nc
@@ -1455,7 +1475,7 @@ contains
   endfunction write_geo_unst_data1_rank2_R8P
 
   function write_geo_unst_data3_rank1_R8P(self, np, nc, x, y, z) result(error)
-  !< Write the points of the piece of an UnstructuredGrid (R8P), by coordinate.
+  !< Write the points of the piece of an UnstructuredGrid or PolyData (R8P), by coordinate.
   class(vtkhdf_writer),       intent(inout) :: self
   integer(I4P),               intent(in)    :: np
   integer(I4P),               intent(in)    :: nc
@@ -1477,7 +1497,7 @@ contains
   endfunction write_geo_unst_data3_rank1_R8P
 
   function write_geo_unst_data1_rank2_R8P_I8P(self, np, nc, xyz) result(error)
-  !< Write the points of the piece of an UnstructuredGrid (R8P), `xyz(1:3,1:np)`.
+  !< Write the points of the piece of an UnstructuredGrid or PolyData (R8P), `xyz(1:3,1:np)`.
   class(vtkhdf_writer),       intent(inout) :: self
   integer(I8P),               intent(in)    :: np
   integer(I8P),               intent(in)    :: nc
@@ -1488,7 +1508,7 @@ contains
   endfunction write_geo_unst_data1_rank2_R8P_I8P
 
   function write_geo_unst_data3_rank1_R8P_I8P(self, np, nc, x, y, z) result(error)
-  !< Write the points of the piece of an UnstructuredGrid (R8P), by coordinate.
+  !< Write the points of the piece of an UnstructuredGrid or PolyData (R8P), by coordinate.
   class(vtkhdf_writer),       intent(inout) :: self
   integer(I8P),               intent(in)    :: np
   integer(I8P),               intent(in)    :: nc
@@ -1510,7 +1530,7 @@ contains
   endfunction write_geo_unst_data3_rank1_R8P_I8P
 
   function write_geo_unst_data1_rank2_R4P(self, np, nc, xyz) result(error)
-  !< Write the points of the piece of an UnstructuredGrid (R4P), `xyz(1:3,1:np)`.
+  !< Write the points of the piece of an UnstructuredGrid or PolyData (R4P), `xyz(1:3,1:np)`.
   class(vtkhdf_writer),       intent(inout) :: self
   integer(I4P),               intent(in)    :: np
   integer(I4P),               intent(in)    :: nc
@@ -1521,7 +1541,7 @@ contains
   endfunction write_geo_unst_data1_rank2_R4P
 
   function write_geo_unst_data3_rank1_R4P(self, np, nc, x, y, z) result(error)
-  !< Write the points of the piece of an UnstructuredGrid (R4P), by coordinate.
+  !< Write the points of the piece of an UnstructuredGrid or PolyData (R4P), by coordinate.
   class(vtkhdf_writer),       intent(inout) :: self
   integer(I4P),               intent(in)    :: np
   integer(I4P),               intent(in)    :: nc
@@ -1543,7 +1563,7 @@ contains
   endfunction write_geo_unst_data3_rank1_R4P
 
   function write_geo_unst_data1_rank2_R4P_I8P(self, np, nc, xyz) result(error)
-  !< Write the points of the piece of an UnstructuredGrid (R4P), `xyz(1:3,1:np)`.
+  !< Write the points of the piece of an UnstructuredGrid or PolyData (R4P), `xyz(1:3,1:np)`.
   class(vtkhdf_writer),       intent(inout) :: self
   integer(I8P),               intent(in)    :: np
   integer(I8P),               intent(in)    :: nc
@@ -1554,7 +1574,7 @@ contains
   endfunction write_geo_unst_data1_rank2_R4P_I8P
 
   function write_geo_unst_data3_rank1_R4P_I8P(self, np, nc, x, y, z) result(error)
-  !< Write the points of the piece of an UnstructuredGrid (R4P), by coordinate.
+  !< Write the points of the piece of an UnstructuredGrid or PolyData (R4P), by coordinate.
   class(vtkhdf_writer),       intent(inout) :: self
   integer(I8P),               intent(in)    :: np
   integer(I8P),               intent(in)    :: nc
@@ -1633,114 +1653,8 @@ contains
   error = self%start_partition(np, nc)
   endfunction write_piece_start_tag_unst_I8P
 
-  function write_geo_strg_data1_rank2_R8P(self, xyz) result(error)
-  !< Not supported yet by the VTKHDF writer (topologies other than ImageData and UnstructuredGrid): an error.
-  class(vtkhdf_writer),       intent(inout) :: self
-  real(R8P),                  intent(in)    :: xyz(1:,1:)
-  integer(I4P)                              :: error
-
-  error = refuse('write_geo of this topology: only ImageData and UnstructuredGrid are supported yet')
-  endfunction write_geo_strg_data1_rank2_R8P
-
-  function write_geo_strg_data1_rank2_R4P(self, xyz) result(error)
-  !< Not supported yet by the VTKHDF writer (topologies other than ImageData and UnstructuredGrid): an error.
-  class(vtkhdf_writer),       intent(inout) :: self
-  real(R4P),                  intent(in)    :: xyz(1:,1:)
-  integer(I4P)                              :: error
-
-  error = refuse('write_geo of this topology: only ImageData and UnstructuredGrid are supported yet')
-  endfunction write_geo_strg_data1_rank2_R4P
-
-  function write_geo_strg_data1_rank4_R8P(self, xyz) result(error)
-  !< Not supported yet by the VTKHDF writer (topologies other than ImageData and UnstructuredGrid): an error.
-  class(vtkhdf_writer),       intent(inout) :: self
-  real(R8P),                  intent(in)    :: xyz(1:,1:,1:,1:)
-  integer(I4P)                              :: error
-
-  error = refuse('write_geo of this topology: only ImageData and UnstructuredGrid are supported yet')
-  endfunction write_geo_strg_data1_rank4_R8P
-
-  function write_geo_strg_data1_rank4_R4P(self, xyz) result(error)
-  !< Not supported yet by the VTKHDF writer (topologies other than ImageData and UnstructuredGrid): an error.
-  class(vtkhdf_writer),       intent(inout) :: self
-  real(R4P),                  intent(in)    :: xyz(1:,1:,1:,1:)
-  integer(I4P)                              :: error
-
-  error = refuse('write_geo of this topology: only ImageData and UnstructuredGrid are supported yet')
-  endfunction write_geo_strg_data1_rank4_R4P
-
-  function write_geo_strg_data3_rank1_R8P(self, n, x, y, z) result(error)
-  !< Not supported yet by the VTKHDF writer (topologies other than ImageData and UnstructuredGrid): an error.
-  class(vtkhdf_writer),       intent(inout) :: self
-  integer(I4P),               intent(in)    :: n
-  real(R8P),                  intent(in)    :: x(1:)
-  real(R8P),                  intent(in)    :: y(1:)
-  real(R8P),                  intent(in)    :: z(1:)
-  integer(I4P)                              :: error
-
-  error = refuse('write_geo of this topology: only ImageData and UnstructuredGrid are supported yet')
-  endfunction write_geo_strg_data3_rank1_R8P
-
-  function write_geo_strg_data3_rank1_R4P(self, n, x, y, z) result(error)
-  !< Not supported yet by the VTKHDF writer (topologies other than ImageData and UnstructuredGrid): an error.
-  class(vtkhdf_writer),       intent(inout) :: self
-  integer(I4P),               intent(in)    :: n
-  real(R4P),                  intent(in)    :: x(1:)
-  real(R4P),                  intent(in)    :: y(1:)
-  real(R4P),                  intent(in)    :: z(1:)
-  integer(I4P)                              :: error
-
-  error = refuse('write_geo of this topology: only ImageData and UnstructuredGrid are supported yet')
-  endfunction write_geo_strg_data3_rank1_R4P
-
-  function write_geo_strg_data3_rank3_R8P(self, n, x, y, z) result(error)
-  !< Not supported yet by the VTKHDF writer (topologies other than ImageData and UnstructuredGrid): an error.
-  class(vtkhdf_writer),       intent(inout) :: self
-  integer(I4P),               intent(in)    :: n
-  real(R8P),                  intent(in)    :: x(1:,1:,1:)
-  real(R8P),                  intent(in)    :: y(1:,1:,1:)
-  real(R8P),                  intent(in)    :: z(1:,1:,1:)
-  integer(I4P)                              :: error
-
-  error = refuse('write_geo of this topology: only ImageData and UnstructuredGrid are supported yet')
-  endfunction write_geo_strg_data3_rank3_R8P
-
-  function write_geo_strg_data3_rank3_R4P(self, n, x, y, z) result(error)
-  !< Not supported yet by the VTKHDF writer (topologies other than ImageData and UnstructuredGrid): an error.
-  class(vtkhdf_writer),       intent(inout) :: self
-  integer(I4P),               intent(in)    :: n
-  real(R4P),                  intent(in)    :: x(1:,1:,1:)
-  real(R4P),                  intent(in)    :: y(1:,1:,1:)
-  real(R4P),                  intent(in)    :: z(1:,1:,1:)
-  integer(I4P)                              :: error
-
-  error = refuse('write_geo of this topology: only ImageData and UnstructuredGrid are supported yet')
-  endfunction write_geo_strg_data3_rank3_R4P
-
-  function write_geo_rect_data3_rank1_R8P(self, x, y, z) result(error)
-  !< Not supported yet by the VTKHDF writer (topologies other than ImageData and UnstructuredGrid): an error.
-  class(vtkhdf_writer),       intent(inout) :: self
-  real(R8P),                  intent(in)    :: x(1:)
-  real(R8P),                  intent(in)    :: y(1:)
-  real(R8P),                  intent(in)    :: z(1:)
-  integer(I4P)                              :: error
-
-  error = refuse('write_geo of this topology: only ImageData and UnstructuredGrid are supported yet')
-  endfunction write_geo_rect_data3_rank1_R8P
-
-  function write_geo_rect_data3_rank1_R4P(self, x, y, z) result(error)
-  !< Not supported yet by the VTKHDF writer (topologies other than ImageData and UnstructuredGrid): an error.
-  class(vtkhdf_writer),       intent(inout) :: self
-  real(R4P),                  intent(in)    :: x(1:)
-  real(R4P),                  intent(in)    :: y(1:)
-  real(R4P),                  intent(in)    :: z(1:)
-  integer(I4P)                              :: error
-
-  error = refuse('write_geo of this topology: only ImageData and UnstructuredGrid are supported yet')
-  endfunction write_geo_rect_data3_rank1_R4P
-
   function write_piece_start_tag_poly(self, np, nverts, nlines, nstrips, npolys) result(error)
-  !< Not supported yet by the VTKHDF writer (topologies other than ImageData and UnstructuredGrid): an error.
+  !< Start a piece of a PolyData: a partition of the file, with the cells of each block.
   class(vtkhdf_writer),       intent(inout) :: self
   integer(I4P),               intent(in)    :: np
   integer(I4P),               intent(in)    :: nverts
@@ -1749,11 +1663,12 @@ contains
   integer(I4P),               intent(in)    :: npolys
   integer(I4P)                              :: error
 
-  error = refuse('write_piece of this topology: only ImageData and UnstructuredGrid are supported yet')
+  error = self%start_partition(int(np, I8P), int(nverts, I8P) + int(nlines, I8P) + int(nstrips, I8P) + int(npolys, I8P), &
+                               [int(nverts, I8P), int(nlines, I8P), int(nstrips, I8P), int(npolys, I8P)])
   endfunction write_piece_start_tag_poly
 
   function write_piece_start_tag_poly_I8P(self, np, nverts, nlines, nstrips, npolys) result(error)
-  !< Not supported yet by the VTKHDF writer (topologies other than ImageData and UnstructuredGrid): an error.
+  !< Start a piece of a PolyData (I8P counts): a partition of the file, with the cells of each block.
   class(vtkhdf_writer),       intent(inout) :: self
   integer(I8P),               intent(in)    :: np
   integer(I8P),               intent(in)    :: nverts
@@ -1762,12 +1677,14 @@ contains
   integer(I8P),               intent(in)    :: npolys
   integer(I4P)                              :: error
 
-  error = refuse('write_piece of this topology: only ImageData and UnstructuredGrid are supported yet')
+  error = self%start_partition(np, nverts + nlines + nstrips + npolys, [nverts, nlines, nstrips, npolys])
   endfunction write_piece_start_tag_poly_I8P
 
   function write_polydata_cells(self, verts_connectivity, verts_offset, lines_connectivity, lines_offset, &
       strips_connectivity, strips_offset, polys_connectivity, polys_offset) result(error)
-  !< Not supported yet by the VTKHDF writer (topologies other than ImageData and UnstructuredGrid): an error.
+  !< Write the cells of the piece of a PolyData: each block given (connectivity and end offsets, I4P or I8P) in its
+  !< group (`Vertices`, `Lines`, `Strips`, `Polygons`), offsets from 0; a block not given has no cells (zero entries).
+  !< Every block is checked before any is written.
   class(vtkhdf_writer),       intent(inout)        :: self
   class(*),                   intent(in), optional :: verts_connectivity(1:)
   class(*),                   intent(in), optional :: verts_offset(1:)
@@ -1779,12 +1696,137 @@ contains
   class(*),                   intent(in), optional :: polys_offset(1:)
   integer(I4P)                                     :: error
 
-  error = refuse('write_polydata_cells of this topology: only ImageData and UnstructuredGrid are supported yet')
+  error = 1_I4P
+  if (self%topology /= TOPOLOGY_POLY) then
+    error = refuse('write_polydata_cells is for a PolyData')
+  elseif (.not.self%is_piece_open .or. self%group >= 0_hid_kind) then
+    error = refuse('write_polydata_cells: open the piece first, outside the point and cell data')
+  elseif (self%is_connectivity_written) then
+    error = refuse('write_polydata_cells: the cells of this piece are already written')
+  elseif ((present(verts_connectivity) .neqv. present(verts_offset)) .or. &
+          (present(lines_connectivity) .neqv. present(lines_offset)) .or. &
+          (present(strips_connectivity) .neqv. present(strips_offset)) .or. &
+          (present(polys_connectivity) .neqv. present(polys_offset))) then
+    error = refuse('write_polydata_cells: each block needs its connectivity and its offsets')
+  else
+    error = self%poly_blocks(.true., verts_connectivity, verts_offset, lines_connectivity, lines_offset, &
+                            strips_connectivity, strips_offset, polys_connectivity, polys_offset)
+    if (error == 0_I4P) error = self%poly_blocks(.false., verts_connectivity, verts_offset, lines_connectivity, lines_offset, &
+                                                 strips_connectivity, strips_offset, polys_connectivity, polys_offset)
+    if (error /= 0_I4P) error = refuse('cannot write the cells of the PolyData piece')
+    if (error == 0_I4P) self%is_connectivity_written = .true.
+  endif
   endfunction write_polydata_cells
+
+  function write_geo_strg_data1_rank2_R8P(self, xyz) result(error)
+  !< Not supported yet by the VTKHDF writer (RectilinearGrid, StructuredGrid): an error.
+  class(vtkhdf_writer),       intent(inout) :: self
+  real(R8P),                  intent(in)    :: xyz(1:,1:)
+  integer(I4P)                              :: error
+
+  error = refuse('write_geo of this topology: only ImageData, UnstructuredGrid and PolyData are supported yet')
+  endfunction write_geo_strg_data1_rank2_R8P
+
+  function write_geo_strg_data1_rank2_R4P(self, xyz) result(error)
+  !< Not supported yet by the VTKHDF writer (RectilinearGrid, StructuredGrid): an error.
+  class(vtkhdf_writer),       intent(inout) :: self
+  real(R4P),                  intent(in)    :: xyz(1:,1:)
+  integer(I4P)                              :: error
+
+  error = refuse('write_geo of this topology: only ImageData, UnstructuredGrid and PolyData are supported yet')
+  endfunction write_geo_strg_data1_rank2_R4P
+
+  function write_geo_strg_data1_rank4_R8P(self, xyz) result(error)
+  !< Not supported yet by the VTKHDF writer (RectilinearGrid, StructuredGrid): an error.
+  class(vtkhdf_writer),       intent(inout) :: self
+  real(R8P),                  intent(in)    :: xyz(1:,1:,1:,1:)
+  integer(I4P)                              :: error
+
+  error = refuse('write_geo of this topology: only ImageData, UnstructuredGrid and PolyData are supported yet')
+  endfunction write_geo_strg_data1_rank4_R8P
+
+  function write_geo_strg_data1_rank4_R4P(self, xyz) result(error)
+  !< Not supported yet by the VTKHDF writer (RectilinearGrid, StructuredGrid): an error.
+  class(vtkhdf_writer),       intent(inout) :: self
+  real(R4P),                  intent(in)    :: xyz(1:,1:,1:,1:)
+  integer(I4P)                              :: error
+
+  error = refuse('write_geo of this topology: only ImageData, UnstructuredGrid and PolyData are supported yet')
+  endfunction write_geo_strg_data1_rank4_R4P
+
+  function write_geo_strg_data3_rank1_R8P(self, n, x, y, z) result(error)
+  !< Not supported yet by the VTKHDF writer (RectilinearGrid, StructuredGrid): an error.
+  class(vtkhdf_writer),       intent(inout) :: self
+  integer(I4P),               intent(in)    :: n
+  real(R8P),                  intent(in)    :: x(1:)
+  real(R8P),                  intent(in)    :: y(1:)
+  real(R8P),                  intent(in)    :: z(1:)
+  integer(I4P)                              :: error
+
+  error = refuse('write_geo of this topology: only ImageData, UnstructuredGrid and PolyData are supported yet')
+  endfunction write_geo_strg_data3_rank1_R8P
+
+  function write_geo_strg_data3_rank1_R4P(self, n, x, y, z) result(error)
+  !< Not supported yet by the VTKHDF writer (RectilinearGrid, StructuredGrid): an error.
+  class(vtkhdf_writer),       intent(inout) :: self
+  integer(I4P),               intent(in)    :: n
+  real(R4P),                  intent(in)    :: x(1:)
+  real(R4P),                  intent(in)    :: y(1:)
+  real(R4P),                  intent(in)    :: z(1:)
+  integer(I4P)                              :: error
+
+  error = refuse('write_geo of this topology: only ImageData, UnstructuredGrid and PolyData are supported yet')
+  endfunction write_geo_strg_data3_rank1_R4P
+
+  function write_geo_strg_data3_rank3_R8P(self, n, x, y, z) result(error)
+  !< Not supported yet by the VTKHDF writer (RectilinearGrid, StructuredGrid): an error.
+  class(vtkhdf_writer),       intent(inout) :: self
+  integer(I4P),               intent(in)    :: n
+  real(R8P),                  intent(in)    :: x(1:,1:,1:)
+  real(R8P),                  intent(in)    :: y(1:,1:,1:)
+  real(R8P),                  intent(in)    :: z(1:,1:,1:)
+  integer(I4P)                              :: error
+
+  error = refuse('write_geo of this topology: only ImageData, UnstructuredGrid and PolyData are supported yet')
+  endfunction write_geo_strg_data3_rank3_R8P
+
+  function write_geo_strg_data3_rank3_R4P(self, n, x, y, z) result(error)
+  !< Not supported yet by the VTKHDF writer (RectilinearGrid, StructuredGrid): an error.
+  class(vtkhdf_writer),       intent(inout) :: self
+  integer(I4P),               intent(in)    :: n
+  real(R4P),                  intent(in)    :: x(1:,1:,1:)
+  real(R4P),                  intent(in)    :: y(1:,1:,1:)
+  real(R4P),                  intent(in)    :: z(1:,1:,1:)
+  integer(I4P)                              :: error
+
+  error = refuse('write_geo of this topology: only ImageData, UnstructuredGrid and PolyData are supported yet')
+  endfunction write_geo_strg_data3_rank3_R4P
+
+  function write_geo_rect_data3_rank1_R8P(self, x, y, z) result(error)
+  !< Not supported yet by the VTKHDF writer (RectilinearGrid, StructuredGrid): an error.
+  class(vtkhdf_writer),       intent(inout) :: self
+  real(R8P),                  intent(in)    :: x(1:)
+  real(R8P),                  intent(in)    :: y(1:)
+  real(R8P),                  intent(in)    :: z(1:)
+  integer(I4P)                              :: error
+
+  error = refuse('write_geo of this topology: only ImageData, UnstructuredGrid and PolyData are supported yet')
+  endfunction write_geo_rect_data3_rank1_R8P
+
+  function write_geo_rect_data3_rank1_R4P(self, x, y, z) result(error)
+  !< Not supported yet by the VTKHDF writer (RectilinearGrid, StructuredGrid): an error.
+  class(vtkhdf_writer),       intent(inout) :: self
+  real(R4P),                  intent(in)    :: x(1:)
+  real(R4P),                  intent(in)    :: y(1:)
+  real(R4P),                  intent(in)    :: z(1:)
+  integer(I4P)                              :: error
+
+  error = refuse('write_geo of this topology: only ImageData, UnstructuredGrid and PolyData are supported yet')
+  endfunction write_geo_rect_data3_rank1_R4P
 
   ! private helpers
   function put_R8P(self, data_name, x, n, n_components) result(error)
-  !< Write `n` values (R8P) as the dataset `data_name` of the open group: in an UnstructuredGrid, created by
+  !< Write `n` values (R8P) as the dataset `data_name` of the open group: in an UnstructuredGrid or PolyData, created by
   !< the first piece and appended to by the others.
   class(vtkhdf_writer), intent(inout) :: self         !< Writer.
   character(*), intent(in)            :: data_name    !< Data name.
@@ -1798,7 +1840,7 @@ contains
   error = self%dataset_dims(data_name, n, n_components, dims)
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
-  if (self%topology == TOPOLOGY_UNSTRUCTURED .and. self%group_name /= 'FieldData') then
+  if (self%topology /= TOPOLOGY_IMAGE .and. self%group_name /= 'FieldData') then
     if (is_new .and. self%n_pieces > 1_I4P) then
       error = refuse('the array '//data_name//' is not in the first piece: every piece writes the same arrays')
       return
@@ -1815,7 +1857,7 @@ contains
   endfunction put_R8P
 
   function put_R4P(self, data_name, x, n, n_components) result(error)
-  !< Write `n` values (R4P) as the dataset `data_name` of the open group: in an UnstructuredGrid, created by
+  !< Write `n` values (R4P) as the dataset `data_name` of the open group: in an UnstructuredGrid or PolyData, created by
   !< the first piece and appended to by the others.
   class(vtkhdf_writer), intent(inout) :: self         !< Writer.
   character(*), intent(in)            :: data_name    !< Data name.
@@ -1829,7 +1871,7 @@ contains
   error = self%dataset_dims(data_name, n, n_components, dims)
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
-  if (self%topology == TOPOLOGY_UNSTRUCTURED .and. self%group_name /= 'FieldData') then
+  if (self%topology /= TOPOLOGY_IMAGE .and. self%group_name /= 'FieldData') then
     if (is_new .and. self%n_pieces > 1_I4P) then
       error = refuse('the array '//data_name//' is not in the first piece: every piece writes the same arrays')
       return
@@ -1846,7 +1888,7 @@ contains
   endfunction put_R4P
 
   function put_I8P(self, data_name, x, n, n_components, unsigned) result(error)
-  !< Write `n` values (I8P) as the dataset `data_name` of the open group: in an UnstructuredGrid, created by
+  !< Write `n` values (I8P) as the dataset `data_name` of the open group: in an UnstructuredGrid or PolyData, created by
   !< the first piece and appended to by the others.
   class(vtkhdf_writer), intent(inout) :: self         !< Writer.
   character(*), intent(in)            :: data_name    !< Data name.
@@ -1861,7 +1903,7 @@ contains
   error = self%dataset_dims(data_name, n, n_components, dims)
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
-  if (self%topology == TOPOLOGY_UNSTRUCTURED .and. self%group_name /= 'FieldData') then
+  if (self%topology /= TOPOLOGY_IMAGE .and. self%group_name /= 'FieldData') then
     if (is_new .and. self%n_pieces > 1_I4P) then
       error = refuse('the array '//data_name//' is not in the first piece: every piece writes the same arrays')
       return
@@ -1878,7 +1920,7 @@ contains
   endfunction put_I8P
 
   function put_I4P(self, data_name, x, n, n_components, unsigned) result(error)
-  !< Write `n` values (I4P) as the dataset `data_name` of the open group: in an UnstructuredGrid, created by
+  !< Write `n` values (I4P) as the dataset `data_name` of the open group: in an UnstructuredGrid or PolyData, created by
   !< the first piece and appended to by the others.
   class(vtkhdf_writer), intent(inout) :: self         !< Writer.
   character(*), intent(in)            :: data_name    !< Data name.
@@ -1893,7 +1935,7 @@ contains
   error = self%dataset_dims(data_name, n, n_components, dims)
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
-  if (self%topology == TOPOLOGY_UNSTRUCTURED .and. self%group_name /= 'FieldData') then
+  if (self%topology /= TOPOLOGY_IMAGE .and. self%group_name /= 'FieldData') then
     if (is_new .and. self%n_pieces > 1_I4P) then
       error = refuse('the array '//data_name//' is not in the first piece: every piece writes the same arrays')
       return
@@ -1910,7 +1952,7 @@ contains
   endfunction put_I4P
 
   function put_I2P(self, data_name, x, n, n_components, unsigned) result(error)
-  !< Write `n` values (I2P) as the dataset `data_name` of the open group: in an UnstructuredGrid, created by
+  !< Write `n` values (I2P) as the dataset `data_name` of the open group: in an UnstructuredGrid or PolyData, created by
   !< the first piece and appended to by the others.
   class(vtkhdf_writer), intent(inout) :: self         !< Writer.
   character(*), intent(in)            :: data_name    !< Data name.
@@ -1925,7 +1967,7 @@ contains
   error = self%dataset_dims(data_name, n, n_components, dims)
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
-  if (self%topology == TOPOLOGY_UNSTRUCTURED .and. self%group_name /= 'FieldData') then
+  if (self%topology /= TOPOLOGY_IMAGE .and. self%group_name /= 'FieldData') then
     if (is_new .and. self%n_pieces > 1_I4P) then
       error = refuse('the array '//data_name//' is not in the first piece: every piece writes the same arrays')
       return
@@ -1942,7 +1984,7 @@ contains
   endfunction put_I2P
 
   function put_I1P(self, data_name, x, n, n_components, unsigned) result(error)
-  !< Write `n` values (I1P) as the dataset `data_name` of the open group: in an UnstructuredGrid, created by
+  !< Write `n` values (I1P) as the dataset `data_name` of the open group: in an UnstructuredGrid or PolyData, created by
   !< the first piece and appended to by the others.
   class(vtkhdf_writer), intent(inout) :: self         !< Writer.
   character(*), intent(in)            :: data_name    !< Data name.
@@ -1957,7 +1999,7 @@ contains
   error = self%dataset_dims(data_name, n, n_components, dims)
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
-  if (self%topology == TOPOLOGY_UNSTRUCTURED .and. self%group_name /= 'FieldData') then
+  if (self%topology /= TOPOLOGY_IMAGE .and. self%group_name /= 'FieldData') then
     if (is_new .and. self%n_pieces > 1_I4P) then
       error = refuse('the array '//data_name//' is not in the first piece: every piece writes the same arrays')
       return
@@ -2167,6 +2209,82 @@ contains
   if (error == 0_I4P) self%is_connectivity_written = .true.
   endfunction put_cells_I8P
 
+  function put_block_I4P(self, b, check_only, connectivity, offset) result(error)
+  !< Check (`check_only`) or append the block `b` (I4P ids) of the cells of a PolyData piece to its group:
+  !< Connectivity, Offsets (from 0), NumberOfCells, NumberOfConnectivityIds.
+  class(vtkhdf_writer), intent(inout) :: self            !< Writer.
+  integer(I4P), intent(in)            :: b               !< Block: 1 vertices, 2 lines, 3 strips, 4 polygons.
+  logical, intent(in)                 :: check_only      !< Check the block, write nothing.
+  integer(I4P), intent(in)            :: connectivity(:) !< Point ids of the cells, from 0 in the piece.
+  integer(I4P), intent(in)            :: offset(:)       !< End offset of each cell in the connectivity.
+  integer(I4P)                        :: error           !< Error status.
+  integer(I4P), allocatable           :: offsets(:)      !< Offsets from 0 (nc+1 values).
+  character(len=:), allocatable       :: group           !< Group of the block, with the separator.
+  integer(I8P)                        :: nc              !< Cells of the block.
+  integer(I8P)                        :: n_ids           !< Ids used by the cells.
+
+  error = 0_I4P
+  group = trim(BLOCKS(b))//'/'
+  nc = self%block_cells(b)
+  if (size(offset, kind=I8P) /= nc) then
+    error = refuse('write_polydata_cells: '//trim(BLOCKS(b))//' needs one offset per cell, '// &
+                   trim(str(n=nc, no_sign=.true.))//' as given to write_piece')
+    return
+  endif
+  n_ids = 0_I8P
+  if (nc > 0_I8P) n_ids = int(offset(nc), I8P)
+  if (n_ids < 0_I8P .or. n_ids > size(connectivity, kind=I8P)) then
+    error = refuse('write_polydata_cells: the last offset of '//trim(BLOCKS(b))//' is not within its connectivity')
+    return
+  endif
+  if (check_only) return
+  allocate(offsets(nc+1_I8P))
+  offsets(1) = 0_I4P
+  if (nc > 0_I8P) offsets(2:) = offset(1:nc)
+  error = store_I4P(self, self%root, group//'Connectivity', connectivity, [n_ids])
+  if (error == 0_I4P) error = store_I4P(self, self%root, group//'Offsets', offsets, [nc+1_I8P])
+  if (error == 0_I4P) error = store_I8P(self, self%root, group//'NumberOfCells', [nc], [1_I8P])
+  if (error == 0_I4P) error = store_I8P(self, self%root, group//'NumberOfConnectivityIds', [n_ids], [1_I8P])
+  endfunction put_block_I4P
+
+  function put_block_I8P(self, b, check_only, connectivity, offset) result(error)
+  !< Check (`check_only`) or append the block `b` (I8P ids) of the cells of a PolyData piece to its group:
+  !< Connectivity, Offsets (from 0), NumberOfCells, NumberOfConnectivityIds.
+  class(vtkhdf_writer), intent(inout) :: self            !< Writer.
+  integer(I4P), intent(in)            :: b               !< Block: 1 vertices, 2 lines, 3 strips, 4 polygons.
+  logical, intent(in)                 :: check_only      !< Check the block, write nothing.
+  integer(I8P), intent(in)            :: connectivity(:) !< Point ids of the cells, from 0 in the piece.
+  integer(I8P), intent(in)            :: offset(:)       !< End offset of each cell in the connectivity.
+  integer(I4P)                        :: error           !< Error status.
+  integer(I8P), allocatable           :: offsets(:)      !< Offsets from 0 (nc+1 values).
+  character(len=:), allocatable       :: group           !< Group of the block, with the separator.
+  integer(I8P)                        :: nc              !< Cells of the block.
+  integer(I8P)                        :: n_ids           !< Ids used by the cells.
+
+  error = 0_I4P
+  group = trim(BLOCKS(b))//'/'
+  nc = self%block_cells(b)
+  if (size(offset, kind=I8P) /= nc) then
+    error = refuse('write_polydata_cells: '//trim(BLOCKS(b))//' needs one offset per cell, '// &
+                   trim(str(n=nc, no_sign=.true.))//' as given to write_piece')
+    return
+  endif
+  n_ids = 0_I8P
+  if (nc > 0_I8P) n_ids = int(offset(nc), I8P)
+  if (n_ids < 0_I8P .or. n_ids > size(connectivity, kind=I8P)) then
+    error = refuse('write_polydata_cells: the last offset of '//trim(BLOCKS(b))//' is not within its connectivity')
+    return
+  endif
+  if (check_only) return
+  allocate(offsets(nc+1_I8P))
+  offsets(1) = 0_I8P
+  if (nc > 0_I8P) offsets(2:) = offset(1:nc)
+  error = store_I8P(self, self%root, group//'Connectivity', connectivity, [n_ids])
+  if (error == 0_I4P) error = store_I8P(self, self%root, group//'Offsets', offsets, [nc+1_I8P])
+  if (error == 0_I4P) error = store_I8P(self, self%root, group//'NumberOfCells', [nc], [1_I8P])
+  if (error == 0_I4P) error = store_I8P(self, self%root, group//'NumberOfConnectivityIds', [n_ids], [1_I8P])
+  endfunction put_block_I8P
+
   function check_cells(self, nc, n_offset, n_types) result(error)
   !< Check a write_connectivity call: an UnstructuredGrid piece open (no data group), its cells once, sizes.
   class(vtkhdf_writer), intent(in) :: self     !< Writer.
@@ -2192,7 +2310,8 @@ contains
   endfunction check_cells
 
   function check_geo(self, np, nc, n1, n2) result(error)
-  !< Check a write_geo call: an UnstructuredGrid piece open (no data group), its points once, sizes.
+  !< Check a write_geo call: an UnstructuredGrid or PolyData piece open (no data group), its points once, sizes. The
+  !< number of cells is checked for an UnstructuredGrid only: for a PolyData it is not used, as in the XML formats.
   class(vtkhdf_writer), intent(in) :: self  !< Writer.
   integer(I8P),         intent(in) :: np    !< Number of points.
   integer(I8P),         intent(in) :: nc    !< Number of cells.
@@ -2201,14 +2320,16 @@ contains
   integer(I4P)                     :: error !< Error status.
 
   error = 1_I4P
-  if (self%topology /= TOPOLOGY_UNSTRUCTURED) then
-    error = refuse('write_geo(np, nc, ...) is for an UnstructuredGrid (an ImageData has no geometry)')
+  if (self%topology /= TOPOLOGY_UNSTRUCTURED .and. self%topology /= TOPOLOGY_POLY) then
+    error = refuse('write_geo(np, nc, ...) is for an UnstructuredGrid or a PolyData (an ImageData has no geometry)')
   elseif (.not.self%is_piece_open .or. self%group >= 0_hid_kind) then
     error = refuse('write_geo: open the piece first, outside the point and cell data')
   elseif (self%is_geo_written) then
     error = refuse('write_geo: the points of this piece are already written')
-  elseif (np /= self%np_piece .or. nc /= self%nc_piece) then
-    error = refuse('write_geo: np and nc are not those of the piece')
+  elseif (np /= self%np_piece) then
+    error = refuse('write_geo: np is not the number of points of the piece')
+  elseif (self%topology == TOPOLOGY_UNSTRUCTURED .and. nc /= self%nc_piece) then
+    error = refuse('write_geo: nc is not the number of cells of the piece')
   elseif (n1 /= 3_I8P .or. n2 /= np) then
     error = refuse('write_geo: the coordinates are not 3 by np')
   else
@@ -2236,7 +2357,8 @@ contains
   !< Point and cell data are shaped as the grid, `[n_components, ni, nj, nk]`: ni points along x for point data, ni-1 cells
   !< for cell data. The axes of one point (a 2D or 1D grid) are dropped, as VTK writes and requires (VTK 9.7 reads neither a
   !< size-1 axis nor a flat array), and so is the first dimension with one component. Field data are
-  !< `[n_components, n_tuples]`. In an UnstructuredGrid, the tuples are the points or cells of the piece, `[n_components, n]`.
+  !< `[n_components, n_tuples]`. In an UnstructuredGrid or a PolyData, the tuples are the points or cells of the piece,
+  !< `[n_components, n]` (the cells of a PolyData in the order of the blocks: vertices, lines, strips, polygons).
   class(vtkhdf_writer),      intent(in)  :: self         !< Writer.
   character(*),              intent(in)  :: data_name    !< Data name (for the messages).
   integer(I8P),              intent(in)  :: n            !< Number of values.
@@ -2256,7 +2378,7 @@ contains
     endif
     grid = [n / n_components, 1_I8P, 1_I8P]
     is_axis = [.true., .false., .false.]
-  elseif (self%topology == TOPOLOGY_UNSTRUCTURED) then
+  elseif (self%topology /= TOPOLOGY_IMAGE) then
     grid = [self%np_piece, 1_I8P, 1_I8P]
     if (self%group_name == 'CellData') grid(1) = self%nc_piece
     is_axis = [.true., .false., .false.]
@@ -2288,13 +2410,23 @@ contains
   endfunction dataset_dims
 
   function end_partition(self) result(error)
-  !< End a piece of an UnstructuredGrid: its points and cells written, every array of the first piece written once.
+  !< End a piece of an UnstructuredGrid or PolyData: its points and cells written, every array of the first piece written
+  !< once. A PolyData piece without cells needs no write_polydata_cells: its four blocks get zero entries.
   class(vtkhdf_writer), intent(inout) :: self  !< Writer.
   integer(I4P)                        :: error !< Error status.
 
   error = 0_I4P
+  if (self%topology == TOPOLOGY_POLY .and. .not.self%is_connectivity_written .and. self%nc_piece == 0_I8P) then
+    error = self%poly_blocks(check_only=.false.)
+    if (error /= 0_I4P) return
+    self%is_connectivity_written = .true.
+  endif
   if (.not.(self%is_geo_written .and. self%is_connectivity_written)) then
-    error = refuse('a piece of an UnstructuredGrid needs write_geo and write_connectivity')
+    if (self%topology == TOPOLOGY_POLY) then
+      error = refuse('a piece of a PolyData needs write_geo and write_polydata_cells')
+    else
+      error = refuse('a piece of an UnstructuredGrid needs write_geo and write_connectivity')
+    endif
     return
   endif
   ! the root passed, not read from the host: nvfortran internal procedures can read stale host values
@@ -2384,13 +2516,80 @@ contains
   enddo
   endfunction open_group
 
+  function poly_block(self, b, check_only, connectivity, offset) result(error)
+  !< Check (`check_only`) or write the block `b` of the cells of a PolyData piece, given by its connectivity and its end
+  !< offsets (I4P or I8P each; both converted to I8P when their kinds differ). A block not given must have no cells in
+  !< the piece: its group gets zero entries.
+  class(vtkhdf_writer), intent(inout)        :: self            !< Writer.
+  integer(I4P),         intent(in)           :: b               !< Block: 1 vertices, 2 lines, 3 strips, 4 polygons.
+  logical,              intent(in)           :: check_only      !< Check the block, write nothing.
+  class(*),             intent(in), optional :: connectivity(:) !< Point ids of the cells, from 0 in the piece.
+  class(*),             intent(in), optional :: offset(:)       !< End offset of each cell in the connectivity.
+  integer(I4P)                               :: error           !< Error status.
+
+  error = 0_I4P
+  if (.not.(present(connectivity) .and. present(offset))) then
+    if (self%block_cells(b) > 0_I8P) then
+      error = refuse('write_polydata_cells: the piece has '//trim(str(n=self%block_cells(b), no_sign=.true.))// &
+                     ' cells in '//trim(BLOCKS(b))//', but their block is not given')
+    elseif (.not.check_only) then
+      error = put_block_I8P(self, b, check_only, [integer(I8P) ::], [integer(I8P) ::])
+    endif
+    return
+  endif
+  select type(connectivity)
+  type is(integer(I4P))
+    select type(offset)
+    type is(integer(I4P))
+      error = put_block_I4P(self, b, check_only, connectivity, offset)
+    type is(integer(I8P))
+      error = put_block_I8P(self, b, check_only, int(connectivity, I8P), offset)
+    class default
+      error = refuse('write_polydata_cells: the offsets of '//trim(BLOCKS(b))//' are not I4P or I8P')
+    endselect
+  type is(integer(I8P))
+    select type(offset)
+    type is(integer(I4P))
+      error = put_block_I8P(self, b, check_only, connectivity, int(offset, I8P))
+    type is(integer(I8P))
+      error = put_block_I8P(self, b, check_only, connectivity, offset)
+    class default
+      error = refuse('write_polydata_cells: the offsets of '//trim(BLOCKS(b))//' are not I4P or I8P')
+    endselect
+  class default
+    error = refuse('write_polydata_cells: the connectivity of '//trim(BLOCKS(b))//' is not I4P or I8P')
+  endselect
+  endfunction poly_block
+
+  function poly_blocks(self, check_only, verts_connectivity, verts_offset, lines_connectivity, lines_offset, &
+                       strips_connectivity, strips_offset, polys_connectivity, polys_offset) result(error)
+  !< Check (`check_only`) or write the four blocks of the cells of a PolyData piece, in the order of their groups.
+  class(vtkhdf_writer), intent(inout)        :: self                   !< Writer.
+  logical,              intent(in)           :: check_only             !< Check the blocks, write nothing.
+  class(*),             intent(in), optional :: verts_connectivity(:)  !< Vertices connectivity.
+  class(*),             intent(in), optional :: verts_offset(:)        !< Vertices offsets.
+  class(*),             intent(in), optional :: lines_connectivity(:)  !< Lines connectivity.
+  class(*),             intent(in), optional :: lines_offset(:)        !< Lines offsets.
+  class(*),             intent(in), optional :: strips_connectivity(:) !< Triangle strips connectivity.
+  class(*),             intent(in), optional :: strips_offset(:)       !< Triangle strips offsets.
+  class(*),             intent(in), optional :: polys_connectivity(:)  !< Polygons connectivity.
+  class(*),             intent(in), optional :: polys_offset(:)        !< Polygons offsets.
+  integer(I4P)                               :: error                  !< Error status.
+
+  error = self%poly_block(1_I4P, check_only, verts_connectivity, verts_offset)
+  if (error == 0_I4P) error = self%poly_block(2_I4P, check_only, lines_connectivity, lines_offset)
+  if (error == 0_I4P) error = self%poly_block(3_I4P, check_only, strips_connectivity, strips_offset)
+  if (error == 0_I4P) error = self%poly_block(4_I4P, check_only, polys_connectivity, polys_offset)
+  endfunction poly_blocks
+
   subroutine record_array(self, data_name)
-  !< Record the name of an array of the open point or cell data group (UnstructuredGrid, checked at the end of the pieces).
+  !< Record the name of an array of the open point or cell data group (UnstructuredGrid, PolyData: checked at the end of
+  !< the pieces).
   class(vtkhdf_writer), intent(inout) :: self      !< Writer.
   character(*),         intent(in)    :: data_name !< Data name.
   character(len=:), allocatable       :: names     !< Names, updated (not an assignment of a component to itself).
 
-  if (self%topology /= TOPOLOGY_UNSTRUCTURED) return
+  if (self%topology == TOPOLOGY_IMAGE) return
   if (self%group_name == 'PointData') then
     names = self%point_arrays//data_name//NAMES_SEPARATOR
     self%point_arrays = names
@@ -2413,6 +2612,7 @@ contains
   self%topology = 0_I4P
   self%np_piece = 0_I8P
   self%nc_piece = 0_I8P
+  self%block_cells = 0_I8P
   self%total_points = 0_I8P
   self%total_cells = 0_I8P
   self%is_geo_written = .false.
@@ -2424,22 +2624,40 @@ contains
   enddo
   endsubroutine reset
 
-  function start_partition(self, np, nc) result(error)
-  !< Start a piece of an UnstructuredGrid: a partition, its counts appended to NumberOfPoints and NumberOfCells.
-  class(vtkhdf_writer), intent(inout) :: self  !< Writer.
-  integer(I8P),         intent(in)    :: np    !< Number of points.
-  integer(I8P),         intent(in)    :: nc    !< Number of cells.
-  integer(I4P)                        :: error !< Error status.
+  function start_partition(self, np, nc, block_cells) result(error)
+  !< Start a piece of an UnstructuredGrid or PolyData: a partition, its counts appended to NumberOfPoints (and
+  !< NumberOfCells for an UnstructuredGrid; the blocks of a PolyData get theirs with their cells).
+  class(vtkhdf_writer), intent(inout)        :: self           !< Writer.
+  integer(I8P),         intent(in)           :: np             !< Number of points.
+  integer(I8P),         intent(in)           :: nc             !< Number of cells.
+  integer(I8P),         intent(in), optional :: block_cells(4) !< Cells of each block (PolyData).
+  integer(I4P)                               :: error          !< Error status.
 
   error = 1_I4P
-  if (self%topology /= TOPOLOGY_UNSTRUCTURED) then
-    error = refuse('write_piece(np, nc) is for an UnstructuredGrid: an ImageData piece is write_piece(nx1, ..., nz2)')
+  if (self%topology == TOPOLOGY_UNSTRUCTURED .and. present(block_cells)) then
+    error = refuse('write_piece(np, nverts, nlines, nstrips, npolys) is for a PolyData: an UnstructuredGrid piece is '// &
+                   'write_piece(np, nc)')
+    return
+  elseif (self%topology == TOPOLOGY_POLY .and. .not.present(block_cells)) then
+    error = refuse('write_piece(np, nc) is for an UnstructuredGrid: a PolyData piece is '// &
+                   'write_piece(np, nverts, nlines, nstrips, npolys)')
+    return
+  elseif (self%topology /= TOPOLOGY_UNSTRUCTURED .and. self%topology /= TOPOLOGY_POLY) then
+    error = refuse('write_piece(np, ...) is for an UnstructuredGrid or a PolyData: an ImageData piece is '// &
+                   'write_piece(nx1, ..., nz2)')
     return
   endif
   if (self%file_id < 0_hid_kind .or. self%is_piece_open .or. self%group >= 0_hid_kind) return
   if (np < 0_I8P .or. nc < 0_I8P) then
     error = refuse('write_piece: negative counts')
     return
+  endif
+  if (present(block_cells)) then
+    if (any(block_cells < 0_I8P)) then
+      error = refuse('write_piece: negative counts')
+      return
+    endif
+    self%block_cells = block_cells
   endif
   self%n_pieces = self%n_pieces + 1_I4P
   self%np_piece = np
@@ -2449,7 +2667,8 @@ contains
   self%is_geo_written = .false.
   self%is_connectivity_written = .false.
   error = store_I8P(self, self%root, 'NumberOfPoints', [np], [1_I8P])
-  if (error == 0_I4P) error = store_I8P(self, self%root, 'NumberOfCells', [nc], [1_I8P])
+  if (error == 0_I4P .and. self%topology == TOPOLOGY_UNSTRUCTURED) &
+    error = store_I8P(self, self%root, 'NumberOfCells', [nc], [1_I8P])
   if (error /= 0_I4P) then
     error = refuse('cannot write the counts of the piece')
     return
