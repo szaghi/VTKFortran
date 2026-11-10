@@ -17,6 +17,7 @@ type, extends(xml_writer_abstract) :: xml_writer_appended
   !< VTK file XML writer, appended.
   type(string) :: encoding      !< Appended data encoding: "raw" or "base64".
   integer(I4P) :: scratch=0_I4P !< Scratch logical unit.
+  logical      :: is_scratch_open=.false. !< The scratch unit is connected by this writer (closed once: see close_scratch_file).
   contains
     ! deferred methods
     procedure, pass(self) :: initialize                 !< Initialize writer.
@@ -203,10 +204,11 @@ contains
 
    call self%write_end_tag(name=self%topology%chars())
    call self%write_dataarray_appended
+   error = self%error ! the error of the data, kept: the I/O below sets self%error again
    call self%write_end_tag(name='VTKFile')
    call self%close_xml_file
    call self%close_scratch_file
-   error = self%error
+   if (error == 0) error = self%error
    endfunction finalize
 
   function n_bytes(self, n_byte) result(n)
@@ -250,13 +252,19 @@ contains
        action='READWRITE',   &
        status='SCRATCH',     &
        iostat=self%error)
+  self%is_scratch_open = self%error == 0
   endsubroutine open_scratch_file
 
   subroutine close_scratch_file(self)
-  !< Close scratch file.
+  !< Close scratch file, once.
+  !<
+  !< @note A unit closed twice is a bug that hurts other threads: once closed, its number can be given by `newunit` to the
+  !< scratch file of a writer in another thread, which the second close would close (its reads then fail).
   class(xml_writer_appended), intent(inout) :: self  !< Writer.
 
+  if (.not.self%is_scratch_open) return
   close(unit=self%scratch, iostat=self%error)
+  self%is_scratch_open = .false.
   endsubroutine close_scratch_file
 
   ! write_dataarray methods
@@ -1294,6 +1302,7 @@ contains
   integer(I2P), allocatable                 :: dataarray_I2P(:)  !< Dataarray buffer of I2P.
   integer(I1P), allocatable                 :: dataarray_I1P(:)  !< Dataarray buffer of I1P.
   logical                                   :: is_uint64         !< Use a UInt64 header, local copy of the component.
+  integer(I4P)                              :: status            !< Error of the data section, kept past the closing I/O.
 
   ! the encoders are passed a local copy of is_uint64: with a component of the polymorphic self as actual argument, ifx copies
   ! the (large) encoded string returned by the encoder onto the stack (issue #70)
@@ -1338,10 +1347,11 @@ contains
         endif
         if (self%error /= 0) exit
       enddo
-      if (is_iostat_end(self%error)) self%error = 0
-      close(unit=self%scratch, iostat=self%error)
+      status = self%error ; if (is_iostat_end(status)) status = 0
+      call self%close_scratch_file
       write(unit=self%xml, iostat=self%error)end_rec
       call self%write_end_tag(name='AppendedData')
+      if (status /= 0) self%error = status
     endblock
     return
   endif
@@ -1353,12 +1363,15 @@ contains
   rewind(unit=self%scratch, iostat=self%error)
   do
     call read_dataarray_from_scratch
-    if (self%error==0) call write_dataarray_on_xml
-    if (is_iostat_end(self%error)) exit
+    if (self%error /= 0) exit ! the end of the scratch file, or a bad record: never read on past it
+    call write_dataarray_on_xml
+    if (self%error /= 0) exit
   enddo
-  close(unit=self%scratch, iostat=self%error)
+  status = self%error ; if (is_iostat_end(status)) status = 0
+  call self%close_scratch_file
   write(unit=self%xml, iostat=self%error)end_rec
   call self%write_end_tag(name='AppendedData')
+  if (status /= 0) self%error = status
   contains
     subroutine read_dataarray_from_scratch
     !< Read the current dataaray from scratch file.

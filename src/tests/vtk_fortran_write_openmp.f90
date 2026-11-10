@@ -4,8 +4,10 @@ program vtk_fortran_write_openmp
 !<
 !< Each file keeps its state in its own `vtk_file`: files written by different threads at the same time must be the same, byte
 !< for byte, as the same files written one after the other, in every format (the appended ones use a scratch file each).
-!< Then each thread reads its own file back. The library is built without OpenMP, as a user links it; CMake builds this test
-!< with OpenMP. Built without it (FoBiS modes), the directives are comments and the test runs serially.
+!< Then each thread reads its own file back. The concurrent writing and reading are repeated for `rounds` rounds: a
+!< race shows only now and then (a unit closed twice by the appended writer, now fixed, failed one run in 60 under load).
+!< The library is built without OpenMP, as a user links it; CMake builds this test with OpenMP. Built without it (FoBiS
+!< modes), the directives are comments and the test runs serially.
 !$ use omp_lib
 use penf
 use vtk_fortran, only : vtk_file
@@ -13,10 +15,11 @@ use vtk_fortran, only : vtk_file
 implicit none
 integer(I4P), parameter :: nfiles=8                                                        !< Files written concurrently.
 integer(I4P), parameter :: nc=2000                                                         !< Cells of each file.
+integer(I4P), parameter :: rounds=25                                                       !< Rounds of concurrent writing.
 character(15), parameter :: formats(4)=[character(15) :: 'ascii', 'binary', 'raw', 'binary-appended'] !< Formats, in turn.
 logical                  :: written(nfiles)                                                !< Files written alike.
 logical                  :: read_back(nfiles)                                              !< Files read back.
-integer(I4P)             :: f                                                              !< Counter.
+integer(I4P)             :: f, r                                                           !< Counters.
 integer(I4P)             :: threads                                                        !< Threads available.
 
 threads = 1
@@ -25,21 +28,24 @@ threads = 1
 do f=1, nfiles
   call write_file(f, 'vtkfortran_write_openmp_serial_'//trim(str(f, .true.))//'.vtu')
 enddo
-! concurrently: the same files, then each one read back by a thread
-!$omp parallel do schedule(static, 1)
-do f=1, nfiles
-  call write_file(f, 'vtkfortran_write_openmp_parallel_'//trim(str(f, .true.))//'.vtu')
+! concurrently, round after round: the same files, then each one read back by a thread
+written = .true. ; read_back = .true.
+do r=1, rounds
+  !$omp parallel do schedule(dynamic, 1)
+  do f=1, nfiles
+    call write_file(f, 'vtkfortran_write_openmp_parallel_'//trim(str(f, .true.))//'.vtu')
+  enddo
+  !$omp end parallel do
+  do f=1, nfiles
+    written(f) = written(f) .and. same_bytes('vtkfortran_write_openmp_serial_'//trim(str(f, .true.))//'.vtu', &
+                                             'vtkfortran_write_openmp_parallel_'//trim(str(f, .true.))//'.vtu')
+  enddo
+  !$omp parallel do schedule(dynamic, 1)
+  do f=1, nfiles
+    read_back(f) = read_back(f) .and. is_read_back(f, 'vtkfortran_write_openmp_parallel_'//trim(str(f, .true.))//'.vtu')
+  enddo
+  !$omp end parallel do
 enddo
-!$omp end parallel do
-do f=1, nfiles
-  written(f) = same_bytes('vtkfortran_write_openmp_serial_'//trim(str(f, .true.))//'.vtu', &
-                          'vtkfortran_write_openmp_parallel_'//trim(str(f, .true.))//'.vtu')
-enddo
-!$omp parallel do schedule(static, 1)
-do f=1, nfiles
-  read_back(f) = is_read_back(f, 'vtkfortran_write_openmp_parallel_'//trim(str(f, .true.))//'.vtu')
-enddo
-!$omp end parallel do
 
 print '(A,I0,A)', 'threads: ', threads, merge(' (built with OpenMP)   ', ' (built without OpenMP)', threads > 1 .or. omp_built())
 print '(A,8L2)', 'written alike:', written

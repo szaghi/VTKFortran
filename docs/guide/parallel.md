@@ -190,11 +190,19 @@ of their own:
 | GNU gfortran, up to 16.2 | ❌ the length of a function result of deferred-length character (`character(len=:), allocatable`) is a static variable, shared by the threads ([GCC bug 113797](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=113797)); gfortran 14 and 15 also make static every variable of a type with user-defined input/output, as the strings of StringiFor. The files are corrupted, or the program crashes: write the files from one thread, or from MPI processes |
 
 The test `src/tests/vtk_fortran_write_openmp.f90` writes 8 files from 4 threads, in every format, compares them byte by
-byte with the same files written serially, and reads them back from the threads. CMake runs it with
-`-DVTKFORTRAN_TEST_OPENMP=ON`, e.g. `cmake -S . -B build -DBUILD_TESTING=ON -DVTKFORTRAN_TEST_OPENMP=ON
--DCMAKE_Fortran_COMPILER=ifx`: it passes 10 runs out of 10 with ifx and nvfortran, and fails with gfortran. With other
-builds (fpm, your own build system) add `-recursive` (ifx) or `-mp` (nvfortran) to the flags of the library and of its
-dependencies, e.g. `fpm build --flag -recursive`.
+byte with the same files written serially, and reads them back from the threads, 25 times over: a race shows only now and
+then. CMake runs it with `-DVTKFORTRAN_TEST_OPENMP=ON`, e.g. `cmake -S . -B build -DBUILD_TESTING=ON
+-DVTKFORTRAN_TEST_OPENMP=ON -DCMAKE_Fortran_COMPILER=ifx`: it passes 20 runs out of 20 with ifx and nvfortran, and fails
+with gfortran. With other builds (fpm, your own build system) add `-recursive` (ifx) or `-mp` (nvfortran) to the flags of
+the library and of its dependencies, e.g. `fpm build --flag -recursive`.
+
+::: warning Appended formats from threads, up to 3.0.1
+Up to 3.0.1 the appended formats (`raw`, `raw-zlib`, `binary-appended`) closed their scratch file twice. A unit number,
+once closed, can be given to a file opened by another thread, which the second close then closed: about one run in 60
+of the test failed, more under load, with the other thread looping on a read error (and writing it without end). The
+writer now closes it once, and stops on any read error. Older versions: write the appended formats from one thread, or
+use `binary`.
+:::
 
 ## Volatile XML output
 
