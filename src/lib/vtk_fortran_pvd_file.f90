@@ -20,6 +20,7 @@ type :: pvd_file
    private
    integer(I4P) :: unit=0_I4P      !< Logical unit, 0 when the file is not open.
    integer(I8P) :: pos_close=0_I8P !< Stream position of the closing tags, i.e. where the next dataset is written.
+   integer(I8P) :: file_end=0_I8P  !< Size of the file: its last byte.
    type(xml_index)   :: xml        !< Index of the file read (`action='read'`, FoXy).
    logical      :: is_reading=.false. !< The file is open for reading.
    contains
@@ -103,6 +104,7 @@ contains
       write(unit=self%unit, iostat=error) header
       if (error /= 0) return
       self%pos_close = len(header, kind=I8P) + 1_I8P
+      self%file_end = len(header, kind=I8P)
    case('APPEND')
       inquire(file=trim(adjustl(filename)), size=file_size)
       if (file_size <= 0_I8P) then
@@ -128,6 +130,7 @@ contains
       endif
       c = index(buffer(:c-1), new_line('a'), back=.true., kind=I8P)
       self%pos_close = c + 1_I8P
+      self%file_end = file_size
    case default
       error = 1_I4P
       return
@@ -185,6 +188,7 @@ contains
    if (self%unit /= 0_I4P) close(unit=self%unit, iostat=error)
    self%unit = 0_I4P
    self%pos_close = 0_I8P
+   self%file_end = 0_I8P
    call self%xml%free
    self%is_reading = .false.
    endfunction finalize
@@ -262,14 +266,31 @@ contains
 
    ! private methods
    subroutine write_closing_tags(self, error)
-   !< Write the closing tags at the current end of datasets, drop anything after them and flush the file.
+   !< Write the closing tags at the current end of datasets, blank anything after them and flush the file.
+   !<
+   !< Older content after the closing tags (an appended file edited by hand) is overwritten with blanks on the line of the
+   !< closing tag, not truncated: the file is a valid collection at any time, and ENDFILE does not truncate a stream file
+   !< with every compiler (nvfortran 26.9).
    class(pvd_file), intent(inout) :: self  !< PVD file.
    integer(I4P),    intent(out)   :: error !< Error status.
+   integer(I8P)                   :: last  !< Last byte of the closing tags.
+   integer(I8P)                   :: b     !< Counter.
 
-   write(unit=self%unit, pos=self%pos_close, iostat=error) closing_tags
-   if (error /= 0) return
-   endfile(unit=self%unit, iostat=error) ! truncate: an appended file may have had more content after its closing tags
-   if (error /= 0) return
+   last = self%pos_close + len(closing_tags, kind=I8P) - 1_I8P
+   if (last >= self%file_end) then
+      write(unit=self%unit, pos=self%pos_close, iostat=error) closing_tags
+      if (error /= 0) return
+      self%file_end = last
+   else
+      write(unit=self%unit, pos=self%pos_close, iostat=error) closing_tags(:len(closing_tags)-1)
+      if (error /= 0) return
+      do b=last, self%file_end - 1_I8P
+         write(unit=self%unit, iostat=error) ' '
+         if (error /= 0) return
+      enddo
+      write(unit=self%unit, iostat=error) new_line('a')
+      if (error /= 0) return
+   endif
    flush(unit=self%unit, iostat=error)
    endsubroutine write_closing_tags
 

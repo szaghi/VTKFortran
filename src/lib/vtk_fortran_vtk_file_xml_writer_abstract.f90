@@ -2090,11 +2090,16 @@ contains
 
    function write_parallel_close_block(self) result(error)
    !< Close a block container.
-   class(xml_writer_abstract), intent(inout) :: self  !< Writer.
-   integer(I4P)                              :: error !< Error status.
+   class(xml_writer_abstract), intent(inout) :: self      !< Writer.
+   integer(I4P)                              :: error     !< Error status.
+   integer(I4P), allocatable                 :: levels(:) !< Open levels, the closed one dropped.
 
    if (allocated(self%vtm_index)) then
-      if (size(self%vtm_index) > 1) self%vtm_index = self%vtm_index(1:size(self%vtm_index)-1)
+      if (size(self%vtm_index) > 1) then
+         ! through a copy: nvfortran 26.9 does not shrink a component assigned a section of itself
+         levels = self%vtm_index(1:size(self%vtm_index)-1)
+         self%vtm_index = levels
+      endif
    endif
    call self%write_end_tag(name='Block')
    error = self%error

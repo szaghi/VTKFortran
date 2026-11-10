@@ -127,7 +127,7 @@ threads never run that initialization at the same time.
 | GNU gfortran 12.5, 13.4, 14.3, 16.2 | ✅ Every test passes (the CI uses gfortran 14) |
 | GNU gfortran 11.5 | ⚠️ Builds; the two `.vtm` tests crash |
 | Intel ifx 2025.3 | ✅ Every test passes (the discontinued ifort is not tested) |
-| NVIDIA nvfortran 26.9 | ⚠️ Builds; 3 of 27 tests fail (reading a binary file written by VTK, `.pvd`, nested `.vtm`) |
+| NVIDIA nvfortran 26.9 | ✅ Every test passes (built with CMake) |
 | NAG, Cray, LLVM Flang | Not tested |
 
 See [Installation](/guide/installation#prerequisites) for how the table is measured.

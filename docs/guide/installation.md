@@ -12,9 +12,11 @@ A Fortran 2008 compiler is required:
 |----------|---------|
 | GNU gfortran | 12 or newer: 12.5, 13.4, 14.3 (the CI) and 16.2 pass every test; 11.5 builds, but the two `.vtm` tests crash |
 | Intel Fortran (ifx) | 2025.3 passes every test (the fobos Intel modes run `ifx`; the discontinued ifort is not tested) |
-| NVIDIA nvfortran | 26.9 builds (with CMake), but 3 of the 27 tests fail: reading a binary file written by VTK, `.pvd` and nested `.vtm` files |
+| NVIDIA nvfortran | 26.9 passes every test (built with CMake: the fobos file has no NVIDIA modes) |
 
 Measured on 2026-11-10 by building the tests (`tests-gnu-debug`, `tests-intel`, CMake for nvfortran) and running them.
+With nvfortran 26.9, VTKFortran 3.0.0 and older fail 3 tests: they hit three bugs of the compiler (`move_alloc` of a
+deferred-length character, `endfile` on a stream file, an array component assigned a section of itself), now worked around.
 
 ## Download
 

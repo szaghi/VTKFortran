@@ -69,10 +69,11 @@ contains
       string(n:n) = string(i:i)
     endselect
   enddo
-  ! copied into a new string: the self assignment string = string(1:n) can be made through a stack temporary (e.g. ifx)
+  ! copied into a new string: the self assignment string = string(1:n) can be made through a stack temporary (e.g. ifx);
+  ! assigned back, not moved: nvfortran 26.9 move_alloc keeps the old length of a deferred-length character `to`
   allocate(character(len=n) :: strip)
   strip(1:n) = string(1:n)
-  call move_alloc(from=strip, to=string)
+  string = strip
   endsubroutine strip_spaces
 
   pure function base64_decoded_size(code) result(n)
