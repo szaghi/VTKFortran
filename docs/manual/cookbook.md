@@ -121,8 +121,24 @@ library:
 
 ParaView reads the partitions as one partitioned dataset. Every piece must hold the same arrays: an array missing from a
 piece, or new after the first one, is refused. It needs the library built with HDF5 (`initialize` returns an error
-otherwise). ImageData and UnstructuredGrid are written for now; the layout of the file:
+otherwise). ImageData, UnstructuredGrid and PolyData are written for now; the layout of the file:
 [VTKHDF](/guide/formats#vtkhdf-hdf5).
+
+### A PolyData in a .vtkhdf file
+
+The calls of a PolyData, with `format='vtkhdf'`: here a hexagon with a vertex on each corner, then a ribbon (a triangle
+strip) with a polyline above it, each one a piece.
+
+<<< @/examples/snippets/vtkhdf_polydata-write.f90
+
+Each piece is a partition, and each block of cells a group of the file, with one entry per piece: a block a piece does
+not have gets zero cells there. The program reads the counts back with the HDF5 bindings of the library:
+
+<<< @/examples/output/vtkhdf_polydata.ansi{ansi}
+
+<p align="center"><img src="../examples/images/vtkhdf_polydata.png" alt="a hexagon with its six corner vertices, and a ribbon with a polyline above it, one colour per piece, read by ParaView from the VTKHDF file"></p>
+
+The cell data follow the order of the blocks (vertices, lines, strips, polygons), as in the XML formats.
 
 ### More than 2^31 points or cells
 

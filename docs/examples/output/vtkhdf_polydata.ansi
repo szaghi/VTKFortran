@@ -1,0 +1,7 @@
+$ vtkhdf_polydata
+shapes.vtkhdf, the cells of each partition by group:
+  NumberOfPoints          6 15
+  Vertices/NumberOfCells  6  0
+  Lines/NumberOfCells     0  1
+  Strips/NumberOfCells    0  1
+  Polygons/NumberOfCells  1  0

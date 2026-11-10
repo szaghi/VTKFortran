@@ -39,7 +39,8 @@ indexes `(0,0,0)`, also when the extents do not start at 0).
 - `write_geo` is not used. Point data have one value per grid point, cell data one value per cell, written with the usual
   `write_dataarray` calls in any format.
 - ImageData is also written in the VTKHDF format (`format='vtkhdf'`, an HDF5 file), with the same calls and one piece:
-  see [VTKHDF](/guide/formats#vtkhdf-hdf5). So is UnstructuredGrid; the other topologies are XML only, for now.
+  see [VTKHDF](/guide/formats#vtkhdf-hdf5). So are UnstructuredGrid and PolyData; the other topologies are XML only,
+  for now.
 
 ## Rectilinear Grid (VTR)
 
@@ -142,6 +143,9 @@ write the points with `write_geo`, then the blocks with `write_polydata_cells`:
 - **Cell data follow the VTK order of the blocks**: vertices, then lines, then strips, then polygons, whatever the order of the
   arguments.
 - The `nc` argument of `write_geo` is not used for PolyData (it writes the points only).
+- PolyData are written in the VTKHDF format (`format='vtkhdf'`, an HDF5 file) too, with the same calls: each piece is a
+  partition of the file, each block a group. See [VTKHDF](/guide/formats#vtkhdf-hdf5) and the recipe
+  [A PolyData in a .vtkhdf file](/manual/cookbook#a-polydata-in-a-vtkhdf-file).
 
 ## Multiple pieces in one file
 

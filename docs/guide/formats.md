@@ -19,7 +19,7 @@ The `format` argument to `initialize` is case-insensitive:
 | `raw` | Raw binary in the appended section |
 | `binary-appended` | Base64-encoded binary in the appended section |
 | `raw-zlib` | Shorthand for `raw` with `compressor='zlib'`, see [Compressed binary data](#compressed-binary-data-zlib) |
-| `vtkhdf` | An HDF5 file in the VTKHDF layout: ImageData and UnstructuredGrid for now, HDF5 needed, see [VTKHDF](#vtkhdf-hdf5) |
+| `vtkhdf` | HDF5 file, VTKHDF layout: ImageData, UnstructuredGrid, PolyData for now, HDF5 needed, see [VTKHDF](#vtkhdf-hdf5) |
 
 The binary formats (`binary`, `raw`, `binary-appended`) can be zlib-compressed with `compressor='zlib'`, see
 [Compressed binary data](#compressed-binary-data-zlib). Binary arrays larger than 2 GiB need `header_type='UInt64'`, see
@@ -42,7 +42,8 @@ space, e.g. off a small `/tmp` on HPC nodes. The `binary` format writes inline, 
 [HDF5](https://www.hdfgroup.org/solutions/hdf5/): one HDF5 file, whose group `/VTKHDF` holds the dataset as attributes
 and one HDF5 dataset per array. VTK's `vtkHDFReader` and ParaView read it; any HDF5 tool (h5py, `h5dump`, HDFView) reads its
 arrays directly. It is being added step by step ([issue #51](https://github.com/szaghi/VTKFortran/issues/51)):
-**ImageData** and **UnstructuredGrid** are written now; the other topologies, time series and parallel writing come next.
+**ImageData**, **UnstructuredGrid** and **PolyData** are written now; the other topologies, time series and parallel
+writing come next.
 
 Choose it when the files are read by HDF5 tools too, or to use HDF5 compression; stay with the XML formats for the other
 topologies, for files that VTKFortran reads back, and without an HDF5 library. It needs the library built with HDF5 (see
@@ -70,6 +71,14 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
   Ids and offsets keep the kind of the call: `I4P` a 32-bit integer, `I8P` a 64-bit one. Every piece must write the
   same point and cell arrays: an array missing from a piece, or new after the first one, is refused. A complete
   program: [Write a .vtkhdf file](/manual/cookbook#write-a-vtkhdf-file).
+- **PolyData** (`Type` `PolyData`): each piece is a partition too, with its entry of `NumberOfPoints` and its `Points`.
+  Its cells are in four groups, `Vertices`, `Lines`, `Strips` and `Polygons`, the blocks of `write_polydata_cells`:
+  each group has its own `NumberOfCells`, `NumberOfConnectivityIds`, `Connectivity` and `Offsets` (from 0 in each
+  piece), one entry per piece. A block not given has no cells: its group gets zero entries for the piece (the four
+  groups are always written, VTK reads none without all of them). A piece of points only needs no
+  `write_polydata_cells`. Each block keeps the kind of its ids (I4P or I8P; I8P when its connectivity and its offsets
+  differ). Cell data follow the order of the blocks, as in the XML formats. A complete program:
+  [A PolyData in a .vtkhdf file](/manual/cookbook#a-polydata-in-a-vtkhdf-file).
 - **No transposition.** An array is stored as it is in memory: a Fortran `velocity(3,0:nx,0:ny,0:nz)` is the dataset of
   shape `[nz+1, ny+1, nx+1, 3]` in C order (the order HDF5 tools show), which is the shape VTKHDF wants. Point data have the
   shape of the grid points, cell data of the cells; the components of a vector are the last dimension (C order). The
