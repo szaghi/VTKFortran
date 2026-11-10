@@ -19,8 +19,9 @@ integer(I4P), parameter :: connect(12)=[0,1,2,3,4,5,6,7, 8,9,10,11]         !< C
 integer(I4P), parameter :: offset(nc)=[8,12]                                !< Cells offset.
 integer(I1P), parameter :: cell_type(nc)=[42_I1P,10_I1P]                    !< Cells type: polyhedron, tetrahedron.
 integer(I4P), parameter :: face(31)=[6,                    &                !< Faces stream: number of faces, then
-                                     4, 0,1,2,3,           &                !< for each face its number of points and
-                                     4, 4,5,6,7,           &                !< the points ids.
+                                     4, 0,3,2,1,           &                !< for each face its number of points and
+                                     4, 4,5,6,7,           &                !< the points ids, counter-clockwise seen
+                                                                            !< from outside (normal pointing out).
                                      4, 0,1,5,4,           &
                                      4, 1,2,6,5,           &
                                      4, 2,3,7,6,           &

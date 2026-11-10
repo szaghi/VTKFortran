@@ -37,7 +37,8 @@ Every point has its own coordinates, the topology is still that of a box: `write
 ### Cells of any type, polyhedra included (UnstructuredGrid)
 
 `cell_type` gives the VTK type of each cell, `offset` the end of each cell in `connect`. A polyhedron (type 42) also needs
-its faces: `face` and `faceoffset`, `-1` for the cells that are not polyhedra.
+its faces: `face` and `faceoffset`, `-1` for the cells that are not polyhedra; the points of each face are listed
+counter-clockwise seen from outside the cell.
 
 <<< @/examples/snippets/polyhedron.f90
 

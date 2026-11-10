@@ -104,7 +104,9 @@ the order of the quad and hexahedron.
 General polyhedra (VTK cell type `42`) need two more arrays, passed to `write_connectivity` as the optional `face` and
 `faceoffset` arguments:
 
-- `face`: for each polyhedron, the number of its faces followed, for each face, by the number of its points and the point ids;
+- `face`: for each polyhedron, the number of its faces followed, for each face, by the number of its points and the point
+  ids, listed counter-clockwise seen from outside the cell (the normal of each face points out: VTK flags a face listed
+  the other way as a wrong orientation);
 - `faceoffset`: for each cell, the position in `face` where the description of that cell ends, or `-1` if the cell is not a
   polyhedron.
 

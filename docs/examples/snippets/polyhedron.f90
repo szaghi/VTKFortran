@@ -9,8 +9,9 @@ real(R8P),    parameter :: z(18)=[real(R8P) :: 0,0,0,0,1,1,1,1, 0,0,0,1, 0,0,0,1
 integer(I4P), parameter :: connect(18)=[0,1,2,3,4,5,6,7, 8,9,10,11, 12,13,14,15,16,17]
 integer(I4P), parameter :: offset(3)=[8, 12, 18]
 integer(I1P), parameter :: cell_type(3)=[42_I1P, 10_I1P, 13_I1P] ! polyhedron, tetrahedron, wedge
-! the faces of the polyhedron: their number, then for each face its number of points and their ids
-integer(I4P), parameter :: face(31)=[6, 4,0,1,2,3, 4,4,5,6,7, 4,0,1,5,4, 4,1,2,6,5, 4,2,3,7,6, 4,3,0,4,7]
+! the faces of the polyhedron: their number, then for each face its number of points and their ids, counter-clockwise
+! seen from outside the cell
+integer(I4P), parameter :: face(31)=[6, 4,0,3,2,1, 4,4,5,6,7, 4,0,1,5,4, 4,1,2,6,5, 4,2,3,7,6, 4,3,0,4,7]
 integer(I4P), parameter :: faceoffset(3)=[31, -1, -1] ! the end of the faces of each cell, -1 if not a polyhedron
 type(vtk_file)          :: a_vtk_file
 integer(I4P)            :: error

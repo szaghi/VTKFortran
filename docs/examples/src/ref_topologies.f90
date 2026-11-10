@@ -152,8 +152,8 @@ contains
   integer(I4P), parameter :: offset(2)    = [8, 12]
   integer(I1P), parameter :: cell_type(2) = [42_I1P, 10_I1P]  ! polyhedron, tetrahedron
   integer(I4P), parameter :: face(31)     = [6,                &  ! the cube has 6 faces,
-                                             4, 0,1,2,3,       &  ! each made of 4 points
-                                             4, 4,5,6,7,       &
+                                             4, 0,3,2,1,       &  ! each made of 4 points, listed
+                                             4, 4,5,6,7,       &  ! counter-clockwise seen from outside
                                              4, 0,1,5,4,       &
                                              4, 1,2,6,5,       &
                                              4, 2,3,7,6,       &
