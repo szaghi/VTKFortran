@@ -20,6 +20,16 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake/Modules)
 set(TARGETS_EXPORT_NAME "${PROJECT_NAME}Targets")
 set(NAMESPACE "${PROJECT_NAME}::")
 
+# Thread-safe builds: files written or read from OpenMP threads need every procedure reentrant (ifx: -recursive) and the
+# input/output statements locked (nvfortran emits the locks only in code compiled with -mp). Set before the dependencies,
+# which need them as much as VTKFortran. gfortran has no such flag: up to 16.2 it is not thread-safe (GCC bug 113797).
+if (CMAKE_Fortran_COMPILER_ID MATCHES "^Intel")
+  add_compile_options(-recursive)
+elseif (CMAKE_Fortran_COMPILER_ID MATCHES "NVHPC|PGI")
+  add_compile_options(-mp)
+  add_link_options(-mp)
+endif()
+
 if(NOT TARGET PENF)
     add_subdirectory(src/third_party/PENF)
 endif()
@@ -94,6 +104,9 @@ if (TARGET VTKFortran)
       target_link_libraries(VTKFortran ${dep})   # plain signature is fine
     endif()
   endforeach()
+  if (CMAKE_Fortran_COMPILER_ID MATCHES "NVHPC|PGI")
+    target_link_options(VTKFortran INTERFACE -mp)   # the programs using the library link its OpenMP runtime
+  endif()
 endif()
 
 # testing

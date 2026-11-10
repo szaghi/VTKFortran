@@ -47,9 +47,9 @@ foreach(test_source ${VTKFORTRAN_TESTS})
 endforeach()
 
 # The OpenMP test writes and reads files from threads; by default it is built without OpenMP and runs serially. With the
-# option on it runs its threads, and passes only
-# with a library built thread-safe, ifx with -recursive or nvfortran with -mp (CMAKE_Fortran_FLAGS); no gfortran release
-# is thread-safe for it (GCC PR 113797), see the documentation of the parallel files.
+# option on it runs its threads, and passes with ifx and nvfortran (the library built with -recursive and -mp, see the
+# top-level CMakeLists.txt); no gfortran release is thread-safe for it (GCC PR 113797), see the documentation of the
+# parallel files.
 option(VTKFORTRAN_TEST_OPENMP "Run the test of files written from OpenMP threads" OFF)
 if (VTKFORTRAN_TEST_OPENMP)
   find_package(OpenMP COMPONENTS Fortran REQUIRED)
