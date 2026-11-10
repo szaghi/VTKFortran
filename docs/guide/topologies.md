@@ -17,7 +17,10 @@ All examples use `use vtk_fortran` and `type(vtk_file)`. The general workflow fo
 6. **Close the piece**
 7. **Finalize** — flush and close the file
 
-All procedures return an integer error code. Zero means success. To read a file back, see [Reading files](/guide/reading).
+Every function returns an integer error status, 0 on success (the subroutines `get_xml_volatile` and `free` take an
+optional `error`). Two failures stop the program instead, with a message on standard error: a binary array larger than
+the 2 GiB of a UInt32 header (initialize the file with `header_type='UInt64'`), and a failure of zlib while
+compressing. To read a file back, see [Reading files](/guide/reading).
 
 ## Image Data (VTI)
 
@@ -117,7 +120,10 @@ error = a_vtk_file%xml_writer%write_piece()
 error = a_vtk_file%finalize()
 ```
 
-The `one_component=.true.` flag ensures a scalar is written as a 1-component array, which ParaView renders correctly.
+Arrays of rank 2 to 4 hold the components in their **first** dimension: without `one_component=.true.`, the rank-3
+scalar `v(0:9,0:5,0:5)` would be written as an array of 10 components and 36 tuples instead of 1 component and 360
+tuples, a file that readers reject or misread. Pass `one_component=.true.` for every scalar field stored in an array of
+rank 2 to 4.
 
 ## Unstructured Grid (VTU)
 

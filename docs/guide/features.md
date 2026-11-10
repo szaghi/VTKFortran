@@ -124,10 +124,13 @@ threads never run that initialization at the same time.
 
 | Compiler | Status |
 |----------|--------|
-| GNU gfortran 12, 13, 14, 16 | ✅ Tested (the CI uses gfortran 14) |
-| GNU gfortran 11 | ⚠️ Builds; the string form of `vtm_file%write_block` crashes (in StringiFor `split`) |
-| Intel ifx 2025.3 | ✅ Tested (the discontinued ifort is not tested) |
-| NAG, NVIDIA, Cray, LLVM Flang | Not tested |
+| GNU gfortran 12.5, 13.4, 14.3, 16.2 | ✅ Every test passes (the CI uses gfortran 14) |
+| GNU gfortran 11.5 | ⚠️ Builds; the two `.vtm` tests crash |
+| Intel ifx 2025.3 | ✅ Every test passes (the discontinued ifort is not tested) |
+| NVIDIA nvfortran 26.9 | ⚠️ Builds; 3 of 27 tests fail (reading a binary file written by VTK, `.pvd`, nested `.vtm`) |
+| NAG, Cray, LLVM Flang | Not tested |
+
+See [Installation](/guide/installation#prerequisites) for how the table is measured.
 
 ## Design Principles
 
@@ -135,5 +138,6 @@ threads never run that initialization at the same time.
 - **OOP** — polymorphic `xml_writer` allocated at runtime, an `xml_reader` to read files back; `vtk_file`, `pvtk_file`,
   `vtm_file`, `pvd_file` expose type-bound procedures
 - **KISS** — simple, focused API without unnecessary abstractions
-- **Error codes** — every procedure returns an integer; zero means success
+- **Error codes** — every function returns an integer status, zero on success; only a binary array overflowing its
+  UInt32 header and a zlib failure stop the program, with a message
 - **Free & Open Source** — multi-licensed for FOSS and commercial use

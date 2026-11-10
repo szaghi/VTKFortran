@@ -60,7 +60,7 @@ error = a_vtk_file%finalize()
 - The format of each array (`ascii`, `binary`, raw or base64 appended), the header type and the compressor are taken from
   the file. Files written by VTK and ParaView are read as well as those written by VTKFortran.
 
-**Errors.** As every procedure, the reader returns 0 on success, otherwise:
+**Errors.** As every function of the library, the reader returns 0 on success, otherwise:
 
 | Error | Meaning |
 |-------|---------|

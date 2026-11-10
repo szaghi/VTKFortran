@@ -17,7 +17,7 @@ Writing it takes one call for each part of the file:
 - `write_geo` writes the geometry; for a rectilinear grid, the coordinates along each axis.
 - The point data are written between an `open` and a `close` of the `node` location; `write_dataarray` accepts arrays of
   rank 1 to 4: `one_component=.true.` says that the rank-3 `t` is one scalar per point, not a vector.
-- `finalize` closes the file. Every procedure returns an error status: 0 means success.
+- `finalize` closes the file. Every function returns an error status: 0 means success.
 
 The whole program:
 

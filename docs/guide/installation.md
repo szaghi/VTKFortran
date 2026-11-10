@@ -10,8 +10,11 @@ A Fortran 2008 compiler is required:
 
 | Compiler | Version |
 |----------|---------|
-| GNU gfortran | 12 or newer (tested 12, 13, 14, 16); gfortran 11 builds, but the string form of `vtm_file%write_block` crashes |
-| Intel Fortran (ifx) | tested with 2025.3 (the fobos Intel modes run `ifx`; the discontinued ifort is not tested) |
+| GNU gfortran | 12 or newer: 12.5, 13.4, 14.3 (the CI) and 16.2 pass every test; 11.5 builds, but the two `.vtm` tests crash |
+| Intel Fortran (ifx) | 2025.3 passes every test (the fobos Intel modes run `ifx`; the discontinued ifort is not tested) |
+| NVIDIA nvfortran | 26.9 builds (with CMake), but 3 of the 27 tests fail: reading a binary file written by VTK, `.pvd` and nested `.vtm` files |
+
+Measured on 2026-11-10 by building the tests (`tests-gnu-debug`, `tests-intel`, CMake for nvfortran) and running them.
 
 ## Download
 
@@ -37,7 +40,7 @@ CMake and FoBiS.py builds need the fetched dependencies; fpm fetches its own (se
 | [PENF](https://github.com/szaghi/PENF) | Portable numeric kind parameters (`I4P`, `R8P`, etc.) — used everywhere |
 | [BeFoR64](https://github.com/szaghi/BeFoR64) | Base64 encode/decode for binary XML data |
 | [StringiFor](https://github.com/szaghi/StringiFor) | OOP `string` type used throughout the writer classes |
-| [FoXy](https://github.com/Fortran-FOSS-Programmers/FoXy) | XML tags emitting (the writers; the readers have their own scanner) |
+| [FoXy](https://github.com/Fortran-FOSS-Programmers/FoXy) | XML streaming (`xml_writer`, used by the writers) and file indexing (`xml_index`, used by the readers) |
 | [FACE](https://github.com/szaghi/FACE) | ANSI terminal colour output |
 
 ## Build with CMake (preferred)
