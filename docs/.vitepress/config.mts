@@ -18,6 +18,7 @@ const docs = [
     text: 'Start here',
     items: [
       { text: 'Introduction', link: '/guide/' },
+      { text: 'Quick start', link: '/#quick-start' },
       { text: 'Installation', link: '/guide/installation' },
     ],
   },

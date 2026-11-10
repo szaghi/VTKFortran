@@ -45,20 +45,12 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 | `%xml_writer%write_parallel_geo(...)` | Write a `<P*>` geometry piece reference (pvtk_file only) |
 | `%xml_writer%write_parallel_dataarray(...)` | Write a parallel data array descriptor (pvtk_file only) |
 
-### `vtk_file` reading (`%xml_reader`)
+### `vtk_file` / `pvtk_file` reading (`%xml_reader`)
 
-| Procedure | Description |
-|-----------|-------------|
-| `%xml_reader%get_info(...)` | Dataset type, number of pieces, header type, compressor; whole extent; `ImageData` origin, spacing, direction |
-| `%xml_reader%read_piece(...)` | Counts (`I8P`) and extent of a piece |
-| `%xml_reader%read_geo(x, y, z, piece)` | Point coordinates, or the axes coordinates of a `RectilinearGrid` (`R8P` or `R4P`) |
-| `%xml_reader%read_connectivity(...)` | Connectivity, offsets, cell types and polyhedra faces of an `UnstructuredGrid` (ids `I4P` or `I8P`) |
-| `%xml_reader%read_polydata_cells(block, connectivity, offset, piece)` | One block of `PolyData` cells: verts, lines, strips or polys (ids `I4P` or `I8P`) |
-| `%xml_reader%get_dataarray_names(location, names, piece)` | Names of the arrays of a location (node, cell, field) |
-| `%xml_reader%get_dataarray_info(...)` | VTK type, components and tuples of an array |
-| `%xml_reader%read_dataarray(location, data_name, x, piece)` | Values of an array: rank 1 or `(components, tuples)`, all kinds; strings |
-| `%xml_reader%get_sources(sources)` | Files of the pieces of a parallel header |
-| `%xml_reader%check_pieces(message)` | Check the pieces of a parallel header against it: type, coordinates, declared arrays (error 7 and `message` on mismatch) |
+`initialize(filename=..., action='read')`, then `get_info`, `read_piece`, `read_geo`, `read_connectivity`,
+`read_polydata_cells`, `get_dataarray_names`, `get_dataarray_info`, `read_dataarray`, and for a parallel header
+`get_sources` and `check_pieces`: every procedure with its arguments and what it returns is in the table of
+[Reading files](/guide/reading#serial-files), the error codes below it.
 
 ### `vtm_file`
 

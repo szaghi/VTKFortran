@@ -18,21 +18,8 @@ Key properties:
 
 Fortran remains the language of choice for high-performance scientific computing. Many HPC codes produce large multi-dimensional arrays that need post-processing and visualization. The VTK XML format is the native input format for ParaView, one of the most widely used open-source visualization tools. VTKFortran provides a direct path from Fortran arrays to VTK XML files without leaving the Fortran ecosystem.
 
-## Authors
+## Authors and licenses
 
-- Stefano Zaghi — [@szaghi](https://github.com/szaghi)
-
-Contributions are welcome — see the [Contributing](contributing) page.
-
-## Copyrights
-
-VTKFortran is distributed under a multi-licensing system:
-
-| Use case | License |
-|----------|---------|
-| FOSS projects | [GPL v3](http://www.gnu.org/licenses/gpl-3.0.html) |
-| Closed source / commercial | [BSD 2-Clause](http://opensource.org/licenses/BSD-2-Clause) |
-| Closed source / commercial | [BSD 3-Clause](http://opensource.org/licenses/BSD-3-Clause) |
-| Closed source / commercial | [MIT](http://opensource.org/licenses/MIT) |
-
-> Anyone interested in using, developing, or contributing to VTKFortran is welcome — pick the license that best fits your needs.
+VTKFortran is written by Stefano Zaghi ([@szaghi](https://github.com/szaghi)) and its contributors, see
+[Contributing](contributing). It is multi-licensed, GPL v3 for FOSS projects and BSD 2-Clause, BSD 3-Clause or MIT for
+closed source and commercial ones, see [Copyrights](/#copyrights).

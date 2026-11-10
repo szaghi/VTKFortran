@@ -100,7 +100,7 @@ features:
       height: 48
     title: All kinds, all ranks
     details: "Every PENF kind from I1P to R8P, ranks 1 to 4, scalars, vectors and tensors; unsigned arrays such as vtkGhostType."
-    link: /guide/features#data-arrays
+    link: /guide/data#writing-arrays
     linkText: Data arrays
   - icon:
       light: /icons/bigdata.svg
