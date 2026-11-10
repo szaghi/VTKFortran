@@ -21,6 +21,8 @@ For MPI-parallel codes, each rank writes its own partition as a regular VTS file
 Adjacent pieces must share the boundary ordinate: `nx2_p(1)` of piece 1 must equal `nx1_p(2)` of piece 2. This is required for correct rendering in ParaView.
 :::
 
+<!--@include: ../diagrams/pieces.svg-->
+
 ## Parallel Rectilinear Grid (PVTR)
 
 A `.pvtr` header is written as a `.pvts` one, with `mesh_topology='PRectilinearGrid'`: each piece is a regular `.vtr` file
@@ -35,6 +37,12 @@ The same approach works for unstructured grids: each rank writes its partition a
 and a connectivity using **local** point ids (`0` to `np-1` of that piece), then one rank writes the `.pvtu` file. The `.pvtu`
 file contains no data: it declares the type of the points coordinates (`mesh_kind`) and of every data array of the pieces, and
 lists the pieces. Unstructured pieces have no extents, so `write_parallel_geo` takes only the piece file name.
+
+```mermaid
+flowchart LR
+  H["ref.pvtu<br/>PPoints: Float64<br/>PPointData: temperature<br/>PCellData: part"] -->|Piece Source| A["ref_part_1.vtu<br/>points, cells, data"]
+  H -->|Piece Source| B["ref_part_2.vtu<br/>points, cells, data"]
+```
 
 <<< @/examples/snippets/ref_parallel-pvtu.f90
 
@@ -93,6 +101,19 @@ Build the hierarchy step by step with the `action` argument of `write_block`:
 
 <<< @/examples/snippets/ref_parallel-vtm-nested.f90
 
+```mermaid
+flowchart TD
+  R[ref_machine.vtm] --> B0["Block 0: assembly"]
+  B0 --> D0["DataSet 0: a.vtu"]
+  B0 --> D1["DataSet 1: b.vtu"]
+  B0 --> B2["Block 2: bolts"]
+  B2 --> E0["DataSet 0: b1.vtu"]
+  B2 --> E1["DataSet 1: b2.vtu"]
+  B0 --> B3["Block 3: sub-assembly"]
+  B3 --> N0["Block 0: nuts"]
+  N0 --> F0["DataSet 0: n.vtu"]
+```
+
 - The children of a block (blocks and datasets together) get the indexes 0, 1, 2, … in the order they are written, as VTK
   numbers the children of a multi-block dataset. Every `action='open'` needs its `action='close'`.
 - The string form (`filenames='a.vtu b.vtu'`, names separated by blanks) accepts the same `action` values.
@@ -124,6 +145,16 @@ collection with `pvd_file`:
 writes
 
 <<< @/examples/output/ref_parallel-pvd.ansi{ansi}
+
+```mermaid
+flowchart LR
+  P[ref_simulation.pvd] --> T0["t = 0.0<br/>ref_simulation_0000.vtu"]
+  P --> T1["t = 0.1<br/>ref_simulation_0001.vtu"]
+  P --> T2["t = 0.2<br/>ref_simulation_0002.vtu"]
+  P --> T3["t = 0.3<br/>ref_simulation_0003.vtu"]
+```
+
+ParaView opens the collection as one dataset with a time axis: each time step shows the file listed for it.
 
 - **The file is valid at any time.** Each `write_dataset` writes its entry and the closing tags, and flushes the file: a run
   that stops before `finalize` (crash, job killed by the scheduler) still leaves a collection that ParaView opens, with all the

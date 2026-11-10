@@ -63,6 +63,10 @@ cube (a hexahedron, points 0 to 7) with a pyramid on top of it (its base is the 
 
 <<< @/examples/snippets/ref_topologies-vtu.f90
 
+How the three arrays describe the two cells:
+
+<!--@include: ../diagrams/connectivity.svg-->
+
 Unstructured grids are written in every format, compressed or not, as the other topologies.
 
 Cell types are passed as `integer(I1P)` and written as a `UInt8` DataArray, as the VTK XML format specifies (VTK cell type

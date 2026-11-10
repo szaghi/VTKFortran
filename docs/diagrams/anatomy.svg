@@ -1,0 +1,76 @@
+<svg class="vtk-diagram" viewBox="0 0 760 450" role="img" aria-labelledby="anat-t">
+<title id="anat-t">The structure of a VTK XML file, with its data inline or appended</title>
+<defs><marker id="anat-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="d-arrowhead" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<text x="190" y="20" class="d-title" text-anchor="middle">Inline: ascii, binary</text>
+<rect class="d-frame" x="10" y="32" width="360" height="370" rx="6"/>
+<text x="22" y="50" class="d-mono">&lt;VTKFile type=&quot;UnstructuredGrid&quot; ...&gt;</text>
+<rect class="d-box" x="22" y="60" width="336" height="278" rx="4"/>
+<text x="34" y="78" class="d-mono">&lt;UnstructuredGrid&gt;</text>
+<rect class="d-frame" x="34" y="86" width="312" height="244" rx="4"/>
+<text x="46" y="104" class="d-mono">&lt;Piece NumberOfPoints NumberOfCells&gt;</text>
+<rect class="d-box" x="46" y="114" width="288" height="46" rx="3"/>
+<text x="56" y="129" class="d-mono d-muted">&lt;PointData&gt;</text>
+<rect class="d-cell" x="58" y="135" width="264" height="20" rx="3"/>
+<text x="66" y="149" class="d-mono">DataArray Name=&quot;pressure&quot;</text>
+<rect class="d-data" x="248" y="139" width="68" height="12" rx="2"/>
+<rect class="d-box" x="46" y="168" width="288" height="46" rx="3"/>
+<text x="56" y="183" class="d-mono d-muted">&lt;CellData&gt;</text>
+<rect class="d-cell" x="58" y="189" width="264" height="20" rx="3"/>
+<text x="66" y="203" class="d-mono">DataArray Name=&quot;id&quot;</text>
+<rect class="d-data" x="248" y="193" width="68" height="12" rx="2"/>
+<rect class="d-box" x="46" y="222" width="288" height="46" rx="3"/>
+<text x="56" y="237" class="d-mono d-muted">&lt;Points&gt;</text>
+<rect class="d-cell" x="58" y="243" width="264" height="20" rx="3"/>
+<text x="66" y="257" class="d-mono">DataArray Name=&quot;Points&quot;</text>
+<rect class="d-data" x="248" y="247" width="68" height="12" rx="2"/>
+<rect class="d-box" x="46" y="276" width="288" height="46" rx="3"/>
+<text x="56" y="291" class="d-mono d-muted">&lt;Cells&gt;</text>
+<rect class="d-cell" x="58" y="297" width="264" height="20" rx="3"/>
+<text x="66" y="311" class="d-mono">DataArray x 3</text>
+<rect class="d-data" x="248" y="301" width="68" height="12" rx="2"/>
+<text x="190" y="362" text-anchor="middle">each DataArray holds its own data:</text>
+<text x="190" y="380" class="d-muted" text-anchor="middle">text (ascii) or base64 (binary)</text>
+<text x="570" y="20" class="d-title" text-anchor="middle">Appended: raw, binary-appended</text>
+<rect class="d-frame" x="390" y="32" width="360" height="370" rx="6"/>
+<text x="402" y="50" class="d-mono">&lt;VTKFile type=&quot;UnstructuredGrid&quot; ...&gt;</text>
+<rect class="d-box" x="402" y="60" width="336" height="278" rx="4"/>
+<text x="414" y="78" class="d-mono">&lt;UnstructuredGrid&gt;</text>
+<rect class="d-frame" x="414" y="86" width="312" height="244" rx="4"/>
+<text x="426" y="104" class="d-mono">&lt;Piece NumberOfPoints NumberOfCells&gt;</text>
+<rect class="d-box" x="426" y="114" width="288" height="46" rx="3"/>
+<text x="436" y="129" class="d-mono d-muted">&lt;PointData&gt;</text>
+<rect class="d-cell" x="438" y="135" width="264" height="20" rx="3"/>
+<text x="446" y="149" class="d-mono">DataArray Name=&quot;pressure&quot;</text>
+<text x="696" y="149" class="d-mono d-neon-text" text-anchor="end">offset</text>
+<rect class="d-box" x="426" y="168" width="288" height="46" rx="3"/>
+<text x="436" y="183" class="d-mono d-muted">&lt;CellData&gt;</text>
+<rect class="d-cell" x="438" y="189" width="264" height="20" rx="3"/>
+<text x="446" y="203" class="d-mono">DataArray Name=&quot;id&quot;</text>
+<text x="696" y="203" class="d-mono d-neon-text" text-anchor="end">offset</text>
+<rect class="d-box" x="426" y="222" width="288" height="46" rx="3"/>
+<text x="436" y="237" class="d-mono d-muted">&lt;Points&gt;</text>
+<rect class="d-cell" x="438" y="243" width="264" height="20" rx="3"/>
+<text x="446" y="257" class="d-mono">DataArray Name=&quot;Points&quot;</text>
+<text x="696" y="257" class="d-mono d-neon-text" text-anchor="end">offset</text>
+<rect class="d-box" x="426" y="276" width="288" height="46" rx="3"/>
+<text x="436" y="291" class="d-mono d-muted">&lt;Cells&gt;</text>
+<rect class="d-cell" x="438" y="297" width="264" height="20" rx="3"/>
+<text x="446" y="311" class="d-mono">DataArray x 3</text>
+<text x="696" y="311" class="d-mono d-neon-text" text-anchor="end">offset</text>
+<rect class="d-box" x="402" y="346" width="336" height="46" rx="4"/>
+<text x="412" y="384" class="d-mono d-muted">&lt;AppendedData encoding=&quot;raw&quot;&gt; _</text>
+<rect class="d-head" x="414" y="356" width="8" height="14" rx="1"/>
+<rect class="d-data" x="422" y="356" width="56" height="14" rx="1"/>
+<path class="d-link" d="M702,145 C742,145 446,300 446,354" marker-end="url(#anat-arrow)"/>
+<rect class="d-head" x="484" y="356" width="8" height="14" rx="1"/>
+<rect class="d-data" x="492" y="356" width="26" height="14" rx="1"/>
+<path class="d-link" d="M702,199 C738,199 501,300 501,354" marker-end="url(#anat-arrow)"/>
+<rect class="d-head" x="524" y="356" width="8" height="14" rx="1"/>
+<rect class="d-data" x="532" y="356" width="72" height="14" rx="1"/>
+<path class="d-link" d="M702,253 C734,253 564,300 564,354" marker-end="url(#anat-arrow)"/>
+<rect class="d-head" x="610" y="356" width="8" height="14" rx="1"/>
+<rect class="d-data" x="618" y="356" width="88" height="14" rx="1"/>
+<path class="d-link" d="M702,307 C730,307 658,300 658,354" marker-end="url(#anat-arrow)"/>
+<text x="380" y="422" class="d-muted" text-anchor="middle">appended: each array is a bytes count header (UInt32 or UInt64) followed by its bytes;</text>
+<text x="380" y="440" class="d-muted" text-anchor="middle">the offset of each DataArray is where its header starts, after the &quot;_&quot;</text>
+</svg>

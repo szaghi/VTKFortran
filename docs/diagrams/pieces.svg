@@ -1,0 +1,84 @@
+<svg class="vtk-diagram" viewBox="0 0 760 330" role="img" aria-labelledby="pcs-t">
+<title id="pcs-t">The extents of two structured pieces, and two unstructured pieces with their ghost cells</title>
+<defs><pattern id="d-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="d-hatch-line" x1="0" y1="0" x2="0" y2="6"/></pattern></defs>
+<text x="190" y="20" class="d-title" text-anchor="middle">Structured pieces: extents</text>
+<rect class="d-seal-soft" x="20" y="196" width="34" height="34" rx="0"/>
+<rect class="d-seal-soft" x="20" y="162" width="34" height="34" rx="0"/>
+<rect class="d-seal-soft" x="20" y="128" width="34" height="34" rx="0"/>
+<rect class="d-seal-soft" x="20" y="94" width="34" height="34" rx="0"/>
+<rect class="d-seal-soft" x="20" y="60" width="34" height="34" rx="0"/>
+<rect class="d-seal-soft" x="54" y="196" width="34" height="34" rx="0"/>
+<rect class="d-seal-soft" x="54" y="162" width="34" height="34" rx="0"/>
+<rect class="d-seal-soft" x="54" y="128" width="34" height="34" rx="0"/>
+<rect class="d-seal-soft" x="54" y="94" width="34" height="34" rx="0"/>
+<rect class="d-seal-soft" x="54" y="60" width="34" height="34" rx="0"/>
+<rect class="d-seal-soft" x="88" y="196" width="34" height="34" rx="0"/>
+<rect class="d-seal-soft" x="88" y="162" width="34" height="34" rx="0"/>
+<rect class="d-seal-soft" x="88" y="128" width="34" height="34" rx="0"/>
+<rect class="d-seal-soft" x="88" y="94" width="34" height="34" rx="0"/>
+<rect class="d-seal-soft" x="88" y="60" width="34" height="34" rx="0"/>
+<rect class="d-seal-soft" x="122" y="196" width="34" height="34" rx="0"/>
+<rect class="d-seal-soft" x="122" y="162" width="34" height="34" rx="0"/>
+<rect class="d-seal-soft" x="122" y="128" width="34" height="34" rx="0"/>
+<rect class="d-seal-soft" x="122" y="94" width="34" height="34" rx="0"/>
+<rect class="d-seal-soft" x="122" y="60" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="156" y="196" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="156" y="162" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="156" y="128" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="156" y="94" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="156" y="60" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="190" y="196" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="190" y="162" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="190" y="128" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="190" y="94" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="190" y="60" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="224" y="196" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="224" y="162" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="224" y="128" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="224" y="94" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="224" y="60" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="258" y="196" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="258" y="162" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="258" y="128" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="258" y="94" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="258" y="60" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="292" y="196" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="292" y="162" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="292" y="128" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="292" y="94" width="34" height="34" rx="0"/>
+<rect class="d-neon-soft" x="292" y="60" width="34" height="34" rx="0"/>
+<path class="d-shared" d="M156,54 L156,236"/>
+<text x="20" y="252" class="d-mono" text-anchor="middle">i=0</text>
+<text x="156" y="252" class="d-mono" text-anchor="middle">i=4</text>
+<text x="326" y="252" class="d-mono" text-anchor="middle">i=9</text>
+<text x="88" y="48" class="d-mono" text-anchor="middle">piece 1: i=0..4</text>
+<text x="241" y="48" class="d-mono" text-anchor="middle">piece 2: i=4..9</text>
+<text x="20" y="274" class="d-muted">whole extent i=0..9: the points of i=4</text>
+<text x="20" y="292" class="d-muted">belong to both pieces (nx2 of one = nx1 of the next)</text>
+<text x="575" y="20" class="d-title" text-anchor="middle">Unstructured pieces: ghost cells</text>
+<text x="400" y="60" class="d-mono">piece 1</text>
+<rect class="d-seal-soft" x="400" y="70" width="34" height="40" rx="2"/>
+<text x="417" y="95" class="d-mono" text-anchor="middle">0</text>
+<rect class="d-seal-soft" x="438" y="70" width="34" height="40" rx="2"/>
+<text x="455" y="95" class="d-mono" text-anchor="middle">0</text>
+<rect class="d-seal-soft" x="476" y="70" width="34" height="40" rx="2"/>
+<text x="493" y="95" class="d-mono" text-anchor="middle">0</text>
+<rect class="d-seal-soft" x="514" y="70" width="34" height="40" rx="2"/>
+<text x="531" y="95" class="d-mono" text-anchor="middle">0</text>
+<rect class="d-ghost" x="552" y="70" width="34" height="40" rx="2"/>
+<text x="569" y="95" class="d-mono" text-anchor="middle">1</text>
+<text x="400" y="180" class="d-mono">piece 2</text>
+<rect class="d-ghost" x="514" y="190" width="34" height="40" rx="2"/>
+<text x="531" y="215" class="d-mono" text-anchor="middle">1</text>
+<rect class="d-neon-soft" x="552" y="190" width="34" height="40" rx="2"/>
+<text x="569" y="215" class="d-mono" text-anchor="middle">0</text>
+<rect class="d-neon-soft" x="590" y="190" width="34" height="40" rx="2"/>
+<text x="607" y="215" class="d-mono" text-anchor="middle">0</text>
+<rect class="d-neon-soft" x="628" y="190" width="34" height="40" rx="2"/>
+<text x="645" y="215" class="d-mono" text-anchor="middle">0</text>
+<rect class="d-neon-soft" x="666" y="190" width="34" height="40" rx="2"/>
+<text x="683" y="215" class="d-mono" text-anchor="middle">0</text>
+<text x="400" y="268" class="d-mono">vtkGhostType (UInt8): 0 own cell, 1 ghost cell</text>
+<text x="400" y="288" class="d-muted">header: ghost_level=1; readers do not draw ghosts,</text>
+<text x="400" y="306" class="d-muted">so the cells shared by two pieces are drawn once</text>
+</svg>

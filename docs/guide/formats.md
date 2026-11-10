@@ -23,6 +23,10 @@ The binary formats (`binary`, `raw`, `binary-appended`) can be zlib-compressed w
 [Compressed binary data](#compressed-binary-data-zlib). Binary arrays larger than 2 GiB need `header_type='UInt64'`, see
 [Large data arrays](#large-data-arrays-uint64-headers).
 
+Where the data are, in the two families of formats:
+
+<!--@include: ../diagrams/anatomy.svg-->
+
 The appended formats (`raw`, `raw-zlib`, `binary-appended`) write the XML metadata of each array first and its data only at
 `finalize`, in the appended section after all the metadata. Until then the data are held in a **scratch file**, so memory use
 does not grow with the file size and the arrays can be deallocated after each `write_dataarray`. The cost is writing the data
