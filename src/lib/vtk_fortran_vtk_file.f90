@@ -71,8 +71,8 @@ contains
    !<- RAW: data are saved in raw-binary format in the appended tag of the XML file;
    !<- RAW-ZLIB: shorthand of RAW with `compressor='zlib'`;
    !<- BINARY-APPENDED: data are saved in base64 encoded format in the appended tag of the XML file;
-   !<- VTKHDF: an HDF5 file in the VTKHDF layout (needs the library built with `VTKFORTRAN_USE_HDF5`), ImageData only for
-   !<  now, one piece; see the `vtk_fortran_vtk_file_vtkhdf_writer` module.
+   !<- VTKHDF: an HDF5 file in the VTKHDF layout (needs the library built with `VTKFORTRAN_USE_HDF5`): ImageData (one
+   !<  piece) and UnstructuredGrid (each piece a partition); see the `vtk_fortran_vtk_file_vtkhdf_writer` module.
    !<
    !<### Compression of binary data
    !<

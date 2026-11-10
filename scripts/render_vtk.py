@@ -90,14 +90,23 @@ def data_range(source, name: str, assoc: str, times: list[float]) -> tuple[float
 
 
 def distinct_values(source, name: str, assoc: str) -> list[int]:
-    """Return the distinct values of an integer array, sorted."""
+    """Return the distinct values of an integer array, sorted, over every partition of a partitioned dataset."""
     from paraview import servermanager
     from vtk.util.numpy_support import vtk_to_numpy
     import numpy
 
     data = servermanager.Fetch(source)
-    arrays = data.GetPointData() if assoc == 'POINTS' else data.GetCellData()
-    return [int(v) for v in numpy.unique(vtk_to_numpy(arrays.GetArray(name)))]
+    if data.IsA('vtkPartitionedDataSet'):  # a VTKHDF file of several pieces
+        parts = [data.GetPartition(i) for i in range(data.GetNumberOfPartitions())]
+    else:
+        parts = [data]
+    values = []
+    for part in parts:
+        if part is None:
+            continue
+        arrays = part.GetPointData() if assoc == 'POINTS' else part.GetCellData()
+        values.append(vtk_to_numpy(arrays.GetArray(name)))
+    return [int(v) for v in numpy.unique(numpy.concatenate(values))]
 
 
 def time_steps(reader) -> list[float]:

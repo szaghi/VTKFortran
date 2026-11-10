@@ -1,0 +1,6 @@
+$ vtkhdf_pieces
+blocks.vtkhdf, one partition per piece:
+  NumberOfPoints          18 18 18
+  NumberOfCells           4 4 4
+  NumberOfConnectivityIds 32 32 32
+  Offsets                 0 8 16 24 32 0 8 16 24 32 0 8 16 24 32

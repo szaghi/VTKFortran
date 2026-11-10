@@ -102,11 +102,27 @@ and `32` a hidden one: ParaView does not draw them.
 uncompressed format. `header_type='UInt64'` is needed only for arrays of more than 2 GiB. The sizes of each format are
 measured in [chapter 2](./tutorial/02-formats) of the tutorial.
 
-### An HDF5 file (VTKHDF)
+### Write a .vtkhdf file
 
-`format='vtkhdf'` writes an ImageData as one HDF5 file in the VTKHDF layout, with the same calls: ParaView reads it, and
-so does any HDF5 tool. It needs the library built with HDF5; the other topologies come later. A complete program and
-the layout of the file: [VTKHDF](/guide/formats#vtkhdf-hdf5).
+`format='vtkhdf'` writes one HDF5 file in the VTKHDF layout, with the calls of the XML formats: ParaView reads it, and so
+does any HDF5 tool. Here three blocks of hexahedra, each one a piece of an UnstructuredGrid:
+
+<<< @/examples/snippets/vtkhdf_pieces-write.f90
+
+Each piece is a partition of the file: its counts are one entry of `NumberOfPoints`, `NumberOfCells` and
+`NumberOfConnectivityIds`, its points, cells and arrays follow those of the previous pieces in datasets shared by all.
+Point ids count from 0 in each piece, and the offsets start from 0 in each piece, as VTKHDF wants (VTKFortran's offsets
+are the ends of the cells: the writer converts them). The program reads the counts back with the HDF5 bindings of the
+library:
+
+<<< @/examples/output/vtkhdf_pieces.ansi{ansi}
+
+<p align="center"><img src="../examples/images/vtkhdf_pieces.png" alt="three blocks of four hexahedra, one colour per block, read by ParaView from the VTKHDF file"></p>
+
+ParaView reads the partitions as one partitioned dataset. Every piece must hold the same arrays: an array missing from a
+piece, or new after the first one, is refused. It needs the library built with HDF5 (`initialize` returns an error
+otherwise). ImageData and UnstructuredGrid are written for now; the layout of the file:
+[VTKHDF](/guide/formats#vtkhdf-hdf5).
 
 ### More than 2^31 points or cells
 

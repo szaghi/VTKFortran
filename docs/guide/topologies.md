@@ -39,7 +39,7 @@ indexes `(0,0,0)`, also when the extents do not start at 0).
 - `write_geo` is not used. Point data have one value per grid point, cell data one value per cell, written with the usual
   `write_dataarray` calls in any format.
 - ImageData is also written in the VTKHDF format (`format='vtkhdf'`, an HDF5 file), with the same calls and one piece:
-  see [VTKHDF](/guide/formats#vtkhdf-hdf5). The other topologies are XML only, for now.
+  see [VTKHDF](/guide/formats#vtkhdf-hdf5). So is UnstructuredGrid; the other topologies are XML only, for now.
 
 ## Rectilinear Grid (VTR)
 
@@ -69,7 +69,10 @@ How the three arrays describe the two cells:
 
 <!--@include: ../diagrams/connectivity.svg-->
 
-Unstructured grids are written in every format, compressed or not, as the other topologies.
+Unstructured grids are written in every format, compressed or not, as the other topologies, and in the VTKHDF format
+(`format='vtkhdf'`, an HDF5 file) too, with the same calls: each piece is a partition of the file, polyhedra are not
+written yet. See [VTKHDF](/guide/formats#vtkhdf-hdf5) and the recipe
+[Write a .vtkhdf file](/manual/cookbook#write-a-vtkhdf-file).
 
 Cell types are passed as `integer(I1P)` and written as a `UInt8` DataArray, as the VTK XML format specifies (VTK cell type
 codes are all below 128, so the bytes are the same).
