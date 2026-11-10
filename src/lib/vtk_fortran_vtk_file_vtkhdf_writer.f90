@@ -13,16 +13,18 @@ module vtk_fortran_vtk_file_vtkhdf_writer
 !< dataset `Points` of shape `[k, j, i, 3]`, both with the attribute `Dimensions`, VTKHDF 2.7); UnstructuredGrid, each
 !< piece a partition (its counts in `NumberOfPoints`, `NumberOfCells`, `NumberOfConnectivityIds`, its points, cells and
 !< arrays appended to datasets shared by the pieces; the offsets written from 0, VTKFortran's end offsets converted), ids
-!< and counts I4P or I8P;
+!< and counts I4P or I8P; polyhedra (`face`, `faceoffset` of `write_connectivity`) as `FaceConnectivity`, `FaceOffsets`,
+!< `PolyhedronToFaces`, `PolyhedronOffsets` with their counts per piece (VTKHDF 2.5; zero entries for the pieces without
+!< polyhedra, the earlier ones written when the first polyhedra come);
 !< PolyData, each piece a partition as well, its cells in the four groups `Vertices`, `Lines`, `Strips`, `Polygons` (each
 !< with its own counts, connectivity and offsets; a block not given has no cells, and its group gets zero entries);
 !< data arrays of every kind and layout, unsigned arrays, active arrays (`Attribute`, VTKHDF 2.6), numeric field data.
-!< Refused (non-zero error, message on stderr): polyhedra (not yet), a volatile file, string field
+!< Refused (non-zero error, message on stderr): a volatile file, string field
 !< data (the VTK reader crashes on them), zlib without the HDF5 deflate filter, an array missing from a piece or new
 !< after the first one, and every call when the library is built without HDF5 (`VTKFORTRAN_USE_HDF5`).
 !<
-!< `Version` is written by `finalize`: 2.0, 2.6 when an active array is marked, 2.7 for a RectilinearGrid or a
-!< StructuredGrid.
+!< `Version` is written by `finalize`: 2.0, 2.5 with polyhedra, 2.6 when an active array is marked, 2.7 for a
+!< RectilinearGrid or a StructuredGrid.
 use penf
 use vtk_fortran_hdf5
 use vtk_fortran_parameters, only : stderr
@@ -39,6 +41,7 @@ integer(I4P), parameter :: TOPOLOGY_UNSTRUCTURED = 2_I4P !< UnstructuredGrid.
 integer(I4P), parameter :: TOPOLOGY_POLY = 3_I4P         !< PolyData.
 integer(I4P), parameter :: TOPOLOGY_RECT = 4_I4P         !< RectilinearGrid.
 integer(I4P), parameter :: TOPOLOGY_STRG = 5_I4P         !< StructuredGrid.
+integer(I1P), parameter :: CELL_POLYHEDRON = 42_I1P     !< VTK type of a polyhedron.
 character(*), parameter :: BLOCKS(4) = ['Vertices', 'Lines   ', 'Strips  ', 'Polygons'] !< Groups of the PolyData cells.
 character(*), parameter :: NAMES_SEPARATOR = achar(0)    !< Separator of the names of a list (a name has no NUL).
 
@@ -67,6 +70,8 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
   integer(I8P)                  :: total_cells=0_I8P       !< Cells of the pieces started (UnstructuredGrid, PolyData).
   logical                       :: is_geo_written=.false.  !< The points of the open piece are written.
   logical                       :: is_connectivity_written=.false. !< The cells of the open piece are written.
+  logical                       :: has_polyhedra=.false.   !< The file has polyhedra (UnstructuredGrid).
+  logical                       :: is_faces_written=.false. !< The faces of the polyhedra of the open piece are written.
   character(len=:), allocatable :: point_arrays            !< Names of the point data arrays, NUL terminated.
   character(len=:), allocatable :: cell_arrays             !< Names of the cell data arrays, NUL terminated.
   contains
@@ -169,11 +174,13 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
     procedure, pass(self), private :: is_partitioned !< The pieces are partitions (UnstructuredGrid, PolyData).
     procedure, pass(self), private :: mark_active   !< Mark a dataset as active array.
     procedure, pass(self), private :: open_group    !< Open (or create) a data group.
+    procedure, pass(self), private :: no_faces      !< Write the zero entries of a piece without polyhedra.
     procedure, pass(self), private :: poly_block    !< Check or write a block of cells of a PolyData piece.
     procedure, pass(self), private :: poly_blocks   !< Check or write the four blocks of cells of a PolyData piece.
     procedure, pass(self), private :: record_array  !< Record the name of a point or cell data array.
     procedure, pass(self), private :: reset         !< Reset the state of the writer.
     procedure, pass(self), private :: start_partition !< Start a piece of an UnstructuredGrid or PolyData.
+    procedure, pass(self), private :: start_polyhedra !< Start the polyhedra of the file: zero entries for the earlier pieces.
 endtype vtkhdf_writer
 
 contains
@@ -1621,7 +1628,8 @@ contains
 
   function write_connectivity_I4P(self, nc, connectivity, offset, cell_type, face, faceoffset) result(error)
   !< Write the cells of the piece of an UnstructuredGrid (I4P ids): connectivity, offsets (VTKFortran end offsets,
-  !< written from 0 as VTKHDF wants them), types. Polyhedra (`face`, `faceoffset`) are not supported yet.
+  !< written from 0 as VTKHDF wants them), types, and the faces of its polyhedra (`face`, `faceoffset`, checked before
+  !< anything is written).
   class(vtkhdf_writer),       intent(inout) :: self
   integer(I4P),               intent(in)    :: nc
   integer(I4P),               intent(in)    :: connectivity(1:)
@@ -1631,16 +1639,26 @@ contains
   integer(I1P),               intent(in)    :: cell_type(1:)
   integer(I4P)                              :: error
 
-  if (present(face) .or. present(faceoffset)) then
-    error = refuse('polyhedra (face, faceoffset) are not supported yet')
+  if (present(face) .neqv. present(faceoffset)) then
+    error = refuse('write_connectivity: face and faceoffset go together')
+    return
+  endif
+  if (present(face)) then
+    error = put_faces_I4P(self, int(nc, I8P), face, faceoffset, cell_type, .true.)
+    if (error /= 0_I4P) return
+  elseif (any(cell_type == CELL_POLYHEDRON)) then
+    error = refuse('write_connectivity: a polyhedron (cell type 42) needs face and faceoffset')
     return
   endif
   error = put_cells_I4P(self, int(nc, I8P), connectivity, offset, cell_type)
+  if (error /= 0_I4P) return
+  if (present(face)) error = put_faces_I4P(self, int(nc, I8P), face, faceoffset, cell_type, .false.)
   endfunction write_connectivity_I4P
 
   function write_connectivity_I8P(self, nc, connectivity, offset, cell_type, face, faceoffset) result(error)
   !< Write the cells of the piece of an UnstructuredGrid (I8P ids): connectivity, offsets (VTKFortran end offsets,
-  !< written from 0 as VTKHDF wants them), types. Polyhedra (`face`, `faceoffset`) are not supported yet.
+  !< written from 0 as VTKHDF wants them), types, and the faces of its polyhedra (`face`, `faceoffset`, checked before
+  !< anything is written).
   class(vtkhdf_writer),       intent(inout) :: self
   integer(I8P),               intent(in)    :: nc
   integer(I8P),               intent(in)    :: connectivity(1:)
@@ -1650,11 +1668,20 @@ contains
   integer(I1P),               intent(in)    :: cell_type(1:)
   integer(I4P)                              :: error
 
-  if (present(face) .or. present(faceoffset)) then
-    error = refuse('polyhedra (face, faceoffset) are not supported yet')
+  if (present(face) .neqv. present(faceoffset)) then
+    error = refuse('write_connectivity: face and faceoffset go together')
+    return
+  endif
+  if (present(face)) then
+    error = put_faces_I8P(self, int(nc, I8P), face, faceoffset, cell_type, .true.)
+    if (error /= 0_I4P) return
+  elseif (any(cell_type == CELL_POLYHEDRON)) then
+    error = refuse('write_connectivity: a polyhedron (cell type 42) needs face and faceoffset')
     return
   endif
   error = put_cells_I8P(self, int(nc, I8P), connectivity, offset, cell_type)
+  if (error /= 0_I4P) return
+  if (present(face)) error = put_faces_I8P(self, int(nc, I8P), face, faceoffset, cell_type, .false.)
   endfunction write_connectivity_I8P
 
   function write_piece_start_tag_unst(self, np, nc) result(error)
@@ -2369,6 +2396,206 @@ contains
   if (error == 0_I4P) self%is_geo_written = .true.
   endfunction put_grid_points_R4P
 
+  function put_faces_I4P(self, nc, face, faceoffset, cell_type, check_only) result(error)
+  !< Check (`check_only`) or append the faces (I4P ids) of the polyhedra of an UnstructuredGrid piece:
+  !< VTKFortran's stream (for each polyhedron the number of its faces, then for each face the number of its
+  !< points and their ids) becomes FaceConnectivity, FaceOffsets, PolyhedronToFaces, PolyhedronOffsets and the
+  !< counts of the piece (VTKHDF 2.5). A cell is a polyhedron (type 42) if and only if its faceoffset is not -1.
+  class(vtkhdf_writer), intent(inout) :: self                   !< Writer.
+  integer(I8P), intent(in)            :: nc                     !< Number of cells.
+  integer(I4P), intent(in)            :: face(:)                !< Faces of each polyhedron with their points (VTKFortran stream).
+  integer(I4P), intent(in)            :: faceoffset(:)          !< End of the faces of each cell in `face`, -1 if not a polyhedron.
+  integer(I1P), intent(in)            :: cell_type(:)           !< VTK cell types.
+  logical, intent(in)                 :: check_only             !< Check the faces, write nothing.
+  integer(I4P)                        :: error                  !< Error status.
+  integer(I4P), allocatable           :: face_connectivity(:)   !< Point ids of the faces.
+  integer(I4P), allocatable           :: face_offsets(:)        !< Offsets of the faces, from 0 (n_faces+1 values).
+  integer(I4P), allocatable           :: polyhedron_to_faces(:) !< Faces of each polyhedron, from 0 in the piece.
+  integer(I4P), allocatable           :: polyhedron_offsets(:)  !< Offsets of the faces of each cell, from 0 (nc+1 values).
+  integer(I8P)                        :: n_faces                !< Faces of the polyhedra of the piece.
+  integer(I8P)                        :: n_face_ids             !< Point ids of those faces.
+  integer(I8P)                        :: start                  !< End of the faces of the previous polyhedron in `face`.
+  integer(I8P)                        :: last                   !< End of the faces of the cell in `face`.
+  integer(I8P)                        :: c, f, i, n, nf         !< Counters, sizes.
+
+  error = 0_I4P
+  if (size(faceoffset, kind=I8P) /= nc .or. size(cell_type, kind=I8P) < nc) then
+    error = refuse('write_connectivity: faceoffset needs one value per cell')
+    return
+  endif
+  ! count and check
+  n_faces = 0_I8P ; n_face_ids = 0_I8P ; start = 0_I8P
+  do c=1_I8P, nc
+    if (faceoffset(c) < 0_I4P) then
+      if (cell_type(c) == CELL_POLYHEDRON) then
+        error = refuse('write_connectivity: the cell '//trim(str(n=c, no_sign=.true.))//' is a polyhedron, '// &
+                       'its faceoffset is -1')
+        return
+      endif
+      cycle
+    endif
+    if (cell_type(c) /= CELL_POLYHEDRON) then
+      error = refuse('write_connectivity: the cell '//trim(str(n=c, no_sign=.true.))//' is not a polyhedron, '// &
+                     'its faceoffset must be -1')
+      return
+    endif
+    last = int(faceoffset(c), I8P)
+    i = start + 1_I8P
+    nf = 0_I8P
+    if (last > start .and. last <= size(face, kind=I8P)) nf = int(face(i), I8P)
+    i = i + 1_I8P
+    do f=1_I8P, nf
+      if (i > last) exit
+      n = int(face(i), I8P)
+      if (n < 3_I8P .or. i + n > last) exit
+      n_face_ids = n_face_ids + n
+      i = i + n + 1_I8P
+    enddo
+    if (nf < 1_I8P .or. f <= nf .or. i - 1_I8P /= last) then
+      error = refuse('write_connectivity: the faces of the cell '//trim(str(n=c, no_sign=.true.))// &
+                     ' do not end at its faceoffset (each face: its number of points, at least 3, then their ids)')
+      return
+    endif
+    n_faces = n_faces + nf
+    start = last
+  enddo
+  if (check_only) return
+  ! convert
+  allocate(face_connectivity(n_face_ids), face_offsets(n_faces+1_I8P), polyhedron_to_faces(n_faces))
+  allocate(polyhedron_offsets(nc+1_I8P))
+  face_offsets(1) = 0_I4P ; polyhedron_offsets(1) = 0_I4P
+  n_faces = 0_I8P ; n_face_ids = 0_I8P ; start = 0_I8P
+  do c=1_I8P, nc
+    if (faceoffset(c) >= 0_I4P) then
+      i = start + 1_I8P
+      nf = int(face(i), I8P)
+      i = i + 1_I8P
+      do f=1_I8P, nf
+        n = int(face(i), I8P)
+        face_connectivity(n_face_ids+1_I8P:n_face_ids+n) = face(i+1_I8P:i+n)
+        n_face_ids = n_face_ids + n
+        face_offsets(n_faces+f+1_I8P) = int(n_face_ids, I4P)
+        polyhedron_to_faces(n_faces+f) = int(n_faces + f - 1_I8P, I4P)
+        i = i + n + 1_I8P
+      enddo
+      n_faces = n_faces + nf
+      start = int(faceoffset(c), I8P)
+    endif
+    polyhedron_offsets(c+1_I8P) = int(n_faces, I4P)
+  enddo
+  error = self%start_polyhedra()
+  if (error /= 0_I4P) return
+  error = store_I4P(self, self%root, 'FaceConnectivity', face_connectivity, [n_face_ids])
+  if (error == 0_I4P) error = store_I4P(self, self%root, 'FaceOffsets', face_offsets, [n_faces+1_I8P])
+  if (error == 0_I4P) error = store_I4P(self, self%root, 'PolyhedronToFaces', polyhedron_to_faces, [n_faces])
+  if (error == 0_I4P) error = store_I4P(self, self%root, 'PolyhedronOffsets', polyhedron_offsets, [nc+1_I8P])
+  if (error == 0_I4P) error = store_I8P(self, self%root, 'NumberOfFaces', [n_faces], [1_I8P])
+  if (error == 0_I4P) error = store_I8P(self, self%root, 'NumberOfFaceConnectivityIds', [n_face_ids], [1_I8P])
+  if (error == 0_I4P) error = store_I8P(self, self%root, 'NumberOfPolyhedronToFaceIds', [n_faces], [1_I8P])
+  if (error /= 0_I4P) error = refuse('cannot write the faces of the polyhedra')
+  if (error == 0_I4P) self%is_faces_written = .true.
+  endfunction put_faces_I4P
+
+  function put_faces_I8P(self, nc, face, faceoffset, cell_type, check_only) result(error)
+  !< Check (`check_only`) or append the faces (I8P ids) of the polyhedra of an UnstructuredGrid piece:
+  !< VTKFortran's stream (for each polyhedron the number of its faces, then for each face the number of its
+  !< points and their ids) becomes FaceConnectivity, FaceOffsets, PolyhedronToFaces, PolyhedronOffsets and the
+  !< counts of the piece (VTKHDF 2.5). A cell is a polyhedron (type 42) if and only if its faceoffset is not -1.
+  class(vtkhdf_writer), intent(inout) :: self                   !< Writer.
+  integer(I8P), intent(in)            :: nc                     !< Number of cells.
+  integer(I8P), intent(in)            :: face(:)                !< Faces of each polyhedron with their points (VTKFortran stream).
+  integer(I8P), intent(in)            :: faceoffset(:)          !< End of the faces of each cell in `face`, -1 if not a polyhedron.
+  integer(I1P), intent(in)            :: cell_type(:)           !< VTK cell types.
+  logical, intent(in)                 :: check_only             !< Check the faces, write nothing.
+  integer(I4P)                        :: error                  !< Error status.
+  integer(I8P), allocatable           :: face_connectivity(:)   !< Point ids of the faces.
+  integer(I8P), allocatable           :: face_offsets(:)        !< Offsets of the faces, from 0 (n_faces+1 values).
+  integer(I8P), allocatable           :: polyhedron_to_faces(:) !< Faces of each polyhedron, from 0 in the piece.
+  integer(I8P), allocatable           :: polyhedron_offsets(:)  !< Offsets of the faces of each cell, from 0 (nc+1 values).
+  integer(I8P)                        :: n_faces                !< Faces of the polyhedra of the piece.
+  integer(I8P)                        :: n_face_ids             !< Point ids of those faces.
+  integer(I8P)                        :: start                  !< End of the faces of the previous polyhedron in `face`.
+  integer(I8P)                        :: last                   !< End of the faces of the cell in `face`.
+  integer(I8P)                        :: c, f, i, n, nf         !< Counters, sizes.
+
+  error = 0_I4P
+  if (size(faceoffset, kind=I8P) /= nc .or. size(cell_type, kind=I8P) < nc) then
+    error = refuse('write_connectivity: faceoffset needs one value per cell')
+    return
+  endif
+  ! count and check
+  n_faces = 0_I8P ; n_face_ids = 0_I8P ; start = 0_I8P
+  do c=1_I8P, nc
+    if (faceoffset(c) < 0_I8P) then
+      if (cell_type(c) == CELL_POLYHEDRON) then
+        error = refuse('write_connectivity: the cell '//trim(str(n=c, no_sign=.true.))//' is a polyhedron, '// &
+                       'its faceoffset is -1')
+        return
+      endif
+      cycle
+    endif
+    if (cell_type(c) /= CELL_POLYHEDRON) then
+      error = refuse('write_connectivity: the cell '//trim(str(n=c, no_sign=.true.))//' is not a polyhedron, '// &
+                     'its faceoffset must be -1')
+      return
+    endif
+    last = int(faceoffset(c), I8P)
+    i = start + 1_I8P
+    nf = 0_I8P
+    if (last > start .and. last <= size(face, kind=I8P)) nf = int(face(i), I8P)
+    i = i + 1_I8P
+    do f=1_I8P, nf
+      if (i > last) exit
+      n = int(face(i), I8P)
+      if (n < 3_I8P .or. i + n > last) exit
+      n_face_ids = n_face_ids + n
+      i = i + n + 1_I8P
+    enddo
+    if (nf < 1_I8P .or. f <= nf .or. i - 1_I8P /= last) then
+      error = refuse('write_connectivity: the faces of the cell '//trim(str(n=c, no_sign=.true.))// &
+                     ' do not end at its faceoffset (each face: its number of points, at least 3, then their ids)')
+      return
+    endif
+    n_faces = n_faces + nf
+    start = last
+  enddo
+  if (check_only) return
+  ! convert
+  allocate(face_connectivity(n_face_ids), face_offsets(n_faces+1_I8P), polyhedron_to_faces(n_faces))
+  allocate(polyhedron_offsets(nc+1_I8P))
+  face_offsets(1) = 0_I8P ; polyhedron_offsets(1) = 0_I8P
+  n_faces = 0_I8P ; n_face_ids = 0_I8P ; start = 0_I8P
+  do c=1_I8P, nc
+    if (faceoffset(c) >= 0_I8P) then
+      i = start + 1_I8P
+      nf = int(face(i), I8P)
+      i = i + 1_I8P
+      do f=1_I8P, nf
+        n = int(face(i), I8P)
+        face_connectivity(n_face_ids+1_I8P:n_face_ids+n) = face(i+1_I8P:i+n)
+        n_face_ids = n_face_ids + n
+        face_offsets(n_faces+f+1_I8P) = int(n_face_ids, I8P)
+        polyhedron_to_faces(n_faces+f) = int(n_faces + f - 1_I8P, I8P)
+        i = i + n + 1_I8P
+      enddo
+      n_faces = n_faces + nf
+      start = int(faceoffset(c), I8P)
+    endif
+    polyhedron_offsets(c+1_I8P) = int(n_faces, I8P)
+  enddo
+  error = self%start_polyhedra()
+  if (error /= 0_I4P) return
+  error = store_I8P(self, self%root, 'FaceConnectivity', face_connectivity, [n_face_ids])
+  if (error == 0_I4P) error = store_I8P(self, self%root, 'FaceOffsets', face_offsets, [n_faces+1_I8P])
+  if (error == 0_I4P) error = store_I8P(self, self%root, 'PolyhedronToFaces', polyhedron_to_faces, [n_faces])
+  if (error == 0_I4P) error = store_I8P(self, self%root, 'PolyhedronOffsets', polyhedron_offsets, [nc+1_I8P])
+  if (error == 0_I4P) error = store_I8P(self, self%root, 'NumberOfFaces', [n_faces], [1_I8P])
+  if (error == 0_I4P) error = store_I8P(self, self%root, 'NumberOfFaceConnectivityIds', [n_face_ids], [1_I8P])
+  if (error == 0_I4P) error = store_I8P(self, self%root, 'NumberOfPolyhedronToFaceIds', [n_faces], [1_I8P])
+  if (error /= 0_I4P) error = refuse('cannot write the faces of the polyhedra')
+  if (error == 0_I4P) self%is_faces_written = .true.
+  endfunction put_faces_I8P
+
   function put_block_I4P(self, b, check_only, connectivity, offset) result(error)
   !< Check (`check_only`) or append the block `b` (I4P ids) of the cells of a PolyData piece to its group:
   !< Connectivity, Offsets (from 0), NumberOfCells, NumberOfConnectivityIds.
@@ -2613,6 +2840,10 @@ contains
     endif
     return
   endif
+  if (self%has_polyhedra .and. .not.self%is_faces_written) then
+    error = self%no_faces(self%nc_piece)
+    if (error /= 0_I4P) return
+  endif
   ! the root passed, not read from the host: nvfortran internal procedures can read stale host values
   error = check_arrays(self%root, 'PointData', self%point_arrays, self%total_points)
   if (error == 0_I4P) error = check_arrays(self%root, 'CellData', self%cell_arrays, self%total_cells)
@@ -2716,6 +2947,26 @@ contains
   enddo
   endfunction open_group
 
+  function no_faces(self, nc) result(error)
+  !< Write the zero entries of a piece without polyhedra, of `nc` cells, in a file with polyhedra: no faces, and the
+  !< `nc+1` polyhedron offsets all 0.
+  class(vtkhdf_writer), intent(inout) :: self      !< Writer.
+  integer(I8P),         intent(in)    :: nc        !< Cells of the piece.
+  integer(I4P)                        :: error     !< Error status.
+  integer(I8P), allocatable           :: zeros(:)  !< Polyhedron offsets of the piece.
+
+  allocate(zeros(nc+1_I8P))
+  zeros = 0_I8P
+  error = store_I8P(self, self%root, 'FaceConnectivity', [integer(I8P) ::], [0_I8P])
+  if (error == 0_I4P) error = store_I8P(self, self%root, 'FaceOffsets', [0_I8P], [1_I8P])
+  if (error == 0_I4P) error = store_I8P(self, self%root, 'PolyhedronToFaces', [integer(I8P) ::], [0_I8P])
+  if (error == 0_I4P) error = store_I8P(self, self%root, 'PolyhedronOffsets', zeros, [nc+1_I8P])
+  if (error == 0_I4P) error = store_I8P(self, self%root, 'NumberOfFaces', [0_I8P], [1_I8P])
+  if (error == 0_I4P) error = store_I8P(self, self%root, 'NumberOfFaceConnectivityIds', [0_I8P], [1_I8P])
+  if (error == 0_I4P) error = store_I8P(self, self%root, 'NumberOfPolyhedronToFaceIds', [0_I8P], [1_I8P])
+  if (error /= 0_I4P) error = refuse('cannot write the (empty) polyhedra of a piece')
+  endfunction no_faces
+
   function poly_block(self, b, check_only, connectivity, offset) result(error)
   !< Check (`check_only`) or write the block `b` of the cells of a PolyData piece, given by its connectivity and its end
   !< offsets (I4P or I8P each; both converted to I8P when their kinds differ). A block not given must have no cells in
@@ -2817,6 +3068,8 @@ contains
   self%total_cells = 0_I8P
   self%is_geo_written = .false.
   self%is_connectivity_written = .false.
+  self%has_polyhedra = .false.
+  self%is_faces_written = .false.
   self%point_arrays = ''
   self%cell_arrays = ''
   do r=1, size(ROLES)
@@ -2866,6 +3119,7 @@ contains
   self%total_cells = self%total_cells + nc
   self%is_geo_written = .false.
   self%is_connectivity_written = .false.
+  self%is_faces_written = .false.
   error = store_I8P(self, self%root, 'NumberOfPoints', [np], [1_I8P])
   if (error == 0_I4P .and. self%topology == TOPOLOGY_UNSTRUCTURED) &
     error = store_I8P(self, self%root, 'NumberOfCells', [nc], [1_I8P])
@@ -2875,6 +3129,29 @@ contains
   endif
   self%is_piece_open = .true.
   endfunction start_partition
+
+  function start_polyhedra(self) result(error)
+  !< Start the polyhedra of the file, at the first piece that has some: the earlier pieces get their zero entries (from
+  !< their counts of cells), and the version is at least 2.5.
+  class(vtkhdf_writer), intent(inout) :: self   !< Writer.
+  integer(I4P)                        :: error  !< Error status.
+  integer(I8P), allocatable           :: nc(:)  !< Cells of each piece started.
+  integer(I8P)                        :: p      !< Counter.
+
+  error = 0_I4P
+  if (self%has_polyhedra) return
+  error = h5_dataset_read(self%root, 'NumberOfCells', nc)
+  if (error /= 0_I4P) then
+    error = refuse('cannot read the counts of cells of the pieces')
+    return
+  endif
+  do p=1_I8P, size(nc, kind=I8P) - 1_I8P ! the open piece is the last one
+    error = self%no_faces(nc(p))
+    if (error /= 0_I4P) return
+  enddo
+  self%has_polyhedra = .true.
+  self%version_minor = max(self%version_minor, 5_I8P)
+  endfunction start_polyhedra
 
   ! non type-bound helpers
   function refuse(message) result(error)

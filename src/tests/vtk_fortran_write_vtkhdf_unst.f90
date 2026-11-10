@@ -14,7 +14,7 @@ program vtk_fortran_write_vtkhdf_unst
 !<
 !< The two-piece file is read back with the HDF5 bindings (counts, offsets from 0, connectivity, types, points, arrays).
 !< Refusals are checked too: an array missing from a piece, an array new after the first piece, a piece without cells,
-!< polyhedra, points of the wrong size. Without HDF5 the writer refuses to start.
+!< a malformed polyhedron (a face of one point), points of the wrong size. Without HDF5 the writer refuses to start.
 use penf
 use vtk_fortran, only : vtk_file
 use vtk_fortran_hdf5
@@ -260,7 +260,7 @@ contains
   ok(2) = a_vtk_file%xml_writer%write_dataarray(data_name='late', x=one_point) /= 0
   error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
   error = a_vtk_file%finalize()
-  ! a piece without cells, polyhedra, points of the wrong size
+  ! a piece without cells, a malformed polyhedron (a face of one point), points of the wrong size
   error = a_vtk_file%initialize(format='vtkhdf', filename='refused_other.vtkhdf', mesh_topology='UnstructuredGrid')
   error = a_vtk_file%xml_writer%write_piece(np=1, nc=1)
   ok(3) = a_vtk_file%xml_writer%write_geo(np=2, nc=1, x=[0._R8P, 1._R8P], y=[0._R8P, 1._R8P], z=[0._R8P, 1._R8P]) /= 0
