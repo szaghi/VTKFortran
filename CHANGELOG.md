@@ -4,6 +4,45 @@ All notable changes to this project are documented here.
 Versions follow [Semantic Versioning](https://semver.org/).
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [3.0.1] — 2026-11-10
+### Changed
+- **reader**: Index files with FoXy xml_index, drop the private scanner
+
+- **writers**: Stream the XML through FoXy xml_writer
+
+- **reader**: Read numeric attributes with FoXy typed accessors
+
+
+### Documentation
+- Adopt the Circuit Moss identity, the vortex dipole mark
+
+- **readme**: Show the vortex dipole mark
+
+- Correct stale and wrong statements, measure the compilers again
+
+- Compile the code of the reference pages, document what was missing
+
+- Draw the structure of the files, the cells and the pieces
+
+- List the faces of a polyhedron outward, as VTK requires
+
+- Render in the site palette, add the cell gallery and animations
+
+- One place for each thing, the quick start in the sidebar
+
+- MPI ranks and OpenMP threads, as measured
+
+
+### Fixed
+- **docs**: Pin mermaid to 11, vitepress-plugin-mermaid rejects 12
+
+- **xml-writer-appended**: Compare the encoding as characters, nvfortran 25.5 rejects the string ==
+
+- Work around three nvfortran 26.9 bugs, every test passes with it
+
+- **vtm**: Keep blanks and slashes in the names and files of scratch blocks
+
+
 ## [3.0.0] — 2026-10-07
 ### Added
 - **writers**: Designate active arrays of point and cell data
