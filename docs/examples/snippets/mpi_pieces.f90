@@ -1,4 +1,3 @@
-!mpi
 program mpi_pieces
 !< Write a partitioned mesh from MPI ranks: each rank writes its own piece, rank 0 the parallel header, then checks it.
 use mpi_f08

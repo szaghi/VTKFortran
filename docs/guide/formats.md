@@ -4,7 +4,8 @@ title: Formats and large data
 
 # Formats and large data
 
-How the data are stored: the formats, zlib compression, arrays and meshes beyond the 32-bit limits. Complete programs:
+How the data are stored: the VTK XML formats, VTKHDF, zlib compression, arrays and meshes beyond the 32-bit limits.
+Complete programs:
 the [cookbook](/manual/cookbook#choose-the-format) and [chapter 2](/manual/tutorial/02-formats) of the tutorial.
 
 ## Output format selection
@@ -18,6 +19,7 @@ The `format` argument to `initialize` is case-insensitive:
 | `raw` | Raw binary in the appended section |
 | `binary-appended` | Base64-encoded binary in the appended section |
 | `raw-zlib` | Shorthand for `raw` with `compressor='zlib'`, see [Compressed binary data](#compressed-binary-data-zlib) |
+| `vtkhdf` | An HDF5 file in the VTKHDF layout: ImageData only for now, and HDF5 needed, see [VTKHDF](#vtkhdf-hdf5) |
 
 The binary formats (`binary`, `raw`, `binary-appended`) can be zlib-compressed with `compressor='zlib'`, see
 [Compressed binary data](#compressed-binary-data-zlib). Binary arrays larger than 2 GiB need `header_type='UInt64'`, see
@@ -33,6 +35,50 @@ does not grow with the file size and the arrays can be deallocated after each `w
 once more to the scratch file and reading them back. The scratch file is opened in the temporary directory of the Fortran
 runtime: set `TMPDIR` (or `GFORTRAN_TMPDIR` for gfortran, `FORT_TMPDIR` for Intel ifx) to move it to a disk with enough free
 space, e.g. off a small `/tmp` on HPC nodes. The `binary` format writes inline, with no scratch file.
+
+## VTKHDF (HDF5)
+
+[VTKHDF](https://docs.vtk.org/en/latest/vtk_file_formats/vtkhdf_file_format/index.html) is the VTK format built on
+[HDF5](https://www.hdfgroup.org/solutions/hdf5/): one HDF5 file, whose group `/VTKHDF` holds the dataset as attributes
+and one HDF5 dataset per array. VTK's `vtkHDFReader` and ParaView read it; any HDF5 tool (h5py, `h5dump`, HDFView) reads its
+arrays directly. It is being added step by step ([issue #51](https://github.com/szaghi/VTKFortran/issues/51)):
+**ImageData** is written now; the other topologies, time series and parallel writing come next.
+
+Choose it when the files are read by HDF5 tools too, or to use HDF5 compression; stay with the XML formats for the other
+topologies, for files that VTKFortran reads back, and without an HDF5 library. It needs the library built with HDF5 (see
+[Installation](/guide/installation#optional-hdf5-vtkhdf)): without it `initialize` returns a non-zero error.
+
+The calls are the ones of the XML formats, with `format='vtkhdf'`:
+
+<<< @/examples/snippets/ref_vtkhdf-write.f90
+
+The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bindings of the library, `vtk_fortran_hdf5`):
+
+<<< @/examples/output/ref_vtkhdf.ansi{ansi}
+
+<p align="center"><img src="../examples/images/ref_vtkhdf.png" alt="the wave of the ImageData example with velocity arrows, read by ParaView from the VTKHDF file"></p>
+
+- **Layout.** `/VTKHDF` has the attributes `Version`, `Type` (`ImageData`), `WholeExtent` (the extent passed to
+  `initialize`), `Origin`, `Spacing` and `Direction`, and the groups `PointData`, `CellData` and `FieldData`, one HDF5
+  dataset per array, in the order written. The arrays have the type of their kind (`R8P` a 64-bit float, `I4P` a 32-bit
+  integer, ...).
+- **No transposition.** An array is stored as it is in memory: a Fortran `velocity(3,0:nx,0:ny,0:nz)` is the dataset of
+  shape `[nz+1, ny+1, nx+1, 3]` in C order (the order HDF5 tools show), which is the shape VTKHDF wants. Point data have the
+  shape of the grid points, cell data of the cells; the components of a vector are the last dimension (C order). The
+  axes of one point (a 2D or 1D grid) are dropped, as VTK writes them: a `nx+1` by `ny+1` grid has arrays of shape
+  `[ny+1, nx+1]`.
+- **One piece**, whose extent is the whole extent: `write_piece` is called once, with the extents of `initialize`.
+- **Data arrays**: every kind, rank and layout of `write_dataarray`, and `write_dataarray_unsigned` (HDF5 unsigned types).
+  An array whose size does not match the grid is refused. Active arrays (`scalars=`, `vectors=`, ...) become the
+  `Attribute` attribute of their dataset; field data are numeric only: a string is refused (VTK 9.7 crashes on string
+  field data, or drops them). See [Data arrays](/guide/data).
+- **Compression**: `compressor='zlib'` deflates every dataset (level 6, in chunks of whole planes up to 1 MiB). It needs the deflate
+  filter of the HDF5 library, not `VTKFORTRAN_USE_ZLIB`: without it `initialize` returns a non-zero error.
+- **Version**: the lowest one with the features written: 2.0, or 2.6 when an active array is designated. The files are
+  checked with VTK 9.7.2 and ParaView 6.1.1.
+- **Not supported**: the other topologies, more than one piece, a volatile file (`is_volatile`), reading the file back with
+  VTKFortran, and VTKHDF pieces in parallel (`P*`), multi-block and `.pvd` files. Each refusal is a non-zero error with a
+  message on standard error. `header_type` is ignored: HDF5 has no size limit per array.
 
 ## Compressed binary data (zlib)
 

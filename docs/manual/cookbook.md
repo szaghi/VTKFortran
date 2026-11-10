@@ -102,6 +102,12 @@ and `32` a hidden one: ParaView does not draw them.
 uncompressed format. `header_type='UInt64'` is needed only for arrays of more than 2 GiB. The sizes of each format are
 measured in [chapter 2](./tutorial/02-formats) of the tutorial.
 
+### An HDF5 file (VTKHDF)
+
+`format='vtkhdf'` writes an ImageData as one HDF5 file in the VTKHDF layout, with the same calls: ParaView reads it, and
+so does any HDF5 tool. It needs the library built with HDF5; the other topologies come later. A complete program and
+the layout of the file: [VTKHDF](/guide/formats#vtkhdf-hdf5).
+
 ### More than 2^31 points or cells
 
 <<< @/examples/snippets/ids_64bit.f90

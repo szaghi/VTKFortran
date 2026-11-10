@@ -9,6 +9,8 @@
 #                                !cast NAME ID ID ...   the runs ID as one animated image, images/NAME.svg: a
 #                                                       terminal session typing each command, then showing its output
 #                                !mpi                   an MPI program: built by $MPIFC, its runs call mpirun
+#                                !hdf5                  a program using HDF5 (VTKHDF): built with the library in mode
+#                                                       static-gnu-hdf5, linked to the HDF5 C library of $HDF5_LIB
 #                                !render ID FILE [KEY=VALUE ...]   a ParaView render of FILE (written by the runs):
 #                                                       images/ID.png, or images/ID.gif for a .pvd time series
 #                                                       (scripts/render_vtk.py, where the keys are described)
@@ -27,11 +29,13 @@
 # The renders need ParaView: they are regenerated only when $PVPYTHON (or pvpython on the PATH) is found, otherwise the
 # committed ones are kept. The MPI programs (!mpi) need an MPI compiler wrapper, $MPIFC: the library is built again with
 # it (in its own directory) and their runs call mpirun from the same installation, with the current LD_LIBRARY_PATH;
-# without $MPIFC they are not built and their committed outputs are kept. The Docs examples workflow, without ParaView
+# without $MPIFC they are not built and their committed outputs are kept. The HDF5 programs (!hdf5) need the HDF5 C
+# library: $HDF5_LIB is its directory (default /usr/lib/x86_64-linux-gnu/hdf5/serial, Ubuntu's libhdf5-dev); without it
+# they are not built and their committed outputs are kept. The Docs examples workflow, with HDF5 but without ParaView
 # and MPI, checks the snippets, outputs and terminal images of all the others.
 #
 # Usage: bash scripts/docs_examples.sh            (FC=gfortran-14 bash scripts/docs_examples.sh: another compiler)
-#        PVPYTHON=/path/to/pvpython MPIFC=/path/to/mpifort bash scripts/docs_examples.sh
+#        PVPYTHON=/path/to/pvpython MPIFC=/path/to/mpifort HDF5_LIB=/path/to/hdf5/lib bash scripts/docs_examples.sh
 set -euo pipefail
 
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
@@ -42,6 +46,9 @@ home=/home/user                 # how the run directory is shown
 pvpython=${PVPYTHON:-$(command -v pvpython || true)}
 mpifc=${MPIFC:-}
 mpi_programs=$(grep -l '^ *!mpi *$' "$ex"/src/*.f90 || true)
+hdf5_lib=${HDF5_LIB:-/usr/lib/x86_64-linux-gnu/hdf5/serial}
+hdf5_programs=$(grep -l '^ *!hdf5 *$' "$ex"/src/*.f90 || true)
+if [ -e "$hdf5_lib/libhdf5.so" ] || [ -e "$hdf5_lib/libhdf5.a" ]; then has_hdf5=1; else has_hdf5=0; fi
 
 fc=${FC:-gfortran}
 mkdir -p "$root/build"
@@ -53,10 +60,19 @@ if [ -n "$mpifc" ]; then
     >> "$root/build/docs-examples.log" 2>&1 || {
     cat "$root/build/docs-examples.log"; echo "docs_examples: library build with $mpifc failed" >&2; exit 1; }
 fi
+if [ $has_hdf5 = 1 ]; then
+  rm -rf -- "$root/build/docs-examples-hdf5"
+  (cd "$root" && fobis build --mode static-gnu-hdf5 --fc "$fc" --dbld "$root/build/docs-examples-hdf5") \
+    >> "$root/build/docs-examples.log" 2>&1 || {
+    cat "$root/build/docs-examples.log"; echo "docs_examples: library build with HDF5 failed" >&2; exit 1; }
+fi
 rm -rf -- "$build"
 mkdir -p "$build/bin" "$build/keep" "$run_dir" "$ex/snippets" "$ex/output" "$ex/images"
-if [ -z "$mpifc" ]; then # the outputs of the MPI programs are kept
-  for src in $mpi_programs; do
+kept=
+if [ -z "$mpifc" ]; then kept="$mpi_programs"; fi
+if [ $has_hdf5 = 0 ]; then kept="$kept $hdf5_programs"; fi
+if [ -n "${kept// /}" ]; then # the outputs of the programs not built are kept
+  for src in $kept; do
     for id in $(sed -n 's/^ *!run \(-s \)\{0,1\}\([A-Za-z0-9_-]*\) .*/\2/p' "$src"); do
       cp "$ex/output/$id.ansi" "$build/keep/" 2>/dev/null || true
     done
@@ -65,15 +81,15 @@ fi
 rm -f -- "$ex"/snippets/*.f90 "$ex"/output/*.ansi "$ex"/images/*.svg
 cp "$build"/keep/*.ansi "$ex/output/" 2>/dev/null || true
 
-markers='run|region|endregion|as|image|cast|render|mpi'
+markers='run|region|endregion|as|image|cast|render|mpi|hdf5'
 # snippets: the whole program and each region, without the markers, dedented
 dedent() { awk '{l[NR]=$0; if ($0 ~ /[^ ]/) {match($0, /^ */); if (m == "" || RLENGTH < m) m = RLENGTH}}
                 END {for (i = 1; i <= NR; i++) print substr(l[i], m + 1)}' "$1"; }
 for src in "$ex"/src/*.f90; do
   name=$(basename "$src" .f90)
-  grep -Ev "^ *!($markers) " "$src" > "$ex/snippets/$name.f90" || true
+  grep -Ev "^ *!($markers)( |$)" "$src" > "$ex/snippets/$name.f90" || true
   for region in $(sed -n 's/^ *!region \([A-Za-z0-9_-]*\).*/\1/p' "$src"); do
-    awk -v r="$region" -v m="^ *!($markers) " '$1 == "!endregion" && $2 == r {on = 0}
+    awk -v r="$region" -v m="^ *!($markers)( |$)" '$1 == "!endregion" && $2 == r {on = 0}
                         on && $0 !~ m {print}
                         $1 == "!region" && $2 == r {on = 1}' "$src" > "$build/region.f90"
     dedent "$build/region.f90" > "$ex/snippets/$name-$region.f90"
@@ -82,11 +98,17 @@ done
 
 # programs
 is_mpi() { grep -q '^ *!mpi *$' "$1"; }
+is_hdf5() { grep -q '^ *!hdf5 *$' "$1"; }
 for src in "$ex"/src/*.f90; do
   if is_mpi "$src"; then
     if [ -n "$mpifc" ]; then
       "$mpifc" -I"$root/build/docs-examples-mpi/mod" -o "$build/bin/$(basename "$src" .f90)" "$src" \
                "$root/build/docs-examples-mpi/libvtkfortran.a" -lz
+    fi
+  elif is_hdf5 "$src"; then
+    if [ $has_hdf5 = 1 ]; then
+      "$fc" -I"$root/build/docs-examples-hdf5/mod" -o "$build/bin/$(basename "$src" .f90)" "$src" \
+            "$root/build/docs-examples-hdf5/libvtkfortran.a" -L"$hdf5_lib" -lhdf5 -lz
     fi
   else
     "$fc" -I"$root/static/mod" -o "$build/bin/$(basename "$src" .f90)" "$src" "$root/static/libvtkfortran.a" -lz
@@ -126,6 +148,10 @@ for src in "$ex"/src/*.f90; do
     path=$build/bin:$(dirname "$(command -v "$mpifc")")
     ld_path=${LD_LIBRARY_PATH:-}
   fi
+  if is_hdf5 "$src"; then
+    [ $has_hdf5 = 1 ] || continue # not built: its committed outputs are kept
+    ld_path=$hdf5_lib
+  fi
   as=$(sed -n 's/^ *!as \([A-Za-z0-9_-]*\).*/\1/p' "$src" | head -n 1)
   if [ -n "$as" ]; then
     path=$build/as/$(basename "$src" .f90)
@@ -155,5 +181,6 @@ while read -r name ids; do
 done < <(sed -n 's/^ *!cast \(.*\)/\1/p' "$ex"/src/*.f90)
 # charts of the outputs, inlined in the pages: drawn with the theme classes, as the diagrams
 python3 "$root/scripts/docs_diagrams.py" --charts
+if [ $has_hdf5 = 0 ]; then echo "docs_examples: no HDF5 in $hdf5_lib (set HDF5_LIB): its programs are not run" >&2; fi
 if [ -z "$pvpython" ]; then echo "docs_examples: no pvpython (set PVPYTHON): the renders are not regenerated" >&2; fi
 echo "docs_examples: $(ls "$ex"/src/*.f90 | wc -l) programs, $(ls "$ex"/output/*.ansi | wc -l) runs, $renders renders"

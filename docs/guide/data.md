@@ -12,7 +12,8 @@ the documentation.
 
 ## Writing arrays
 
-Point data and cell data are written between an `open` and a `close` of their location,
+The calls are the same in every format, VTKHDF included (see [VTKHDF](/guide/formats#vtkhdf-hdf5) for how it stores the
+arrays). Point data and cell data are written between an `open` and a `close` of their location,
 `write_dataarray(location='node', action='open')` (`<PointData>`; `location='cell'` for `<CellData>`) and
 `write_dataarray(location='node', action='close')`, with any number of `write_dataarray(data_name=..., x=...)` in between.
 
@@ -72,6 +73,9 @@ them as string arrays. Trailing blanks of each string are trimmed, so a Fortran 
 is. In ParaView, field data are listed in the Spreadsheet view (attribute *Field Data*) and are available to filters and Python.
 VTKFortran reads them back with `read_dataarray(location='field', ...)`, see [Reading files](/guide/reading).
 
+In the VTKHDF format, field data are the datasets of the group `FieldData`, numeric only: a `character` value makes
+`write_fielddata` return a non-zero error (VTK 9.7 crashes on string field data, or drops them).
+
 ## Active arrays
 
 Readers such as ParaView color a dataset by its *active* scalars and use its *active* vectors, normals, tensors and texture
@@ -97,6 +101,9 @@ writes `<PointData Scalars="pressure" Vectors="velocity">` (`<CellData ...>` for
 - In parallel files the same arguments designate the active arrays in `<PPointData>`/`<PCellData>`: pass them to the
   `pvtk_file` writer with the arrays declared by `write_parallel_dataarray`.
 
+- In the VTKHDF format the role is the `Attribute` attribute of the dataset of the array (e.g. `Attribute = "Scalars"`),
+  written when the array is: the name must match an array written in the same location, or nothing is marked.
+
 See `src/tests/vtk_fortran_write_active_arrays.f90` for a complete program, parallel header included.
 
 ## Unsigned integer arrays
@@ -121,7 +128,7 @@ surfaces to render, so the cells a parallel piece shares with its neighbours are
 <<< @/examples/snippets/ref_data-unsigned.f90
 
 - It works with every format, compression included. The binary formats write the bytes of the array; the ASCII format
-  prints the unsigned values (e.g. `200` for `-56_I1P`).
+  prints the unsigned values (e.g. `200` for `-56_I1P`); VTKHDF stores them with the HDF5 unsigned type of the same width.
 - With the ASCII format a `UInt64` value of `2^63` or more (a negative `I8P`) cannot be printed: nothing is written and
   the function returns a non-zero error. The binary formats write any value.
 - Only rank-1 arrays with one component; in a parallel header declare it with

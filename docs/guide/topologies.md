@@ -38,6 +38,8 @@ indexes `(0,0,0)`, also when the extents do not start at 0).
   `origin + direction . ([i,j,k] * spacing)`. Default: identity.
 - `write_geo` is not used. Point data have one value per grid point, cell data one value per cell, written with the usual
   `write_dataarray` calls in any format.
+- ImageData is also written in the VTKHDF format (`format='vtkhdf'`, an HDF5 file), with the same calls and one piece:
+  see [VTKHDF](/guide/formats#vtkhdf-hdf5). The other topologies are XML only, for now.
 
 ## Rectilinear Grid (VTR)
 

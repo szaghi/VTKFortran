@@ -1,0 +1,9 @@
+$ ref_vtkhdf
+wave.vtkhdf written; its layout, shapes in C order (as h5dump and h5py show them):
+/VTKHDF                    Version     2.6
+                           Type        ImageData
+                           WholeExtent 0 40 0 30 0 10
+                           Spacing     0.1 0.1 0.1
+/VTKHDF/PointData/wave     shape [11,31,41]  Attribute Scalars
+/VTKHDF/PointData/velocity shape [11,31,41,3]  Attribute Vectors
+/VTKHDF/FieldData/time     shape [1]  value 0.50
