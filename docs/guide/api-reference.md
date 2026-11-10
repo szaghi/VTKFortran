@@ -13,7 +13,8 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 - [vtk_fortran_pvtk_file](/api/src/lib/vtk_fortran_pvtk_file) — `pvtk_file` derived type (parallel/partitioned writer)
 - [vtk_fortran_vtm_file](/api/src/lib/vtk_fortran_vtm_file) — `vtm_file` derived type (multi-block composite writer)
 - [vtk_fortran_pvd_file](/api/src/lib/vtk_fortran_pvd_file) — `pvd_file` derived type (time series collection writer)
-- [vtk_fortran_vtk_file_xml_writer_abstract](/api/src/lib/vtk_fortran_vtk_file_xml_writer_abstract) — abstract base class defining the common writer interface
+- [vtk_fortran_vtk_writer_abstract](/api/src/lib/vtk_fortran_vtk_writer_abstract) — format-neutral abstract writer: the procedures `vtk_file%xml_writer` exposes, deferred to the format writers
+- [vtk_fortran_vtk_file_xml_writer_abstract](/api/src/lib/vtk_fortran_vtk_file_xml_writer_abstract) — abstract XML writer, extending the format-neutral one: XML tags, encoders, the parallel and multi-block elements
 - [vtk_fortran_vtk_file_xml_writer_ascii_local](/api/src/lib/vtk_fortran_vtk_file_xml_writer_ascii_local) — ASCII writer
 - [vtk_fortran_vtk_file_xml_writer_binary_local](/api/src/lib/vtk_fortran_vtk_file_xml_writer_binary_local) — Base64-encoded binary writer
 - [vtk_fortran_vtk_file_xml_writer_appended](/api/src/lib/vtk_fortran_vtk_file_xml_writer_appended) — raw binary appended writer

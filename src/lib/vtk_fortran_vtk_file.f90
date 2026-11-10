@@ -4,7 +4,7 @@ module vtk_fortran_vtk_file
 use befor64
 use penf
 use stringifor
-use vtk_fortran_vtk_file_xml_writer_abstract
+use vtk_fortran_vtk_writer_abstract
 use vtk_fortran_vtk_file_xml_writer_appended
 use vtk_fortran_vtk_file_xml_writer_ascii_local
 use vtk_fortran_vtk_file_xml_writer_binary_local
@@ -18,7 +18,7 @@ public :: vtk_file
 type :: vtk_file
   !< VTK file class.
   private
-  class(xml_writer_abstract), allocatable, public :: xml_writer !< XML writer.
+  class(vtk_writer_abstract), allocatable, public :: xml_writer !< Writer (XML; its name is kept for compatibility).
   type(xml_reader),                        public :: xml_reader !< XML reader (`initialize(..., action='read')`).
   logical                                         :: is_reading=.false. !< The file is open for reading.
   contains

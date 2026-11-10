@@ -57,7 +57,15 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
 - `vtk_fortran_pvtk_file` — `pvtk_file` type: parallel/partitioned VTK files (`.pvtr`, `.pvts`, `.pvtu`); the header is plain XML metadata, the pieces can use any format
 - `vtk_fortran_vtm_file` — `vtm_file` type: multi-block composite datasets (`.vtm`)
 - `vtk_fortran_pvd_file` — `pvd_file` type: time series collections (`.pvd`), valid after each `write_dataset`
-- `vtk_fortran_vtk_file_xml_writer_abstract` — abstract base class defining the common interface (`initialize`, `finalize`, `write_piece`, `write_geo`, `write_connectivity`, `write_dataarray`, `get_xml_volatile`)
+- `vtk_fortran_vtk_writer_abstract` — format-neutral abstract writer (`vtk_writer_abstract`): the state `vtk_file` sets
+  (origin, spacing, direction, header type, compression) and every procedure `vtk_file%xml_writer` exposes (`initialize`,
+  `finalize`, `write_piece`, `write_geo`, `write_connectivity`, `write_polydata_cells`, `write_dataarray`,
+  `write_dataarray_unsigned`, `write_fielddata`, `free`, `get_xml_volatile`), all deferred and PUBLIC (ifx does not
+  override a private binding from another module). `vtk_file%xml_writer` is of this type (the name is kept); the VTKHDF
+  writer (#51) will extend it
+- `vtk_fortran_vtk_file_xml_writer_abstract` — abstract XML writer, extends `vtk_writer_abstract`: implements the
+  format-neutral procedures as XML tags, plus the XML-only ones (`write_parallel_*`, used by `pvtk_file` and `vtm_file`,
+  whose `xml_writer` stays `class(xml_writer_abstract)`)
 - Three concrete writer implementations:
   - `vtk_fortran_vtk_file_xml_writer_ascii_local` — human-readable ASCII
   - `vtk_fortran_vtk_file_xml_writer_binary_local` — Base64-encoded binary inside XML elements
