@@ -63,8 +63,8 @@ default, `icx`, is often missing). CI: job `hdf5-mpi` of `hdf5.yml` in the toolc
 
 CI toolchain: `ci.yml` (tests, coverage) and the build job of `docs.yml` run in the container
 `ghcr.io/szaghi/fortran-toolchains:gnu-16.2` (repo `~/fortran/fortran-toolchains`: gfortran 16.2, Open MPI 5.0.11, HDF5
-2.3.0 parallel with deflate, FoBiS, formal), set by `[scaffold] toolchain_image` in `fobos` (FoBiS scaffold: run the
-sync with a FoBiS that has it, e.g. `~/python/FoBiS/.venv/bin/fobis` until a release). On the bare runner: the serial
+2.3.0 parallel with deflate, FoBiS, formal), set by `[scaffold] toolchain_image` in `fobos` (FoBiS >= 3.16.5 renders it;
+an older `fobis scaffold sync` would revert both workflows to the bare runner). On the bare runner: the serial
 `hdf5` job (gfortran 14, Ubuntu's HDF5 1.10, the oldest supported), *Docs examples* and `install.yml`.
 
 ## Architecture
