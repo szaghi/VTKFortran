@@ -281,7 +281,9 @@ contains
   endif
   error = h5_file_create(filename, self%file_id)
   if (error /= 0_I4P) error = refuse('cannot create '//filename)
-  if (error == 0_I4P) error = h5_group_create(self%file_id, 'VTKHDF', self%root)
+  ! every group with its creation order tracked and indexed, as VTK writes them (its reader of a multi-block file
+  ! lists the groups of each block by creation order)
+  if (error == 0_I4P) error = h5_group_create(self%file_id, 'VTKHDF', self%root, track_order=.true.)
   if (self%topology == TOPOLOGY_IMAGE) then
     if (error == 0_I4P) error = h5_attribute_write(self%root, 'Type', 'ImageData')
     if (error == 0_I4P) error = h5_attribute_write(self%root, 'WholeExtent', int(self%whole_extent, I8P))
@@ -296,7 +298,7 @@ contains
   else
     if (error == 0_I4P) error = h5_attribute_write(self%root, 'Type', 'PolyData')
     do b=1, size(BLOCKS)
-      if (error == 0_I4P) error = h5_group_create(self%root, trim(BLOCKS(b)), block_group)
+      if (error == 0_I4P) error = h5_group_create(self%root, trim(BLOCKS(b)), block_group, track_order=.true.)
       if (error == 0_I4P) error = h5_group_close(block_group)
     enddo
   endif
@@ -408,10 +410,10 @@ contains
   else
     error = 0_I4P
     if (.not.self%is_temporal) then
-      error = h5_group_create(self%root, 'Steps', group_id)
+      error = h5_group_create(self%root, 'Steps', group_id, track_order=.true.)
       if (error == 0_I4P) error = h5_group_close(group_id)
       do g=1, size(STEP_GROUPS)
-        if (error == 0_I4P) error = h5_group_create(self%root, 'Steps/'//trim(STEP_GROUPS(g)), group_id)
+        if (error == 0_I4P) error = h5_group_create(self%root, 'Steps/'//trim(STEP_GROUPS(g)), group_id, track_order=.true.)
         if (error == 0_I4P) error = h5_group_close(group_id)
       enddo
       if (error /= 0_I4P) error = refuse('cannot create the group Steps')

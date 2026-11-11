@@ -1,12 +1,21 @@
 !< VTM file class.
 module vtk_fortran_vtm_file
-!< VTM file class.
+!< VTM file class: a multi-block dataset, a `.vtm` (XML) whose blocks list VTK files, or one VTKHDF file
+!< (`initialize(..., format='vtkhdf')`, a `MultiBlockDataSet`) into which the `.vtkhdf` files of the blocks are copied.
+!<
+!< In the VTKHDF format the same `write_block` calls build the file: each dataset file (a `.vtkhdf` written by `vtk_file`)
+!< is copied as the group `Block_<n>` of `/VTKHDF`, and the tree of the blocks is the group `Assembly`, whose groups are
+!< the blocks and whose soft links, named after the datasets (`names`, or the file names without directory and
+!< extension), point to the copies. A time series block is refused: VTK 9.7.2 reads only the first step of a multi-block
+!< time series (in the files of its own writer too).
 use befor64
 use penf
 use stringifor
 use vtk_fortran_vtk_file_xml_writer_abstract
 use vtk_fortran_vtk_file_xml_writer_ascii_local
 use foxy, only : xml_index, XML_MALFORMED
+use vtk_fortran_hdf5
+use vtk_fortran_parameters, only : stderr
 
 implicit none
 private
@@ -18,6 +27,14 @@ type :: vtm_file
    integer(I4P), allocatable                       :: scratch_unit(:) !< Scratch units for very large list of named blocks.
    type(xml_index),            private             :: xml             !< Index of the file read (`action='read'`, FoXy).
    logical,                    private             :: is_reading=.false. !< The file is open for reading.
+   logical,                    private             :: is_vtkhdf=.false.  !< The file is a VTKHDF one.
+   integer(hid_kind),          private             :: file_id=-1_hid_kind !< VTKHDF file.
+   integer(hid_kind),          private             :: root=-1_hid_kind    !< Its group /VTKHDF.
+   character(len=:), allocatable, private          :: node               !< Path of the open block in the Assembly.
+   integer(I4P), allocatable,  private             :: children(:)        !< Children written in each open level.
+   integer(I4P),               private             :: n_leaves=0_I4P     !< Datasets copied.
+   integer(I8P),               private             :: version_minor=1_I8P !< Minor version (the highest of the blocks).
+   integer(I8P),               private             :: n_steps=-1_I8P     !< Steps of the blocks: -1 none yet, 0 static.
    contains
       ! public methods
       procedure, pass(self) :: initialize          !< Initialize file.
@@ -33,11 +50,18 @@ type :: vtm_file
       ! scratch files methods``
       procedure, pass(self), private :: parse_scratch_files !< Parse scratch files.
       procedure, pass(self), private :: write_block_scratch !< Write one block dataset on scratch files.
+      ! VTKHDF methods
+      procedure, pass(self), private :: vtkhdf_close_block  !< Close the open block of a VTKHDF file.
+      procedure, pass(self), private :: vtkhdf_dataset      !< Copy a dataset file into a VTKHDF file.
+      procedure, pass(self), private :: vtkhdf_open_block   !< Open a block of a VTKHDF file.
 endtype vtm_file
 contains
   ! public methods
-  function initialize(self, filename, scratch_units_number, action) result(error)
+  function initialize(self, filename, scratch_units_number, action, format) result(error)
   !< Initialize file: open it for writing (default) or for reading.
+  !<
+  !< With `format='vtkhdf'` (case insensitive) the file is a VTKHDF `MultiBlockDataSet` (the library built with HDF5),
+  !< built by the same `write_block` calls from `.vtkhdf` files, which are copied into it; scratch units are not used.
   !<
   !< With `action='read'` (case insensitive) the file is indexed: its blocks and datasets are returned by `get_entries`, and
   !< each dataset file can then be read with `vtk_file` (or `pvtk_file`); `finalize` frees the index. The error is 1 if the
@@ -46,6 +70,8 @@ contains
   character(*),    intent(in)           :: filename              !< File name of output VTM file.
   integer(I4P),    intent(in), optional :: scratch_units_number  !< Number of scratch units for very large list of named blocks.
   character(*),    intent(in), optional :: action                !< Action: **write** (default) or **read**.
+  character(*),    intent(in), optional :: format                !< Format: **xml** (default) or **vtkhdf**.
+  integer(hid_kind)                     :: assembly              !< Group Assembly.
   integer(I4P)                          :: scratch_units_number_ !< Number of scratch units for very large list of named blocks.
   integer(I4P)                          :: error                 !< Error status.
   character(len=:), allocatable         :: value                 !< Attribute value.
@@ -81,6 +107,34 @@ contains
      endselect
   endif
   scratch_units_number_ = 0_I4P ; if (present(scratch_units_number)) scratch_units_number_ = scratch_units_number
+  if (present(format)) then
+     action_ = trim(adjustl(format)) ; action_ = action_%upper()
+     if (action_ == 'VTKHDF') then
+        error = self%finalize()
+        error = 1
+        if (scratch_units_number_ > 0_I4P) return
+        if (.not.is_hdf5_enabled) then
+           write(stderr, '(A)') 'error: VTKFortran vtm_file: VTKHDF needs the library built with HDF5 (VTKFORTRAN_USE_HDF5)'
+           return
+        endif
+        error = h5_file_create(filename, self%file_id)
+        if (error == 0) error = h5_group_create(self%file_id, 'VTKHDF', self%root, track_order=.true.)
+        if (error == 0) error = h5_attribute_write(self%root, 'Type', 'MultiBlockDataSet')
+        if (error == 0) error = h5_group_create(self%root, 'Assembly', assembly, track_order=.true.)
+        if (error == 0) error = h5_group_close(assembly)
+        if (error /= 0) return
+        self%is_vtkhdf = .true.
+        self%node = 'Assembly'
+        self%children = [0_I4P]
+        self%n_leaves = 0_I4P
+        self%version_minor = 1_I8P
+        self%n_steps = -1_I8P
+        return
+     elseif (action_ /= 'XML') then
+        error = 1
+        return
+     endif
+  endif
   error = self%finalize()
   if (allocated(self%xml_writer)) deallocate(self%xml_writer)
   allocate(xml_writer_ascii_local :: self%xml_writer)
@@ -94,6 +148,16 @@ contains
   integer(I4P)                   :: error !< Error status.
 
   error = 1
+  if (self%is_vtkhdf) then
+     error = 0
+     if (size(self%children) > 1) error = 1 ! a block left open
+     if (h5_attribute_write(self%root, 'Version', [2_I8P, self%version_minor]) /= 0) error = 1
+     if (h5_group_close(self%root) /= 0) error = 1
+     if (h5_file_close(self%file_id) /= 0) error = 1
+     self%root = -1_hid_kind ; self%file_id = -1_hid_kind
+     self%is_vtkhdf = .false.
+     return
+  endif
   if (self%is_reading) then
      call self%xml%free
      self%is_reading = .false.
@@ -241,8 +305,24 @@ contains
   integer(I4P)                          :: error         !< Error status.
   logical                               :: is_new_block  !< Wrap the files in a new block.
 
+  integer(I4P)                          :: f             !< Counter.
+
   is_new_block = .true.
   if (present(action)) is_new_block = trim(adjustl(action)) /= 'write' .and. trim(adjustl(action)) /= 'WRITE'
+  if (self%is_vtkhdf) then
+     error = 0
+     if (is_new_block) error = self%vtkhdf_open_block(name=name)
+     do f=1, size(filenames, dim=1)
+        if (error /= 0) exit
+        if (present(names)) then
+           error = self%vtkhdf_dataset(filename=filenames(f), name=names(f))
+        else
+           error = self%vtkhdf_dataset(filename=filenames(f))
+        endif
+     enddo
+     if (is_new_block .and. error == 0) error = self%vtkhdf_close_block()
+     return
+  endif
   if (is_new_block) error = self%xml_writer%write_parallel_open_block(name=name)
   error = self%xml_writer%write_parallel_block_files(filenames=filenames, names=names)
   if (is_new_block) error = self%xml_writer%write_parallel_close_block()
@@ -271,7 +351,37 @@ contains
    character(*),    intent(in), optional :: name      !< Block name
    integer(I4P)                          :: error     !< Error status.
    type(string)                          :: action_   !< Action string.
+   type(string)                          :: list      !< A list of names, blank separated.
+   type(string), allocatable             :: files(:)  !< File names.
+   type(string), allocatable             :: labels(:) !< Dataset names.
+   integer(I4P)                          :: f         !< Counter.
 
+   if (self%is_vtkhdf) then
+      action_ = 'BLOCK'
+      if (present(action)) then
+         action_ = trim(adjustl(action)) ; action_ = action_%upper()
+      endif
+      error = 0
+      if (action_ == 'OPEN' .or. action_ == 'BLOCK') error = self%vtkhdf_open_block(name=name)
+      if ((action_ == 'WRITE' .or. action_ == 'BLOCK') .and. present(filenames) .and. error == 0) then
+         list = trim(adjustl(filenames)) ; call list%split(tokens=files, sep=' ')
+         allocate(labels(size(files)))
+         if (present(names)) then
+            list = trim(adjustl(names)) ; call list%split(tokens=labels, sep=' ')
+            error = merge(0, 1, size(labels) == size(files))
+         endif
+         do f=1, size(files)
+            if (error /= 0) exit
+            if (present(names)) then
+               error = self%vtkhdf_dataset(filename=files(f)%chars(), name=labels(f)%chars())
+            else
+               error = self%vtkhdf_dataset(filename=files(f)%chars())
+            endif
+         enddo
+      endif
+      if ((action_ == 'CLOSE' .or. action_ == 'BLOCK') .and. error == 0) error = self%vtkhdf_close_block()
+      return
+   endif
    if (present(action)) then
       action_ = trim(adjustl(action)) ; action_ = action_%upper()
       select case(action_%chars())
@@ -335,6 +445,8 @@ contains
    type(string)                          :: action_  !< Action string.
    type(string)                          :: name_    !< Block name, local variable
 
+   error = 1
+   if (self%is_vtkhdf) return ! no scratch units in the VTKHDF format: the blocks are written in order
    action_ = trim(adjustl(action)) ; action_ = action_%upper()
    select case(action_%chars())
    case('OPEN')
@@ -349,4 +461,108 @@ contains
       if (present(filename)) write(self%scratch_unit(scratch), iostat=error, fmt='(A)') trim(filename)
    endselect
    endfunction write_block_scratch
+
+   ! VTKHDF methods
+   function vtkhdf_open_block(self, name) result(error)
+   !< Open a block of a VTKHDF file: a group of the open block of the Assembly, named `name` or `block_<index>`.
+   class(vtm_file), intent(inout)        :: self      !< VTM file.
+   character(*),    intent(in), optional :: name      !< Block name.
+   integer(I4P)                          :: error     !< Error status.
+   character(len=:), allocatable         :: block     !< Block name.
+   integer(hid_kind)                     :: group     !< Group of the block.
+   integer(I4P), allocatable             :: stack(:)  !< Children of the open levels, one more level.
+
+   block = 'block_'//trim(str(n=self%children(size(self%children)), no_sign=.true.))
+   if (present(name)) then
+      if (len_trim(name) > 0) block = trim(adjustl(name))
+   endif
+   self%children(size(self%children)) = self%children(size(self%children)) + 1_I4P
+   error = h5_group_create(self%root, self%node//'/'//block, group, track_order=.true.)
+   if (error == 0) error = h5_group_close(group)
+   if (error /= 0) then
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: cannot create the block '//block//' (a name used twice?)'
+      return
+   endif
+   self%node = self%node//'/'//block
+   stack = [self%children, 0_I4P]
+   call move_alloc(stack, self%children)
+   endfunction vtkhdf_open_block
+
+   function vtkhdf_close_block(self) result(error)
+   !< Close the open block of a VTKHDF file.
+   class(vtm_file), intent(inout) :: self     !< VTM file.
+   integer(I4P)                   :: error    !< Error status.
+   integer(I4P), allocatable      :: stack(:) !< Children of the open levels, one less level.
+
+   error = 1
+   if (size(self%children) < 2) return
+   self%node = self%node(1:index(self%node, '/', back=.true.)-1)
+   stack = self%children(1:size(self%children)-1) ! a new array: no shrinking in place (nvfortran 26.9)
+   call move_alloc(stack, self%children)
+   error = 0
+   endfunction vtkhdf_close_block
+
+   function vtkhdf_dataset(self, filename, name) result(error)
+   !< Copy the dataset of a `.vtkhdf` file into the VTKHDF file, as `Block_<n>`, and link it in the open block, named `name`
+   !< or after the file (without directory and extension). A time series is refused (VTK 9.7.2 reads only the first step of
+   !< a multi-block time series, its own files too).
+   class(vtm_file), intent(inout)        :: self      !< VTM file.
+   character(*),    intent(in)           :: filename  !< File of the dataset.
+   character(*),    intent(in), optional :: name      !< Dataset name.
+   integer(I4P)                          :: error     !< Error status.
+   character(len=:), allocatable         :: leaf      !< Group of the copy.
+   character(len=:), allocatable         :: label     !< Name of the link.
+   integer(hid_kind)                     :: source    !< File of the dataset.
+   integer(hid_kind)                     :: group     !< A group.
+   integer(I8P), allocatable             :: values(:) !< Attribute values.
+   integer(I8P)                          :: n_steps   !< Steps of the dataset.
+   integer(I4P)                          :: e         !< Error of a closing.
+
+   error = 1
+   self%n_leaves = self%n_leaves + 1_I4P
+   self%children(size(self%children)) = self%children(size(self%children)) + 1_I4P
+   leaf = 'Block_'//trim(str(n=self%n_leaves, no_sign=.true.))
+   if (h5_file_open(trim(adjustl(filename)), source) /= 0) then
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: cannot open '//trim(adjustl(filename))//' as an HDF5 file'
+      return
+   endif
+   if (h5_link_exists(source, 'VTKHDF')) error = h5_object_copy(source, 'VTKHDF', self%root, leaf)
+   e = h5_file_close(source)
+   if (error /= 0) then
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: '//trim(adjustl(filename))//' is not a VTKHDF file'
+      return
+   endif
+   ! the version: the highest of the blocks; the steps: the same for every block
+   error = h5_group_open(self%root, leaf, group)
+   if (error /= 0) return
+   if (h5_attribute_read(group, 'Version', values) == 0) self%version_minor = max(self%version_minor, values(2))
+   e = h5_group_close(group)
+   n_steps = 0_I8P
+   if (h5_link_exists(self%root, leaf//'/Steps')) then
+      error = h5_group_open(self%root, leaf//'/Steps', group)
+      if (error == 0) error = h5_attribute_read(group, 'NSteps', values)
+      e = h5_group_close(group)
+      if (error /= 0) return
+      n_steps = values(1)
+   endif
+   if (n_steps > 0_I8P) then
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: '//trim(adjustl(filename))//' is a time series: VTK 9.7.2 reads '// &
+                           'only the first step of a multi-block time series'
+      error = 1
+      return
+   endif
+   self%n_steps = n_steps
+   label = trim(adjustl(filename))
+   label = label(index(label, '/', back=.true.)+1:)
+   if (index(label, '.', back=.true.) > 1) label = label(1:index(label, '.', back=.true.)-1)
+   if (present(name)) then
+      if (len_trim(name) > 0) label = trim(adjustl(name))
+   endif
+   error = h5_group_open(self%root, self%node, group)
+   if (error == 0) then
+      error = h5_link_soft('/VTKHDF/'//leaf, group, label)
+      e = h5_group_close(group)
+   endif
+   if (error /= 0) write(stderr, '(A)') 'error: VTKFortran vtm_file: cannot link '//label//' (a name used twice?)'
+   endfunction vtkhdf_dataset
 endmodule vtk_fortran_vtm_file

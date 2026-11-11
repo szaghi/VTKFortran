@@ -33,6 +33,7 @@ public :: h5_group_open
 public :: h5_group_close
 public :: h5_link_exists
 public :: h5_link_soft
+public :: h5_object_copy
 public :: h5_group_names
 public :: h5_attribute_write
 public :: h5_attribute_read
@@ -236,6 +237,14 @@ interface
     character(kind=c_char), intent(in) :: name(*)
     integer(c_int64_t), value          :: aapl
   end function H5Aopen
+  integer(c_int) function H5Ocopy(src_loc, src_name, dst_loc, dst_name, ocpypl, lcpl) bind(C, name='H5Ocopy')
+    import :: c_int, c_int64_t, c_char
+    integer(c_int64_t), value          :: src_loc
+    character(kind=c_char), intent(in) :: src_name(*)
+    integer(c_int64_t), value          :: dst_loc
+    character(kind=c_char), intent(in) :: dst_name(*)
+    integer(c_int64_t), value          :: ocpypl, lcpl
+  end function H5Ocopy
   integer(c_int) function H5Adelete(loc, name) bind(C, name='H5Adelete')
     import :: c_int, c_int64_t, c_char
     integer(c_int64_t), value          :: loc
@@ -524,6 +533,22 @@ contains
     error = 0_I4P
 #endif
   endfunction h5_link_soft
+
+  function h5_object_copy(src_loc, src_name, dst_loc, dst_name) result(error)
+  !< Copy the object (group or dataset, with all it holds) `src_name` of `src_loc` to `dst_name` of `dst_loc`, in the same
+  !< or another file.
+  integer(hid_kind), intent(in) :: src_loc  !< Source file or group.
+  character(*),      intent(in) :: src_name !< Source object.
+  integer(hid_kind), intent(in) :: dst_loc  !< Destination file or group.
+  character(*),      intent(in) :: dst_name !< Destination name.
+  integer(I4P)                  :: error    !< Error status.
+
+  error = 1_I4P
+#ifdef VTKFORTRAN_USE_HDF5
+  if (H5Ocopy(src_loc, trim(src_name)//c_null_char, dst_loc, trim(dst_name)//c_null_char, H5P_DEFAULT, H5P_DEFAULT) >= 0) &
+    error = 0_I4P
+#endif
+  endfunction h5_object_copy
 
   function h5_group_names(loc_id, group, names) result(error)
   !< Return the names of the members (links) of the group `group` of `loc_id`, in the order of their names, each one
