@@ -18,6 +18,9 @@ module vtk_fortran_hdf5
 !< dimension (the first HDF5 one).
 use, intrinsic :: iso_c_binding
 use penf, only : I1P, I2P, I4P, I8P, R4P, R8P
+#ifdef VTKFORTRAN_USE_MPI
+use mpi_f08, only : MPI_Comm, MPI_Allgather, MPI_Allreduce, MPI_Comm_size, MPI_Comm_rank, MPI_INTEGER8, MPI_SUM, MPI_MAX
+#endif
 implicit none
 private
 
@@ -25,6 +28,8 @@ public :: is_hdf5_enabled
 public :: hid_kind
 public :: h5_initialize
 public :: h5_file_create
+public :: h5_mpi_sum
+public :: is_mpi_enabled
 public :: h5_file_open
 public :: h5_file_flush
 public :: h5_file_close
@@ -59,8 +64,14 @@ integer, parameter :: hid_kind = c_int64_t !< Kind of the HDF5 identifiers (`hid
 
 #ifdef VTKFORTRAN_USE_HDF5
 logical, parameter :: is_hdf5_enabled = .true.  !< The library is built with HDF5 (VTKFORTRAN_USE_HDF5).
+#ifdef VTKFORTRAN_USE_MPI
+logical, parameter :: is_mpi_enabled = .true.   !< The library is built with MPI (VTKFORTRAN_USE_MPI): parallel HDF5 files.
+#else
+logical, parameter :: is_mpi_enabled = .false.  !< The library is built with MPI (VTKFORTRAN_USE_MPI): parallel HDF5 files.
+#endif
 #else
 logical, parameter :: is_hdf5_enabled = .false. !< The library is built with HDF5 (VTKFORTRAN_USE_HDF5).
+logical, parameter :: is_mpi_enabled = .false.  !< The library is built with MPI (VTKFORTRAN_USE_MPI): parallel HDF5 files.
 #endif
 
 integer(c_int64_t), parameter :: H5P_DEFAULT = 0_c_int64_t           !< Default property list.
@@ -107,6 +118,10 @@ interface
     type(c_funptr),     value :: func
     type(c_ptr),        value :: client_data
   end function H5Eset_auto2
+  integer(c_int64_t) function vtkfortran_h5_fapl_mpio(fcomm) bind(C, name='vtkfortran_h5_fapl_mpio')
+    import :: c_int, c_int64_t
+    integer(c_int), value :: fcomm
+  end function vtkfortran_h5_fapl_mpio
   integer(c_int64_t) function H5Fcreate(name, flags, fcpl, fapl) bind(C, name='H5Fcreate')
     import :: c_int64_t, c_char, c_int
     character(kind=c_char), intent(in) :: name(*)
@@ -387,20 +402,54 @@ contains
 #endif
   endfunction h5_initialize
 
-  function h5_file_create(filename, file_id) result(error)
-  !< Create a file (an existing one is overwritten).
-  character(*),          intent(in)  :: filename !< File name.
-  integer(hid_kind),     intent(out) :: file_id  !< File identifier.
-  integer(I4P)                       :: error    !< Error status.
+  function h5_file_create(filename, file_id, comm) result(error)
+  !< Create a file (an existing one is overwritten); with `comm` (a Fortran MPI communicator) a parallel file, created by
+  !< every rank of it (the library built with MPI, `VTKFORTRAN_USE_MPI`, and a parallel HDF5).
+  character(*),          intent(in)           :: filename !< File name.
+  integer(hid_kind),     intent(out)          :: file_id  !< File identifier.
+  integer(I4P),          intent(in), optional :: comm     !< MPI communicator (Fortran handle, `MPI_Comm%MPI_VAL`).
+  integer(I4P)                                :: error    !< Error status.
+#ifdef VTKFORTRAN_USE_HDF5
+  integer(c_int64_t)                          :: fapl     !< File access properties.
+#endif
 
   file_id = -1_hid_kind
   error = h5_initialize()
   if (error /= 0) return
 #ifdef VTKFORTRAN_USE_HDF5
-  file_id = H5Fcreate(trim(filename)//c_null_char, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT)
+  fapl = H5P_DEFAULT
+  if (present(comm)) then
+    error = 1_I4P
+#ifdef VTKFORTRAN_USE_MPI
+    fapl = vtkfortran_h5_fapl_mpio(int(comm, c_int))
+#endif
+    if (fapl < 0 .or. .not.is_mpi_enabled) return
+    error = 0_I4P
+  endif
+  file_id = H5Fcreate(trim(filename)//c_null_char, H5F_ACC_TRUNC, H5P_DEFAULT, fapl)
   if (file_id < 0) error = 1_I4P
+  if (present(comm)) then
+    if (H5Pclose(fapl) < 0) error = 1_I4P
+  endif
+#else
+  if (present(comm)) error = 1_I4P
 #endif
   endfunction h5_file_create
+
+  function h5_mpi_sum(comm, n) result(total)
+  !< The sum of `n` over the ranks of `comm` (a Fortran MPI communicator); `n` without MPI.
+  integer(I4P), intent(in) :: comm  !< MPI communicator (Fortran handle).
+  integer(I8P), intent(in) :: n     !< Value of the rank.
+  integer(I8P)             :: total !< Sum over the ranks.
+#ifdef VTKFORTRAN_USE_MPI
+  type(MPI_Comm)           :: c     !< Communicator.
+
+  c%MPI_VAL = comm
+  call MPI_Allreduce(n, total, 1, MPI_INTEGER8, MPI_SUM, c)
+#else
+  total = n + 0_I8P * comm
+#endif
+  endfunction h5_mpi_sum
 
   function h5_file_open(filename, file_id, readwrite) result(error)
   !< Open an existing file, read-only or (`readwrite=.true.`) for reading and writing.
@@ -962,7 +1011,7 @@ contains
   endfunction h5_dataset_resize
 
   ! datasets of every kind: thin front ends of dataset_write, dataset_append and dataset_read
-  function h5_dataset_write_R8P(loc_id, name, x, dims, appendable, deflate) result(error)
+  function h5_dataset_write_R8P(loc_id, name, x, dims, appendable, deflate, comm) result(error)
   !< Create a dataset of `R8P` values (HDF5 native double), shape `dims` in Fortran order.
   integer(hid_kind), intent(in)           :: loc_id     !< Parent (file or group).
   character(*),      intent(in)           :: name       !< Dataset name.
@@ -970,16 +1019,17 @@ contains
   integer(I8P),      intent(in)           :: dims(:)    !< Shape, Fortran order.
   logical,           intent(in), optional :: appendable !< Chunked, unlimited along the last dimension.
   integer(I4P),      intent(in), optional :: deflate    !< Deflate level (1-9), implies chunking.
+  integer(I4P),      intent(in), optional :: comm       !< MPI communicator: every rank writes its rows (appendable, collective).
   integer(I4P)                            :: error      !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
-  error = dataset_write(loc_id, name, H5T_NATIVE_DOUBLE_g, 8_I8P, dims, c_loc(x), appendable, deflate)
+  error = dataset_write(loc_id, name, H5T_NATIVE_DOUBLE_g, 8_I8P, dims, c_loc(x), appendable, deflate, comm)
 #else
   error = 1_I4P
 #endif
   endfunction h5_dataset_write_R8P
 
-  function h5_dataset_write_R4P(loc_id, name, x, dims, appendable, deflate) result(error)
+  function h5_dataset_write_R4P(loc_id, name, x, dims, appendable, deflate, comm) result(error)
   !< Create a dataset of `R4P` values (HDF5 native float), shape `dims` in Fortran order.
   integer(hid_kind), intent(in)           :: loc_id     !< Parent (file or group).
   character(*),      intent(in)           :: name       !< Dataset name.
@@ -987,16 +1037,17 @@ contains
   integer(I8P),      intent(in)           :: dims(:)    !< Shape, Fortran order.
   logical,           intent(in), optional :: appendable !< Chunked, unlimited along the last dimension.
   integer(I4P),      intent(in), optional :: deflate    !< Deflate level (1-9), implies chunking.
+  integer(I4P),      intent(in), optional :: comm       !< MPI communicator: every rank writes its rows (appendable, collective).
   integer(I4P)                            :: error      !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
-  error = dataset_write(loc_id, name, H5T_NATIVE_FLOAT_g, 4_I8P, dims, c_loc(x), appendable, deflate)
+  error = dataset_write(loc_id, name, H5T_NATIVE_FLOAT_g, 4_I8P, dims, c_loc(x), appendable, deflate, comm)
 #else
   error = 1_I4P
 #endif
   endfunction h5_dataset_write_R4P
 
-  function h5_dataset_write_I8P(loc_id, name, x, dims, appendable, deflate, unsigned) result(error)
+  function h5_dataset_write_I8P(loc_id, name, x, dims, appendable, deflate, unsigned, comm) result(error)
   !< Create a dataset of `I8P` values (HDF5 native int64, or uint64 with `unsigned=.true.`), shape `dims` in Fortran order.
   integer(hid_kind), intent(in)           :: loc_id     !< Parent (file or group).
   character(*),      intent(in)           :: name       !< Dataset name.
@@ -1005,17 +1056,18 @@ contains
   logical,           intent(in), optional :: appendable !< Chunked, unlimited along the last dimension.
   integer(I4P),      intent(in), optional :: deflate    !< Deflate level (1-9), implies chunking.
   logical,           intent(in), optional :: unsigned   !< Store the bits as the unsigned type of the same width.
+  integer(I4P),      intent(in), optional :: comm       !< MPI communicator: every rank writes its rows (appendable, collective).
   integer(I4P)                            :: error      !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
   error = dataset_write(loc_id, name, merge(H5T_NATIVE_UINT64_g, H5T_NATIVE_INT64_g, is_true(unsigned)), 8_I8P, dims, &
-                        c_loc(x), appendable, deflate)
+                        c_loc(x), appendable, deflate, comm)
 #else
   error = 1_I4P
 #endif
   endfunction h5_dataset_write_I8P
 
-  function h5_dataset_write_I4P(loc_id, name, x, dims, appendable, deflate, unsigned) result(error)
+  function h5_dataset_write_I4P(loc_id, name, x, dims, appendable, deflate, unsigned, comm) result(error)
   !< Create a dataset of `I4P` values (HDF5 native int32, or uint32 with `unsigned=.true.`), shape `dims` in Fortran order.
   integer(hid_kind), intent(in)           :: loc_id     !< Parent (file or group).
   character(*),      intent(in)           :: name       !< Dataset name.
@@ -1024,17 +1076,18 @@ contains
   logical,           intent(in), optional :: appendable !< Chunked, unlimited along the last dimension.
   integer(I4P),      intent(in), optional :: deflate    !< Deflate level (1-9), implies chunking.
   logical,           intent(in), optional :: unsigned   !< Store the bits as the unsigned type of the same width.
+  integer(I4P),      intent(in), optional :: comm       !< MPI communicator: every rank writes its rows (appendable, collective).
   integer(I4P)                            :: error      !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
   error = dataset_write(loc_id, name, merge(H5T_NATIVE_UINT32_g, H5T_NATIVE_INT32_g, is_true(unsigned)), 4_I8P, dims, &
-                        c_loc(x), appendable, deflate)
+                        c_loc(x), appendable, deflate, comm)
 #else
   error = 1_I4P
 #endif
   endfunction h5_dataset_write_I4P
 
-  function h5_dataset_write_I2P(loc_id, name, x, dims, appendable, deflate, unsigned) result(error)
+  function h5_dataset_write_I2P(loc_id, name, x, dims, appendable, deflate, unsigned, comm) result(error)
   !< Create a dataset of `I2P` values (HDF5 native int16, or uint16 with `unsigned=.true.`), shape `dims` in Fortran order.
   integer(hid_kind), intent(in)           :: loc_id     !< Parent (file or group).
   character(*),      intent(in)           :: name       !< Dataset name.
@@ -1043,17 +1096,18 @@ contains
   logical,           intent(in), optional :: appendable !< Chunked, unlimited along the last dimension.
   integer(I4P),      intent(in), optional :: deflate    !< Deflate level (1-9), implies chunking.
   logical,           intent(in), optional :: unsigned   !< Store the bits as the unsigned type of the same width.
+  integer(I4P),      intent(in), optional :: comm       !< MPI communicator: every rank writes its rows (appendable, collective).
   integer(I4P)                            :: error      !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
   error = dataset_write(loc_id, name, merge(H5T_NATIVE_UINT16_g, H5T_NATIVE_INT16_g, is_true(unsigned)), 2_I8P, dims, &
-                        c_loc(x), appendable, deflate)
+                        c_loc(x), appendable, deflate, comm)
 #else
   error = 1_I4P
 #endif
   endfunction h5_dataset_write_I2P
 
-  function h5_dataset_write_I1P(loc_id, name, x, dims, appendable, deflate, unsigned) result(error)
+  function h5_dataset_write_I1P(loc_id, name, x, dims, appendable, deflate, unsigned, comm) result(error)
   !< Create a dataset of `I1P` values (HDF5 native int8, or uint8 with `unsigned=.true.`), shape `dims` in Fortran order.
   integer(hid_kind), intent(in)           :: loc_id     !< Parent (file or group).
   character(*),      intent(in)           :: name       !< Dataset name.
@@ -1062,105 +1116,112 @@ contains
   logical,           intent(in), optional :: appendable !< Chunked, unlimited along the last dimension.
   integer(I4P),      intent(in), optional :: deflate    !< Deflate level (1-9), implies chunking.
   logical,           intent(in), optional :: unsigned   !< Store the bits as the unsigned type of the same width.
+  integer(I4P),      intent(in), optional :: comm       !< MPI communicator: every rank writes its rows (appendable, collective).
   integer(I4P)                            :: error      !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
   error = dataset_write(loc_id, name, merge(H5T_NATIVE_UINT8_g, H5T_NATIVE_INT8_g, is_true(unsigned)), 1_I8P, dims, &
-                        c_loc(x), appendable, deflate)
+                        c_loc(x), appendable, deflate, comm)
 #else
   error = 1_I4P
 #endif
   endfunction h5_dataset_write_I1P
 
-  function h5_dataset_append_R8P(loc_id, name, x, dims) result(error)
+  function h5_dataset_append_R8P(loc_id, name, x, dims, comm) result(error)
   !< Append `R8P` values to an appendable dataset; `dims` is the shape of the values appended, Fortran order.
   integer(hid_kind), intent(in)         :: loc_id  !< Parent (file or group).
   character(*),      intent(in)         :: name    !< Dataset name.
   real(R8P),         intent(in), target   :: x(*)       !< Values appended, any rank.
   integer(I8P),      intent(in)           :: dims(:) !< Shape of the values appended, Fortran order.
+  integer(I4P),      intent(in), optional :: comm    !< MPI communicator: every rank appends its values, in rank order.
   integer(I4P)                          :: error   !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
-  error = dataset_append(loc_id, name, H5T_NATIVE_DOUBLE_g, dims, c_loc(x))
+  error = dataset_append(loc_id, name, H5T_NATIVE_DOUBLE_g, dims, c_loc(x), comm)
 #else
   error = 1_I4P
 #endif
   endfunction h5_dataset_append_R8P
 
-  function h5_dataset_append_R4P(loc_id, name, x, dims) result(error)
+  function h5_dataset_append_R4P(loc_id, name, x, dims, comm) result(error)
   !< Append `R4P` values to an appendable dataset; `dims` is the shape of the values appended, Fortran order.
   integer(hid_kind), intent(in)         :: loc_id  !< Parent (file or group).
   character(*),      intent(in)         :: name    !< Dataset name.
   real(R4P),         intent(in), target   :: x(*)       !< Values appended, any rank.
   integer(I8P),      intent(in)           :: dims(:) !< Shape of the values appended, Fortran order.
+  integer(I4P),      intent(in), optional :: comm    !< MPI communicator: every rank appends its values, in rank order.
   integer(I4P)                          :: error   !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
-  error = dataset_append(loc_id, name, H5T_NATIVE_FLOAT_g, dims, c_loc(x))
+  error = dataset_append(loc_id, name, H5T_NATIVE_FLOAT_g, dims, c_loc(x), comm)
 #else
   error = 1_I4P
 #endif
   endfunction h5_dataset_append_R4P
 
-  function h5_dataset_append_I8P(loc_id, name, x, dims, unsigned) result(error)
+  function h5_dataset_append_I8P(loc_id, name, x, dims, unsigned, comm) result(error)
   !< Append `I8P` values to an appendable dataset; `dims` is the shape of the values appended, Fortran order.
   integer(hid_kind), intent(in)           :: loc_id   !< Parent (file or group).
   character(*),      intent(in)           :: name     !< Dataset name.
   integer(I8P),      intent(in), target   :: x(*)       !< Values appended, any rank.
   integer(I8P),      intent(in)           :: dims(:)  !< Shape of the values appended, Fortran order.
+  integer(I4P),      intent(in), optional :: comm    !< MPI communicator: every rank appends its values, in rank order.
   logical,           intent(in), optional :: unsigned !< The values are the bits of the unsigned type of the same width.
   integer(I4P)                            :: error    !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
-  error = dataset_append(loc_id, name, merge(H5T_NATIVE_UINT64_g, H5T_NATIVE_INT64_g, is_true(unsigned)), dims, c_loc(x))
+  error = dataset_append(loc_id, name, merge(H5T_NATIVE_UINT64_g, H5T_NATIVE_INT64_g, is_true(unsigned)), dims, c_loc(x), comm)
 #else
   error = 1_I4P
 #endif
   endfunction h5_dataset_append_I8P
 
-  function h5_dataset_append_I4P(loc_id, name, x, dims, unsigned) result(error)
+  function h5_dataset_append_I4P(loc_id, name, x, dims, unsigned, comm) result(error)
   !< Append `I4P` values to an appendable dataset; `dims` is the shape of the values appended, Fortran order.
   integer(hid_kind), intent(in)           :: loc_id   !< Parent (file or group).
   character(*),      intent(in)           :: name     !< Dataset name.
   integer(I4P),      intent(in), target   :: x(*)       !< Values appended, any rank.
   integer(I8P),      intent(in)           :: dims(:)  !< Shape of the values appended, Fortran order.
+  integer(I4P),      intent(in), optional :: comm    !< MPI communicator: every rank appends its values, in rank order.
   logical,           intent(in), optional :: unsigned !< The values are the bits of the unsigned type of the same width.
   integer(I4P)                            :: error    !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
-  error = dataset_append(loc_id, name, merge(H5T_NATIVE_UINT32_g, H5T_NATIVE_INT32_g, is_true(unsigned)), dims, c_loc(x))
+  error = dataset_append(loc_id, name, merge(H5T_NATIVE_UINT32_g, H5T_NATIVE_INT32_g, is_true(unsigned)), dims, c_loc(x), comm)
 #else
   error = 1_I4P
 #endif
   endfunction h5_dataset_append_I4P
 
-  function h5_dataset_append_I2P(loc_id, name, x, dims, unsigned) result(error)
+  function h5_dataset_append_I2P(loc_id, name, x, dims, unsigned, comm) result(error)
   !< Append `I2P` values to an appendable dataset; `dims` is the shape of the values appended, Fortran order.
   integer(hid_kind), intent(in)           :: loc_id   !< Parent (file or group).
   character(*),      intent(in)           :: name     !< Dataset name.
   integer(I2P),      intent(in), target   :: x(*)       !< Values appended, any rank.
   integer(I8P),      intent(in)           :: dims(:)  !< Shape of the values appended, Fortran order.
+  integer(I4P),      intent(in), optional :: comm    !< MPI communicator: every rank appends its values, in rank order.
   logical,           intent(in), optional :: unsigned !< The values are the bits of the unsigned type of the same width.
   integer(I4P)                            :: error    !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
-  error = dataset_append(loc_id, name, merge(H5T_NATIVE_UINT16_g, H5T_NATIVE_INT16_g, is_true(unsigned)), dims, c_loc(x))
+  error = dataset_append(loc_id, name, merge(H5T_NATIVE_UINT16_g, H5T_NATIVE_INT16_g, is_true(unsigned)), dims, c_loc(x), comm)
 #else
   error = 1_I4P
 #endif
   endfunction h5_dataset_append_I2P
 
-  function h5_dataset_append_I1P(loc_id, name, x, dims, unsigned) result(error)
+  function h5_dataset_append_I1P(loc_id, name, x, dims, unsigned, comm) result(error)
   !< Append `I1P` values to an appendable dataset; `dims` is the shape of the values appended, Fortran order.
   integer(hid_kind), intent(in)           :: loc_id   !< Parent (file or group).
   character(*),      intent(in)           :: name     !< Dataset name.
   integer(I1P),      intent(in), target   :: x(*)       !< Values appended, any rank.
   integer(I8P),      intent(in)           :: dims(:)  !< Shape of the values appended, Fortran order.
+  integer(I4P),      intent(in), optional :: comm    !< MPI communicator: every rank appends its values, in rank order.
   logical,           intent(in), optional :: unsigned !< The values are the bits of the unsigned type of the same width.
   integer(I4P)                            :: error    !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
-  error = dataset_append(loc_id, name, merge(H5T_NATIVE_UINT8_g, H5T_NATIVE_INT8_g, is_true(unsigned)), dims, c_loc(x))
+  error = dataset_append(loc_id, name, merge(H5T_NATIVE_UINT8_g, H5T_NATIVE_INT8_g, is_true(unsigned)), dims, c_loc(x), comm)
 #else
   error = 1_I4P
 #endif
@@ -1374,8 +1435,11 @@ contains
   if (H5Sclose(space) < 0) error = 1_I4P
   endfunction dataset_dims
 
-  function dataset_write(loc_id, name, memtype, bytes, dims, buffer, appendable, deflate) result(error)
+  function dataset_write(loc_id, name, memtype, bytes, dims, buffer, appendable, deflate, comm) result(error)
   !< Create a dataset of the type `memtype` (stored as it is), shape `dims` (Fortran order), and write its values.
+  !<
+  !< With `comm` (an appendable dataset of a parallel file) the ranks create the dataset empty, its chunks sized for the
+  !< rows of all of them, then each one appends its rows after the ranks before (collective).
   integer(hid_kind),  intent(in)           :: loc_id     !< Parent (file or group).
   character(*),       intent(in)           :: name       !< Dataset name.
   integer(c_int64_t), intent(in)           :: memtype    !< Type of the values in memory (and in the file).
@@ -1384,7 +1448,12 @@ contains
   type(c_ptr),        intent(in)           :: buffer     !< Values.
   logical,            intent(in), optional :: appendable !< Chunked, unlimited along the last Fortran dimension.
   integer(I4P),       intent(in), optional :: deflate    !< Deflate level (1-9), implies chunking.
+  integer(I4P),       intent(in), optional :: comm       !< MPI communicator (Fortran handle).
   integer(I4P)                             :: error      !< Error status.
+  integer(I8P)                             :: first      !< Rows of the ranks before this one.
+  integer(I8P)                             :: total      !< Rows of all the ranks.
+  integer(I8P)                             :: fbytes     !< Bytes of a value in the file.
+  integer(c_int64_t)                       :: ftype      !< Type of the values in the file.
   integer(c_long_long)                     :: cdims(size(dims)) !< Shape, C order.
   integer(c_long_long), target             :: maxdims(size(dims)) !< Maximum shape, C order.
   integer(c_long_long)                     :: chunk(size(dims)) !< Chunk shape, C order.
@@ -1398,6 +1467,16 @@ contains
   error = 1_I4P
   if (size(dims) < 1 .or. bytes < 1) return
   cdims = c_dims(dims)
+  total = dims(size(dims))
+  ftype = memtype
+  fbytes = bytes
+  if (present(comm)) then ! created empty by every rank, its chunks sized for the rows of all, of the widest kind given
+    if (.not.is_true(appendable)) return
+    if (mpi_rows(comm, dims(size(dims)), first, total) /= 0_I4P) return
+    cdims(1) = 0_c_long_long
+    fbytes = mpi_maximum(comm, bytes)
+    ftype = widest_type(memtype, fbytes)
+  endif
   level = 0_I4P ; if (present(deflate)) level = max(0_I4P, min(9_I4P, deflate))
   chunked = is_true(appendable) .or. level > 0
   maxdims = cdims
@@ -1414,15 +1493,15 @@ contains
     dcpl = H5Pcreate(H5P_CLS_DATASET_CREATE_ID_g)
     chunk = max(1_c_long_long, cdims)
     ! whole rows (slowest dimension) up to CHUNK_BYTES: a rank-3 grid is chunked by planes, not as one chunk
-    chunk(1) = max(1_c_long_long, min(cdims(1), int(CHUNK_BYTES / (bytes * product(chunk(2:))), c_long_long)))
+    chunk(1) = max(1_c_long_long, min(int(total, c_long_long), int(CHUNK_BYTES / (fbytes * product(chunk(2:))), c_long_long)))
     ok = dcpl >= 0
     if (ok) ok = H5Pset_chunk(dcpl, int(size(dims), c_int), chunk) >= 0
     if (ok .and. level > 0) ok = H5Pset_deflate(dcpl, int(level, c_int)) >= 0
   endif
   dset = -1
-  if (ok) dset = H5Dcreate2(loc_id, trim(name)//c_null_char, memtype, space, H5P_DEFAULT, dcpl, H5P_DEFAULT)
+  if (ok) dset = H5Dcreate2(loc_id, trim(name)//c_null_char, ftype, space, H5P_DEFAULT, dcpl, H5P_DEFAULT)
   if (dset >= 0) then
-    if (product(dims) == 0_I8P) then
+    if (product(dims) == 0_I8P .or. present(comm)) then
       error = 0_I4P
     elseif (H5Dwrite(dset, memtype, H5S_ALL, H5S_ALL, H5P_DEFAULT, buffer) >= 0) then
       error = 0_I4P
@@ -1433,9 +1512,83 @@ contains
     if (H5Pclose(dcpl) < 0) error = 1_I4P
   endif
   if (H5Sclose(space) < 0) error = 1_I4P
+  if (present(comm) .and. error == 0_I4P) error = dataset_append(loc_id, name, memtype, dims, buffer, comm)
   endfunction dataset_write
 
-  function dataset_append(loc_id, name, memtype, dims, buffer) result(error)
+  function widest_type(memtype, bytes) result(ftype)
+  !< The type of the class and sign of `memtype` (real, signed or unsigned integer) with `bytes` bytes, or `memtype`.
+  !<
+  !< The type of a dataset created by the ranks of a communicator: the ranks may give the same values with different kinds
+  !< (the ids of an empty PolyData block are I8P), the dataset gets the widest one.
+  integer(c_int64_t), intent(in) :: memtype !< Type of the values in memory.
+  integer(I8P),       intent(in) :: bytes   !< Bytes of a value in the file.
+  integer(c_int64_t)             :: ftype   !< Type of the values in the file.
+  integer(c_int64_t)             :: reals(4), signed(4), unsigned_(4) !< Types by bytes: 1, 2, 4, 8.
+  integer                        :: w       !< Index of the width.
+
+  ftype = memtype
+  reals = [-1_c_int64_t, -1_c_int64_t, H5T_NATIVE_FLOAT_g, H5T_NATIVE_DOUBLE_g]
+  signed = [H5T_NATIVE_INT8_g, H5T_NATIVE_INT16_g, H5T_NATIVE_INT32_g, H5T_NATIVE_INT64_g]
+  unsigned_ = [H5T_NATIVE_UINT8_g, H5T_NATIVE_UINT16_g, H5T_NATIVE_UINT32_g, H5T_NATIVE_UINT64_g]
+  select case(bytes)
+  case(1_I8P) ; w = 1
+  case(2_I8P) ; w = 2
+  case(4_I8P) ; w = 3
+  case(8_I8P) ; w = 4
+  case default ; return
+  endselect
+  if (any(reals == memtype)) then
+    if (reals(w) >= 0_c_int64_t) ftype = reals(w)
+  elseif (any(signed == memtype)) then
+    ftype = signed(w)
+  elseif (any(unsigned_ == memtype)) then
+    ftype = unsigned_(w)
+  endif
+  endfunction widest_type
+
+  function mpi_maximum(comm, n) result(nmax)
+  !< The maximum of `n` over the ranks of `comm` (a Fortran MPI communicator); `n` without MPI.
+  integer(I4P), intent(in) :: comm  !< MPI communicator (Fortran handle).
+  integer(I8P), intent(in) :: n     !< Value of the rank.
+  integer(I8P)             :: nmax  !< Maximum over the ranks.
+#ifdef VTKFORTRAN_USE_MPI
+  type(MPI_Comm)           :: c     !< Communicator.
+
+  c%MPI_VAL = comm
+  call MPI_Allreduce(n, nmax, 1, MPI_INTEGER8, MPI_MAX, c)
+#else
+  nmax = n + 0_I8P * comm
+#endif
+  endfunction mpi_maximum
+
+  function mpi_rows(comm, n, first, total) result(error)
+  !< The rows appended by the ranks of `comm` before this one (`first`) and by all of them (`total`), this one appending `n`.
+  integer(I4P), intent(in)  :: comm   !< MPI communicator (Fortran handle).
+  integer(I8P), intent(in)  :: n      !< Rows of this rank.
+  integer(I8P), intent(out) :: first  !< Rows of the ranks before.
+  integer(I8P), intent(out) :: total  !< Rows of all the ranks.
+  integer(I4P)              :: error  !< Error status.
+#ifdef VTKFORTRAN_USE_MPI
+  type(MPI_Comm)            :: c      !< Communicator.
+  integer                   :: rank   !< Rank.
+  integer                   :: size_  !< Ranks.
+  integer(I8P), allocatable :: rows(:) !< Rows of each rank.
+
+  c%MPI_VAL = comm
+  call MPI_Comm_rank(c, rank)
+  call MPI_Comm_size(c, size_)
+  allocate(rows(0:size_-1))
+  call MPI_Allgather(n, 1, MPI_INTEGER8, rows, 1, MPI_INTEGER8, c)
+  first = sum(rows(0:rank-1))
+  total = sum(rows)
+  error = 0_I4P
+#else
+  first = 0_I8P ; total = n + 0_I8P * comm
+  error = 1_I4P
+#endif
+  endfunction mpi_rows
+
+  function dataset_append(loc_id, name, memtype, dims, buffer, comm) result(error)
   !< Append values (shape `dims`, Fortran order) to an appendable dataset, along its last Fortran dimension; the other
   !< dimensions must match the dataset's.
   integer(hid_kind),  intent(in) :: loc_id    !< Parent (file or group).
@@ -1443,7 +1596,10 @@ contains
   integer(c_int64_t), intent(in) :: memtype   !< Type of the values in memory.
   integer(I8P),       intent(in) :: dims(:)   !< Shape of the values appended, Fortran order.
   type(c_ptr),        intent(in) :: buffer    !< Values appended.
+  integer(I4P), intent(in), optional :: comm  !< MPI communicator: the ranks append their values in rank order (collective).
   integer(I4P)                   :: error     !< Error status.
+  integer(I8P)                   :: first     !< Rows of the ranks before this one.
+  integer(I8P)                   :: total     !< Rows of all the ranks.
   integer(c_int64_t)             :: dset      !< Dataset.
   integer(c_int64_t)             :: filespace !< Dataspace of the dataset, extended.
   integer(c_int64_t)             :: memspace  !< Dataspace of the values appended.
@@ -1453,7 +1609,13 @@ contains
   integer(c_long_long)           :: ccount(size(dims)) !< Shape of the appended values, C order.
 
   error = 1_I4P
-  if (product(dims) == 0_I8P) then
+  first = 0_I8P
+  total = dims(size(dims))
+  if (present(comm)) then ! collective: every rank extends by the rows of all, and writes its own after the ranks before
+    error = mpi_rows(comm, dims(size(dims)), first, total)
+    if (error /= 0_I4P) return
+    error = 1_I4P
+  elseif (product(dims) == 0_I8P) then
     error = 0_I4P
     return
   endif
@@ -1465,9 +1627,13 @@ contains
       ccount = c_dims(dims)
       cnew = c_dims(old)
       cstart = 0_c_long_long
-      cstart(1) = cnew(1)
-      cnew(1) = cnew(1) + ccount(1)
-      if (H5Dset_extent(dset, cnew) >= 0) then
+      cstart(1) = cnew(1) + int(first, c_long_long)
+      cnew(1) = cnew(1) + int(total, c_long_long)
+      if (H5Dset_extent(dset, cnew) < 0) then
+        continue
+      elseif (ccount(1) == 0_c_long_long) then ! a rank with no rows: it extends with the others, writes nothing
+        error = 0_I4P
+      else
         filespace = H5Dget_space(dset)
         memspace = H5Screate_simple(int(size(dims), c_int), ccount, c_null_ptr)
         if (filespace >= 0 .and. memspace >= 0) then

@@ -96,6 +96,8 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
   logical                       :: is_reopened=.false.     !< A time series reopened (`reopen`): the extent start unknown.
   character(len=:), allocatable :: point_arrays            !< Names of the point data arrays, NUL terminated.
   character(len=:), allocatable :: cell_arrays             !< Names of the cell data arrays, NUL terminated.
+  logical                       :: is_parallel=.false.     !< The file is written by the ranks of an MPI communicator.
+  integer(I4P)                  :: comm=0_I4P              !< MPI communicator (Fortran handle), if `is_parallel`.
   contains
     procedure, pass(self) :: initialize
     procedure, pass(self) :: finalize
@@ -187,6 +189,7 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
     procedure, pass(self) :: write_geo_strg_data3_rank3_R4P
     ! private helpers
     procedure, pass(self)          :: reopen        !< Reopen a time series to append steps (`action='append'`).
+    procedure, pass(self)          :: set_comm      !< Write the file from the ranks of an MPI communicator.
     procedure, pass(self), private :: check_cells   !< Check a write_connectivity call of an UnstructuredGrid piece.
     procedure, pass(self), private :: check_geo     !< Check a write_geo call of an UnstructuredGrid or PolyData piece.
     procedure, pass(self), private :: close_group   !< Close the open data group.
@@ -279,7 +282,21 @@ contains
     error = refuse('compressor zlib: the HDF5 library has no deflate filter')
     return
   endif
-  error = h5_file_create(filename, self%file_id)
+  if (self%is_parallel) then ! the ranks of comm write one file: one partition each, every call collective
+    error = 0_I4P
+    if (.not.is_mpi_enabled) then
+      error = refuse('comm: the library is built without MPI (VTKFORTRAN_USE_MPI)')
+    elseif (.not.self%is_partitioned()) then
+      error = refuse('comm: '//trim(adjustl(mesh_topology))//' has one piece, written by one rank (comm is for an '// &
+                     'UnstructuredGrid or a PolyData)')
+    elseif (self%is_compressed) then
+      error = refuse('comm: compressor zlib is not supported (a deflated dataset needs collective writes)')
+    endif
+    if (error /= 0_I4P) return
+    error = h5_file_create(filename, self%file_id, comm=self%comm)
+  else
+    error = h5_file_create(filename, self%file_id)
+  endif
   if (error /= 0_I4P) error = refuse('cannot create '//filename)
   ! every group with its creation order tracked and indexed, as VTK writes them (its reader of a multi-block file
   ! lists the groups of each block by creation order)
@@ -325,6 +342,7 @@ contains
   if (h5_file_close(self%file_id) /= 0_I4P) error = 1_I4P
   self%file_id = -1_hid_kind ; self%root = -1_hid_kind ; self%group = -1_hid_kind
   call self%reset
+  self%is_parallel = .false.
   endfunction finalize
 
   function write_piece_start_tag(self, nx1, nx2, ny1, ny2, nz1, nz2) result(error)
@@ -399,7 +417,9 @@ contains
 
   error = 1_I4P
   if (self%file_id < 0_hid_kind) return
-  if (self%is_piece_open .or. self%group >= 0_hid_kind) then
+  if (self%is_parallel) then
+    error = refuse('write_step: a time series is not written by the ranks of comm')
+  elseif (self%is_piece_open .or. self%group >= 0_hid_kind) then
     error = refuse('write_step: outside the pieces and the data groups')
   elseif (.not.self%is_temporal .and. (self%n_pieces > 0_I4P .or. h5_link_exists(self%root, 'FieldData'))) then
     error = refuse('write_step: a time series starts with write_step, before its first piece and field data')
@@ -557,6 +577,7 @@ contains
 
   self%file_id = -1_hid_kind ; self%root = -1_hid_kind ; self%group = -1_hid_kind
   call self%reset
+  self%is_parallel = .false.
   if (present(error)) error = 0_I4P
   endsubroutine free
 
@@ -2253,7 +2274,7 @@ contains
   endfunction put_I1P
 
   function store_R8P(self, loc_id, name, x, dims) result(error)
-  !< Create the appendable dataset `name` (R8P) with `x`, or append `x` to it if it exists.
+  !< Create the appendable dataset `name` (R8P) with `x`, or append `x` to it if it exists; with a communicator, collective.
   class(vtkhdf_writer), intent(in) :: self    !< Writer.
   integer(hid_kind), intent(in)    :: loc_id  !< Parent group.
   character(*), intent(in)         :: name    !< Dataset name.
@@ -2261,7 +2282,13 @@ contains
   integer(I8P), intent(in)         :: dims(:) !< Shape of the values, Fortran order (the last dimension grows).
   integer(I4P)                     :: error   !< Error status.
 
-  if (h5_link_exists(loc_id, name)) then
+  if (self%is_parallel) then ! every rank, its rows after those of the ranks before
+    if (h5_link_exists(loc_id, name)) then
+      error = h5_dataset_append_R8P(loc_id, name, x, dims, comm=self%comm)
+    else
+      error = h5_dataset_write_R8P(loc_id, name, x, dims, appendable=.true., comm=self%comm)
+    endif
+  elseif (h5_link_exists(loc_id, name)) then
     error = h5_dataset_append_R8P(loc_id, name, x, dims)
   else
     error = h5_dataset_write_R8P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level())
@@ -2269,7 +2296,7 @@ contains
   endfunction store_R8P
 
   function store_R4P(self, loc_id, name, x, dims) result(error)
-  !< Create the appendable dataset `name` (R4P) with `x`, or append `x` to it if it exists.
+  !< Create the appendable dataset `name` (R4P) with `x`, or append `x` to it if it exists; with a communicator, collective.
   class(vtkhdf_writer), intent(in) :: self    !< Writer.
   integer(hid_kind), intent(in)    :: loc_id  !< Parent group.
   character(*), intent(in)         :: name    !< Dataset name.
@@ -2277,7 +2304,13 @@ contains
   integer(I8P), intent(in)         :: dims(:) !< Shape of the values, Fortran order (the last dimension grows).
   integer(I4P)                     :: error   !< Error status.
 
-  if (h5_link_exists(loc_id, name)) then
+  if (self%is_parallel) then ! every rank, its rows after those of the ranks before
+    if (h5_link_exists(loc_id, name)) then
+      error = h5_dataset_append_R4P(loc_id, name, x, dims, comm=self%comm)
+    else
+      error = h5_dataset_write_R4P(loc_id, name, x, dims, appendable=.true., comm=self%comm)
+    endif
+  elseif (h5_link_exists(loc_id, name)) then
     error = h5_dataset_append_R4P(loc_id, name, x, dims)
   else
     error = h5_dataset_write_R4P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level())
@@ -2285,7 +2318,7 @@ contains
   endfunction store_R4P
 
   function store_I8P(self, loc_id, name, x, dims, unsigned) result(error)
-  !< Create the appendable dataset `name` (I8P) with `x`, or append `x` to it if it exists.
+  !< Create the appendable dataset `name` (I8P) with `x`, or append `x` to it if it exists; with a communicator, collective.
   class(vtkhdf_writer), intent(in) :: self     !< Writer.
   integer(hid_kind), intent(in)    :: loc_id   !< Parent group.
   character(*), intent(in)         :: name     !< Dataset name.
@@ -2294,7 +2327,13 @@ contains
   logical, intent(in), optional    :: unsigned !< Unsigned values.
   integer(I4P)                     :: error    !< Error status.
 
-  if (h5_link_exists(loc_id, name)) then
+  if (self%is_parallel) then ! every rank, its rows after those of the ranks before
+    if (h5_link_exists(loc_id, name)) then
+      error = h5_dataset_append_I8P(loc_id, name, x, dims, unsigned=unsigned, comm=self%comm)
+    else
+      error = h5_dataset_write_I8P(loc_id, name, x, dims, appendable=.true., unsigned=unsigned, comm=self%comm)
+    endif
+  elseif (h5_link_exists(loc_id, name)) then
     error = h5_dataset_append_I8P(loc_id, name, x, dims, unsigned=unsigned)
   else
     error = h5_dataset_write_I8P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), unsigned=unsigned)
@@ -2302,7 +2341,7 @@ contains
   endfunction store_I8P
 
   function store_I4P(self, loc_id, name, x, dims, unsigned) result(error)
-  !< Create the appendable dataset `name` (I4P) with `x`, or append `x` to it if it exists.
+  !< Create the appendable dataset `name` (I4P) with `x`, or append `x` to it if it exists; with a communicator, collective.
   class(vtkhdf_writer), intent(in) :: self     !< Writer.
   integer(hid_kind), intent(in)    :: loc_id   !< Parent group.
   character(*), intent(in)         :: name     !< Dataset name.
@@ -2311,7 +2350,13 @@ contains
   logical, intent(in), optional    :: unsigned !< Unsigned values.
   integer(I4P)                     :: error    !< Error status.
 
-  if (h5_link_exists(loc_id, name)) then
+  if (self%is_parallel) then ! every rank, its rows after those of the ranks before
+    if (h5_link_exists(loc_id, name)) then
+      error = h5_dataset_append_I4P(loc_id, name, x, dims, unsigned=unsigned, comm=self%comm)
+    else
+      error = h5_dataset_write_I4P(loc_id, name, x, dims, appendable=.true., unsigned=unsigned, comm=self%comm)
+    endif
+  elseif (h5_link_exists(loc_id, name)) then
     error = h5_dataset_append_I4P(loc_id, name, x, dims, unsigned=unsigned)
   else
     error = h5_dataset_write_I4P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), unsigned=unsigned)
@@ -2319,7 +2364,7 @@ contains
   endfunction store_I4P
 
   function store_I2P(self, loc_id, name, x, dims, unsigned) result(error)
-  !< Create the appendable dataset `name` (I2P) with `x`, or append `x` to it if it exists.
+  !< Create the appendable dataset `name` (I2P) with `x`, or append `x` to it if it exists; with a communicator, collective.
   class(vtkhdf_writer), intent(in) :: self     !< Writer.
   integer(hid_kind), intent(in)    :: loc_id   !< Parent group.
   character(*), intent(in)         :: name     !< Dataset name.
@@ -2328,7 +2373,13 @@ contains
   logical, intent(in), optional    :: unsigned !< Unsigned values.
   integer(I4P)                     :: error    !< Error status.
 
-  if (h5_link_exists(loc_id, name)) then
+  if (self%is_parallel) then ! every rank, its rows after those of the ranks before
+    if (h5_link_exists(loc_id, name)) then
+      error = h5_dataset_append_I2P(loc_id, name, x, dims, unsigned=unsigned, comm=self%comm)
+    else
+      error = h5_dataset_write_I2P(loc_id, name, x, dims, appendable=.true., unsigned=unsigned, comm=self%comm)
+    endif
+  elseif (h5_link_exists(loc_id, name)) then
     error = h5_dataset_append_I2P(loc_id, name, x, dims, unsigned=unsigned)
   else
     error = h5_dataset_write_I2P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), unsigned=unsigned)
@@ -2336,7 +2387,7 @@ contains
   endfunction store_I2P
 
   function store_I1P(self, loc_id, name, x, dims, unsigned) result(error)
-  !< Create the appendable dataset `name` (I1P) with `x`, or append `x` to it if it exists.
+  !< Create the appendable dataset `name` (I1P) with `x`, or append `x` to it if it exists; with a communicator, collective.
   class(vtkhdf_writer), intent(in) :: self     !< Writer.
   integer(hid_kind), intent(in)    :: loc_id   !< Parent group.
   character(*), intent(in)         :: name     !< Dataset name.
@@ -2345,7 +2396,13 @@ contains
   logical, intent(in), optional    :: unsigned !< Unsigned values.
   integer(I4P)                     :: error    !< Error status.
 
-  if (h5_link_exists(loc_id, name)) then
+  if (self%is_parallel) then ! every rank, its rows after those of the ranks before
+    if (h5_link_exists(loc_id, name)) then
+      error = h5_dataset_append_I1P(loc_id, name, x, dims, unsigned=unsigned, comm=self%comm)
+    else
+      error = h5_dataset_write_I1P(loc_id, name, x, dims, appendable=.true., unsigned=unsigned, comm=self%comm)
+    endif
+  elseif (h5_link_exists(loc_id, name)) then
     error = h5_dataset_append_I1P(loc_id, name, x, dims, unsigned=unsigned)
   else
     error = h5_dataset_write_I1P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), unsigned=unsigned)
@@ -2587,6 +2644,10 @@ contains
   integer(I8P)                        :: c, f, i, n, nf         !< Counters, sizes.
 
   error = 0_I4P
+  if (self%is_parallel) then
+    error = refuse('write_connectivity: polyhedra are not written by the ranks of comm')
+    return
+  endif
   if (size(faceoffset, kind=I8P) /= nc .or. size(cell_type, kind=I8P) < nc) then
     error = refuse('write_connectivity: faceoffset needs one value per cell')
     return
@@ -2690,6 +2751,10 @@ contains
   integer(I8P)                        :: c, f, i, n, nf         !< Counters, sizes.
 
   error = 0_I4P
+  if (self%is_parallel) then
+    error = refuse('write_connectivity: polyhedra are not written by the ranks of comm')
+    return
+  endif
   if (size(faceoffset, kind=I8P) /= nc .or. size(cell_type, kind=I8P) < nc) then
     error = refuse('write_connectivity: faceoffset needs one value per cell')
     return
@@ -3009,7 +3074,8 @@ contains
   integer(I4P)                        :: error !< Error status.
 
   error = 0_I4P
-  if (self%topology == TOPOLOGY_POLY .and. .not.self%is_connectivity_written .and. self%nc_piece == 0_I8P) then
+  if (self%topology == TOPOLOGY_POLY .and. .not.self%is_connectivity_written .and. self%nc_piece == 0_I8P &
+      .and. .not.self%is_parallel) then ! with comm the blocks are written by write_polydata_cells, by every rank
     error = self%poly_blocks(check_only=.false.)
     if (error /= 0_I4P) return
     self%is_connectivity_written = .true.
@@ -3209,6 +3275,20 @@ contains
     self%cell_arrays = names
   endif
   endsubroutine record_array
+
+  subroutine set_comm(self, comm)
+  !< Write the next file from the ranks of the MPI communicator `comm` (Fortran handle: `MPI_Comm%MPI_VAL` of mpi_f08):
+  !< set before `initialize` (`vtk_file%initialize(..., comm=)`), forgotten by `finalize`.
+  !<
+  !< Every rank calls every procedure, with the same arrays in the same order (the HDF5 calls are collective): its piece is
+  !< one partition of the UnstructuredGrid or PolyData, appended after the pieces of the ranks before. One piece per rank;
+  !< refused: the grids, time series, polyhedra, compressor zlib.
+  class(vtkhdf_writer), intent(inout) :: self !< Writer.
+  integer(I4P),         intent(in)    :: comm !< MPI communicator (Fortran handle).
+
+  self%is_parallel = .true.
+  self%comm = comm
+  endsubroutine set_comm
 
   function reopen(self, filename) result(error)
   !< Reopen a VTKHDF time series to append steps (`vtk_file%initialize(format='vtkhdf', filename=..., action='append')`):
@@ -3517,12 +3597,21 @@ contains
     endif
     self%block_cells = block_cells
   endif
+  if (self%is_parallel .and. self%n_pieces > 0_I4P) then
+    error = refuse('write_piece: one piece per rank of comm')
+    return
+  endif
   self%n_pieces = self%n_pieces + 1_I4P
   self%step_pieces = self%step_pieces + 1_I8P
   self%np_piece = np
   self%nc_piece = nc
-  self%total_points = self%total_points + np
-  self%total_cells = self%total_cells + nc
+  if (self%is_parallel) then ! the datasets hold the pieces of all the ranks
+    self%total_points = self%total_points + h5_mpi_sum(self%comm, np)
+    self%total_cells = self%total_cells + h5_mpi_sum(self%comm, nc)
+  else
+    self%total_points = self%total_points + np
+    self%total_cells = self%total_cells + nc
+  endif
   self%is_geo_written = .false.
   self%is_connectivity_written = .false.
   self%is_faces_written = .false.

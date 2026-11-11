@@ -24,18 +24,29 @@ modes = shared-gnu static-gnu static-gnu-zlib tests-gnu
         shared-gnu-debug static-gnu-debug tests-gnu-debug
         tests-gnu-debug-zlib
         static-gnu-hdf5 tests-gnu-debug-hdf5
+        static-gnu-hdf5-mpi tests-gnu-debug-hdf5-mpi
         shared-intel static-intel tests-intel
         shared-intel-debug static-intel-debug tests-intel-debug
 
-# The HDF5 modes (VTKHDF) link the HDF5 C library, nothing else of HDF5 (no headers, no Fortran modules): $HDF5_LIB is
-# its directory, $HDF5_EXT the libraries to link. The default varset is Ubuntu's libhdf5-dev (serial), as the CI; add a
+# The HDF5 modes (VTKHDF) link the HDF5 C library, nothing else of HDF5 (no Fortran modules): $HDF5_LIB is its
+# directory, $HDF5_EXT the libraries to link. The default varset is Ubuntu's libhdf5-dev (serial), as the CI; add a
 # varset for another HDF5, e.g. a parallel one ($HDF5_EXT then lists the MPI libraries too), and select it with
 #   fobis build --mode tests-gnu-debug-hdf5 --varset <name>
+# The MPI modes (VTKHDF files written by MPI ranks: VTKFORTRAN_USE_MPI) need a parallel HDF5, its headers too
+# ($HDF5_INC, for the C source src/mpi/vtk_fortran_mpi.c, excluded by the other modes: they need no C compiler), and
+# the MPI compilers (mpifort, mpicc), e.g. Ubuntu's libhdf5-openmpi-dev:
+#   fobis build --mode tests-gnu-debug-hdf5-mpi --varset ubuntu-openmpi
 [varsets]
 default = ubuntu
 
 [varset:ubuntu]
 $HDF5_LIB = /usr/lib/x86_64-linux-gnu/hdf5/serial
+$HDF5_INC = /usr/include/hdf5/serial
+$HDF5_EXT = hdf5 z
+
+[varset:ubuntu-openmpi]
+$HDF5_LIB = /usr/lib/x86_64-linux-gnu/hdf5/openmpi
+$HDF5_INC = /usr/include/hdf5/openmpi
 $HDF5_EXT = hdf5 z
 
 [common-variables]
@@ -120,6 +131,17 @@ mklib     = static
 template  = template-static-gnu-debug-hdf5
 build_dir = exe
 
+[static-gnu-hdf5-mpi]
+template  = template-static-gnu-hdf5-mpi
+target    = src/lib/vtk_fortran.f90
+build_dir = ./static/
+output    = libvtkfortran.a
+mklib     = static
+
+[tests-gnu-debug-hdf5-mpi]
+template  = template-static-gnu-debug-hdf5-mpi
+build_dir = exe
+
 [tests-gnu-debug-zlib]
 template  = template-static-gnu-debug-zlib
 build_dir = exe
@@ -168,7 +190,7 @@ lflags       = $LSHARED $OPTIMIZE
 mod_dir      = ./mod/
 obj_dir      = ./obj/
 src          = ./src/
-exclude_dirs = $EXDIRS
+exclude_dirs = $EXDIRS src/mpi/
 colors       = True
 quiet        = False
 log          = True
@@ -181,7 +203,7 @@ lflags       = $OPTIMIZE
 mod_dir      = ./mod/
 obj_dir      = ./obj/
 src          = ./src/
-exclude_dirs = $EXDIRS
+exclude_dirs = $EXDIRS src/mpi/
 colors       = True
 quiet        = False
 log          = True
@@ -194,7 +216,7 @@ lflags       = $LSHARED $DEBUG_GNU
 mod_dir      = ./mod/
 obj_dir      = ./obj/
 src          = ./src/
-exclude_dirs = $EXDIRS
+exclude_dirs = $EXDIRS src/mpi/
 colors       = True
 quiet        = False
 log          = True
@@ -207,7 +229,7 @@ lflags       = $DEBUG_GNU
 mod_dir      = ./mod/
 obj_dir      = ./obj/
 src          = ./src/
-exclude_dirs = $EXDIRS
+exclude_dirs = $EXDIRS src/mpi/
 colors       = True
 quiet        = False
 log          = True
@@ -221,7 +243,7 @@ ext_libs     = z
 mod_dir      = ./mod/
 obj_dir      = ./obj/
 src          = ./src/
-exclude_dirs = $EXDIRS
+exclude_dirs = $EXDIRS src/mpi/
 colors       = True
 quiet        = False
 log          = True
@@ -236,7 +258,7 @@ ext_libs     = $HDF5_EXT
 mod_dir      = ./mod/
 obj_dir      = ./obj/
 src          = ./src/
-exclude_dirs = $EXDIRS
+exclude_dirs = $EXDIRS src/mpi/
 colors       = True
 quiet        = False
 log          = True
@@ -245,6 +267,42 @@ jobs         = 10
 [template-static-gnu-debug-hdf5]
 compiler     = gnu
 cflags       = $CSTATIC_GNU $DEBUG_GNU -DVTKFORTRAN_USE_ZLIB -DVTKFORTRAN_USE_HDF5
+lflags       = $DEBUG_GNU
+lib_dir      = $HDF5_LIB
+ext_libs     = $HDF5_EXT
+mod_dir      = ./mod/
+obj_dir      = ./obj/
+src          = ./src/
+exclude_dirs = $EXDIRS src/mpi/
+colors       = True
+quiet        = False
+log          = True
+jobs         = 10
+
+[template-static-gnu-hdf5-mpi]
+compiler     = gnu
+mpi          = True
+cc           = mpicc
+cflags       = $CSTATIC_GNU $OPTIMIZE -DVTKFORTRAN_USE_ZLIB -DVTKFORTRAN_USE_HDF5 -DVTKFORTRAN_USE_MPI
+c_cflags     = -c $OPTIMIZE -I$HDF5_INC -DVTKFORTRAN_USE_MPI
+lflags       = $OPTIMIZE
+lib_dir      = $HDF5_LIB
+ext_libs     = $HDF5_EXT
+mod_dir      = ./mod/
+obj_dir      = ./obj/
+src          = ./src/
+exclude_dirs = $EXDIRS
+colors       = True
+quiet        = False
+log          = True
+jobs         = 10
+
+[template-static-gnu-debug-hdf5-mpi]
+compiler     = gnu
+mpi          = True
+cc           = mpicc
+cflags       = $CSTATIC_GNU $DEBUG_GNU -DVTKFORTRAN_USE_ZLIB -DVTKFORTRAN_USE_HDF5 -DVTKFORTRAN_USE_MPI
+c_cflags     = -c -g -I$HDF5_INC -DVTKFORTRAN_USE_MPI
 lflags       = $DEBUG_GNU
 lib_dir      = $HDF5_LIB
 ext_libs     = $HDF5_EXT
@@ -265,7 +323,7 @@ ext_libs     = z
 mod_dir      = ./mod/
 obj_dir      = ./obj/
 src          = ./src/
-exclude_dirs = $EXDIRS
+exclude_dirs = $EXDIRS src/mpi/
 colors       = True
 quiet        = False
 log          = True
@@ -279,7 +337,7 @@ lflags       = $LSHARED $OPTIMIZE
 mod_dir      = ./mod/
 obj_dir      = ./obj/
 src          = ./src/
-exclude_dirs = $EXDIRS
+exclude_dirs = $EXDIRS src/mpi/
 colors       = True
 quiet        = False
 log          = True
@@ -293,7 +351,7 @@ lflags       = $OPTIMIZE
 mod_dir      = ./mod/
 obj_dir      = ./obj/
 src          = ./src/
-exclude_dirs = $EXDIRS
+exclude_dirs = $EXDIRS src/mpi/
 colors       = True
 quiet        = False
 log          = True
@@ -307,7 +365,7 @@ lflags       = $LSHARED $DEBUG_INT
 mod_dir      = ./mod/
 obj_dir      = ./obj/
 src          = ./src/
-exclude_dirs = $EXDIRS
+exclude_dirs = $EXDIRS src/mpi/
 colors       = True
 quiet        = False
 log          = True
@@ -321,7 +379,7 @@ lflags       = $DEBUG_INT
 mod_dir      = ./mod/
 obj_dir      = ./obj/
 src          = ./src/
-exclude_dirs = $EXDIRS
+exclude_dirs = $EXDIRS src/mpi/
 colors       = True
 quiet        = False
 log          = True

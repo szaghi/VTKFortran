@@ -39,7 +39,7 @@ contains
    endsubroutine get_xml_volatile
 
    function initialize(self, format, filename, mesh_topology, is_volatile, nx1, nx2, ny1, ny2, nz1, nz2, &
-                       origin, spacing, direction, header_type, compressor, action) result(error)
+                       origin, spacing, direction, header_type, compressor, action, comm) result(error)
    !< Initialize file: open it for writing (default) or for reading.
    !<
    !< @note This function must be the first to be called.
@@ -75,6 +75,21 @@ contains
    !<### Writing
    !<
    !< `format` and `mesh_topology` are required.
+   !<
+   !<### Writing one file from MPI ranks
+   !<
+   !< With `format='vtkhdf'` and `comm` (a Fortran MPI communicator: `MPI_Comm%MPI_VAL` of mpi_f08, or the integer handle of
+   !< the `mpi` module) the ranks of `comm` write one file together (the library built with `VTKFORTRAN_USE_MPI` and a
+   !< parallel HDF5): an UnstructuredGrid or a PolyData, each rank one piece, a partition of the file. Every rank makes the
+   !< same calls, with the same arrays in the same order: the HDF5 calls are collective. Refused with `comm`: the grids,
+   !< time series, polyhedra, `compressor='zlib'`, the other formats, `action='read'` and `'append'`.
+   !<
+   !<```fortran
+   !< error = vtk%initialize(format='vtkhdf', filename='mesh.vtkhdf', mesh_topology='UnstructuredGrid', &
+   !<                        comm=MPI_COMM_WORLD%MPI_VAL)
+   !< error = vtk%xml_writer%write_piece(np=np, nc=nc) ! the piece of this rank
+   !< ...
+   !<```
    !<
    !<### Supported output formats are (the passed specifier value is case insensitive):
    !<
@@ -143,6 +158,7 @@ contains
    character(*),    intent(in), optional :: header_type    !< Bytes count header of binary data: UInt32 (default) or UInt64.
    character(*),    intent(in), optional :: compressor     !< Compressor of binary data: none (default) or zlib.
    character(*),    intent(in), optional :: action         !< Action: **write** (default), **read** or **append** (VTKHDF).
+   integer(I4P),    intent(in), optional :: comm           !< MPI communicator (Fortran handle): one VTKHDF file from its ranks.
    integer(I4P)                          :: error         !< Error status.
    type(string)                          :: fformat       !< File format.
    logical                               :: is_compressed !< Compress the binary data.
@@ -153,6 +169,10 @@ contains
    call self%xml_reader%close
    self%is_reading = .false.
    if (present(action)) then
+      if (present(comm) .and. upper_case(trim(adjustl(action))) /= 'WRITE') then
+         error = 1_I4P ! a file is read, or continued, by one rank
+         return
+      endif
       select case(upper_case(trim(adjustl(action))))
       case('READ')
          error = self%xml_reader%initialize(filename=filename)
@@ -240,6 +260,16 @@ contains
    if (present(direction)) then
       self%xml_writer%direction = direction
       self%xml_writer%is_direction_set = .true.
+   endif
+   if (present(comm)) then
+      ! the ranks of comm write one file: VTKHDF only, the writer refuses what it cannot write in parallel
+      select type(writer => self%xml_writer)
+      type is(vtkhdf_writer)
+         call writer%set_comm(comm)
+      class default
+         error = 1_I4P
+         return
+      endselect
    endif
    error = self%xml_writer%initialize(format=format, filename=filename, mesh_topology=mesh_topology, &
                                       is_volatile=is_volatile,                                       &

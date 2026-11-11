@@ -29,6 +29,7 @@ set(VTKFORTRAN_TESTS
   vtk_fortran_write_vtkhdf_steps.f90
   vtk_fortran_write_vtkhdf_append.f90
   vtk_fortran_write_vtkhdf_vtm.f90
+  vtk_fortran_write_vtkhdf_ranks.F90
   vtk_fortran_write_vtm.f90
   vtk_fortran_write_vtm_nested.f90
   vtk_fortran_write_vtm_scratch.f90
@@ -56,7 +57,15 @@ foreach(test_source ${VTKFORTRAN_TESTS})
   endif()
   set(test_dir ${CMAKE_CURRENT_BINARY_DIR}/run/${test_name})
   file(MAKE_DIRECTORY ${test_dir})
-  add_test(NAME ${test_name} COMMAND ${test_name} WORKING_DIRECTORY ${test_dir})
+  if (VTKFORTRAN_USE_MPI AND test_name STREQUAL "vtk_fortran_write_vtkhdf_ranks")
+    # one file from 4 ranks (MPIEXEC_PREFLAGS=--oversubscribe for Open MPI on fewer cores)
+    target_compile_definitions(${test_name} PRIVATE VTKFORTRAN_USE_MPI)
+    target_link_libraries(${test_name} PRIVATE MPI::MPI_Fortran)
+    add_test(NAME ${test_name} COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS}
+             $<TARGET_FILE:${test_name}> ${MPIEXEC_POSTFLAGS} WORKING_DIRECTORY ${test_dir})
+  else()
+    add_test(NAME ${test_name} COMMAND ${test_name} WORKING_DIRECTORY ${test_dir})
+  endif()
 endforeach()
 
 # The OpenMP test writes and reads files from threads; by default it is built without OpenMP and runs serially. With the

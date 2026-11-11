@@ -32,8 +32,16 @@ endif()
 
 # VTKHDF: the HDF5 C library (src/lib/CMakeLists.txt). Finding it (and MPI for a parallel HDF5) needs the C language.
 option(VTKFORTRAN_USE_HDF5 "Enable the VTKHDF format (HDF5 C library)." OFF)
+# One .vtkhdf written by the ranks of an MPI communicator: a parallel HDF5, MPI for C and Fortran (mpi_f08), a C source.
+option(VTKFORTRAN_USE_MPI "Enable the VTKHDF files written by MPI ranks (needs VTKFORTRAN_USE_HDF5 and a parallel HDF5)." OFF)
+if (VTKFORTRAN_USE_MPI AND NOT VTKFORTRAN_USE_HDF5)
+  message(FATAL_ERROR "VTKFORTRAN_USE_MPI needs VTKFORTRAN_USE_HDF5")
+endif()
 if (VTKFORTRAN_USE_HDF5)
   enable_language(C)
+endif()
+if (VTKFORTRAN_USE_MPI)
+  find_package(MPI REQUIRED COMPONENTS C Fortran) # here: its targets are seen by the library and by the tests
 endif()
 
 if(NOT TARGET PENF)

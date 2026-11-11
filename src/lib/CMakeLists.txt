@@ -55,6 +55,19 @@ if (VTKFORTRAN_USE_HDF5)
   endif()
 endif()
 
+# VTKFORTRAN_USE_MPI: files written by the ranks of a communicator (vtk_file%initialize(..., comm=)). src/mpi/vtk_fortran_mpi.c
+# hands the communicator to HDF5 (MPI_Comm_f2c, H5Pset_fapl_mpio: C only); vtk_fortran_hdf5.F90 uses mpi_f08.
+if (VTKFORTRAN_USE_MPI)
+  # HDF5_IS_PARALLEL from FindHDF5, HDF5_PROVIDES_PARALLEL from the CMake package of HDF5 (config mode)
+  if (NOT (HDF5_IS_PARALLEL OR HDF5_PROVIDES_PARALLEL))
+    message(FATAL_ERROR "VTKFORTRAN_USE_MPI needs a parallel HDF5 (${HDF5_C_LIBRARIES} is not)")
+  endif()
+  target_sources(${LIB} PRIVATE ${PROJECT_SOURCE_DIR}/src/mpi/vtk_fortran_mpi.c)
+  target_include_directories(${LIB} PRIVATE ${HDF5_C_INCLUDE_DIRS} ${HDF5_INCLUDE_DIRS} ${HDF5_INCLUDE_DIR})
+  target_compile_definitions(${LIB} PRIVATE VTKFORTRAN_USE_MPI)
+  target_link_libraries(${LIB} MPI::MPI_Fortran MPI::MPI_C)
+endif()
+
 add_library(${NAMESPACE}${LIB} ALIAS ${LIB})
 
 target_include_directories(${LIB}
