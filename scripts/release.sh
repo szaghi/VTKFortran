@@ -25,6 +25,13 @@
 #                                            relative to the repository root; they are committed with the release
 # Both run from the repository root; their standard error is shown, a non-zero exit stops the release.
 #
+# CMake: a version written into project() of CMakeLists.txt (project(Name VERSION X.Y.Z ...)) is not updated by this
+# script and would go stale: the release refuses it, before any change. Read it from VERSION instead:
+#   file(STRINGS "${CMAKE_CURRENT_LIST_DIR}/VERSION" name_version LIMIT_COUNT 1)
+#   string(REGEX REPLACE "^v" "" name_version "${name_version}")
+#   project(Name VERSION ${name_version} LANGUAGES Fortran)
+# or keep the literal with the project hook: it must then equal the new version once the hook has run.
+#
 # Requirements:
 #   git-cliff  →  cargo install git-cliff
 #                 or: https://github.com/orhun/git-cliff/releases
@@ -180,6 +187,19 @@ if [[ -e "$RELEASE_HOOK" ]]; then
   fi
 fi
 
+# ── CMake project version ─────────────────────────────────────────────────────
+# a version written into project() goes stale (see the header): refused, unless the project hook keeps it
+CMAKE_VERSION_RE='^[[:space:]]*project\([^)]*VERSION[[:space:]]+[0-9]+(\.[0-9]+)*'
+cmake_literal_version() { # the version written into project() of CMakeLists.txt, empty if none
+  [[ -f CMakeLists.txt ]] || return 0
+  grep -Eo "$CMAKE_VERSION_RE" CMakeLists.txt | head -n 1 | grep -Eo '[0-9]+(\.[0-9]+)*$' || true
+}
+CMAKE_LITERAL="$(cmake_literal_version)"
+if [[ -n "$CMAKE_LITERAL" ]] && ! $HAS_HOOK; then
+  die "CMakeLists.txt declares project(... VERSION ${CMAKE_LITERAL}), which this script does not update: read it from
+  VERSION (see the header of this script), or keep it with ${RELEASE_HOOK}; nothing was changed"
+fi
+
 # ── fpm manifest ──────────────────────────────────────────────────────────────
 # fpm.toml carries its own copy of the version (X.Y.Z, without the v prefix that
 # fpm does not accept): it is kept aligned when the manifest declares one.
@@ -247,6 +267,11 @@ if $HAS_HOOK; then
     HOOK_COUNT=$((HOOK_COUNT + 1))
   done <<< "$HOOK_OUT"
   success "${RELEASE_HOOK}: ${HOOK_COUNT} file(s) to commit"
+fi
+if [[ -n "$CMAKE_LITERAL" ]]; then # kept by the hook: it must now be the new version
+  [[ "$(cmake_literal_version)" == "${NEW_TAG#v}" ]] \
+    || die "CMakeLists.txt still declares project(... VERSION $(cmake_literal_version)) after ${RELEASE_HOOK}:" \
+           "${NEW_TAG#v} expected"
 fi
 
 # ── Commit ────────────────────────────────────────────────────────────────────
