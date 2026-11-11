@@ -9,7 +9,10 @@
 # the config file is generatet in the build and install directories
 
 cmake_minimum_required(VERSION 3.13)
-project(VTKFortran VERSION 0.9.9 LANGUAGES Fortran)
+# the version is read from the VERSION file (vX.Y.Z), updated by scripts/release.sh
+file(STRINGS "${CMAKE_CURRENT_LIST_DIR}/VERSION" vtkfortran_version LIMIT_COUNT 1)
+string(REGEX REPLACE "^v" "" vtkfortran_version "${vtkfortran_version}")
+project(VTKFortran VERSION ${vtkfortran_version} LANGUAGES Fortran)
 
 set(CMAKE_VERBOSE_MAKEFILE TRUE)
 # seach path for additional cmake modules
