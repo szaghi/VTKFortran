@@ -121,6 +121,16 @@ flowchart TD
 - The string form (`filenames='a.vtu b.vtu'`, names separated by blanks) accepts the same `action` values.
 - The test `src/tests/vtk_fortran_write_vtm_nested.f90` writes the hierarchy of issue #25, checked with VTK's reader.
 
+### Multi-block in one VTKHDF file
+
+With `format='vtkhdf'` (the library built with HDF5), `vtm_file` writes one VTKHDF file, a `MultiBlockDataSet`, with
+the same `write_block` calls: each dataset, a `.vtkhdf` file written by `vtk_file`, is copied into it (the group
+`Block_<n>` of `/VTKHDF`), and the tree of the blocks is the group `Assembly`, whose groups are the blocks and whose soft
+links, named after the datasets (`names`, or the file names without directory and extension), point to the copies; the
+names of a block must differ. The copied files can be deleted afterwards. `scratch` units are refused (the blocks are
+written in order), and so is a time series block: VTK 9.7.2 reads only the first step of a multi-block time series, the
+files of its own writer too. `src/tests/vtk_fortran_write_vtkhdf_vtm.f90` writes the nested assembly above in VTKHDF.
+
 ### Blocks filled in any order
 
 When the files of the blocks are known one at a time, interleaved (e.g. a solver that writes, at each output, one file

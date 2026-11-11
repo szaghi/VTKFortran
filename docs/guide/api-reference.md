@@ -20,6 +20,7 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 - [vtk_fortran_vtk_file_xml_writer_appended](/api/src/lib/vtk_fortran_vtk_file_xml_writer_appended) — raw binary appended writer
 - [vtk_fortran_vtk_file_vtkhdf_writer](/api/src/lib/vtk_fortran_vtk_file_vtkhdf_writer) — VTKHDF writer (`format='vtkhdf'`): an HDF5 file in the VTKHDF layout, every topology
 - [vtk_fortran_vtk_file_xml_reader](/api/src/lib/vtk_fortran_vtk_file_xml_reader) — reader of serial files (`vtk_file%xml_reader`), with its error codes
+- [vtk_fortran_vtk_file_vtkhdf_reader](/api/src/lib/vtk_fortran_vtk_file_vtkhdf_reader) — reader of VTKHDF files, behind `xml_reader`
 - [vtk_fortran_dataarray_decoder](/api/src/lib/vtk_fortran_dataarray_decoder) — decoding routines for ASCII and Base64 data arrays (optionally zlib-compressed)
 - [vtk_fortran_dataarray_encoder](/api/src/lib/vtk_fortran_dataarray_encoder) — encoding routines for ASCII and Base64 data arrays (optionally zlib-compressed)
 - [vtk_fortran_hdf5](/api/src/lib/vtk_fortran_hdf5) — HDF5 C bindings used by VTKHDF: files, groups, attributes, datasets (stubs when built without `VTKFORTRAN_USE_HDF5`)
@@ -54,7 +55,8 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 
 `initialize(filename=..., action='read')`, then `get_info`, `read_piece`, `read_geo`, `read_connectivity`,
 `read_polydata_cells`, `get_dataarray_names`, `get_dataarray_info`, `read_dataarray`, and for a parallel header
-`get_sources` and `check_pieces`: every procedure with its arguments and what it returns is in the table of
+`get_sources` and `check_pieces`; for a VTKHDF time series `get_steps(times)` and `set_step(step)` (see
+[VTKHDF files](/guide/reading#vtkhdf-files)): every procedure with its arguments and what it returns is in the table of
 [Reading files](/guide/reading#serial-files), the error codes below it.
 
 ### `vtm_file`
@@ -63,6 +65,7 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 |-----------|-------------|
 | `%initialize(filename, scratch_units_number)` | Create the `.vtm` wrapper file; `scratch_units_number` blocks to fill in any order |
 | `%initialize(filename, action='read')` | Open a `.vtm` file for reading |
+| `%initialize(filename, format='vtkhdf')` | Create a VTKHDF multi-block file: the same `write_block` calls copy the `.vtkhdf` datasets into it |
 | `%get_entries(level, kind, index, name, file)` | Blocks and datasets of a file read, flattened depth first |
 | `%write_block(filenames, names, name, action)` | Add a named block of files; `action='open'`/`'close'` to nest blocks, `'write'` to add datasets to the current block (filenames and names as arrays or blank-separated strings) |
 | `%write_block(scratch, action, filename, name)` | Open (`action='open'`, `name`) the block of a scratch unit, or add a file to it (`action='write'`, `filename`); the blocks are written by `finalize`, see [Blocks filled in any order](/guide/parallel#blocks-filled-in-any-order) |

@@ -71,8 +71,9 @@ built with HDF5 ([Installation](/guide/installation#optional-hdf5-vtkhdf)). It i
 | Polydata, each piece a partition: the four blocks of cells, I4P and I8P ids, point, cell and field data | ✅ |
 | Rectilinear and Structured Grids, one piece: coordinates or points, point, cell and field data (read by VTK 9.7, not ParaView 6.1) | ✅ |
 | Time series in one file (`Steps`): `write_step`, valid after every piece, restart with `action='append'` | ✅ |
-| Partitions written from MPI ranks, multi-block (`PartitionedDataSetCollection`) | Planned |
-| Reading VTKHDF files back | Planned |
+| Multi-block (`vtm_file` with `format='vtkhdf'`): the `.vtkhdf` datasets copied in, the tree of the blocks as `Assembly` | ✅ |
+| Reading VTKHDF files back (`action='read'`): every topology, time series step by step | ✅ |
+| Partitions written from MPI ranks | Planned |
 
 ## VTK Legacy Exporters
 

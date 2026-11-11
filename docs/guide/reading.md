@@ -56,9 +56,28 @@ indexed, and its data are then read, array by array, through the `xml_reader` co
 data in memory. Each read then loads and decodes only the requested array: memory use is a small multiple of the size of
 that array (while decoding, its text, its decoded bytes and the output coexist), whatever the size of the file.
 
-**Not supported:** `BigEndian` files, the LZ4 and LZMA compressors, the legacy `.vtk` format, and VTKHDF. Compressed files
+**Not supported:** `BigEndian` files, the LZ4 and LZMA compressors, and the legacy `.vtk` format. Compressed files
 need the library built with zlib, see [Installation](/guide/installation#optional-zlib-compression). The test
 `src/tests/vtk_fortran_read.F90` reads every topology and format, and two files written by VTK.
+
+### VTKHDF files
+
+A `.vtkhdf` file (the library built with HDF5, see [Installation](/guide/installation#optional-hdf5-vtkhdf)) is read
+with the same calls: `initialize(filename, action='read')` recognizes it by its HDF5 signature, and every call of
+`xml_reader` answers from it. Every topology is read, polyhedra included; the pieces of an UnstructuredGrid or PolyData
+are the partitions of the file. The offsets are returned as VTKFortran writes them (the end of each cell), the faces of
+the polyhedra as the face stream of `write_connectivity`; `get_info` returns `header_type='HDF5'`, `compressor='none'`
+(HDF5 decompresses its datasets itself). Files written by VTK's `vtkHDFWriter` are read too.
+
+- **Time series**: `get_steps(times)` returns the times of the steps (none for a file that is not a time series), and
+  `set_step(step)` selects the step that the following calls read (the step 1 by default). The pieces are those of the
+  step.
+- **Memory**: each read is an HDF5 hyperslab of the piece and step asked for: memory use is about the size of the array
+  read.
+- `finalize` closes the file (`free` alone forgets it without closing it: call `finalize`).
+- **Not supported**: a multi-block VTKHDF file (`vtm_file` with `format='vtkhdf'`), and `get_sources` /
+  `check_pieces` (a VTKHDF file is not a parallel header). The test `src/tests/vtk_fortran_read_vtkhdf.f90` reads every
+  topology and time series back.
 
 ### Parallel headers
 

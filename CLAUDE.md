@@ -59,7 +59,10 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
 - `vtk_fortran` — main API module (re-exports `vtk_file`, `pvtk_file`, `vtm_file`, `pvd_file`, `write_xml_volatile`)
 - `vtk_fortran_vtk_file` — `vtk_file` type: single-file serial writer; selects and allocates the appropriate `xml_writer` concrete type; with `initialize(filename, action='read')` it reads instead, through its `xml_reader` component
 - `vtk_fortran_pvtk_file` — `pvtk_file` type: parallel/partitioned VTK files (`.pvtr`, `.pvts`, `.pvtu`); the header is plain XML metadata, the pieces can use any format
-- `vtk_fortran_vtm_file` — `vtm_file` type: multi-block composite datasets (`.vtm`)
+- `vtk_fortran_vtm_file` — `vtm_file` type: multi-block composite datasets (`.vtm`); with `initialize(...,
+  format='vtkhdf')` one VTKHDF
+  `MultiBlockDataSet`: the `.vtkhdf` datasets copied in (`H5Ocopy`, `Block_<n>`), the tree as `Assembly` soft links;
+  time series blocks refused (VTK 9.7.2 reads only their first step)
 - `vtk_fortran_pvd_file` — `pvd_file` type: time series collections (`.pvd`), valid after each `write_dataset`
 - `vtk_fortran_vtk_writer_abstract` — format-neutral abstract writer (`vtk_writer_abstract`): the state `vtk_file` sets
   (origin, spacing, direction, header type, compression) and every procedure `vtk_file%xml_writer` exposes (`initialize`,
@@ -92,6 +95,10 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   (`vtk_file%initialize(..., action='append')`, reached by `select type`) reads the state back and trims every dataset
   to the last complete piece. vtkHDFReader 9.7.2 misreads a PolyData block first appearing at a later step, and a series
   of one part at step 1 (its own files too): the tests avoid both
+- `vtk_fortran_vtk_file_vtkhdf_reader` — `vtkhdf_reader`: VTKHDF files read through `xml_reader` (dispatched when
+  `initialize` sees the HDF5 signature): every topology, partitions as pieces, time series (`get_steps`, `set_step`),
+  values as HDF5 hyperslabs of the piece/step converted by the decoder (`read_dataarray_bytes`), offsets back to end
+  offsets, polyhedra back to the face stream. `xml_reader%finalize` stays pure (forgets the file); `close` closes it
 - `vtk_fortran_vtk_file_xml_reader` — `xml_reader` type: reader of serial files (any format, header type, zlib) and parallel headers (`check_pieces`); indexes the file once with FoXy `xml_index` (tags and content positions, scan stopped at `AppendedData`), then decodes only the arrays asked for; error codes 0–7 documented in the module. `pvtk_file` uses it too (`action='read'`); `vtm_file` and `pvd_file` read with `get_entries`/`get_datasets`
 - `vtk_fortran_dataarray_decoder` — inverse of the encoder: ASCII/Base64/zlib data into bytes, bytes into arrays of the requested kind
 - `vtk_fortran_dataarray_encoder` — overloaded encoding routines for ASCII and Base64 (optionally zlib-compressed), covering all PENF numeric kinds and ranks 1–4
@@ -132,6 +139,8 @@ VTKHDF ImageData written and read back; stubs checked without HDF5) and the VTKH
 UnstructuredGrid, every cell type but polyhedra, two pieces, I8P ids, each also written as a `.vtu` to compare in VTK;
 `vtk_fortran_write_vtkhdf_steps.f90`: time series of every topology, each step also written as an XML file;
 `vtk_fortran_write_vtkhdf_append.f90`: series continued with `action='append'` (restart, interrupted run);
+`vtk_fortran_write_vtkhdf_vtm.f90`: a VTKHDF multi-block file (`vtm_file`, `format='vtkhdf'`);
+`vtk_fortran_read_vtkhdf.f90`: VTKHDF files read back (every topology, time series);
 `vtk_fortran_write_vtkhdf_polyh.f90`: polyhedra (one piece; three pieces with polyhedra in the second), each also
 written as a `.vtu`; `vtk_fortran_write_vtkhdf_grids.f90`: RectilinearGrid and StructuredGrid (3D/2D/1D, the four StructuredGrid
 `write_geo` layouts), each also written as a `.vtr`/`.vts`; `vtk_fortran_write_vtkhdf_poly.f90`: PolyData, the four
