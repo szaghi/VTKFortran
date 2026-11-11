@@ -10,6 +10,10 @@ module vtk_fortran_vtk_file_xml_reader
 !< VTKFortran or by VTK, in every format (ascii, binary, raw and base64 appended), uncompressed or zlib compressed
 !< (`vtkZLibDataCompressor`), with UInt32 or UInt64 headers. BigEndian files and other compressors are not supported.
 !<
+!< It reads VTKHDF files too (`.vtkhdf`, HDF5, when the library is built with HDF5): `initialize` recognizes them by the
+!< HDF5 signature, and every call is then answered by a `vtkhdf_reader` (`vtk_fortran_vtk_file_vtkhdf_reader`), the API
+!< unchanged; a VTKHDF time series is read one step at a time (`get_steps`, `set_step`; the step 1 by default).
+!<
 !< It reads the parallel headers too (PImageData, PRectilinearGrid, PStructuredGrid, PUnstructuredGrid, PPolyData): their
 !< information, the declared arrays (`get_dataarray_names`, `get_dataarray_info`), the pieces (`get_sources`, `read_piece`
 !< for their extents) and the check of the pieces against the header (`check_pieces`). They hold no data.
@@ -30,6 +34,7 @@ use penf
 use vtk_fortran_dataarray_decoder
 use foxy, only : xml_index, XML_MALFORMED, XML_NOT_FOUND
 use vtk_fortran_zlib, only : zlib_uncompress_blocks
+use vtk_fortran_vtk_file_vtkhdf_reader, only : vtkhdf_reader, is_hdf5_file
 
 implicit none
 private
@@ -54,14 +59,18 @@ type :: xml_reader
   logical                       :: is_appended_raw=.true.  !< The appended data are raw (base64 otherwise).
   integer(I8P)                  :: appended_start=0_I8P    !< Position of the first byte of the appended data, 0 if none.
   logical                       :: is_parallel=.false.     !< The file is a parallel header (P* dataset type).
+  logical                       :: is_hdf=.false.          !< The file is a VTKHDF one, read by `hdf`.
+  type(vtkhdf_reader)           :: hdf                     !< Reader of a VTKHDF file.
   contains
     ! public methods
     procedure, pass(self) :: check_pieces         !< Check the pieces of a parallel header against it.
+    procedure, pass(self) :: close                !< Close the file read and finalize the reader.
     procedure, pass(self) :: finalize             !< Finalize the reader (free memory).
     procedure, pass(self) :: get_dataarray_info   !< Return the type, components and tuples of a dataarray.
     procedure, pass(self) :: get_dataarray_names  !< Return the names of the dataarrays of a location.
     procedure, pass(self) :: get_info             !< Return the information of the dataset.
     procedure, pass(self) :: get_sources          !< Return the files of the pieces of a parallel header.
+    procedure, pass(self) :: get_steps            !< Return the times of the steps of a VTKHDF time series.
     procedure, pass(self) :: initialize           !< Initialize the reader: index the file.
     generic               :: read_connectivity => read_connectivity_I4P, read_connectivity_I8P !< Read the cells.
     generic               :: read_dataarray => read_dataarray_rank1_R8P, read_dataarray_rank1_R4P, &
@@ -73,6 +82,7 @@ type :: xml_reader
                                                read_dataarray_strings !< Read a dataarray.
     generic               :: read_geo => read_geo_R8P, read_geo_R4P !< Read the geometry.
     procedure, pass(self) :: read_piece           !< Read the counts and extent of a piece.
+    procedure, pass(self) :: set_step             !< Select the step read of a VTKHDF time series.
     generic               :: read_polydata_cells => read_polydata_cells_I4P, read_polydata_cells_I8P !< Read polydata cells.
     ! private methods
     procedure, pass(self), private :: dataarray_bytes         !< Return the bytes of a dataarray element.
@@ -114,7 +124,16 @@ contains
   integer(I4P)                     :: appended  !< Index of the AppendedData element.
   integer(I4P)                     :: iostat    !< IO status.
 
-  call self%finalize
+  call self%close
+  if (is_hdf5_file(filename)) then ! a VTKHDF file: read by the VTKHDF reader
+    error = self%hdf%initialize(filename=filename)
+    if (error /= 0) return
+    error = self%hdf%get_info(mesh_topology=self%mesh_topology)
+    self%filename = filename
+    self%is_hdf = .true.
+    self%is_initialized = .true.
+    return
+  endif
   call self%xml%scan(filename=filename, stop_at='AppendedData', iostat=iostat)
   error = scan_error(iostat)
   if (error /= 0) return
@@ -178,10 +197,20 @@ contains
   error = 0
   endfunction initialize
 
-  elemental subroutine finalize(self)
-  !< Finalize the reader (free memory).
+  subroutine close(self)
+  !< Close the file read (a VTKHDF file is open while read) and finalize the reader.
   class(xml_reader), intent(inout) :: self !< XML reader.
 
+  call self%hdf%close
+  call self%finalize
+  endsubroutine close
+
+  elemental subroutine finalize(self)
+  !< Finalize the reader (free memory). A VTKHDF file is forgotten, not closed: `close` closes it.
+  class(xml_reader), intent(inout) :: self !< XML reader.
+
+  call self%hdf%forget
+  self%is_hdf = .false.
   call self%xml%free
   if (allocated(self%filename)) deallocate(self%filename)
   if (allocated(self%mesh_topology)) deallocate(self%mesh_topology)
@@ -222,6 +251,12 @@ contains
   integer(I4P)                                         :: extent(6)     !< Extent.
   integer(I4P)                                         :: iostat        !< IO status.
 
+  if (self%is_hdf) then
+    error = self%hdf%get_info(mesh_topology=mesh_topology, npieces=npieces, header_type=header_type, compressor=compressor, &
+                              nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, origin=origin, spacing=spacing,     &
+                              direction=direction, ghost_level=ghost_level)
+    return
+  endif
   error = 4
   if (.not.self%is_initialized) return
   error = 0
@@ -281,6 +316,11 @@ contains
   integer(I8P)                             :: counts(6) !< Points, cells, verts, lines, strips, polys.
   integer(I4P)                             :: extent(6) !< Extent.
 
+  if (self%is_hdf) then
+    error = self%hdf%read_piece(piece=piece, np=np, nc=nc, nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, &
+                                nverts=nverts, nlines=nlines, nstrips=nstrips, npolys=npolys)
+    return
+  endif
   error = self%piece_element(piece=piece, id=p)
   if (error /= 0) return
   call piece_counts(xml=self%xml, id=p, mesh_topology=self%mesh_topology, counts=counts, extent=extent, error=error)
@@ -316,6 +356,10 @@ contains
   integer(I4P), allocatable                           :: kids(:)  !< Indexes of the children of the section element.
 
   allocate(character(len=0) :: names(1:0))
+  if (self%is_hdf) then
+    error = self%hdf%get_dataarray_names(location=location, names=names, piece=piece)
+    return
+  endif
   ! a missing piece or an unknown location is an error, a location without arrays is not
   error = 4
   select case(lower_case(trim(adjustl(location))))
@@ -374,6 +418,11 @@ contains
   character(len=:), allocatable                        :: value        !< Attribute value.
   integer(I4P)                                         :: iostat       !< IO status.
 
+  if (self%is_hdf) then
+    error = self%hdf%get_dataarray_info(location=location, data_name=data_name, piece=piece, data_type=data_type, &
+                                        n_components=n_components, n_tuples=n_tuples)
+    return
+  endif
   error = self%find_dataarray(location=location, data_name=data_name, piece=piece, id=id, section=section)
   if (error /= 0) return
   iostat = 0
@@ -429,6 +478,10 @@ contains
   integer(I4P)                                 :: n      !< Number of geometry dataarrays.
 
   allocate(x(1:0), y(1:0), z(1:0))
+  if (self%is_hdf) then
+    error = self%hdf%read_geo(x=x, y=y, z=z, piece=piece)
+    return
+  endif
   error = self%geometry_dataarrays(piece=piece, id=id, n=n)
   if (error /= 0) return
   if (n == 3) then
@@ -456,6 +509,10 @@ contains
   integer(I4P)                                 :: n      !< Number of geometry dataarrays.
 
   allocate(x(1:0), y(1:0), z(1:0))
+  if (self%is_hdf) then
+    error = self%hdf%read_geo(x=x, y=y, z=z, piece=piece)
+    return
+  endif
   error = self%geometry_dataarrays(piece=piece, id=id, n=n)
   if (error /= 0) return
   if (n == 3) then
@@ -579,6 +636,37 @@ contains
   error = to_I4P(ids, offset)
   endfunction read_polydata_cells_I4P
 
+  function get_steps(self, times) result(error)
+  !< Return the times of the steps of a VTKHDF time series; none for any other file (an XML time series is a `.pvd`
+  !< collection, read by `pvd_file`).
+  class(xml_reader),      intent(in)  :: self     !< XML reader.
+  real(R8P), allocatable, intent(out) :: times(:) !< Times of the steps.
+  integer(I4P)                        :: error    !< Error status.
+
+  if (self%is_hdf) then
+    error = self%hdf%get_steps(times=times)
+    return
+  endif
+  allocate(times(0))
+  error = 4
+  if (self%is_initialized) error = 0
+  endfunction get_steps
+
+  function set_step(self, step) result(error)
+  !< Select the step read (from 1) of a VTKHDF time series: the following calls read that step. A file that is not a time
+  !< series has the step 1 only.
+  class(xml_reader), intent(inout) :: self  !< XML reader.
+  integer(I4P),      intent(in)    :: step  !< Step, from 1.
+  integer(I4P)                     :: error !< Error status.
+
+  if (self%is_hdf) then
+    error = self%hdf%set_step(step=step)
+    return
+  endif
+  error = 4
+  if (self%is_initialized .and. step == 1) error = 0
+  endfunction set_step
+
   function get_sources(self, sources) result(error)
   !< Return the files of the pieces of a parallel header (the `Source` attributes), as written in the file.
   !<
@@ -591,6 +679,12 @@ contains
   integer(I4P)                               :: p          !< Counter.
   integer(I4P)                               :: l          !< Length of the longest source.
   integer(I4P), allocatable                  :: pieces(:)  !< Indexes of the piece elements.
+
+  if (self%is_hdf) then ! a VTKHDF file is no parallel header
+    allocate(character(len=0) :: sources(0))
+    error = 3
+    return
+  endif
 
   allocate(character(len=0) :: sources(1:0))
   error = 4
@@ -923,6 +1017,12 @@ contains
   integer(I4P), allocatable                       :: kids(:)   !< Indexes of the children of the section element.
 
   allocate(ids(1:0))
+  if (self%is_hdf) then
+    p = 1
+    if (present(piece)) p = piece
+    error = self%hdf%read_ids(piece=p, section=section, data_name=data_name, ids=ids)
+    return
+  endif
   error = self%piece_element(piece=piece, id=p) ; if (error /= 0) return
   error = 4
   s = self%xml%find(name=section, parent=p)
@@ -959,6 +1059,11 @@ contains
   allocate(bytes(1:0))
   data_type = ''
   n_components = 1
+  if (self%is_hdf) then
+    error = self%hdf%read_dataarray_bytes(location=location, data_name=data_name, piece=piece, bytes=bytes, &
+                                          data_type=data_type, n_components=n_components)
+    return
+  endif
   error = self%find_dataarray(location=location, data_name=data_name, piece=piece, id=id, section=section)
   if (error /= 0) return
   ! the arrays of a parallel header hold no data
@@ -1401,6 +1506,10 @@ contains
   case default
     return
   endselect
+  if (self%is_hdf) then ! a block of a VTKHDF file: read through read_ids, empty when it has no cells
+    error = 0
+    return
+  endif
   error = self%piece_element(piece=piece, id=p) ; if (error /= 0) return
   if (self%xml%find(name=section, parent=p) == 0) then
     call piece_counts(xml=self%xml, id=p, mesh_topology=self%mesh_topology, counts=counts, extent=extent, &

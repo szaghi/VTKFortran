@@ -150,7 +150,7 @@ contains
    if (.not.is_initialized) call penf_init
    if (.not.is_b64_initialized) call b64_init
    if (allocated(self%xml_writer)) deallocate(self%xml_writer)
-   call self%xml_reader%finalize
+   call self%xml_reader%close
    self%is_reading = .false.
    if (present(action)) then
       select case(upper_case(trim(adjustl(action))))
@@ -265,7 +265,7 @@ contains
 
    error = 1
    if (self%is_reading) then
-      call self%xml_reader%finalize
+      call self%xml_reader%close
       self%is_reading = .false.
       error = 0
    elseif (allocated(self%xml_writer)) then

@@ -49,6 +49,8 @@ public :: h5_dataset_open
 public :: h5_dataset_close
 public :: h5_dataset_dims
 public :: h5_dataset_resize
+public :: h5_dataset_info
+public :: h5_dataset_read_bytes
 public :: h5_dataset_read
 public :: h5_deflate_available
 
@@ -295,6 +297,23 @@ interface
     integer(c_int64_t), value :: dtype
     integer(c_int),     value :: strpad
   end function H5Tset_strpad
+  integer(c_int64_t) function H5Dget_type(dset) bind(C, name='H5Dget_type')
+    import :: c_int64_t
+    integer(c_int64_t), value :: dset
+  end function H5Dget_type
+  integer(c_int) function H5Tget_class(dtype) bind(C, name='H5Tget_class')
+    import :: c_int, c_int64_t
+    integer(c_int64_t), value :: dtype
+  end function H5Tget_class
+  integer(c_int) function H5Tget_sign(dtype) bind(C, name='H5Tget_sign')
+    import :: c_int, c_int64_t
+    integer(c_int64_t), value :: dtype
+  end function H5Tget_sign
+  integer(c_int64_t) function H5Tget_native_type(dtype, direction) bind(C, name='H5Tget_native_type')
+    import :: c_int, c_int64_t
+    integer(c_int64_t), value :: dtype
+    integer(c_int),     value :: direction
+  end function H5Tget_native_type
   integer(c_int) function H5Tclose(id) bind(C, name='H5Tclose')
     import :: c_int, c_int64_t
     integer(c_int64_t), value :: id
@@ -781,6 +800,115 @@ contains
   allocate(dims(0))
 #endif
   endfunction h5_dataset_dims
+
+  function h5_dataset_info(loc_id, name, data_type, dims) result(error)
+  !< Return the VTK type of a numeric dataset (Float64, Float32, Int64, ..., UInt8) and its shape (Fortran order).
+  integer(hid_kind),             intent(in)  :: loc_id    !< Parent (file or group).
+  character(*),                  intent(in)  :: name      !< Dataset name (or path).
+  character(len=:), allocatable, intent(out) :: data_type !< VTK type, empty if not a numeric type.
+  integer(I8P),     allocatable, intent(out) :: dims(:)   !< Shape, Fortran order.
+  integer(I4P)                               :: error     !< Error status.
+#ifdef VTKFORTRAN_USE_HDF5
+  integer(c_int64_t)                         :: dset      !< Dataset.
+  integer(c_int64_t)                         :: dtype     !< Its type.
+  integer(c_int)                             :: class     !< Type class: 0 integer, 1 float.
+  integer(c_int)                             :: sign      !< Sign of an integer: 0 unsigned, 1 two's complement.
+  integer(c_size_t)                          :: bytes     !< Size of a value.
+
+  data_type = ''
+  error = 1_I4P
+  dset = H5Dopen2(loc_id, trim(name)//c_null_char, H5P_DEFAULT)
+  if (dset < 0) return
+  if (dataset_dims(dset, dims) == 0) then
+    dtype = H5Dget_type(dset)
+    if (dtype >= 0) then
+      class = H5Tget_class(dtype)
+      bytes = H5Tget_size(dtype)
+      sign = H5Tget_sign(dtype)
+      if (class == 1_c_int) then
+        if (bytes == 8_c_size_t) data_type = 'Float64'
+        if (bytes == 4_c_size_t) data_type = 'Float32'
+      elseif (class == 0_c_int) then
+        if (bytes == 8_c_size_t) data_type = 'Int64'
+        if (bytes == 4_c_size_t) data_type = 'Int32'
+        if (bytes == 2_c_size_t) data_type = 'Int16'
+        if (bytes == 1_c_size_t) data_type = 'Int8'
+        if (sign == 0_c_int .and. len(data_type) > 0) data_type = 'U'//data_type
+      endif
+      error = 0_I4P
+      if (H5Tclose(dtype) < 0) error = 1_I4P
+    endif
+  endif
+  if (H5Dclose(dset) < 0) error = 1_I4P
+#else
+  data_type = ''
+  allocate(dims(0))
+  error = 1_I4P
+#endif
+  endfunction h5_dataset_info
+
+  function h5_dataset_read_bytes(loc_id, name, first, count, bytes) result(error)
+  !< Read the slice `first+1 ... first+count` of the last Fortran dimension (the first HDF5 one) of a numeric dataset, all
+  !< of its other dimensions, as the bytes of its values in the native type of the file's type (see `h5_dataset_info`).
+  integer(hid_kind),         intent(in)  :: loc_id   !< Parent (file or group).
+  character(*),              intent(in)  :: name     !< Dataset name (or path).
+  integer(I8P),              intent(in)  :: first    !< Values (rows) skipped along the last dimension.
+  integer(I8P),              intent(in)  :: count    !< Values (rows) read along the last dimension.
+  integer(I1P), allocatable, intent(out) :: bytes(:) !< Bytes of the values.
+  integer(I4P)                           :: error    !< Error status.
+#ifdef VTKFORTRAN_USE_HDF5
+  integer(c_int64_t)                     :: dset      !< Dataset.
+  integer(c_int64_t)                     :: dtype     !< Its type.
+  integer(c_int64_t)                     :: memtype   !< Native type of the values in memory.
+  integer(c_int64_t)                     :: filespace !< Dataspace of the dataset.
+  integer(c_int64_t)                     :: memspace  !< Dataspace of the values read.
+  integer(I8P), allocatable              :: dims(:)   !< Shape, Fortran order.
+  integer(c_long_long), allocatable      :: cstart(:), ccount(:) !< Slice, C order.
+  integer(I1P), allocatable, target      :: buffer(:) !< Bytes read.
+
+  allocate(bytes(0))
+  error = 1_I4P
+  dset = H5Dopen2(loc_id, trim(name)//c_null_char, H5P_DEFAULT)
+  if (dset < 0) return
+  if (dataset_dims(dset, dims) /= 0) allocate(dims(0)) ! no short-circuit in Fortran: dims is checked apart
+  if (size(dims) > 0) then
+    if (first >= 0_I8P .and. count >= 0_I8P .and. first + count <= dims(size(dims))) then
+      dtype = H5Dget_type(dset)
+      memtype = H5Tget_native_type(dtype, 1_c_int) ! H5T_DIR_ASCEND
+      dims(size(dims)) = count
+      allocate(buffer(max(1_I8P, product(dims) * int(H5Tget_size(memtype), I8P))))
+      if (product(dims) == 0_I8P) then
+        error = 0_I4P
+      else
+        ccount = c_dims(dims)
+        allocate(cstart(size(dims)))
+        cstart = 0_c_long_long
+        cstart(1) = int(first, c_long_long)
+        filespace = H5Dget_space(dset)
+        memspace = H5Screate_simple(int(size(dims), c_int), ccount, c_null_ptr)
+        if (filespace >= 0 .and. memspace >= 0) then
+          if (H5Sselect_hyperslab(filespace, H5S_SELECT_SET, cstart, c_null_ptr, ccount, c_null_ptr) >= 0) then
+            if (H5Dread(dset, memtype, memspace, filespace, H5P_DEFAULT, c_loc(buffer)) >= 0) error = 0_I4P
+          endif
+        endif
+        if (memspace >= 0) then
+          if (H5Sclose(memspace) < 0) error = 1_I4P
+        endif
+        if (filespace >= 0) then
+          if (H5Sclose(filespace) < 0) error = 1_I4P
+        endif
+      endif
+      if (error == 0_I4P) bytes = buffer(1:product(dims) * int(H5Tget_size(memtype), I8P))
+      if (H5Tclose(memtype) < 0) error = 1_I4P
+      if (H5Tclose(dtype) < 0) error = 1_I4P
+    endif
+  endif
+  if (H5Dclose(dset) < 0) error = 1_I4P
+#else
+  allocate(bytes(0))
+  error = 1_I4P
+#endif
+  endfunction h5_dataset_read_bytes
 
   function h5_dataset_resize(loc_id, name, n) result(error)
   !< Resize an appendable dataset along its last Fortran dimension (the first HDF5 one) to `n`: values past it are

@@ -3,6 +3,7 @@
 set(VTKFORTRAN_TESTS
   vtk_fortran_read.F90
   vtk_fortran_read_composite.f90
+  vtk_fortran_read_vtkhdf.f90
   vtk_fortran_hdf5_bindings.F90
   vtk_fortran_use_module_basic.f90
   vtk_fortran_write_active_arrays.f90
