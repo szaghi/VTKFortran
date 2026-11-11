@@ -8,8 +8,9 @@ email      = stefano.zaghi@gmail.it
 authors    = Stefano Zaghi
 
 [scaffold]
-apt_packages = zlib1g-dev libhdf5-dev
-skip         = docs/guide/contributing.md
+apt_packages    = zlib1g-dev libhdf5-dev
+toolchain_image = ghcr.io/szaghi/fortran-toolchains:gnu-16.2
+skip            = docs/guide/contributing.md
 
 [dependencies]
 deps_dir   = src/third_party
@@ -48,6 +49,12 @@ $HDF5_EXT = hdf5 z
 $HDF5_LIB = /usr/lib/x86_64-linux-gnu/hdf5/openmpi
 $HDF5_INC = /usr/include/hdf5/openmpi
 $HDF5_EXT = hdf5 z
+
+# the toolchain image of CI (ghcr.io/szaghi/fortran-toolchains:gnu-16.2): HDF5 2.3.0 parallel, static
+[varset:toolchain-image]
+$HDF5_LIB = /opt/hdf5/lib
+$HDF5_INC = /opt/hdf5/include
+$HDF5_EXT = hdf5 z dl m
 
 [common-variables]
 $CSHARED_GNU = -cpp -c -fPIC -frealloc-lhs

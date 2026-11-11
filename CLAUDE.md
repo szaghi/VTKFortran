@@ -58,8 +58,14 @@ CMake `-DVTKFORTRAN_USE_MPI=ON` (MPI C and Fortran found at the top level; the t
 (mpif90 + mpicc; the varset gives `$HDF5_INC` too; `ubuntu-openmpi` = libhdf5-openmpi-dev); no fpm. The C source
 `src/mpi/vtk_fortran_mpi.c` (`MPI_Comm_f2c` + `H5Pset_fapl_mpio`, C only) sits outside `src/lib` (fpm's source dir) and
 is excluded by the non-MPI FoBiS modes (`exclude_dirs = $EXDIRS src/mpi/`): they need no C compiler (ifx's family
-default, `icx`, is often missing). CI: job `hdf5-mpi` of `hdf5.yml` (gfortran 13, the compiler of Ubuntu's Open MPI,
-and libhdf5-openmpi-dev; FoBiS and CMake, the MPI test on 4 ranks); locally ADAM's HDF5 2.3.0 + Open MPI 5.0.11.
+default, `icx`, is often missing). CI: job `hdf5-mpi` of `hdf5.yml` in the toolchain image (FoBiS with the varset
+`toolchain-image`, and CMake; the MPI test on 4 ranks); locally ADAM's HDF5 2.3.0 + Open MPI 5.0.11, the same stack.
+
+CI toolchain: `ci.yml` (tests, coverage) and the build job of `docs.yml` run in the container
+`ghcr.io/szaghi/fortran-toolchains:gnu-16.2` (repo `~/fortran/fortran-toolchains`: gfortran 16.2, Open MPI 5.0.11, HDF5
+2.3.0 parallel with deflate, FoBiS, formal), set by `[scaffold] toolchain_image` in `fobos` (FoBiS scaffold: run the
+sync with a FoBiS that has it, e.g. `~/python/FoBiS/.venv/bin/fobis` until a release). On the bare runner: the serial
+`hdf5` job (gfortran 14, Ubuntu's HDF5 1.10, the oldest supported), *Docs examples* and `install.yml`.
 
 ## Architecture
 

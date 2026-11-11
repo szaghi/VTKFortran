@@ -14,6 +14,7 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
+    container: ghcr.io/szaghi/fortran-toolchains:gnu-16.2
     permissions:
       contents: read
 
@@ -21,9 +22,6 @@ jobs:
 
     - name: Checkout repository
       uses: actions/checkout@v4
-
-    - name: Setup build environment
-      uses: ./.github/actions/setup-build-env
 
     - name: Fetch dependencies
       if: hashFiles('**/.deps_config.ini') != ''

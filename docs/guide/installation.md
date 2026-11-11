@@ -10,7 +10,7 @@ A Fortran 2008 compiler is required:
 
 | Compiler | Version |
 |----------|---------|
-| GNU gfortran | 12 or newer: 12.5, 13.4, 14.3 (the CI) and 16.2 pass every test; 11.5 builds, but the two `.vtm` tests crash |
+| GNU gfortran | 12 or newer: 12.5, 13.4, 14.3 and 16.2 pass every test (the CI: 16.2, and 14.3 for HDF5 1.10); 11.5 builds, but the two `.vtm` tests crash |
 | Intel Fortran (ifx) | 2025.3 passes every test (the fobos Intel modes run `ifx`; the discontinued ifort is not tested) |
 | NVIDIA nvfortran | 26.9 passes every test (built with CMake: the fobos file has no NVIDIA modes) |
 
@@ -220,7 +220,9 @@ cmake --build build
 ```
 
 **FoBiS.py**: the modes `static-gnu-hdf5-mpi` and `tests-gnu-debug-hdf5-mpi` build with `mpif90` and `mpicc`; their
-varset also gives the HDF5 headers (`$HDF5_INC`). The varset `ubuntu-openmpi` is Ubuntu's `libhdf5-openmpi-dev`:
+varset also gives the HDF5 headers (`$HDF5_INC`). The varset `ubuntu-openmpi` is Ubuntu's `libhdf5-openmpi-dev`;
+`toolchain-image` is the HDF5 of the CI's toolchain image (`ghcr.io/szaghi/fortran-toolchains:gnu-16.2`: gfortran 16.2,
+Open MPI 5.0.11, HDF5 2.3.0, all built by the same compiler):
 
 ```bash
 fobis build --mode tests-gnu-debug-hdf5-mpi --varset ubuntu-openmpi
