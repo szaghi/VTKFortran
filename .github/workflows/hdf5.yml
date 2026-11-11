@@ -2,7 +2,8 @@ name: HDF5
 
 # Project-owned workflow (not managed by `fobis scaffold`): the library and the tests built with HDF5 (VTKHDF format),
 # against Ubuntu's serial libhdf5-dev (HDF5 1.10, the oldest HDF5 supported), with FoBiS and with CMake. The CI workflow
-# builds without HDF5, where the HDF5 procedures are stubs.
+# builds without HDF5, where the HDF5 procedures are stubs. The job hdf5-mpi builds with MPI (VTKFORTRAN_USE_MPI)
+# against Ubuntu's libhdf5-openmpi-dev and runs the test of one file written by MPI ranks on 4 ranks.
 
 on:
   push:
@@ -45,5 +46,39 @@ jobs:
     - name: Build and run the tests (CMake)
       run: |
         cmake -S . -B build -DBUILD_TESTING=ON -DVTKFORTRAN_USE_ZLIB=ON -DVTKFORTRAN_USE_HDF5=ON
+        cmake --build build -j 4
+        ctest --test-dir build --output-on-failure
+
+  hdf5-mpi:
+    name: hdf5-mpi / gfortran-13 + Open MPI
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # gfortran 13: the compiler of Ubuntu's Open MPI, whose mpi_f08.mod the library uses
+    - name: Setup build environment
+      uses: ./.github/actions/setup-build-env
+      with:
+        gcc-version: '13'
+
+    - name: Install parallel HDF5 and Open MPI
+      run: sudo apt-get install -y libhdf5-openmpi-dev libopenmpi-dev openmpi-bin
+
+    - name: Fetch dependencies
+      run: fobis fetch
+
+    # run_tests.sh runs the MPI test on one rank (its name has no "mpi"): then on 4
+    - name: Build and run the tests (FoBiS)
+      run: |
+        fobis build --mode tests-gnu-debug-hdf5-mpi --varset ubuntu-openmpi
+        bash scripts/run_tests.sh
+        mpirun --oversubscribe -np 4 exe/vtk_fortran_write_vtkhdf_ranks
+
+    - name: Build and run the tests (CMake)
+      run: |
+        cmake -S . -B build -DBUILD_TESTING=ON -DVTKFORTRAN_USE_ZLIB=ON -DVTKFORTRAN_USE_HDF5=ON -DVTKFORTRAN_USE_MPI=ON \
+              -DHDF5_PREFER_PARALLEL=ON -DMPIEXEC_PREFLAGS=--oversubscribe
         cmake --build build -j 4
         ctest --test-dir build --output-on-failure

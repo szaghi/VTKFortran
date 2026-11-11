@@ -58,7 +58,8 @@ CMake `-DVTKFORTRAN_USE_MPI=ON` (MPI C and Fortran found at the top level; the t
 (mpif90 + mpicc; the varset gives `$HDF5_INC` too; `ubuntu-openmpi` = libhdf5-openmpi-dev); no fpm. The C source
 `src/mpi/vtk_fortran_mpi.c` (`MPI_Comm_f2c` + `H5Pset_fapl_mpio`, C only) sits outside `src/lib` (fpm's source dir) and
 is excluded by the non-MPI FoBiS modes (`exclude_dirs = $EXDIRS src/mpi/`): they need no C compiler (ifx's family
-default, `icx`, is often missing). No CI job has MPI: check it locally (ADAM's HDF5 2.3.0 + Open MPI 5.0.11).
+default, `icx`, is often missing). CI: job `hdf5-mpi` of `hdf5.yml` (gfortran 13, the compiler of Ubuntu's Open MPI,
+and libhdf5-openmpi-dev; FoBiS and CMake, the MPI test on 4 ranks); locally ADAM's HDF5 2.3.0 + Open MPI 5.0.11.
 
 ## Architecture
 
