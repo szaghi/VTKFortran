@@ -1,0 +1,5 @@
+$ mpirun -np 4 vtkhdf_mpi
+ranks.vtkhdf, one partition per rank:
+  NumberOfPoints 18 18 18 18
+  NumberOfCells  4 4 4 4
+  CellData/rank  0 0 0 0 1 1 1 1 2 2 2 2 3 3 3 3

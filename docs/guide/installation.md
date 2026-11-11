@@ -203,3 +203,29 @@ fobis build --mode tests-gnu-debug-hdf5 --varset my_hdf5
 fpm build --flag "-DVTKFORTRAN_USE_HDF5" --link-flag "-L/path/to/hdf5/lib -lhdf5"
 ```
 
+### One file from MPI ranks
+
+The ranks of an MPI communicator write one `.vtkhdf` file together (`initialize(..., comm=)`, see the cookbook:
+[Write one .vtkhdf from MPI ranks](/manual/cookbook#write-one-vtkhdf-from-mpi-ranks)) with the macro
+`VTKFORTRAN_USE_MPI` too, a **parallel** HDF5 (e.g. `apt install libhdf5-openmpi-dev`) and MPI for Fortran (`mpi_f08`)
+and C: the communicator is handed to HDF5 by a small C source, `src/mpi/vtk_fortran_mpi.c`, that needs the HDF5
+headers. Without the macro the library builds as usual and `comm` is an error.
+
+**CMake**: both options; MPI is found with `find_package(MPI COMPONENTS C Fortran)`, and the MPI test runs on 4 ranks
+(add `-DMPIEXEC_PREFLAGS=--oversubscribe` for Open MPI on fewer cores).
+
+```bash
+cmake -S . -B build -DVTKFORTRAN_USE_HDF5=ON -DVTKFORTRAN_USE_MPI=ON
+cmake --build build
+```
+
+**FoBiS.py**: the modes `static-gnu-hdf5-mpi` and `tests-gnu-debug-hdf5-mpi` build with `mpif90` and `mpicc`; their
+varset also gives the HDF5 headers (`$HDF5_INC`). The varset `ubuntu-openmpi` is Ubuntu's `libhdf5-openmpi-dev`:
+
+```bash
+fobis build --mode tests-gnu-debug-hdf5-mpi --varset ubuntu-openmpi
+mpirun -np 4 exe/vtk_fortran_write_vtkhdf_ranks
+```
+
+**fpm**: not supported (the C source, outside `src/lib`, needs the macro and the HDF5 headers).
+

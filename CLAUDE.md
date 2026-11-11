@@ -28,7 +28,9 @@ FC=gfortran-14 PVPYTHON=<paraview>/bin/pvpython MPIFC=<openmpi>/bin/mpifort bash
 Programs in `docs/examples/src/` with markers (`!run`, `!region`, `!cast`, `!render`, ...); the pages include the
 generated snippets, outputs, terminal casts (`scripts/ansi2svg.py`) and ParaView renders (`scripts/render_vtk.py`, PNG or
 GIF for a `.pvd`; `!mpi` programs need `MPIFC`, `!hdf5` ones the HDF5 C library in `HDF5_LIB`, default Ubuntu's
-libhdf5-dev, otherwise their committed outputs are kept). The *Docs examples* workflow (with libhdf5-dev) checks all but
+libhdf5-dev, `!mpi` + `!hdf5` ones `MPIFC` and a parallel HDF5 installed in `HDF5_MPI` (e.g. ADAM's
+`~/fortran/adam/lib/hdf5/develop/gnu/16.2.0` with Open MPI 5.0.11's mpifort), otherwise their committed outputs are
+kept). The *Docs examples* workflow (with libhdf5-dev) checks all but
 the renders and the MPI runs (no ParaView, no MPI in CI). The reference pages
 (`docs/guide/*.md`) hold no code of their own: their snippets are regions of `ref_<page>.f90`, programs that also read
 back what they write and stop with an error otherwise.
@@ -49,6 +51,14 @@ too: CMake
 `-DVTKFORTRAN_USE_HDF5=ON` (`find_package(HDF5 COMPONENTS C)`), FoBiS modes `static-gnu-hdf5`, `tests-gnu-debug-hdf5`
 (varset `ubuntu` = libhdf5-dev, add one for another HDF5), workflow `hdf5.yml`. Only the HDF5 C library is used, bound
 with iso_c_binding (no `hdf5.mod`). Without it `format='vtkhdf'` is an error.
+
+One VTKHDF file from MPI ranks (`vtk_file%initialize(..., comm=)`) needs `VTKFORTRAN_USE_MPI` too and a parallel HDF5:
+CMake `-DVTKFORTRAN_USE_MPI=ON` (MPI C and Fortran found at the top level; the test runs on 4 ranks, add
+`-DMPIEXEC_PREFLAGS=--oversubscribe` on fewer cores), FoBiS modes `static-gnu-hdf5-mpi`, `tests-gnu-debug-hdf5-mpi`
+(mpif90 + mpicc; the varset gives `$HDF5_INC` too; `ubuntu-openmpi` = libhdf5-openmpi-dev); no fpm. The C source
+`src/mpi/vtk_fortran_mpi.c` (`MPI_Comm_f2c` + `H5Pset_fapl_mpio`, C only) sits outside `src/lib` (fpm's source dir) and
+is excluded by the non-MPI FoBiS modes (`exclude_dirs = $EXDIRS src/mpi/`): they need no C compiler (ifx's family
+default, `icx`, is often missing). No CI job has MPI: check it locally (ADAM's HDF5 2.3.0 + Open MPI 5.0.11).
 
 ## Architecture
 
@@ -94,7 +104,11 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   `Steps` entries of the open step rewritten at the end of every piece (file valid after it); `reopen`
   (`vtk_file%initialize(..., action='append')`, reached by `select type`) reads the state back and trims every dataset
   to the last complete piece. vtkHDFReader 9.7.2 misreads a PolyData block first appearing at a later step, and a series
-  of one part at step 1 (its own files too): the tests avoid both
+  of one part at step 1 (its own files too): the tests avoid both. MPI (`set_comm`, called by
+  `vtk_file%initialize(..., comm=)` through `select type` before `initialize`, forgotten by `finalize`): every
+  `store_<kind>` collective, totals summed over the ranks, one piece per rank; refused: grids, `write_step`, polyhedra,
+  zlib, a second piece; a PolyData piece without cells calls `write_polydata_cells()` (the implicit empty blocks of
+  `end_partition` would come out of the collective order)
 - `vtk_fortran_vtk_file_vtkhdf_reader` — `vtkhdf_reader`: VTKHDF files read through `xml_reader` (dispatched when
   `initialize` sees the HDF5 signature): every topology, partitions as pieces, time series (`get_steps`, `set_step`),
   values as HDF5 hyperslabs of the piece/step converted by the decoder (`read_dataarray_bytes`), offsets back to end
@@ -104,7 +118,10 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
 - `vtk_fortran_dataarray_encoder` — overloaded encoding routines for ASCII and Base64 (optionally zlib-compressed), covering all PENF numeric kinds and ranks 1–4
 - `vtk_fortran_hdf5` — HDF5 C API bindings (files, groups and their members, links, attributes (overwritten),
   datasets of every kind, appendable, resized, deflate, read back); always compiled, stubs without
-  `VTKFORTRAN_USE_HDF5`. The `*_g` type globals must stay PUBLIC:
+  `VTKFORTRAN_USE_HDF5`. With `comm` (`VTKFORTRAN_USE_MPI`): `h5_file_create` opens a parallel file, an appendable
+  dataset is created by every rank (empty, chunks sized by all the rows, the widest kind the ranks give) and appended to
+  collectively (`MPI_Allgather` of the rows, every rank extends by the total, writes its hyperslab after the ranks
+  before; mpi_f08 under the macro). The `*_g` type globals must stay PUBLIC:
   gfortran gives private module variables hidden visibility, even with bind(C), and they would never bind to HDF5's
 - `vtk_fortran_zlib` — zlib bindings, VTK block compression and decompression (`zlib_compress_blocks`, `zlib_uncompress_blocks`); always compiled, stubs without `VTKFORTRAN_USE_ZLIB`
 - `vtk_fortran_parameters` — shared constants (`stderr`, `stdout`, `end_rec`)
@@ -145,4 +162,7 @@ UnstructuredGrid, every cell type but polyhedra, two pieces, I8P ids, each also 
 written as a `.vtu`; `vtk_fortran_write_vtkhdf_grids.f90`: RectilinearGrid and StructuredGrid (3D/2D/1D, the four StructuredGrid
 `write_geo` layouts), each also written as a `.vtr`/`.vts`; `vtk_fortran_write_vtkhdf_poly.f90`: PolyData, the four
 blocks, three pieces with different blocks (one without cells),
-I8P, each also written as a `.vtp`; without HDF5 the writer refuses to start); `vtk_fortran_read.F90` reads files back (every topology and format, and two files written by VTK, embedded in the test), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.
+I8P, each also written as a `.vtp`; `vtk_fortran_write_vtkhdf_ranks.F90`: an UnstructuredGrid and a PolyData from MPI
+ranks (one rank empty, I4P and I8P ids by rank), compared with the same pieces written serially and as `.vtu`/`.vtp`,
+the refusals of `comm`; without MPI `comm` refused, its name without "mpi" since `scripts/run_tests.sh` runs those with
+mpirun; without HDF5 the writer refuses to start); `vtk_fortran_read.F90` reads files back (every topology and format, and two files written by VTK, embedded in the test), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.

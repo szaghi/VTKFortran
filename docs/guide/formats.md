@@ -43,7 +43,7 @@ space, e.g. off a small `/tmp` on HPC nodes. The `binary` format writes inline, 
 and one HDF5 dataset per array. VTK's `vtkHDFReader` and ParaView read it; any HDF5 tool (h5py, `h5dump`, HDFView) reads its
 arrays directly. It is being added step by step ([issue #51](https://github.com/szaghi/VTKFortran/issues/51)):
 every topology is written now (**ImageData**, **RectilinearGrid**, **StructuredGrid**, **UnstructuredGrid** with its
-polyhedra, **PolyData**), and time series in one file; parallel writing comes next.
+polyhedra, **PolyData**), time series in one file, and one file written by MPI ranks.
 
 Choose it when the files are read by HDF5 tools too, or to use HDF5 compression; stay with the XML formats for files
 that VTKFortran reads back, and without an HDF5 library. It needs the library built with HDF5 (see
@@ -98,6 +98,13 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
   the times and, for each step, where it starts in the datasets (`PartOffsets`, `PointOffsets`, ...). The file is
   valid after every piece; `action='append'` continues it. See [One VTKHDF file instead of a
   collection](/guide/parallel#one-vtkhdf-file-instead-of-a-collection), whose diagram shows the layout.
+- **From MPI ranks** (`initialize(..., comm=)`, the library built with `VTKFORTRAN_USE_MPI` and a parallel HDF5): the
+  ranks of the communicator write one UnstructuredGrid or PolyData file, the piece of each rank a partition, in rank
+  order. The file is the one the pieces would make written by one process, but for the kind of the ids: a dataset gets
+  the widest kind the ranks give (a PolyData block a rank does not have is 64-bit, so its ids are 64-bit unless every
+  rank gives every block in `I4P`). Every call is collective (same calls, same arrays, same order on every rank); the
+  writes of the ranks are independent (MPI-IO). Refused with `comm`: the grids, time series, polyhedra, compression. A
+  complete program: [Write one .vtkhdf from MPI ranks](/manual/cookbook#write-one-vtkhdf-from-mpi-ranks).
 - **No transposition.** An array is stored as it is in memory (an ImageData, RectilinearGrid or StructuredGrid): a
   Fortran `velocity(3,0:nx,0:ny,0:nz)` is the dataset of shape `[nz+1, ny+1, nx+1, 3]` in C order (the order HDF5 tools
   show), which is the shape VTKHDF wants. Point data have the shape of the grid points, cell data of the cells; the

@@ -10,7 +10,9 @@
 #                                                       terminal session typing each command, then showing its output
 #                                !mpi                   an MPI program: built by $MPIFC, its runs call mpirun
 #                                !hdf5                  a program using HDF5 (VTKHDF): built with the library in mode
-#                                                       static-gnu-hdf5, linked to the HDF5 C library of $HDF5_LIB
+#                                                       static-gnu-hdf5, linked to the HDF5 C library of $HDF5_LIB;
+#                                                       with !mpi too, in mode static-gnu-hdf5-mpi by $MPIFC, linked
+#                                                       to the parallel HDF5 installed in $HDF5_MPI
 #                                !render ID FILE [KEY=VALUE ...]   a ParaView render of FILE (written by the runs):
 #                                                       images/ID.png, or images/ID.gif for a .pvd time series
 #                                                       (scripts/render_vtk.py, where the keys are described)
@@ -31,11 +33,14 @@
 # it (in its own directory) and their runs call mpirun from the same installation, with the current LD_LIBRARY_PATH;
 # without $MPIFC they are not built and their committed outputs are kept. The HDF5 programs (!hdf5) need the HDF5 C
 # library: $HDF5_LIB is its directory (default /usr/lib/x86_64-linux-gnu/hdf5/serial, Ubuntu's libhdf5-dev); without it
-# they are not built and their committed outputs are kept. The Docs examples workflow, with HDF5 but without ParaView
-# and MPI, checks the snippets, outputs and terminal images of all the others.
+# they are not built and their committed outputs are kept. The programs both MPI and HDF5 (files written by MPI ranks)
+# need $MPIFC and a parallel HDF5: $HDF5_MPI is its installation (lib/ and include/; its C compiler wrapper, mpicc, is
+# taken next to $MPIFC); without both they are not built and their committed outputs are kept. The Docs examples
+# workflow, with HDF5 but without ParaView and MPI, checks the snippets, outputs and terminal images of all the others.
 #
 # Usage: bash scripts/docs_examples.sh            (FC=gfortran-14 bash scripts/docs_examples.sh: another compiler)
-#        PVPYTHON=/path/to/pvpython MPIFC=/path/to/mpifort HDF5_LIB=/path/to/hdf5/lib bash scripts/docs_examples.sh
+#        PVPYTHON=/path/to/pvpython MPIFC=/path/to/mpifort HDF5_LIB=/path/to/hdf5/lib HDF5_MPI=/path/to/parallel/hdf5 \
+#        bash scripts/docs_examples.sh
 set -euo pipefail
 
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
@@ -49,6 +54,8 @@ mpi_programs=$(grep -l '^ *!mpi *$' "$ex"/src/*.f90 || true)
 hdf5_lib=${HDF5_LIB:-/usr/lib/x86_64-linux-gnu/hdf5/serial}
 hdf5_programs=$(grep -l '^ *!hdf5 *$' "$ex"/src/*.f90 || true)
 if [ -e "$hdf5_lib/libhdf5.so" ] || [ -e "$hdf5_lib/libhdf5.a" ]; then has_hdf5=1; else has_hdf5=0; fi
+hdf5_mpi=${HDF5_MPI:-}
+if [ -n "$mpifc" ] && [ -n "$hdf5_mpi" ] && [ -e "$hdf5_mpi/include/hdf5.h" ]; then has_hdf5_mpi=1; else has_hdf5_mpi=0; fi
 
 fc=${FC:-gfortran}
 mkdir -p "$root/build"
@@ -66,11 +73,25 @@ if [ $has_hdf5 = 1 ]; then
     >> "$root/build/docs-examples.log" 2>&1 || {
     cat "$root/build/docs-examples.log"; echo "docs_examples: library build with HDF5 failed" >&2; exit 1; }
 fi
+if [ $has_hdf5_mpi = 1 ]; then # the library with MPI (VTKFORTRAN_USE_MPI), its HDF5 given by a varset of a fobos copy
+  rm -rf -- "$root/build/docs-examples-hdf5-mpi"
+  varset="[varset:docs]\n\$HDF5_LIB = $hdf5_mpi/lib\n\$HDF5_INC = $hdf5_mpi/include\n\$HDF5_EXT = hdf5 z dl m\n"
+  sed "s|^\[varset:ubuntu\]|$varset\n&|" "$root/fobos" > "$root/build/fobos.docs-mpi"
+  (cd "$root" && fobis build -f build/fobos.docs-mpi --mode static-gnu-hdf5-mpi --varset docs --fc "$mpifc" \
+                             --cc "$(dirname "$mpifc")/mpicc" --dbld "$root/build/docs-examples-hdf5-mpi") \
+    >> "$root/build/docs-examples.log" 2>&1 || {
+    cat "$root/build/docs-examples.log"; echo "docs_examples: library build with MPI and HDF5 failed" >&2; exit 1; }
+fi
 rm -rf -- "$build"
 mkdir -p "$build/bin" "$build/keep" "$run_dir" "$ex/snippets" "$ex/output" "$ex/images"
+is_mpi() { grep -q '^ *!mpi *$' "$1"; }
+is_hdf5() { grep -q '^ *!hdf5 *$' "$1"; }
 kept=
 if [ -z "$mpifc" ]; then kept="$mpi_programs"; fi
 if [ $has_hdf5 = 0 ]; then kept="$kept $hdf5_programs"; fi
+if [ $has_hdf5_mpi = 0 ]; then
+  for src in $mpi_programs; do if is_hdf5 "$src"; then kept="$kept $src"; fi; done
+fi
 if [ -n "${kept// /}" ]; then # the outputs of the programs not built are kept
   for src in $kept; do
     for id in $(sed -n 's/^ *!run \(-s \)\{0,1\}\([A-Za-z0-9_-]*\) .*/\2/p' "$src"); do
@@ -97,10 +118,13 @@ for src in "$ex"/src/*.f90; do
 done
 
 # programs
-is_mpi() { grep -q '^ *!mpi *$' "$1"; }
-is_hdf5() { grep -q '^ *!hdf5 *$' "$1"; }
 for src in "$ex"/src/*.f90; do
-  if is_mpi "$src"; then
+  if is_mpi "$src" && is_hdf5 "$src"; then
+    if [ $has_hdf5_mpi = 1 ]; then
+      "$mpifc" -I"$root/build/docs-examples-hdf5-mpi/mod" -o "$build/bin/$(basename "$src" .f90)" "$src" \
+               "$root/build/docs-examples-hdf5-mpi/libvtkfortran.a" -L"$hdf5_mpi/lib" -lhdf5 -lz -ldl -lm
+    fi
+  elif is_mpi "$src"; then
     if [ -n "$mpifc" ]; then
       "$mpifc" -I"$root/build/docs-examples-mpi/mod" -o "$build/bin/$(basename "$src" .f90)" "$src" \
                "$root/build/docs-examples-mpi/libvtkfortran.a" -lz
@@ -143,12 +167,15 @@ ld_path=
 for src in "$ex"/src/*.f90; do
   path=$build/bin
   ld_path=
-  if is_mpi "$src"; then
+  if is_mpi "$src" && is_hdf5 "$src"; then
+    [ $has_hdf5_mpi = 1 ] || continue # not built: its committed outputs are kept
+    path=$build/bin:$(dirname "$(command -v "$mpifc")")
+    ld_path=$hdf5_mpi/lib:${LD_LIBRARY_PATH:-}
+  elif is_mpi "$src"; then
     [ -n "$mpifc" ] || continue # not built: its committed outputs are kept
     path=$build/bin:$(dirname "$(command -v "$mpifc")")
     ld_path=${LD_LIBRARY_PATH:-}
-  fi
-  if is_hdf5 "$src"; then
+  elif is_hdf5 "$src"; then
     [ $has_hdf5 = 1 ] || continue # not built: its committed outputs are kept
     ld_path=$hdf5_lib
   fi

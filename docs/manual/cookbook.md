@@ -219,6 +219,28 @@ Built with the MPI compiler wrapper (`mpifort`) and run with `mpirun -np 4`. Whe
 system, the other ranks write their pieces into memory and send them to it, see
 [Write a file into memory](#write-a-file-into-memory).
 
+### Write one .vtkhdf from MPI ranks
+
+With a parallel HDF5 the ranks write one file together: `comm` (the Fortran handle of a communicator) given to
+`initialize`, every rank makes the same calls, each one with its own piece, which becomes a partition of the file.
+
+<<< @/examples/snippets/vtkhdf_mpi-write.f90
+
+<<< @/examples/output/vtkhdf_mpi.ansi{ansi}
+
+<p align="center"><img src="../examples/images/vtkhdf_mpi.png" alt="four blocks of four hexahedra, one colour per rank, read by ParaView from the VTKHDF file written by the four ranks"></p>
+
+- **Every call is collective**: the ranks create and extend the datasets together, then each one writes its rows after
+  those of the ranks before. Every rank calls every procedure, with the same arrays in the same order; a rank that
+  stops calling (an error on one rank only) leaves the others waiting.
+- An UnstructuredGrid or a PolyData, one piece per rank; a rank can have an empty piece (`np=0`, `nc=0`). A PolyData
+  piece without cells still calls `write_polydata_cells()`, with no blocks.
+- Refused with `comm`: the grids (one piece, the whole extent), time series, polyhedra, `compressor='zlib'` (a deflated
+  dataset needs collective writes), the XML formats, `action='read'` and `'append'`. A refusal comes on every rank.
+- It needs the library built with `VTKFORTRAN_USE_MPI` (CMake `-DVTKFORTRAN_USE_MPI=ON`, FoBiS mode
+  `static-gnu-hdf5-mpi`) and a parallel HDF5; `initialize` returns an error otherwise
+  ([Installation](/guide/installation#one-file-from-mpi-ranks)). Built with `mpifort`, run with `mpirun -np 4`.
+
 ### Check a parallel header against its pieces
 
 <<< @/examples/snippets/check_pieces.f90
