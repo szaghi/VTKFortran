@@ -1,4 +1,4 @@
-<svg class="vtk-diagram" viewBox="0 0 760 248" role="img" aria-labelledby="size-t">
+<svg class="vtk-diagram" viewBox="0 0 760 328" role="img" aria-labelledby="size-t">
 <title id="size-t">The size of the same temperature field written in each format</title>
 <text x="250" y="20" class="d-muted">file size, the same 24 x 24 x 24 temperature field</text>
 <text x="238" y="53" class="d-mono" text-anchor="end">ascii</text>
@@ -16,4 +16,10 @@
 <text x="238" y="213" class="d-mono" text-anchor="end">binary-appended + zlib</text>
 <rect class="d-head" x="250" y="198" width="120.8" height="22" rx="3"/>
 <text x="378.8" y="214" class="d-mono">107 KiB</text>
+<text x="238" y="253" class="d-mono" text-anchor="end">vtkhdf</text>
+<rect class="d-data" x="250" y="238" width="128.955" height="22" rx="3"/>
+<text x="386.955" y="254" class="d-mono">114 KiB</text>
+<text x="238" y="293" class="d-mono" text-anchor="end">vtkhdf + zlib</text>
+<rect class="d-head" x="250" y="278" width="104.593" height="22" rx="3"/>
+<text x="362.593" y="294" class="d-mono">92 KiB</text>
 </svg>

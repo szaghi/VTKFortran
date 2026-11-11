@@ -1,12 +1,14 @@
 program heat
-!< Tutorial, chapter 2: the same temperature in every format, and the size of each file.
+!< Tutorial, chapter 2: the same temperature in every format, and the size of each file (VTKHDF only when the library is
+!< built with HDF5).
 use penf, only : I4P, I8P, R8P
 use vtk_fortran, only : vtk_file
+use vtk_fortran_hdf5, only : is_hdf5_enabled
 implicit none
 integer(I4P), parameter :: n=24
-character(*), parameter :: formats(5)=['ascii          ', 'binary         ', 'raw            ', 'raw            ', &
-                                       'binary-appended']
-character(*), parameter :: compressors(5)=['none', 'none', 'none', 'zlib', 'zlib']
+character(*), parameter :: formats(7)=['ascii          ', 'binary         ', 'raw            ', 'raw            ', &
+                                       'binary-appended', 'vtkhdf         ', 'vtkhdf         ']
+character(*), parameter :: compressors(7)=['none', 'none', 'none', 'zlib', 'zlib', 'none', 'zlib']
 real(R8P)               :: x(n), t(n,n,n)
 integer(I8P)            :: bytes
 integer(I4P)            :: i, j, k, f, error
@@ -20,7 +22,9 @@ t(1,:,:) = 0 ; t(n,:,:) = 0 ; t(:,1,:) = 0 ; t(:,n,:) = 0 ; t(:,:,1) = 0 ; t(:,:
 
 print '(A,T32,A,T49,A,T63,A)', 'file', 'format', 'compressor', 'bytes'
 do f=1, size(formats)
-  filename = 'heat-'//trim(formats(f))//'-'//compressors(f)//'.vtr'
+  if (trim(formats(f)) == 'vtkhdf' .and. .not.is_hdf5_enabled) cycle
+  filename = 'heat-'//trim(formats(f))//'-'//compressors(f)//merge('.vtkhdf', '.vtr   ', trim(formats(f)) == 'vtkhdf')
+  filename = trim(filename)
   error = write_file(filename=filename, format=trim(formats(f)), compressor=compressors(f))
   inquire(file=filename, size=bytes)
   print '(A,T32,A,T49,A,T58,I10)', filename, formats(f), compressors(f), bytes

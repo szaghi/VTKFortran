@@ -45,7 +45,7 @@ features:
       width: 48
       height: 48
     title: Any format, zlib too
-    details: "ASCII to read by eye, base64 binary inline, raw binary appended for speed; the binary formats compressed as VTK does, byte for byte."
+    details: "ASCII to read by eye, base64 binary inline, raw binary appended for speed; the binary formats compressed as VTK does, byte for byte; VTKHDF, one HDF5 file, with HDF5."
     link: /guide/formats#output-format-selection
     linkText: Formats
   - icon:
@@ -63,7 +63,7 @@ features:
       width: 48
       height: 48
     title: Time series
-    details: "A .pvd collection valid after every step, so a crashed run still opens in ParaView; restarts append to it."
+    details: "A .pvd collection valid after every step, or the whole series in one .vtkhdf valid after every piece: a crashed run still opens; restarts append to it."
     link: /guide/parallel#time-series-pvd
     linkText: Time series
   - icon:
@@ -81,7 +81,7 @@ features:
       width: 48
       height: 48
     title: Read them back
-    details: "Every file VTKFortran writes, and the same files written by VTK, read array by array without loading the whole file; parallel headers checked against their pieces."
+    details: "Every file VTKFortran writes, VTKHDF included, and the same files written by VTK, read array by array without loading the whole file; parallel headers checked against their pieces."
     link: /guide/reading
     linkText: Reading
   - icon:
