@@ -28,6 +28,10 @@ module vtk_fortran_vtk_file_vtkhdf_writer
 !< and the `Steps` entries of the open step are rewritten at the end of every piece, with `NSteps` and `Version`, and the
 !< file flushed: the file is valid after every piece.
 !<
+!< `reopen` (`vtk_file%initialize(..., action='append')`) continues a time series written before (a restart): the state is
+!< read from the file, and every dataset is trimmed to the pieces recorded by the last complete piece (a run interrupted
+!< in a piece leaves the data of that piece, dropped).
+!<
 !< `Version` is written by `finalize` (and after every piece of a time series): 2.0, 2.5 with polyhedra, 2.6 when an
 !< active array is marked, 2.7 for a RectilinearGrid or a StructuredGrid.
 use penf
@@ -89,6 +93,7 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
   integer(I8P)                  :: totals(9)=0_I8P         !< Running totals, as `step_start`.
   integer(I8P)                  :: block_totals(8)=0_I8P   !< Running PolyData totals: cells of each block, then ids.
   character(len=:), allocatable :: field_arrays            !< Names of the field data arrays of a time series.
+  logical                       :: is_reopened=.false.     !< A time series reopened (`reopen`): the extent start unknown.
   character(len=:), allocatable :: point_arrays            !< Names of the point data arrays, NUL terminated.
   character(len=:), allocatable :: cell_arrays             !< Names of the cell data arrays, NUL terminated.
   contains
@@ -181,6 +186,7 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
     procedure, pass(self) :: write_geo_strg_data3_rank1_R4P
     procedure, pass(self) :: write_geo_strg_data3_rank3_R4P
     ! private helpers
+    procedure, pass(self)          :: reopen        !< Reopen a time series to append steps (`action='append'`).
     procedure, pass(self), private :: check_cells   !< Check a write_connectivity call of an UnstructuredGrid piece.
     procedure, pass(self), private :: check_geo     !< Check a write_geo call of an UnstructuredGrid or PolyData piece.
     procedure, pass(self), private :: close_group   !< Close the open data group.
@@ -340,7 +346,10 @@ contains
     error = refuse('a grid (ImageData, RectilinearGrid, StructuredGrid) has one piece per step')
   elseif (.not.self%is_temporal .and. self%n_pieces > 0_I4P) then
     error = refuse('a grid (ImageData, RectilinearGrid, StructuredGrid) has one piece in VTKHDF')
-  elseif (any([nx1, nx2, ny1, ny2, nz1, nz2] /= self%whole_extent)) then
+  ! a RectilinearGrid or StructuredGrid reopened (action append): its extent start is not in the file, its size is
+  elseif ((.not.(self%is_reopened .and. self%topology /= TOPOLOGY_IMAGE) .and. &
+           any([nx1, nx2, ny1, ny2, nz1, nz2] /= self%whole_extent)) .or. &
+          any([nx2 - nx1, ny2 - ny1, nz2 - nz1] /= self%whole_extent(2::2) - self%whole_extent(1::2))) then
     error = refuse('the extent of the piece must be the whole extent (one piece in VTKHDF)')
   else
     self%n_pieces = self%n_pieces + 1_I4P
@@ -3199,6 +3208,241 @@ contains
   endif
   endsubroutine record_array
 
+  function reopen(self, filename) result(error)
+  !< Reopen a VTKHDF time series to append steps (`vtk_file%initialize(format='vtkhdf', filename=..., action='append')`):
+  !< its topology, extent, steps, the totals of its pieces and its arrays are read from the file, and its datasets trimmed to
+  !< the pieces recorded by the last complete piece (the `Steps` entries): what an interrupted run left after it is dropped.
+  !< The next `write_step` needs a time after the last one of the file.
+  class(vtkhdf_writer), intent(inout) :: self      !< Writer.
+  character(*),         intent(in)    :: filename  !< File name.
+  integer(I4P)                        :: error     !< Error status.
+  character(len=:), allocatable       :: text      !< Type of the dataset.
+  character(len=:), allocatable       :: names     !< Names of a group's members.
+  integer(I8P), allocatable           :: ivalues(:), counts(:), more(:) !< Values read.
+  real(R8P),    allocatable           :: times(:)  !< Times of the steps.
+  integer(I8P)                        :: k         !< Steps.
+  integer(I8P)                        :: n_parts   !< Parts of the complete steps.
+  integer(I8P)                        :: b         !< Counter.
+  integer(I8P)                        :: grid(3)   !< Points of a grid along each axis.
+  integer(hid_kind)                   :: steps     !< Group Steps.
+
+  self%file_id = -1_hid_kind ; self%root = -1_hid_kind ; self%group = -1_hid_kind
+  call self%reset
+  if (.not.is_hdf5_enabled) then
+    error = refuse('the library is built without HDF5 (VTKFORTRAN_USE_HDF5)')
+    return
+  endif
+  error = h5_file_open(filename, self%file_id, readwrite=.true.)
+  if (error == 0_I4P) error = h5_group_open(self%file_id, 'VTKHDF', self%root)
+  if (error /= 0_I4P) then
+    error = refuse('action append: cannot open '//filename//' as a VTKHDF file')
+    return
+  endif
+  error = h5_attribute_read(self%root, 'Type', text)
+  select case(text)
+  case('ImageData')
+    self%topology = TOPOLOGY_IMAGE
+  case('RectilinearGrid')
+    self%topology = TOPOLOGY_RECT
+  case('StructuredGrid')
+    self%topology = TOPOLOGY_STRG
+  case('UnstructuredGrid')
+    self%topology = TOPOLOGY_UNSTRUCTURED
+  case('PolyData')
+    self%topology = TOPOLOGY_POLY
+  case default
+    error = refuse('action append: '//filename//' holds no dataset VTKFortran writes')
+    return
+  endselect
+  if (.not.h5_link_exists(self%root, 'Steps')) then
+    error = refuse('action append: '//filename//' is not a time series (no Steps): it cannot be continued')
+    return
+  endif
+  error = h5_attribute_read(self%root, 'Version', ivalues)
+  if (error == 0_I4P) self%version_minor = ivalues(2)
+  if (error == 0_I4P) error = h5_group_open(self%root, 'Steps', steps)
+  if (error == 0_I4P) then
+    error = h5_attribute_read(steps, 'NSteps', ivalues)
+    if (h5_group_close(steps) /= 0_I4P) error = 1_I4P
+  endif
+  k = 0_I8P
+  if (error == 0_I4P) k = ivalues(1)
+  if (error == 0_I4P) error = h5_dataset_read(self%root, 'Steps/Values', times)
+  if (error /= 0_I4P .or. k < 1_I8P) then
+    error = refuse('action append: the steps of '//filename//' cannot be read, or there are none')
+    return
+  endif
+  self%is_temporal = .true.
+  self%is_reopened = .true.
+  self%n_steps = k
+  self%step_time = times(k)
+  self%step_pieces = 1_I8P
+  if (self%is_partitioned()) then
+    ! the parts of the complete steps, their totals; every dataset trimmed to them
+    error = h5_dataset_read(self%root, 'Steps/PartOffsets', ivalues)
+    if (error == 0_I4P) error = h5_dataset_read(self%root, 'Steps/NumberOfParts', counts)
+    if (error /= 0_I4P) return
+    n_parts = ivalues(k) + counts(k)
+    self%n_pieces = int(n_parts, I4P)
+    self%step_pieces = counts(k)
+    error = trimmed_counts(self%root, n_parts, 'NumberOfPoints', self%total_points)
+    if (error == 0_I4P) error = trim_to(self%root, 'Points', self%total_points)
+    if (self%topology == TOPOLOGY_UNSTRUCTURED) then
+      if (error == 0_I4P) error = trimmed_counts(self%root, n_parts, 'NumberOfCells', self%total_cells)
+      if (error == 0_I4P) error = trimmed_counts(self%root, n_parts, 'NumberOfConnectivityIds', self%totals(4))
+      if (error == 0_I4P) error = trim_to(self%root, 'Connectivity', self%totals(4))
+      if (error == 0_I4P) error = trim_to(self%root, 'Offsets', self%total_cells + n_parts)
+      if (error == 0_I4P) error = trim_to(self%root, 'Types', self%total_cells)
+      if (error == 0_I4P .and. h5_link_exists(self%root, 'FaceConnectivity')) then
+        self%has_polyhedra = .true.
+        error = trimmed_counts(self%root, n_parts, 'NumberOfFaceConnectivityIds', self%totals(5))
+        if (error == 0_I4P) error = trimmed_counts(self%root, n_parts, 'NumberOfFaces', self%totals(6))
+        if (error == 0_I4P) error = trimmed_counts(self%root, n_parts, 'NumberOfPolyhedronToFaceIds', self%totals(7))
+        if (error == 0_I4P) error = trim_to(self%root, 'FaceConnectivity', self%totals(5))
+        if (error == 0_I4P) error = trim_to(self%root, 'FaceOffsets', self%totals(6) + n_parts)
+        if (error == 0_I4P) error = trim_to(self%root, 'PolyhedronToFaces', self%totals(7))
+        if (error == 0_I4P) error = trim_to(self%root, 'PolyhedronOffsets', self%total_cells + n_parts)
+      endif
+    else
+      do b=1_I8P, size(BLOCKS, kind=I8P)
+        if (error == 0_I4P) error = trimmed_counts(self%root, n_parts, trim(BLOCKS(b))//'/NumberOfCells', self%block_totals(b))
+        if (error == 0_I4P) error = trimmed_counts(self%root, n_parts, trim(BLOCKS(b))//'/NumberOfConnectivityIds', &
+                                                   self%block_totals(4+b))
+        if (error == 0_I4P) error = trim_to(self%root, trim(BLOCKS(b))//'/Connectivity', self%block_totals(4+b))
+        if (error == 0_I4P) error = trim_to(self%root, trim(BLOCKS(b))//'/Offsets', self%block_totals(b) + n_parts)
+      enddo
+      self%total_cells = sum(self%block_totals(1:4))
+    endif
+    if (error == 0_I4P) error = trimmed_arrays(self%root, 'PointData', self%total_points, self%point_arrays)
+    if (error == 0_I4P) error = trimmed_arrays(self%root, 'CellData', self%total_cells, self%cell_arrays)
+  else
+    ! a grid: its extent (the start of a RectilinearGrid or StructuredGrid one is not stored), a time slice per step
+    if (self%topology == TOPOLOGY_IMAGE) then
+      error = h5_attribute_read(self%root, 'WholeExtent', ivalues)
+      if (error == 0_I4P) self%whole_extent = int(ivalues, I4P)
+    else
+      error = h5_attribute_read(self%root, 'Dimensions', ivalues)
+      if (error == 0_I4P) then
+        self%whole_extent(1::2) = 0_I4P
+        self%whole_extent(2::2) = int(ivalues - 1_I8P, I4P)
+      endif
+    endif
+    self%n_pieces = int(k, I4P)
+    grid = self%grid_points()
+    if (error == 0_I4P .and. self%topology == TOPOLOGY_RECT) then
+      error = trim_to(self%root, 'XCoordinates', k * grid(1))
+      if (error == 0_I4P) error = trim_to(self%root, 'YCoordinates', k * grid(2))
+      if (error == 0_I4P) error = trim_to(self%root, 'ZCoordinates', k * grid(3))
+    elseif (error == 0_I4P .and. self%topology == TOPOLOGY_STRG) then
+      error = trim_to(self%root, 'Points', k)
+    endif
+    if (error == 0_I4P) error = trimmed_arrays(self%root, 'PointData', k, self%point_arrays)
+    if (error == 0_I4P) error = trimmed_arrays(self%root, 'CellData', k, self%cell_arrays)
+  endif
+  ! field data: the tuples of the complete steps (a group not written is empty)
+  names = ''
+  if (error == 0_I4P .and. h5_link_exists(self%root, 'FieldData')) error = h5_group_names(self%root, 'FieldData', names)
+  self%field_arrays = names
+  if (error == 0_I4P) then
+    b = 1_I8P
+    do while (b <= len(names, kind=I8P) .and. error == 0_I4P)
+      text = names(b:b-2_I8P+index(names(b:), NAMES_SEPARATOR, kind=I8P))
+      error = h5_dataset_read(self%root, 'Steps/FieldDataOffsets/'//text, ivalues)
+      if (error == 0_I4P) error = h5_dataset_read(self%root, 'Steps/FieldDataSizes/'//text, more)
+      if (error == 0_I4P) error = trim_to(self%root, 'FieldData/'//text, ivalues(k) + more(2_I8P * k))
+      b = b + len(text, kind=I8P) + 1_I8P
+    enddo
+  endif
+  ! the Steps entries of the complete steps
+  if (error == 0_I4P) error = trimmed_steps(self%root, 'Steps', k)
+  do b=1_I8P, size(STEP_GROUPS, kind=I8P)
+    if (error == 0_I4P .and. h5_link_exists(self%root, 'Steps/'//trim(STEP_GROUPS(b)))) &
+      error = trimmed_steps(self%root, 'Steps/'//trim(STEP_GROUPS(b)), k)
+  enddo
+  if (error /= 0_I4P) then
+    error = refuse('action append: cannot read or trim the datasets of '//filename)
+    return
+  endif
+  self%step_start = [int(self%n_pieces, I8P), self%total_points, self%total_cells, self%totals(4:)]
+  self%step_blocks = self%block_totals
+  contains
+    function trim_to(root, name, n) result(error)
+    !< Trim the dataset `name` of /VTKHDF to `n` along its last dimension (root and sizes passed: nvfortran internal
+    !< procedures can read stale host values).
+    integer(hid_kind), intent(in) :: root !< Group /VTKHDF.
+    character(*), intent(in) :: name  !< Dataset.
+    integer(I8P), intent(in) :: n     !< Size kept.
+    integer(I4P)             :: error !< Error status.
+
+    error = h5_dataset_resize(root, name, n)
+    endfunction trim_to
+
+    function trimmed_counts(root, n_parts, name, total) result(error)
+    !< Trim the counts `name` (one per part) to the parts of the complete steps, and return their sum.
+    integer(hid_kind), intent(in) :: root    !< Group /VTKHDF.
+    integer(I8P), intent(in)  :: n_parts !< Parts of the complete steps.
+    character(*), intent(in)  :: name  !< Dataset of counts.
+    integer(I8P), intent(out) :: total !< Sum of the counts kept.
+    integer(I4P)              :: error !< Error status.
+    integer(I8P), allocatable :: values(:) !< Counts.
+
+    total = 0_I8P
+    error = h5_dataset_read(root, name, values)
+    if (error /= 0_I4P) return
+    if (size(values, kind=I8P) < n_parts) then
+      error = 1_I4P
+      return
+    endif
+    total = sum(values(1:n_parts))
+    error = trim_to(root, name, n_parts)
+    endfunction trimmed_counts
+
+    function trimmed_arrays(root, group, n, list) result(error)
+    !< Trim every array of `group` to `n` along its last dimension, and list their names (none if the group was never
+    !< written).
+    integer(hid_kind),             intent(in)  :: root  !< Group /VTKHDF.
+    character(*),                  intent(in)  :: group !< Group of the arrays.
+    integer(I8P),                  intent(in)  :: n     !< Size kept.
+    character(len=:), allocatable, intent(out) :: list  !< Names, each followed by NAMES_SEPARATOR.
+    integer(I4P)                               :: error !< Error status.
+    integer(I8P)                               :: first, last !< Bounds of a name.
+
+    list = ''
+    error = 0_I4P
+    if (h5_link_exists(root, group)) error = h5_group_names(root, group, list)
+    first = 1_I8P
+    do while (first <= len(list, kind=I8P) .and. error == 0_I4P)
+      last = first - 1_I8P + index(list(first:), NAMES_SEPARATOR, kind=I8P)
+      error = trim_to(root, group//'/'//list(first:last-1), n)
+      first = last + 1_I8P
+    enddo
+    endfunction trimmed_arrays
+
+    function trimmed_steps(root, group, n_steps) result(error)
+    !< Trim every dataset of the group `group` (Steps or one of its groups) to the complete steps.
+    integer(hid_kind), intent(in) :: root   !< Group /VTKHDF.
+    character(*), intent(in)      :: group  !< Group.
+    integer(I8P), intent(in)      :: n_steps !< Complete steps.
+    integer(I4P)                  :: error  !< Error status.
+    character(len=:), allocatable :: list   !< Names of its members.
+    integer(I8P)                  :: first, last !< Bounds of a name.
+    integer(I4P)                  :: g      !< Counter.
+    logical                       :: is_group !< The member is a group of Steps.
+
+    error = h5_group_names(root, group, list)
+    first = 1_I8P
+    do while (first <= len(list, kind=I8P) .and. error == 0_I4P)
+      last = first - 1_I8P + index(list(first:), NAMES_SEPARATOR, kind=I8P)
+      is_group = .false.
+      do g=1, size(STEP_GROUPS)
+        if (list(first:last-1) == trim(STEP_GROUPS(g))) is_group = .true.
+      enddo
+      if (.not.is_group) error = trim_to(root, group//'/'//list(first:last-1), n_steps)
+      first = last + 1_I8P
+    enddo
+    endfunction trimmed_steps
+  endfunction reopen
+
   elemental subroutine reset(self)
   !< Reset the state of the writer, but the HDF5 identifiers.
   class(vtkhdf_writer), intent(inout) :: self !< Writer.
@@ -3228,6 +3472,7 @@ contains
   self%totals = 0_I8P
   self%block_totals = 0_I8P
   self%field_arrays = ''
+  self%is_reopened = .false.
   self%point_arrays = ''
   self%cell_arrays = ''
   do r=1, size(ROLES)

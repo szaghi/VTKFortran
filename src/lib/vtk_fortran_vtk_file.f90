@@ -60,6 +60,18 @@ contains
    !< error = vtk%finalize()
    !<```
    !<
+   !<### Continuing a time series
+   !<
+   !< With `format='vtkhdf'` and `action='append'` a VTKHDF time series written before (`xml_writer%write_step`) is reopened
+   !< to append steps, e.g. after a restart: `filename` is the only other argument used, the rest comes from the file. What
+   !< an interrupted run left after its last complete piece is dropped. The next `write_step` needs a later time.
+   !<
+   !<```fortran
+   !< error = vtk%initialize(format='vtkhdf', filename='run.vtkhdf', action='append')
+   !< error = vtk%xml_writer%write_step(time=t)
+   !< ...
+   !<```
+   !<
    !<### Writing
    !<
    !< `format` and `mesh_topology` are required.
@@ -130,7 +142,7 @@ contains
    real(R8P),       intent(in), optional :: direction(9)   !< Axes directions of ImageData, row-major 3x3 matrix (default identity).
    character(*),    intent(in), optional :: header_type    !< Bytes count header of binary data: UInt32 (default) or UInt64.
    character(*),    intent(in), optional :: compressor     !< Compressor of binary data: none (default) or zlib.
-   character(*),    intent(in), optional :: action         !< Action: **write** (default) or **read**, case insensitive.
+   character(*),    intent(in), optional :: action         !< Action: **write** (default), **read** or **append** (VTKHDF).
    integer(I4P)                          :: error         !< Error status.
    type(string)                          :: fformat       !< File format.
    logical                               :: is_compressed !< Compress the binary data.
@@ -145,6 +157,17 @@ contains
       case('READ')
          error = self%xml_reader%initialize(filename=filename)
          self%is_reading = error == 0_I4P
+         return
+      case('APPEND')
+         ! a VTKHDF time series continued (restart): its writer reads its state from the file
+         error = 1_I4P
+         if (.not.present(format)) return
+         if (upper_case(trim(adjustl(format))) /= 'VTKHDF') return
+         allocate(vtkhdf_writer :: self%xml_writer)
+         select type(writer => self%xml_writer)
+         type is(vtkhdf_writer)
+            error = writer%reopen(filename=filename)
+         endselect
          return
       case('WRITE')
       case default
