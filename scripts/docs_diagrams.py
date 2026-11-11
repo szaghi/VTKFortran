@@ -205,6 +205,54 @@ def sizes() -> None:
     s.write('heat_2-sizes', EXAMPLES / 'images')
 
 
+def vtkhdf() -> None:
+    """The anatomy of a VTKHDF file: an UnstructuredGrid time series of two steps (two parts, then one), its datasets
+    shared by the parts of every step, and the Steps group that tells where each step starts in them."""
+    s = Svg(760, 430, 'The structure of a VTKHDF file holding a time series of an unstructured grid', 'vhdf')
+    s.arrow_marker()
+    s.text(380, 20, 'series.vtkhdf: an UnstructuredGrid in 2 steps, 2 parts then 1', 'd-title', 'middle')
+    # the groups and datasets
+    s.rect(10, 32, 300, 388, 'd-frame', 6)
+    s.text(22, 52, '/VTKHDF   Type, Version', 'd-mono')
+    rows = ['NumberOfPoints  [parts]', 'NumberOfCells   [parts]', 'Points          [points, 3]',
+            'Connectivity, Offsets, Types', 'PointData/T     [points]', 'CellData/...    [cells]',
+            'FieldData/TIME  [steps]']
+    for i, row in enumerate(rows):
+        s.rect(22, 62 + i * 26, 276, 20, 'd-cell', 3)
+        s.text(30, 76 + i * 26, row, 'd-mono')
+    s.rect(22, 248, 276, 160, 'd-box')
+    s.text(30, 266, 'Steps   NSteps = 2', 'd-mono')
+    steps = [('Values', '[0.0, 0.5]'), ('PartOffsets', '[0, 2]'), ('NumberOfParts', '[2, 1]'),
+             ('PointOffsets', '[0, 9]'), ('CellOffsets ...', '[0, 4]'), ('FieldDataSizes/TIME', '[[1,1], [1,1]]')]
+    for i, (name, value) in enumerate(steps):
+        s.text(38, 288 + i * 20, name, 'd-mono')
+        s.text(290, 288 + i * 20, value, 'd-mono d-neon-text', 'end')
+    # the datasets as bars: the parts of step 1 (two) and of step 2 (one)
+    x0, scale = 340, 25
+    parts = [(4, 'step 1, part 1'), (5, 'step 1, part 2'), (6, 'step 2')]
+    for b, (label, y) in enumerate([('NumberOfPoints', 70), ('Points', 160), ('PointData/T', 220)]):
+        s.text(x0, y - 8, label, 'd-mono d-muted')
+        x = x0
+        for i, (n, _) in enumerate(parts):
+            w = 40 if b == 0 else n * scale
+            s.rect(x, y, w - 2, 22, 'd-data' if i < 2 else 'd-head', 2)  # step 1 (two parts), step 2
+            s.text(x + (w - 2) / 2, y + 15, str(n) if b == 0 else '', 'd-mono', 'middle')
+            x += w
+    s.text(x0, 112, 'one entry per part: the parts of every step, in order', 'd-muted')
+    for n, (_, text) in enumerate(parts):
+        s.text(x0 + sum(p * scale for p, _ in parts[:n]) + parts[n][0] * scale / 2, 268, text, 'd-muted', 'middle')
+    # PointOffsets: where each step starts in Points
+    for k, start in enumerate([0, 9]):
+        xs = x0 + start * scale
+        s.path(f'M{290:g},{348:g} C{330:g},{348 + k * 4:g} {xs - 20:g},{150:g} {xs:g},{158:g}', 'd-link', marker=True)
+    s.text(550, 320, 'PointOffsets: the first point of each step;', 'd-muted', 'middle')
+    s.text(550, 338, 'the other offsets of Steps do the same for', 'd-muted', 'middle')
+    s.text(550, 356, 'the cells, the ids, the parts, the arrays', 'd-muted', 'middle')
+    s.text(550, 392, 'a grid (ImageData, ...) has no parts: its arrays', 'd-muted', 'middle')
+    s.text(550, 410, 'get a time axis, [t, k, j, i] in C order', 'd-muted', 'middle')
+    s.write('vtkhdf')
+
+
 if __name__ == '__main__':
     import sys
 
@@ -215,4 +263,5 @@ if __name__ == '__main__':
     anatomy()
     connectivity()
     pieces()
+    vtkhdf()
     print('docs_diagrams:', ', '.join(sorted(p.name for p in OUT.glob('*.svg'))))

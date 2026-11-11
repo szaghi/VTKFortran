@@ -64,7 +64,7 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
 - `vtk_fortran_vtk_writer_abstract` — format-neutral abstract writer (`vtk_writer_abstract`): the state `vtk_file` sets
   (origin, spacing, direction, header type, compression) and every procedure `vtk_file%xml_writer` exposes (`initialize`,
   `finalize`, `write_piece`, `write_geo`, `write_connectivity`, `write_polydata_cells`, `write_dataarray`,
-  `write_dataarray_unsigned`, `write_fielddata`, `free`, `get_xml_volatile`), all deferred and PUBLIC (ifx does not
+  `write_dataarray_unsigned`, `write_fielddata`, `write_step`, `free`, `get_xml_volatile`), all deferred and PUBLIC (ifx does not
   override a private binding from another module). `vtk_file%xml_writer` is of this type (the name is kept); the XML
   writers and the VTKHDF writer extend it
 - `vtk_fortran_vtk_file_xml_writer_abstract` — abstract XML writer, extends `vtk_writer_abstract`: implements the
@@ -87,12 +87,17 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   (`x(nc,i,j,k)` = VTKHDF `[k,j,i,nc]`), the axes of one point of a grid dropped (VTK requires it); `Version` written by
   `finalize` (2.0, 2.5 with polyhedra, 2.6 with active arrays, 2.7 for RG/SG). Its procedures repeat the abstract
   interfaces, one per kind and layout, all funnelled into the private `put_<kind>` (and `store_<kind>` for the appended
-  datasets of an UnstructuredGrid and PolyData): change the kinds together
+  datasets of an UnstructuredGrid and PolyData): change the kinds together. Time series (`write_step`, `Steps`): the
+  `Steps` entries of the open step rewritten at the end of every piece (file valid after it); `reopen`
+  (`vtk_file%initialize(..., action='append')`, reached by `select type`) reads the state back and trims every dataset
+  to the last complete piece. vtkHDFReader 9.7.2 misreads a PolyData block first appearing at a later step, and a series
+  of one part at step 1 (its own files too): the tests avoid both
 - `vtk_fortran_vtk_file_xml_reader` — `xml_reader` type: reader of serial files (any format, header type, zlib) and parallel headers (`check_pieces`); indexes the file once with FoXy `xml_index` (tags and content positions, scan stopped at `AppendedData`), then decodes only the arrays asked for; error codes 0–7 documented in the module. `pvtk_file` uses it too (`action='read'`); `vtm_file` and `pvd_file` read with `get_entries`/`get_datasets`
 - `vtk_fortran_dataarray_decoder` — inverse of the encoder: ASCII/Base64/zlib data into bytes, bytes into arrays of the requested kind
 - `vtk_fortran_dataarray_encoder` — overloaded encoding routines for ASCII and Base64 (optionally zlib-compressed), covering all PENF numeric kinds and ranks 1–4
-- `vtk_fortran_hdf5` — HDF5 C API bindings (files, groups, links, attributes, datasets of every kind, appendable,
-  deflate, read back); always compiled, stubs without `VTKFORTRAN_USE_HDF5`. The `*_g` type globals must stay PUBLIC:
+- `vtk_fortran_hdf5` — HDF5 C API bindings (files, groups and their members, links, attributes (overwritten),
+  datasets of every kind, appendable, resized, deflate, read back); always compiled, stubs without
+  `VTKFORTRAN_USE_HDF5`. The `*_g` type globals must stay PUBLIC:
   gfortran gives private module variables hidden visibility, even with bind(C), and they would never bind to HDF5's
 - `vtk_fortran_zlib` — zlib bindings, VTK block compression and decompression (`zlib_compress_blocks`, `zlib_uncompress_blocks`); always compiled, stubs without `VTKFORTRAN_USE_ZLIB`
 - `vtk_fortran_parameters` — shared constants (`stderr`, `stdout`, `end_rec`)
@@ -125,6 +130,8 @@ Each test program in `src/tests/` writes actual VTK XML files, then prints `"Are
 VTKHDF ImageData written and read back; stubs checked without HDF5) and the VTKHDF writer (`vtk_fortran_write_vtkhdf.f90`:
 3D and 2D ImageData through `vtk_file`, read back with the bindings, refusals; `vtk_fortran_write_vtkhdf_unst.f90`:
 UnstructuredGrid, every cell type but polyhedra, two pieces, I8P ids, each also written as a `.vtu` to compare in VTK;
+`vtk_fortran_write_vtkhdf_steps.f90`: time series of every topology, each step also written as an XML file;
+`vtk_fortran_write_vtkhdf_append.f90`: series continued with `action='append'` (restart, interrupted run);
 `vtk_fortran_write_vtkhdf_polyh.f90`: polyhedra (one piece; three pieces with polyhedra in the second), each also
 written as a `.vtu`; `vtk_fortran_write_vtkhdf_grids.f90`: RectilinearGrid and StructuredGrid (3D/2D/1D, the four StructuredGrid
 `write_geo` layouts), each also written as a `.vtr`/`.vts`; `vtk_fortran_write_vtkhdf_poly.f90`: PolyData, the four

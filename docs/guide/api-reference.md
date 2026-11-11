@@ -35,6 +35,7 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 | `%initialize(format, filename, mesh_topology, ...)` | Open the file, select the writer (`format='vtkhdf'`: an HDF5 file, every topology), write the header; for `ImageData`/`PImageData` also `origin`, `spacing` (required) and `direction`; `header_type='UInt64'` for binary arrays larger than 2 GiB; `compressor='zlib'` to compress binary data; `is_volatile=.true.` to write into memory (`vtk_file` only) |
 | `%initialize(filename, mesh_topology, mesh_kind, ..., ghost_level)` | `pvtk_file`: no `format` (a header is ASCII); `mesh_kind` (`'Float64'` or `'Float32'`) the type of the coordinates of the pieces, required but for `PImageData`; `ghost_level` the number of layers of ghost cells of the pieces (default 0) |
 | `%initialize(filename=..., action='read')` | Open a file for reading through `%xml_reader`: a serial file (`vtk_file`) or a parallel header (`pvtk_file`), see below |
+| `%initialize(format='vtkhdf', filename=..., action='append')` | Reopen a VTKHDF time series to append steps (restart): the rest comes from the file |
 | `%finalize()` | Flush and close the file (or free the reader) |
 | `%get_xml_volatile(xml_volatile)`, `%free()` | Return the file written with `is_volatile=.true.` as a string, then free its memory (`vtk_file` only) |
 | `%xml_writer%write_fielddata(...)` | Write global FieldData: scalars, rank-1 arrays (all kinds), strings and arrays of strings |
@@ -42,6 +43,7 @@ Auto-generated from Fortran source doc comments using [FORMAL](https://github.co
 | `%xml_writer%write_geo(...)` | Write geometry (coordinates; unstructured `np`/`nc` counts `I4P` or `I8P`) |
 | `%xml_writer%write_connectivity(...)` | Write unstructured connectivity, offsets, and cell types (ids `I4P` or `I8P`) |
 | `%xml_writer%write_polydata_cells(...)` | Write the cell blocks of PolyData: vertices, lines, triangle strips, polygons (ids `I4P` or `I8P`) |
+| `%xml_writer%write_step(time)` | Start a time step of a VTKHDF time series (`format='vtkhdf'`); an error in the XML formats, whose series are `.pvd` collections |
 | `%xml_writer%write_dataarray(location, action, scalars, vectors, normals, tensors, tcoords)` | Open (`action='open'`) or close the point (`location='node'`) or cell (`'cell'`) data; designate the active arrays |
 | `%xml_writer%write_dataarray(data_name, x, one_component)`, `(data_name, x, y, z)`, `(data_name, u, v, w, x, y, z)` | Write a data array: all kinds, ranks 1 to 4, components from the shape, see [Writing arrays](/guide/data#writing-arrays) |
 | `%xml_writer%write_dataarray_unsigned(data_name, x)` | Write a rank-1 integer array as unsigned (`I1P`…`I8P` as `UInt8`…`UInt64`) |

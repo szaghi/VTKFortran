@@ -172,6 +172,30 @@ ParaView opens the collection as one dataset with a time axis: each time step sh
 
 See `src/tests/vtk_fortran_write_pvd.f90` for a complete program, restart included.
 
+### One VTKHDF file instead of a collection
+
+The VTKHDF format holds a whole time series in one HDF5 file: with `format='vtkhdf'`, each output starts with
+`xml_writer%write_step(time)`, followed by its field data and its pieces, written with the usual calls; the group `Steps`
+of the file tells where each step starts in the datasets that the steps share. A complete program:
+[A time series in one .vtkhdf file](/manual/cookbook#a-time-series-in-one-vtkhdf-file).
+
+<!--@include: ../diagrams/vtkhdf.svg-->
+
+| | `.pvd` collection | one `.vtkhdf` |
+|---|---|---|
+| Files | one per step, any XML format, plus the collection | one |
+| Valid during the run | after every step | after every piece |
+| Restart | `pvd_file%initialize(..., action='append')` | `vtk_file%initialize(format='vtkhdf', ..., action='append')` |
+| Steps | any time, any order | increasing times; the same arrays in every step |
+| Reading back with VTKFortran | yes | not yet |
+
+- `action='append'` reads the state of the series from the file (topology, extent, steps, parts, arrays) and drops what
+  an interrupted run left after its last complete piece; the next `write_step` needs a later time.
+- VTK 9.7.2 reads two kinds of series wrongly, in the files of its own writer too: a PolyData block of cells (lines,
+  say) that first appears at a later step is read empty at that step; a series of one part at its first step is read as
+  one dataset, of which a later step with more parts keeps only the last. Write every block from the first step (empty
+  blocks are fine afterwards), and the largest number of parts at the first step, or use a `.pvd` collection.
+
 ## Threads and processes
 
 **MPI processes** write their own files at the same time with no limitation: they share no memory. Each rank writes its

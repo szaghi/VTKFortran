@@ -29,6 +29,16 @@ and the cube cools down.
 
 <p align="center"><img src="../../examples/images/heat_4.gif" alt="an animation of the temperature on the middle plane of the cube, two peaks merging and decaying"></p>
 
+## One file instead of a collection
+
+With the library built with HDF5, the whole series can be one `.vtkhdf` file instead: the file is initialized once
+with `format='vtkhdf'`, and each output starts with `write_step(time)`; its other calls do not change:
+
+<<< @/examples/snippets/vtkhdf_series-output.f90
+
+The file is valid after every output too, and a restart continues it (`action='append'`): see the recipe
+[A time series in one .vtkhdf file](/manual/cookbook#a-time-series-in-one-vtkhdf-file).
+
 ::: tip What you learned
 One file per output, listed by a `pvd_file` with its time: the collection is always valid. Reference:
 [Time series](/guide/parallel#time-series-pvd).

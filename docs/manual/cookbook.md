@@ -155,6 +155,30 @@ A RectilinearGrid is written the same way, with `write_geo(x=x, y=y, z=z)`: its 
 `XCoordinates`, `YCoordinates` and `ZCoordinates`. Both are VTKHDF 2.7: **VTK 9.7 reads them, ParaView 6.1 does not**
 (its VTK 9.6 knows neither type); use the XML formats (`.vtr`, `.vts`) for a ParaView of VTK 9.6 or older.
 
+### A time series in one .vtkhdf file
+
+Instead of one file per output and a `.pvd` collection, the whole series in one `.vtkhdf` file: each output starts with
+`write_step(time)`, then its field data and its pieces, written as usual. Here a wave on a 2D grid, written in two runs:
+the second one reopens the file with `action='append'`, as a restarted simulation would.
+
+<<< @/examples/snippets/vtkhdf_series-write.f90
+
+Each output:
+
+<<< @/examples/snippets/vtkhdf_series-output.f90
+
+<<< @/examples/output/vtkhdf_series.ansi{ansi}
+
+<p align="center"><img src="../examples/images/vtkhdf_series.gif" alt="the wave travelling along the grid, the eight steps of the VTKHDF file played by ParaView"></p>
+
+- **The file is valid after every piece**: a run killed in the middle leaves the steps written so far, as a `.pvd`
+  collection does. `action='append'` continues the file, and drops what an interrupted run left after its last complete
+  piece. The times must increase: a restart from an earlier time is refused.
+- Every step writes the same arrays. A grid (ImageData, RectilinearGrid, StructuredGrid) has one piece per step; the parts
+  of an UnstructuredGrid or a PolyData can change from step to step, and so can the mesh.
+- The layout of the file: [VTKHDF](/guide/formats#vtkhdf-hdf5); the two kinds of series compared:
+  [Time series](/guide/parallel#time-series-pvd).
+
 ### More than 2^31 points or cells
 
 <<< @/examples/snippets/ids_64bit.f90

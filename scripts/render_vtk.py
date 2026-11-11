@@ -1,9 +1,9 @@
-"""Render a VTK file written by a documentation example: a PNG image, or an animated GIF for a .pvd time series.
+"""Render a VTK file written by a documentation example: a PNG image, or an animated GIF for a time series (.pvd or .vtkhdf).
 
 Usage: pvpython --force-offscreen-rendering render_vtk.py FILE IMAGE [KEY=VALUE ...]
 
-IMAGE is the image path without extension: IMAGE.png is written, or IMAGE.gif when FILE is a .pvd file with more than
-one time step. The keys (all optional):
+IMAGE is the image path without extension: IMAGE.png is written, or IMAGE.gif when FILE is a .pvd or .vtkhdf file with
+more than one time step. The keys (all optional):
 
   array=NAME       colour by the point or cell array NAME (default: the solid colour of the site)
   edges=1          draw the cell edges
@@ -33,7 +33,7 @@ one time step. The keys (all optional):
   explode=F        for a parallel header (.pvtu): an animated GIF of its pieces moving apart from the centre (the farthest
                    one by the fraction F of the size of the dataset, the others in proportion), and back; their ghost
                    cells removed, so that each piece is drawn closed
-  stride=N         for a .pvd GIF: one frame every N time steps (the last one always included)
+  stride=N         for a GIF: one frame every N time steps (the last one always included)
   camera=front     a view from the front, a little from above and from the right (for galleries of cells)
 
 The renders are deterministic for a given ParaView version: the camera, colours and sizes depend only on the keys and on
@@ -384,7 +384,7 @@ def main() -> None:
     view.ResetCamera()
     view.GetActiveCamera().Zoom(float(opt.get('zoom', '1')))
 
-    if len(times) > 1 and path.endswith('.pvd'):
+    if len(times) > 1 and path.endswith(('.pvd', '.vtkhdf')):
         from PIL import Image  # bundled with pvpython
 
         shots = []

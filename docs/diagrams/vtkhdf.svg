@@ -1,0 +1,67 @@
+<svg class="vtk-diagram" viewBox="0 0 760 430" role="img" aria-labelledby="vhdf-t">
+<title id="vhdf-t">The structure of a VTKHDF file holding a time series of an unstructured grid</title>
+<defs><marker id="vhdf-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="d-arrowhead" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<text x="380" y="20" class="d-title" text-anchor="middle">series.vtkhdf: an UnstructuredGrid in 2 steps, 2 parts then 1</text>
+<rect class="d-frame" x="10" y="32" width="300" height="388" rx="6"/>
+<text x="22" y="52" class="d-mono">/VTKHDF   Type, Version</text>
+<rect class="d-cell" x="22" y="62" width="276" height="20" rx="3"/>
+<text x="30" y="76" class="d-mono">NumberOfPoints  [parts]</text>
+<rect class="d-cell" x="22" y="88" width="276" height="20" rx="3"/>
+<text x="30" y="102" class="d-mono">NumberOfCells   [parts]</text>
+<rect class="d-cell" x="22" y="114" width="276" height="20" rx="3"/>
+<text x="30" y="128" class="d-mono">Points          [points, 3]</text>
+<rect class="d-cell" x="22" y="140" width="276" height="20" rx="3"/>
+<text x="30" y="154" class="d-mono">Connectivity, Offsets, Types</text>
+<rect class="d-cell" x="22" y="166" width="276" height="20" rx="3"/>
+<text x="30" y="180" class="d-mono">PointData/T     [points]</text>
+<rect class="d-cell" x="22" y="192" width="276" height="20" rx="3"/>
+<text x="30" y="206" class="d-mono">CellData/...    [cells]</text>
+<rect class="d-cell" x="22" y="218" width="276" height="20" rx="3"/>
+<text x="30" y="232" class="d-mono">FieldData/TIME  [steps]</text>
+<rect class="d-box" x="22" y="248" width="276" height="160" rx="4"/>
+<text x="30" y="266" class="d-mono">Steps   NSteps = 2</text>
+<text x="38" y="288" class="d-mono">Values</text>
+<text x="290" y="288" class="d-mono d-neon-text" text-anchor="end">[0.0, 0.5]</text>
+<text x="38" y="308" class="d-mono">PartOffsets</text>
+<text x="290" y="308" class="d-mono d-neon-text" text-anchor="end">[0, 2]</text>
+<text x="38" y="328" class="d-mono">NumberOfParts</text>
+<text x="290" y="328" class="d-mono d-neon-text" text-anchor="end">[2, 1]</text>
+<text x="38" y="348" class="d-mono">PointOffsets</text>
+<text x="290" y="348" class="d-mono d-neon-text" text-anchor="end">[0, 9]</text>
+<text x="38" y="368" class="d-mono">CellOffsets ...</text>
+<text x="290" y="368" class="d-mono d-neon-text" text-anchor="end">[0, 4]</text>
+<text x="38" y="388" class="d-mono">FieldDataSizes/TIME</text>
+<text x="290" y="388" class="d-mono d-neon-text" text-anchor="end">[[1,1], [1,1]]</text>
+<text x="340" y="62" class="d-mono d-muted">NumberOfPoints</text>
+<rect class="d-data" x="340" y="70" width="38" height="22" rx="2"/>
+<text x="359" y="85" class="d-mono" text-anchor="middle">4</text>
+<rect class="d-data" x="380" y="70" width="38" height="22" rx="2"/>
+<text x="399" y="85" class="d-mono" text-anchor="middle">5</text>
+<rect class="d-head" x="420" y="70" width="38" height="22" rx="2"/>
+<text x="439" y="85" class="d-mono" text-anchor="middle">6</text>
+<text x="340" y="152" class="d-mono d-muted">Points</text>
+<rect class="d-data" x="340" y="160" width="98" height="22" rx="2"/>
+<text x="389" y="175" class="d-mono" text-anchor="middle"></text>
+<rect class="d-data" x="440" y="160" width="123" height="22" rx="2"/>
+<text x="501.5" y="175" class="d-mono" text-anchor="middle"></text>
+<rect class="d-head" x="565" y="160" width="148" height="22" rx="2"/>
+<text x="639" y="175" class="d-mono" text-anchor="middle"></text>
+<text x="340" y="212" class="d-mono d-muted">PointData/T</text>
+<rect class="d-data" x="340" y="220" width="98" height="22" rx="2"/>
+<text x="389" y="235" class="d-mono" text-anchor="middle"></text>
+<rect class="d-data" x="440" y="220" width="123" height="22" rx="2"/>
+<text x="501.5" y="235" class="d-mono" text-anchor="middle"></text>
+<rect class="d-head" x="565" y="220" width="148" height="22" rx="2"/>
+<text x="639" y="235" class="d-mono" text-anchor="middle"></text>
+<text x="340" y="112" class="d-muted">one entry per part: the parts of every step, in order</text>
+<text x="390" y="268" class="d-muted" text-anchor="middle">step 1, part 1</text>
+<text x="502.5" y="268" class="d-muted" text-anchor="middle">step 1, part 2</text>
+<text x="640" y="268" class="d-muted" text-anchor="middle">step 2</text>
+<path class="d-link" d="M290,348 C330,348 320,150 340,158" marker-end="url(#vhdf-arrow)"/>
+<path class="d-link" d="M290,348 C330,352 545,150 565,158" marker-end="url(#vhdf-arrow)"/>
+<text x="550" y="320" class="d-muted" text-anchor="middle">PointOffsets: the first point of each step;</text>
+<text x="550" y="338" class="d-muted" text-anchor="middle">the other offsets of Steps do the same for</text>
+<text x="550" y="356" class="d-muted" text-anchor="middle">the cells, the ids, the parts, the arrays</text>
+<text x="550" y="392" class="d-muted" text-anchor="middle">a grid (ImageData, ...) has no parts: its arrays</text>
+<text x="550" y="410" class="d-muted" text-anchor="middle">get a time axis, [t, k, j, i] in C order</text>
+</svg>
