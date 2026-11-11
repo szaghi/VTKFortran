@@ -25,6 +25,7 @@ set(VTKFORTRAN_TESTS
   vtk_fortran_write_vtkhdf_unst.f90
   vtk_fortran_write_vtkhdf_poly.f90
   vtk_fortran_write_vtkhdf_polyh.f90
+  vtk_fortran_write_vtkhdf_steps.f90
   vtk_fortran_write_vtm.f90
   vtk_fortran_write_vtm_nested.f90
   vtk_fortran_write_vtm_scratch.f90

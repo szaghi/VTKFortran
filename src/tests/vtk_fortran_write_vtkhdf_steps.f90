@@ -1,0 +1,300 @@
+!< VTK_Fortran test: write time series in the VTKHDF format (`format='vtkhdf'`, `write_step`).
+program vtk_fortran_write_vtkhdf_steps
+!< VTK_Fortran test: write time series in the VTKHDF format (`format='vtkhdf'`, `write_step`).
+!<
+!< With HDF5 the test writes six time series, each one as one `.vtkhdf` file and, by the same calls, as one binary XML
+!< file per step, `<name>_<step>.vt?` (VTK readers compare each step with its XML file outside this test):
+!<
+!<- `vtkfortran_steps_unst`: an UnstructuredGrid whose mesh changes (one more point at each step), two pieces, then one,
+!<  then two, with point, cell and field data (two at step 1: vtkHDFReader 9.7.2 reads a series of one piece at step 1 as
+!<  one dataset, of which it keeps only the last piece of a later step with more);
+!<- `vtkfortran_steps_polyh`: an UnstructuredGrid with a hexahedron, then a cube as a polyhedron and a tetrahedron;
+!<- `vtkfortran_steps_poly`: a PolyData with the four blocks, then lines and strips only;
+!<- `vtkfortran_steps_image`: a 2D ImageData, its point and cell data and its field data changing at each step;
+!<- `vtkfortran_steps_rect`: a RectilinearGrid whose coordinates stretch at each step;
+!<- `vtkfortran_steps_strg`: a 2D StructuredGrid whose points move at each step.
+!<
+!< The UnstructuredGrid series is read back with the HDF5 bindings (NSteps, Values, the parts of each step). Refusals are
+!< checked too. Without HDF5 the writer refuses to start.
+use penf
+use vtk_fortran, only : vtk_file
+use vtk_fortran_hdf5
+
+implicit none
+type(vtk_file)                :: a_vtk_file                 !< VTK file.
+integer(hid_kind)             :: file_id, root, steps       !< HDF5 identifiers.
+integer(I8P),     allocatable :: ivalues(:)                 !< Values read back.
+real(R8P),        allocatable :: rvalues(:)                 !< Values read back.
+integer(I4P)                  :: e(30)                      !< Errors of each call.
+integer(I4P)                  :: f                          !< Counter.
+logical                       :: test_passed(5)             !< List of passed tests.
+real(R8P),        parameter   :: times(3) = [0._R8P, 0.5_R8P, 1._R8P] !< Times of the steps.
+
+test_passed = .false.
+if (.not.is_hdf5_enabled) then
+  test_passed = a_vtk_file%initialize(format='vtkhdf', filename='refused.vtkhdf', mesh_topology='UnstructuredGrid') /= 0
+  print '(A)', 'HDF5 not enabled: the VTKHDF writer refuses to start'
+else
+  e = 0
+  do f=1, 2
+    e(f)    = series('vtkfortran_steps_unst',  'UnstructuredGrid', '.vtu', 3, f == 1, unst_step)
+    e(2+f)  = series('vtkfortran_steps_polyh', 'UnstructuredGrid', '.vtu', 2, f == 1, polyh_step)
+    e(4+f)  = series('vtkfortran_steps_poly',  'PolyData',         '.vtp', 2, f == 1, poly_step)
+    e(6+f)  = series('vtkfortran_steps_image', 'ImageData',        '.vti', 3, f == 1, image_step)
+    e(8+f)  = series('vtkfortran_steps_rect',  'RectilinearGrid',  '.vtr', 2, f == 1, rect_step)
+    e(10+f) = series('vtkfortran_steps_strg',  'StructuredGrid',   '.vts', 2, f == 1, strg_step)
+  enddo
+  test_passed(1) = all(e(1:12) == 0)
+  if (.not.test_passed(1)) print '(A,12I2)', 'errors of the series (vtkhdf, xml for each): ', e(1:12)
+  test_passed(2) = refusals()
+
+  ! read back the UnstructuredGrid series
+  e = 0
+  e(1) = h5_file_open('vtkfortran_steps_unst.vtkhdf', file_id)
+  e(2) = h5_group_open(file_id, 'VTKHDF', root)
+  e(3) = h5_group_open(root, 'Steps', steps)
+  e(4) = h5_attribute_read(steps, 'NSteps', ivalues)
+  test_passed(3) = all(ivalues == [3_I8P])
+  e(5) = h5_dataset_read(steps, 'Values', rvalues)
+  test_passed(3) = test_passed(3) .and. all(rvalues == times)
+  e(6) = h5_dataset_read(steps, 'NumberOfParts', ivalues)
+  test_passed(4) = all(ivalues == [2_I8P, 1_I8P, 2_I8P])
+  e(7) = h5_dataset_read(steps, 'PartOffsets', ivalues)
+  test_passed(4) = test_passed(4) .and. all(ivalues == [0_I8P, 2_I8P, 3_I8P])
+  e(8) = h5_dataset_read(steps, 'PointOffsets', ivalues)
+  test_passed(4) = test_passed(4) .and. all(ivalues == [0_I8P, 13_I8P, 19_I8P])
+  e(9) = h5_dataset_read(steps, 'FieldDataSizes/time', ivalues)
+  test_passed(4) = test_passed(4) .and. all(ivalues == [1_I8P, 1_I8P, 1_I8P, 1_I8P, 1_I8P, 1_I8P])
+  e(10) = h5_group_close(steps)
+  e(11) = h5_group_close(root)
+  e(12) = h5_file_close(file_id)
+  test_passed(5) = all(e(1:12) == 0)
+  print '(A,5L2)', 'VTKHDF time series: series, refusals, steps, offsets, reads:', test_passed
+endif
+
+print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
+if (.not.all(test_passed)) error stop 'some tests failed'
+stop
+contains
+  function series(base, topology, xml, n_steps, is_vtkhdf, step) result(error)
+  !< Write a time series: one `.vtkhdf` file with a `write_step` per step, or one XML file per step, by the same calls.
+  character(*), intent(in) :: base       !< Base name of the files.
+  character(*), intent(in) :: topology   !< Mesh topology.
+  character(*), intent(in) :: xml        !< Extension of the XML files.
+  integer(I4P), intent(in) :: n_steps    !< Number of steps.
+  logical,      intent(in) :: is_vtkhdf  !< One VTKHDF file, otherwise XML files.
+  interface
+    function step(s) result(error)
+    import :: I4P
+    integer(I4P), intent(in) :: s     !< Step, from 1.
+    integer(I4P)             :: error !< Error status.
+    endfunction step
+  endinterface
+  integer(I4P)             :: error    !< Error status.
+  integer(I4P)             :: s        !< Step.
+
+  error = 0
+  if (is_vtkhdf) error = initialize(base//'.vtkhdf', 'vtkhdf', topology)
+  do s=1, n_steps
+    if (is_vtkhdf) then
+      error = max(error, abs(a_vtk_file%xml_writer%write_step(time=times(s))))
+    else
+      error = max(error, abs(initialize(base//'_'//trim(str(n=s, no_sign=.true.))//xml, 'binary', topology)))
+    endif
+    error = max(error, abs(field_data(s)))
+    error = max(error, abs(step(s)))
+    if (.not.is_vtkhdf) error = max(error, abs(a_vtk_file%finalize()))
+  enddo
+  if (is_vtkhdf) error = max(error, abs(a_vtk_file%finalize()))
+  endfunction series
+
+  function initialize(filename, format, topology) result(error)
+  !< Initialize a file of the topology (the extents of the grids of the test: 0:2 x 0:1 x 0:0, 2D).
+  character(*), intent(in) :: filename !< File name.
+  character(*), intent(in) :: format   !< Format.
+  character(*), intent(in) :: topology !< Mesh topology.
+  integer(I4P)             :: error    !< Error status.
+
+  select case(topology)
+  case('ImageData')
+    error = a_vtk_file%initialize(format=format, filename=filename, mesh_topology=topology, &
+                                  nx1=0, nx2=2, ny1=0, ny2=1, nz1=0, nz2=0,                 &
+                                  origin=[0._R8P, 0._R8P, 0._R8P], spacing=[1._R8P, 1._R8P, 1._R8P])
+  case('RectilinearGrid', 'StructuredGrid')
+    error = a_vtk_file%initialize(format=format, filename=filename, mesh_topology=topology, &
+                                  nx1=0, nx2=2, ny1=0, ny2=1, nz1=0, nz2=0)
+  case default
+    error = a_vtk_file%initialize(format=format, filename=filename, mesh_topology=topology)
+  endselect
+  endfunction initialize
+
+  function field_data(s) result(error)
+  !< The field data of the step: its time and its cycle.
+  integer(I4P), intent(in) :: s     !< Step.
+  integer(I4P)             :: error !< Error status.
+
+  error = a_vtk_file%xml_writer%write_fielddata(action='open')
+  error = max(error, abs(a_vtk_file%xml_writer%write_fielddata(data_name='time', x=times(s))))
+  error = max(error, abs(a_vtk_file%xml_writer%write_fielddata(data_name='cycle', x=10_I4P * s)))
+  error = max(error, abs(a_vtk_file%xml_writer%write_fielddata(action='close')))
+  endfunction field_data
+
+  function cell_point_data(np, nc, s) result(error)
+  !< Point data pd (100*s + point) and cell data cid (100*s + cell) of a piece, then the end of the piece.
+  integer(I4P), intent(in) :: np, nc, s
+  integer(I4P)             :: error, i
+
+  error = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
+  error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(data_name='pd', x=[(real(100 * s + i, R8P), i=1, np)])))
+  error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(location='node', action='close')))
+  error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(location='cell', action='open')))
+  error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(data_name='cid', x=[(100 * s + i, i=1, nc)])))
+  error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(location='cell', action='close')))
+  error = max(error, abs(a_vtk_file%xml_writer%write_piece()))
+  endfunction cell_point_data
+
+  function unst_step(s) result(error)
+  !< A tetrahedron and 0 to 2 more points (the mesh changes); at steps 1 and 3 a second piece, a hexahedron.
+  integer(I4P), intent(in) :: s     !< Step.
+  integer(I4P)             :: error !< Error status.
+  integer(I4P)             :: np, i
+
+  np = 4 + s
+  error = a_vtk_file%xml_writer%write_piece(np=np, nc=1)
+  error = max(error, abs(a_vtk_file%xml_writer%write_geo(np=np, nc=1, x=[(real(i, R8P), i=0, np-1)],           &
+                                                         y=[(real(mod(i, 2), R8P), i=0, np-1)],                   &
+                                                         z=[(real(i / 3, R8P) + 0.1_R8P * s, i=0, np-1)])))
+  error = max(error, abs(a_vtk_file%xml_writer%write_connectivity(nc=1, connectivity=[0, 1, 2, 3], offset=[4], &
+                                                                    cell_type=[10_I1P])))
+  error = max(error, abs(cell_point_data(np, 1, s)))
+  if (s == 1 .or. s == 3) then
+    error = max(error, abs(a_vtk_file%xml_writer%write_piece(np=8, nc=1)))
+    error = max(error, abs(a_vtk_file%xml_writer%write_geo(np=8, nc=1, x=[0._R8P, 1._R8P, 1._R8P, 0._R8P, 0._R8P, 1._R8P, &
+                                                                         1._R8P, 0._R8P] + 10._R8P,                       &
+                                                           y=[0._R8P, 0._R8P, 1._R8P, 1._R8P, 0._R8P, 0._R8P, 1._R8P, 1._R8P], &
+                                                           z=[0._R8P, 0._R8P, 0._R8P, 0._R8P, 1._R8P, 1._R8P, 1._R8P, 1._R8P])))
+    error = max(error, abs(a_vtk_file%xml_writer%write_connectivity(nc=1, connectivity=[0, 1, 2, 3, 4, 5, 6, 7], &
+                                                                      offset=[8], cell_type=[12_I1P])))
+    error = max(error, abs(cell_point_data(8, 1, 50)))
+  endif
+  endfunction unst_step
+
+  function polyh_step(s) result(error)
+  !< A hexahedron (step 1), then a cube as a polyhedron and a tetrahedron (step 2), moved up at each step.
+  integer(I4P), intent(in) :: s     !< Step.
+  integer(I4P)             :: error !< Error status.
+  integer(I4P), parameter  :: cube(31) = [6, 4, 0, 3, 2, 1,  4, 4, 5, 6, 7,  4, 0, 1, 5, 4,  4, 1, 2, 6, 5, &
+                                          4, 2, 3, 7, 6,  4, 3, 0, 4, 7]
+  real(R8P)                :: x(12), y(12), z(12)
+  integer(I4P)             :: i
+
+  x = [0, 1, 1, 0, 0, 1, 1, 0,  2, 3, 2, 2] ; y = [0, 0, 1, 1, 0, 0, 1, 1,  0, 0, 1, 0]
+  z = [0, 0, 0, 0, 1, 1, 1, 1,  0, 0, 0, 1] ; z = z + s
+  if (s == 1) then
+    error = a_vtk_file%xml_writer%write_piece(np=8, nc=1)
+    error = max(error, abs(a_vtk_file%xml_writer%write_geo(np=8, nc=1, x=x(1:8), y=y(1:8), z=z(1:8))))
+    error = max(error, abs(a_vtk_file%xml_writer%write_connectivity(nc=1, connectivity=[(i, i=0, 7)], offset=[8], &
+                                                                      cell_type=[12_I1P])))
+    error = max(error, abs(cell_point_data(8, 1, s)))
+  else
+    error = a_vtk_file%xml_writer%write_piece(np=12, nc=2)
+    error = max(error, abs(a_vtk_file%xml_writer%write_geo(np=12, nc=2, x=x, y=y, z=z)))
+    error = max(error, abs(a_vtk_file%xml_writer%write_connectivity(nc=2, connectivity=[(i, i=0, 11)], offset=[8, 12],    &
+                                                                      cell_type=[42_I1P, 10_I1P], face=cube, faceoffset=[31, -1])))
+    error = max(error, abs(cell_point_data(12, 2, s)))
+  endif
+  endfunction polyh_step
+
+  function poly_step(s) result(error)
+  !< The four blocks (a vertex, a polyline, a triangle strip, a quad) at step 1, then a polyline and a triangle strip only.
+  !< (Not a block first appearing at a later step: vtkHDFReader 9.7.2 reads it wrongly at that step, in VTK's own files too.)
+  integer(I4P), intent(in) :: s     !< Step.
+  integer(I4P)             :: error !< Error status.
+
+  if (s == 1) then
+    error = a_vtk_file%xml_writer%write_piece(np=6, nverts=1, nlines=1, nstrips=1, npolys=1)
+    error = max(error, abs(a_vtk_file%xml_writer%write_geo(np=6, nc=4, x=[0._R8P, 1._R8P, 2._R8P, 0._R8P, 1._R8P, 2._R8P], &
+                                                           y=[0._R8P, 0._R8P, 0._R8P, 1._R8P, 1._R8P, 1._R8P],           &
+                                                           z=[0._R8P, 0._R8P, 0._R8P, 0._R8P, 0._R8P, 0._R8P])))
+    error = max(error, abs(a_vtk_file%xml_writer%write_polydata_cells(verts_connectivity=[5], verts_offset=[1],          &
+                                                                      lines_connectivity=[0, 1, 2], lines_offset=[3],   &
+                                                                      strips_connectivity=[0, 3, 1, 4], strips_offset=[4], &
+                                                                      polys_connectivity=[1, 2, 5, 4], polys_offset=[4])))
+    error = max(error, abs(cell_point_data(6, 4, s)))
+  else
+    error = a_vtk_file%xml_writer%write_piece(np=4, nverts=0, nlines=1, nstrips=1, npolys=0)
+    error = max(error, abs(a_vtk_file%xml_writer%write_geo(np=4, nc=2, x=[0._R8P, 1._R8P, 0._R8P, 1._R8P], &
+                                                           y=[2._R8P, 2._R8P, 3._R8P, 3._R8P], z=[0._R8P, 0._R8P, 0._R8P, 0._R8P])))
+    error = max(error, abs(a_vtk_file%xml_writer%write_polydata_cells(lines_connectivity=[0, 1, 2], lines_offset=[3],      &
+                                                                      strips_connectivity=[0, 1, 2, 3], strips_offset=[4])))
+    error = max(error, abs(cell_point_data(4, 2, s)))
+  endif
+  endfunction poly_step
+
+  function image_step(s) result(error)
+  !< The 3x2 points (2x1 cells) of the 2D ImageData, its data changing at each step.
+  integer(I4P), intent(in) :: s     !< Step.
+  integer(I4P)             :: error !< Error status.
+
+  error = a_vtk_file%xml_writer%write_piece(nx1=0, nx2=2, ny1=0, ny2=1, nz1=0, nz2=0)
+  error = max(error, abs(cell_point_data(6, 2, s)))
+  endfunction image_step
+
+  function rect_step(s) result(error)
+  !< The 3x2 points of the RectilinearGrid, its x coordinates stretched at each step.
+  integer(I4P), intent(in) :: s     !< Step.
+  integer(I4P)             :: error !< Error status.
+
+  error = a_vtk_file%xml_writer%write_piece(nx1=0, nx2=2, ny1=0, ny2=1, nz1=0, nz2=0)
+  error = max(error, abs(a_vtk_file%xml_writer%write_geo(x=[0._R8P, 1._R8P, 2._R8P] * s, y=[0._R8P, 1._R8P], z=[0._R8P])))
+  error = max(error, abs(cell_point_data(6, 2, s)))
+  endfunction rect_step
+
+  function strg_step(s) result(error)
+  !< The 3x2 points of the StructuredGrid, moved along x at each step.
+  integer(I4P), intent(in) :: s     !< Step.
+  integer(I4P)             :: error !< Error status.
+
+  error = a_vtk_file%xml_writer%write_piece(nx1=0, nx2=2, ny1=0, ny2=1, nz1=0, nz2=0)
+  error = max(error, abs(a_vtk_file%xml_writer%write_geo(n=6, x=[0._R8P, 1._R8P, 2._R8P, 0._R8P, 1._R8P, 2._R8P] + s, &
+                                                         y=[0._R8P, 0._R8P, 0._R8P, 1._R8P, 1._R8P, 1._R8P],           &
+                                                         z=[0._R8P, 0._R8P, 0._R8P, 0._R8P, 0._R8P, 0._R8P])))
+  error = max(error, abs(cell_point_data(6, 2, s)))
+  endfunction strg_step
+
+  logical function refusals()
+  !< The refusals of the time series, each one a non-zero error.
+  integer(I4P) :: error
+  logical      :: ok(7)
+
+  ok = .false.
+  ! write_step in an XML format
+  error = a_vtk_file%initialize(format='binary', filename='refused_steps.vti', mesh_topology='ImageData', &
+                                nx1=0, nx2=2, ny1=0, ny2=1, nz1=0, nz2=0,                                &
+                                origin=[0._R8P, 0._R8P, 0._R8P], spacing=[1._R8P, 1._R8P, 1._R8P])
+  ok(1) = a_vtk_file%xml_writer%write_step(time=0._R8P) /= 0
+  error = a_vtk_file%finalize()
+  ! write_step after the first piece of a file that is not a time series
+  error = initialize('refused_steps_1.vtkhdf', 'vtkhdf', 'ImageData')
+  error = image_step(1)
+  ok(2) = a_vtk_file%xml_writer%write_step(time=0._R8P) /= 0
+  error = a_vtk_file%finalize()
+  ! times not increasing; a step without piece; two pieces of a grid in a step; a new array; a last step without piece
+  error = initialize('refused_steps_2.vtkhdf', 'vtkhdf', 'ImageData')
+  error = a_vtk_file%xml_writer%write_step(time=1._R8P)
+  ok(3) = a_vtk_file%xml_writer%write_step(time=2._R8P) /= 0                             ! the step before has no piece
+  error = image_step(1)
+  ok(4) = a_vtk_file%xml_writer%write_step(time=1._R8P) /= 0                             ! not increasing
+  ok(5) = a_vtk_file%xml_writer%write_piece(nx1=0, nx2=2, ny1=0, ny2=1, nz1=0, nz2=0) /= 0 ! a second piece in the step
+  error = a_vtk_file%xml_writer%write_step(time=2._R8P)
+  error = a_vtk_file%xml_writer%write_piece(nx1=0, nx2=2, ny1=0, ny2=1, nz1=0, nz2=0)
+  error = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
+  ok(6) = a_vtk_file%xml_writer%write_dataarray(data_name='new', x=[(1._R8P, f=1, 6)]) /= 0 ! not in the first step
+  error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
+  error = a_vtk_file%xml_writer%write_piece()
+  error = a_vtk_file%xml_writer%write_step(time=3._R8P)
+  ok(7) = a_vtk_file%finalize() /= 0                                                      ! the last step has no piece
+  refusals = all(ok)
+  if (.not.refusals) print '(A,7L2)', 'refusals: ', ok
+  endfunction refusals
+endprogram vtk_fortran_write_vtkhdf_steps

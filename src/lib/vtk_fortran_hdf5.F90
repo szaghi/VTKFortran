@@ -33,6 +33,7 @@ public :: h5_group_open
 public :: h5_group_close
 public :: h5_link_exists
 public :: h5_link_soft
+public :: h5_group_names
 public :: h5_attribute_write
 public :: h5_attribute_read
 public :: h5_attribute_exists
@@ -47,6 +48,7 @@ public :: h5_dataset_append_I2P, h5_dataset_append_I1P
 public :: h5_dataset_open
 public :: h5_dataset_close
 public :: h5_dataset_dims
+public :: h5_dataset_resize
 public :: h5_dataset_read
 public :: h5_deflate_available
 
@@ -232,6 +234,22 @@ interface
     character(kind=c_char), intent(in) :: name(*)
     integer(c_int64_t), value          :: aapl
   end function H5Aopen
+  integer(c_int) function H5Adelete(loc, name) bind(C, name='H5Adelete')
+    import :: c_int, c_int64_t, c_char
+    integer(c_int64_t), value          :: loc
+    character(kind=c_char), intent(in) :: name(*)
+  end function H5Adelete
+  integer(c_int64_t) function H5Lget_name_by_idx(loc, group, idx_type, order, n, name, size, lapl) &
+      bind(C, name='H5Lget_name_by_idx')
+    import :: c_int, c_int64_t, c_char, c_long_long, c_size_t, c_ptr
+    integer(c_int64_t),   value          :: loc
+    character(kind=c_char), intent(in)   :: group(*)
+    integer(c_int),       value          :: idx_type, order
+    integer(c_long_long), value          :: n
+    type(c_ptr),          value          :: name
+    integer(c_size_t),    value          :: size
+    integer(c_int64_t),   value          :: lapl
+  end function H5Lget_name_by_idx
   integer(c_int) function H5Aexists(loc, name) bind(C, name='H5Aexists')
     import :: c_int, c_int64_t, c_char
     integer(c_int64_t), value          :: loc
@@ -488,6 +506,42 @@ contains
 #endif
   endfunction h5_link_soft
 
+  function h5_group_names(loc_id, group, names) result(error)
+  !< Return the names of the members (links) of the group `group` of `loc_id`, in the order of their names, each one
+  !< followed by a NUL character (`achar(0)`); empty if the group has none.
+  integer(hid_kind),             intent(in)  :: loc_id !< Parent (file or group).
+  character(*),                  intent(in)  :: group  !< Group name (or path).
+  character(len=:), allocatable, intent(out) :: names  !< Names, each followed by NUL.
+#ifdef VTKFORTRAN_USE_HDF5
+  integer(c_int64_t)                         :: n      !< Length of a name (ssize_t).
+  integer(c_long_long)                       :: m      !< Member index.
+  character(kind=c_char), allocatable, target :: chars(:) !< A name, as C characters.
+#endif
+  integer(I4P)                               :: error  !< Error status.
+
+  names = ''
+  error = 1_I4P
+#ifdef VTKFORTRAN_USE_HDF5
+  if (.not.h5_link_exists(loc_id, group)) return
+  error = 0_I4P
+  m = 0_c_long_long
+  do
+    n = H5Lget_name_by_idx(loc_id, trim(group)//c_null_char, 0_c_int, 0_c_int, m, c_null_ptr, 0_c_size_t, H5P_DEFAULT)
+    if (n < 0) exit ! past the last member
+    allocate(chars(n + 1))
+    n = H5Lget_name_by_idx(loc_id, trim(group)//c_null_char, 0_c_int, 0_c_int, m, c_loc(chars), &
+                           int(n + 1, c_size_t), H5P_DEFAULT)
+    if (n < 0) then
+      error = 1_I4P
+      return
+    endif
+    names = names//transfer(chars(1:n), repeat(' ', int(n)))//achar(0)
+    deallocate(chars)
+    m = m + 1_c_long_long
+  enddo
+#endif
+  endfunction h5_group_names
+
   function h5_attribute_exists(loc_id, name) result(exists)
   !< Return true if the attribute `name` of the object `loc_id` exists.
   integer(hid_kind), intent(in) :: loc_id !< Object (file, group or dataset).
@@ -522,6 +576,9 @@ contains
   if (dtype < 0) return
   if (H5Tset_size(dtype, int(size(chars), c_size_t)) < 0) return
   if (H5Tset_strpad(dtype, H5T_STR_NULLPAD) < 0) return
+  if (H5Aexists(loc_id, trim(name)//c_null_char) > 0) then ! overwritten
+    if (H5Adelete(loc_id, trim(name)//c_null_char) < 0) return
+  endif
   space = H5Screate(H5S_SCALAR)
   attr = H5Acreate2(loc_id, trim(name)//c_null_char, dtype, space, H5P_DEFAULT, H5P_DEFAULT)
   if (attr >= 0) then
@@ -724,6 +781,32 @@ contains
   allocate(dims(0))
 #endif
   endfunction h5_dataset_dims
+
+  function h5_dataset_resize(loc_id, name, n) result(error)
+  !< Resize an appendable dataset along its last Fortran dimension (the first HDF5 one) to `n`: values past it are
+  !< dropped, the other dimensions are kept.
+  integer(hid_kind), intent(in) :: loc_id  !< Parent (file or group).
+  character(*),      intent(in) :: name    !< Dataset name (or path).
+  integer(I8P),      intent(in) :: n       !< New size of the last dimension.
+  integer(I4P)                  :: error   !< Error status.
+#ifdef VTKFORTRAN_USE_HDF5
+  integer(c_int64_t)            :: dset    !< Dataset.
+  integer(I8P), allocatable     :: dims(:) !< Current shape, Fortran order.
+
+  error = 1_I4P
+  dset = H5Dopen2(loc_id, trim(name)//c_null_char, H5P_DEFAULT)
+  if (dset < 0) return
+  if (dataset_dims(dset, dims) == 0) then
+    if (size(dims) > 0) then
+      dims(size(dims)) = n
+      if (H5Dset_extent(dset, c_dims(dims)) >= 0) error = 0_I4P
+    endif
+  endif
+  if (H5Dclose(dset) < 0) error = 1_I4P
+#else
+  error = 1_I4P
+#endif
+  endfunction h5_dataset_resize
 
   ! datasets of every kind: thin front ends of dataset_write, dataset_append and dataset_read
   function h5_dataset_write_R8P(loc_id, name, x, dims, appendable, deflate) result(error)
@@ -1079,6 +1162,9 @@ contains
   integer(c_int64_t)             :: attr    !< Attribute.
 
   error = 1_I4P
+  if (H5Aexists(loc_id, trim(name)//c_null_char) > 0) then ! overwritten
+    if (H5Adelete(loc_id, trim(name)//c_null_char) < 0) return
+  endif
   space = H5Screate_simple(1_c_int, [int(n, c_long_long)], c_null_ptr)
   if (space < 0) return
   attr = H5Acreate2(loc_id, trim(name)//c_null_char, memtype, space, H5P_DEFAULT, H5P_DEFAULT)

@@ -32,6 +32,7 @@ type, abstract, extends(vtk_writer_abstract) :: xml_writer_abstract
     procedure,                                 pass(self) :: free                         !< Free allocated memory.
     procedure,                                 pass(self) :: get_xml_volatile             !< Return the XML volatile string file.
     procedure,                                 pass(self) :: write_polydata_cells         !< Write cell blocks of polydata.
+    procedure,                                 pass(self) :: write_step                   !< Start a time step (VTKHDF only).
     procedure,                                 pass(self) :: write_dataarray_location_tag !< Write dataarray location tag.
     procedure,                                 pass(self) :: write_dataarray_tag          !< Write dataarray tag.
     procedure,                                 pass(self) :: write_dataarray_tag_appended !< Write dataarray appended tag.
@@ -1315,6 +1316,16 @@ contains
       endselect
       endfunction is_ids
    endfunction write_polydata_cells
+
+   function write_step(self, time) result(error)
+   !< Start a time step: a VTKHDF feature (`format='vtkhdf'`), an error in the XML formats, whose time series are `.pvd`
+   !< collections of files (`pvd_file`).
+   class(xml_writer_abstract), intent(inout) :: self  !< Writer.
+   real(R8P),                  intent(in)    :: time  !< Time of the step.
+   integer(I4P)                              :: error !< Error status.
+
+   error = 1_I4P
+   endfunction write_step
 
    ! write_parallel methods
    function write_parallel_open_block(self, name) result(error)
