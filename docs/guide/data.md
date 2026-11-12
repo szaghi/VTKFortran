@@ -17,6 +17,11 @@ arrays). Point data and cell data are written between an `open` and a `close` of
 `write_dataarray(location='node', action='open')` (`<PointData>`; `location='cell'` for `<CellData>`) and
 `write_dataarray(location='node', action='close')`, with any number of `write_dataarray(data_name=..., x=...)` in between.
 
+**Names**: any name in the XML formats. In VTKHDF a name (of a point, cell or field data array, and of a block or
+dataset of a multi-block file) is an HDF5 link name: it cannot be empty nor contain `/` or `.` (the VTKHDF
+specification), and such a name is refused with a message naming the character; it is never renamed, so that a program
+reading the file finds its arrays under the names it wrote.
+
 An array has one **tuple** per point (`node`) or per cell (`cell`) of the piece, and each tuple has one or more
 **components**: 1 for a scalar, 3 for a vector, 6 or 9 for a tensor. `write_dataarray` takes the components from the shape
 of what it is given:

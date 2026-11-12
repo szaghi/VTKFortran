@@ -57,6 +57,7 @@ public :: h5_dataset_slab_I1P
 public :: h5_mpi_allgather
 public :: h5_mpi_rank
 public :: h5_mpi_max
+public :: h5_name_invalid
 public :: h5_dataset_open
 public :: h5_dataset_close
 public :: h5_dataset_dims
@@ -1278,6 +1279,23 @@ contains
   error = 1_I4P
 #endif
   endfunction h5_dataset_slab_I1P
+
+  pure function h5_name_invalid(name) result(reason)
+  !< Why `name` cannot be the name of a VTKHDF array or block, empty if it can: VTKHDF names cannot contain `/` (the
+  !< separator of HDF5 paths) nor `.` (the VTKHDF specification, Limitations), and cannot be empty. HDF5 sets no limit
+  !< to the length of a name (measured: 200000 characters accepted).
+  character(*), intent(in)      :: name   !< Name.
+  character(len=:), allocatable :: reason !< Why it is refused, empty if it is not.
+
+  reason = ''
+  if (len_trim(name) == 0) then
+    reason = 'is empty'
+  elseif (index(name, '/') > 0) then
+    reason = "contains '/' (VTKHDF names contain neither '/' nor '.')"
+  elseif (index(name, '.') > 0) then
+    reason = "contains '.' (VTKHDF names contain neither '/' nor '.')"
+  endif
+  endfunction h5_name_invalid
 
   function h5_mpi_max(comm, n) result(nmax)
   !< The maximum of `n` over the ranks of `comm` (a Fortran MPI communicator, collective); `n` without MPI.

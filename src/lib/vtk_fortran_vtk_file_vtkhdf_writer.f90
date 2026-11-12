@@ -21,7 +21,9 @@ module vtk_fortran_vtk_file_vtkhdf_writer
 !< data arrays of every kind and layout, unsigned arrays, active arrays (`Attribute`, VTKHDF 2.6), numeric field data.
 !< Refused (non-zero error, message on stderr): a volatile file, string field
 !< data (the VTK reader crashes on them), zlib without the HDF5 deflate filter, an array missing from a piece or new
-!< after the first one, and every call when the library is built without HDF5 (`VTKFORTRAN_USE_HDF5`).
+!< after the first one, a data name (point, cell or field data) empty or containing `/` or `.` (VTKHDF names cannot:
+!< no renaming, the code reading the file back would not find the array), and every call when the library is built
+!< without HDF5 (`VTKFORTRAN_USE_HDF5`).
 !<
 !< Time series (VTKHDF `Steps`): a file whose first output starts with `write_step(time)` is one; each output then starts
 !< with `write_step`, its pieces appended as for a single dataset (the grids get a time axis, their arrays `[t, k, j, i]`),
@@ -2134,7 +2136,11 @@ contains
   integer(I8P), allocatable           :: mem_dims(:), mem_start(:) !< Grid region: values, block start.
   integer(I8P), allocatable           :: file_start(:), count(:)   !< Grid region: block start, shape.
 
-  error = self%dataset_dims(data_name, n, n_components, dims)
+  if (len(h5_name_invalid(data_name)) > 0) then ! a VTKHDF name: no / nor .
+    error = refuse('the array name "'//data_name//'" '//h5_name_invalid(data_name))
+  else
+    error = self%dataset_dims(data_name, n, n_components, dims)
+  endif
   error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
@@ -2180,7 +2186,11 @@ contains
   integer(I8P), allocatable           :: mem_dims(:), mem_start(:) !< Grid region: values, block start.
   integer(I8P), allocatable           :: file_start(:), count(:)   !< Grid region: block start, shape.
 
-  error = self%dataset_dims(data_name, n, n_components, dims)
+  if (len(h5_name_invalid(data_name)) > 0) then ! a VTKHDF name: no / nor .
+    error = refuse('the array name "'//data_name//'" '//h5_name_invalid(data_name))
+  else
+    error = self%dataset_dims(data_name, n, n_components, dims)
+  endif
   error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
@@ -2227,7 +2237,11 @@ contains
   integer(I8P), allocatable           :: mem_dims(:), mem_start(:) !< Grid region: values, block start.
   integer(I8P), allocatable           :: file_start(:), count(:)   !< Grid region: block start, shape.
 
-  error = self%dataset_dims(data_name, n, n_components, dims)
+  if (len(h5_name_invalid(data_name)) > 0) then ! a VTKHDF name: no / nor .
+    error = refuse('the array name "'//data_name//'" '//h5_name_invalid(data_name))
+  else
+    error = self%dataset_dims(data_name, n, n_components, dims)
+  endif
   error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
@@ -2274,7 +2288,11 @@ contains
   integer(I8P), allocatable           :: mem_dims(:), mem_start(:) !< Grid region: values, block start.
   integer(I8P), allocatable           :: file_start(:), count(:)   !< Grid region: block start, shape.
 
-  error = self%dataset_dims(data_name, n, n_components, dims)
+  if (len(h5_name_invalid(data_name)) > 0) then ! a VTKHDF name: no / nor .
+    error = refuse('the array name "'//data_name//'" '//h5_name_invalid(data_name))
+  else
+    error = self%dataset_dims(data_name, n, n_components, dims)
+  endif
   error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
@@ -2321,7 +2339,11 @@ contains
   integer(I8P), allocatable           :: mem_dims(:), mem_start(:) !< Grid region: values, block start.
   integer(I8P), allocatable           :: file_start(:), count(:)   !< Grid region: block start, shape.
 
-  error = self%dataset_dims(data_name, n, n_components, dims)
+  if (len(h5_name_invalid(data_name)) > 0) then ! a VTKHDF name: no / nor .
+    error = refuse('the array name "'//data_name//'" '//h5_name_invalid(data_name))
+  else
+    error = self%dataset_dims(data_name, n, n_components, dims)
+  endif
   error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
@@ -2368,7 +2390,11 @@ contains
   integer(I8P), allocatable           :: mem_dims(:), mem_start(:) !< Grid region: values, block start.
   integer(I8P), allocatable           :: file_start(:), count(:)   !< Grid region: block start, shape.
 
-  error = self%dataset_dims(data_name, n, n_components, dims)
+  if (len(h5_name_invalid(data_name)) > 0) then ! a VTKHDF name: no / nor .
+    error = refuse('the array name "'//data_name//'" '//h5_name_invalid(data_name))
+  else
+    error = self%dataset_dims(data_name, n, n_components, dims)
+  endif
   error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)

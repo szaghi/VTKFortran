@@ -13,8 +13,8 @@ program vtk_fortran_write_vtkhdf_vtm
 !<
 !< Both files are read back with the HDF5 bindings (the type, the links of the tree; the steps of each block of the
 !< series). Refusals are checked too: a time-series ImageData block, a static block after a series block and the
-!< reverse, a series with another number of steps or other times. Without HDF5 the VTKHDF format of `vtm_file` is
-!< refused.
+!< reverse, a series with another number of steps or other times, block and dataset names with '/' or '.'. Without
+!< HDF5 the VTKHDF format of `vtm_file` is refused.
 use penf
 use vtk_fortran, only : vtk_file, vtm_file
 use vtk_fortran_hdf5
@@ -191,7 +191,7 @@ contains
   logical function refusals()
   !< The refusals of the VTKHDF format of vtm_file, each one a non-zero error.
   integer(I4P) :: error
-  logical      :: ok(9)
+  logical      :: ok(13)
 
   ok = .false.
   ! a static file
@@ -214,7 +214,15 @@ contains
   ok(8) = a_vtm_file%write_block(filenames='series_short.vtkhdf', name='d') /= 0          ! another number of steps
   ok(9) = a_vtm_file%write_block(filenames='series_late.vtkhdf', name='e') /= 0           ! other times
   error = a_vtm_file%finalize() ! not 0: each refused file left its new block open
+  ! names: a block or a dataset name with '/' or '.' is refused (VTKHDF names), never renamed
+  error = a_vtm_file%initialize(filename='refused_vtm_names.vtkhdf', format='vtkhdf')
+  ok(10) = a_vtm_file%write_block(filenames='part_1.vtkhdf', name='a.b') /= 0             ! a '.' in a block name
+  error = a_vtm_file%write_block(action='open', name='blk')
+  ok(11) = a_vtm_file%write_block(filenames=['part_1.vtkhdf'], names=['p/q'], action='write') /= 0 ! a '/' in a name
+  ok(12) = a_vtm_file%write_block(filenames=['part_1.vtkhdf'], names=['p_q'], action='write') == 0 ! a valid name
+  error = a_vtm_file%write_block(action='close')
+  ok(13) = a_vtm_file%finalize() == 0                                                      ! the file is complete
   refusals = all(ok)
-  if (.not.refusals) print '(A,9L2)', 'refusals: ', ok
+  if (.not.refusals) print '(A,13L2)', 'refusals: ', ok
   endfunction refusals
 endprogram vtk_fortran_write_vtkhdf_vtm

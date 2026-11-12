@@ -10,8 +10,8 @@ program vtk_fortran_write_vtkhdf
 !<- `vtkfortran_write_vtkhdf_2d.vtkhdf`: a 3x2x1 points grid (2D: the z axis is dropped from the datasets, as VTK
 !<  requires), compressed if HDF5 has deflate.
 !<
-!< Refusals are checked too: string field data, an array of the wrong size, a second piece, a parallel header topology, a volatile
-!< file. Without HDF5 the writer refuses to start. VTK readers open both files outside this test.
+!< Refusals are checked too: string field data, an array of the wrong size, names with '/' or '.' or empty (point and
+!< field data), a second piece, a parallel header topology, a volatile file. Without HDF5 the writer refuses to start. VTK readers open both files outside this test.
 use penf
 use vtk_fortran, only : vtk_file
 use vtk_fortran_hdf5
@@ -67,6 +67,7 @@ else
   e(3) = a_vtk_file%xml_writer%write_fielddata(data_name='time', x=1.5_R8P)
   e(4) = a_vtk_file%xml_writer%write_fielddata(data_name='cycle', x=[7_I4P, 8_I4P])
   e(5) = merge(0, 1, a_vtk_file%xml_writer%write_fielddata(data_name='label', x='refused') /= 0) ! strings are refused
+  e(21) = merge(0, 1, a_vtk_file%xml_writer%write_fielddata(data_name='run.id', x=1_I4P) /= 0) ! a '.' in the name
   e(6) = a_vtk_file%xml_writer%write_fielddata(action='close')
   e(7) = a_vtk_file%xml_writer%write_piece(nx1=0, nx2=ni-1, ny1=0, ny2=nj-1, nz1=0, nz2=nk-1)
   e(8) = a_vtk_file%xml_writer%write_dataarray(location='node', action='open', scalars='f', vectors='v')
@@ -75,6 +76,9 @@ else
   e(11) = a_vtk_file%xml_writer%write_dataarray(data_name='g', x=g)
   e(12) = a_vtk_file%xml_writer%write_dataarray_unsigned(data_name='u', x=u)
   e(13) = merge(0, 1, a_vtk_file%xml_writer%write_dataarray(data_name='short', x=vx(2:)) /= 0) ! wrong size: refused
+  e(22) = merge(0, 1, a_vtk_file%xml_writer%write_dataarray(data_name='u/v', x=vx) /= 0)        ! a '/' in the name
+  e(23) = merge(0, 1, a_vtk_file%xml_writer%write_dataarray(data_name='u.v', x=vx) /= 0)        ! a '.' in the name
+  e(24) = merge(0, 1, a_vtk_file%xml_writer%write_dataarray(data_name=' ', x=vx) /= 0)          ! an empty name
   e(14) = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
   e(15) = a_vtk_file%xml_writer%write_dataarray(location='cell', action='open', scalars='c')
   e(16) = a_vtk_file%xml_writer%write_dataarray(data_name='c', x=c)
@@ -82,8 +86,8 @@ else
   e(18) = a_vtk_file%xml_writer%write_piece()
   e(19) = merge(0, 1, a_vtk_file%xml_writer%write_piece(nx1=0, nx2=ni-1, ny1=0, ny2=nj-1, nz1=0, nz2=nk-1) /= 0) ! one piece
   e(20) = a_vtk_file%finalize()
-  test_passed(1) = all(e(1:20) == 0)
-  if (.not.test_passed(1)) print '(A,20I2)', 'errors of the 3D file: ', e(1:20)
+  test_passed(1) = all(e(1:24) == 0)
+  if (.not.test_passed(1)) print '(A,24I2)', 'errors of the 3D file: ', e(1:24)
 
   ! 2D file, compressed if HDF5 has deflate (refused otherwise)
   e = 0

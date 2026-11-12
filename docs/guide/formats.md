@@ -136,8 +136,10 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
   file (`is_volatile`), VTKHDF pieces in parallel (`P*`) and `.pvd` files (a multi-block file is `vtm_file` with
   `format='vtkhdf'`, static or a time series of UnstructuredGrid and PolyData blocks, see
   [Multi-block in one VTKHDF file](/guide/parallel#multi-block-in-one-vtkhdf-file); a VTKHDF file is
-  read back with `action='read'`, see [Reading](/guide/reading#vtkhdf-files)). Each refusal is a non-zero error with a
-  message on standard error. `header_type` is ignored: HDF5 has no
+  read back with `action='read'`, see [Reading](/guide/reading#vtkhdf-files)). Names: a data name (point, cell, field
+  data) or a block name of a multi-block file empty or containing `/` or `.` is refused, never renamed (VTKHDF names
+  are HDF5 link names; the XML formats accept them). Each refusal is a non-zero error with a message on standard
+  error. `header_type` is ignored: HDF5 has no
   size limit per array.
 
 ## Compressed binary data (zlib)

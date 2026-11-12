@@ -15,6 +15,8 @@ module vtk_fortran_vtm_file
 !< Refused: a time-series ImageData, RectilinearGrid or StructuredGrid block (VTK 9.7.2 reads it without any array), a
 !< static block in a time series or the reverse (VTK fails on the mix, VTK issue 19963), a series with other steps.
 !< A refused file leaves the block that `write_block` opened for it open (as a missing file does).
+!< The names of the blocks and of the datasets (`names`, or the file names without directory and extension) cannot be
+!< empty nor contain `/` or `.` (VTKHDF names): such a name is refused, never renamed.
 use befor64
 use penf
 use stringifor
@@ -486,6 +488,11 @@ contains
    if (present(name)) then
       if (len_trim(name) > 0) block = trim(adjustl(name))
    endif
+   if (len(h5_name_invalid(block)) > 0) then
+      error = 1
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: the block name "'//block//'" '//h5_name_invalid(block)
+      return
+   endif
    self%children(size(self%children)) = self%children(size(self%children)) + 1_I4P
    error = h5_group_create(self%root, self%node//'/'//block, group, track_order=.true.)
    if (error == 0) error = h5_group_close(group)
@@ -536,6 +543,16 @@ contains
 
    error = 1
    file = trim(adjustl(filename))
+   label = file(index(file, '/', back=.true.)+1:)
+   if (index(label, '.', back=.true.) > 1) label = label(1:index(label, '.', back=.true.)-1)
+   if (present(name)) then
+      if (len_trim(name) > 0) label = trim(adjustl(name))
+   endif
+   if (len(h5_name_invalid(label)) > 0) then
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: the dataset name "'//label//'" '//h5_name_invalid(label)// &
+                           ' (give it a name with names=)'
+      return
+   endif
    if (h5_file_open(file, source) /= 0) then
       write(stderr, '(A)') 'error: VTKFortran vtm_file: cannot open '//file//' as an HDF5 file'
       return
@@ -608,12 +625,6 @@ contains
    if (error /= 0) return
    if (h5_attribute_read(group, 'Version', values) == 0) self%version_minor = max(self%version_minor, values(2))
    e = h5_group_close(group)
-   label = file
-   label = label(index(label, '/', back=.true.)+1:)
-   if (index(label, '.', back=.true.) > 1) label = label(1:index(label, '.', back=.true.)-1)
-   if (present(name)) then
-      if (len_trim(name) > 0) label = trim(adjustl(name))
-   endif
    error = h5_group_open(self%root, self%node, group)
    if (error == 0) then
       error = h5_link_soft('/VTKHDF/'//leaf, group, label)

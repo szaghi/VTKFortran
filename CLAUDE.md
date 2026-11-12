@@ -106,7 +106,8 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   PolyData: each piece a partition too, the four blocks of `write_polydata_cells` in the groups `Vertices`, `Lines`,
   `Strips`, `Polygons`, all four always written (VTK reads nothing without one), a block not given gets zero entries,
   `nc` of `write_geo` unused as in XML. Point/cell/field data, active arrays as the `Attribute` attribute, unsigned,
-  deflate for `compressor='zlib'`; refusals return an error with a message on stderr. Arrays stored as in memory
+  deflate for `compressor='zlib'`; refusals return an error with a message on stderr (a data name empty or with `/` or
+  `.`: `h5_name_invalid`, also used by `vtm_file` for block and dataset names; never renamed; HDF5 has no length limit). Arrays stored as in memory
   (`x(nc,i,j,k)` = VTKHDF `[k,j,i,nc]`), the axes of one point of a grid dropped (VTK requires it); `Version` written by
   `finalize` (2.0, 2.5 with polyhedra, 2.6 with active arrays, 2.7 for RG/SG). Its procedures repeat the abstract
   interfaces, one per kind and layout, all funnelled into the private `put_<kind>` (and `store_<kind>` for the appended
