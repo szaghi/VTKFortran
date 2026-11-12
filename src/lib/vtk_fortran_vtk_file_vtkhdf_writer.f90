@@ -1861,12 +1861,10 @@ contains
   integer(I1P),               intent(in)    :: cell_type(1:)
   integer(I4P)                              :: error
 
+  error = 0_I4P ! the checks of this rank, agreed by the ranks of comm before their collective calls
   if (present(face) .neqv. present(faceoffset)) then
     error = refuse('write_connectivity: face and faceoffset go together')
-    return
-  endif
-  error = 0_I4P
-  if (present(face)) then
+  elseif (present(face)) then
     error = put_faces_I4P(self, int(nc, I8P), face, faceoffset, cell_type, .true.)
   elseif (any(cell_type == CELL_POLYHEDRON)) then
     error = refuse('write_connectivity: a polyhedron (cell type 42) needs face and faceoffset')
@@ -1903,12 +1901,10 @@ contains
   integer(I1P),               intent(in)    :: cell_type(1:)
   integer(I4P)                              :: error
 
+  error = 0_I4P ! the checks of this rank, agreed by the ranks of comm before their collective calls
   if (present(face) .neqv. present(faceoffset)) then
     error = refuse('write_connectivity: face and faceoffset go together')
-    return
-  endif
-  error = 0_I4P
-  if (present(face)) then
+  elseif (present(face)) then
     error = put_faces_I8P(self, int(nc, I8P), face, faceoffset, cell_type, .true.)
   elseif (any(cell_type == CELL_POLYHEDRON)) then
     error = refuse('write_connectivity: a polyhedron (cell type 42) needs face and faceoffset')
@@ -3805,11 +3801,11 @@ contains
   logical                             :: is_multi(3) !< Axes of more than one point.
   integer                             :: r, q      !< Ranks.
 
+  error = 0_I4P
+  if (self%n_pieces > 0_I4P) error = refuse('write_piece: one region per rank of comm')
+  error = self%agree(error) ! a second region on one rank: refused on every rank, before the gather
+  if (error /= 0_I4P) return
   error = 1_I4P
-  if (self%n_pieces > 0_I4P) then
-    error = refuse('write_piece: one region per rank of comm')
-    return
-  endif
   if (h5_mpi_allgather(self%comm, int(extent, I8P), self%regions) /= 0_I4P) then
     error = refuse('write_piece: the regions of the ranks cannot be gathered')
     return
@@ -4426,21 +4422,18 @@ contains
     return
   endif
   if (self%file_id < 0_hid_kind .or. self%is_piece_open .or. self%group >= 0_hid_kind) return
+  ! the checks of this rank's arguments and state, agreed by the ranks of comm before their collective calls
+  error = 0_I4P
   if (np < 0_I8P .or. nc < 0_I8P) then
     error = refuse('write_piece: negative counts')
-    return
+  elseif (present(block_cells)) then
+    if (any(block_cells < 0_I8P)) error = refuse('write_piece: negative counts')
   endif
-  if (present(block_cells)) then
-    if (any(block_cells < 0_I8P)) then
-      error = refuse('write_piece: negative counts')
-      return
-    endif
-    self%block_cells = block_cells
-  endif
-  if (self%is_parallel .and. self%step_local > 0_I4P) then
+  if (error == 0_I4P .and. self%is_parallel .and. self%step_local > 0_I4P) &
     error = refuse('write_piece: one piece per rank of comm (in each step of a time series)')
-    return
-  endif
+  error = self%agree(error)
+  if (error /= 0_I4P) return
+  if (present(block_cells)) self%block_cells = block_cells
   if (self%is_reusing()) then
     if (self%is_written_in_step()) then
       error = refuse('write_piece: arrays are already written in this step without its pieces')

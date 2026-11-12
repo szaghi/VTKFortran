@@ -128,7 +128,9 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   `region_block`/`points_block`: datasets created with the whole extent by every rank, each writes its block
   (`h5_dataset_slab_<kind>`), the points of an upper boundary inside the extent left to the next region; RG coordinates
   by `axis_runs`, the entries no lower rank has, as many writes on every rank); a check of a rank's own values before
-  a collective call goes through `agree` (`h5_mpi_max` of the errors: every rank refuses, none hangs); refused:
+  a collective call goes through `agree` (`h5_mpi_max` of the errors: every rank refuses, none hangs; also
+  `start_partition`, `start_region`, `write_connectivity`); ranks making different calls hang (documented, not
+  detectable); refused:
   a grid time series, zlib for a grid, a second piece or region in a step. Polyhedra with comm: decided at
   `write_connectivity` (`h5_mpi_max` of a flag), `start_polyhedra` writes the zero entries of the earlier parts once
   (rank 0), ranks without faces `no_faces` (the same store sequence as `put_faces`, `add_face_totals` after it); zlib with

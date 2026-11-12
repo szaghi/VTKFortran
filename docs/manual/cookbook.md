@@ -285,8 +285,10 @@ UnstructuredGrid, a PolyData), or its own region of the grid (ImageData, Rectili
 <p align="center"><img src="../examples/images/vtkhdf_mpi.png" alt="four blocks of four hexahedra, one colour per rank, read by ParaView from the VTKHDF file written by the four ranks"></p>
 
 - **Every call is collective**: the ranks create and extend the datasets together, then each one writes its rows after
-  those of the ranks before. Every rank calls every procedure, with the same arrays in the same order; a rank that
-  stops calling leaves the others waiting.
+  those of the ranks before. Every rank calls every procedure, with the same arrays in the same order. Wrong arguments
+  on some ranks in a call they all make (a size, a negative count, `face` without `faceoffset`) are refused on every
+  rank; but ranks making different calls (one stops calling, or, in a step reusing the mesh, writes an array the others
+  do not) cannot be told apart from slow ones: the others wait for it.
 - An UnstructuredGrid or a PolyData, one piece per rank; a rank can have an empty piece (`np=0`, `nc=0`). A PolyData
   piece without cells still calls `write_polydata_cells()`, with no blocks.
 - Polyhedra (on any ranks: the others write zero entries for their pieces) and `compressor='zlib'` (an HDF5 1.10.2 or

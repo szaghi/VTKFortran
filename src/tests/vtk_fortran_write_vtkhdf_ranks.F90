@@ -539,7 +539,7 @@ contains
   logical function refusals()
   !< The refusals of comm, by every rank (the files created are finalized by all of them).
   integer(I4P) :: error
-  logical      :: ok(12)
+  logical      :: ok(14)
   integer(I4P) :: ext(6) !< Region of this rank.
 
   ok = .false.
@@ -589,7 +589,21 @@ contains
                                                    face=[4, 3, 0, 1, 2, 3, 0, 1, 3, 3, 0, 2, 3, 3, 1, 2, 3],         &
                                                    faceoffset=[merge(16, 17, rank == 0)]) /= 0 ! malformed on rank 0
   error = a_vtk_file%finalize()
+  ! wrong arguments on rank 0 only, in a call every rank makes: refused on every rank (none left waiting)
+  error = a_vtk_file%initialize(format='vtkhdf', filename='refused_local.vtkhdf', mesh_topology='UnstructuredGrid', &
+                                comm=comm)
+  ok(13) = a_vtk_file%xml_writer%write_piece(np=merge(-1, 4, rank == 0), nc=1) /= 0          ! negative counts on rank 0
+  error = a_vtk_file%xml_writer%write_piece(np=4, nc=1)
+  error = a_vtk_file%xml_writer%write_geo(np=4, nc=1, x=[0._R8P, 1._R8P, 0._R8P, 0._R8P], y=[0._R8P, 0._R8P, 1._R8P, 0._R8P], &
+                                         z=[0._R8P, 0._R8P, 0._R8P, 1._R8P])
+  if (rank == 0) then ! a face stream without its faceoffset on rank 0
+    ok(14) = a_vtk_file%xml_writer%write_connectivity(nc=1, connectivity=[0, 1, 2, 3], offset=[4], cell_type=[10_I1P], &
+                                                      face=[4, 3, 0, 1, 2]) /= 0
+  else
+    ok(14) = a_vtk_file%xml_writer%write_connectivity(nc=1, connectivity=[0, 1, 2, 3], offset=[4], cell_type=[10_I1P]) /= 0
+  endif
+  error = a_vtk_file%finalize()
   refusals = all(ok)
-  if (.not.refusals) print '(A,I0,A,12L2)', 'rank ', rank, ' refusals: ', ok
+  if (.not.refusals) print '(A,I0,A,14L2)', 'rank ', rank, ' refusals: ', ok
   endfunction refusals
 endprogram vtk_fortran_write_vtkhdf_ranks
