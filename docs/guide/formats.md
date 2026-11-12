@@ -121,7 +121,8 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
   the singular ones of 2.2 below 2.3, so both are read back, by VTK and by the library; the library also reads the
 singular names in a file of a later Version, as VTKFortran wrote a series with an active array before), the file valid
 after each box. Refused: field data (the specification puts it in each level; VTK 9.7.2 reads none, at the root or in
-a level: its reader reads point and cell data only), `comm`, a step without boxes, the XML formats. Read back level by level
+a level: its reader reads point and cell data only), `comm`, a step without boxes, the XML formats (an XML
+OverlappingAMR is a `.vthb` of `.vti` boxes: `vtm_file`, see [Parallel](/guide/parallel#overlappingamr-vthb)). Read back level by level
   (`get_levels`, `set_level`), see [Reading](/guide/reading#vtkhdf-files). **VTK 9.7 reads it** (its pipeline time too);
   **ParaView 6.1 does not** (its reader groups the output with a filter that refuses an OverlappingAMR). A complete
   program: [A block-structured AMR](/manual/cookbook#a-block-structured-amr).

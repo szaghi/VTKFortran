@@ -218,6 +218,28 @@ the order of their units:
 - The blocks are written at the top level, one per unit, and the name of each dataset is its file name.
 - It can be mixed with the other forms: the blocks written with them come first, the scratch blocks follow at `finalize`.
 
+## OverlappingAMR (VTHB)
+
+An XML OverlappingAMR is a `.vthb` file listing the boxes of each level, each box an ImageData file (`.vti`), as
+vtkXMLUniformGridAMRWriter writes it. Write each box with `vtk_file` (`mesh_topology='ImageData'`): the origin of the
+AMR, the spacing of its level, and its extent in the point indices of that level, which places it. Then list the
+boxes level by level with `vtm_file`:
+
+<<< @/examples/snippets/ref_parallel-vthb.f90
+
+- `initialize(filename, composite='OverlappingAMR')` (XML only: a VTKHDF OverlappingAMR is one file written by
+  `vtk_file`, see [Formats](/guide/formats)); `write_level(level, filenames)` gives the boxes of the levels 0, 1, ... in
+  order, each level once; the `.vthb` is written by `finalize`.
+- `write_level` reads each box: the origin (the same for every box), the spacing (the same in a level: the level's) and
+  the extent are taken from the files, the `amr_box` of each box is its extent in cells (a flat axis `0 -1`), and the
+  grid description (`XYZ`, `XY`, ...) the axes of the first box. A box that cannot be read, is not an ImageData, or
+  disagrees is refused. A relative file is relative to the directory of the `.vthb`.
+- `write_block` is refused in an OverlappingAMR, `write_level` elsewhere.
+- VTK 9.7.2 reads it (`vtkXMLUniformGridAMRReader`): levels, boxes, spacing and data. ParaView 6.1.1 opens no
+  OverlappingAMR (VTK's own `.vthb` neither: its reader groups the output with a filter that refuses the type).
+- `vtm_file%initialize(filename, action='read')` lists a `.vthb` (and a former `.vth`): its levels as blocks (`index`
+  the level), its boxes as datasets with their files.
+
 ## Time series (PVD)
 
 A `.pvd` file is a *collection*: it lists the files of a simulation (any VTK XML file written by `vtk_file`, `pvtk_file` or

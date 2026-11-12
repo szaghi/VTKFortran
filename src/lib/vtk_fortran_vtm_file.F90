@@ -38,6 +38,7 @@ use vtk_fortran_vtk_file_xml_writer_ascii_local
 use foxy, only : xml_index, xml_file, XML_MALFORMED
 use vtk_fortran_hdf5
 use vtk_fortran_vtk_file_vtkhdf_reader, only : is_hdf5_file
+use vtk_fortran_vtk_file_xml_reader, only : xml_reader
 use vtk_fortran_parameters, only : stderr
 
 implicit none
@@ -81,11 +82,21 @@ type :: vtm_file
    character(len=:), allocatable, private          :: xml_assembly       !< Body of the DataAssembly.
    character(len=:), allocatable, private          :: xml_open           !< Open nodes of the assembly.
    integer(I4P),               private             :: xml_ids=0_I4P      !< Assembly node ids given (the root is 0).
+   ! an XML OverlappingAMR (.vthb) written: its levels and boxes, kept until finalize
+   logical,                    private             :: is_xml_amr=.false. !< An XML .vthb is written.
+   character(len=:), allocatable, private          :: amr_filename       !< Its file name.
+   real(R8P),                  private             :: amr_origin(3)=0._R8P !< Origin (of every box).
+   character(len=:), allocatable, private          :: amr_desc           !< Grid description: XYZ, XY, ...
+   integer(I4P),               private             :: amr_levels=0_I4P   !< Levels written.
+   real(R8P), allocatable,     private             :: amr_spacing(:,:)   !< Spacing of each level (3, levels).
+   integer(I4P), allocatable,  private             :: amr_boxes(:,:)     !< Level and cells (lo hi per axis) of each box.
+   character(len=:), allocatable, private          :: amr_files          !< File of each box, followed by NUL.
    contains
       ! public methods
       procedure, pass(self) :: initialize          !< Initialize file.
       procedure, pass(self) :: finalize            !< Finalize file.
       procedure, pass(self) :: get_entries         !< Return the blocks and datasets of a file read.
+      procedure, pass(self) :: write_level         !< Write a level of an OverlappingAMR (.vthb).
       generic               :: write_block =>      &
                                write_block_array,  &
                                write_block_string, &
@@ -114,6 +125,8 @@ type :: vtm_file
       procedure, pass(self), private :: xml_part_entries      !< Gather the entries of a .vtpc or .vtpd read.
       procedure, pass(self), private :: add_entry             !< Append an entry to the entries read.
       procedure, pass(self), private :: add_partitions        !< Append the entries of a Partitions element.
+      procedure, pass(self), private :: xml_amr_finalize      !< Write the levels and boxes of a .vthb.
+      procedure, pass(self), private :: xml_amr_entries       !< Gather the entries of a .vthb read.
 endtype vtm_file
 contains
   ! public methods
@@ -177,6 +190,12 @@ contains
            self%is_reading_vtkhdf = error == 0
            return
         endif
+        if (value == 'vtkOverlappingAMR' .or. value == 'vtkHierarchicalBoxDataSet') then ! a .vthb (or a former .vth)
+           error = self%xml_amr_entries(root, value)
+           call self%xml%free
+           self%is_reading_vtkhdf = error == 0
+           return
+        endif
         if (value /= 'vtkMultiBlockDataSet') return
         if (self%xml%find(name='vtkMultiBlockDataSet', parent=root) == 0) return
         self%is_reading = .true.
@@ -197,6 +216,29 @@ contains
         self%is_collection = .true.
      elseif (action_ == 'PARTITIONEDDATASET') then
         is_pds = .true.
+     elseif (action_ == 'OVERLAPPINGAMR') then ! an XML .vthb, written at finalize from the levels given
+        error = 1
+        if (scratch_units_number_ > 0_I4P) return
+        if (present(format)) then
+           action_ = trim(adjustl(format)) ; action_ = action_%upper()
+           if (action_ /= 'XML') then
+              write(stderr, '(A)') 'error: VTKFortran vtm_file: an OverlappingAMR composite is an XML .vthb; a VTKHDF '// &
+                                   'OverlappingAMR is written by vtk_file (mesh_topology=''OverlappingAMR'')'
+              return
+           endif
+        endif
+        error = self%finalize()
+        self%is_xml_amr = .true.
+        self%amr_filename = trim(adjustl(filename))
+        self%amr_origin = 0._R8P
+        self%amr_desc = ''
+        self%amr_levels = 0_I4P
+        if (allocated(self%amr_spacing)) deallocate(self%amr_spacing)
+        if (allocated(self%amr_boxes)) deallocate(self%amr_boxes)
+        allocate(self%amr_spacing(3, 0), self%amr_boxes(7, 0))
+        self%amr_files = ''
+        error = 0
+        return
      elseif (action_ /= 'MULTIBLOCKDATASET') then
         error = 1
         return
@@ -286,6 +328,11 @@ contains
      call self%xml%free
      self%is_reading = .false.
      error = 0
+     return
+  endif
+  if (self%is_xml_amr) then ! the .vthb: written now, from the levels given
+     self%is_xml_amr = .false.
+     error = self%xml_amr_finalize()
      return
   endif
   if (allocated(self%scratch_unit)) then
@@ -477,6 +524,11 @@ contains
 
   integer(I4P)                          :: f             !< Counter.
 
+  if (self%is_xml_amr) then
+     error = 1
+     write(stderr, '(A)') 'error: VTKFortran vtm_file: the boxes of an OverlappingAMR are written by write_level'
+     return
+  endif
   is_new_block = .true.
   if (present(action)) is_new_block = trim(adjustl(action)) /= 'write' .and. trim(adjustl(action)) /= 'WRITE'
   is_pieces = .false.
@@ -561,6 +613,11 @@ contains
    type(string), allocatable             :: labels(:) !< Dataset names.
    integer(I4P)                          :: f         !< Counter.
 
+   if (self%is_xml_amr) then
+      error = 1
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: the boxes of an OverlappingAMR are written by write_level'
+      return
+   endif
    if (self%is_vtkhdf .or. self%is_xml_collection .or. self%is_xml_pds) then
       action_ = 'BLOCK'
       if (present(action)) then
@@ -1484,4 +1541,200 @@ contains
    endif
    self%children(size(self%children)) = self%children(size(self%children)) + 1_I4P
    endfunction vtkhdf_reference
+   function write_level(self, level, filenames) result(error)
+   !< Write the level `level` (0, 1, ... in order, each once) of an OverlappingAMR (`initialize(...,
+   !< composite='OverlappingAMR')`, a `.vthb`): its boxes, each an ImageData file (`.vti`) written before with the origin
+   !< of the AMR, the spacing of the level and its extent in the point indices of the level (`nx1...nz2`). The files are
+   !< read: the origin (the same for every box), the spacing (the same in a level, the level's) and the extent (the
+   !< `amr_box`, in cells: lo, hi of each axis; a flat axis 0 -1) are taken from them, so the `.vthb` agrees with its data.
+   !< A relative file is relative to the directory of the `.vthb`, and written as given.
+   !<
+   !<```fortran
+   !< error = amr%initialize(filename='amr.vthb', composite='OverlappingAMR')
+   !< error = amr%write_level(level=0, filenames=['amr/amr_0.vti'])
+   !< error = amr%write_level(level=1, filenames=['amr/amr_1.vti', 'amr/amr_2.vti'])
+   !< error = amr%finalize()
+   !<```
+   class(vtm_file), intent(inout) :: self         !< VTM file.
+   integer(I4P),    intent(in)    :: level        !< Level, from 0.
+   character(*),    intent(in)    :: filenames(:) !< Files of its boxes.
+   integer(I4P)                   :: error        !< Error status.
+   type(xml_reader)               :: reader       !< A box read.
+   character(len=:), allocatable  :: dir          !< Directory of the .vthb.
+   character(len=:), allocatable  :: file         !< A file, as given.
+   character(len=:), allocatable  :: topology     !< Its dataset type.
+   character(len=:), allocatable  :: desc         !< Grid description of the box.
+   character(len=:), allocatable  :: files        !< Files of the level, followed by NUL.
+   integer(I4P), allocatable      :: boxes(:,:)   !< Boxes of the level.
+   integer(I4P)                   :: ext(6)       !< Extent of a box (points).
+   real(R8P)                      :: origin(3)    !< Origin of a box.
+   real(R8P)                      :: spacing(3)   !< Spacing of a box.
+   real(R8P)                      :: level_spacing(3) !< Spacing of the level.
+   integer(I4P)                   :: f, a, e      !< Counters, error of a read.
+
+   error = 1
+   if (.not.self%is_xml_amr) then
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: write_level is for an OverlappingAMR (composite=''OverlappingAMR'')'
+      return
+   elseif (level /= self%amr_levels) then
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: the levels of an OverlappingAMR are 0, 1, ... in order, each once '// &
+                           '(the next one is '//trim(str(n=self%amr_levels, no_sign=.true.))//')'
+      return
+   elseif (size(filenames) == 0) then
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: a level of an OverlappingAMR needs its boxes'
+      return
+   endif
+   dir = ''
+   if (index(self%amr_filename, '/', back=.true.) > 0) dir = self%amr_filename(:index(self%amr_filename, '/', back=.true.))
+   allocate(boxes(7, size(filenames)))
+   files = ''
+   do f=1, size(filenames)
+      file = trim(adjustl(filenames(f)))
+      if (len(file) == 0) then
+         write(stderr, '(A)') 'error: VTKFortran vtm_file: a box of an OverlappingAMR needs its file'
+         return
+      endif
+      if (file(1:1) == '/') then
+         e = reader%initialize(filename=file)
+      else
+         e = reader%initialize(filename=dir//file)
+      endif
+      if (e == 0) e = reader%get_info(mesh_topology=topology, nx1=ext(1), nx2=ext(2), ny1=ext(3), ny2=ext(4), nz1=ext(5), &
+                                      nz2=ext(6), origin=origin, spacing=spacing)
+      call reader%close
+      if (e /= 0) then
+         write(stderr, '(A,I0,A)') 'error: VTKFortran vtm_file: cannot read the box '//file//' (error ', e, ')'
+         return
+      elseif (topology /= 'ImageData') then
+         write(stderr, '(A)') 'error: VTKFortran vtm_file: the box '//file//' is a '//topology//', not an ImageData'
+         return
+      endif
+      desc = ''
+      do a=1, 3
+         if (ext(2*a) > ext(2*a-1)) desc = desc//'XYZ'(a:a)
+      enddo
+      if (self%amr_levels == 0 .and. f == 1) then ! the first box: the origin and grid description of the AMR
+         self%amr_origin = origin
+         self%amr_desc = desc
+      endif
+      if (f == 1) level_spacing = spacing
+      if (any(origin /= self%amr_origin)) then
+         write(stderr, '(A)') 'error: VTKFortran vtm_file: the box '//file//' has another origin than the first box (the '// &
+                              'boxes of an OverlappingAMR share the origin; their extents place them)'
+         return
+      elseif (any(spacing /= level_spacing)) then
+         write(stderr, '(A)') 'error: VTKFortran vtm_file: the box '//file//' has another spacing than the first box of '// &
+                              'its level'
+         return
+      elseif (.not.all(spacing > 0._R8P)) then
+         write(stderr, '(A)') 'error: VTKFortran vtm_file: the box '//file//' has a spacing not positive'
+         return
+      elseif (desc /= self%amr_desc) then
+         write(stderr, '(A)') 'error: VTKFortran vtm_file: the box '//file//' spans the axes '//desc//', the first box '// &
+                              self%amr_desc
+         return
+      endif
+      boxes(:, f) = [level, ext(1), ext(2) - 1, ext(3), ext(4) - 1, ext(5), ext(6) - 1]
+      files = files//file//achar(0)
+   enddo
+   self%amr_spacing = reshape([self%amr_spacing, level_spacing], [3, self%amr_levels + 1])
+   self%amr_boxes = reshape([self%amr_boxes, boxes], [7, size(self%amr_boxes, 2) + size(filenames)])
+   self%amr_files = self%amr_files//files
+   self%amr_levels = self%amr_levels + 1_I4P
+   error = 0
+   endfunction write_level
+
+   function xml_amr_finalize(self) result(error)
+   !< Write the `.vthb` of an OverlappingAMR: a `Block level spacing` for each level, a `DataSet index amr_box file` for each
+   !< of its boxes, as vtkXMLUniformGridAMRWriter writes them (version 1.1).
+   class(vtm_file), intent(inout) :: self  !< VTM file.
+   integer(I4P)                   :: error !< Error status.
+   integer(I4P)                   :: e     !< Error of the writer's finalize.
+   integer(I4P)                   :: l, b, i, f1, f2 !< Counters, positions.
+
+   error = 1
+   if (self%amr_levels == 0) then
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: an OverlappingAMR without levels is not written'
+      return
+   endif
+   if (allocated(self%xml_writer)) deallocate(self%xml_writer)
+   allocate(xml_writer_ascii_local :: self%xml_writer)
+   self%xml_writer%origin = self%amr_origin
+   error = self%xml_writer%initialize(format='ascii', filename=self%amr_filename, mesh_topology='vtkOverlappingAMR', &
+                                      mesh_kind=self%amr_desc)
+   f1 = 1
+   b = 0
+   do l=0, self%amr_levels - 1
+      call self%xml_writer%write_start_tag(name='Block', attributes='level="'//trim(str(n=l, no_sign=.true.))// &
+                                           '" spacing="'//real_values(self%amr_spacing(:, l+1))//'"')
+      i = 0
+      do while (b < size(self%amr_boxes, 2))
+         if (self%amr_boxes(1, b+1) /= l) exit
+         b = b + 1
+         f2 = f1 - 1 + index(self%amr_files(f1:), achar(0))
+         call self%xml_writer%write_self_closing_tag(name='DataSet', attributes='index="'// &
+            trim(str(n=i, no_sign=.true.))//'" amr_box="'//int_values(self%amr_boxes(2:7, b))//'" file="'// &
+            attr_text(self%amr_files(f1:f2-1))//'"')
+         f1 = f2 + 1
+         i = i + 1
+      enddo
+      call self%xml_writer%write_end_tag(name='Block')
+   enddo
+   if (self%xml_writer%error /= 0) error = self%xml_writer%error
+   e = self%xml_writer%finalize()
+   if (error == 0) error = e
+   deallocate(self%xml_writer)
+   contains
+      function int_values(x) result(values)
+      !< Space separated integers.
+      integer(I4P), intent(in)      :: x(:)   !< Values.
+      character(len=:), allocatable :: values !< Their text.
+      integer                       :: k      !< Counter.
+
+      values = trim(str(n=x(1), no_sign=.true.))
+      if (x(1) < 0) values = trim(str(n=x(1)))
+      do k=2, size(x)
+         if (x(k) < 0) then
+            values = values//' '//trim(str(n=x(k)))
+         else
+            values = values//' '//trim(str(n=x(k), no_sign=.true.))
+         endif
+      enddo
+      endfunction int_values
+   endfunction xml_amr_finalize
+
+   function xml_amr_entries(self, root, file_type) result(error)
+   !< Gather the entries of an XML OverlappingAMR read (`vtkOverlappingAMR`, `.vthb`; or `vtkHierarchicalBoxDataSet`, a
+   !< former `.vth`): its `Block`s (the levels) are blocks at level 1 (index the `level`), their `DataSet`s (the boxes)
+   !< datasets at level 2 with their files (index the `index`, or `dataset` of a former file).
+   class(vtm_file), intent(inout) :: self      !< VTM file.
+   integer(I4P),    intent(in)    :: root      !< Index of the VTKFile element.
+   character(*),    intent(in)    :: file_type !< vtkOverlappingAMR or vtkHierarchicalBoxDataSet.
+   integer(I4P)                   :: error     !< Error status.
+   integer(I4P), allocatable      :: blocks(:) !< The Block elements.
+   integer(I4P), allocatable      :: kids(:)   !< Children of a block.
+   character(len=:), allocatable  :: value     !< An attribute.
+   integer(I4P)                   :: top, b, c !< Elements, counters.
+
+   call self%free_entries
+   allocate(self%entry_level(0), self%entry_is_block(0), self%entry_index(0), self%entry_text(6, 0), &
+            self%entry_is_piece(0))
+   self%entry_chars = ''
+   error = 2
+   top = self%xml%find(name=file_type, parent=root)
+   if (top == 0) return
+   error = 0
+   blocks = self%xml%children(top)
+   do b=1, size(blocks)
+      if (self%xml%name(blocks(b)) /= 'Block') cycle
+      call self%add_entry(1, .true., .false., index_of(self%xml%attribute(id=blocks(b), name='level'), b - 1), '', '')
+      kids = self%xml%children(blocks(b))
+      do c=1, size(kids)
+         if (self%xml%name(kids(c)) /= 'DataSet') cycle
+         value = self%xml%attribute(id=kids(c), name='index')
+         if (len(value) == 0) value = self%xml%attribute(id=kids(c), name='dataset')
+         call self%add_entry(2, .false., .false., index_of(value, c - 1), '', self%xml%attribute(id=kids(c), name='file'))
+      enddo
+   enddo
+   endfunction xml_amr_entries
 endmodule vtk_fortran_vtm_file

@@ -94,6 +94,12 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   `write_block(references='name ...')` (string form) soft-links a copy into the open block (`vtkhdf_reference`);
   in a multi-block too (#90 C5: `leaf_links` = name NUL Block_<n> NUL of each linked dataset; a name of several
   datasets refused, ambiguous); refused in an XML `.vtm`; the same time series rules (VTK 9.7.2 pipeline time likewise at step 1)
+- XML OverlappingAMR (in `vtm_file`, #90 B2): `composite='OverlappingAMR'` (XML only) writes a `.vthb` at finalize
+  (`xml_amr_finalize`, `vtkOverlappingAMR` version 1.1, `origin`/`grid_description` on the topology tag, mesh_kind = the
+  description) from `write_level(level, filenames)`: levels 0, 1, ... in order, each box a `.vti` read (`xml_reader`) for
+  origin (shared), spacing (per level), extent -> `amr_box` in cells (flat axis 0 -1); read back by `xml_amr_entries`
+  (levels as blocks, boxes as datasets; `.vth` `vtkHierarchicalBoxDataSet` too). VTK 9.7.2 reads it; ParaView 6.1.1
+  fetches no OverlappingAMR (vtkGroupDataSetsFilter, VTK's own `.vthb` too)
 - XML partitioned composites (in `vtm_file`, #90): `composite='PartitionedDataSetCollection'` without vtkhdf writes a
   `.vtpc` (`xml_part_*`: datasets and assembly kept NUL-separated until `finalize`, `<Partitions index name>` of one
   `DataSet`, `<DataAssembly encoding="base64">` of the vtkDataAssembly XML, node names XML element names, ids from 1
@@ -360,5 +366,5 @@ ascii and binary; string point and cell data in every format and a `.vtt` string
 rows refused, the next one unaffected); component names and 3-component field data in every format), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files, `PArray`
 string arrays (a VTK 9.7.2 header and piece embedded, and a header of the library over that piece); `.vtpc` and `.vtpd`
 written and read back (blocks, references, an empty dataset, the refusals), and VTK 9.7.2's own `.vtpc`/`.vtpd`
-embedded and read; a `.pvtt` over two `.vtt` pieces and a `.vtm` with blocks of pieces, `write_block(...,
+embedded and read; a `.vthb` of three boxes on two levels written and read back, its refusals, VTK's `.vthb` read; a `.pvtt` over two `.vtt` pieces and a `.vtm` with blocks of pieces, `write_block(...,
 action='pieces')` = a `Piece` (vtkMultiPieceDataSet; XML `.vtm` only, both forms), read back as `piece` entries).

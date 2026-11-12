@@ -8,14 +8,16 @@ program vtk_fortran_read_composite
 !< written and their entries read back. String arrays declared as `PArray`: a header and a piece written by VTK 9.7.2
 !< (embedded), and a header of the library over the same piece. XML partitioned composites (`.vtpc`, `.vtpd`) written
 !< and read back, and the two written by VTK 9.7.2 (embedded) read. A parallel Table (`.pvtt`) over two `.vtt` pieces
-!< (a numeric and a string column) and a `.vtm` with a block of pieces (`action='pieces'`), read back.
+!< (a numeric and a string column) and a `.vtm` with a block of pieces (`action='pieces'`), read back. An OverlappingAMR
+!< (`.vthb`: three ImageData boxes on two levels, `write_level`) written and read back, its refusals, and the `.vthb` of
+!< VTK 9.7.2 (embedded) read.
 use penf
 use vtk_fortran, only : pvd_file, pvtk_file, vtk_file, vtm_file
 
 implicit none
 character(*), parameter :: pieces(2)=['vtkfortran_read_composite_01.vtu', 'vtkfortran_read_composite_02.vtu'] !< Pieces.
 type(pvtk_file)         :: a_pvtk_file    !< A parallel VTK file.
-logical                 :: test_passed(8) !< List of passed tests.
+logical                 :: test_passed(9) !< List of passed tests.
 integer(I4P)            :: p              !< Counter.
 
 do p=1, size(pieces)
@@ -29,6 +31,7 @@ test_passed(5) = check_pvd()
 test_passed(6) = check_parray()
 test_passed(7) = check_partitioned()
 test_passed(8) = check_ptable_pieces()
+test_passed(9) = check_amr()
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 if (.not.all(test_passed)) error stop 'some tests failed'
@@ -486,4 +489,111 @@ contains
                              file(2) == pieces(1) .and. file(3) == pieces(2) .and. file(7) == pieces(2)
   if (.not.is_passed) print '(A,10(1X,I0))', 'failed: vtkfortran_read_composite-pieces.vtm', e
   endfunction check_ptable_pieces
+  function check_amr() result(is_passed)
+  !< An OverlappingAMR (`.vthb`): a 2D level 0 of one box (4x4 cells, spacing 1) and a level 1 of two (spacing 0.5), each
+  !< box an ImageData file with the origin of the AMR and its extent in the indices of its level; read back (the levels as
+  !< blocks, the boxes as datasets); the refusals (levels out of order, another origin or spacing, not an ImageData, a
+  !< VTKHDF composite, write_block, write_level in a multi-block, no levels); the `.vthb` VTK 9.7.2 writes, read.
+  logical                       :: is_passed !< Check result.
+  type(vtk_file)                :: box       !< A box.
+  type(vtm_file)                :: amr       !< The .vthb.
+  character(len=:), allocatable :: kind(:), file(:) !< Entries read.
+  integer(I4P),     allocatable :: level(:), index(:) !< Entries read.
+  integer(I4P)                  :: u, e(12)  !< Unit, errors.
+
+  e = 0
+  e(1) = write_box('vtkfortran_read_composite_amr_0.vti', [0, 4, 0, 4], 1._R8P, [0._R8P, 0._R8P, 0._R8P])
+  e(1) = e(1) + write_box('vtkfortran_read_composite_amr_1.vti', [0, 4, 0, 4], 0.5_R8P, [0._R8P, 0._R8P, 0._R8P])
+  e(1) = e(1) + write_box('vtkfortran_read_composite_amr_2.vti', [4, 8, 4, 8], 0.5_R8P, [0._R8P, 0._R8P, 0._R8P])
+  e(1) = e(1) + write_box('vtkfortran_read_composite_amr_shifted.vti', [4, 8, 4, 8], 0.5_R8P, [1._R8P, 0._R8P, 0._R8P])
+  e(1) = e(1) + write_box('vtkfortran_read_composite_amr_coarse.vti', [4, 8, 4, 8], 1._R8P, [0._R8P, 0._R8P, 0._R8P])
+  e(2) = amr%initialize(filename='vtkfortran_read_composite.vthb', composite='OverlappingAMR')
+  e(3) = amr%write_level(level=0, filenames=['vtkfortran_read_composite_amr_0.vti'])
+  e(4) = amr%write_level(level=1, filenames=['vtkfortran_read_composite_amr_1.vti', 'vtkfortran_read_composite_amr_2.vti'])
+  e(5) = amr%finalize()
+  e(6) = amr%initialize(filename='vtkfortran_read_composite.vthb', action='read')
+  e(6) = e(6) + amr%get_entries(level=level, kind=kind, index=index, file=file)
+  e(6) = e(6) + amr%finalize()
+  is_passed = all(e == 0)
+  if (is_passed) is_passed = size(level) == 5
+  if (is_passed) is_passed = all(level == [1, 2, 1, 2, 2]) .and. all(index == [0, 0, 1, 0, 1]) .and. &
+                             all(kind == [character(7) :: 'block', 'dataset', 'block', 'dataset', 'dataset']) .and. &
+                             file(5) == 'vtkfortran_read_composite_amr_2.vti'
+  if (.not.is_passed) then
+    print '(A,12(1X,I0))', 'failed: vtkfortran_read_composite.vthb', e
+    return
+  endif
+  ! refusals
+  e = 0
+  e(1) = amr%initialize(filename='vtkfortran_read_composite_refused.vthb', composite='OverlappingAMR')
+  e(2) = merge(0, 1, amr%write_level(level=1, filenames=['vtkfortran_read_composite_amr_1.vti']) /= 0)  ! level 0 first
+  e(3) = merge(0, 1, amr%write_level(level=0, filenames=[pieces(1)]) /= 0)                              ! not an ImageData
+  e(4) = merge(0, 1, amr%write_level(level=0, filenames=[character(41) :: 'vtkfortran_read_composite_amr_0.vti', &
+                                                         'vtkfortran_read_composite_amr_coarse.vti']) == 0) ! ok: level 0
+  e(5) = merge(0, 1, amr%write_level(level=1, filenames=[character(41) :: 'vtkfortran_read_composite_amr_1.vti', &
+                                                         'vtkfortran_read_composite_amr_shifted.vti']) /= 0) ! another origin
+  e(6) = merge(0, 1, amr%write_level(level=1, filenames=[character(41) :: 'vtkfortran_read_composite_amr_1.vti', &
+                                                         'vtkfortran_read_composite_amr_coarse.vti']) /= 0) ! another spacing
+  e(7) = merge(0, 1, amr%write_block(filenames=['vtkfortran_read_composite_amr_1.vti'], name='b') /= 0) ! write_block
+  e(8) = amr%finalize()                                                                                ! level 0 only
+  e(9) = merge(0, 1, amr%initialize(filename='vtkfortran_read_composite_refused.vtkhdf', format='vtkhdf', &
+                                    composite='OverlappingAMR') /= 0)                                ! VTKHDF
+  e(10) = amr%initialize(filename='vtkfortran_read_composite_refused.vthb', composite='OverlappingAMR')
+  e(10) = merge(0, 1, amr%finalize() /= 0)                                                           ! no levels
+  e(11) = amr%initialize(filename='vtkfortran_read_composite_refused.vtm')
+  e(11) = e(11) + merge(0, 1, amr%write_level(level=0, filenames=['vtkfortran_read_composite_amr_0.vti']) /= 0) ! a .vtm
+  e(11) = e(11) + amr%finalize()
+  ! the .vthb of VTK 9.7.2 (vtkXMLUniformGridAMRWriter, vtkAMRGaussianPulseSource of 2 levels in 2D)
+  open(newunit=u, file='vtkfortran_read_composite_vtk.vthb', status='replace', action='write')
+  write(u, '(A)') '<?xml version="1.0"?>', &
+    '<VTKFile type="vtkOverlappingAMR" version="1.1" byte_order="LittleEndian" header_type="UInt32" '// &
+    'compressor="vtkZLibDataCompressor">', &
+    '  <vtkOverlappingAMR origin="-2 -2 0" grid_description="XY">', &
+    '    <Block level="0" spacing="0.5 0.5 0.5">', &
+    '      <DataSet index="0" amr_box="0 4 0 4 0 -1" file="amr/amr_0.vti"/>', &
+    '    </Block>', &
+    '    <Block level="1" spacing="0.25 0.25 0.5">', &
+    '      <DataSet index="0" amr_box="0 3 0 5 0 -1" file="amr/amr_1.vti"/>', &
+    '      <DataSet index="1" amr_box="6 9 4 9 0 -1" file="amr/amr_2.vti"/>', &
+    '    </Block>', &
+    '  </vtkOverlappingAMR>', &
+    '</VTKFile>'
+  close(u)
+  e(12) = amr%initialize(filename='vtkfortran_read_composite_vtk.vthb', action='read')
+  e(12) = e(12) + amr%get_entries(level=level, kind=kind, index=index, file=file)
+  e(12) = e(12) + amr%finalize()
+  is_passed = all(e == 0)
+  if (is_passed) is_passed = size(level) == 5
+  if (is_passed) is_passed = all(level == [1, 2, 1, 2, 2]) .and. all(index == [0, 0, 1, 0, 1]) .and. &
+                             file(2) == 'amr/amr_0.vti' .and. file(5) == 'amr/amr_2.vti'
+  if (.not.is_passed) print '(A,12(1X,I0))', 'failed: the refusals of a .vthb or the .vthb of VTK', e
+  endfunction check_amr
+
+  function write_box(filename, ext, spacing, origin) result(error)
+  !< A 2D ImageData box: the point extent ext (x1, x2, y1, y2) in the indices of its level, its spacing, the origin; point
+  !< data pd (the point index) and cell data cd (the x of the cell centre).
+  character(*), intent(in) :: filename   !< File name.
+  integer(I4P), intent(in) :: ext(4)     !< Point extent.
+  real(R8P),    intent(in) :: spacing    !< Spacing (x and y; z 1).
+  real(R8P),    intent(in) :: origin(3)  !< Origin.
+  integer(I4P)             :: error      !< Error status.
+  type(vtk_file)           :: box        !< The box.
+  integer(I4P)             :: np, nc, i, j !< Points, cells, counters.
+
+  np = (ext(2) - ext(1) + 1) * (ext(4) - ext(3) + 1)
+  nc = (ext(2) - ext(1)) * (ext(4) - ext(3))
+  error = box%initialize(format='ascii', filename=filename, mesh_topology='ImageData', nx1=ext(1), nx2=ext(2), &
+                         ny1=ext(3), ny2=ext(4), nz1=0, nz2=0, origin=origin, spacing=[spacing, spacing, 1._R8P])
+  error = error + abs(box%xml_writer%write_piece(nx1=ext(1), nx2=ext(2), ny1=ext(3), ny2=ext(4), nz1=0, nz2=0))
+  error = error + abs(box%xml_writer%write_dataarray(location='node', action='open'))
+  error = error + abs(box%xml_writer%write_dataarray(data_name='pd', x=[(real(i, R8P), i=1, np)]))
+  error = error + abs(box%xml_writer%write_dataarray(location='node', action='close'))
+  error = error + abs(box%xml_writer%write_dataarray(location='cell', action='open'))
+  error = error + abs(box%xml_writer%write_dataarray(data_name='cd', x=[((origin(1) + (i + 0.5_R8P) * spacing, &
+                                                     i=ext(1), ext(2) - 1), j=ext(3), ext(4) - 1)]))
+  error = error + abs(box%xml_writer%write_dataarray(location='cell', action='close'))
+  error = error + abs(box%xml_writer%write_piece())
+  error = error + abs(box%finalize())
+  if (nc < 0) error = 1
+  endfunction write_box
 endprogram vtk_fortran_read_composite

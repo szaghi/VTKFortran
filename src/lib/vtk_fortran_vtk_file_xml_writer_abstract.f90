@@ -11,6 +11,7 @@ implicit none
 private
 public :: xml_writer_abstract
 public :: attr_text
+public :: real_values
 
 character(len=1), parameter :: QUOTE_MARK = achar(1) !< A `"` of a user value inside an attribute string (`attr_text`).
 
@@ -210,7 +211,9 @@ contains
    call self%writer%declaration(iostat=self%error)
    call self%writer%start(name='VTKFile', iostat=self%error)
    call self%writer%attribute(name='type', value=self%topology%chars(), iostat=self%error)
-   call self%writer%attribute(name='version', value='1.0', iostat=self%error)
+   ! version 1.1 for an OverlappingAMR: amr_box in cells (VTK reads 1.0 as the former vtkHierarchicalBoxDataSet layout)
+   call self%writer%attribute(name='version', value=trim(merge('1.1', '1.0', self%topology == 'vtkOverlappingAMR')), &
+                              iostat=self%error)
    if (endian==endianL) then
       call self%writer%attribute(name='byte_order', value='LittleEndian', iostat=self%error)
    else
@@ -336,6 +339,9 @@ contains
                trim(str(n=nz1))//' '//trim(str(n=nz2))//'" GhostLevel="'//trim(str(self%ghost_level, .true.))//'"'
    case('PUnstructuredGrid', 'PPolyData')
       buffer = 'GhostLevel="'//trim(str(self%ghost_level, .true.))//'"'
+   case('vtkOverlappingAMR') ! a .vthb (vtm_file): the origin, and the grid description (XYZ, XY, ...) as mesh_kind
+      buffer = 'origin="'//real_values(self%origin)//'"'
+      if (present(mesh_kind)) buffer = buffer%chars()//' grid_description="'//trim(mesh_kind)//'"'
    case('ImageData')
       buffer = 'WholeExtent="'//                             &
                trim(str(n=nx1))//' '//trim(str(n=nx2))//' '//&
@@ -380,25 +386,26 @@ contains
    class(xml_writer_abstract), intent(in) :: self       !< Writer.
    character(len=:), allocatable          :: attributes !< Attributes, with a leading blank.
 
-   attributes = ' Origin="'//reals(self%origin)//'" Spacing="'//reals(self%spacing)//'"'
-   if (self%is_direction_set) attributes = attributes//' Direction="'//reals(self%direction)//'"'
-   contains
-      function reals(x) result(values)
-      !< Return space separated values, without the `+` of positive values (PENF `no_sign` would drop `-` too).
-      real(R8P), intent(in)         :: x(:)   !< Values.
-      character(len=:), allocatable :: values !< Space separated values.
-      character(len=:), allocatable :: value  !< One value.
-      integer                       :: i      !< Counter.
-
-      values = ''
-      do i=1, size(x)
-         value = trim(str(n=x(i), compact=.true.))
-         if (value(1:1) == '+') value = value(2:)
-         values = values//' '//value
-      enddo
-      values = values(2:)
-      endfunction reals
+   attributes = ' Origin="'//real_values(self%origin)//'" Spacing="'//real_values(self%spacing)//'"'
+   if (self%is_direction_set) attributes = attributes//' Direction="'//real_values(self%direction)//'"'
    endfunction image_attributes
+
+   function real_values(x) result(values)
+   !< Return space separated values, in the shortest form that reads back exactly, without the `+` of positive values
+   !< (PENF `no_sign` would drop `-` too).
+   real(R8P), intent(in)         :: x(:)   !< Values.
+   character(len=:), allocatable :: values !< Space separated values.
+   character(len=:), allocatable :: value  !< One value.
+   integer                       :: i      !< Counter.
+
+   values = ''
+   do i=1, size(x)
+      value = trim(str(n=x(i), compact=.true.))
+      if (value(1:1) == '+') value = value(2:)
+      values = values//' '//value
+   enddo
+   if (len(values) > 0) values = values(2:)
+   endfunction real_values
 
    ! write_dataarray
    subroutine write_dataarray_tag(self, data_type, number_of_components, data_name, data_content, is_tuples)

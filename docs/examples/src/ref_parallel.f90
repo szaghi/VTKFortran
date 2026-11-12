@@ -14,6 +14,7 @@ call pvtu
 call pvti
 call pvtp
 call pvtt
+call vthb
 call vtm
 call vtm_nested
 call vtm_scratch
@@ -223,6 +224,39 @@ contains
   error = a_pvtk_file%finalize()
   !endregion pvtt
   endsubroutine pvtt
+
+  subroutine vthb
+  use vtk_fortran, only : vtm_file
+  type(vtm_file)  :: amr
+  type(vtk_file)  :: box
+  integer(I4P)    :: b, i, error
+  integer(I4P), allocatable :: levels(:)
+  integer(I4P), parameter :: ext(4,3) = reshape([0, 4, 0, 4, 0, 4, 0, 4, 4, 8, 4, 8], [4, 3]) !< Box extents.
+  real(R8P),    parameter :: dx(3) = [1._R8P, 0.5_R8P, 0.5_R8P]                             !< Box spacings.
+
+  do b=1, 3   ! the boxes: level 0 one of 4x4 cells, level 1 two of 4x4 cells of half the size
+    error = box%initialize(format='raw', filename='ref_amr_'//achar(47+b)//'.vti', mesh_topology='ImageData', &
+                           nx1=ext(1,b), nx2=ext(2,b), ny1=ext(3,b), ny2=ext(4,b), nz1=0, nz2=0, &
+                           origin=[0._R8P, 0._R8P, 0._R8P], spacing=[dx(b), dx(b), 1._R8P])
+    error = box%xml_writer%write_piece(nx1=ext(1,b), nx2=ext(2,b), ny1=ext(3,b), ny2=ext(4,b), nz1=0, nz2=0)
+    error = box%xml_writer%write_dataarray(location='cell', action='open')
+    error = box%xml_writer%write_dataarray(data_name='level', x=[(b / 2, i=1, 16)])   ! its level
+    error = box%xml_writer%write_dataarray(location='cell', action='close')
+    error = box%xml_writer%write_piece()
+    error = box%finalize()
+  enddo
+  !region vthb
+  error = amr%initialize(filename='ref.vthb', composite='OverlappingAMR')
+  error = amr%write_level(level=0, filenames=['ref_amr_0.vti'])
+  error = amr%write_level(level=1, filenames=['ref_amr_1.vti', 'ref_amr_2.vti'])
+  error = amr%finalize()
+  !endregion vthb
+  error = amr%initialize(filename='ref.vthb', action='read') ! read back: 2 levels, 3 boxes
+  if (error == 0) error = amr%get_entries(level=levels)
+  if (error /= 0 .or. size(levels) /= 5) error stop 'ref.vthb: not read back'
+  error = amr%finalize()
+  print '(A)', 'ref.vthb: 2 levels, 3 boxes'
+  endsubroutine vthb
 
   subroutine vtm
   !region vtm
