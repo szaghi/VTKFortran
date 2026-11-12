@@ -307,7 +307,8 @@ contains
   !< Return the blocks and datasets of a file read (`initialize(..., action='read')`), in the order of the file.
   !<
   !< The hierarchy is flattened depth first: each entry has its nesting level (1 for the children of the root), its kind
-  !< (**block**, **dataset**, or **piece** for the pieces of a `vtkMultiPieceDataSet` written by VTK), its index among the
+  !< (**block**, **dataset**, or **piece** for a `vtkMultiPieceDataSet`, written by VTK or by `write_block(...,
+  !< action='pieces')`, whose `DataSet`s follow at the next level), its index among the
   !< children of its parent (-1 if the file has none), its name and, for datasets, its file (empty for blocks and pieces,
   !< or for datasets without file). The children of an entry are the following entries of the next level. The names and files
   !< are blank padded to the longest one; relative files are relative to the directory of the `.vtm` file. A VTKHDF
@@ -439,7 +440,8 @@ contains
   !< Write one block dataset (array input).
   !<
   !< By default the files are wrapped in a new block; with `action='write'` they are written as datasets of the current
-  !< (open) block, without a new block.
+  !< (open) block, without a new block; with `action='pieces'` (an XML `.vtm`) they are wrapped in a `Piece`, a
+  !< vtkMultiPieceDataSet whose pieces they are (as VTK writes the partitions of a dataset in a `.vtm`).
   !<
   !<#### Example of usage: 3 files blocks
   !<```fortran
@@ -466,11 +468,20 @@ contains
   character(*),    intent(in), optional :: action        !< Action: 'write' (datasets of the current block) or default.
   integer(I4P)                          :: error         !< Error status.
   logical                               :: is_new_block  !< Wrap the files in a new block.
+  logical                               :: is_pieces     !< Wrap them in a Piece (a vtkMultiPieceDataSet).
 
   integer(I4P)                          :: f             !< Counter.
 
   is_new_block = .true.
   if (present(action)) is_new_block = trim(adjustl(action)) /= 'write' .and. trim(adjustl(action)) /= 'WRITE'
+  is_pieces = .false.
+  if (present(action)) is_pieces = trim(adjustl(action)) == 'pieces' .or. trim(adjustl(action)) == 'PIECES'
+  if (is_pieces .and. (self%is_vtkhdf .or. self%is_xml_collection .or. self%is_xml_pds)) then
+     error = 1
+     write(stderr, '(A)') 'error: VTKFortran vtm_file: a block of pieces (action=pieces) is a vtkMultiPieceDataSet of an '// &
+                          'XML .vtm only'
+     return
+  endif
   if (self%is_xml_collection .or. self%is_xml_pds) then
      error = 0
      if (is_new_block) error = self%xml_part_open_block(name=name)
@@ -499,7 +510,7 @@ contains
      if (is_new_block .and. error == 0) error = self%vtkhdf_close_block()
      return
   endif
-  if (is_new_block) error = self%xml_writer%write_parallel_open_block(name=name)
+  if (is_new_block) error = self%xml_writer%write_parallel_open_block(name=name, pieces=is_pieces)
   error = self%xml_writer%write_parallel_block_files(filenames=filenames, names=names)
   if (is_new_block) error = self%xml_writer%write_parallel_close_block()
   endfunction write_block_array
@@ -509,7 +520,8 @@ contains
    !<
    !< With `action` the block is written in steps, so blocks can be nested: `'open'` opens a (child) block, `'write'` writes the
    !< files as datasets of the current block, `'close'` closes it. The children of a block (blocks and datasets) are indexed
-   !< from 0 in the order they are written.
+   !< from 0 in the order they are written. `'pieces'` (an XML `.vtm` only) wraps the files in a `Piece`, a
+   !< vtkMultiPieceDataSet whose pieces they are.
    !<
    !<#### Example of usage: 3 files blocks
    !<```fortran
@@ -531,7 +543,7 @@ contains
    !< error = vtm%write_block(references='pump', name='rotating')
    !<```
    class(vtm_file), intent(inout)        :: self      !< VTM file.
-   character(*),    intent(in), optional :: action    !< Action: [open, close, write].
+   character(*),    intent(in), optional :: action    !< Action: [open, close, write, pieces].
    character(*),    intent(in), optional :: filenames !< File names of VTK files grouped into current block.
    character(*),    intent(in), optional :: names     !< Auxiliary names attributed to each files.
    character(*),    intent(in), optional :: name      !< Block name
@@ -549,6 +561,11 @@ contains
          action_ = trim(adjustl(action)) ; action_ = action_%upper()
       endif
       error = 0
+      if (action_ == 'PIECES') then
+         error = 1
+         write(stderr, '(A)') 'error: VTKFortran vtm_file: a block of pieces (action=pieces) is a vtkMultiPieceDataSet '// &
+                              'of an XML .vtm only'
+      endif
       if (action_ == 'OPEN' .or. action_ == 'BLOCK') then
          if (self%is_vtkhdf) then
             error = self%vtkhdf_open_block(name=name)
@@ -610,6 +627,10 @@ contains
          error = self%xml_writer%write_parallel_close_block()
       case('WRITE')
          if (present(filenames)) error = self%xml_writer%write_parallel_block_files(filenames=filenames, names=names)
+      case('PIECES')
+         error = self%xml_writer%write_parallel_open_block(name=name, pieces=.true.)
+         error = self%xml_writer%write_parallel_block_files(filenames=filenames, names=names)
+         error = self%xml_writer%write_parallel_close_block()
       endselect
    else
       error = self%xml_writer%write_parallel_open_block(name=name)

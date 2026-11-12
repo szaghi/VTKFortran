@@ -75,7 +75,10 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
 
 - `vtk_fortran` — main API module (re-exports `vtk_file`, `pvtk_file`, `vtm_file`, `pvd_file`, `write_xml_volatile`)
 - `vtk_fortran_vtk_file` — `vtk_file` type: single-file serial writer; selects and allocates the appropriate `xml_writer` concrete type; with `initialize(filename, action='read')` it reads instead, through its `xml_reader` component
-- `vtk_fortran_pvtk_file` — `pvtk_file` type: parallel/partitioned VTK files (`.pvtr`, `.pvts`, `.pvtu`); the header is plain XML metadata, the pieces can use any format
+- `vtk_fortran_pvtk_file` — `pvtk_file` type: parallel/partitioned VTK files (`.pvtr`, `.pvts`, `.pvtu`, `.pvti`, `.pvtp`,
+  `.pvtt`: `PTable`, columns in `PRowData` between `write_dataarray(location='row', action='open'|'close')`, pieces by
+  `write_parallel_geo(source=)`; VTK 9.7.2 reads one piece per request, string columns empty, its own too); the header
+  is plain XML metadata, the pieces can use any format
 - `vtk_fortran_vtm_file` — `vtm_file` type: multi-block composite datasets (`.vtm`); with `initialize(...,
   format='vtkhdf')` one VTKHDF
   `MultiBlockDataSet`: the `.vtkhdf` datasets copied in (`H5Ocopy`, `Block_<n>`), the tree as `Assembly` soft links;
@@ -347,4 +350,5 @@ ascii and binary; string point and cell data in every format and a `.vtt` string
 rows refused, the next one unaffected); component names and 3-component field data in every format), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files, `PArray`
 string arrays (a VTK 9.7.2 header and piece embedded, and a header of the library over that piece); `.vtpc` and `.vtpd`
 written and read back (blocks, references, an empty dataset, the refusals), and VTK 9.7.2's own `.vtpc`/`.vtpd`
-embedded and read).
+embedded and read; a `.pvtt` over two `.vtt` pieces and a `.vtm` with blocks of pieces, `write_block(...,
+action='pieces')` = a `Piece` (vtkMultiPieceDataSet; XML `.vtm` only, both forms), read back as `piece` entries).

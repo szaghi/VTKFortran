@@ -55,6 +55,8 @@ contains
   !<- PImageData: `origin` and `spacing` are required, `direction` is optional, `mesh_kind` is not used (the pieces have no
   !<  points coordinates).
   !<- PPolyData: `mesh_kind` (type of the points coordinates of the pieces) is required.
+  !<- PTable: the columns declared between `write_dataarray(location='row', action='open')` and `action='close'`, the
+  !<  `.vtt` pieces listed with `write_parallel_geo(source=...)`; `mesh_kind` is not used.
   !<
   !<### Example of usage
   !<

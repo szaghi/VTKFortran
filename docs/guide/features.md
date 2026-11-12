@@ -37,12 +37,14 @@ title: Features
 | Parallel Rectilinear Grid | `.pvtr` | ✅ |
 | Parallel Structured Grid | `.pvts` | ✅ |
 | Parallel Unstructured Grid | `.pvtu` | ✅ |
+| Parallel Table | `.pvtt` | ✅ |
 
 ### Composite datasets
 
 | Type | Extension | Status |
 |------|-----------|--------|
 | vtkMultiBlockDataSet | `.vtm` | ✅ |
+| vtkMultiPieceDataSet (a block of pieces in a `.vtm`) | `.vtm` | ✅ |
 | Time series (collection) | `.pvd` | ✅ |
 
 ## VTK XML Importers
@@ -54,7 +56,7 @@ VTKFortran or by VTK and ParaView. Only the array asked for is loaded and decode
 | Type | Extension | Status |
 |------|-----------|--------|
 | Serial datasets | `.vti`, `.vtp`, `.vtr`, `.vts`, `.vtu`, `.vtt` | ✅ |
-| Parallel (partitioned) headers, with the check of the pieces | `.pvti`, `.pvtp`, `.pvtr`, `.pvts`, `.pvtu` | ✅ |
+| Parallel (partitioned) headers, with the check of the pieces | `.pvti`, `.pvtp`, `.pvtr`, `.pvts`, `.pvtu`, `.pvtt` | ✅ |
 | Multi-block entries and time series datasets | `.vtm`, `.pvd` | ✅ |
 | Partitioned composites (entries; a Partitions of several DataSets as pieces) | `.vtpc`, `.vtpd` | ✅ |
 

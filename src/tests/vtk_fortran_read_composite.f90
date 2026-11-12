@@ -7,14 +7,15 @@ program vtk_fortran_read_composite
 !< The pieces extents of a parallel rectilinear grid header are read. A nested multi-block file and a time series are
 !< written and their entries read back. String arrays declared as `PArray`: a header and a piece written by VTK 9.7.2
 !< (embedded), and a header of the library over the same piece. XML partitioned composites (`.vtpc`, `.vtpd`) written
-!< and read back, and the two written by VTK 9.7.2 (embedded) read.
+!< and read back, and the two written by VTK 9.7.2 (embedded) read. A parallel Table (`.pvtt`) over two `.vtt` pieces
+!< (a numeric and a string column) and a `.vtm` with a block of pieces (`action='pieces'`), read back.
 use penf
 use vtk_fortran, only : pvd_file, pvtk_file, vtk_file, vtm_file
 
 implicit none
 character(*), parameter :: pieces(2)=['vtkfortran_read_composite_01.vtu', 'vtkfortran_read_composite_02.vtu'] !< Pieces.
 type(pvtk_file)         :: a_pvtk_file    !< A parallel VTK file.
-logical                 :: test_passed(7) !< List of passed tests.
+logical                 :: test_passed(8) !< List of passed tests.
 integer(I4P)            :: p              !< Counter.
 
 do p=1, size(pieces)
@@ -27,6 +28,7 @@ test_passed(4) = check_vtm()
 test_passed(5) = check_pvd()
 test_passed(6) = check_parray()
 test_passed(7) = check_partitioned()
+test_passed(8) = check_ptable_pieces()
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 if (.not.all(test_passed)) error stop 'some tests failed'
@@ -417,4 +419,71 @@ contains
   is_passed = all(c) .and. all(e == 0)
   if (.not.is_passed) print '(A,12(1X,I0),A,7L2)', 'failed: partitioned composites, errors', e, ' checks', c
   endfunction check_partitioned
+  function check_ptable_pieces() result(is_passed)
+  !< A parallel Table (`.pvtt`): two `.vtt` pieces of the columns `a` (Float64) and `s` (strings), the header declaring
+  !< them (`PRowData`, `s` a `PArray`), read back and checked against the pieces; a `.vtm` with a block of pieces
+  !< (`write_block(..., action='pieces')`: a vtkMultiPieceDataSet), its entries read back.
+  logical                       :: is_passed !< Check result.
+  type(vtk_file)                :: t         !< A Table.
+  type(vtm_file)                :: vtm       !< Multi-block file.
+  character(len=:), allocatable :: topology, message, names(:), sources(:) !< Header read.
+  character(len=:), allocatable :: kind(:), file(:) !< Entries read.
+  integer(I4P),     allocatable :: level(:)  !< Entries read.
+  integer(I4P)                  :: k, npieces !< Counter, pieces.
+  integer(I4P)                  :: e(10)     !< Errors.
+
+  e = 0
+  do k=1, 2
+    e(1) = e(1) + abs(t%initialize(format='ascii', filename='vtkfortran_read_composite_t'//trim(str(k, no_sign=.true.))// &
+                                   '.vtt', mesh_topology='Table'))
+    e(1) = e(1) + abs(t%xml_writer%write_dataarray(location='row', action='open'))
+    e(1) = e(1) + abs(t%xml_writer%write_dataarray(data_name='a', x=[1._R8P, 2._R8P] * k))
+    e(1) = e(1) + abs(t%xml_writer%write_dataarray(data_name='s', x=[character(2) :: 'x'//achar(48 + k), 'y']))
+    e(1) = e(1) + abs(t%xml_writer%write_dataarray(location='row', action='close'))
+    e(1) = e(1) + abs(t%finalize())
+  enddo
+  e(2) = a_pvtk_file%initialize(filename='vtkfortran_read_composite.pvtt', mesh_topology='PTable')
+  e(2) = e(2) + abs(a_pvtk_file%xml_writer%write_dataarray(location='row', action='open'))
+  e(2) = e(2) + abs(a_pvtk_file%xml_writer%write_parallel_dataarray(data_name='a', data_type='Float64'))
+  e(2) = e(2) + abs(a_pvtk_file%xml_writer%write_parallel_dataarray(data_name='s', data_type='String'))
+  e(2) = e(2) + abs(a_pvtk_file%xml_writer%write_dataarray(location='row', action='close'))
+  e(2) = e(2) + abs(a_pvtk_file%xml_writer%write_parallel_geo(source='vtkfortran_read_composite_t1.vtt'))
+  e(2) = e(2) + abs(a_pvtk_file%xml_writer%write_parallel_geo(source='vtkfortran_read_composite_t2.vtt'))
+  e(2) = e(2) + abs(a_pvtk_file%finalize())
+  e(3) = a_pvtk_file%initialize(filename='vtkfortran_read_composite.pvtt', action='read')
+  e(4) = a_pvtk_file%xml_reader%get_info(mesh_topology=topology, npieces=npieces)
+  e(5) = a_pvtk_file%xml_reader%get_dataarray_names(location='row', names=names)
+  e(6) = a_pvtk_file%xml_reader%get_sources(sources)
+  e(7) = a_pvtk_file%xml_reader%check_pieces(message=message)
+  e(8) = a_pvtk_file%finalize()
+  is_passed = all(e == 0)
+  if (is_passed) is_passed = topology == 'PTable' .and. npieces == 2 .and. size(names) == 2 .and. size(sources) == 2
+  if (is_passed) is_passed = names(1) == 'a' .and. names(2) == 's' .and. sources(2) == 'vtkfortran_read_composite_t2.vtt'
+  if (.not.is_passed) then
+    print '(A,10(1X,I0))', 'failed: vtkfortran_read_composite.pvtt '//message, e
+    return
+  endif
+  ! a block of pieces in a .vtm
+  e = 0
+  e(1) = vtm%initialize(filename='vtkfortran_read_composite-pieces.vtm')
+  e(2) = vtm%write_block(filenames=pieces, names=['p1', 'p2'], name='parts', action='pieces')
+  e(3) = vtm%write_block(filenames=[pieces(1)], name='solid')
+  e(3) = e(3) + vtm%write_block(filenames=pieces(2)//' '//pieces(1), action='pieces', name='more')
+  e(4) = vtm%finalize()
+  e(5) = vtm%initialize(filename='vtkfortran_read_composite-pieces.vtm', action='read')
+  e(6) = vtm%get_entries(level=level, kind=kind, file=file)
+  e(7) = vtm%finalize()
+  ! refused outside an XML .vtm (a .vtpd here; VTKHDF likewise), array and string forms
+  e(8) = vtm%initialize(filename='vtkfortran_read_composite-pieces.vtpd', composite='PartitionedDataSet')
+  e(9) = merge(0, 1, vtm%write_block(filenames=pieces, action='pieces') /= 0)                   ! array form
+  e(9) = e(9) + merge(0, 1, vtm%write_block(filenames=pieces(1), action='pieces') /= 0)          ! string form
+  e(10) = vtm%finalize()
+  is_passed = all(e == 0)
+  if (is_passed) is_passed = size(level) == 8
+  if (is_passed) is_passed = all(level == [1, 2, 2, 1, 2, 1, 2, 2]) .and. &
+                             all(kind == [character(7) :: 'piece', 'dataset', 'dataset', 'block', 'dataset', &
+                                                          'piece', 'dataset', 'dataset']) .and. &
+                             file(2) == pieces(1) .and. file(3) == pieces(2) .and. file(7) == pieces(2)
+  if (.not.is_passed) print '(A,10(1X,I0))', 'failed: vtkfortran_read_composite-pieces.vtm', e
+  endfunction check_ptable_pieces
 endprogram vtk_fortran_read_composite

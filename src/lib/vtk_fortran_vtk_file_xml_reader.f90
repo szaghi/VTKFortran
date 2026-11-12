@@ -169,7 +169,7 @@ contains
   select case(self%mesh_topology)
   case('ImageData', 'RectilinearGrid', 'StructuredGrid', 'UnstructuredGrid', 'PolyData', 'Table')
     self%is_parallel = .false.
-  case('PImageData', 'PRectilinearGrid', 'PStructuredGrid', 'PUnstructuredGrid', 'PPolyData')
+  case('PImageData', 'PRectilinearGrid', 'PStructuredGrid', 'PUnstructuredGrid', 'PPolyData', 'PTable')
     self%is_parallel = .true.
   case default
     return
@@ -889,8 +889,9 @@ contains
   integer(I4P)                                         :: iostat    !< IO status.
   integer(I4P), allocatable                            :: pieces(:) !< Indexes of the piece elements.
   integer(I4P), allocatable                            :: kids(:)   !< Indexes of the children of a section element.
-  character(len=10), parameter                         :: sections(2)=['PPointData', 'PCellData '] !< Data sections.
-  character(len=4),  parameter                         :: locations(2)=['node', 'cell'] !< Locations of the sections.
+  character(len=10), parameter                         :: sections(3)=['PPointData', 'PCellData ', 'PRowData  '] !< Data
+                                                                                                             !< sections.
+  character(len=4),  parameter                         :: locations(3)=['node', 'cell', 'row '] !< Their locations.
 
   msg = ''
   error = 4
@@ -948,7 +949,7 @@ contains
         dtype = self%xml%attribute(id=a, name='type')
         nc = 1
         call self%xml%get_attribute(id=a, name='NumberOfComponents', value=nc)
-        do q=1, piece%pieces_number
+        do q=1, max(piece%pieces_number, merge(1, 0, locations(l) == 'row')) ! (a Table has no pieces: its columns once)
           if (piece%get_dataarray_info(location=trim(locations(l)), data_name=name, piece=q, data_type=ptype, &
                                        n_components=pnc) /= 0) then
             msg = 'piece '//trim(str(p, no_sign=.true.))//' ('//source//'): '//trim(locations(l))//' array "'//name// &
@@ -1114,11 +1115,15 @@ contains
     endif
   case('field')
     section = self%xml%find(name='FieldData', parent=self%dataset)
-  case('row') ! the columns of a Table: its RowData, in its one Piece
-    if (self%mesh_topology /= 'Table') return
-    p = self%xml%find(name='Piece', parent=self%dataset)
-    if (p == 0) return
-    section = self%xml%find(name='RowData', parent=p)
+  case('row') ! the columns of a Table: its RowData, in its one Piece (the PRowData of a PTable header)
+    if (self%mesh_topology == 'PTable') then
+      section = self%xml%find(name='PRowData', parent=self%dataset)
+    else
+      if (self%mesh_topology /= 'Table') return
+      p = self%xml%find(name='Piece', parent=self%dataset)
+      if (p == 0) return
+      section = self%xml%find(name='RowData', parent=p)
+    endif
   endselect
   error = 4
   if (section == 0) return

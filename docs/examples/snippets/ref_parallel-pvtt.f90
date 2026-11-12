@@ -1,0 +1,8 @@
+error = a_pvtk_file%initialize(filename='ref.pvtt', mesh_topology='PTable')
+error = a_pvtk_file%xml_writer%write_dataarray(location='row', action='open')
+error = a_pvtk_file%xml_writer%write_parallel_dataarray(data_name='a', data_type='Float64')
+error = a_pvtk_file%xml_writer%write_parallel_dataarray(data_name='s', data_type='String')
+error = a_pvtk_file%xml_writer%write_dataarray(location='row', action='close')
+error = a_pvtk_file%xml_writer%write_parallel_geo(source='ref_table_1.vtt')
+error = a_pvtk_file%xml_writer%write_parallel_geo(source='ref_table_2.vtt')
+error = a_pvtk_file%finalize()

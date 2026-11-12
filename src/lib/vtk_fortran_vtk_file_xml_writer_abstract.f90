@@ -26,6 +26,7 @@ type, abstract, extends(vtk_writer_abstract) :: xml_writer_abstract
   integer(I8P)  :: ioffset=0_I8P                   !< Offset count.
   integer(I4P)  :: xml=0_I4P                       !< XML Logical unit.
   integer(I4P), allocatable :: vtm_index(:)       !< Next child index of each open level of a multi-block file.
+  logical,      allocatable :: vtm_piece(:)       !< Each open level is a Piece (a vtkMultiPieceDataSet), not a Block.
   integer(I4P)  :: error=0_I4P                     !< IO Error status.
   type(xml_writer) :: writer                       !< FoXy streaming writer (on the file unit, or on memory if volatile).
   logical       :: is_volatile=.false.             !< Flag to check volatile writer.
@@ -168,6 +169,7 @@ contains
    self%ioffset=0_I8P
    self%xml=0_I4P
    if (allocated(self%vtm_index)) deallocate(self%vtm_index)
+   if (allocated(self%vtm_piece)) deallocate(self%vtm_piece)
    self%error=0_I4P
    self%is_volatile=.false.
    self%n_tuples=-1_I8P
@@ -691,9 +693,13 @@ contains
       location_ = 'CellData'
    case('NODE')
       location_ = 'PointData'
-   case('ROW') ! the columns of a Table
-      error = self%write_table_rows(action=action_%chars())
-      return
+   case('ROW') ! the columns of a Table (the PRowData declarations of a PTable header)
+      if (self%topology == 'PTable') then
+         location_ = 'RowData'
+      else
+         error = self%write_table_rows(action=action_%chars())
+         return
+      endif
    endselect
    if (self%topology == 'Table') then
       write(stderr, '(A)') 'error: VTKFortran XML writer: a Table has only columns, written with '// &
@@ -702,7 +708,7 @@ contains
       return
    endif
    select case(self%topology%chars())
-   case('PRectilinearGrid', 'PStructuredGrid', 'PUnstructuredGrid', 'PImageData', 'PPolyData')
+   case('PRectilinearGrid', 'PStructuredGrid', 'PUnstructuredGrid', 'PImageData', 'PPolyData', 'PTable')
       location_ = 'P'//location_
    endselect
    select case(action_%chars())
@@ -1658,22 +1664,29 @@ contains
    endfunction write_tree
 
    ! write_parallel methods
-   function write_parallel_open_block(self, name) result(error)
-   !< Write a block (open) container.
+   function write_parallel_open_block(self, name, pieces) result(error)
+   !< Write a block (open) container, or with `pieces` a `Piece` (a vtkMultiPieceDataSet: its datasets are its pieces, as
+   !< VTK writes a multi-piece block of a `.vtm`).
    !<
    !< Blocks can be nested: each open block is a new level. The children of a level (blocks and datasets) are indexed from 0
    !< in the order they are written, as VTK numbers the children of a multi-block dataset.
    class(xml_writer_abstract), intent(inout)        :: self   !< Writer.
    character(*),               intent(in), optional :: name   !< Block name.
+   logical,                    intent(in), optional :: pieces !< A Piece (multi-piece dataset), not a Block.
    integer(I4P)                                     :: error  !< Error status.
    type(string)                                     :: buffer !< Buffer string.
    integer(I4P)                                     :: child  !< Index of the block in its level.
+   logical                                          :: is_piece !< A Piece.
 
+   is_piece = .false.
+   if (present(pieces)) is_piece = pieces
    child = self%next_vtm_index()
    buffer = 'index="'//trim(str(child, .true.))//'"'
    if (present(name)) buffer = buffer//' name="'//attr_text(name)//'"'
    self%vtm_index = [self%vtm_index, 0_I4P] ! a new level, its children start from 0
-   call self%write_start_tag(name='Block', attributes=buffer%chars())
+   if (.not.allocated(self%vtm_piece)) allocate(self%vtm_piece(0))
+   self%vtm_piece = [self%vtm_piece, is_piece]
+   call self%write_start_tag(name=trim(merge('Piece', 'Block', is_piece)), attributes=buffer%chars())
    error = self%error
    endfunction write_parallel_open_block
 
@@ -1682,6 +1695,8 @@ contains
    class(xml_writer_abstract), intent(inout) :: self      !< Writer.
    integer(I4P)                              :: error     !< Error status.
    integer(I4P), allocatable                 :: levels(:) !< Open levels, the closed one dropped.
+   logical,      allocatable                 :: kinds(:)  !< Open levels kinds, the closed one dropped.
+   logical                                   :: is_piece  !< The closed level is a Piece.
 
    if (allocated(self%vtm_index)) then
       if (size(self%vtm_index) > 1) then
@@ -1690,7 +1705,15 @@ contains
          self%vtm_index = levels
       endif
    endif
-   call self%write_end_tag(name='Block')
+   is_piece = .false.
+   if (allocated(self%vtm_piece)) then
+      if (size(self%vtm_piece) > 0) then
+         is_piece = self%vtm_piece(size(self%vtm_piece))
+         kinds = self%vtm_piece(1:size(self%vtm_piece)-1)
+         self%vtm_piece = kinds
+      endif
+   endif
+   call self%write_end_tag(name=trim(merge('Piece', 'Block', is_piece)))
    error = self%error
    endfunction write_parallel_close_block
 
@@ -1747,7 +1770,7 @@ contains
                trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
                trim(str(n=ny1))//' '//trim(str(n=ny2))//' '// &
                trim(str(n=nz1))//' '//trim(str(n=nz2))//'" Source="'//attr_text(source)//'"'
-   case('PUnstructuredGrid', 'PPolyData')
+   case('PUnstructuredGrid', 'PPolyData', 'PTable')
       buffer = 'Source="'//attr_text(source)//'"'
    endselect
    call self%write_self_closing_tag(name='Piece', attributes=buffer%chars())

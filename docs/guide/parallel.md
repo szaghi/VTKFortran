@@ -83,6 +83,18 @@ type of the points coordinates (`mesh_kind`, required) and of each data array, a
 
 See `src/tests/vtk_fortran_write_vtp.f90` for a complete program with the four blocks, serial and parallel.
 
+## Parallel Table (PVTT)
+
+The pieces of a Table are `.vtt` files (`mesh_topology='Table'`, see [Table](/guide/topologies#table)); the `.pvtt` header declares its
+columns between `write_dataarray(location='row', action='open')` and `action='close'` (`PRowData`; a string column with
+`data_type='String'`, a `PArray`) and lists the pieces with `write_parallel_geo(source=...)`:
+
+<<< @/examples/snippets/ref_parallel-pvtt.f90
+
+VTK 9.7.2's `vtkXMLPTableReader` reads one piece per request (`UpdatePiece`), not the whole table, and gives its string
+columns empty: the same with a `.pvtt` VTK writes. The test `src/tests/vtk_fortran_read_composite.f90` writes one and
+reads it back (`check_pieces`), as this page's program does.
+
 ## Multi-block Dataset (VTM)
 
 A VTM file is a composite wrapper that references multiple individual VTK files organised into named blocks.
@@ -124,6 +136,9 @@ flowchart TD
 - The children of a block (blocks and datasets together) get the indexes 0, 1, 2, … in the order they are written, as VTK
   numbers the children of a multi-block dataset. Every `action='open'` needs its `action='close'`.
 - The string form (`filenames='a.vtu b.vtu'`, names separated by blanks) accepts the same `action` values.
+- `write_block(filenames=[...], name=..., action='pieces')` wraps the files in a `Piece`: a `vtkMultiPieceDataSet`, the
+  partitions of one dataset, as VTK writes them in a `.vtm` (an XML `.vtm` only; the partitioned composites hold their
+  partitions as the datasets of a block).
 - The test `src/tests/vtk_fortran_write_vtm_nested.f90` writes the hierarchy of issue #25, checked with VTK's reader.
 
 ### Multi-block in one VTKHDF file

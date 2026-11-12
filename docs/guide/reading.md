@@ -129,7 +129,7 @@ keeping the axis of one point is refused (error 6), as VTK refuses it.
 
 ### Parallel headers
 
-A parallel header (`.pvti`, `.pvtr`, `.pvts`, `.pvtu`, `.pvtp`) is read with `pvtk_file`, through the same `xml_reader`: it
+A parallel header (`.pvti`, `.pvtr`, `.pvts`, `.pvtu`, `.pvtp`, `.pvtt`) is read with `pvtk_file`, through the same `xml_reader`: it
 holds no data, only the declaration of the arrays and the list of the pieces, each one a serial file read with `vtk_file`.
 
 <<< @/examples/snippets/ref_reading-parallel.f90
@@ -140,7 +140,8 @@ holds no data, only the declaration of the arrays and the list of the pieces, ea
 - `get_sources` returns the files as written in the header; relative paths are relative to the directory of the header.
 - `check_pieces` reads the index of every piece (not its data) and checks that it is a dataset of the type of the header,
   with coordinates of the declared type, and that each of its pieces holds every declared point and cell array with the
-  same type and number of components (a piece can hold more arrays). It returns 7 and describes the first mismatch in
+  same type and number of components (a piece can hold more arrays; the columns of a `.pvtt`, `location='row'`). It
+  returns 7 and describes the first mismatch in
   `message`, e.g. `piece 2 (part_02.vtu): node array "pressure" declared but missing`: VTK readers would otherwise drop the
   array, fill it with zeros or fail. A piece that cannot be read returns its own error (1, 2, 3).
 
@@ -152,7 +153,8 @@ then read with `vtk_file` (or `pvtk_file`). Relative files are relative to the d
 <<< @/examples/snippets/ref_reading-composite.f90
 
 - `get_entries` flattens the hierarchy depth first: `level` is the nesting level (1 for the children of the root), `kind` is
-  `block`, `dataset`, or `piece` (the pieces of a `vtkMultiPieceDataSet` written by VTK), `index` the index among the
+  `block`, `dataset`, or `piece` (a `vtkMultiPieceDataSet`, written by VTK or by `write_block(..., action='pieces')`, its
+  `DataSet`s at the next level), `index` the index among the
   siblings, `file` empty for blocks. The children of an entry are the entries that follow it with the next level.
 - `get_datasets` returns the attributes of each `DataSet` of the collection; missing ones are 0 (`timestep`, `part`) or empty.
 - An XML `.vtpc` (vtkPartitionedDataSetCollection) is read by `vtm_file` too: the nodes of its `DataAssembly` are the

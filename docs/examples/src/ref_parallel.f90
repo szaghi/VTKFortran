@@ -2,7 +2,7 @@
 !run ref_parallel-series cat ref_series.vtm
 !run ref_parallel-pvd cat ref_simulation.pvd
 program ref_parallel
-!< The examples of the reference page "Parallel and composite files": the five parallel headers with their pieces, multi-block
+!< The examples of the reference page "Parallel and composite files": the six parallel headers with their pieces, multi-block
 !< files, a time series, a volatile file. Every header is then read back and checked against its pieces.
 use penf, only : I1P, I4P, R8P
 use vtk_fortran, only : pvtk_file, vtk_file
@@ -13,12 +13,13 @@ call pvtr
 call pvtu
 call pvti
 call pvtp
+call pvtt
 call vtm
 call vtm_nested
 call vtm_scratch
 call pvd
 call volatile
-call check([character(16) :: 'ref.pvts', 'ref.pvtr', 'ref.pvtu', 'ref.pvti', 'ref.pvtp'])
+call check([character(16) :: 'ref.pvts', 'ref.pvtr', 'ref.pvtu', 'ref.pvti', 'ref.pvtp', 'ref.pvtt'])
 contains
   subroutine pvts
   !region pvts
@@ -197,6 +198,31 @@ contains
   error = a_pvtk_file%finalize()
   !endregion pvtp
   endsubroutine pvtp
+
+  subroutine pvtt
+  type(pvtk_file) :: a_pvtk_file
+  type(vtk_file)  :: a_vtk_file
+  integer(I4P)    :: p, error
+
+  do p=1, 2   ! the pieces: two rows each
+    error = a_vtk_file%initialize(format='ascii', filename='ref_table_'//achar(48+p)//'.vtt', mesh_topology='Table')
+    error = a_vtk_file%xml_writer%write_dataarray(location='row', action='open')
+    error = a_vtk_file%xml_writer%write_dataarray(data_name='a', x=[1._R8P, 2._R8P] * p)
+    error = a_vtk_file%xml_writer%write_dataarray(data_name='s', x=[character(5) :: 'left', 'right'])
+    error = a_vtk_file%xml_writer%write_dataarray(location='row', action='close')
+    error = a_vtk_file%finalize()
+  enddo
+  !region pvtt
+  error = a_pvtk_file%initialize(filename='ref.pvtt', mesh_topology='PTable')
+  error = a_pvtk_file%xml_writer%write_dataarray(location='row', action='open')
+  error = a_pvtk_file%xml_writer%write_parallel_dataarray(data_name='a', data_type='Float64')
+  error = a_pvtk_file%xml_writer%write_parallel_dataarray(data_name='s', data_type='String')
+  error = a_pvtk_file%xml_writer%write_dataarray(location='row', action='close')
+  error = a_pvtk_file%xml_writer%write_parallel_geo(source='ref_table_1.vtt')
+  error = a_pvtk_file%xml_writer%write_parallel_geo(source='ref_table_2.vtt')
+  error = a_pvtk_file%finalize()
+  !endregion pvtt
+  endsubroutine pvtt
 
   subroutine vtm
   !region vtm
