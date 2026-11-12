@@ -82,6 +82,7 @@ type :: vtm_file
       ! VTKHDF methods
       procedure, pass(self), private :: vtkhdf_close_block  !< Close the open block of a VTKHDF file.
       procedure, pass(self), private :: vtkhdf_entries      !< Gather the entries of a VTKHDF composite read.
+      procedure, pass(self), private :: free_entries        !< Free the entries of a VTKHDF composite read.
       procedure, pass(self), private :: vtkhdf_add_entries  !< Gather the entries of a block of its Assembly.
       procedure, pass(self), private :: vtkhdf_dataset      !< Copy a dataset file into a VTKHDF file.
       procedure, pass(self), private :: vtkhdf_open_block   !< Open a block of a VTKHDF file.
@@ -221,8 +222,8 @@ contains
      self%is_vtkhdf = .false.
      return
   endif
+  call self%free_entries ! (also after a refused read, which leaves them allocated)
   if (self%is_reading_vtkhdf) then
-     deallocate(self%entry_level, self%entry_is_block, self%entry_index, self%entry_text, self%entry_chars)
      self%is_reading_vtkhdf = .false.
      error = 0
      return
@@ -614,6 +615,17 @@ contains
    call move_alloc(stack, self%children)
    endfunction vtkhdf_open_block
 
+   pure subroutine free_entries(self)
+   !< Free the entries of a VTKHDF composite read.
+   class(vtm_file), intent(inout) :: self !< VTM file.
+
+   if (allocated(self%entry_level)) deallocate(self%entry_level)
+   if (allocated(self%entry_is_block)) deallocate(self%entry_is_block)
+   if (allocated(self%entry_index)) deallocate(self%entry_index)
+   if (allocated(self%entry_text)) deallocate(self%entry_text)
+   if (allocated(self%entry_chars)) deallocate(self%entry_chars)
+   endsubroutine free_entries
+
    function vtkhdf_entries(self, filename) result(error)
    !< Open a VTKHDF composite file (action read) and gather its entries from its `Assembly`: the groups are blocks, the
    !< soft links datasets (their file the dataset under `/VTKHDF` they point to, the `dataset` of
@@ -629,6 +641,7 @@ contains
    character(len=:), allocatable  :: path     !< Path of a block.
    integer(I4P)                   :: e        !< Entry, error of a closing.
 
+   call self%free_entries
    allocate(self%entry_level(0), self%entry_is_block(0), self%entry_index(0), self%entry_text(6, 0))
    self%entry_chars = ''
    error = 1

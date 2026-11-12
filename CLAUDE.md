@@ -101,7 +101,8 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   `Piece NumberOfCols NumberOfRows` tag is written, then the buffered columns (indented by 6) with `raw`: FoXy keeps a
   start tag pending only until its first content, so the counts cannot be patched later. Rows: every one of the 144
   `write_dataarray<N>_rank<M>_<kind>` of the three concrete writers sets `n_tuples` before its tag, checked by
-  `is_table_column` (the first column's rows; a mismatch writes no tag). VTK 9.7.2 needs `NumberOfRows` (absent: 0
+  `is_table_column` (the first column's rows; a mismatch writes no tag, and the appended specifics return before
+  their scratch data: the scratch write would reset `self%error`). `finalize` closes columns left open. VTK 9.7.2 needs `NumberOfRows` (absent: 0
   rows), ignores `NumberOfCols`. Refused for a Table: pieces, node/cell locations, the rows opened twice
 - Three concrete writer implementations:
   - `vtk_fortran_vtk_file_xml_writer_ascii_local` — human-readable ASCII
@@ -166,7 +167,9 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   hangs the others (documented, not detectable); grid time series (#88): a region per rank per step (`start_region`
   each step), every dataset one time slice more (`h5_dataset_slab_<kind>(..., append=.true.)`: created appendable,
   chunked as `dataset_write`, or extended by `dims(last)` collectively, the block after the old rows; RG coordinates
-  offset by `geo_slices * grid(a)`), Steps entries as serial (rank 0), reopen with comm generic; refused:
+  offset by `geo_slices * grid(a)`), Steps entries as serial (rank 0), reopen with comm generic (an RG/SG takes its
+  extent start from the regions at the first `start_region`: the file stores the size only; a step without pieces
+  before any region after the reopen is refused, `has_region`); refused:
   zlib for a grid, a second piece or region in a step. Polyhedra with comm: decided at
   `write_connectivity` (`h5_mpi_max` of a flag), `start_polyhedra` writes the zero entries of the earlier parts once
   (rank 0), ranks without faces `no_faces` (the same store sequence as `put_faces`, `add_face_totals` after it); zlib with
@@ -195,7 +198,9 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
 - `vtk_fortran_vtk_file_xml_reader` — `xml_reader` type: reader of serial files (any format, header type, zlib; a `.vtt` Table: `npieces` 0, `location='row'` = `Piece/RowData`, tuples from `NumberOfRows`) and parallel headers (`check_pieces`); indexes the file once with FoXy `xml_index` (tags and content positions, scan stopped at `AppendedData`), then decodes only the arrays asked for; `get_active(location, role, data_name)` the active array of a role (the
 roles list `ACTIVE_ROLES` and `active_role` in `vtk_fortran_parameters`, shared with the VTKHDF reader); error codes 0–7 documented in the module. `pvtk_file` uses it too (`action='read'`); `vtm_file` and `pvd_file` read with `get_entries`/`get_datasets` (`vtm_file` a VTKHDF composite too:
 `vtkhdf_entries` walks its `Assembly` once at `initialize`, groups = blocks, soft links = datasets (`h5_link_target`,
-H5Lget_val: a hard link fails silently), `file` = the link target under /VTKHDF)
+H5Lget_val: a hard link fails silently), `file` = the link target under /VTKHDF; no recursion and no arrays of
+`string`: integer arrays + one character buffer (nvfortran 26.9 corrupted string arrays grown by constructors), a
+block's path copied before the call that grows the buffer; `free_entries` at finalize and before every read)
 - `vtk_fortran_dataarray_decoder` — inverse of the encoder: ASCII/Base64/zlib data into bytes, bytes into arrays of the requested kind
 - `vtk_fortran_dataarray_encoder` — overloaded encoding routines for ASCII and Base64 (optionally zlib-compressed), covering all PENF numeric kinds and ranks 1–4
 - `vtk_fortran_hdf5` — HDF5 C API bindings (files, groups and their members (in creation order when tracked), links,
@@ -250,8 +255,9 @@ back with the bindings and the reader, the refusals (rows, names, missing/new co
 locations; the XML formats refuse an OverlappingAMR);
 `vtk_fortran_write_vtt.f90`: XML Tables (`.vtt`) in ascii, binary, raw, binary-appended and raw zlib (columns of every
 kind, unsigned, 3 components as an array and as x, y, z), read back (names in order, types, `NumberOfRows` tuples,
-values), the same Table as VTKHDF (VTK compares them outside the test), the refusals, a time series as a `.pvd` of two
-`.vtt` read back;
+values), the same Table as VTKHDF (VTK compares them outside the test), the refusals (a column of other rows in every
+format, the file holding the others), columns left open closed by finalize, a time series as a `.pvd` of two `.vtt`
+read back;
 `vtk_fortran_write_vtkhdf_htg.f90`: HyperTreeGrids (the 2x2 root grid of the VTK probe: trees of depth 3, 2, a
 masked leaf, a root cell without tree; branch factor 3; a 2-step series), checked with the bindings (descriptors and
 mask unpacked, the Steps entries; append refused), 16 refusals, the three files read back with the reader (every
@@ -265,7 +271,8 @@ the restart, an orphan offset entry, a restart after a step with an empty piece;
 time series of two UnstructuredGrid series (one of two parts) and a PolyData series, both also as
 PartitionedDataSetCollections with a block of references, the refusals (grid series, static and series mixed, other
 steps or times; collection names, references, composites); the four files read back (`vtm_file` read: the entries;
-every dataset with `dataset=` compared with its source step by step, integer arrays as I8P), the refusals of `dataset`;
+every dataset with `dataset=` compared with its source step by step, integer arrays as I8P), the refusals of `dataset`,
+the same `vtm_file` reading a composite after a refused read;
 `vtk_fortran_read_vtkhdf.f90`: VTKHDF files read back (every topology, time series, two polyhedra sharing a face
 (Version 2.9, the file built with the bindings), a face id out of range, series storing once the mesh and arrays);
 `vtk_fortran_write_vtkhdf_polyh.f90`: polyhedra (one piece; three pieces with polyhedra in the second), each also
@@ -282,5 +289,6 @@ HyperTreeGrid), an UnstructuredGrid with `chunk_bytes` (chunks sized from all th
 different on the ranks refused; ImageData, RectilinearGrid and StructuredGrid series of 4 steps by regions (geometry at
 steps 1 and 3, cell data reused at step 4, a parallel restart at step 3), compared with the serial series dataset by
 dataset and, by VTK outside the test, each step with its XML file (`vtkfortran_steps_<grid>_mpi_<s>.vt?`); ranks
-writing different arrays refused; without MPI `comm` refused, its name without "mpi" since `scripts/run_tests.sh` runs those with
+writing different arrays refused; an RG series of extent 10:16 restarted by the ranks; a step without pieces right after
+a parallel restart refused; without MPI `comm` refused, its name without "mpi" since `scripts/run_tests.sh` runs those with
 mpirun; without HDF5 the writer refuses to start); `vtk_fortran_read.F90` reads files back (every topology and format, and two files written by VTK, embedded in the test), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.

@@ -202,6 +202,7 @@ contains
    class(xml_writer_appended), intent(inout) :: self  !< Writer.
    integer(I4P)                              :: error !< Error status.
 
+   if (self%is_row_open) error = self%write_table_rows(action='CLOSE') ! the columns of a Table left open
    call self%write_end_tag(name=self%topology%chars())
    call self%write_dataarray_appended
    error = self%error ! the error of the data, kept: the I/O below sets self%error again
@@ -283,6 +284,10 @@ contains
   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank1_R8P
@@ -302,6 +307,10 @@ contains
   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank1_R4P
@@ -321,6 +330,10 @@ contains
   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank1_I8P
@@ -340,6 +353,10 @@ contains
   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank1_I4P
@@ -359,6 +376,10 @@ contains
   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank1_I2P
@@ -378,6 +399,10 @@ contains
   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank1_I1P
@@ -401,6 +426,10 @@ contains
   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank2_R8P
@@ -424,6 +453,10 @@ contains
   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank2_R4P
@@ -447,6 +480,10 @@ contains
   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank2_I8P
@@ -470,6 +507,10 @@ contains
   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank2_I4P
@@ -493,6 +534,10 @@ contains
   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank2_I2P
@@ -516,6 +561,10 @@ contains
   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank2_I1P
@@ -539,6 +588,10 @@ contains
   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank3_R8P
@@ -562,6 +615,10 @@ contains
   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank3_R4P
@@ -585,6 +642,10 @@ contains
   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank3_I8P
@@ -608,6 +669,10 @@ contains
   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank3_I4P
@@ -631,6 +696,10 @@ contains
   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank3_I2P
@@ -654,6 +723,10 @@ contains
   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank3_I1P
@@ -677,6 +750,10 @@ contains
   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank4_R8P
@@ -700,6 +777,10 @@ contains
   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank4_R4P
@@ -723,6 +804,10 @@ contains
   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank4_I8P
@@ -746,6 +831,10 @@ contains
   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank4_I4P
@@ -769,6 +858,10 @@ contains
   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank4_I2P
@@ -792,6 +885,10 @@ contains
   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
   error = self%error
   endfunction write_dataarray1_rank4_I1P
@@ -813,6 +910,10 @@ contains
   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray3_rank1_R8P
@@ -834,6 +935,10 @@ contains
   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray3_rank1_R4P
@@ -855,6 +960,10 @@ contains
   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray3_rank1_I8P
@@ -876,6 +985,10 @@ contains
   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray3_rank1_I4P
@@ -897,6 +1010,10 @@ contains
   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray3_rank1_I2P
@@ -918,6 +1035,10 @@ contains
   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray3_rank1_I1P
@@ -939,6 +1060,10 @@ contains
   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray3_rank3_R8P
@@ -960,6 +1085,10 @@ contains
   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray3_rank3_R4P
@@ -981,6 +1110,10 @@ contains
   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray3_rank3_I8P
@@ -1002,6 +1135,10 @@ contains
   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray3_rank3_I4P
@@ -1023,6 +1160,10 @@ contains
   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray3_rank3_I2P
@@ -1044,6 +1185,10 @@ contains
   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray3_rank3_I1P
@@ -1068,6 +1213,10 @@ contains
   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray6_rank1_R8P
@@ -1092,6 +1241,10 @@ contains
   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray6_rank1_R4P
@@ -1116,6 +1269,10 @@ contains
   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray6_rank1_I8P
@@ -1140,6 +1297,10 @@ contains
   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray6_rank1_I4P
@@ -1164,6 +1325,10 @@ contains
   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray6_rank1_I2P
@@ -1188,6 +1353,10 @@ contains
   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray6_rank1_I1P
@@ -1212,6 +1381,10 @@ contains
   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray6_rank3_R8P
@@ -1236,6 +1409,10 @@ contains
   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray6_rank3_R4P
@@ -1260,6 +1437,10 @@ contains
   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray6_rank3_I8P
@@ -1284,6 +1465,10 @@ contains
   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray6_rank3_I4P
@@ -1308,6 +1493,10 @@ contains
   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray6_rank3_I2P
@@ -1332,6 +1521,10 @@ contains
   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
+  if (self%error /= 0) then ! a refused column of a Table: no data written, the error returned
+    error = self%error
+    return
+  endif
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
   error = self%error
   endfunction write_dataarray6_rank3_I1P

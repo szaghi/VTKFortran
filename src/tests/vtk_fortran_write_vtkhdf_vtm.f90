@@ -22,7 +22,8 @@ program vtk_fortran_write_vtkhdf_vtm
 !< dataset name used twice or `Assembly`, a reference to a dataset not copied; references in a multi-block file or an XML
 !< `.vtm`, an unknown composite, a collection in XML. The four composite files are read back with `vtm_file`
 !< (`action='read'`: the entries of the Assembly, the dataset of each) and every dataset with `vtk_file%initialize(...,
-!< action='read', dataset=)`, compared with its source file step by step; the refusals of `dataset`. Without HDF5 the VTKHDF format of `vtm_file` is refused.
+!< action='read', dataset=)`, compared with its source file step by step; the refusals of `dataset`. Without HDF5 the
+!< VTKHDF format of `vtm_file` is refused.
 use penf
 use vtk_fortran, only : vtk_file, vtm_file
 use vtk_fortran_hdf5
@@ -282,10 +283,13 @@ contains
 
   logical function composite_refusals()
   !< Reading a composite: a missing dataset (4), a dataset of an XML file (3), dataset without action read (1), a
-  !< composite without dataset (3), a .vtkhdf that is not a composite to vtm_file (2).
+  !< composite without dataset (3), a .vtkhdf that is not a composite to vtm_file (2), then a composite read by the same
+  !< vtm_file.
   type(vtk_file) :: r
   type(vtm_file) :: vtm
-  logical        :: ok(5)
+  logical        :: ok(6)
+  integer(I4P), allocatable :: level(:)
+  integer(I4P)   :: err !< Error (e is the array of the program).
 
   ok(1) = r%initialize(filename='vtkfortran_vtm_nested.vtkhdf', action='read', dataset='Block_9') == 4
   e = r%finalize()
@@ -297,8 +301,13 @@ contains
   e = r%finalize()
   ok(5) = vtm%initialize(filename='part_1.vtkhdf', action='read') == 2
   e = vtm%finalize()
+  ! the same vtm_file reads a composite after the refused read
+  ok(6) = vtm%initialize(filename='vtkfortran_vtm_nested.vtkhdf', action='read') == 0
+  err = vtm%get_entries(level=level)
+  ok(6) = ok(6) .and. err == 0 .and. size(level) == 8
+  e = vtm%finalize()
   composite_refusals = all(ok)
-  if (.not.composite_refusals) print '(A,5L2)', 'composite refusals: ', ok
+  if (.not.composite_refusals) print '(A,6L2)', 'composite refusals: ', ok
   endfunction composite_refusals
 
   logical function collection(filename, copies, links)

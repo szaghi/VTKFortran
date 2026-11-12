@@ -546,6 +546,57 @@ contains
   error = max(error, abs(a_vtk_file%finalize()))
   endfunction grid_file
 
+  logical function restart_offset()
+  !< A RectilinearGrid series of extent 10:16 x 0:3 x 0:1 by the ranks, step 1, then continued by them (action append)
+  !< with the same regions: step 2 (geometry reused) accepted, 2 steps in the file.
+  integer(I4P)              :: ext(6), error
+  integer(hid_kind)         :: file_id, steps_id
+  integer(I8P), allocatable :: n_steps(:)
+
+  ext = region(rank)
+  if (all(ext(2::2) >= ext(1::2))) ext(1:2) = ext(1:2) + 10 ! the regions moved along x by 10
+  error = a_vtk_file%initialize(format='vtkhdf', filename='restart_offset_mpi.vtkhdf', mesh_topology='RectilinearGrid', &
+                                nx1=10, nx2=16, ny1=0, ny2=3, nz1=0, nz2=1, comm=comm)
+  error = max(error, abs(a_vtk_file%xml_writer%write_step(time=0.5_R8P)))
+  error = max(error, abs(grid_step('RectilinearGrid', ext, 1, geo=.true., cells=.true.)))
+  error = max(error, abs(a_vtk_file%finalize()))
+  error = max(error, abs(a_vtk_file%initialize(format='vtkhdf', filename='restart_offset_mpi.vtkhdf', action='append', &
+                                               comm=comm)))
+  error = max(error, abs(a_vtk_file%xml_writer%write_step(time=1._R8P)))
+  error = max(error, abs(grid_step('RectilinearGrid', ext, 2, geo=.false., cells=.true.)))
+  error = max(error, abs(a_vtk_file%finalize()))
+  restart_offset = error == 0
+  if (rank == 0 .and. restart_offset) then
+    restart_offset = h5_file_open('restart_offset_mpi.vtkhdf', file_id) == 0
+    if (restart_offset) restart_offset = h5_group_open(file_id, 'VTKHDF/Steps', steps_id) == 0
+    if (restart_offset) restart_offset = h5_attribute_read(steps_id, 'NSteps', n_steps) == 0
+    if (restart_offset) restart_offset = all(n_steps == [2_I8P])
+    error = h5_group_close(steps_id)
+    error = h5_file_close(file_id)
+  endif
+  endfunction restart_offset
+
+  logical function reuse_after_restart_refused()
+  !< An ImageData series by the ranks, step 1, continued (action append) by a step without pieces: refused on every rank
+  !< (the regions of the ranks are not in the file).
+  integer(I4P) :: ext(6), error
+
+  ext = region(rank)
+  error = a_vtk_file%initialize(format='vtkhdf', filename='reuse_restart_mpi.vtkhdf', mesh_topology='ImageData', &
+                                nx1=0, nx2=6, ny1=0, ny2=3, nz1=0, nz2=1,                                        &
+                                origin=[0._R8P, 0._R8P, 0._R8P], spacing=[1._R8P, 1._R8P, 1._R8P], comm=comm)
+  error = max(error, abs(a_vtk_file%xml_writer%write_step(time=0.5_R8P)))
+  error = max(error, abs(grid_step('ImageData', ext, 1, geo=.false., cells=.true.)))
+  error = max(error, abs(a_vtk_file%finalize()))
+  error = max(error, abs(a_vtk_file%initialize(format='vtkhdf', filename='reuse_restart_mpi.vtkhdf', action='append', &
+                                               comm=comm)))
+  error = max(error, abs(a_vtk_file%xml_writer%write_step(time=1._R8P)))
+  reuse_after_restart_refused = error == 0
+  error = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
+  reuse_after_restart_refused = reuse_after_restart_refused .and. error /= 0
+  error = a_vtk_file%finalize()
+  endfunction reuse_after_restart_refused
+
   function grid_series(topology, filename, is_parallel, first, last, xml, xml_only) result(error)
   !< The steps `first` to `last` of a grid series (extent 0:6 x 0:3 x 0:1; a new file from step 1, continued otherwise):
   !< at step s the piece of `grid_step`, its geometry written at steps 1 and 3 (reused at 2 and 4), its cell data at
@@ -682,7 +733,7 @@ contains
   logical function refusals()
   !< The refusals of comm, by every rank (the files created are finalized by all of them).
   integer(I4P) :: error
-  logical      :: ok(19)
+  logical      :: ok(21)
   integer(I4P) :: ext(6) !< Region of this rank.
 
   ok = .false.
@@ -765,7 +816,11 @@ contains
     ok(14) = a_vtk_file%xml_writer%write_connectivity(nc=1, connectivity=[0, 1, 2, 3], offset=[4], cell_type=[10_I1P]) /= 0
   endif
   error = a_vtk_file%finalize()
+  ! a restart of a grid series by the ranks: a RectilinearGrid whose extent starts at x=10 (not in the file: taken from
+  ! the regions), continued; a step without pieces right after a restart refused (the regions are not in the file)
+  ok(20) = restart_offset()
+  ok(21) = reuse_after_restart_refused()
   refusals = all(ok)
-  if (.not.refusals) print '(A,I0,A,19L2)', 'rank ', rank, ' refusals: ', ok
+  if (.not.refusals) print '(A,I0,A,21L2)', 'rank ', rank, ' refusals: ', ok
   endfunction refusals
 endprogram vtk_fortran_write_vtkhdf_ranks

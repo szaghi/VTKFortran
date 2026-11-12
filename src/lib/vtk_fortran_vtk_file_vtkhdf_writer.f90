@@ -207,6 +207,7 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
                                                            !< entries, descriptor bytes, mask bytes, cells.
   logical                       :: is_parallel=.false.     !< The file is written by the ranks of an MPI communicator.
   integer(I4P)                  :: region(6)=0_I4P         !< Region of this rank of a grid written from ranks: its extent.
+  logical                       :: has_region=.false.      !< The region is known (set by write_piece, not after a reopen).
   integer(I4P)                  :: rank=0_I4P              !< Rank of this process in `comm`.
   integer(I8P), allocatable     :: regions(:,:)            !< Regions of all the ranks, `regions(:, r)` of rank r-1.
   integer(I4P)                  :: comm=0_I4P              !< MPI communicator (Fortran handle), if `is_parallel`.
@@ -763,6 +764,11 @@ contains
       endif
       self%step_pieces = 1_I8P ! the columns of the Table (of the step) opened
     elseif (.not.(self%is_piece_open .or. self%is_reusing()) .or. self%group >= 0_hid_kind) then
+      return
+    elseif (self%is_reusing() .and. self%is_parallel .and. .not.self%is_partitioned() .and. .not.self%has_region) then
+      ! a grid reopened by the ranks: the region of each rank is not in the file (every rank refuses: the same state)
+      error = refuse('write_dataarray: after a restart by the ranks of comm, the first step of a grid writes its '// &
+                     'piece (write_piece with the region of the rank): the regions are not in the file')
       return
     endif
     error = self%open_group(name)
@@ -4340,6 +4346,19 @@ contains
     error = refuse('write_piece: the regions of the ranks cannot be gathered')
     return
   endif
+  if (self%is_reopened .and. (self%topology == TOPOLOGY_RECT .or. self%topology == TOPOLOGY_STRG)) then
+    ! a RectilinearGrid or StructuredGrid reopened: the start of its extent is not in the file (its size is): the start
+    ! of each axis is the lowest lower bound of the regions (the same on every rank), as the serial check allows
+    do r=1, 3
+      lo(r) = huge(1_I8P)
+      do q=1, size(self%regions, dim=2)
+        if (any(self%regions(2::2, q) < self%regions(1::2, q))) cycle ! an empty region
+        lo(r) = min(lo(r), self%regions(2 * r - 1, q))
+      enddo
+      if (lo(r) < huge(1_I8P)) self%whole_extent(2 * r - 1:2 * r) = self%whole_extent(2 * r - 1:2 * r) + &
+                                                                    int(lo(r), I4P) - self%whole_extent(2 * r - 1)
+    enddo
+  endif
   wlo = int(self%whole_extent(1::2), I8P) ; whi = int(self%whole_extent(2::2), I8P)
   is_multi = whi > wlo
   covered = 0_I8P
@@ -4373,6 +4392,7 @@ contains
     return
   endif
   self%region = extent
+  self%has_region = .true.
   self%rank = h5_mpi_rank(self%comm)
   error = 0_I4P
   endfunction start_region
@@ -5190,6 +5210,7 @@ contains
   self%mesh_pieces = 0_I8P
   self%geo_slices = 0_I8P
   self%region = 0_I4P
+  self%has_region = .false.
   if (allocated(self%regions)) deallocate(self%regions)
   self%point_start = [integer(I8P) ::] ; self%point_prev = [integer(I8P) ::]
   self%cell_start = [integer(I8P) ::] ; self%cell_prev = [integer(I8P) ::]

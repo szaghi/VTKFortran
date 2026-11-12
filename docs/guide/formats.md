@@ -167,7 +167,9 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
   its part of the mesh reused); the `Steps` entries are the totals of the ranks, written once; `action='append'` with
   `comm` continues it. Polyhedra too, on any ranks (the others write zero entries), and compression (`compressor='zlib'`,
   an HDF5 1.10.2 or later with the deflate filter: the writes are then collective). A time series of a grid too: each step a region per rank (checked
-  at every step), every dataset one time slice more, each rank its block of it; a parallel restart continues it.
+  at every step), every dataset one time slice more, each rank its block of it; a parallel restart continues it (the
+  first step after it writes its regions: they are not in the file; a RectilinearGrid or StructuredGrid takes the start
+  of its extent from them).
   Refused with `comm`: compression of a grid. Complete
   programs: [Write one .vtkhdf from MPI ranks](/manual/cookbook#write-one-vtkhdf-from-mpi-ranks).
 - **No transposition.** An array is stored as it is in memory (an ImageData, RectilinearGrid or StructuredGrid): a

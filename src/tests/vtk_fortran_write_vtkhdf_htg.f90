@@ -13,7 +13,8 @@ program vtk_fortran_write_vtkhdf_htg
 !< or coordinates, a branch factor of 4, a step without its piece, `write_tree` in another topology, the series
 !< continued (`action='append'`), the piece left open at finalize; a refused cell data open not blocking the trees. The
 !< three files are read back with the reader of the library (`get_info`, `read_geo`, `get_trees`, `read_tree`: every
-!< descriptor and mask as written; the cell data; the series step by step; a tree not in the file). Without HDF5 the writer refuses a HyperTreeGrid; the XML formats refuse it
+!< descriptor and mask as written; the cell data; the series step by step; a tree not in the file). Without HDF5 the
+!< writer refuses a HyperTreeGrid; the XML formats refuse it
 !< always.
 use penf
 use vtk_fortran, only : vtk_file

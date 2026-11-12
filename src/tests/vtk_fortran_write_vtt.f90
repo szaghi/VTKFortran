@@ -8,8 +8,10 @@ program vtk_fortran_write_vtt
 !< `vtk_file%xml_reader` (`location='row'`: names in order, types, components, `NumberOfRows` as the tuples, values,
 !< `npieces` 0); writes the same Table as VTKHDF when the library has HDF5 (`vtkfortran_vtt_table.vtkhdf`: VTK readers
 !< compare the two outside this test). Then the refusals: columns of different rows, pieces, point and cell data in a
-!< Table, the columns opened twice, closed without being opened, location row in an UnstructuredGrid. Last a time series
-!< of two Tables listed in a `.pvd` (`vtkfortran_vtt_series.pvd`, read back with `get_datasets`; ParaView plays it).
+!< Table, the columns opened twice, closed without being opened, location row in an UnstructuredGrid; a column of other
+!< rows in every format (nothing written, the file holding the others); the columns left open, closed by `finalize`.
+!< Last a time series of two Tables listed in a `.pvd` (`vtkfortran_vtt_series.pvd`, read back with `get_datasets`;
+!< ParaView plays it).
 use penf
 use vtk_fortran, only : vtk_file, pvd_file
 use vtk_fortran_hdf5, only : is_hdf5_enabled
@@ -187,7 +189,56 @@ contains
   e = w%initialize(format='ascii', filename='vtkfortran_vtt_refused.vtu', mesh_topology='UnstructuredGrid')
   r(6) = w%xml_writer%write_dataarray(location='row', action='open') /= 0   ! columns in an UnstructuredGrid
   e = w%finalize()
+  ! a column of other rows refused in every format (none written, the error returned); the columns left open closed by
+  ! finalize (the Table complete)
+  do f=1, size(FORMATS)
+    if (trim(FORMATS(f)) == 'raw-zlib' .and. .not.is_zlib_enabled) cycle
+    r(4) = r(4) .and. rows_refused(trim(FORMATS(f)))
+  enddo
+  r(5) = r(5) .and. left_open()
   refusals = all(r)
   if (.not.refusals) print '(A,6L2)', 'refusals: ', r
   endfunction refusals
+
+  logical function rows_refused(format)
+  !< In `format`, a column of 2 rows after one of 3 is refused (error, nothing written): the file holds the first only.
+  character(*), intent(in)      :: format !< Format.
+  type(vtk_file)                :: r
+  character(len=:), allocatable :: names(:)
+  integer(I4P)                  :: np
+
+  if (format == 'raw-zlib') then
+    e = w%initialize(format='raw', filename='vtkfortran_vtt_rows_'//format//'.vtt', mesh_topology='Table', &
+                     compressor='zlib')
+  else
+    e = w%initialize(format=format, filename='vtkfortran_vtt_rows_'//format//'.vtt', mesh_topology='Table')
+  endif
+  e = w%xml_writer%write_dataarray(location='row', action='open')
+  e = w%xml_writer%write_dataarray(data_name='a', x=[1._R8P, 2._R8P, 3._R8P])
+  rows_refused = w%xml_writer%write_dataarray(data_name='b', x=[1._R8P, 2._R8P]) /= 0
+  e = w%xml_writer%write_dataarray(location='row', action='close')
+  e = w%finalize()
+  e = r%initialize(filename='vtkfortran_vtt_rows_'//format//'.vtt', action='read')
+  np = r%xml_reader%get_dataarray_names(location='row', names=names)
+  rows_refused = rows_refused .and. e == 0 .and. np == 0 .and. size(names) == 1
+  if (rows_refused) rows_refused = names(1) == 'a'
+  e = r%finalize()
+  if (.not.rows_refused) print '(A)', 'the refusal of a column of other rows failed in the format '//format
+  endfunction rows_refused
+
+  logical function left_open()
+  !< A Table finalized with its columns still open: closed by finalize, read back.
+  type(vtk_file)         :: r
+  real(R8P), allocatable :: x(:)
+
+  e = w%initialize(format='raw', filename='vtkfortran_vtt_open.vtt', mesh_topology='Table')
+  e = w%xml_writer%write_dataarray(location='row', action='open')
+  e = w%xml_writer%write_dataarray(data_name='a', x=[1._R8P, 2._R8P, 3._R8P])
+  left_open = w%finalize() == 0
+  e = r%initialize(filename='vtkfortran_vtt_open.vtt', action='read')
+  e = e + r%xml_reader%read_dataarray(location='row', data_name='a', x=x)
+  left_open = left_open .and. e == 0 .and. size(x) == 3
+  if (left_open) left_open = all(x == [1._R8P, 2._R8P, 3._R8P])
+  e = r%finalize()
+  endfunction left_open
 endprogram vtk_fortran_write_vtt

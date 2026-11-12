@@ -411,7 +411,8 @@ ImageData of 8x4 cells, one region of 4x2 cells per rank:
   the step (checked at every step: it may change, the whole extent does not) and the arrays of the region. Each dataset
   grows by one time slice per step, each rank writing its block of it; a step without `write_geo` reuses the geometry
   of the step before, an array not written its values (the ranks make the same calls).
-  `action='append'` with `comm` continues the series (a parallel restart). The file is, dataset by dataset, the one
+  `action='append'` with `comm` continues the series (a parallel restart): the first step after it writes its piece
+  (the regions are not in the file; a step without pieces there is refused). The file is, dataset by dataset, the one
   the whole grid written by one process would make (`src/tests/vtk_fortran_write_vtkhdf_ranks.F90` checks it on 1 to
   4 ranks, VTK 9.7.2 each step against its XML file).
 - It needs the library built with `VTKFORTRAN_USE_MPI` (CMake `-DVTKFORTRAN_USE_MPI=ON`, FoBiS mode
