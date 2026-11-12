@@ -3956,9 +3956,9 @@ contains
       rows = [self%total_points - self%mesh_start(2), self%total_cells - sum(self%mesh_blocks(1:4))]
     endif
     ! the arrays: the tuples of the mesh from their offset of the last step (repeated by the steps that reused them)
-    if (error == 0_I4P) error = trimmed_arrays(self%root, 'PointData', rows(1), self%mesh_start(2), self%point_arrays, &
+    if (error == 0_I4P) error = trimmed_arrays(self%root, 'PointData', k, rows(1), self%mesh_start(2), self%point_arrays, &
                                                self%point_start, self%point_prev)
-    if (error == 0_I4P) error = trimmed_arrays(self%root, 'CellData', rows(2), self%total_cells - rows(2), &
+    if (error == 0_I4P) error = trimmed_arrays(self%root, 'CellData', k, rows(2), self%total_cells - rows(2), &
                                                self%cell_arrays, self%cell_start, self%cell_prev)
   else
     ! a grid: its extent (the start of a RectilinearGrid or StructuredGrid one is not stored), a time slice per step
@@ -3987,9 +3987,9 @@ contains
       if (error == 0_I4P) error = trim_to(self%root, 'Points', self%geo_slices)
     endif
     ! the arrays: one time slice from their offset of the last step (k - 1 for a file without data offsets)
-    if (error == 0_I4P) error = trimmed_arrays(self%root, 'PointData', 1_I8P, k - 1_I8P, self%point_arrays, &
+    if (error == 0_I4P) error = trimmed_arrays(self%root, 'PointData', k, 1_I8P, k - 1_I8P, self%point_arrays, &
                                                self%point_start, self%point_prev)
-    if (error == 0_I4P) error = trimmed_arrays(self%root, 'CellData', 1_I8P, k - 1_I8P, self%cell_arrays, &
+    if (error == 0_I4P) error = trimmed_arrays(self%root, 'CellData', k, 1_I8P, k - 1_I8P, self%cell_arrays, &
                                                self%cell_start, self%cell_prev)
   endif
   ! field data: the tuples of the complete steps (a group not written is empty)
@@ -4050,12 +4050,13 @@ contains
     error = trim_to(root, name, n_parts)
     endfunction trimmed_counts
 
-    function trimmed_arrays(root, group, rows, default, list, start, prev) result(error)
-    !< Trim every array of `group` to the `rows` tuples (slices) of the last step from its offset at that step
+    function trimmed_arrays(root, group, k, rows, default, list, start, prev) result(error)
+    !< Trim every array of `group` to the `rows` tuples (slices) of the last complete step `k` from its offset at that step
     !< (`Steps/<group>Offsets/<name>`, `default` without it), list their names (none if the group was never written), and
     !< start their bookkeeping: tuples at the start of the next step, offset of the last one.
     integer(hid_kind),             intent(in)  :: root     !< Group /VTKHDF.
     character(*),                  intent(in)  :: group    !< PointData or CellData.
+    integer(I8P),                  intent(in)  :: k        !< Last complete step (NSteps).
     integer(I8P),                  intent(in)  :: rows     !< Tuples (slices) of the last step.
     integer(I8P),                  intent(in)  :: default  !< Offset of an array without its offsets dataset.
     character(len=:), allocatable, intent(out) :: list     !< Names, each followed by NAMES_SEPARATOR.
@@ -4076,7 +4077,14 @@ contains
       offset = default
       if (h5_link_exists(root, 'Steps/'//group//'Offsets/'//list(first:last-1))) then
         error = h5_dataset_read(root, 'Steps/'//group//'Offsets/'//list(first:last-1), offsets)
-        if (error == 0_I4P) offset = offsets(size(offsets))
+        ! the entry of step k: an interrupted run may have left one more, of a step not complete
+        if (error == 0_I4P) then
+          if (size(offsets, kind=I8P) >= k) then
+            offset = offsets(k)
+          else
+            error = 1_I4P
+          endif
+        endif
       endif
       if (error == 0_I4P) error = trim_to(root, group//'/'//list(first:last-1), offset + rows)
       start = [start, offset + rows]

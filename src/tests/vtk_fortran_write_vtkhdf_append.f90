@@ -15,7 +15,10 @@ program vtk_fortran_write_vtkhdf_append
 !<  second run drops that piece, step 3 keeps its first one, and step 4 follows;
 !<- `vtkfortran_steps_restartunst_fixed`, `_restartimage_fixed`, `_restartrect_fixed`, `_restartstrg_fixed`: series that
 !<  store once what does not change (the mesh written at step 1 only, arrays reused), continued after the restart with
-!<  the mesh of the first run (and, for the RectilinearGrid, new coordinates at step 3); their offsets are checked here.
+!<  the mesh of the first run (and, for the RectilinearGrid, new coordinates at step 3); their offsets are checked here;
+!<- `vtkfortran_restart_orphan.vtkhdf`: a series reusing the mesh, steps 1-2, then a run that died after writing an
+!<  offset of a third step (an entry past NSteps, added here with the HDF5 bindings): the restart ignores it, and its
+!<  step 3, reusing the point data of step 2, gets the offset of step 2.
 !<
 !< Refusals are checked too. Without HDF5 the writer refuses to start.
 use penf
@@ -83,8 +86,15 @@ else
   e(31) = run('vtkfortran_steps_restartstrg_fixed.vtkhdf', 'StructuredGrid', .false., 1, 1, strg_fixed_step)
   e(32) = run('vtkfortran_steps_restartstrg_fixed.vtkhdf', 'StructuredGrid', .true., 2, 2, strg_fixed_step)
   e(33) = xml('vtkfortran_steps_restartstrg_fixed', 'StructuredGrid', '.vts', 2, strg_fixed_step)
-  test_passed(1) = all(e(1:33) == 0)
-  if (.not.test_passed(1)) print '(A,33I2)', 'errors of the runs: ', e(1:33)
+  e(34) = run('vtkfortran_restart_orphan.vtkhdf', 'UnstructuredGrid', .false., 1, 2, unst_fixed_step)
+  e(35) = h5_file_open('vtkfortran_restart_orphan.vtkhdf', file_id(1), readwrite=.true.)
+  e(36) = h5_dataset_append_I8P(file_id(1), 'VTKHDF/Steps/PointDataOffsets/pd', [99_I8P], [1_I8P]) ! the orphan entry
+  e(37) = h5_file_close(file_id(1))
+  e(38) = a_vtk_file%initialize(format='vtkhdf', filename='vtkfortran_restart_orphan.vtkhdf', action='append')
+  e(38) = max(e(38), abs(a_vtk_file%xml_writer%write_step(time=times(3)))) ! no piece, no array: all of step 2
+  e(38) = max(e(38), abs(a_vtk_file%finalize()))
+  test_passed(1) = all(e(1:38) == 0)
+  if (.not.test_passed(1)) print '(A,38I2)', 'errors of the runs: ', e(1:38)
   test_passed(2) = refusals()
 
   ! the series continued is the series written in one run
@@ -388,7 +398,7 @@ contains
   logical function stored_once()
   !< The offsets of the series continued with what does not change stored once.
   integer(I8P), allocatable :: dims(:)
-  logical                   :: ok(8)
+  logical                   :: ok(10)
 
   ok = .false.
   e = 0
@@ -409,8 +419,13 @@ contains
   e(15) = h5_dataset_read(root(1), 'Steps/PointDataOffsets/pd', ivalues) ; ok(7) = all(ivalues == [0_I8P, 1_I8P, 1_I8P])
   e(16) = h5_dataset_read(root(1), 'Steps/CellDataOffsets/cid', ivalues) ; ok(8) = all(ivalues == 0_I8P)
   e(17) = max(h5_group_close(root(1)), h5_file_close(file_id(1)))
-  stored_once = all(ok) .and. all(e(1:17) == 0)
-  if (.not.stored_once) print '(A,8L2)', 'stored once: ', ok
+  e(18) = h5_file_open('vtkfortran_restart_orphan.vtkhdf', file_id(1))
+  e(19) = h5_group_open(file_id(1), 'VTKHDF', root(1))
+  e(20) = h5_dataset_read(root(1), 'Steps/PointDataOffsets/pd', ivalues) ; ok(9) = all(ivalues == [0_I8P, 5_I8P, 5_I8P])
+  e(21) = h5_dataset_dims(root(1), 'PointData/pd', dims) ; ok(10) = all(dims == [10_I8P])
+  e(22) = max(h5_group_close(root(1)), h5_file_close(file_id(1)))
+  stored_once = all(ok) .and. all(e(1:22) == 0)
+  if (.not.stored_once) print '(A,10L2)', 'stored once: ', ok
   endfunction stored_once
 
   logical function refusals()
