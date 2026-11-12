@@ -130,6 +130,24 @@ links, named after the datasets (`names`, or the file names without directory an
 names of a block must differ. The copied files can be deleted afterwards. `scratch` units are refused (the blocks are
 written in order). `src/tests/vtk_fortran_write_vtkhdf_vtm.f90` writes the nested assembly above in VTKHDF.
 
+**A PartitionedDataSetCollection.** With `initialize(..., format='vtkhdf', composite='PartitionedDataSetCollection')`
+the file is VTK's other composite (`vtkPartitionedDataSetCollection`, VTKHDF 2.1), written by the same `write_block`
+calls. The two compared:
+
+| | `MultiBlockDataSet` (default) | `PartitionedDataSetCollection` |
+|---|---|---|
+| Copy of a dataset | the group `Block_<n>` | the group of its name, with the attribute `Index` (0, 1, ... as written) |
+| A dataset in two blocks | copied twice | copied once, then placed in other blocks with `write_block(references='name ...')` (soft links) |
+| Dataset names | unique in a block | unique in the file (a second one is refused: reference the first), not `Assembly` |
+| VTK output | `vtkMultiBlockDataSet`, the blocks nested | `vtkPartitionedDataSetCollection`, flat, the tree in its `vtkDataAssembly` |
+
+`references` is an argument of the string form of `write_block` (blank separated, as `filenames`), alone
+(`write_block(references='pump', name='rotating')`, a new block) or with `action='write'` (the open block); it is
+refused in a multi-block file and in an XML `.vtm`. The time series rules below are
+the same. ParaView 6.1.1 reads a collection and plays every step; VTK 9.7.2 as for a multi-block file (each step with
+`SetStep`). `src/tests/vtk_fortran_write_vtkhdf_vtm.f90` writes the nested assembly and a time series as collections,
+each with a block referencing two datasets already copied.
+
 **A time series of several meshes.** The blocks can be time series (`write_step`), so that one file holds several
 meshes moving together: see [A time series of several meshes in one .vtkhdf file](/manual/cookbook#a-time-series-of-several-meshes-in-one-vtkhdf-file).
 

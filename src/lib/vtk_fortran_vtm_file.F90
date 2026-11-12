@@ -17,6 +17,14 @@ module vtk_fortran_vtm_file
 !< A refused file leaves the block that `write_block` opened for it open (as a missing file does).
 !< The names of the blocks and of the datasets (`names`, or the file names without directory and extension) cannot be
 !< empty nor contain `/` or `.` (VTKHDF names): such a name is refused, never renamed.
+!<
+!< With `initialize(..., format='vtkhdf', composite='PartitionedDataSetCollection')` the file is a VTKHDF
+!< `PartitionedDataSetCollection` (VTK's composite of choice) instead: each dataset is copied once as the group of its name
+!< (`/VTKHDF/<name>`, the name VTK gives it), with the attribute `Index` (0, 1, ... in the order written); the blocks are
+!< the nodes of `Assembly`, as for a multi-block file, and a dataset already copied can be placed in other blocks without a
+!< new copy (`write_block(references='name ...')`, soft links to the copy). A dataset name is then unique in the file (a
+!< second dataset of the same name is refused: reference the first one) and cannot be `Assembly`. The time series rules
+!< are those of the multi-block file.
 use befor64
 use penf
 use stringifor
@@ -45,6 +53,7 @@ type :: vtm_file
    integer(I8P),               private             :: version_minor=1_I8P !< Minor version (the highest of the blocks).
    integer(I8P),               private             :: n_steps=-1_I8P     !< Steps of the blocks: -1 none yet, 0 static.
    real(R8P), allocatable,     private             :: times(:)           !< Times of the steps of a time series.
+   logical,                    private             :: is_collection=.false. !< A PartitionedDataSetCollection.
    contains
       ! public methods
       procedure, pass(self) :: initialize          !< Initialize file.
@@ -64,15 +73,18 @@ type :: vtm_file
       procedure, pass(self), private :: vtkhdf_close_block  !< Close the open block of a VTKHDF file.
       procedure, pass(self), private :: vtkhdf_dataset      !< Copy a dataset file into a VTKHDF file.
       procedure, pass(self), private :: vtkhdf_open_block   !< Open a block of a VTKHDF file.
+      procedure, pass(self), private :: vtkhdf_reference    !< Place a dataset already copied in the open block.
 endtype vtm_file
 contains
   ! public methods
-  function initialize(self, filename, scratch_units_number, action, format) result(error)
+  function initialize(self, filename, scratch_units_number, action, format, composite) result(error)
   !< Initialize file: open it for writing (default) or for reading.
   !<
   !< With `format='vtkhdf'` (case insensitive) the file is a VTKHDF `MultiBlockDataSet` (the library built with HDF5),
   !< built by the same `write_block` calls from `.vtkhdf` files, which are copied into it; scratch units are not used.
   !< Its blocks are all static or all time series of UnstructuredGrid and PolyData with the same steps (module header).
+  !< `composite='PartitionedDataSetCollection'` (case insensitive; VTKHDF only, `MultiBlockDataSet` by default) writes a
+  !< collection instead, whose datasets can be referenced from several blocks (module header).
   !<
   !< With `action='read'` (case insensitive) the file is indexed: its blocks and datasets are returned by `get_entries`, and
   !< each dataset file can then be read with `vtk_file` (or `pvtk_file`); `finalize` frees the index. The error is 1 if the
@@ -82,6 +94,8 @@ contains
   integer(I4P),    intent(in), optional :: scratch_units_number  !< Number of scratch units for very large list of named blocks.
   character(*),    intent(in), optional :: action                !< Action: **write** (default) or **read**.
   character(*),    intent(in), optional :: format                !< Format: **xml** (default) or **vtkhdf**.
+  character(*),    intent(in), optional :: composite             !< VTKHDF: **MultiBlockDataSet** (default) or
+                                                                  !< **PartitionedDataSetCollection**.
   integer(hid_kind)                     :: assembly              !< Group Assembly.
   integer(I4P)                          :: scratch_units_number_ !< Number of scratch units for very large list of named blocks.
   integer(I4P)                          :: error                 !< Error status.
@@ -118,6 +132,22 @@ contains
      endselect
   endif
   scratch_units_number_ = 0_I4P ; if (present(scratch_units_number)) scratch_units_number_ = scratch_units_number
+  self%is_collection = .false.
+  if (present(composite)) then
+     action_ = trim(adjustl(composite)) ; action_ = action_%upper()
+     if (action_ == 'PARTITIONEDDATASETCOLLECTION') then
+        self%is_collection = .true.
+     elseif (action_ /= 'MULTIBLOCKDATASET') then
+        error = 1
+        return
+     endif
+  endif
+  if (self%is_collection) then ! a collection is a VTKHDF file
+     error = 1
+     if (.not.present(format)) return
+     action_ = trim(adjustl(format)) ; action_ = action_%upper()
+     if (action_ /= 'VTKHDF') return
+  endif
   if (present(format)) then
      action_ = trim(adjustl(format)) ; action_ = action_%upper()
      if (action_ == 'VTKHDF') then
@@ -130,7 +160,9 @@ contains
         endif
         error = h5_file_create(filename, self%file_id)
         if (error == 0) error = h5_group_create(self%file_id, 'VTKHDF', self%root, track_order=.true.)
-        if (error == 0) error = h5_attribute_write(self%root, 'Type', 'MultiBlockDataSet')
+        if (error == 0) error = h5_attribute_write(self%root, 'Type', &
+                                                   trim(merge('PartitionedDataSetCollection', 'MultiBlockDataSet           ', &
+                                                              self%is_collection)))
         if (error == 0) error = h5_group_create(self%root, 'Assembly', assembly, track_order=.true.)
         if (error == 0) error = h5_group_close(assembly)
         if (error /= 0) return
@@ -340,7 +372,7 @@ contains
   if (is_new_block) error = self%xml_writer%write_parallel_close_block()
   endfunction write_block_array
 
-   function write_block_string(self, action, filenames, names, name) result(error)
+   function write_block_string(self, action, filenames, names, name, references) result(error)
    !< Write one block dataset (string input).
    !<
    !< With `action` the block is written in steps, so blocks can be nested: `'open'` opens a (child) block, `'write'` writes the
@@ -356,11 +388,22 @@ contains
    !<```fortran
    !< error = vtm%write_block(filenames='file_1.vts file_2.vts file_3.vtu', names='block-bar block-foo block-baz', name='my_block')
    !<```
+   !<
+   !< In a VTKHDF `PartitionedDataSetCollection`, `references` (blank separated) places datasets already copied (by their
+   !< names) in the block too, without a new copy: soft links to their copies, after the datasets of `filenames`.
+   !<
+   !<#### Example of usage: a dataset in two blocks of a collection
+   !<```fortran
+   !< error = vtm%initialize(filename='plant.vtkhdf', format='vtkhdf', composite='PartitionedDataSetCollection')
+   !< error = vtm%write_block(filenames='pump.vtkhdf pipe.vtkhdf', name='hydraulics')
+   !< error = vtm%write_block(references='pump', name='rotating')
+   !<```
    class(vtm_file), intent(inout)        :: self      !< VTM file.
    character(*),    intent(in), optional :: action    !< Action: [open, close, write].
    character(*),    intent(in), optional :: filenames !< File names of VTK files grouped into current block.
    character(*),    intent(in), optional :: names     !< Auxiliary names attributed to each files.
    character(*),    intent(in), optional :: name      !< Block name
+   character(*),    intent(in), optional :: references !< Datasets already copied, placed in the block (a collection).
    integer(I4P)                          :: error     !< Error status.
    type(string)                          :: action_   !< Action string.
    type(string)                          :: list      !< A list of names, blank separated.
@@ -391,7 +434,19 @@ contains
             endif
          enddo
       endif
+      if ((action_ == 'WRITE' .or. action_ == 'BLOCK') .and. present(references) .and. error == 0) then
+         list = trim(adjustl(references)) ; call list%split(tokens=files, sep=' ')
+         do f=1, size(files)
+            if (error /= 0) exit
+            error = self%vtkhdf_reference(files(f)%chars())
+         enddo
+      endif
       if ((action_ == 'CLOSE' .or. action_ == 'BLOCK') .and. error == 0) error = self%vtkhdf_close_block()
+      return
+   endif
+   if (present(references)) then ! references: a VTKHDF collection only
+      error = 1
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: references are datasets of a VTKHDF PartitionedDataSetCollection'
       return
    endif
    if (present(action)) then
@@ -520,10 +575,11 @@ contains
    endfunction vtkhdf_close_block
 
    function vtkhdf_dataset(self, filename, name) result(error)
-   !< Copy the dataset of a `.vtkhdf` file into the VTKHDF file, as `Block_<n>`, and link it in the open block, named `name`
-   !< or after the file (without directory and extension). The time series rules are checked on the file before the copy:
-   !< the first block decides whether the file is static or a time series; a series block must be an UnstructuredGrid or
-   !< a PolyData with the steps of the first one (their number and times, compared exactly).
+   !< Copy the dataset of a `.vtkhdf` file into the VTKHDF file, as `Block_<n>` (as `<name>` with the attribute `Index` in a
+   !< collection), and link it in the open block, named `name` or after the file (without directory and extension). The
+   !< time series rules are checked on the file before the copy: the first block decides whether the file is static or a
+   !< time series; a series block must be an UnstructuredGrid or a PolyData with the steps of the first one (their number
+   !< and times, compared exactly).
    class(vtm_file), intent(inout)        :: self      !< VTM file.
    character(*),    intent(in)           :: filename  !< File of the dataset.
    character(*),    intent(in), optional :: name      !< Dataset name.
@@ -552,6 +608,13 @@ contains
       write(stderr, '(A)') 'error: VTKFortran vtm_file: the dataset name "'//label//'" '//h5_name_invalid(label)// &
                            ' (give it a name with names=)'
       return
+   endif
+   if (self%is_collection) then ! the copy is the group of its name: unique, not Assembly
+      if (label == 'Assembly' .or. h5_link_exists(self%root, label)) then
+         write(stderr, '(A)') 'error: VTKFortran vtm_file: the dataset name "'//label//'" is Assembly or is used twice '// &
+                              '(a collection copies each dataset once: reference it with references=)'
+         return
+      endif
    endif
    if (h5_file_open(file, source) /= 0) then
       write(stderr, '(A)') 'error: VTKFortran vtm_file: cannot open '//file//' as an HDF5 file'
@@ -610,6 +673,7 @@ contains
    self%n_leaves = self%n_leaves + 1_I4P
    self%children(size(self%children)) = self%children(size(self%children)) + 1_I4P
    leaf = 'Block_'//trim(str(n=self%n_leaves, no_sign=.true.))
+   if (self%is_collection) leaf = label
    error = h5_object_copy(source, 'VTKHDF', self%root, leaf)
    e = h5_file_close(source)
    if (error /= 0) then
@@ -624,7 +688,9 @@ contains
    error = h5_group_open(self%root, leaf, group)
    if (error /= 0) return
    if (h5_attribute_read(group, 'Version', values) == 0) self%version_minor = max(self%version_minor, values(2))
+   if (self%is_collection) error = h5_attribute_write(group, 'Index', [int(self%n_leaves - 1_I4P, I8P)])
    e = h5_group_close(group)
+   if (error /= 0) return
    error = h5_group_open(self%root, self%node, group)
    if (error == 0) then
       error = h5_link_soft('/VTKHDF/'//leaf, group, label)
@@ -632,4 +698,41 @@ contains
    endif
    if (error /= 0) write(stderr, '(A)') 'error: VTKFortran vtm_file: cannot link '//label//' (a name used twice?)'
    endfunction vtkhdf_dataset
+
+   function vtkhdf_reference(self, label) result(error)
+   !< Place a dataset already copied into a collection (`/VTKHDF/<label>`, with its `Index`) in the open block: a soft link
+   !< to the copy, named `label`, no new copy.
+   class(vtm_file), intent(inout) :: self  !< VTM file.
+   character(*),    intent(in)    :: label !< Name of the dataset.
+   integer(I4P)                   :: error !< Error status.
+   integer(hid_kind)              :: group !< A group.
+   integer(I4P)                   :: e     !< Error of a closing.
+   logical                        :: is_copy !< The dataset is a copy of the collection.
+
+   error = 1
+   is_copy = .false.
+   if (self%is_collection .and. len(h5_name_invalid(label)) == 0 .and. label /= 'Assembly') then
+      if (h5_link_exists(self%root, label)) then
+         if (h5_group_open(self%root, label, group) == 0) then
+            is_copy = h5_attribute_exists(group, 'Index')
+            e = h5_group_close(group)
+         endif
+      endif
+   endif
+   if (.not.is_copy) then
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: cannot reference "'//label//'": not a dataset copied before into '// &
+                           'a PartitionedDataSetCollection'
+      return
+   endif
+   error = h5_group_open(self%root, self%node, group)
+   if (error == 0) then
+      error = h5_link_soft('/VTKHDF/'//label, group, label)
+      e = h5_group_close(group)
+   endif
+   if (error /= 0) then
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: cannot link '//label//' (a name used twice in the block?)'
+      return
+   endif
+   self%children(size(self%children)) = self%children(size(self%children)) + 1_I4P
+   endfunction vtkhdf_reference
 endmodule vtk_fortran_vtm_file

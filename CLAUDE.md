@@ -82,7 +82,10 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   all static or all time series (the first block decides), series blocks UnstructuredGrid or PolyData with the same
   `NSteps` and times (grid series refused: VTK 9.7.2 reads them without arrays), checked on the file before the copy.
   ParaView 6.1.1 plays every step; VTK 9.7.2 reads each with `SetStep`, its pipeline time stays at step 1 on a
-  multi-block (fine on a single dataset)
+  multi-block (fine on a single dataset). `composite='PartitionedDataSetCollection'` (`is_collection`): each copy named
+  after its dataset (VTK names a partitioned dataset after its group) with `Index`, unique names (not `Assembly`),
+  `write_block(references='name ...')` (string form) soft-links a copy into the open block (`vtkhdf_reference`);
+  references refused outside a collection; the same time series rules (VTK 9.7.2 pipeline time likewise at step 1)
 - `vtk_fortran_pvd_file` — `pvd_file` type: time series collections (`.pvd`), valid after each `write_dataset`
 - `vtk_fortran_vtk_writer_abstract` — format-neutral abstract writer (`vtk_writer_abstract`): the state `vtk_file` sets
   (origin, spacing, direction, header type, compression) and every procedure `vtk_file%xml_writer` exposes (`initialize`,
@@ -206,8 +209,9 @@ locations; XML refuses a Table);
 `vtk_fortran_write_vtkhdf_append.f90`: series continued with `action='append'` (restart, interrupted run), reuse across
 the restart, an orphan offset entry, a restart after a step with an empty piece;
 `vtk_fortran_write_vtkhdf_vtm.f90`: VTKHDF multi-block files (`vtm_file`, `format='vtkhdf'`): the nested assembly, a
-time series of two UnstructuredGrid series (one of two parts) and a PolyData series, the refusals (grid series, static
-and series mixed, other steps or times);
+time series of two UnstructuredGrid series (one of two parts) and a PolyData series, both also as
+PartitionedDataSetCollections with a block of references, the refusals (grid series, static and series mixed, other
+steps or times; collection names, references, composites);
 `vtk_fortran_read_vtkhdf.f90`: VTKHDF files read back (every topology, time series, two polyhedra sharing a face
 (Version 2.9, the file built with the bindings), a face id out of range, series storing once the mesh and arrays);
 `vtk_fortran_write_vtkhdf_polyh.f90`: polyhedra (one piece; three pieces with polyhedra in the second), each also

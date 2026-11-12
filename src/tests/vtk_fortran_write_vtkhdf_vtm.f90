@@ -11,10 +11,16 @@ program vtk_fortran_write_vtkhdf_vtm
 !<- `vtkfortran_vtm_series`: a time series of three steps, two UnstructuredGrid series (the second of two parts) in a
 !<  block `solid` and a PolyData series in a block `surface`, with the same times.
 !<
-!< Both files are read back with the HDF5 bindings (the type, the links of the tree; the steps of each block of the
-!< series). Refusals are checked too: a time-series ImageData block, a static block after a series block and the
-!< reverse, a series with another number of steps or other times, block and dataset names with '/' or '.'. Without
-!< HDF5 the VTKHDF format of `vtm_file` is refused.
+!<- `vtkfortran_pdc_nested`, `vtkfortran_pdc_series`: the same two as `PartitionedDataSetCollection`s
+!<  (`composite='PartitionedDataSetCollection'`), each with one more block, `checked`, that references two datasets
+!<  already copied (`references=`), without a new copy.
+!<
+!< The files are read back with the HDF5 bindings (the type, the links of the tree; the steps of each block of the
+!< series; the copies of a collection named after their datasets, their `Index`, a referenced dataset copied once).
+!< Refusals are checked too: a time-series ImageData block, a static block after a series block and the reverse, a
+!< series with another number of steps or other times, block and dataset names with '/' or '.'; in a collection a
+!< dataset name used twice or `Assembly`, a reference to a dataset not copied; references in a multi-block file or an XML
+!< `.vtm`, an unknown composite, a collection in XML. Without HDF5 the VTKHDF format of `vtm_file` is refused.
 use penf
 use vtk_fortran, only : vtk_file, vtm_file
 use vtk_fortran_hdf5
@@ -29,7 +35,7 @@ integer(I4P)                  :: u                          !< Unit.
 integer(I8P), allocatable     :: n_steps(:)                 !< Steps read back.
 real(R8P), allocatable        :: times(:)                   !< Times read back.
 integer(I4P)                  :: b                          !< Counter.
-logical                       :: test_passed(6)             !< List of passed tests.
+logical                       :: test_passed(8)             !< List of passed tests.
 
 test_passed = .false.
 if (.not.is_hdf5_enabled) then
@@ -72,8 +78,38 @@ else
   write(u, '(A)') 'solid/series_tetra series_tetra.vtkhdf', 'solid/series_tetra_2 series_tetra_2.vtkhdf', &
                   'surface/series_skin series_skin.vtkhdf'
   close(u)
-  test_passed(1) = all(e(1:13) == 0)
-  if (.not.test_passed(1)) print '(A,13I2)', 'errors of the files: ', e(1:13)
+  ! the same two as collections, each with a block referencing two datasets already copied
+  e(14) = a_vtm_file%initialize(filename='vtkfortran_pdc_nested.vtkhdf', format='vtkhdf', &
+                                composite='PartitionedDataSetCollection')
+  e(14) = max(e(14), abs(a_vtm_file%write_block(action='open', name='assembly')))
+  e(14) = max(e(14), abs(a_vtm_file%write_block(filenames=['part_1.vtkhdf', 'part_2.vtkhdf'], action='write')))
+  e(14) = max(e(14), abs(a_vtm_file%write_block(filenames=['bolt_1.vtkhdf', 'bolt_2.vtkhdf'], names=['bolt-1', 'bolt-2'], &
+                                                name='bolts')))
+  e(14) = max(e(14), abs(a_vtm_file%write_block(action='close')))
+  e(14) = max(e(14), abs(a_vtm_file%write_block(filenames='fluid.vtkhdf', names='fluid', name='domain')))
+  e(14) = max(e(14), abs(a_vtm_file%write_block(references='bolt-1 part_2', name='checked')))
+  e(14) = max(e(14), abs(a_vtm_file%finalize()))
+  open(newunit=u, file='vtkfortran_pdc_nested.txt', status='replace')
+  write(u, '(A)') 'assembly/part_1 part_1.vtkhdf', 'assembly/part_2 part_2.vtkhdf', 'assembly/bolts/bolt-1 bolt_1.vtkhdf', &
+                  'assembly/bolts/bolt-2 bolt_2.vtkhdf', 'domain/fluid fluid.vtkhdf', 'checked/bolt-1 bolt_1.vtkhdf', &
+                  'checked/part_2 part_2.vtkhdf'
+  close(u)
+  e(15) = a_vtm_file%initialize(filename='vtkfortran_pdc_series.vtkhdf', format='vtkhdf', &
+                                composite='partitioneddatasetcollection')
+  e(15) = max(e(15), abs(a_vtm_file%write_block(filenames=['series_tetra.vtkhdf  ', 'series_tetra_2.vtkhdf'], &
+                                                name='solid')))
+  e(15) = max(e(15), abs(a_vtm_file%write_block(filenames='series_skin.vtkhdf', name='surface')))
+  e(15) = max(e(15), abs(a_vtm_file%write_block(action='open', name='checked')))
+  e(15) = max(e(15), abs(a_vtm_file%write_block(action='write', references='series_skin series_tetra')))
+  e(15) = max(e(15), abs(a_vtm_file%write_block(action='close')))
+  e(15) = max(e(15), abs(a_vtm_file%finalize()))
+  open(newunit=u, file='vtkfortran_pdc_series.txt', status='replace')
+  write(u, '(A)') 'solid/series_tetra series_tetra.vtkhdf', 'solid/series_tetra_2 series_tetra_2.vtkhdf', &
+                  'surface/series_skin series_skin.vtkhdf', 'checked/series_skin series_skin.vtkhdf', &
+                  'checked/series_tetra series_tetra.vtkhdf'
+  close(u)
+  test_passed(1) = all(e(1:15) == 0)
+  if (.not.test_passed(1)) print '(A,15I2)', 'errors of the files: ', e(1:15)
   test_passed(2) = refusals()
 
   ! read back the nested assembly
@@ -103,13 +139,73 @@ else
   e(5) = h5_group_close(root)
   e(6) = h5_file_close(file_id)
   test_passed(6) = all(e(1:6) == 0)
-  print '(A,6L2)', 'VTKHDF multi-block: files, refusals, tree, reads, series steps, series reads:', test_passed
+
+  ! read back the collections: the type, the copies named after their datasets with their Index, the references
+  test_passed(7) = collection('vtkfortran_pdc_nested.vtkhdf', &
+                              [character(6) :: 'part_1', 'part_2', 'bolt-1', 'bolt-2', 'fluid'], &
+                              [character(32) :: 'Assembly/assembly/bolts/bolt-2', 'Assembly/checked/bolt-1', &
+                               'Assembly/checked/part_2'])
+  test_passed(8) = collection('vtkfortran_pdc_series.vtkhdf', &
+                              [character(14) :: 'series_tetra', 'series_tetra_2', 'series_skin'], &
+                              [character(32) :: 'Assembly/surface/series_skin', 'Assembly/checked/series_skin', &
+                               'Assembly/checked/series_tetra'])
+  print '(A,8L2)', 'VTKHDF multi-block: files, refusals, tree, reads, series steps, series reads, collections:', test_passed
 endif
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 if (.not.all(test_passed)) error stop 'some tests failed'
 stop
 contains
+  logical function collection(filename, copies, links)
+  !< A collection read back: its type, its copies named after their datasets with the Index of the order written, no
+  !< other dataset group (a referenced dataset copied once), the links of the tree given.
+  character(*), intent(in)      :: filename  !< File name.
+  character(*), intent(in)      :: copies(:) !< Datasets, in the order written.
+  character(*), intent(in)      :: links(:)  !< Links of the tree.
+  character(len=:), allocatable :: members   !< Members of /VTKHDF.
+  character(len=:), allocatable :: text      !< Type.
+  integer(hid_kind)             :: file_id   !< File.
+  integer(hid_kind)             :: root      !< Group /VTKHDF.
+  integer(hid_kind)             :: group     !< A copy.
+  integer(I8P), allocatable     :: index_(:) !< Index of a copy.
+  integer(I4P)                  :: c, ee(4)  !< Counter, errors.
+
+  ee = 0
+  ee(1) = h5_file_open(filename, file_id)
+  ee(2) = h5_group_open(file_id, 'VTKHDF', root)
+  ee(3) = h5_attribute_read(root, 'Type', text)
+  collection = all(ee == 0) .and. text == 'PartitionedDataSetCollection'
+  do c=1, size(copies)
+    collection = collection .and. h5_link_exists(root, trim(copies(c)))
+    if (.not.collection) exit
+    collection = h5_group_open(root, trim(copies(c)), group) == 0
+    if (collection) collection = h5_attribute_read(group, 'Index', index_) == 0
+    if (collection) collection = all(index_ == [int(c - 1, I8P)])
+    ee(4) = h5_group_close(group)
+  enddo
+  ! the members of /VTKHDF in creation order: Assembly (created by initialize), the copies
+  ee(4) = h5_group_names(file_id, 'VTKHDF', members)
+  collection = collection .and. ee(4) == 0 .and. members == 'Assembly'//achar(0)//join(copies)
+  do c=1, size(links)
+    collection = collection .and. h5_link_exists(root, trim(links(c)))
+  enddo
+  ee(1) = h5_group_close(root)
+  ee(2) = h5_file_close(file_id)
+  collection = collection .and. all(ee(1:2) == 0)
+  endfunction collection
+
+  pure function join(names) result(list)
+  !< The names, each trimmed and followed by NUL.
+  character(*), intent(in)      :: names(:) !< Names.
+  character(len=:), allocatable :: list     !< List.
+  integer(I4P)                  :: n        !< Counter.
+
+  list = ''
+  do n=1, size(names)
+    list = list//trim(names(n))//achar(0)
+  enddo
+  endfunction join
+
   function tetra(filename, shift, n_steps, height, parts) result(error)
   !< A tetrahedron moved by shift along x and height along z, with point data; a time series of n_steps steps if n_steps > 0;
   !< `parts` tetrahedra (pieces) per step, each one 1.5 further along y.
@@ -191,7 +287,7 @@ contains
   logical function refusals()
   !< The refusals of the VTKHDF format of vtm_file, each one a non-zero error.
   integer(I4P) :: error
-  logical      :: ok(13)
+  logical      :: ok(21)
 
   ok = .false.
   ! a static file
@@ -222,7 +318,25 @@ contains
   ok(12) = a_vtm_file%write_block(filenames=['part_1.vtkhdf'], names=['p_q'], action='write') == 0 ! a valid name
   error = a_vtm_file%write_block(action='close')
   ok(13) = a_vtm_file%finalize() == 0                                                      ! the file is complete
+  ! a collection: a dataset name used twice or Assembly, a reference to a dataset not copied or to the Assembly
+  error = a_vtm_file%initialize(filename='refused_pdc.vtkhdf', format='vtkhdf', composite='PartitionedDataSetCollection')
+  error = a_vtm_file%write_block(filenames='part_1.vtkhdf', name='a')
+  ok(14) = a_vtm_file%write_block(filenames='part_2.vtkhdf', names='part_1', name='b') /= 0 ! part_1 copied twice
+  ok(15) = a_vtm_file%write_block(filenames='part_2.vtkhdf', names='Assembly', name='c') /= 0 ! the name Assembly
+  ok(16) = a_vtm_file%write_block(references='part_2', name='d') /= 0                      ! part_2 never copied
+  ok(17) = a_vtm_file%write_block(references='Assembly', name='e') /= 0                    ! not a dataset
+  error = a_vtm_file%finalize() ! not 0: each refused call left its new block open
+  ! references outside a collection, an unknown composite, a collection in XML
+  error = a_vtm_file%initialize(filename='refused_vtm_references.vtkhdf', format='vtkhdf')
+  error = a_vtm_file%write_block(filenames='part_1.vtkhdf', name='a')
+  ok(18) = a_vtm_file%write_block(references='part_1', name='b') /= 0                      ! a multi-block file
+  error = a_vtm_file%finalize()
+  error = a_vtm_file%initialize(filename='refused_references.vtm')
+  ok(19) = a_vtm_file%write_block(references='part_1', name='b') /= 0                      ! an XML .vtm
+  error = a_vtm_file%finalize()
+  ok(20) = a_vtm_file%initialize(filename='refused_composite.vtkhdf', format='vtkhdf', composite='Collection') /= 0
+  ok(21) = a_vtm_file%initialize(filename='refused_collection.vtm', composite='PartitionedDataSetCollection') /= 0
   refusals = all(ok)
-  if (.not.refusals) print '(A,13L2)', 'refusals: ', ok
+  if (.not.refusals) print '(A,21L2)', 'refusals: ', ok
   endfunction refusals
 endprogram vtk_fortran_write_vtkhdf_vtm
