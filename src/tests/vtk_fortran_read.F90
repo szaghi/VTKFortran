@@ -13,7 +13,9 @@ program vtk_fortran_read
 !< u v w x y z, w and x joined) with non-finite values where w and x meet; `type="Bit"` arrays of two files written by
 !< VTK 9.7.2 (ascii, binary), embedded below; string arrays written as point and cell data in every format and as a column
 !< of a `.vtt` Table (a column of other rows refused, the next column unaffected), read back; component names
-!< (`set_component_names`, the next array only) and field data of several components in every format, read back.
+!< (`set_component_names`, the next array only) and field data of several components in every format, read back. Four
+!< BigEndian files written by VTK 9.7.2 (inline binary with UInt32 headers, appended raw with UInt64 headers; with zlib,
+!< appended base64 and appended raw), embedded below: every array, the points and the cells.
 use penf
 use, intrinsic :: ieee_arithmetic, only : ieee_is_nan, ieee_is_finite, ieee_value, ieee_quiet_nan, &
                                           ieee_positive_inf, ieee_negative_inf
@@ -28,7 +30,7 @@ real(R8P),    parameter :: p(4)=[1.5_R8P, -2.25_R8P, 1.e-300_R8P, 4._R8P/3._R8P]
 real(R4P),    parameter :: v(3,4)=reshape([1,2,3, 4,5,6, 7,8,9, 10,11,12], [3,4]) * 0.1_R4P !< Point vectors.
 type(vtk_file)          :: a_vtk_file      !< A VTK file.
 integer(I4P)            :: f               !< Counter.
-logical                 :: test_passed(17) !< List of passed tests.
+logical                 :: test_passed(18) !< List of passed tests.
 
 test_passed = .true.
 do f=1, size(formats)
@@ -56,6 +58,7 @@ test_passed(14) = check_six_non_finite()
 test_passed(15) = check_vtk_bits()
 test_passed(16) = check_string_arrays()
 test_passed(17) = check_components()
+test_passed(18) = check_big_endian()
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 if (.not.all(test_passed)) error stop 'some tests failed'
@@ -1041,4 +1044,256 @@ contains
 
   is_it = (.not.ieee_is_finite(v)) .and. (.not.ieee_is_nan(v)) .and. ((v > 0._R8P) .eqv. (sign > 0))
   endfunction is_inf
+  logical function check_big_endian()
+  !< BigEndian files written by VTK 9.7.2 (vtkXMLUnstructuredGridWriter, SetByteOrderToBigEndian): a tetrahedron with
+  !< Float64, Int32 and 3-component UInt16 point data and Float32 cell data; inline binary (UInt32 headers), appended raw
+  !< (UInt64 headers) and, with zlib, appended base64 and appended raw (UInt32). Their information keys and ranges are
+  !< left out; the appended raw data are written as bytes (hex).
+  character(*), parameter       :: nl = new_line('a')
+  character(32)                 :: files(4) !< The files.
+  type(vtk_file)                :: r        !< Reader.
+  real(R8P),    allocatable     :: pd(:), xx(:), yy(:), zz(:) !< Arrays read.
+  real(R4P),    allocatable     :: cf(:)    !< Cell data read.
+  integer(I4P), allocatable     :: ip(:), us(:,:) !< Arrays read.
+  integer(I8P), allocatable     :: conn(:), offs(:) !< Cells read.
+  integer(I1P), allocatable     :: types(:) !< Cell types read.
+  integer(I4P)                  :: u, k, n, e !< Unit, counters, error.
+
+  ! be_binary_none_32.vtu
+  open(newunit=u, file='vtkfortran_read_be_binary.vtu', status='replace', action='write')
+  write(u, '(A)') &
+    '<?xml version="1.0"?>', &
+    '<VTKFile type="UnstructuredGrid" version="0.1" byte_order="BigEndian" header_type="UInt32"' // &
+    '>', &
+    '  <UnstructuredGrid>', &
+    '    <Piece NumberOfPoints="4" NumberOfCells="1">', &
+    '      <PointData>', &
+    '        <DataArray type="Float64" Name="pd" format="binary">', &
+    '          AAAAID/4AAAAAAAAwAIAAAAAAABCG/COsAAAAL37fN/Z1727', &
+    '        </DataArray>', &
+    '        <DataArray type="Int32" Name="ip" format="binary">', &
+    '          AAAAEAAAAAf////4AAAACf////Y=', &
+    '        </DataArray>', &
+    '        <DataArray type="UInt16" Name="us" NumberOfComponents="3" format="binary">', &
+    '          AAAAGAABAAIAAwAEAAUABgAHAAgACf//AAAAAQ==', &
+    '        </DataArray>', &
+    '      </PointData>', &
+    '      <CellData>', &
+    '        <DataArray type="Float32" Name="cf" format="binary">', &
+    '          AAAABEAgAAA=', &
+    '        </DataArray>', &
+    '      </CellData>', &
+    '      <Points>', &
+    '        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="binary">', &
+    '          AAAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' // &
+    'P/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/8AAAAAAAAA==', &
+    '        </DataArray>', &
+    '      </Points>', &
+    '      <Cells>', &
+    '        <DataArray type="Int64" Name="connectivity" format="binary">', &
+    '          AAAAIAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAgAAAAAAAAAD', &
+    '        </DataArray>', &
+    '        <DataArray type="Int64" Name="offsets" format="binary">', &
+    '          AAAACAAAAAAAAAAE', &
+    '        </DataArray>', &
+    '        <DataArray type="UInt8" Name="types" format="binary">', &
+    '          AAAAAQo=', &
+    '        </DataArray>', &
+    '      </Cells>', &
+    '    </Piece>', &
+    '  </UnstructuredGrid>', &
+    '</VTKFile>'
+  close(u)
+  ! be_appended-b64_zlib_32.vtu
+  open(newunit=u, file='vtkfortran_read_be_b64zlib.vtu', status='replace', action='write')
+  write(u, '(A)') &
+    '<?xml version="1.0"?>', &
+    '<VTKFile type="UnstructuredGrid" version="0.1" byte_order="BigEndian" header_type="UInt32"' // &
+    ' compressor="vtkZLibDataCompressor">', &
+    '  <UnstructuredGrid>', &
+    '    <Piece NumberOfPoints="4"                    NumberOfCells="1"                   >', &
+    '      <PointData>', &
+    '        <DataArray type="Float64" Name="pd" format="appended" RangeMin="-2.25"            ' // &
+    '    RangeMax="30000000000"          offset="0"                   >', &
+    '        </DataArray>', &
+    '        <DataArray type="Int32" Name="ip" format="appended" RangeMin="-10"                ' // &
+    '  RangeMax="9"                    offset="68"                  >', &
+    '        </DataArray>', &
+    '        <DataArray type="UInt16" Name="us" NumberOfComponents="3" format="appended" RangeM' // &
+    'in="3.7416573868"         RangeMax="65535.000008"         offset="124"                 >', &
+    '        </DataArray>', &
+    '      </PointData>', &
+    '      <CellData>', &
+    '        <DataArray type="Float32" Name="cf" format="appended" RangeMin="2.5"              ' // &
+    '    RangeMax="2.5"                  offset="188"                 >', &
+    '        </DataArray>', &
+    '      </CellData>', &
+    '      <Points>', &
+    '        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" R' // &
+    'angeMin="0"                    RangeMax="1"                    offset="228"               ' // &
+    '  >', &
+    '        </DataArray>', &
+    '      </Points>', &
+    '      <Cells>', &
+    '        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""         ' // &
+    '            RangeMax=""                     offset="276"                 />', &
+    '        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""              ' // &
+    '       RangeMax=""                     offset="324"                 />', &
+    '        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                ' // &
+    '     RangeMax=""                     offset="364"                 >', &
+    '        </DataArray>', &
+    '      </Cells>', &
+    '    </Piece>', &
+    '  </UnstructuredGrid>', &
+    '  <AppendedData encoding="base64">', &
+    '   _AAAAAQAAgAAAAAAgAAAAIA==eJyz/8EABgeYILST9Ie+DUB67++a+zev790NAHanCsA=AAAAAQAAgAAAAAAQAA' // &
+    'AAFw==eJxjYGBg/////w8GBgZOIP0NADQcB/k=AAAAAQAAgAAAAAAYAAAAHg==eJwFwYEBABAIALCFiv8PziYs25FK' // &
+    'u94M4gMNOQItAAAAAQAAgAAAAAAEAAAADA==eJxzUGBgAAABZABhAAAAAQAAgAAAAABgAAAAEg==eJxjYMAO7D/gkC' // &
+    'BRHgCLmAOOAAAAAQAAgAAAAAAgAAAAEg==eJxjYEABjFCaCUozAwAARgAHAAAAAQAAgAAAAAAIAAAADA==eJxjYAAD' // &
+    'FgAADAAFAAAAAQAAgAAAAAABAAAACQ==eJzjAgAACwAL', &
+    '  </AppendedData>', &
+    '</VTKFile>'
+  close(u)
+  ! be_appended-raw_none_64.vtu: the XML, the raw appended data (hex), the end
+  open(newunit=u, file='vtkfortran_read_be_raw64.vtu', status='replace', action='write', access='stream', &
+       form='unformatted')
+  write(u) &
+    '<VTKFile type="UnstructuredGrid" version="1.0" byte_order="BigEndian" header_type="UInt64"' // &
+    '>' // nl // &
+    '  <UnstructuredGrid>' // nl // &
+    '    <Piece NumberOfPoints="4"                    NumberOfCells="1"                   >' // nl // &
+    '      <PointData>' // nl // &
+    '        <DataArray type="Float64" Name="pd" format="appended" RangeMin="-2.25"            ' // &
+    '    RangeMax="30000000000"          offset="0"                   >' // nl // &
+    '        </DataArray>' // nl // &
+    '        <DataArray type="Int32" Name="ip" format="appended" RangeMin="-10"                ' // &
+    '  RangeMax="9"                    offset="40"                  >' // nl // &
+    '        </DataArray>' // nl // &
+    '        <DataArray type="UInt16" Name="us" NumberOfComponents="3" format="appended" RangeM' // &
+    'in="3.7416573868"         RangeMax="65535.000008"         offset="64"                  >' // nl // &
+    '        </DataArray>' // nl // &
+    '      </PointData>' // nl // &
+    '      <CellData>' // nl // &
+    '        <DataArray type="Float32" Name="cf" format="appended" RangeMin="2.5"              ' // &
+    '    RangeMax="2.5"                  offset="96"                  >' // nl // &
+    '        </DataArray>' // nl // &
+    '      </CellData>' // nl // &
+    '      <Points>' // nl // &
+    '        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" R' // &
+    'angeMin="0"                    RangeMax="1"                    offset="108"               ' // &
+    '  >' // nl // &
+    '        </DataArray>' // nl // &
+    '      </Points>' // nl // &
+    '      <Cells>' // nl // &
+    '        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""         ' // &
+    '            RangeMax=""                     offset="212"                 />' // nl // &
+    '        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""              ' // &
+    '       RangeMax=""                     offset="252"                 />' // nl // &
+    '        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                ' // &
+    '     RangeMax=""                     offset="268"                 >' // nl // &
+    '        </DataArray>' // nl // &
+    '      </Cells>' // nl // &
+    '    </Piece>' // nl // &
+    '  </UnstructuredGrid>' // nl // &
+    '  <AppendedData encoding="raw">' // nl // &
+    '   _'
+  call write_hex(u, &
+    '00000000000000203ff8000000000000c002000000000000421bf08eb0000000bdfb7cdfd9d7bdbb0000000000000010' // &
+    '00000007fffffff800000009fffffff60000000000000018000100020003000400050006000700080009ffff00000001' // &
+    '00000000000000044020000000000000000000600000000000000000000000000000000000000000000000003ff00000' // &
+    '000000000000000000000000000000000000000000000000000000003ff0000000000000000000000000000000000000' // &
+    '0000000000000000000000003ff000000000000000000000000000200000000000000000000000000000000100000000' // &
+    '0000000200000000000000030000000000000008000000000000000400000000000000010a0a2020')
+  write(u) nl // '  </AppendedData>' // nl // '</VTKFile>' // nl
+  close(u)
+  ! be_appended-raw_zlib_32.vtu: the XML, the raw appended data (hex), the end
+  open(newunit=u, file='vtkfortran_read_be_rawzlib.vtu', status='replace', action='write', access='stream', &
+       form='unformatted')
+  write(u) &
+    '<VTKFile type="UnstructuredGrid" version="0.1" byte_order="BigEndian" header_type="UInt32"' // &
+    ' compressor="vtkZLibDataCompressor">' // nl // &
+    '  <UnstructuredGrid>' // nl // &
+    '    <Piece NumberOfPoints="4"                    NumberOfCells="1"                   >' // nl // &
+    '      <PointData>' // nl // &
+    '        <DataArray type="Float64" Name="pd" format="appended" RangeMin="-2.25"            ' // &
+    '    RangeMax="30000000000"          offset="0"                   >' // nl // &
+    '        </DataArray>' // nl // &
+    '        <DataArray type="Int32" Name="ip" format="appended" RangeMin="-10"                ' // &
+    '  RangeMax="9"                    offset="48"                  >' // nl // &
+    '        </DataArray>' // nl // &
+    '        <DataArray type="UInt16" Name="us" NumberOfComponents="3" format="appended" RangeM' // &
+    'in="3.7416573868"         RangeMax="65535.000008"         offset="87"                  >' // nl // &
+    '        </DataArray>' // nl // &
+    '      </PointData>' // nl // &
+    '      <CellData>' // nl // &
+    '        <DataArray type="Float32" Name="cf" format="appended" RangeMin="2.5"              ' // &
+    '    RangeMax="2.5"                  offset="133"                 >' // nl // &
+    '        </DataArray>' // nl // &
+    '      </CellData>' // nl // &
+    '      <Points>' // nl // &
+    '        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" R' // &
+    'angeMin="0"                    RangeMax="1"                    offset="161"               ' // &
+    '  >' // nl // &
+    '        </DataArray>' // nl // &
+    '      </Points>' // nl // &
+    '      <Cells>' // nl // &
+    '        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""         ' // &
+    '            RangeMax=""                     offset="195"                 />' // nl // &
+    '        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""              ' // &
+    '       RangeMax=""                     offset="229"                 />' // nl // &
+    '        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                ' // &
+    '     RangeMax=""                     offset="257"                 >' // nl // &
+    '        </DataArray>' // nl // &
+    '      </Cells>' // nl // &
+    '    </Piece>' // nl // &
+    '  </UnstructuredGrid>' // nl // &
+    '  <AppendedData encoding="raw">' // nl // &
+    '   _'
+  call write_hex(u, &
+    '00000001000080000000002000000020789cb3ffc10006079820b493f487be0d407aefef9afb37afefdd0d0076a70ac0' // &
+    '00000001000080000000001000000017789c63606060ffffffff0f0606064e20fd0d00341c07f9000000010000800000' // &
+    '0000180000001e789c05c1810100100800b0858aff0fce262cdb914abbde0ce2030d39022d0000000100008000000000' // &
+    '040000000c789c7350606000000164006100000001000080000000006000000012789c6360c00eec3fe09020511e008b' // &
+    '98038e00000001000080000000002000000012789c636040018c509a094a330300004600070000000100008000000000' // &
+    '080000000c789c636000031600000c000500000001000080000000000100000009789ce30200000b000b0a2020')
+  write(u) nl // '  </AppendedData>' // nl // '</VTKFile>' // nl
+  close(u)
+  files = [character(32) :: 'vtkfortran_read_be_binary.vtu', 'vtkfortran_read_be_raw64.vtu', &
+           'vtkfortran_read_be_b64zlib.vtu', 'vtkfortran_read_be_rawzlib.vtu']
+  n = 2
+#ifdef VTKFORTRAN_USE_ZLIB
+  n = 4
+#endif
+  check_big_endian = .true.
+  do k=1, n
+    e = r%initialize(filename=trim(files(k)), action='read')
+    e = e + abs(r%xml_reader%read_dataarray(location='node', data_name='pd', x=pd))
+    e = e + abs(r%xml_reader%read_dataarray(location='node', data_name='ip', x=ip))
+    e = e + abs(r%xml_reader%read_dataarray(location='node', data_name='us', x=us))
+    e = e + abs(r%xml_reader%read_dataarray(location='cell', data_name='cf', x=cf))
+    e = e + abs(r%xml_reader%read_geo(x=xx, y=yy, z=zz))
+    e = e + abs(r%xml_reader%read_connectivity(connectivity=conn, offset=offs, cell_type=types))
+    if (e == 0) then
+      if (.not.(all(pd == [1.5_R8P, -2.25_R8P, 3.e10_R8P, -4.e-10_R8P]) .and. all(ip == [7, -8, 9, -10]) .and. &
+                all(us(:,1) == [1, 2, 3]) .and. all(us(:,4) == [65535, 0, 1]) .and. all(cf == [2.5_R4P]) .and. &
+                all(xx == x) .and. all(yy == y) .and. all(zz == z) .and. all(conn == [0_I8P, 1_I8P, 2_I8P, 3_I8P]) .and. &
+                all(offs == [4_I8P]) .and. all(types == [10_I1P]))) e = 1
+    endif
+    if (e /= 0) print '(A,I0)', 'failed: '//trim(files(k))//', error ', e
+    check_big_endian = check_big_endian .and. e == 0
+    e = r%finalize()
+  enddo
+  endfunction check_big_endian
+
+  subroutine write_hex(unit, hex)
+  !< Write the bytes of a hexadecimal string.
+  integer(I4P), intent(in) :: unit     !< Unit, stream access.
+  character(*), intent(in) :: hex      !< Bytes, two hexadecimal digits each.
+  integer(I4P)             :: b, value !< Counter, a byte.
+
+  do b=1, len(hex) - 1, 2
+    read(hex(b:b+1), '(Z2)') value
+    write(unit) int(merge(value - 256, value, value > 127), I1P)
+  enddo
+  endsubroutine write_hex
 endprogram vtk_fortran_read

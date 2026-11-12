@@ -74,6 +74,10 @@ same `origin` and `spacing`, and the extents of each piece. `mesh_kind` is not n
 
 See `src/tests/vtk_fortran_write_vti.f90` for a complete program, serial and parallel.
 
+A `direction` given to `pvtk_file` is written in the `.pvti`, but VTK 9.7.2 ignores it: its `.pvti` reader gives an
+identity direction, whatever the header and the pieces hold (its own writer leaves it out of the header). A rotated
+image is read with its direction from the `.vti` pieces only.
+
 ## Parallel Polygonal Data (PVTP)
 
 As for PVTU: each rank writes its piece as a complete `.vtp` file (local point ids), one rank writes the `.pvtp` file with the

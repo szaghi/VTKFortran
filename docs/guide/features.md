@@ -64,7 +64,7 @@ VTKFortran or by VTK and ParaView. Only the array asked for is loaded and decode
 | OverlappingAMR entries (levels as blocks, boxes as datasets) | `.vthb`, `.vth` | ✅ |
 | Partitioned composites (entries; a Partitions of several DataSets as pieces) | `.vtpc`, `.vtpd` | ✅ |
 
-Not supported: `BigEndian` files and the LZ4 and LZMA compressors.
+`BigEndian` files are read too (their binary headers and values reversed). Not supported: the LZ4 and LZMA compressors.
 
 ## VTKHDF Exporters
 

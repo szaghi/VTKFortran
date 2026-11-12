@@ -9,7 +9,8 @@ module vtk_fortran_vtk_file_xml_reader
 !< It reads the serial XML formats (ImageData, RectilinearGrid, StructuredGrid, UnstructuredGrid, PolyData, and Table:
 !< `.vtt`, no pieces, `npieces` 0, its columns the data arrays of `location='row'`, their tuples its `NumberOfRows`)
 !< written by VTKFortran or by VTK, in every format (ascii, binary, raw and base64 appended), uncompressed or zlib compressed
-!< (`vtkZLibDataCompressor`), with UInt32 or UInt64 headers. BigEndian files and other compressors are not supported.
+!< (`vtkZLibDataCompressor`), with UInt32 or UInt64 headers, LittleEndian or BigEndian (the binary headers and values of a
+!< file of the other byte order than the host's are reversed when read). Other compressors are not supported.
 !< `Bit` arrays (vtkBitArray, packed MSB first in the binary formats) are read as integers 0 and 1.
 !< The polyhedra of an UnstructuredGrid are read from the `faces`/`faceoffsets` arrays VTKFortran writes or from the four
 !< arrays VTK 9.7.2 writes (XML 2.3: `face_connectivity`, `face_offsets`, `polyhedron_to_faces`, `polyhedron_offsets`; a
@@ -35,7 +36,7 @@ module vtk_fortran_vtk_file_xml_reader
 !<| 0     | success                                                                                  |
 !<| 1     | the file cannot be read                                                                  |
 !<| 2     | the file is not a VTK XML file (malformed XML, no VTKFile element or dataset element)    |
-!<| 3     | unsupported feature (BigEndian, compressor, parallel or unknown dataset type, encoding)  |
+!<| 3     | unsupported feature (compressor, byte order, parallel or unknown dataset type, encoding) |
 !<| 4     | not found (piece, data array, geometry or cells absent), or the reader is not initialized |
 !<| 5     | the output kind cannot hold the values of the data array                                 |
 !<| 6     | the data do not decode (inconsistent sizes, malformed base64, zlib failure)              |
@@ -63,6 +64,7 @@ type :: xml_reader
   type(xml_index)               :: xml                     !< Index of the XML elements (FoXy).
   character(len=:), allocatable :: mesh_topology           !< Dataset type.
   integer(I8P)                  :: word_size=4_I8P         !< Size of the binary header words: 4 (UInt32) or 8 (UInt64).
+  logical                       :: is_swapped=.false.      !< The file is of the other byte order than the host's.
   logical                       :: is_compressed=.false.   !< The binary data are zlib compressed.
   logical                       :: is_initialized=.false.  !< The reader is initialized.
   integer(I4P)                  :: dataset=0               !< Index of the dataset element.
@@ -181,7 +183,14 @@ contains
     return
   endselect
   value = self%xml%attribute(id=root, name='byte_order')
-  if (value == 'BigEndian') return
+  select case(value) ! the binary values and headers of a file of the other byte order are reversed when read
+  case('BigEndian')
+    self%is_swapped = endian /= endianB
+  case('', 'LittleEndian')
+    self%is_swapped = endian /= endianL
+  case default
+    return
+  endselect
   value = self%xml%attribute(id=root, name='header_type')
   select case(value)
   case('', 'UInt32')
@@ -243,6 +252,7 @@ contains
   if (allocated(self%filename)) deallocate(self%filename)
   if (allocated(self%mesh_topology)) deallocate(self%mesh_topology)
   self%word_size = 4_I8P
+  self%is_swapped = .false.
   self%is_compressed = .false.
   self%is_initialized = .false.
   self%dataset = 0
@@ -1099,7 +1109,8 @@ contains
     error = read_chars(filename=self%filename, first=first, last=last, chars=code)
     if (error /= 0) return
     call strip_spaces(code)
-    call decode_base64(code=code, word_size=self%word_size, is_compressed=self%is_compressed, bytes=bytes, error=error)
+    call decode_base64(code=code, word_size=self%word_size, is_compressed=self%is_compressed, bytes=bytes, error=error, &
+                       is_swapped=self%is_swapped)
   case('appended')
     if (self%appended_start == 0_I8P) return
     call self%xml%get_attribute(id=id, name='offset', value=offset, iostat=iostat)
@@ -1113,6 +1124,7 @@ contains
     error = 3
   endselect
   if (error /= 0) return
+  if (self%is_swapped .and. value /= 'ascii') bytes = swap_bytes(bytes, sz) ! values of the other byte order
   if (data_type == 'Bit') then ! vtkBitArray: one value per bit, MSB first, but in ASCII; read as UInt8 values 0 and 1
     if (value /= 'ascii') then
       error = 6
@@ -1731,7 +1743,7 @@ contains
   allocate(bytes(1:0))
   w = self%word_size
   error = read_bytes(filename=self%filename, pos=pos, n=w, bytes=raw) ; if (error /= 0) return
-  header = header_words(raw, w)
+  header = header_words(raw, w, self%is_swapped)
   error = 6
   if (header(1) < 0_I8P) return
   if (.not.self%is_compressed) then
@@ -1739,7 +1751,7 @@ contains
   else
     ! [number of blocks, block size, last block size, compressed sizes], then the blocks
     error = read_bytes(filename=self%filename, pos=pos, n=(3_I8P+header(1))*w, bytes=raw) ; if (error /= 0) return
-    header = header_words(raw, w)
+    header = header_words(raw, w, self%is_swapped)
     error = 6
     if (any(header(4:) < 0_I8P)) return
     error = read_bytes(filename=self%filename, pos=pos+(3_I8P+header(1))*w, n=sum(header(4:)), bytes=raw)
@@ -1772,7 +1784,7 @@ contains
   error = 6
   allocate(raw(1:(lh/4_I8P)*3_I8P))
   call b64_decode_bytes(code=code, bytes=raw)
-  header = header_words(raw(1:w), w)
+  header = header_words(raw(1:w), w, self%is_swapped)
   if (header(1) < 0_I8P) return
   if (.not.self%is_compressed) then
     lc = ((w + header(1) + 2_I8P) / 3_I8P) * 4_I8P
@@ -1784,12 +1796,13 @@ contains
     allocate(raw(1:base64_decoded_size(code)))
     if (size(raw, kind=I8P) /= (3_I8P + header(1)) * w) return
     call b64_decode_bytes(code=code, bytes=raw)
-    header = header_words(raw, w)
+    header = header_words(raw, w, self%is_swapped)
     if (any(header(4:) < 0_I8P)) return
     lc = lh + ((sum(header(4:)) + 2_I8P) / 3_I8P) * 4_I8P
   endif
   error = read_chars(filename=self%filename, first=pos, last=pos+lc-1_I8P, chars=code) ; if (error /= 0) return
-  call decode_base64(code=code, word_size=w, is_compressed=self%is_compressed, bytes=bytes, error=error)
+  call decode_base64(code=code, word_size=w, is_compressed=self%is_compressed, bytes=bytes, error=error, &
+                     is_swapped=self%is_swapped)
   endfunction read_appended_base64
 
   subroutine b64_decode_bytes(code, bytes)

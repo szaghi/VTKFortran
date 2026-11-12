@@ -18,6 +18,7 @@ public :: data_type_size
 public :: decode_ascii
 public :: decode_base64
 public :: header_words
+public :: swap_bytes
 public :: strip_spaces
 
 interface bytes_to_array
@@ -91,26 +92,50 @@ contains
   if (code(l-1_I8P:l-1_I8P) == '=') n = n - 1_I8P
   endfunction base64_decoded_size
 
-  pure function header_words(bytes, word_size) result(words)
-  !< Return the words of a VTK binary header (UInt32 or UInt64, given by their size, 4 or 8 bytes) from its bytes.
-  integer(I1P), intent(in)  :: bytes(1:)  !< Bytes of the header (a multiple of the word size).
-  integer(I8P), intent(in)  :: word_size  !< Size of a word: 4 (UInt32) or 8 (UInt64).
-  integer(I8P), allocatable :: words(:)   !< Words.
-  integer(I8P)              :: i          !< Counter.
-  integer(I8P)              :: k          !< First byte of the current word.
+  pure function header_words(bytes, word_size, is_swapped) result(words)
+  !< Return the words of a VTK binary header (UInt32 or UInt64, given by their size, 4 or 8 bytes) from its bytes; with
+  !< `is_swapped` (a file of the other byte order than the host's) the bytes of each word reversed first.
+  integer(I1P), intent(in)           :: bytes(1:)  !< Bytes of the header (a multiple of the word size).
+  integer(I8P), intent(in)           :: word_size  !< Size of a word: 4 (UInt32) or 8 (UInt64).
+  logical,      intent(in), optional :: is_swapped !< The file is of the other byte order.
+  integer(I8P), allocatable          :: words(:)   !< Words.
+  integer(I1P), allocatable          :: b(:)       !< The bytes, in the host's order.
+  integer(I8P)                       :: i          !< Counter.
+  integer(I8P)                       :: k          !< First byte of the current word.
 
-  allocate(words(1:size(bytes, kind=I8P)/word_size))
+  b = bytes
+  if (present(is_swapped)) then
+    if (is_swapped) b = swap_bytes(bytes, word_size)
+  endif
+  allocate(words(1:size(b, kind=I8P)/word_size))
   do i=1_I8P, size(words, kind=I8P)
     k = (i - 1_I8P) * word_size + 1_I8P
     if (word_size == 8_I8P) then
-      words(i) = transfer(bytes(k:k+7_I8P), 0_I8P)
+      words(i) = transfer(b(k:k+7_I8P), 0_I8P)
     else
-      words(i) = iand(int(transfer(bytes(k:k+3_I8P), 0_I4P), I8P), 4294967295_I8P)
+      words(i) = iand(int(transfer(b(k:k+3_I8P), 0_I4P), I8P), 4294967295_I8P)
     endif
   enddo
   endfunction header_words
 
-  subroutine decode_base64(code, word_size, is_compressed, bytes, error)
+  pure function swap_bytes(bytes, word_size) result(swapped)
+  !< Reverse the bytes of each word of `word_size` bytes (the byte order of the values of a binary array); trailing bytes
+  !< of an incomplete word are left as they are.
+  integer(I1P), intent(in) :: bytes(1:)               !< Bytes.
+  integer(I8P), intent(in) :: word_size               !< Size of a word, bytes.
+  integer(I1P)             :: swapped(1:size(bytes))  !< Bytes, each word reversed.
+  integer(I8P)             :: i                       !< Counter.
+  integer(I8P)             :: k                       !< First byte of the current word.
+
+  swapped = bytes
+  if (word_size < 2_I8P) return
+  do i=1_I8P, size(bytes, kind=I8P) / word_size
+    k = (i - 1_I8P) * word_size + 1_I8P
+    swapped(k:k+word_size-1_I8P) = bytes(k+word_size-1_I8P:k:-1)
+  enddo
+  endfunction swap_bytes
+
+  subroutine decode_base64(code, word_size, is_compressed, bytes, error, is_swapped)
   !< Decode the base64 code of a binary DataArray (inline or appended), header included, into its data bytes.
   !<
   !< Uncompressed, the code is one base64 stream: the bytes count (a header word) followed by the data. Compressed, it is
@@ -121,7 +146,9 @@ contains
   logical,                   intent(in)  :: is_compressed !< The data are zlib compressed.
   integer(I1P), allocatable, intent(out) :: bytes(:)      !< Data bytes.
   integer(I4P),              intent(out) :: error         !< Error status: 0, or 6 if the code does not decode.
+  logical,         optional, intent(in)  :: is_swapped    !< The file is of the other byte order (its header words).
   integer(I1P), allocatable              :: raw(:)        !< Decoded bytes.
+  logical                                :: swapped       !< The header words are swapped.
   integer(I8P), allocatable              :: header(:)     !< Header words.
   integer(I8P)                           :: n             !< Bytes count.
   integer(I8P)                           :: lh            !< Length of the code of the header.
@@ -129,12 +156,13 @@ contains
 
   error = 6
   allocate(bytes(1:0))
+  swapped = .false. ; if (present(is_swapped)) swapped = is_swapped
   if (.not.is_compressed) then
     n = base64_decoded_size(code)
     if (n < word_size) return
     allocate(raw(1:n))
     call b64_decode(code=code, n=raw)
-    header = header_words(raw(1:word_size), word_size)
+    header = header_words(raw(1:word_size), word_size, swapped)
     if (header(1) < 0_I8P .or. header(1) > n - word_size) return
     deallocate(bytes)
     allocate(bytes(1:header(1)))
@@ -145,7 +173,7 @@ contains
     if (len(code, kind=I8P) < lh) return
     allocate(raw(1:(lh/4_I8P)*3_I8P))
     call b64_decode(code=code(1:lh), n=raw)
-    header = header_words(raw(1:word_size), word_size)
+    header = header_words(raw(1:word_size), word_size, swapped)
     if (header(1) < 0_I8P) return
     lh = (((3_I8P + header(1)) * word_size + 2_I8P) / 3_I8P) * 4_I8P
     if (len(code, kind=I8P) < lh) return
@@ -154,7 +182,7 @@ contains
     deallocate(raw)
     allocate(raw(1:n))
     call b64_decode(code=code(1:lh), n=raw)
-    header = header_words(raw, word_size)
+    header = header_words(raw, word_size, swapped)
     n = base64_decoded_size(code(lh+1_I8P:))
     if (n == 0_I8P .and. len(code, kind=I8P) > lh) return
     deallocate(raw)

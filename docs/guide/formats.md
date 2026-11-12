@@ -245,7 +245,9 @@ compressor when initializing the file:
   the number of blocks, the block size, the size of the last partial block and the compressed size of each block. The
   header words are UInt32 or UInt64, as the `header_type` of the file. With base64, VTK encodes the header and the
   compressed blocks as two separate base64 streams, and so does VTKFortran: the encoded arrays are byte-identical to the
-  output of VTK's own writer with the same compression level.
+  output of VTK's own writer with the same compression level. The level is fixed at 6 (VTK's writer defaults to 5 and
+  lets it be set): readers do not depend on it, and a per-file level would have to reach every encoder (a library-wide
+  setting would not be safe for files written by concurrent threads).
 - How much the files shrink depends on the data: integer arrays (connectivity, offsets, cell types, ids) and fields with
   repeated values compress well, generic floating point fields much less. Measure on your own data.
 - The cost is CPU time, and memory: while an array is written, its bytes are copied and compressed into temporary buffers

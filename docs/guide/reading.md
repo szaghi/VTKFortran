@@ -53,7 +53,7 @@ indexed, and its data are then read, array by array, through the `xml_reader` co
 |-------|---------|
 | 1 | the file cannot be read |
 | 2 | not a VTK XML file: malformed XML, no `VTKFile` element or no dataset element |
-| 3 | unsupported: `BigEndian` byte order, a compressor other than zlib, a parallel or unknown dataset type |
+| 3 | unsupported: a compressor other than zlib, a parallel or unknown dataset type |
 | 4 | not found: piece, array, geometry or cells; or the file is not open for reading |
 | 5 | the output kind cannot hold the values of the array |
 | 6 | the data do not decode: inconsistent sizes, malformed base64, zlib failure |
@@ -63,9 +63,11 @@ indexed, and its data are then read, array by array, through the `xml_reader` co
 data in memory. Each read then loads and decodes only the requested array: memory use is a small multiple of the size of
 that array (while decoding, its text, its decoded bytes and the output coexist), whatever the size of the file.
 
-**Not supported:** `BigEndian` files, the LZ4 and LZMA compressors, and the legacy `.vtk` format. Compressed files
+`BigEndian` files (as VTK writes them on request, `SetByteOrderToBigEndian`) are read in every encoding: the header
+words and the values of the binary data are reversed. **Not supported:** the LZ4 and LZMA compressors, and the legacy
+`.vtk` format. Compressed files
 need the library built with zlib, see [Installation](/guide/installation#optional-zlib-compression). The test
-`src/tests/vtk_fortran_read.F90` reads every topology and format, and two files written by VTK.
+`src/tests/vtk_fortran_read.F90` reads every topology and format, and files written by VTK (BigEndian ones too).
 
 ### VTKHDF files
 
