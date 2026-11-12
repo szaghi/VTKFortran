@@ -26,6 +26,7 @@ title: Features
 | Rectilinear Grid | `.vtr` | ✅ |
 | Structured Grid | `.vts` | ✅ |
 | Unstructured Grid | `.vtu` | ✅ |
+| Table (columns of values, VTK `vtkTable`; a time series through a `.pvd`; read by VTK and ParaView) | `.vtt` | ✅ |
 
 ### Parallel (partitioned) datasets
 
@@ -52,7 +53,7 @@ VTKFortran or by VTK and ParaView. Only the array asked for is loaded and decode
 
 | Type | Extension | Status |
 |------|-----------|--------|
-| Serial datasets | `.vti`, `.vtp`, `.vtr`, `.vts`, `.vtu` | ✅ |
+| Serial datasets | `.vti`, `.vtp`, `.vtr`, `.vts`, `.vtu`, `.vtt` | ✅ |
 | Parallel (partitioned) headers, with the check of the pieces | `.pvti`, `.pvtp`, `.pvtr`, `.pvts`, `.pvtu` | ✅ |
 | Multi-block entries and time series datasets | `.vtm`, `.pvd` | ✅ |
 
@@ -70,7 +71,7 @@ built with HDF5 ([Installation](/guide/installation#optional-hdf5-vtkhdf)). It i
 | Unstructured Grid, each piece a partition: polyhedra, I4P and I8P ids, point, cell and field data, active arrays, deflate | ✅ |
 | Polydata, each piece a partition: the four blocks of cells, I4P and I8P ids, point, cell and field data | ✅ |
 | Rectilinear and Structured Grids, one piece: coordinates or points, point, cell and field data (read by VTK 9.7, not ParaView 6.1) | ✅ |
-| Table (columns of values, VTK `vtkTable`), static or a time series (read by VTK 9.7, not ParaView 6.1) | ✅ |
+| Table (columns of values, VTK `vtkTable`), static or a time series (read by VTK 9.7, not ParaView 6.1: write a `.vtt` for ParaView) | ✅ |
 | OverlappingAMR (levels of uniform boxes, point and cell data), static or a time series (read by VTK 9.7, not ParaView 6.1) | ✅ |
 | HyperTreeGrid (trees of branch factor 2 or 3 on a root grid, masks, cell data), static or a time series (not read back by the library) | ✅ |
 | Time series in one file (`Steps`): `write_step`, valid after every piece, restart with `action='append'`; a fixed mesh, unchanged geometry or arrays stored once | ✅ |

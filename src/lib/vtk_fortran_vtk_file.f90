@@ -77,10 +77,12 @@ contains
    !<
    !<### Writing
    !<
-   !< `format` and `mesh_topology` are required. `mesh_topology='Table'` (columns of values, no mesh),
-   !< `'OverlappingAMR'` (the boxes of the levels of a block-structured AMR, `origin` its origin) and `'HyperTreeGrid'` (the
-   !< trees of a tree-based AMR on a root grid, `nx1...nz2` its points, `branch_factor` 2 or 3) are written in the VTKHDF
-   !< format only: the XML formats refuse them.
+   !< `format` and `mesh_topology` are required. `mesh_topology='Table'` (columns of values, no mesh) is a `.vtt` file in
+   !< the XML formats (one Piece: `NumberOfCols`, `NumberOfRows` and the columns in `RowData`, written between
+   !< `write_dataarray(location='row', action='open')` and `...'close')`) or a VTKHDF Table. `'OverlappingAMR'` (the
+   !< boxes of the levels of a block-structured AMR, `origin` its origin) and `'HyperTreeGrid'` (the trees of a tree-based
+   !< AMR on a root grid, `nx1...nz2` its points, `branch_factor` 2 or 3) are written in the VTKHDF format only: the XML
+   !< formats refuse them.
    !<
    !<### Writing one file from MPI ranks
    !<
@@ -152,6 +154,7 @@ contains
    !<  written (`write_geo` is not used).
    !<- PolyData: points (`write_geo(np, nc, x, y, z)`) and up to four cell blocks (vertices, lines, triangle strips, polygons)
    !<  written with `write_polydata_cells`; the piece is opened with `write_piece(np, nverts, nlines, nstrips, npolys)`.
+   !<- Table: columns of values, no mesh (`.vtt` in the XML formats); see *Writing* above.
    !<
    !<### Example of usage
    !<
@@ -246,8 +249,8 @@ contains
    if (.not.(present(format).and.present(mesh_topology))) return
    fformat = trim(adjustl(format))
    fformat = fformat%upper()
-   ! a Table, an OverlappingAMR: VTKHDF only
-   if (any(upper_case(trim(adjustl(mesh_topology))) == ['TABLE         ', 'OVERLAPPINGAMR', 'HYPERTREEGRID ']) .and. &
+   ! an OverlappingAMR, a HyperTreeGrid: VTKHDF only (a Table is a .vtt in the XML formats)
+   if (any(upper_case(trim(adjustl(mesh_topology))) == ['OVERLAPPINGAMR', 'HYPERTREEGRID ']) .and. &
        fformat /= 'VTKHDF') return
    error = 0_I4P
    select case(fformat%chars())

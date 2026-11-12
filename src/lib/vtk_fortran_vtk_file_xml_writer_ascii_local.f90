@@ -120,6 +120,7 @@ contains
   data_type = 'Float64'
   n_components = 1
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -139,6 +140,7 @@ contains
   data_type = 'Float32'
   n_components = 1
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -158,6 +160,7 @@ contains
   data_type = 'Int64'
   n_components = 1
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -177,6 +180,7 @@ contains
   data_type = 'Int32'
   n_components = 1
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -196,6 +200,7 @@ contains
   data_type = 'Int16'
   n_components = 1
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -215,6 +220,7 @@ contains
   data_type = 'Int8'
   n_components = 1
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -238,6 +244,7 @@ contains
     if (one_component) n_components = 1
   endif
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -261,6 +268,7 @@ contains
     if (one_component) n_components = 1
   endif
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -284,6 +292,7 @@ contains
     if (one_component) n_components = 1
   endif
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -307,6 +316,7 @@ contains
     if (one_component) n_components = 1
   endif
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -330,6 +340,7 @@ contains
     if (one_component) n_components = 1
   endif
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -353,6 +364,7 @@ contains
     if (one_component) n_components = 1
   endif
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -376,6 +388,7 @@ contains
     if (one_component) n_components = 1
   endif
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -399,6 +412,7 @@ contains
     if (one_component) n_components = 1
   endif
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -422,6 +436,7 @@ contains
     if (one_component) n_components = 1
   endif
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -445,6 +460,7 @@ contains
     if (one_component) n_components = 1
   endif
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -468,6 +484,7 @@ contains
     if (one_component) n_components = 1
   endif
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -491,6 +508,7 @@ contains
     if (one_component) n_components = 1
   endif
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -514,6 +532,7 @@ contains
     if (one_component) n_components = 1
   endif
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -537,6 +556,7 @@ contains
     if (one_component) n_components = 1
   endif
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -560,6 +580,7 @@ contains
     if (one_component) n_components = 1
   endif
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -583,6 +604,7 @@ contains
     if (one_component) n_components = 1
   endif
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -606,6 +628,7 @@ contains
     if (one_component) n_components = 1
   endif
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -629,6 +652,7 @@ contains
     if (one_component) n_components = 1
   endif
   code = encode_ascii_dataarray(x=x)
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -650,6 +674,7 @@ contains
   data_type = 'Float64'
   n_components = 3
   code = encode_ascii_dataarray(x=x, y=y, z=z)
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -671,6 +696,7 @@ contains
   data_type = 'Float32'
   n_components = 3
   code = encode_ascii_dataarray(x=x, y=y, z=z)
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -692,6 +718,7 @@ contains
   data_type = 'Int64'
   n_components = 3
   code = encode_ascii_dataarray(x=x, y=y, z=z)
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -713,6 +740,7 @@ contains
   data_type = 'Int32'
   n_components = 3
   code = encode_ascii_dataarray(x=x, y=y, z=z)
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -734,6 +762,7 @@ contains
   data_type = 'Int16'
   n_components = 3
   code = encode_ascii_dataarray(x=x, y=y, z=z)
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -755,6 +784,7 @@ contains
   data_type = 'Int8'
   n_components = 3
   code = encode_ascii_dataarray(x=x, y=y, z=z)
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -776,6 +806,7 @@ contains
   data_type = 'Float64'
   n_components = 3
   code = encode_ascii_dataarray(x=x, y=y, z=z)
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -797,6 +828,7 @@ contains
   data_type = 'Float32'
   n_components = 3
   code = encode_ascii_dataarray(x=x, y=y, z=z)
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -818,6 +850,7 @@ contains
   data_type = 'Int64'
   n_components = 3
   code = encode_ascii_dataarray(x=x, y=y, z=z)
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -839,6 +872,7 @@ contains
   data_type = 'Int32'
   n_components = 3
   code = encode_ascii_dataarray(x=x, y=y, z=z)
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -860,6 +894,7 @@ contains
   data_type = 'Int16'
   n_components = 3
   code = encode_ascii_dataarray(x=x, y=y, z=z)
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -881,6 +916,7 @@ contains
   data_type = 'Int8'
   n_components = 3
   code = encode_ascii_dataarray(x=x, y=y, z=z)
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -905,6 +941,7 @@ contains
   data_type = 'Float64'
   n_components = 6
   code = encode_ascii_dataarray(u=u, v=v, w=w, x=x, y=y, z=z)
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -929,6 +966,7 @@ contains
   data_type = 'Float32'
   n_components = 6
   code = encode_ascii_dataarray(u=u, v=v, w=w, x=x, y=y, z=z)
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -953,6 +991,7 @@ contains
   data_type = 'Int64'
   n_components = 6
   code = encode_ascii_dataarray(u=u, v=v, w=w, x=x, y=y, z=z)
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -977,6 +1016,7 @@ contains
   data_type = 'Int32'
   n_components = 6
   code = encode_ascii_dataarray(u=u, v=v, w=w, x=x, y=y, z=z)
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -1001,6 +1041,7 @@ contains
   data_type = 'Int16'
   n_components = 6
   code = encode_ascii_dataarray(u=u, v=v, w=w, x=x, y=y, z=z)
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -1025,6 +1066,7 @@ contains
   data_type = 'Int8'
   n_components = 6
   code = encode_ascii_dataarray(u=u, v=v, w=w, x=x, y=y, z=z)
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -1049,6 +1091,7 @@ contains
   data_type = 'Float64'
   n_components = 6
   code = encode_ascii_dataarray(u=u, v=v, w=w, x=x, y=y, z=z)
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -1073,6 +1116,7 @@ contains
   data_type = 'Float32'
   n_components = 6
   code = encode_ascii_dataarray(u=u, v=v, w=w, x=x, y=y, z=z)
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -1097,6 +1141,7 @@ contains
   data_type = 'Int64'
   n_components = 6
   code = encode_ascii_dataarray(u=u, v=v, w=w, x=x, y=y, z=z)
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -1121,6 +1166,7 @@ contains
   data_type = 'Int32'
   n_components = 6
   code = encode_ascii_dataarray(u=u, v=v, w=w, x=x, y=y, z=z)
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -1145,6 +1191,7 @@ contains
   data_type = 'Int16'
   n_components = 6
   code = encode_ascii_dataarray(u=u, v=v, w=w, x=x, y=y, z=z)
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error
@@ -1169,6 +1216,7 @@ contains
   data_type = 'Int8'
   n_components = 6
   code = encode_ascii_dataarray(u=u, v=v, w=w, x=x, y=y, z=z)
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                 is_tuples=is_tuples)
   error = self%error

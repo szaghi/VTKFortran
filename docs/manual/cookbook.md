@@ -253,6 +253,20 @@ Both are read back with the reader of the library, the columns with `location='r
 A Table is VTKHDF 2.8: **VTK 9.7 reads it** (`vtkHDFReader` gives a `vtkTable`), **ParaView 6.1 does not** (its VTK
 9.6 does not know the type). See [VTKHDF](/guide/formats#vtkhdf-hdf5) for the layout.
 
+For ParaView, the same calls in an XML format write a `.vtt` (VTK's XML table, which ParaView opens as a spreadsheet
+and plots); a time series of Tables is then a `.pvd` of `.vtt` files:
+
+<<< @/examples/snippets/vtt_table-history.f90
+
+<<< @/examples/snippets/vtt_table-probes.f90
+
+<<< @/examples/snippets/vtt_table-read.f90
+
+<<< @/examples/output/vtt_table.ansi{ansi}
+
+The columns of a `.vtt` are kept in memory until `write_dataarray(location='row', action='close')`: its `Piece` tag,
+written first, holds their counts.
+
 ### A block-structured AMR
 
 A block-structured AMR in one file, an OverlappingAMR: level 0 covers the domain with one box, level 1 refines two

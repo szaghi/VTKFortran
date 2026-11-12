@@ -26,7 +26,7 @@ indexed, and its data are then read, array by array, through the `xml_reader` co
 | `get_active(location, role, data_name, piece)` | name of the active array of a role (`Scalars`, ..., `GlobalIds`, ..., `ProcessIds`, case insensitive), empty if none |
 | `read_dataarray(location, data_name, x, piece)` | the values of an array |
 
-- `location` is `'node'`, `'cell'` or `'field'` (field data), case insensitive (`'row'` for the columns of a VTKHDF Table). `piece` counts from 1 and defaults to 1; field
+- `location` is `'node'`, `'cell'` or `'field'` (field data), case insensitive (`'row'` for the columns of a Table). `piece` counts from 1 and defaults to 1; field
   data belong to the dataset and ignore it. The outputs are allocatable: they are allocated by the reader.
 - `read_dataarray` returns the values flattened, rank 1 with the components interleaved, or with shape
   `(n_components, n_tuples)` for a rank-2 output; field data strings (type `String`) go into a
@@ -80,7 +80,8 @@ the polyhedra as the face stream of `write_connectivity`; `get_info` returns `he
   `set_step(step)` selects the step that the following calls read (the step 1 by default). The pieces are those of the
   step. A step that stores nothing new for its mesh or an array (the offsets of the step before repeated) reads them
   as if written in full.
-- **Table**: `get_info` returns `mesh_topology='Table'` and `npieces=0` (`read_piece` returns 4); its columns are the
+- **Table** (a `.vtt` reads the same way: its columns those of its `RowData`, their tuples its `NumberOfRows`):
+  `get_info` returns `mesh_topology='Table'` and `npieces=0` (`read_piece` returns 4); its columns are the
   arrays of `location='row'` (`get_dataarray_names`, `get_dataarray_info`, `read_dataarray`), the rows of the step read
   in a time series. A column of a time series without its `Steps/RowDataOffsets` entry is error 6 (VTK 9.7.2 cannot read
   it either). A complete program: [A time history (Table)](/manual/cookbook#a-time-history-table).

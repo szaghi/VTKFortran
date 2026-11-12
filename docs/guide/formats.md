@@ -103,9 +103,9 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
   `NumberOfRows`. In a time series each step writes the same columns, its rows appended (`NumberOfRows` one entry per
   step, `Steps/RowDataOffsets/<name>` where each column starts: the spelling VTK writes and reads, the specification page
   spells it `RowDataOffets`); the file is valid after each step. Refused: a column with other rows, a column missing in a
-  step or new after the first one, a step without columns, pieces, point and cell data, `comm`; the XML formats refuse a
-  Table (VTK's XML table format, `.vtt`, is not written by VTKFortran). **VTK 9.7 reads it, ParaView 6.1 does not** (its
-  VTK 9.6 does not know the type). A complete program: [A time history (Table)](/manual/cookbook#a-time-history-table).
+  step or new after the first one, a step without columns, pieces, point and cell data, `comm`. **VTK 9.7 reads it,
+  ParaView 6.1 does not** (its VTK 9.6 does not know the type): for ParaView write the same calls in an XML format, a
+  `.vtt` (one `Piece`, `NumberOfCols`, `NumberOfRows`, the columns in `RowData`; a series as a `.pvd` of them). A complete program: [A time history (Table)](/manual/cookbook#a-time-history-table).
 - **OverlappingAMR** (`mesh_topology='OverlappingAMR'`, `origin` of `initialize` its origin, a VTK
   `vtkOverlappingAMR`): the levels of a block-structured AMR, each of uniform boxes. `write_level(level, spacing)` starts
   a level (0, 1, ... in order; a level can be started again, with its spacing), then each box is a piece,

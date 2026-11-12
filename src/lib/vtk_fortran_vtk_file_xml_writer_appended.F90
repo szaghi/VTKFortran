@@ -280,6 +280,7 @@ contains
 
   data_type = 'Float64'
   n_components = 1
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -298,6 +299,7 @@ contains
 
   data_type = 'Float32'
   n_components = 1
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -316,6 +318,7 @@ contains
 
   data_type = 'Int64'
   n_components = 1
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -334,6 +337,7 @@ contains
 
   data_type = 'Int32'
   n_components = 1
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -352,6 +356,7 @@ contains
 
   data_type = 'Int16'
   n_components = 1
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -370,6 +375,7 @@ contains
 
   data_type = 'Int8'
   n_components = 1
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -392,6 +398,7 @@ contains
   if (present(one_component)) then
     if (one_component) n_components = 1
   endif
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -414,6 +421,7 @@ contains
   if (present(one_component)) then
     if (one_component) n_components = 1
   endif
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -436,6 +444,7 @@ contains
   if (present(one_component)) then
     if (one_component) n_components = 1
   endif
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -458,6 +467,7 @@ contains
   if (present(one_component)) then
     if (one_component) n_components = 1
   endif
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -480,6 +490,7 @@ contains
   if (present(one_component)) then
     if (one_component) n_components = 1
   endif
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -502,6 +513,7 @@ contains
   if (present(one_component)) then
     if (one_component) n_components = 1
   endif
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -524,6 +536,7 @@ contains
   if (present(one_component)) then
     if (one_component) n_components = 1
   endif
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -546,6 +559,7 @@ contains
   if (present(one_component)) then
     if (one_component) n_components = 1
   endif
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -568,6 +582,7 @@ contains
   if (present(one_component)) then
     if (one_component) n_components = 1
   endif
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -590,6 +605,7 @@ contains
   if (present(one_component)) then
     if (one_component) n_components = 1
   endif
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -612,6 +628,7 @@ contains
   if (present(one_component)) then
     if (one_component) n_components = 1
   endif
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -634,6 +651,7 @@ contains
   if (present(one_component)) then
     if (one_component) n_components = 1
   endif
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -656,6 +674,7 @@ contains
   if (present(one_component)) then
     if (one_component) n_components = 1
   endif
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -678,6 +697,7 @@ contains
   if (present(one_component)) then
     if (one_component) n_components = 1
   endif
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -700,6 +720,7 @@ contains
   if (present(one_component)) then
     if (one_component) n_components = 1
   endif
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -722,6 +743,7 @@ contains
   if (present(one_component)) then
     if (one_component) n_components = 1
   endif
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -744,6 +766,7 @@ contains
   if (present(one_component)) then
     if (one_component) n_components = 1
   endif
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -766,6 +789,7 @@ contains
   if (present(one_component)) then
     if (one_component) n_components = 1
   endif
+  self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x))
@@ -786,6 +810,7 @@ contains
 
   data_type = 'Float64'
   n_components = 3
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
@@ -806,6 +831,7 @@ contains
 
   data_type = 'Float32'
   n_components = 3
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
@@ -826,6 +852,7 @@ contains
 
   data_type = 'Int64'
   n_components = 3
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
@@ -846,6 +873,7 @@ contains
 
   data_type = 'Int32'
   n_components = 3
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
@@ -866,6 +894,7 @@ contains
 
   data_type = 'Int16'
   n_components = 3
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
@@ -886,6 +915,7 @@ contains
 
   data_type = 'Int8'
   n_components = 3
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
@@ -906,6 +936,7 @@ contains
 
   data_type = 'Float64'
   n_components = 3
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
@@ -926,6 +957,7 @@ contains
 
   data_type = 'Float32'
   n_components = 3
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
@@ -946,6 +978,7 @@ contains
 
   data_type = 'Int64'
   n_components = 3
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
@@ -966,6 +999,7 @@ contains
 
   data_type = 'Int32'
   n_components = 3
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
@@ -986,6 +1020,7 @@ contains
 
   data_type = 'Int16'
   n_components = 3
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
@@ -1006,6 +1041,7 @@ contains
 
   data_type = 'Int8'
   n_components = 3
+  self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(x=x, y=y, z=z))
@@ -1029,6 +1065,7 @@ contains
 
   data_type = 'Float64'
   n_components = 6
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
@@ -1052,6 +1089,7 @@ contains
 
   data_type = 'Float32'
   n_components = 6
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
@@ -1075,6 +1113,7 @@ contains
 
   data_type = 'Int64'
   n_components = 6
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
@@ -1098,6 +1137,7 @@ contains
 
   data_type = 'Int32'
   n_components = 6
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
@@ -1121,6 +1161,7 @@ contains
 
   data_type = 'Int16'
   n_components = 6
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
@@ -1144,6 +1185,7 @@ contains
 
   data_type = 'Int8'
   n_components = 6
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
@@ -1167,6 +1209,7 @@ contains
 
   data_type = 'Float64'
   n_components = 6
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
@@ -1190,6 +1233,7 @@ contains
 
   data_type = 'Float32'
   n_components = 6
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
@@ -1213,6 +1257,7 @@ contains
 
   data_type = 'Int64'
   n_components = 6
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
@@ -1236,6 +1281,7 @@ contains
 
   data_type = 'Int32'
   n_components = 6
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
@@ -1259,6 +1305,7 @@ contains
 
   data_type = 'Int16'
   n_components = 6
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))
@@ -1282,6 +1329,7 @@ contains
 
   data_type = 'Int8'
   n_components = 6
+  self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
   call self%write_dataarray_tag_appended(data_type=data_type, number_of_components=n_components, data_name=data_name, &
                                          is_tuples=is_tuples)
   call self%ioffset_update(n_byte=self%write_on_scratch_dataarray(u=u, v=v, w=w, x=x, y=y, z=z))

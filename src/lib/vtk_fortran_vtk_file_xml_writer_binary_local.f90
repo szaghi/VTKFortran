@@ -133,6 +133,7 @@ contains
    n_components = 1
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -155,6 +156,7 @@ contains
    n_components = 1
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -177,6 +179,7 @@ contains
    n_components = 1
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -199,6 +202,7 @@ contains
    n_components = 1
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -221,6 +225,7 @@ contains
    n_components = 1
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -243,6 +248,7 @@ contains
    n_components = 1
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -269,6 +275,7 @@ contains
    endif
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -295,6 +302,7 @@ contains
    endif
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -321,6 +329,7 @@ contains
    endif
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -347,6 +356,7 @@ contains
    endif
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -373,6 +383,7 @@ contains
    endif
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -399,6 +410,7 @@ contains
    endif
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -425,6 +437,7 @@ contains
    endif
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -451,6 +464,7 @@ contains
    endif
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -477,6 +491,7 @@ contains
    endif
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -503,6 +518,7 @@ contains
    endif
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -529,6 +545,7 @@ contains
    endif
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -555,6 +572,7 @@ contains
    endif
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -581,6 +599,7 @@ contains
    endif
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -607,6 +626,7 @@ contains
    endif
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -633,6 +653,7 @@ contains
    endif
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -659,6 +680,7 @@ contains
    endif
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -685,6 +707,7 @@ contains
    endif
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -711,6 +734,7 @@ contains
    endif
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) / n_components ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -735,6 +759,7 @@ contains
    n_components = 3
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -759,6 +784,7 @@ contains
    n_components = 3
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -783,6 +809,7 @@ contains
    n_components = 3
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -807,6 +834,7 @@ contains
    n_components = 3
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -831,6 +859,7 @@ contains
    n_components = 3
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -855,6 +884,7 @@ contains
    n_components = 3
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -879,6 +909,7 @@ contains
    n_components = 3
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -903,6 +934,7 @@ contains
    n_components = 3
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -927,6 +959,7 @@ contains
    n_components = 3
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -951,6 +984,7 @@ contains
    n_components = 3
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -975,6 +1009,7 @@ contains
    n_components = 3
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -999,6 +1034,7 @@ contains
    n_components = 3
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(x, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -1026,6 +1062,7 @@ contains
    n_components = 6
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -1053,6 +1090,7 @@ contains
    n_components = 6
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -1080,6 +1118,7 @@ contains
    n_components = 6
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -1107,6 +1146,7 @@ contains
    n_components = 6
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -1134,6 +1174,7 @@ contains
    n_components = 6
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -1161,6 +1202,7 @@ contains
    n_components = 6
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -1188,6 +1230,7 @@ contains
    n_components = 6
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -1215,6 +1258,7 @@ contains
    n_components = 6
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -1242,6 +1286,7 @@ contains
    n_components = 6
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -1269,6 +1314,7 @@ contains
    n_components = 6
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -1296,6 +1342,7 @@ contains
    n_components = 6
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error
@@ -1323,6 +1370,7 @@ contains
    n_components = 6
    is_uint64 = self%is_uint64 ; is_compressed = self%is_compressed
    code = encode_binary_dataarray(u=u, v=v, w=w, x=x, y=y, z=z, is_uint64=is_uint64, is_compressed=is_compressed)
+   self%n_tuples = size(u, kind=I8P) ! the tuples, for the rows of a Table
    call self%write_dataarray_tag(data_type=data_type, number_of_components=n_components, data_name=data_name, data_content=code, &
                                  is_tuples=is_tuples)
    error = self%error

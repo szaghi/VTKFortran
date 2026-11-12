@@ -9,7 +9,8 @@ program vtk_fortran_write_vtkhdf_table
 !< then the refusals: columns of different rows, a name with `/`, a column missing in a step or new in a later one, a step
 !< without columns, a static Table then a step, a Table without columns, pieces and point data in a Table, columns in an
 !< UnstructuredGrid, a refused close of the columns (finalize refuses too); field data left open (closed by finalize, the
-!< columns ended once), without columns (refused). Without HDF5 the writer refuses a Table; the XML formats refuse it always.
+!< columns ended once), without columns (refused). Without HDF5 the writer refuses a Table; the XML formats refuse an
+!< OverlappingAMR (a Table there is a `.vtt`, tested by `vtk_fortran_write_vtt`).
 use penf
 use vtk_fortran, only : vtk_file
 use vtk_fortran_hdf5
@@ -21,9 +22,8 @@ logical        :: ok(4)   !< Checks.
 integer(I4P)   :: e       !< Error.
 
 ok = .false.
-! the XML formats have no Table here (VTKHDF only)
-ok(1) = w%initialize(format='ascii', filename='table.vtt', mesh_topology='Table') /= 0 .and. &
-        w%initialize(format='raw', filename='table.vtt', mesh_topology='Table') /= 0
+! the XML formats have no OverlappingAMR (VTKHDF only); a Table is a .vtt there (vtk_fortran_write_vtt)
+ok(1) = w%initialize(format='ascii', filename='table.vthb', mesh_topology='OverlappingAMR') /= 0
 if (.not.is_hdf5_enabled) then
   e = w%initialize(format='vtkhdf', filename='table.vtkhdf', mesh_topology='Table')
   ok(2:) = e /= 0
@@ -33,7 +33,7 @@ else
   ok(3) = series_table()
   ok(4) = refusals()
 endif
-print '(A,4L2)', 'VTKHDF Table: XML refused, static, series, refusals:', ok
+print '(A,4L2)', 'VTKHDF Table: XML AMR refused, static, series, refusals:', ok
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(ok)
 if (.not.all(ok)) error stop 'some tests failed'

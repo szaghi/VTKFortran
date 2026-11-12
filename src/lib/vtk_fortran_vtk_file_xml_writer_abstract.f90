@@ -25,6 +25,13 @@ type, abstract, extends(vtk_writer_abstract) :: xml_writer_abstract
   integer(I4P)  :: error=0_I4P                     !< IO Error status.
   type(xml_writer) :: writer                       !< FoXy streaming writer (on the file unit, or on memory if volatile).
   logical       :: is_volatile=.false.             !< Flag to check volatile writer.
+  ! a Table (`.vtt`): its columns are buffered in memory, its Piece tag (counts of rows and columns) written at the close
+  type(xml_writer) :: table_writer                 !< The file writer, kept while the columns go to memory.
+  integer(I8P)  :: n_tuples=-1_I8P                 !< Tuples of the DataArray being written (set by each write_dataarray).
+  integer(I8P)  :: table_rows=-1_I8P               !< Rows of the columns of a Table, -1 before the first column.
+  integer(I4P)  :: table_columns=0_I4P             !< Columns of a Table written.
+  logical       :: is_row_open=.false.             !< The columns of a Table are being written (location row open).
+  logical       :: is_rows_written=.false.         !< The columns of the Table are written (one RowData).
   contains
     ! public methods (some deferred)
     procedure,                                 pass(self) :: close_xml_file               !< Close xml file.
@@ -48,6 +55,8 @@ type, abstract, extends(vtk_writer_abstract) :: xml_writer_abstract
     procedure,                                 pass(self) :: write_start_tag              !< Write start tag.
     procedure,                                 pass(self) :: write_tag                    !< Write tag.
     procedure,                                 pass(self) :: write_attributes             !< Write the attributes of a tag.
+    procedure,                                 pass(self) :: is_table_column              !< Check a column of a Table.
+    procedure,                                 pass(self) :: write_table_rows             !< Open or close the rows of a Table.
     procedure,                                 pass(self) :: write_topology_tag           !< Write topology tag.
     procedure,                                 pass(self) :: image_attributes             !< Return ImageData attributes.
     generic :: write_parallel_block_files =>     &
@@ -153,6 +162,11 @@ contains
    if (allocated(self%vtm_index)) deallocate(self%vtm_index)
    self%error=0_I4P
    self%is_volatile=.false.
+   self%n_tuples=-1_I8P
+   self%table_rows=-1_I8P
+   self%table_columns=0_I4P
+   self%is_row_open=.false.
+   self%is_rows_written=.false.
    endsubroutine free
 
    pure subroutine get_xml_volatile(self, xml_volatile, error)
@@ -362,6 +376,7 @@ contains
    character(len=:), allocatable                    :: tag_name             !< Element name, actually written.
    character(len=:), allocatable                    :: count                !< Components (or tuples) count, actually written.
 
+   if (.not.self%is_table_column(data_name)) return
    call self%dataarray_tag_overrides(data_type=data_type, number_of_components=number_of_components, &
                                      tag_name=tag_name, data_type_=data_type_, count=count)
    is_tuples_ = .false.
@@ -394,6 +409,7 @@ contains
    character(len=:), allocatable                    :: tag_name             !< Element name, actually written.
    character(len=:), allocatable                    :: count                !< Components (or tuples) count, actually written.
 
+   if (.not.self%is_table_column(data_name)) return
    call self%dataarray_tag_overrides(data_type=data_type, number_of_components=number_of_components, &
                                      tag_name=tag_name, data_type_=data_type_, count=count)
    is_tuples_ = .false.
@@ -442,6 +458,96 @@ contains
       self%tuples_override = -1_I8P
    endif
    endsubroutine dataarray_tag_overrides
+
+   function is_table_column(self, data_name) result(is_ok)
+   !< Inside the rows of a Table (`write_dataarray(location='row', action='open')`), count the column being written and
+   !< check its rows against those of the first column (refused, with a message, otherwise: no DataArray written); true
+   !< outside a Table too.
+   class(xml_writer_abstract), intent(inout) :: self      !< Writer.
+   character(*),               intent(in)    :: data_name !< Name of the column.
+   logical                                   :: is_ok     !< The DataArray is written.
+
+   is_ok = .true.
+   if (.not.self%is_row_open) return
+   if (self%table_rows >= 0_I8P .and. self%n_tuples /= self%table_rows) then
+      write(stderr, '(A)') 'error: VTKFortran XML writer: the column '//trim(adjustl(data_name))//' has '// &
+                           trim(str(n=self%n_tuples, no_sign=.true.))//' rows, the other columns '// &
+                           trim(str(n=self%table_rows, no_sign=.true.))
+      self%error = 1_I4P
+      is_ok = .false.
+      return
+   endif
+   self%table_rows = self%n_tuples
+   self%table_columns = self%table_columns + 1_I4P
+   endfunction is_table_column
+
+   function write_table_rows(self, action) result(error)
+   !< Open (`action` OPEN) or close (CLOSE) the rows of a Table: one `<Piece NumberOfCols NumberOfRows><RowData>`, the
+   !< columns (DataArray, every kind and number of components, the same rows) written in between. They are buffered in
+   !< memory (a FoXy writer on memory) while the file writer is kept: at the close their counts are known, the Piece
+   !< tag is written and the columns after it.
+   class(xml_writer_abstract), intent(inout) :: self    !< Writer.
+   character(*),               intent(in)    :: action  !< OPEN or CLOSE.
+   integer(I4P)                              :: error   !< Error status.
+   character(len=:), allocatable             :: columns  !< The RowData element, written in memory.
+   character(len=:), allocatable             :: indented !< The same, indented as a child of Piece.
+   integer(I8P)                              :: first    !< First character of a line.
+   integer(I8P)                              :: c        !< Length of a line, its new line included.
+
+   error = 1_I4P
+   if (self%topology /= 'Table') then
+      write(stderr, '(A)') 'error: VTKFortran XML writer: location row is for a Table'
+      return
+   endif
+   select case(action)
+   case('OPEN')
+      if (self%is_row_open .or. self%is_rows_written) then
+         write(stderr, '(A)') 'error: VTKFortran XML writer: a Table has one RowData (location row opened once)'
+         return
+      endif
+      self%table_writer = self%writer
+      call self%writer%open(iostat=self%error)
+      if (self%error == 0) call self%writer%start(name='RowData', iostat=self%error)
+      self%table_rows = -1_I8P
+      self%table_columns = 0_I4P
+      self%is_row_open = .true.
+   case('CLOSE')
+      if (.not.self%is_row_open) then
+         write(stderr, '(A)') 'error: VTKFortran XML writer: location row closed but not open'
+         return
+      endif
+      call self%writer%close(iostat=self%error)
+      columns = self%writer%string()
+      self%writer = self%table_writer
+      self%is_row_open = .false.
+      self%is_rows_written = .true.
+      if (self%error /= 0) return
+      call self%write_start_tag(name='Piece', attributes='NumberOfCols="'//trim(str(n=self%table_columns, no_sign=.true.))// &
+                                '" NumberOfRows="'//trim(str(n=max(self%table_rows, 0_I8P), no_sign=.true.))//'"')
+      ! the RowData element as written in memory (from depth 0), indented as a child of Piece
+      do while (len(columns) > 0)
+         if (columns(len(columns):) /= new_line('a')) exit
+         columns = columns(:len(columns) - 1)
+      enddo
+      indented = ''
+      first = 1_I8P
+      do
+         c = index(columns(first:), new_line('a'), kind=I8P)
+         if (c == 0_I8P) then
+            indented = indented//columns(first:)
+            exit
+         endif
+         indented = indented//columns(first:first + c - 1_I8P)//'      ' ! the lines after the first: 3 levels deeper
+         first = first + c
+      enddo
+      if (self%error == 0) call self%writer%raw(indented, is_block=.true., iostat=self%error)
+      if (self%error == 0) call self%write_end_tag(name='Piece')
+   case default
+      write(stderr, '(A)') 'error: VTKFortran XML writer: location row: action '//action//' is not open or close'
+      return
+   endselect
+   error = self%error
+   endfunction write_table_rows
 
    function write_dataarray_location_tag(self, location, action, scalars, vectors, normals, tensors, tcoords, &
                                          global_ids, pedigree_ids, edge_flags, tangents, rational_weights, &
@@ -517,10 +623,16 @@ contains
       location_ = 'CellData'
    case('NODE')
       location_ = 'PointData'
-   case('ROW') ! the columns of a Table: VTKHDF only
-      error = 1_I4P
+   case('ROW') ! the columns of a Table
+      error = self%write_table_rows(action=action_%chars())
       return
    endselect
+   if (self%topology == 'Table') then
+      write(stderr, '(A)') 'error: VTKFortran XML writer: a Table has only columns, written with '// &
+                           'write_dataarray(location=row, ...)'
+      error = 1_I4P
+      return
+   endif
    select case(self%topology%chars())
    case('PRectilinearGrid', 'PStructuredGrid', 'PUnstructuredGrid', 'PImageData', 'PPolyData')
       location_ = 'P'//location_
@@ -692,6 +804,12 @@ contains
    integer(I4P)                              :: error          !< Error status.
    type(string)                              :: tag_attributes !< Tag attributes.
 
+   if (self%topology == 'Table') then
+      write(stderr, '(A)') 'error: VTKFortran XML writer: a Table has no pieces: its columns are written with '// &
+                           'write_dataarray(location=row, ...)'
+      error = 1_I4P
+      return
+   endif
    tag_attributes = 'Extent="'//trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
                                 trim(str(n=ny1))//' '//trim(str(n=ny2))//' '// &
                                 trim(str(n=nz1))//' '//trim(str(n=nz2))//'"'
@@ -706,6 +824,12 @@ contains
    integer(I4P),               intent(in)    :: nc    !< Number of cells.
    integer(I4P)                              :: error !< Error status.
 
+   if (self%topology == 'Table') then
+      write(stderr, '(A)') 'error: VTKFortran XML writer: a Table has no pieces: its columns are written with '// &
+                           'write_dataarray(location=row, ...)'
+      error = 1_I4P
+      return
+   endif
    error = self%write_piece_start_tag_unst_I8P(np=int(np, I8P), nc=int(nc, I8P))
    endfunction write_piece_start_tag_unst
 
@@ -717,6 +841,12 @@ contains
    integer(I4P)                              :: error          !< Error status.
    type(string)                              :: tag_attributes !< Tag attributes.
 
+   if (self%topology == 'Table') then
+      write(stderr, '(A)') 'error: VTKFortran XML writer: a Table has no pieces: its columns are written with '// &
+                           'write_dataarray(location=row, ...)'
+      error = 1_I4P
+      return
+   endif
    tag_attributes = 'NumberOfPoints="'//trim(str(n=np))//'" NumberOfCells="'//trim(str(n=nc))//'"'
    call self%write_start_tag(name='Piece', attributes=tag_attributes%chars())
    error = self%error
@@ -732,6 +862,12 @@ contains
    integer(I4P),               intent(in)    :: npolys  !< Number of polygon cells (block Polys).
    integer(I4P)                              :: error   !< Error status.
 
+   if (self%topology == 'Table') then
+      write(stderr, '(A)') 'error: VTKFortran XML writer: a Table has no pieces: its columns are written with '// &
+                           'write_dataarray(location=row, ...)'
+      error = 1_I4P
+      return
+   endif
    error = self%write_piece_start_tag_poly_I8P(np=int(np, I8P), nverts=int(nverts, I8P), nlines=int(nlines, I8P), &
                                                nstrips=int(nstrips, I8P), npolys=int(npolys, I8P))
    endfunction write_piece_start_tag_poly
@@ -747,6 +883,12 @@ contains
    integer(I4P)                              :: error          !< Error status.
    type(string)                              :: tag_attributes !< Tag attributes.
 
+   if (self%topology == 'Table') then
+      write(stderr, '(A)') 'error: VTKFortran XML writer: a Table has no pieces: its columns are written with '// &
+                           'write_dataarray(location=row, ...)'
+      error = 1_I4P
+      return
+   endif
    tag_attributes = 'NumberOfPoints="'//trim(str(n=np, no_sign=.true.))//     &
                     '" NumberOfVerts="'//trim(str(n=nverts, no_sign=.true.))//  &
                     '" NumberOfLines="'//trim(str(n=nlines, no_sign=.true.))//  &

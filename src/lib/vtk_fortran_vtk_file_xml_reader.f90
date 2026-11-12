@@ -6,8 +6,9 @@ module vtk_fortran_vtk_file_xml_reader
 !< the positions of the data, without loading them (the scan stops at the appended data). Each read then decodes only the
 !< data asked for: the memory used is about the size of the dataarray read, not of the file.
 !<
-!< It reads the serial XML formats (ImageData, RectilinearGrid, StructuredGrid, UnstructuredGrid, PolyData) written by
-!< VTKFortran or by VTK, in every format (ascii, binary, raw and base64 appended), uncompressed or zlib compressed
+!< It reads the serial XML formats (ImageData, RectilinearGrid, StructuredGrid, UnstructuredGrid, PolyData, and Table:
+!< `.vtt`, no pieces, `npieces` 0, its columns the data arrays of `location='row'`, their tuples its `NumberOfRows`)
+!< written by VTKFortran or by VTK, in every format (ascii, binary, raw and base64 appended), uncompressed or zlib compressed
 !< (`vtkZLibDataCompressor`), with UInt32 or UInt64 headers. BigEndian files and other compressors are not supported.
 !<
 !< It reads VTKHDF files too (`.vtkhdf`, HDF5, when the library is built with HDF5): `initialize` recognizes them by the
@@ -152,7 +153,7 @@ contains
   if (self%dataset == 0) return
   error = 3
   select case(self%mesh_topology)
-  case('ImageData', 'RectilinearGrid', 'StructuredGrid', 'UnstructuredGrid', 'PolyData')
+  case('ImageData', 'RectilinearGrid', 'StructuredGrid', 'UnstructuredGrid', 'PolyData', 'Table')
     self%is_parallel = .false.
   case('PImageData', 'PRectilinearGrid', 'PStructuredGrid', 'PUnstructuredGrid', 'PPolyData')
     self%is_parallel = .true.
@@ -269,6 +270,7 @@ contains
   iostat = 0
   if (present(mesh_topology)) mesh_topology = self%mesh_topology
   if (present(npieces)) npieces = self%pieces_number
+  if (present(npieces) .and. self%mesh_topology == 'Table') npieces = 0 ! its columns are read with location row
   if (present(header_type)) header_type = trim(merge('UInt64', 'UInt32', self%word_size == 8_I8P))
   if (present(compressor)) compressor = trim(merge('zlib', 'none', self%is_compressed))
   extent = 0
@@ -412,7 +414,7 @@ contains
       error = self%piece_element(piece=piece, id=id) ; if (error /= 0) return
     endif
     if (.not.self%is_initialized) return
-  case('field')
+  case('field', 'row')
     if (.not.self%is_initialized) return
   case default
     return
@@ -478,7 +480,10 @@ contains
   if (present(n_tuples)) then
     n_tuples = -1_I8P
     call self%xml%get_attribute(id=id, name='NumberOfTuples', value=n_tuples, iostat=iostat)
-    if (iostat == XML_NOT_FOUND .and. self%xml%name(section) /= 'FieldData' .and. .not.self%is_parallel) then
+    if (iostat == XML_NOT_FOUND .and. self%xml%name(section) == 'RowData') then ! a column of a Table: its rows
+      call self%xml%get_attribute(id=self%xml%parent(section), name='NumberOfRows', value=n_tuples, iostat=iostat)
+      if (iostat /= 0) error = 6
+    elseif (iostat == XML_NOT_FOUND .and. self%xml%name(section) /= 'FieldData' .and. .not.self%is_parallel) then
       p = self%xml%parent(section)
       call piece_counts(xml=self%xml, id=p, mesh_topology=self%mesh_topology, counts=counts, extent=extent, &
                         error=error)
@@ -998,6 +1003,11 @@ contains
     endif
   case('field')
     section = self%xml%find(name='FieldData', parent=self%dataset)
+  case('row') ! the columns of a Table: its RowData, in its one Piece
+    if (self%mesh_topology /= 'Table') return
+    p = self%xml%find(name='Piece', parent=self%dataset)
+    if (p == 0) return
+    section = self%xml%find(name='RowData', parent=p)
   endselect
   error = 4
   if (section == 0) return

@@ -96,7 +96,13 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   writers and the VTKHDF writer extend it
 - `vtk_fortran_vtk_file_xml_writer_abstract` — abstract XML writer, extends `vtk_writer_abstract`: implements the
   format-neutral procedures as XML tags, plus the XML-only ones (`write_parallel_*`, used by `pvtk_file` and `vtm_file`,
-  whose `xml_writer` stays `class(xml_writer_abstract)`)
+  whose `xml_writer` stays `class(xml_writer_abstract)`). Table (`.vtt`, #86): `location='row'` (`write_table_rows`)
+  swaps the FoXy writer for one on memory (`table_writer` keeps the file writer) holding `RowData`; at the close the
+  `Piece NumberOfCols NumberOfRows` tag is written, then the buffered columns (indented by 6) with `raw`: FoXy keeps a
+  start tag pending only until its first content, so the counts cannot be patched later. Rows: every one of the 144
+  `write_dataarray<N>_rank<M>_<kind>` of the three concrete writers sets `n_tuples` before its tag, checked by
+  `is_table_column` (the first column's rows; a mismatch writes no tag). VTK 9.7.2 needs `NumberOfRows` (absent: 0
+  rows), ignores `NumberOfCols`. Refused for a Table: pieces, node/cell locations, the rows opened twice
 - Three concrete writer implementations:
   - `vtk_fortran_vtk_file_xml_writer_ascii_local` — human-readable ASCII
   - `vtk_fortran_vtk_file_xml_writer_binary_local` — Base64-encoded binary inside XML elements
@@ -113,7 +119,7 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   written with `write_dataarray(location='row', action='open'|'close')` (every kind, components; the same rows,
   `table_rows`), `NumberOfRows` written at the close (`end_table`); a series appends the rows of each step
   (`NumberOfRows` one entry per step, `Steps/RowDataOffsets/<col>` = `row_total`, VTK's spelling, not the spec page's
-  `RowDataOffets`); refused: XML formats (`vtk_file%initialize`), `comm`, a step without columns (`step_pieces` is the
+  `RowDataOffets`); refused: `comm`, a step without columns (`step_pieces` is the
   "columns opened" flag); VTK 9.7.2 reads it, ParaView 6.1.1 does not. OverlappingAMR (`mesh_topology='OverlappingAMR'`,
   `TOPOLOGY_AMR`): `write_level(level, spacing)` (the only AMR binding, deferred in `vtk_writer_abstract`, XML writers
   refuse) opens `Level<n>` (`open_level`, `level_group`; `open_group` puts PointData/CellData in it), each box a
@@ -181,7 +187,7 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   `prefix` = `Level<n>/`), polyhedra back to the face stream (VTKHDF 2.9 shared faces, `-(n+1)` in `PolyhedronToFaces`, given to each
   polyhedron, reversed where marked; a face id out of range is error 6; VTK 9.7.2 cannot read such files, the nightly
   of 2026-11-08 misreads the reversed faces). `xml_reader%finalize` stays pure (forgets the file); `close` closes it
-- `vtk_fortran_vtk_file_xml_reader` — `xml_reader` type: reader of serial files (any format, header type, zlib) and parallel headers (`check_pieces`); indexes the file once with FoXy `xml_index` (tags and content positions, scan stopped at `AppendedData`), then decodes only the arrays asked for; `get_active(location, role, data_name)` the active array of a role (the
+- `vtk_fortran_vtk_file_xml_reader` — `xml_reader` type: reader of serial files (any format, header type, zlib; a `.vtt` Table: `npieces` 0, `location='row'` = `Piece/RowData`, tuples from `NumberOfRows`) and parallel headers (`check_pieces`); indexes the file once with FoXy `xml_index` (tags and content positions, scan stopped at `AppendedData`), then decodes only the arrays asked for; `get_active(location, role, data_name)` the active array of a role (the
 roles list `ACTIVE_ROLES` and `active_role` in `vtk_fortran_parameters`, shared with the VTKHDF reader); error codes 0–7 documented in the module. `pvtk_file` uses it too (`action='read'`); `vtm_file` and `pvd_file` read with `get_entries`/`get_datasets`
 - `vtk_fortran_dataarray_decoder` — inverse of the encoder: ASCII/Base64/zlib data into bytes, bytes into arrays of the requested kind
 - `vtk_fortran_dataarray_encoder` — overloaded encoding routines for ASCII and Base64 (optionally zlib-compressed), covering all PENF numeric kinds and ranks 1–4
@@ -234,7 +240,11 @@ an append with another value (the polyhedron offsets created after it get the ne
 refusals;
 `vtk_fortran_write_vtkhdf_table.f90`: Tables (a column of each kind, unsigned, 3 components; a 3-step series), read
 back with the bindings and the reader, the refusals (rows, names, missing/new columns, steps without columns, pieces,
-locations; XML refuses a Table);
+locations; the XML formats refuse an OverlappingAMR);
+`vtk_fortran_write_vtt.f90`: XML Tables (`.vtt`) in ascii, binary, raw, binary-appended and raw zlib (columns of every
+kind, unsigned, 3 components as an array and as x, y, z), read back (names in order, types, `NumberOfRows` tuples,
+values), the same Table as VTKHDF (VTK compares them outside the test), the refusals, a time series as a `.pvd` of two
+`.vtt` read back;
 `vtk_fortran_write_vtkhdf_htg.f90`: HyperTreeGrids (the 2x2 root grid of the VTK probe: trees of depth 3, 2, a
 masked leaf, a root cell without tree; branch factor 3; a 2-step series), checked with the bindings (descriptors and
 mask unpacked, the Steps entries; append refused), 16 refusals, the reader refusing it;
