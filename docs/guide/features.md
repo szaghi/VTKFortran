@@ -46,6 +46,8 @@ title: Features
 |------|-----------|--------|
 | vtkMultiBlockDataSet | `.vtm` | ✅ |
 | vtkMultiPieceDataSet (a block of pieces in a `.vtm`) | `.vtm` | ✅ |
+| vtkPartitionedDataSetCollection (`vtm_file` with `composite='PartitionedDataSetCollection'`: blocks, references, the assembly) | `.vtpc` | ✅ |
+| vtkPartitionedDataSet (`vtm_file` with `composite='PartitionedDataSet'`: a flat list of partitions) | `.vtpd` | ✅ |
 | vtkOverlappingAMR (levels of `.vti` boxes; read by VTK 9.7, not ParaView 6.1) | `.vthb` | ✅ |
 | Time series (collection) | `.pvd` | ✅ |
 | ParaView file series (JSON) | `.series` | ✅ |
@@ -69,7 +71,7 @@ VTKFortran or by VTK and ParaView. Only the array asked for is loaded and decode
 ## VTKHDF Exporters
 
 The [VTKHDF](/guide/formats#vtkhdf-hdf5) format (`format='vtkhdf'`, one HDF5 file, extension `.vtkhdf`) needs the library
-built with HDF5 ([Installation](/guide/installation#optional-hdf5-vtkhdf)). It is being added step by step
+built with HDF5 ([Installation](/guide/installation#optional-hdf5-vtkhdf)). Every type below is written and read back
 ([issue #51](https://github.com/szaghi/VTKFortran/issues/51)).
 
 | Type | Status |
@@ -82,7 +84,7 @@ built with HDF5 ([Installation](/guide/installation#optional-hdf5-vtkhdf)). It i
 | OverlappingAMR (levels of uniform boxes, point and cell data), static or a time series (read by VTK 9.7, not ParaView 6.1) | ✅ |
 | HyperTreeGrid (trees of branch factor 2 or 3 on a root grid, masks, cell data), static or a time series | ✅ |
 | Time series in one file (`Steps`): `write_step`, valid after every piece, restart with `action='append'`; a fixed mesh, unchanged geometry or arrays stored once | ✅ |
-| Multi-block (`vtm_file` with `format='vtkhdf'`): the `.vtkhdf` datasets copied in, the tree of the blocks as `Assembly`; static, or time series of Unstructured Grids and Polydata | ✅ |
+| Multi-block (`vtm_file` with `format='vtkhdf'`): the `.vtkhdf` datasets copied in, the tree of the blocks as `Assembly`; static, or time series of any type but a Table (VTK 9.7 reads a Table series block without rows) | ✅ |
 | PartitionedDataSetCollection (`vtm_file` with `composite='PartitionedDataSetCollection'`): each dataset copied once, with its `Index`, referenced from several blocks | ✅ |
 | Reading VTKHDF files back (`action='read'`): every topology, Tables, OverlappingAMRs level by level, HyperTreeGrids tree by tree, time series step by step; the entries of a MultiBlockDataSet or PartitionedDataSetCollection (`vtm_file`) and each of its datasets (`dataset=`) | ✅ |
 | One file from MPI ranks (`comm`, a parallel HDF5): Unstructured Grid and Polydata, one partition per rank, time series too (restart with `action='append'`), polyhedra, compression; Image Data, Rectilinear and Structured Grids, one region per rank | ✅ |
@@ -110,7 +112,7 @@ by gfortran, whose static variables for deferred-length string results are share
 
 | Compiler | Status |
 |----------|--------|
-| GNU gfortran 12.5, 13.4, 14.3, 16.2 | ✅ Every test passes (the CI uses gfortran 14) |
+| GNU gfortran 12.5, 13.4, 14.3, 16.2 | ✅ Every test passes (the CI uses gfortran 16.2, the serial HDF5 job gfortran 14) |
 | GNU gfortran 11.5 | ⚠️ Builds; the two `.vtm` tests crash |
 | Intel ifx 2025.3 | ✅ Every test passes (the discontinued ifort is not tested) |
 | NVIDIA nvfortran 26.9 | ✅ Every test passes (built with CMake) |
