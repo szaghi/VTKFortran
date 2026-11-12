@@ -4,7 +4,8 @@ program vtk_fortran_write_pvd
 !<
 !< Three time steps of a one-cell mesh: the first two are collected in a new `.pvd` file, the third one is appended to it as a
 !< restarted run would do. The test checks the content of the collection after each phase, the append to a file with content
-!< after its closing tags, and the error cases.
+!< after its closing tags, and the error cases. The same steps as a ParaView file series (`.series`, JSON): written,
+!< continued, read back (files and times), a series written by hand without times (their positions), the refusals.
 use penf
 use vtk_fortran, only : pvd_file, vtk_file
 
@@ -16,7 +17,7 @@ character(len=32)       :: step_name(3)                         !< Dataset (step
 integer(I4P)            :: error                                !< Status error.
 integer(I4P)            :: s                                    !< Counter.
 integer(I4P)            :: u                                    !< File unit.
-logical                 :: test_passed(6)                       !< List of passed tests.
+logical                 :: test_passed(9)                       !< List of passed tests.
 
 do s=1, 3
   step_name(s) = 'vtkfortran_write_pvd_'//trim(strz(s-1, 4))//'.vtu'
@@ -63,6 +64,43 @@ test_passed(4) = count_datasets('vtkfortran_write_pvd_edited.pvd') == 2 .and. is
 ! errors: append to a missing file, write before initialize
 test_passed(5) = pvd%initialize(filename='vtkfortran_write_pvd_missing.pvd', action='append') /= 0
 test_passed(6) = pvd%write_dataset(filename='any.vtu', timestep=0._R8P) /= 0
+
+! a ParaView file series (.series, JSON): new, continued, read back
+error = pvd%initialize(filename='vtkfortran_write_pvd.vtu.series')
+do s=1, 2
+  error = error + pvd%write_dataset(filename=trim(step_name(s)), timestep=times(s))
+enddo
+error = error + pvd%finalize()
+error = error + pvd%initialize(filename='vtkfortran_write_pvd.vtu.series', action='append')
+error = error + pvd%write_dataset(filename=trim(step_name(3)), timestep=times(3))
+error = error + pvd%write_dataset(filename='a "quoted" name.vtu', timestep=1._R8P)
+error = error + pvd%finalize()
+test_passed(7) = error == 0 .and. has_line('vtkfortran_write_pvd.vtu.series', '"file-series-version" : "1.0",') .and. &
+                 has_line('vtkfortran_write_pvd.vtu.series', '{ "name" : "a '//achar(92)//'"quoted'//achar(92)// &
+                          '" name.vtu", "time" : 1.0000000000000000E+000 }') ! (no backslash literal: nvfortran escapes it)
+test_passed(7) = test_passed(7) .and. series_read('vtkfortran_write_pvd.vtu.series', [times, 1._R8P], &
+                                                  [character(32) :: step_name, 'a "quoted" name.vtu'])
+error = pvd%initialize(filename='vtkfortran_write_pvd_paraview.vtu.series') ! the three steps, read by ParaView outside
+do s=1, 3
+  error = error + pvd%write_dataset(filename=trim(step_name(s)), timestep=times(s))
+enddo
+error = error + pvd%finalize()
+test_passed(7) = test_passed(7) .and. error == 0
+! a series written by hand (ParaView's layout, a member more, no times): the times are the positions
+open(newunit=u, file='vtkfortran_write_pvd_hand.series', action='write', status='replace')
+write(u, '(A)') '{', '  "file-series-version" : "1.0",', '  "files" : [', &
+                '    { "name" : "a.vtu", "size" : 10 },', '    { "name" : "b.vtu", "size" : 20 }', '  ]', '}'
+close(u)
+test_passed(8) = series_read('vtkfortran_write_pvd_hand.series', [0._R8P, 1._R8P], [character(5) :: 'a.vtu', 'b.vtu'])
+! refusals: part, group, name; a file that is not a series
+error = pvd%initialize(filename='vtkfortran_write_pvd_refused.series')
+test_passed(9) = pvd%write_dataset(filename='a.vtu', timestep=0._R8P, part=1) /= 0
+test_passed(9) = test_passed(9) .and. pvd%write_dataset(filename='a.vtu', timestep=0._R8P, group='g') /= 0
+test_passed(9) = test_passed(9) .and. pvd%write_dataset(filename='a.vtu', timestep=0._R8P, name='n') /= 0
+error = pvd%finalize()
+test_passed(9) = test_passed(9) .and. pvd%initialize(filename=pvd_name//'.series', action='read') /= 0
+test_passed(9) = test_passed(9) .and. pvd%initialize(filename='vtkfortran_write_pvd_missing.series', action='append') /= 0
+error = pvd%finalize()
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 if (.not.all(test_passed)) error stop 'some tests failed'
@@ -127,6 +165,29 @@ contains
   close(v)
   is_valid = n_close == 1 .and. trim(adjustl(last(1))) == '</Collection>' .and. trim(adjustl(last(2))) == '</VTKFile>'
   endfunction is_closed
+
+  function series_read(filename, times_expected, files_expected) result(is_passed)
+  !< Read a `.series` file back: the times and files of its entries.
+  character(*), intent(in)      :: filename          !< File name.
+  real(R8P),    intent(in)      :: times_expected(:) !< Times expected.
+  character(*), intent(in)      :: files_expected(:) !< Files expected.
+  logical                       :: is_passed         !< Check result.
+  type(pvd_file)                :: reader            !< The file read.
+  real(R8P),        allocatable :: timestep(:)       !< Times read.
+  integer(I4P),     allocatable :: part(:)           !< Parts read.
+  character(len=:), allocatable :: file(:)           !< Files read.
+  integer(I4P)                  :: e                 !< Error status.
+
+  is_passed = .false.
+  e = reader%initialize(filename=filename, action='read')
+  if (e == 0) e = reader%get_datasets(timestep=timestep, part=part, file=file)
+  if (e == 0) then
+    is_passed = size(timestep) == size(times_expected) .and. size(file) == size(files_expected)
+    if (is_passed) is_passed = all(timestep == times_expected) .and. all(file == files_expected) .and. all(part == 0)
+  endif
+  e = reader%finalize()
+  if (.not.is_passed) print '(A)', 'failed: reading '//filename
+  endfunction series_read
 
   function has_line(filename, expected) result(is_found)
   !< Check that the file contains a line made of the expected text (leading indentation apart).

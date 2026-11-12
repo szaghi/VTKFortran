@@ -252,7 +252,24 @@ ParaView opens the collection as one dataset with a time axis: each time step sh
 - `timestep` is a `real(R8P)`, written with the shortest representation that reads back exactly. `filename` is written as
   given: relative paths are relative to the directory of the `.pvd` file.
 
-See `src/tests/vtk_fortran_write_pvd.f90` for a complete program, restart included.
+**A ParaView file series.** A file name ending in `.series` (e.g. `simulation.vtu.series`: ParaView picks the reader
+of the files by the extension before `.series`) writes ParaView's JSON file series instead, with the same calls, valid
+after each `write_dataset` and continued with `action='append'` as well:
+
+```json
+{
+  "file-series-version" : "1.0",
+  "files" : [
+    { "name" : "simulation_0000.vtu", "time" : 0.0000000000000000E+000 },
+    { "name" : "simulation_0001.vtu", "time" : 1.0000000000000001E-001 }
+  ]
+}
+```
+
+It lists files and times only: `part`, `group` and `name` are refused. The times are written with 17 digits (they read
+back exactly). ParaView 6.1.1 reads it as the `.pvd`.
+
+See `src/tests/vtk_fortran_write_pvd.f90` for a complete program, restart and `.series` included.
 
 ### One VTKHDF file instead of a collection
 

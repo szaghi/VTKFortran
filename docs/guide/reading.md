@@ -148,8 +148,9 @@ holds no data, only the declaration of the arrays and the list of the pieces, ea
 
 ### Multi-block and time series files
 
-The entries of a `.vtm` file and the datasets of a `.pvd` file are read with `vtm_file` and `pvd_file`; each dataset file is
-then read with `vtk_file` (or `pvtk_file`). Relative files are relative to the directory of the `.vtm` or `.pvd` file.
+The entries of a `.vtm` file and the datasets of a `.pvd` (or `.series`) file are read with `vtm_file` and `pvd_file`; each
+dataset file is then read with `vtk_file` (or `pvtk_file`). Relative files are relative to the directory of the `.vtm` or
+`.pvd` file.
 
 <<< @/examples/snippets/ref_reading-composite.f90
 
@@ -158,6 +159,8 @@ then read with `vtk_file` (or `pvtk_file`). Relative files are relative to the d
   `DataSet`s at the next level), `index` the index among the
   siblings, `file` empty for blocks. The children of an entry are the entries that follow it with the next level.
 - `get_datasets` returns the attributes of each `DataSet` of the collection; missing ones are 0 (`timestep`, `part`) or empty.
+  A ParaView `.series` file gives the `name` of each entry as `file` and its `time` as `timestep` (without `time`, its
+  position in the list from 0, as ParaView takes it); other members of an entry are skipped.
 - An XML `.vtpc` (vtkPartitionedDataSetCollection) is read by `vtm_file` too: the nodes of its `DataAssembly` are the
   blocks, its `dataset` nodes the `Partitions` of that index (the `file` of its `DataSet`; a `Partitions` of several
   `DataSet`s is a dataset without file followed by its files as `piece`s), then the `Partitions` the assembly does not
