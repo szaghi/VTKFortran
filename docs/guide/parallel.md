@@ -128,8 +128,22 @@ the same `write_block` calls: each dataset, a `.vtkhdf` file written by `vtk_fil
 `Block_<n>` of `/VTKHDF`), and the tree of the blocks is the group `Assembly`, whose groups are the blocks and whose soft
 links, named after the datasets (`names`, or the file names without directory and extension), point to the copies; the
 names of a block must differ. The copied files can be deleted afterwards. `scratch` units are refused (the blocks are
-written in order), and so is a time series block: VTK 9.7.2 reads only the first step of a multi-block time series, the
-files of its own writer too. `src/tests/vtk_fortran_write_vtkhdf_vtm.f90` writes the nested assembly above in VTKHDF.
+written in order). `src/tests/vtk_fortran_write_vtkhdf_vtm.f90` writes the nested assembly above in VTKHDF.
+
+**A time series of several meshes.** The blocks can be time series (`write_step`), so that one file holds several
+meshes moving together: see [A time series of several meshes in one .vtkhdf file](/manual/cookbook#a-time-series-of-several-meshes-in-one-vtkhdf-file).
+
+- A file is **either static or a time series**: its first block decides, and a block of the other kind is refused
+  (VTK cannot read the mix, VTK issue 19963). Make a fixed part a time series too, the same mesh at every step.
+- Every block has **the same steps**: their number and their times, compared exactly (the specification requires it).
+  A block with other steps is refused, the message naming the first step that differs.
+- The time-series blocks are **UnstructuredGrid or PolyData**, of one or more parts per step. A time-series ImageData,
+  RectilinearGrid or StructuredGrid block is refused: VTK 9.7.2 reads such a block without any of its arrays.
+- **Readers**: ParaView 6.1.1 plays every step of every block. VTK 9.7.2 reads each step with
+  `vtkHDFReader::SetStep`, but its pipeline time (`UpdateTimeStep`) leaves a multi-block file at the first step (a single
+  dataset follows it).
+- A refused file leaves the block opened for it by `write_block` open, as a missing file does: `finalize` then returns
+  an error.
 
 ### Blocks filled in any order
 

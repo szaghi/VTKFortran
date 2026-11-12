@@ -6,8 +6,15 @@ module vtk_fortran_vtm_file
 !< In the VTKHDF format the same `write_block` calls build the file: each dataset file (a `.vtkhdf` written by `vtk_file`)
 !< is copied as the group `Block_<n>` of `/VTKHDF`, and the tree of the blocks is the group `Assembly`, whose groups are
 !< the blocks and whose soft links, named after the datasets (`names`, or the file names without directory and
-!< extension), point to the copies. A time series block is refused: VTK 9.7.2 reads only the first step of a multi-block
-!< time series (in the files of its own writer too).
+!< extension), point to the copies.
+!<
+!< Time series: a file is either static or a time series, decided by its first block. The blocks of a time series must
+!< all be UnstructuredGrid or PolyData series with the same steps (`NSteps`, and the times of `Steps/Values` compared
+!< exactly), as the VTKHDF specification requires. ParaView 6.1.1 plays every step of every block; VTK 9.7.2 reads every
+!< step with `vtkHDFReader%SetStep`, but its pipeline time (`UpdateTimeStep`) leaves a multi-block file at the first step.
+!< Refused: a time-series ImageData, RectilinearGrid or StructuredGrid block (VTK 9.7.2 reads it without any array), a
+!< static block in a time series or the reverse (VTK fails on the mix, VTK issue 19963), a series with other steps.
+!< A refused file leaves the block that `write_block` opened for it open (as a missing file does).
 use befor64
 use penf
 use stringifor
@@ -35,6 +42,7 @@ type :: vtm_file
    integer(I4P),               private             :: n_leaves=0_I4P     !< Datasets copied.
    integer(I8P),               private             :: version_minor=1_I8P !< Minor version (the highest of the blocks).
    integer(I8P),               private             :: n_steps=-1_I8P     !< Steps of the blocks: -1 none yet, 0 static.
+   real(R8P), allocatable,     private             :: times(:)           !< Times of the steps of a time series.
    contains
       ! public methods
       procedure, pass(self) :: initialize          !< Initialize file.
@@ -62,6 +70,7 @@ contains
   !<
   !< With `format='vtkhdf'` (case insensitive) the file is a VTKHDF `MultiBlockDataSet` (the library built with HDF5),
   !< built by the same `write_block` calls from `.vtkhdf` files, which are copied into it; scratch units are not used.
+  !< Its blocks are all static or all time series of UnstructuredGrid and PolyData with the same steps (module header).
   !<
   !< With `action='read'` (case insensitive) the file is indexed: its blocks and datasets are returned by `get_entries`, and
   !< each dataset file can then be read with `vtk_file` (or `pvtk_file`); `finalize` frees the index. The error is 1 if the
@@ -129,6 +138,7 @@ contains
         self%n_leaves = 0_I4P
         self%version_minor = 1_I8P
         self%n_steps = -1_I8P
+        if (allocated(self%times)) deallocate(self%times)
         return
      elseif (action_ /= 'XML') then
         error = 1
@@ -504,55 +514,101 @@ contains
 
    function vtkhdf_dataset(self, filename, name) result(error)
    !< Copy the dataset of a `.vtkhdf` file into the VTKHDF file, as `Block_<n>`, and link it in the open block, named `name`
-   !< or after the file (without directory and extension). A time series is refused (VTK 9.7.2 reads only the first step of
-   !< a multi-block time series, its own files too).
+   !< or after the file (without directory and extension). The time series rules are checked on the file before the copy:
+   !< the first block decides whether the file is static or a time series; a series block must be an UnstructuredGrid or
+   !< a PolyData with the steps of the first one (their number and times, compared exactly).
    class(vtm_file), intent(inout)        :: self      !< VTM file.
    character(*),    intent(in)           :: filename  !< File of the dataset.
    character(*),    intent(in), optional :: name      !< Dataset name.
    integer(I4P)                          :: error     !< Error status.
    character(len=:), allocatable         :: leaf      !< Group of the copy.
    character(len=:), allocatable         :: label     !< Name of the link.
+   character(len=:), allocatable         :: file      !< File name, trimmed.
+   character(len=:), allocatable         :: topology  !< Type of the dataset.
+   character(len=:), allocatable         :: reason    !< Why the dataset is refused.
    integer(hid_kind)                     :: source    !< File of the dataset.
    integer(hid_kind)                     :: group     !< A group.
    integer(I8P), allocatable             :: values(:) !< Attribute values.
+   real(R8P), allocatable                :: times(:)  !< Times of the steps of the dataset.
    integer(I8P)                          :: n_steps   !< Steps of the dataset.
+   integer(I8P)                          :: s         !< Counter.
    integer(I4P)                          :: e         !< Error of a closing.
 
    error = 1
+   file = trim(adjustl(filename))
+   if (h5_file_open(file, source) /= 0) then
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: cannot open '//file//' as an HDF5 file'
+      return
+   endif
+   ! the type and steps of the dataset, read before it is copied
+   reason = 'is not a VTKHDF file'
+   topology = ''
+   n_steps = 0_I8P
+   if (h5_link_exists(source, 'VTKHDF')) then
+      reason = ''
+      if (h5_group_open(source, 'VTKHDF', group) == 0) then
+         if (h5_attribute_read(group, 'Type', topology) /= 0) topology = ''
+         e = h5_group_close(group)
+      endif
+      if (h5_link_exists(source, 'VTKHDF/Steps')) then
+         reason = 'has unreadable steps'
+         if (h5_group_open(source, 'VTKHDF/Steps', group) == 0) then
+            if (h5_attribute_read(group, 'NSteps', values) == 0) then
+               n_steps = values(1)
+               if (h5_dataset_read(group, 'Values', times) == 0) reason = ''
+            endif
+            e = h5_group_close(group)
+         endif
+      endif
+   endif
+   if (len(reason) == 0 .and. n_steps > 0_I8P) then
+      if (size(times) /= n_steps) reason = 'has unreadable steps'
+   endif
+   if (len(reason) == 0) then
+      if (n_steps > 0_I8P .and. topology /= 'UnstructuredGrid' .and. topology /= 'PolyData') then
+         reason = 'is a time series of a '//topology//': VTK 9.7.2 reads the time-series grid blocks of a multi-block '// &
+                  'file without their arrays (UnstructuredGrid and PolyData series are accepted)'
+      elseif (self%n_steps == 0_I8P .and. n_steps > 0_I8P) then
+         reason = 'is a time series, the blocks before are not (a file is either static or a time series)'
+      elseif (self%n_steps > 0_I8P .and. n_steps == 0_I8P) then
+         reason = 'is not a time series, the blocks before are (a file is either static or a time series)'
+      elseif (self%n_steps > 0_I8P .and. n_steps /= self%n_steps) then
+         reason = 'has '//trim(str(n=n_steps, no_sign=.true.))//' steps, the blocks before '// &
+                  trim(str(n=self%n_steps, no_sign=.true.))//' (every block has the same steps)'
+      elseif (self%n_steps > 0_I8P) then
+         do s=1_I8P, n_steps
+            if (times(s) /= self%times(s)) then
+               reason = 'has another time at step '//trim(str(n=s, no_sign=.true.))// &
+                        ' than the blocks before (every block has the same steps)'
+               exit
+            endif
+         enddo
+      endif
+   endif
+   if (len(reason) > 0) then
+      e = h5_file_close(source)
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: '//file//' '//reason
+      return
+   endif
    self%n_leaves = self%n_leaves + 1_I4P
    self%children(size(self%children)) = self%children(size(self%children)) + 1_I4P
    leaf = 'Block_'//trim(str(n=self%n_leaves, no_sign=.true.))
-   if (h5_file_open(trim(adjustl(filename)), source) /= 0) then
-      write(stderr, '(A)') 'error: VTKFortran vtm_file: cannot open '//trim(adjustl(filename))//' as an HDF5 file'
-      return
-   endif
-   if (h5_link_exists(source, 'VTKHDF')) error = h5_object_copy(source, 'VTKHDF', self%root, leaf)
+   error = h5_object_copy(source, 'VTKHDF', self%root, leaf)
    e = h5_file_close(source)
    if (error /= 0) then
-      write(stderr, '(A)') 'error: VTKFortran vtm_file: '//trim(adjustl(filename))//' is not a VTKHDF file'
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: cannot copy '//file
       return
    endif
-   ! the version: the highest of the blocks; the steps: the same for every block
+   if (self%n_steps < 0_I8P) then ! the first block: the file is static or a time series of its steps
+      self%n_steps = n_steps
+      if (n_steps > 0_I8P) self%times = times
+   endif
+   ! the version: the highest of the blocks
    error = h5_group_open(self%root, leaf, group)
    if (error /= 0) return
    if (h5_attribute_read(group, 'Version', values) == 0) self%version_minor = max(self%version_minor, values(2))
    e = h5_group_close(group)
-   n_steps = 0_I8P
-   if (h5_link_exists(self%root, leaf//'/Steps')) then
-      error = h5_group_open(self%root, leaf//'/Steps', group)
-      if (error == 0) error = h5_attribute_read(group, 'NSteps', values)
-      e = h5_group_close(group)
-      if (error /= 0) return
-      n_steps = values(1)
-   endif
-   if (n_steps > 0_I8P) then
-      write(stderr, '(A)') 'error: VTKFortran vtm_file: '//trim(adjustl(filename))//' is a time series: VTK 9.7.2 reads '// &
-                           'only the first step of a multi-block time series'
-      error = 1
-      return
-   endif
-   self%n_steps = n_steps
-   label = trim(adjustl(filename))
+   label = file
    label = label(index(label, '/', back=.true.)+1:)
    if (index(label, '.', back=.true.) > 1) label = label(1:index(label, '.', back=.true.)-1)
    if (present(name)) then

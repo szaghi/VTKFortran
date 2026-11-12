@@ -1,0 +1,6 @@
+$ vtkhdf_motion
+error: VTKFortran vtm_file: pier.vtkhdf is not a time series, the blocks before are (a file is either static or a time series)
+the static block: error 1
+harbour.vtkhdf, the steps of each block:
+  Block_1: 6 steps, at 0.00 0.25 0.50 0.75 1.00 1.25
+  Block_2: 6 steps, at 0.00 0.25 0.50 0.75 1.00 1.25

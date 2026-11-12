@@ -79,7 +79,10 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
 - `vtk_fortran_vtm_file` — `vtm_file` type: multi-block composite datasets (`.vtm`); with `initialize(...,
   format='vtkhdf')` one VTKHDF
   `MultiBlockDataSet`: the `.vtkhdf` datasets copied in (`H5Ocopy`, `Block_<n>`), the tree as `Assembly` soft links;
-  time series blocks refused (VTK 9.7.2 reads only their first step)
+  all static or all time series (the first block decides), series blocks UnstructuredGrid or PolyData with the same
+  `NSteps` and times (grid series refused: VTK 9.7.2 reads them without arrays), checked on the file before the copy.
+  ParaView 6.1.1 plays every step; VTK 9.7.2 reads each with `SetStep`, its pipeline time stays at step 1 on a
+  multi-block (fine on a single dataset)
 - `vtk_fortran_pvd_file` — `pvd_file` type: time series collections (`.pvd`), valid after each `write_dataset`
 - `vtk_fortran_vtk_writer_abstract` — format-neutral abstract writer (`vtk_writer_abstract`): the state `vtk_file` sets
   (origin, spacing, direction, header type, compression) and every procedure `vtk_file%xml_writer` exposes (`initialize`,
@@ -165,7 +168,9 @@ VTKHDF ImageData written and read back; stubs checked without HDF5) and the VTKH
 UnstructuredGrid, every cell type but polyhedra, two pieces, I8P ids, each also written as a `.vtu` to compare in VTK;
 `vtk_fortran_write_vtkhdf_steps.f90`: time series of every topology, each step also written as an XML file;
 `vtk_fortran_write_vtkhdf_append.f90`: series continued with `action='append'` (restart, interrupted run);
-`vtk_fortran_write_vtkhdf_vtm.f90`: a VTKHDF multi-block file (`vtm_file`, `format='vtkhdf'`);
+`vtk_fortran_write_vtkhdf_vtm.f90`: VTKHDF multi-block files (`vtm_file`, `format='vtkhdf'`): the nested assembly, a
+time series of two UnstructuredGrid series (one of two parts) and a PolyData series, the refusals (grid series, static
+and series mixed, other steps or times);
 `vtk_fortran_read_vtkhdf.f90`: VTKHDF files read back (every topology, time series, two polyhedra sharing a face
 (Version 2.9, the file built with the bindings), a face id out of range);
 `vtk_fortran_write_vtkhdf_polyh.f90`: polyhedra (one piece; three pieces with polyhedra in the second), each also

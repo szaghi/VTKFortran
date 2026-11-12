@@ -179,6 +179,31 @@ Each output:
 - The layout of the file: [VTKHDF](/guide/formats#vtkhdf-hdf5); the two kinds of series compared:
   [Time series](/guide/parallel#time-series-pvd).
 
+### A time series of several meshes in one .vtkhdf file
+
+Several meshes moving together, in one file: each one is written as its own time series, with the same times, then
+`vtm_file` with `format='vtkhdf'` copies them as the blocks of one multi-block file. Here a wave (a PolyData surface) and
+a buoy riding it (an UnstructuredGrid of two hexahedra), six steps.
+
+<<< @/examples/snippets/vtkhdf_motion-write.f90
+
+The steps of each mesh, written as for a single series:
+
+<<< @/examples/snippets/vtkhdf_motion-steps.f90
+
+<<< @/examples/output/vtkhdf_motion.ansi{ansi}
+
+<p align="center"><img src="../examples/images/vtkhdf_motion.gif" alt="the wave travelling along the surface and the buoy rising and falling with it, the six steps of the multi-block VTKHDF file played by ParaView"></p>
+
+- A file is **either static or a time series**, as its first block: a static block in a time series is refused, as
+  the output shows (VTK cannot read the mix). A part that does not move is written as a series too, the same mesh at
+  every step.
+- Every block has **the same steps**, their number and times; each one an UnstructuredGrid or a PolyData, of any
+  number of parts per step. A time-series ImageData, RectilinearGrid or StructuredGrid block is refused: VTK 9.7.2
+  reads it without its arrays.
+- ParaView 6.1.1 plays every step of every block. The rules and readers in detail:
+  [Multi-block in one VTKHDF file](/guide/parallel#multi-block-in-one-vtkhdf-file).
+
 ### More than 2^31 points or cells
 
 <<< @/examples/snippets/ids_64bit.f90
