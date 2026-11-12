@@ -87,6 +87,7 @@ type :: vtm_file
       procedure, pass(self), private :: vtkhdf_entries      !< Gather the entries of a VTKHDF composite read.
       procedure, pass(self), private :: free_entries        !< Free the entries of a VTKHDF composite read.
       procedure, pass(self), private :: vtkhdf_add_entries  !< Gather the entries of a block of its Assembly.
+      procedure, pass(self), private :: vtkhdf_unlinked_entries !< The datasets of a collection the Assembly misses.
       procedure, pass(self), private :: vtkhdf_dataset      !< Copy a dataset file into a VTKHDF file.
       procedure, pass(self), private :: vtkhdf_open_block   !< Open a block of a VTKHDF file.
       procedure, pass(self), private :: vtkhdf_reference    !< Place a dataset already copied in the open block.
@@ -255,7 +256,9 @@ contains
   !< (**block**, **dataset**, or **piece** for the pieces of a `vtkMultiPieceDataSet` written by VTK), its index among the
   !< children of its parent (-1 if the file has none), its name and, for datasets, its file (empty for blocks and pieces,
   !< or for datasets without file). The children of an entry are the following entries of the next level. The names and files
-  !< are blank padded to the longest one; relative files are relative to the directory of the `.vtm` file.
+  !< are blank padded to the longest one; relative files are relative to the directory of the `.vtm` file. A VTKHDF
+  !< composite: the groups (blocks) and links (datasets, `file` the dataset under /VTKHDF) of its `Assembly`, then, for a
+  !< collection, its datasets (`Index`) that no link reaches, at level 1 in the order of their `Index`.
   !<
   !<```fortran
   !< type(vtm_file)                :: vtm
@@ -663,12 +666,80 @@ contains
                endif
                e = e + 1
             enddo
+            ! a collection: its datasets are the groups with an Index; those the Assembly does not reach are listed too
+            if (error == 0 .and. text == 'PartitionedDataSetCollection') error = self%vtkhdf_unlinked_entries(file_id, root)
          endif
       endif
       e = h5_group_close(root)
    endif
    e = h5_file_close(file_id)
    endfunction vtkhdf_entries
+
+   function vtkhdf_unlinked_entries(self, file_id, root) result(error)
+   !< Append, at the top level and in the order of their `Index`, the datasets of a collection (the groups of /VTKHDF with
+   !< an `Index` attribute, the dataset list of the VTKHDF specification) that no soft link of its `Assembly` reaches
+   !< (vtkHDFWriter writes such files: VTK reads every dataset of the list).
+   class(vtm_file),   intent(inout) :: self    !< VTM file.
+   integer(hid_kind), intent(in)    :: file_id !< File.
+   integer(hid_kind), intent(in)    :: root    !< Group /VTKHDF.
+   integer(I4P)                     :: error   !< Error status.
+   character(len=:), allocatable    :: names   !< Members of /VTKHDF, each followed by NUL.
+   character(len=:), allocatable    :: member  !< A member.
+   character(len=:), allocatable    :: linked  !< The datasets the Assembly reaches, each between NULs.
+   integer(I8P),     allocatable    :: values(:) !< Index attribute.
+   integer(I8P),     allocatable    :: indexes(:) !< Index of each unlinked dataset.
+   integer(I4P),     allocatable    :: firsts(:) !< First character of each unlinked dataset in names.
+   integer(hid_kind)                :: group   !< A member group.
+   integer(I4P)                     :: first, c, e, k, m, n, top, base !< Positions, counters.
+
+   error = 2
+   if (h5_group_names(file_id, 'VTKHDF', names) /= 0) return
+   error = 0
+   linked = achar(0)
+   do e=1, size(self%entry_level)
+      if (.not.self%entry_is_block(e)) linked = linked//self%entry_chars(self%entry_text(3, e):self%entry_text(3, e) + &
+                                                                          self%entry_text(4, e) - 1)//achar(0)
+   enddo
+   allocate(indexes(0), firsts(0))
+   first = 1
+   do while (first <= len(names))
+      c = first - 1 + index(names(first:), achar(0))
+      member = names(first:c-1)
+      if (member /= 'Assembly' .and. index(linked, achar(0)//member//achar(0)) == 0) then
+         if (h5_group_open(root, member, group) == 0) then
+            if (h5_attribute_exists(group, 'Index')) then
+               ! one call per statement: the operands of .and. can be evaluated in any order (values is allocated
+               ! by the read)
+               if (h5_attribute_read(group, 'Index', values) == 0) then
+                  if (size(values) > 0) then
+                     indexes = [indexes, values(1)]
+                     firsts = [firsts, first]
+                  endif
+               endif
+            endif
+            e = h5_group_close(group)
+         endif
+      endif
+      first = c + 1
+   enddo
+   top = count(self%entry_level == 1)
+   n = size(indexes)
+   do k=1, n ! in Index order
+      m = minloc(indexes, dim=1)
+      first = firsts(m)
+      c = first - 1 + index(names(first:), achar(0))
+      member = names(first:c-1)
+      base = len(self%entry_chars)
+      self%entry_level = [self%entry_level, 1_I4P]
+      self%entry_index = [self%entry_index, top + k - 1_I4P]
+      self%entry_is_block = [self%entry_is_block, .false.]
+      ! name, file (the group itself), path: the member's name each time
+      self%entry_text = reshape([self%entry_text, [base + 1, len(member), base + 1, len(member), base + 1, len(member)]], &
+                                [6, size(self%entry_level)])
+      self%entry_chars = self%entry_chars//member
+      indexes(m) = huge(1_I8P)
+   enddo
+   endfunction vtkhdf_unlinked_entries
 
    function vtkhdf_add_entries(self, root, path, level, after) result(error)
    !< Insert the members of the block `path` of the Assembly (nesting level `level`) after the entry `after` (0: first).

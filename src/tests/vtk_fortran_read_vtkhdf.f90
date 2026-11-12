@@ -11,14 +11,18 @@ program vtk_fortran_read_vtkhdf
 !< referenced reversed by the second polyhedron), the file built with the HDF5 bindings, read back as the face stream of
 !< each polyhedron, and a face id out of range (error 6); time series storing once what does not change (an
 !< UnstructuredGrid whose mesh is reused by steps without pieces, an ImageData whose cell data are reused), each step
-!< read as written. Without HDF5 the reader refuses a VTKHDF file.
+!< read as written; variable-length string attributes (`Type`, the `Attribute` of an active array; as h5py writes them);
+!< temporal field data without `Steps/FieldDataSizes` (optional: one tuple per step), the file rebuilt with the bindings;
+!< the arrays of a 2D ImageData built with the bindings: the axes of more than one point (as VTK) read, with and without
+!< components, an array keeping the axis of one point (the literal shape of the specification) refused (error 6).
+!< Without HDF5 the reader refuses a VTKHDF file.
 use penf
 use vtk_fortran, only : vtk_file
 use vtk_fortran_hdf5
 
 implicit none
 type(vtk_file)                :: w, r                    !< Writer, reader.
-logical                       :: ok(11)                  !< Checks.
+logical                       :: ok(14)                  !< Checks.
 integer(I4P)                  :: e, i                    !< Error, counter.
 integer(I4P), parameter       :: cube(31) = [6, 4, 0, 3, 2, 1,  4, 4, 5, 6, 7,  4, 0, 1, 5, 4,  4, 1, 2, 6, 5, &
                                              4, 2, 3, 7, 6,  4, 3, 0, 4, 7] !< Faces of a unit cube.
@@ -42,7 +46,11 @@ else
   ok(9) = errors()
   ok(10) = shared_faces()
   ok(11) = reused()
-  print '(A,11L2)', 'VTKHDF read: image, rect, strg, unst, poly, series, image series, I4P, errors, shared faces, reused:', ok
+  ok(12) = vlen_strings()
+  ok(13) = field_sizes_optional()
+  ok(14) = grid_axes()
+  print '(A,14L2)', 'VTKHDF read: image, rect, strg, unst, poly, series, image series, I4P, errors, shared faces, reused, '// &
+                    'vlen strings, FieldDataSizes optional, grid axes:', ok
 endif
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(ok)
@@ -432,6 +440,144 @@ contains
   e = r%finalize()
   if (.not.reused) print '(A)', 'reused: different'
   endfunction reused
+
+  logical function vlen_strings()
+  !< Variable-length string attributes (as h5py writes a `str`): the `Type` of /VTKHDF and the `Attribute` of the active
+  !< scalars, rewritten with the bindings in a file of the writer; read back as the fixed-length ones.
+  character(len=:), allocatable :: topology, active
+  integer(hid_kind)             :: file_id, root, dset
+  real(R8P), allocatable        :: pd(:)
+  integer(I4P)                  :: ee(6)
+
+  ee = 0
+  ee(1) = w%initialize(format='vtkhdf', filename='read_vlen.vtkhdf', mesh_topology='ImageData', &
+                       nx1=0, nx2=2, ny1=0, ny2=1, nz1=0, nz2=0, origin=[0._R8P, 0._R8P, 0._R8P], &
+                       spacing=[1._R8P, 1._R8P, 1._R8P])
+  ee(1) = ee(1) + abs(w%xml_writer%write_piece(nx1=0, nx2=2, ny1=0, ny2=1, nz1=0, nz2=0))
+  ee(1) = ee(1) + abs(w%xml_writer%write_dataarray(location='node', action='open', scalars='pd'))
+  ee(1) = ee(1) + abs(w%xml_writer%write_dataarray(data_name='pd', x=[(real(i, R8P), i=1, 6)]))
+  ee(1) = ee(1) + abs(w%xml_writer%write_dataarray(location='node', action='close'))
+  ee(1) = ee(1) + abs(w%xml_writer%write_piece())
+  ee(1) = ee(1) + abs(w%finalize())
+  ee(2) = h5_file_open('read_vlen.vtkhdf', file_id, readwrite=.true.)
+  ee(3) = h5_group_open(file_id, 'VTKHDF', root)
+  ee(4) = h5_attribute_write(root, 'Type', 'ImageData', variable_length=.true.)
+  ee(5) = h5_dataset_open(root, 'PointData/pd', dset)
+  ee(5) = ee(5) + abs(h5_attribute_write(dset, 'Attribute', 'Scalars', variable_length=.true.))
+  ee(5) = ee(5) + abs(h5_dataset_close(dset))
+  ee(6) = abs(h5_group_close(root))
+  ee(6) = ee(6) + abs(h5_file_close(file_id))
+  vlen_strings = all(ee == 0) .and. r%initialize(filename='read_vlen.vtkhdf', action='read') == 0
+  e = r%xml_reader%get_info(mesh_topology=topology)
+  vlen_strings = vlen_strings .and. e == 0
+  if (vlen_strings) vlen_strings = topology == 'ImageData'
+  e = r%xml_reader%get_active(location='node', role='scalars', data_name=active)
+  vlen_strings = vlen_strings .and. e == 0
+  if (vlen_strings) vlen_strings = active == 'pd'
+  e = r%xml_reader%read_dataarray(location='node', data_name='pd', x=pd)
+  vlen_strings = vlen_strings .and. e == 0
+  if (vlen_strings) vlen_strings = all(pd == [(real(i, R8P), i=1, 6)])
+  e = r%finalize()
+  if (.not.vlen_strings) print '(A,6I3)', 'variable-length strings: errors ', ee
+  endfunction vlen_strings
+
+  logical function field_sizes_optional()
+  !< The time series of `series` (temporal field data TIME, one value per step) rebuilt with the bindings without
+  !< `Steps/FieldDataSizes` (optional in the specification: one tuple per step); the field data of each step read back.
+  character(len=:), allocatable :: names, member, attr
+  integer(I8P),     allocatable :: values(:)
+  real(R8P),        allocatable :: t(:)
+  integer(hid_kind)             :: src, dst, root, steps, sroot, ssteps
+  integer(I4P)                  :: ee(5), first, c
+
+  ee = 0
+  ee(1) = h5_file_open('read_series.vtkhdf', src)
+  ee(2) = h5_file_create('read_series_nosizes.vtkhdf', dst)
+  ee(2) = ee(2) + abs(h5_group_create(dst, 'VTKHDF', root))
+  ee(3) = abs(h5_group_open(src, 'VTKHDF', sroot))
+  ee(3) = ee(3) + abs(h5_group_open(src, 'VTKHDF/Steps', ssteps))
+  ee(3) = ee(3) + abs(h5_attribute_read(sroot, 'Type', attr))
+  ee(3) = ee(3) + abs(h5_attribute_write(root, 'Type', attr))
+  ee(3) = ee(3) + abs(h5_attribute_read(sroot, 'Version', values))
+  ee(3) = ee(3) + abs(h5_attribute_write(root, 'Version', values))
+  ! every member of /VTKHDF, and of Steps but FieldDataSizes
+  ee(4) = h5_group_names(src, 'VTKHDF', names)
+  first = 1
+  do while (first <= len(names))
+    c = first - 1 + index(names(first:), achar(0))
+    member = names(first:c-1)
+    if (member /= 'Steps') ee(4) = ee(4) + abs(h5_object_copy(src, 'VTKHDF/'//member, root, member))
+    first = c + 1
+  enddo
+  ee(5) = h5_group_create(root, 'Steps', steps)
+  ee(5) = ee(5) + abs(h5_attribute_read(ssteps, 'NSteps', values))
+  ee(5) = ee(5) + abs(h5_attribute_write(steps, 'NSteps', values))
+  ee(5) = ee(5) + abs(h5_group_names(src, 'VTKHDF/Steps', names))
+  first = 1
+  do while (first <= len(names))
+    c = first - 1 + index(names(first:), achar(0))
+    member = names(first:c-1)
+    if (member /= 'FieldDataSizes') ee(5) = ee(5) + abs(h5_object_copy(src, 'VTKHDF/Steps/'//member, steps, member))
+    first = c + 1
+  enddo
+  ee(5) = ee(5) + abs(h5_group_close(steps))
+  ee(5) = ee(5) + abs(h5_group_close(root))
+  ee(5) = ee(5) + abs(h5_file_close(dst))
+  ee(5) = ee(5) + abs(h5_group_close(ssteps))
+  ee(5) = ee(5) + abs(h5_group_close(sroot))
+  ee(5) = ee(5) + abs(h5_file_close(src))
+  field_sizes_optional = all(ee == 0) .and. r%initialize(filename='read_series_nosizes.vtkhdf', action='read') == 0
+  e = r%xml_reader%read_dataarray(location='field', data_name='TIME', x=t)
+  field_sizes_optional = field_sizes_optional .and. e == 0
+  if (field_sizes_optional) field_sizes_optional = size(t) == 1
+  if (field_sizes_optional) field_sizes_optional = t(1) == 0._R8P
+  e = r%xml_reader%set_step(step=2)
+  e = e + abs(r%xml_reader%read_dataarray(location='field', data_name='TIME', x=t))
+  field_sizes_optional = field_sizes_optional .and. e == 0
+  if (field_sizes_optional) field_sizes_optional = size(t) == 1
+  if (field_sizes_optional) field_sizes_optional = t(1) == 0.5_R8P
+  e = r%finalize()
+  if (.not.field_sizes_optional) print '(A,5I3)', 'FieldDataSizes optional: errors ', ee
+  endfunction field_sizes_optional
+
+  logical function grid_axes()
+  !< A 2D ImageData (3x2 points) built with the bindings: point arrays with the axes VTK writes and reads ([2, 3] and
+  !< [2, 3, 3] in C order: the axis of one point dropped) are read; an array keeping it ([1, 2, 3], the literal shape of the
+  !< specification, which VTK 9.7.2 does not read either) is refused (error 6), not read as 3 components.
+  integer(hid_kind)       :: file_id, root, group
+  real(R8P), allocatable  :: v(:)
+  integer(I4P)            :: ee(4), nc
+
+  ee = 0
+  ee(1) = h5_file_create('read_grid_axes.vtkhdf', file_id)
+  ee(1) = ee(1) + abs(h5_group_create(file_id, 'VTKHDF', root))
+  ee(2) = abs(h5_attribute_write(root, 'Type', 'ImageData'))
+  ee(2) = ee(2) + abs(h5_attribute_write(root, 'Version', [2_I8P, 0_I8P]))
+  ee(2) = ee(2) + abs(h5_attribute_write(root, 'WholeExtent', [0_I8P, 2_I8P, 0_I8P, 1_I8P, 0_I8P, 0_I8P]))
+  ee(2) = ee(2) + abs(h5_attribute_write(root, 'Origin', [0._R8P, 0._R8P, 0._R8P]))
+  ee(2) = ee(2) + abs(h5_attribute_write(root, 'Spacing', [1._R8P, 1._R8P, 1._R8P]))
+  ee(2) = ee(2) + abs(h5_attribute_write(root, 'Direction', [1._R8P, 0._R8P, 0._R8P, 0._R8P, 1._R8P, 0._R8P, &
+                                                              0._R8P, 0._R8P, 1._R8P]))
+  ee(3) = h5_group_create(root, 'PointData', group)
+  ee(3) = ee(3) + abs(h5_dataset_write_R8P(group, 'scalar', [(real(i, R8P), i=1, 6)], [3_I8P, 2_I8P]))
+  ee(3) = ee(3) + abs(h5_dataset_write_R8P(group, 'vector', [(real(i, R8P), i=1, 18)], [3_I8P, 3_I8P, 2_I8P]))
+  ee(3) = ee(3) + abs(h5_dataset_write_R8P(group, 'kept', [(real(i, R8P), i=1, 6)], [3_I8P, 2_I8P, 1_I8P]))
+  ee(4) = abs(h5_group_close(group))
+  ee(4) = ee(4) + abs(h5_group_close(root))
+  ee(4) = ee(4) + abs(h5_file_close(file_id))
+  grid_axes = all(ee == 0) .and. r%initialize(filename='read_grid_axes.vtkhdf', action='read') == 0
+  e = r%xml_reader%read_dataarray(location='node', data_name='scalar', x=v)
+  grid_axes = grid_axes .and. e == 0
+  if (grid_axes) grid_axes = all(v == [(real(i, R8P), i=1, 6)])
+  e = r%xml_reader%get_dataarray_info(location='node', data_name='vector', n_components=nc)
+  grid_axes = grid_axes .and. e == 0 .and. nc == 3
+  e = r%xml_reader%read_dataarray(location='node', data_name='vector', x=v)
+  grid_axes = grid_axes .and. e == 0
+  if (grid_axes) grid_axes = all(v == [(real(i, R8P), i=1, 18)])
+  grid_axes = grid_axes .and. r%xml_reader%read_dataarray(location='node', data_name='kept', x=v) == 6
+  e = r%finalize()
+  if (.not.grid_axes) print '(A,4I3)', 'grid axes: errors ', ee
+  endfunction grid_axes
 
   function cell_data(cid) result(error)
   !< The cell data cid of a piece, then the end of the piece.

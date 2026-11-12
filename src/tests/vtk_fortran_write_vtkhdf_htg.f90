@@ -13,16 +13,18 @@ program vtk_fortran_write_vtkhdf_htg
 !< or coordinates, a branch factor of 4, a step without its piece, `write_tree` in another topology, the series
 !< continued (`action='append'`), the piece left open at finalize; a refused cell data open not blocking the trees. The
 !< three files are read back with the reader of the library (`get_info`, `read_geo`, `get_trees`, `read_tree`: every
-!< descriptor and mask as written; the cell data; the series step by step; a tree not in the file). Without HDF5 the
-!< writer refuses a HyperTreeGrid; the XML formats refuse it
-!< always.
+!< descriptor and mask as written; the cell data; the series step by step; a tree not in the file); the names, the active
+!< array and the cells of a piece (`get_dataarray_names`, `get_active`, `read_piece`); a file of two partitions and one
+!< with `TransposedRootIndexing`, both built with the bindings from the first one, read back partition by partition (trees,
+!< masks, cell data, coordinates) and in the documented indexing. Without HDF5 the writer refuses a HyperTreeGrid; the XML
+!< formats refuse it always.
 use penf
 use vtk_fortran, only : vtk_file
 use vtk_fortran_hdf5
 
 implicit none
 type(vtk_file) :: w     !< Writer.
-logical        :: ok(6) !< Checks.
+logical        :: ok(7) !< Checks.
 integer(I4P)   :: e     !< Error.
 
 ok = .false.
@@ -40,8 +42,10 @@ else
   ok(4) = refusals()
   ok(5) = series_htg()
   ok(6) = read_back()
+  ok(7) = read_parts()
 endif
-print '(A,6L2)', 'VTKHDF HyperTreeGrid: XML refused, branch factor 2, branch factor 3, refusals, series, read back:', ok
+print '(A,7L2)', 'VTKHDF HyperTreeGrid: XML refused, branch factor 2, branch factor 3, refusals, series, read back, '// &
+                 'partitions and transposed:', ok
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(ok)
 if (.not.all(ok)) error stop 'some tests failed'
@@ -206,6 +210,150 @@ contains
   read_back = all(c) .and. all(ee == 0)
   if (.not.read_back) print '(A,12I3,A,12L2)', 'HyperTreeGrid read back: errors ', ee, ' checks ', c
   endfunction read_back
+
+  logical function read_parts()
+  !< The cell data calls on a HyperTreeGrid (`get_dataarray_names`, `get_active`, `read_piece`); a file of two
+  !< partitions (htg.vtkhdf twice, the second with x + 10 and cd + 100, built with the bindings as VTK writes a
+  !< vtkPartitionedDataSet of HyperTreeGrids) read partition by partition; htg.vtkhdf with `TransposedRootIndexing`
+  !< (tree ids z fastest in the file: 0, 1, 3 are the root cells 0, 2, 3), read in the documented indexing.
+  logical, parameter            :: t=.true., f=.false.
+  type(vtk_file)                :: r
+  integer(hid_kind)             :: src, dst, root, group, sroot
+  integer(I8P), allocatable     :: ids(:), ivalues(:), bytes(:)
+  real(R8P),    allocatable     :: x(:), y(:), z(:), cd(:), rvalues(:)
+  integer(I4P), allocatable     :: ivalues4(:)
+  logical,      allocatable     :: d(:), m(:)
+  character(len=:), allocatable :: names(:), active
+  character(15), parameter      :: PER_PART(5) = [character(15) :: 'NumberOfTrees', 'NumberOfDepths', 'NumberOfCells', &
+                                                  'DescriptorsSize', 'TreeIds'] !< Datasets duplicated as they are.
+  integer(I4P)                  :: ee(8), np, i, k
+  integer(I8P)                  :: nc
+  logical                       :: c(8)
+
+  ee = 0 ; c = .false.
+  ! names, active array, cells of the piece
+  ee(1) = w%initialize(format='vtkhdf', filename='htg_active.vtkhdf', mesh_topology='HyperTreeGrid', &
+                       nx1=0, nx2=1, ny1=0, ny2=1, nz1=0, nz2=0, branch_factor=2)
+  ee(1) = ee(1) + abs(w%xml_writer%write_piece(nx1=0, nx2=1, ny1=0, ny2=1, nz1=0, nz2=0))
+  ee(1) = ee(1) + abs(w%xml_writer%write_geo(x=[0._R8P, 1._R8P], y=[0._R8P, 1._R8P], z=[0._R8P]))
+  ee(1) = ee(1) + abs(w%xml_writer%write_tree(tree_id=0, descriptor=[t]))
+  ee(1) = ee(1) + abs(w%xml_writer%write_dataarray(location='cell', action='open', scalars='cd'))
+  ee(1) = ee(1) + abs(w%xml_writer%write_dataarray(data_name='cd', x=[(real(i, R8P), i=1, 5)]))
+  ee(1) = ee(1) + abs(w%xml_writer%write_dataarray(location='cell', action='close'))
+  ee(1) = ee(1) + abs(w%xml_writer%write_piece())
+  ee(1) = ee(1) + abs(w%finalize())
+  ee(2) = r%initialize(filename='htg_active.vtkhdf', action='read')
+  e = r%xml_reader%get_dataarray_names(location='cell', names=names)
+  c(1) = e == 0
+  if (c(1)) c(1) = size(names) == 1
+  if (c(1)) c(1) = names(1) == 'cd'
+  e = r%xml_reader%get_active(location='cell', role='scalars', data_name=active)
+  c(1) = c(1) .and. e == 0
+  if (c(1)) c(1) = active == 'cd'
+  e = r%xml_reader%read_piece(piece=1, nc=nc)
+  c(1) = c(1) .and. e == 0 .and. nc == 5_I8P
+  e = r%finalize()
+  ee(2) = ee(2) + r%initialize(filename='htg.vtkhdf', action='read')
+  e = r%xml_reader%get_dataarray_names(location='cell', names=names)
+  c(2) = e == 0
+  if (c(2)) c(2) = size(names) == 2
+  if (c(2)) c(2) = names(1) == 'cd' .and. names(2) == 'depth'
+  e = r%xml_reader%get_active(location='cell', role='scalars', data_name=active)
+  c(2) = c(2) .and. e == 0
+  if (c(2)) c(2) = len(active) == 0
+  e = r%xml_reader%read_piece(piece=1, nc=nc)
+  c(2) = c(2) .and. e == 0 .and. nc == 15_I8P
+  e = r%finalize()
+  ! two partitions; one call per statement: the order of the calls of an expression is the processor's
+  ee(3) = h5_file_open('htg.vtkhdf', src)
+  ee(3) = ee(3) + abs(h5_group_open(src, 'VTKHDF', sroot))
+  ee(3) = ee(3) + abs(h5_file_create('htg_parts.vtkhdf', dst))
+  ee(3) = ee(3) + abs(h5_group_create(dst, 'VTKHDF', root))
+  ee(3) = ee(3) + abs(h5_attribute_write(root, 'Type', 'HyperTreeGrid'))
+  ee(3) = ee(3) + abs(h5_attribute_write(root, 'Version', [2_I8P, 4_I8P]))
+  ee(3) = ee(3) + abs(h5_attribute_write(root, 'Dimensions', [3_I8P, 3_I8P, 1_I8P]))
+  ee(3) = ee(3) + abs(h5_attribute_write(root, 'BranchFactor', [2_I8P]))
+  do k=1, size(PER_PART)
+    ee(4) = ee(4) + abs(h5_dataset_read(sroot, trim(PER_PART(k)), ivalues))
+    ee(4) = ee(4) + abs(h5_dataset_write_I8P(root, trim(PER_PART(k)), [ivalues, ivalues], [2_I8P * size(ivalues, kind=I8P)]))
+  enddo
+  ee(4) = ee(4) + abs(h5_dataset_read(sroot, 'DepthPerTree', ivalues))
+  ee(4) = ee(4) + abs(h5_dataset_write_I8P(root, 'DepthPerTree', [ivalues, ivalues], [2_I8P * size(ivalues, kind=I8P)]))
+  ee(4) = ee(4) + abs(h5_dataset_read(sroot, 'NumberOfCellsPerTreeDepth', ivalues))
+  ee(4) = ee(4) + abs(h5_dataset_write_I8P(root, 'NumberOfCellsPerTreeDepth', [ivalues, ivalues], &
+                                           [2_I8P * size(ivalues, kind=I8P)]))
+  ee(5) = ee(5) + abs(h5_dataset_read(sroot, 'Descriptors', bytes)) ! each partition from a new byte
+  ee(5) = ee(5) + abs(h5_dataset_write_I1P(root, 'Descriptors', signed_bytes([bytes, bytes]), [2_I8P * size(bytes, kind=I8P)], &
+                                           unsigned=.true.))
+  ee(5) = ee(5) + abs(h5_dataset_read(sroot, 'Mask', bytes))
+  ee(5) = ee(5) + abs(h5_dataset_write_I1P(root, 'Mask', signed_bytes([bytes, bytes]), [2_I8P * size(bytes, kind=I8P)], &
+                                           unsigned=.true.))
+  ee(6) = ee(6) + abs(h5_dataset_read(sroot, 'XCoordinates', rvalues))
+  ee(6) = ee(6) + abs(h5_dataset_write_R8P(root, 'XCoordinates', [rvalues, rvalues + 10._R8P], [6_I8P]))
+  ee(6) = ee(6) + abs(h5_dataset_read(sroot, 'YCoordinates', rvalues))
+  ee(6) = ee(6) + abs(h5_dataset_write_R8P(root, 'YCoordinates', [rvalues, rvalues], [6_I8P]))
+  ee(6) = ee(6) + abs(h5_dataset_read(sroot, 'ZCoordinates', rvalues))
+  ee(6) = ee(6) + abs(h5_dataset_write_R8P(root, 'ZCoordinates', [rvalues, rvalues], [2_I8P]))
+  ee(6) = ee(6) + abs(h5_group_create(root, 'CellData', group))
+  ee(6) = ee(6) + abs(h5_dataset_read(sroot, 'CellData/cd', rvalues))
+  ee(6) = ee(6) + abs(h5_dataset_write_R8P(group, 'cd', [rvalues, rvalues + 100._R8P], [30_I8P]))
+  ee(6) = ee(6) + abs(h5_dataset_read(sroot, 'CellData/depth', ivalues))
+  ivalues4 = int([ivalues, ivalues], I4P)
+  ee(6) = ee(6) + abs(h5_dataset_write_I4P(group, 'depth', ivalues4, [30_I8P]))
+  ee(6) = ee(6) + abs(h5_group_close(group))
+  ee(6) = ee(6) + abs(h5_group_close(root))
+  ee(6) = ee(6) + abs(h5_file_close(dst))
+  ! the same with TransposedRootIndexing
+  ee(7) = h5_file_create('htg_transposed.vtkhdf', dst)
+  ee(7) = ee(7) + abs(h5_object_copy(src, 'VTKHDF', dst, 'VTKHDF'))
+  ee(7) = ee(7) + abs(h5_group_open(dst, 'VTKHDF', root))
+  ee(7) = ee(7) + abs(h5_attribute_write(root, 'TransposedRootIndexing', [1_I8P]))
+  ee(7) = ee(7) + abs(h5_group_close(root))
+  ee(7) = ee(7) + abs(h5_file_close(dst))
+  ee(7) = ee(7) + abs(h5_group_close(sroot))
+  ee(7) = ee(7) + abs(h5_file_close(src))
+  ! the partitions read back
+  ee(8) = r%initialize(filename='htg_parts.vtkhdf', action='read')
+  e = r%xml_reader%get_info(npieces=np)
+  c(3) = e == 0 .and. np == 2
+  do k=1, 2
+    e = r%xml_reader%get_trees(tree_ids=ids, piece=k)
+    c(4) = e == 0 .and. all(ids == [0, 1, 3])
+    e = r%xml_reader%read_tree(tree_id=0_I8P, descriptor=d, mask=m, piece=k)
+    c(4) = c(4) .and. e == 0 .and. same(d, [t, t, f, f, f]) .and. same(m, [(f, i=1, 9)])
+    e = r%xml_reader%read_tree(tree_id=3_I8P, descriptor=d, mask=m, piece=k)
+    c(4) = c(4) .and. e == 0 .and. same(d, [logical ::]) .and. same(m, [t])
+    e = r%xml_reader%read_dataarray(location='cell', data_name='cd', x=cd, piece=k)
+    c(5) = e == 0
+    if (c(5)) c(5) = all(cd == [(real(i + 100 * (k - 1), R8P), i=0, 14)])
+    e = r%xml_reader%read_geo(x=x, y=y, z=z, piece=k)
+    c(6) = e == 0
+    if (c(6)) c(6) = all(x == [0._R8P, 1._R8P, 2._R8P] + 10 * (k - 1)) .and. all(y == [0._R8P, 1._R8P, 2._R8P])
+    e = r%xml_reader%read_piece(piece=k, nc=nc)
+    c(6) = c(6) .and. e == 0 .and. nc == 15_I8P
+    if (.not.all(c(4:6))) exit
+  enddo
+  c(7) = r%xml_reader%get_trees(tree_ids=ids, piece=3) == 4 ! no third partition
+  e = r%finalize()
+  ! transposed: the file's ids 0, 1, 3 are the root cells 0, 2, 3 (x fastest); the tree of file id 1 is tree 2
+  ee(8) = ee(8) + r%initialize(filename='htg_transposed.vtkhdf', action='read')
+  e = r%xml_reader%get_trees(tree_ids=ids)
+  c(8) = e == 0 .and. all(ids == [0, 2, 3])
+  e = r%xml_reader%read_tree(tree_id=2_I8P, descriptor=d, mask=m)
+  c(8) = c(8) .and. e == 0 .and. same(d, [t]) .and. same(m, [(f, i=1, 5)])
+  c(8) = c(8) .and. r%xml_reader%read_tree(tree_id=1_I8P, descriptor=d, mask=m) == 4
+  e = r%finalize()
+  read_parts = all(c) .and. all(ee == 0)
+  if (.not.read_parts) print '(A,8I3,A,8L2)', 'HyperTreeGrid partitions and transposed: errors ', ee, ' checks ', c
+  endfunction read_parts
+
+  pure function signed_bytes(bytes) result(signed)
+  !< Unsigned byte values (0 to 255) as I1P, with the same bits.
+  integer(I8P), intent(in) :: bytes(:)            !< Values, 0 to 255.
+  integer(I1P)             :: signed(size(bytes)) !< The same bits.
+
+  signed = int(merge(bytes - 256_I8P, bytes, bytes > 127_I8P), I1P)
+  endfunction signed_bytes
 
   logical function same(a, b)
   !< The bits a are b (the same size, the same values).

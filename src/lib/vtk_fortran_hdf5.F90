@@ -387,6 +387,18 @@ interface
     import :: c_int, c_int64_t
     integer(c_int64_t), value :: id
   end function H5Tclose
+  integer(c_int) function H5Tis_variable_str(dtype) bind(C, name='H5Tis_variable_str')
+    import :: c_int, c_int64_t
+    integer(c_int64_t), value :: dtype
+  end function H5Tis_variable_str
+  integer(c_int) function H5free_memory(mem) bind(C, name='H5free_memory')
+    import :: c_int, c_ptr
+    type(c_ptr), value :: mem
+  end function H5free_memory
+  integer(c_size_t) function c_strlen(s) bind(C, name='strlen')
+    import :: c_size_t, c_ptr
+    type(c_ptr), value :: s
+  end function c_strlen
   integer(c_int64_t) function H5Pcreate(cls) bind(C, name='H5Pcreate')
     import :: c_int64_t
     integer(c_int64_t), value :: cls
@@ -758,35 +770,50 @@ contains
 #endif
   endfunction h5_attribute_exists
 
-  function h5_attribute_write_string(loc_id, name, value) result(error)
-  !< Write a string attribute: fixed length, the length of the value, padded with NULs, as VTK writes `Type`.
-  integer(hid_kind), intent(in)         :: loc_id !< Object (file, group or dataset).
-  character(*),      intent(in)         :: name   !< Attribute name.
-  character(*),      intent(in)         :: value  !< Attribute value.
-  integer(I4P)                          :: error  !< Error status.
+  function h5_attribute_write_string(loc_id, name, value, variable_length) result(error)
+  !< Write a string attribute: fixed length, the length of the value, padded with NULs, as VTK writes `Type`; or, with
+  !< `variable_length`, a variable-length string (as h5py writes a `str`).
+  integer(hid_kind), intent(in)           :: loc_id          !< Object (file, group or dataset).
+  character(*),      intent(in)           :: name            !< Attribute name.
+  character(*),      intent(in)           :: value           !< Attribute value.
+  logical,           intent(in), optional :: variable_length !< A variable-length string (default false).
+  integer(I4P)                            :: error           !< Error status.
 #ifdef VTKFORTRAN_USE_HDF5
-  character(kind=c_char), target        :: chars(max(len(value), 1)) !< Value, as C characters.
-  integer                               :: c      !< Counter.
-  integer(c_int64_t)                    :: dtype  !< String type.
-  integer(c_int64_t)                    :: space  !< Scalar dataspace.
-  integer(c_int64_t)                    :: attr   !< Attribute.
+  character(kind=c_char), target          :: chars(len(value) + 1) !< Value, as C characters, NUL terminated.
+  type(c_ptr),            target          :: ptr    !< The value, for a variable-length string.
+  integer                                 :: c      !< Counter.
+  integer(c_int64_t)                      :: dtype  !< String type.
+  integer(c_int64_t)                      :: space  !< Scalar dataspace.
+  integer(c_int64_t)                      :: attr   !< Attribute.
+  logical                                 :: is_vlen !< A variable-length string.
 
   error = 1_I4P
+  is_vlen = .false.
+  if (present(variable_length)) is_vlen = variable_length
   chars = c_null_char
   do c=1, len(value)
     chars(c) = value(c:c)
   enddo
   dtype = H5Tcopy(H5T_C_S1_g)
   if (dtype < 0) return
-  if (H5Tset_size(dtype, int(size(chars), c_size_t)) < 0) return
-  if (H5Tset_strpad(dtype, H5T_STR_NULLPAD) < 0) return
+  if (is_vlen) then
+    if (H5Tset_size(dtype, -1_c_size_t) < 0) return ! H5T_VARIABLE
+  else
+    if (H5Tset_size(dtype, int(max(len(value), 1), c_size_t)) < 0) return
+    if (H5Tset_strpad(dtype, H5T_STR_NULLPAD) < 0) return
+  endif
   if (H5Aexists(loc_id, trim(name)//c_null_char) > 0) then ! overwritten
     if (H5Adelete(loc_id, trim(name)//c_null_char) < 0) return
   endif
   space = H5Screate(H5S_SCALAR)
   attr = H5Acreate2(loc_id, trim(name)//c_null_char, dtype, space, H5P_DEFAULT, H5P_DEFAULT)
   if (attr >= 0) then
-    if (H5Awrite(attr, dtype, c_loc(chars)) >= 0) error = 0_I4P
+    if (is_vlen) then
+      ptr = c_loc(chars)
+      if (H5Awrite(attr, dtype, c_loc(ptr)) >= 0) error = 0_I4P
+    else
+      if (H5Awrite(attr, dtype, c_loc(chars)) >= 0) error = 0_I4P
+    endif
     if (H5Aclose(attr) < 0) error = 1_I4P
   endif
   if (H5Sclose(space) < 0) error = 1_I4P
@@ -839,16 +866,20 @@ contains
   endfunction h5_attribute_write_R8P
 
   function h5_attribute_read_string(loc_id, name, value) result(error)
-  !< Read a fixed-length string attribute (trailing NULs dropped).
+  !< Read a string attribute: fixed length (trailing NULs dropped) or variable length (as h5py writes a `str`; the first
+  !< string of an array of them), ASCII or UTF-8.
   integer(hid_kind),             intent(in)  :: loc_id !< Object (file, group or dataset).
   character(*),                  intent(in)  :: name   !< Attribute name.
   character(len=:), allocatable, intent(out) :: value  !< Attribute value.
   integer(I4P)                               :: error  !< Error status.
 #ifdef VTKFORTRAN_USE_HDF5
   character(kind=c_char), allocatable, target :: chars(:) !< Raw value, as C characters.
+  type(c_ptr),            allocatable, target :: ptrs(:)  !< Variable-length strings, as C pointers.
+  character(kind=c_char), pointer            :: text(:)  !< A variable-length string.
   integer(c_int64_t)                         :: attr   !< Attribute.
   integer                                    :: c      !< Counter.
   integer(c_int64_t)                         :: dtype  !< Stored type.
+  integer(c_int64_t)                         :: memtype !< Memory type of a variable-length string.
   integer(c_size_t)                          :: n      !< Stored length.
 
   error = 1_I4P
@@ -856,14 +887,36 @@ contains
   attr = H5Aopen(loc_id, trim(name)//c_null_char, H5P_DEFAULT)
   if (attr < 0) return
   dtype = H5Aget_type(attr)
-  n = H5Tget_size(dtype)
-  allocate(chars(max(n, 1_c_size_t)))
-  if (H5Aread(attr, dtype, c_loc(chars)) >= 0) then
-    do c=1, int(n)
-      if (chars(c) == c_null_char) exit
-      value = value//chars(c)
-    enddo
-    error = 0_I4P
+  if (H5Tis_variable_str(dtype) > 0) then ! read as C strings (the library allocates them), then freed
+    memtype = H5Tcopy(dtype)
+    allocate(ptrs(max(attribute_size(attr), 1_I8P)))
+    ptrs = c_null_ptr
+    if (H5Aread(attr, memtype, c_loc(ptrs)) >= 0) then
+      if (c_associated(ptrs(1))) then
+        n = c_strlen(ptrs(1))
+        call c_f_pointer(ptrs(1), text, [n])
+        do c=1, int(n)
+          value = value//text(c)
+        enddo
+      endif
+      error = 0_I4P
+      do c=1, size(ptrs)
+        if (c_associated(ptrs(c))) then
+          if (H5free_memory(ptrs(c)) < 0) error = 1_I4P
+        endif
+      enddo
+    endif
+    if (H5Tclose(memtype) < 0) error = 1_I4P
+  else
+    n = H5Tget_size(dtype)
+    allocate(chars(max(n, 1_c_size_t)))
+    if (H5Aread(attr, dtype, c_loc(chars)) >= 0) then
+      do c=1, int(n)
+        if (chars(c) == c_null_char) exit
+        value = value//chars(c)
+      enddo
+      error = 0_I4P
+    endif
   endif
   if (H5Tclose(dtype) < 0) error = 1_I4P
   if (H5Aclose(attr) < 0) error = 1_I4P

@@ -7,10 +7,11 @@ module vtk_fortran_vtk_file_vtkhdf_reader
 !< StructuredGrid (one piece), UnstructuredGrid (polyhedra included), PolyData (each partition a piece), Table (no
 !< pieces: its columns are read with `location='row'`, the rows of the step read; `NumberOfRows`) and OverlappingAMR
 !< (`get_levels`, `set_level`: the boxes of the level read, from level 0, are its pieces, `read_piece` giving their point
-!< extents, `get_info` its spacing and the origin), HyperTreeGrid (one piece: its root grid, `read_geo` its coordinates as
-!< for a RectilinearGrid, `get_trees` the ids of its trees and the branch factor, `read_tree` the descriptor and mask of a
-!< tree as `write_tree` takes them, unpacked from the bits, MSB first; cell data the cells of the trees in their order,
-!< breadth first in each), static or time
+!< extents, `get_info` its spacing and the origin), HyperTreeGrid (its partitions are the pieces: `read_geo` the
+!< coordinates of one as for a RectilinearGrid, `get_trees` the ids of its trees (x fastest, also for a file with
+!< `TransposedRootIndexing`) and the branch factor, `read_tree` the descriptor and mask of a tree as `write_tree` takes
+!< them, unpacked from the bits, MSB first; cell data the cells of its trees in their order, breadth first in each);
+!< grid arrays with the axes of more than one point (as VTK), another shape refused (error 6), static or time
 !< series (`Steps`: `get_steps`, `set_step`; the step 1 by default; through the offsets of `Steps`, so that a step reusing
 !< the mesh or an array of the step before reads it as written in full). The values are read as HDF5 hyperslabs of the piece
 !< and step asked for, as the bytes of their type in the file (`read_dataarray_bytes`), then converted by the caller: the
@@ -48,6 +49,7 @@ type :: vtkhdf_reader
   integer(I4P)                  :: n_levels=0_I4P         !< Levels of an OverlappingAMR.
   integer(I4P)                  :: level=0_I4P            !< Level read (from 0).
   integer(I8P)                  :: version(2)=[2_I8P, 0_I8P] !< Version of the file (of the composite if the dataset has none).
+  logical                       :: transposed=.false.     !< HyperTreeGrid with TransposedRootIndexing (tree ids z fastest).
   contains
     ! public methods
     procedure, pass(self) :: close                !< Close the file and reset the reader.
@@ -77,8 +79,9 @@ type :: vtkhdf_reader
     procedure, pass(self), private :: is_grid      !< The dataset is a grid (one piece).
     procedure, pass(self), private :: part         !< The partition of a piece of the step, and where it starts.
     procedure, pass(self), private :: step_value   !< An entry of a dataset of Steps for the step read.
-    procedure, pass(self), private :: step_entry   !< The entry of the step read of a dataset with one per step.
     procedure, pass(self), private :: tree_layout  !< Where the trees of a HyperTreeGrid (of the step read) are.
+    procedure, pass(self), private :: htg_part     !< A partition of a HyperTreeGrid of the step read: starts, counts.
+    procedure, pass(self), private :: tree_id      !< A tree id of the file in the documented (x fastest) indexing.
 endtype vtkhdf_reader
 
 contains
@@ -154,6 +157,11 @@ contains
     self%whole_extent(1::2) = 0_I4P
     self%whole_extent(2::2) = int(ivalues - 1_I8P, I4P)
   endif
+  self%transposed = .false.
+  if (self%mesh_topology == 'HyperTreeGrid' .and. h5_attribute_exists(self%root, 'TransposedRootIndexing')) then
+    if (h5_attribute_read(self%root, 'TransposedRootIndexing', ivalues) /= 0_I4P) return
+    if (size(ivalues) > 0) self%transposed = ivalues(1) /= 0_I8P
+  endif
   self%n_steps = 0_I8P
   if (h5_link_exists(self%root, 'Steps')) then
     if (h5_group_open(self%root, 'Steps', steps) /= 0_I4P) return
@@ -194,6 +202,7 @@ contains
   self%n_levels = 0
   self%level = 0
   self%version = [2_I8P, 0_I8P]
+  self%transposed = .false.
   endsubroutine forget
 
   function get_info(self, mesh_topology, npieces, header_type, compressor, nx1, nx2, ny1, ny2, nz1, nz2, &
@@ -221,6 +230,7 @@ contains
   integer(I4P)                                         :: ext(6)        !< Extent of a box (AMR).
   integer(I8P)                                         :: starts(2)     !< Points, cells before a box (AMR).
   integer(I8P)                                         :: n_boxes       !< Boxes of the level read (AMR).
+  integer(I8P)                                         :: hstart(6), hcount(3) !< A HyperTreeGrid partition.
   integer(hid_kind)                                    :: dset          !< Group of the level read (AMR).
   integer(I4P)                                         :: e             !< Error of a closing.
 
@@ -232,8 +242,10 @@ contains
     npieces = 1
     if (self%mesh_topology == 'Table') then ! no pieces: its columns are read with location='row'
       npieces = 0
-    elseif (self%mesh_topology == 'HyperTreeGrid') then ! one piece: its root grid and trees
-      npieces = 1
+    elseif (self%mesh_topology == 'HyperTreeGrid') then ! the partitions of the step
+      error = self%htg_part(1, n_parts, hstart, hcount) ! n_parts even when the step has no part
+      npieces = int(n_parts, I4P)
+      if (error == 4) error = 0
     elseif (self%mesh_topology == 'OverlappingAMR') then ! the boxes of the level read
       error = self%amr_box(1, ext, starts, n_boxes) ! n_boxes even when the level has no box in the step
       npieces = int(n_boxes, I4P)
@@ -375,6 +387,7 @@ contains
   integer(I4P)                                :: ext(6)  !< Extent of a box (AMR).
   integer(I8P)                                :: starts(2) !< Points, cells before a box (AMR).
   integer(I8P)                                :: n_boxes !< Boxes of the level read (AMR).
+  integer(I8P)                                :: hstart(6), hcount(3) !< A HyperTreeGrid partition.
 
   counts = 0_I8P
   error = 4
@@ -393,6 +406,11 @@ contains
     if (present(np)) np = counts(1)
     if (present(nc)) nc = counts(2)
     return
+  elseif (self%mesh_topology == 'HyperTreeGrid') then ! a partition: the points of the root grid, the cells of its trees
+    error = self%htg_part(piece, n_parts, hstart, hcount)
+    if (error /= 0) return
+    counts(1) = product(self%grid_points())
+    counts(2) = hcount(3)
   elseif (self%is_grid()) then
     if (present(piece)) then
       if (piece /= 1) return
@@ -443,13 +461,17 @@ contains
   integer(hid_kind)                                   :: dset      !< A dataset.
   integer(I8P)                                        :: g, first(9), n_parts !< Partition, starts, parts of the step.
   integer(I4P)                                        :: i, j, e   !< Counters, error of a closing.
+  integer(I8P)                                        :: hstart(6), hcount(3) !< A HyperTreeGrid partition.
 
   data_name = ''
   error = 4
   if (.not.self%is_initialized .or. active_role(role) == 0) return
   group = location_group(location)
   if (group /= 'PointData' .and. group /= 'CellData') return
-  if (.not.(self%is_grid() .or. self%mesh_topology == 'OverlappingAMR')) then
+  if (self%mesh_topology == 'HyperTreeGrid') then ! cell data only, of every partition
+    error = self%htg_part(piece, n_parts, hstart, hcount)
+    if (error /= 0) return
+  elseif (.not.(self%is_grid() .or. self%mesh_topology == 'OverlappingAMR')) then
     error = self%part(piece, g, first, n_parts)
     if (error /= 0) return
   endif
@@ -488,13 +510,17 @@ contains
   character(len=:), allocatable                       :: list     !< Names, each followed by NUL.
   integer(I8P)                                        :: g, first(9), n_parts !< Partition, starts, parts of the step.
   integer(I4P)                                        :: n, l, i, j !< Counters, lengths.
+  integer(I8P)                                        :: hstart(6), hcount(3) !< A HyperTreeGrid partition.
 
   allocate(character(len=0) :: names(1:0))
   error = 4
   if (.not.self%is_initialized) return
   group = location_group(location)
   if (len(group) == 0) return
-  if (group /= 'FieldData' .and. group /= 'RowData' .and. &
+  if (group /= 'FieldData' .and. group /= 'RowData' .and. self%mesh_topology == 'HyperTreeGrid') then
+    error = self%htg_part(piece, n_parts, hstart, hcount)
+    if (error /= 0) return
+  elseif (group /= 'FieldData' .and. group /= 'RowData' .and. &
       .not.(self%is_grid() .or. self%mesh_topology == 'Table' .or. self%mesh_topology == 'OverlappingAMR')) then
     error = self%part(piece, g, first, n_parts)
     if (error /= 0) return
@@ -721,19 +747,26 @@ contains
   endfunction read_ids
 
   ! private methods
-  function get_trees(self, tree_ids, branch_factor) result(error)
-  !< Return the trees of a HyperTreeGrid, of the step read: the ids of their root cells (i + (nx-1)(j + (ny-1)k), from 0),
-  !< in the order of the file (that of their cells in the cell data), and its branch factor. Error 4 for another dataset.
+  function get_trees(self, tree_ids, branch_factor, piece) result(error)
+  !< Return the trees of a piece (a partition, default 1) of a HyperTreeGrid, of the step read: the ids of their root cells
+  !< (i + (nx-1)(j + (ny-1)k), from 0; a file with `TransposedRootIndexing` has them z fastest, converted), in the order of
+  !< the file (that of their cells in the cell data), and its branch factor. Error 4 for another dataset or piece.
   class(vtkhdf_reader),      intent(in)            :: self          !< Reader.
   integer(I8P), allocatable, intent(out)           :: tree_ids(:)   !< Ids of the trees.
   integer(I4P),              intent(out), optional :: branch_factor !< Branch factor: 2 or 3.
+  integer(I4P),              intent(in),  optional :: piece         !< Piece, from 1 (default 1).
   integer(I4P)                                     :: error         !< Error status.
   integer(I8P), allocatable                        :: depths(:), counts(:), ivalues(:) !< Layout of the trees.
   integer(I8P)                                     :: first_bit, first_mask !< Bits of the step (unused here).
+  integer(I8P)                                     :: t             !< Counter.
 
   allocate(tree_ids(0))
-  error = self%tree_layout(tree_ids, depths, counts, first_bit, first_mask)
-  if (error /= 0 .or. .not.present(branch_factor)) return
+  error = self%tree_layout(piece, tree_ids, depths, counts, first_bit, first_mask)
+  if (error /= 0) return
+  do t=1_I8P, size(tree_ids, kind=I8P)
+    tree_ids(t) = self%tree_id(tree_ids(t))
+  enddo
+  if (.not.present(branch_factor)) return
   error = 6
   if (h5_attribute_read(self%root, 'BranchFactor', ivalues) /= 0_I4P) return
   if (size(ivalues) < 1) return
@@ -741,7 +774,7 @@ contains
   error = 0
   endfunction get_trees
 
-  function read_tree(self, tree_id, descriptor, mask) result(error)
+  function read_tree(self, tree_id, descriptor, mask, piece) result(error)
   !< Read the tree `tree_id` of a HyperTreeGrid (of the step read), as `write_tree` takes it: `descriptor` the refinement
   !< of its cells breadth first, every depth but the deepest (empty for a tree of one leaf); `mask` one value per cell,
   !< breadth first (all false when the file has no mask). The bits are unpacked from `Descriptors` and `Mask` (MSB
@@ -750,6 +783,7 @@ contains
   integer(I8P),         intent(in)            :: tree_id       !< Id of the tree (its root cell).
   logical, allocatable, intent(out)           :: descriptor(:) !< Refinement of its cells.
   logical, allocatable, intent(out), optional :: mask(:)       !< Masked cells.
+  integer(I4P),         intent(in),  optional :: piece         !< Piece, from 1 (default 1).
   integer(I4P)                                :: error         !< Error status.
   integer(I8P), allocatable                   :: tree_ids(:), depths(:), counts(:) !< Layout of the trees.
   integer(I8P)                                :: first_bit     !< First byte of the descriptors of the step.
@@ -762,7 +796,10 @@ contains
 
   allocate(descriptor(0))
   if (present(mask)) allocate(mask(0))
-  error = self%tree_layout(tree_ids, depths, counts, first_bit, first_mask) ; if (error /= 0) return
+  error = self%tree_layout(piece, tree_ids, depths, counts, first_bit, first_mask) ; if (error /= 0) return
+  do t=1_I8P, size(tree_ids, kind=I8P) ! in the documented indexing, as get_trees gives them
+    tree_ids(t) = self%tree_id(tree_ids(t))
+  enddo
   error = 4
   t = findloc(tree_ids, tree_id, dim=1, kind=I8P)
   if (t == 0_I8P) return
@@ -787,60 +824,125 @@ contains
   endif
   endfunction read_tree
 
-  function tree_layout(self, tree_ids, depths, counts, first_bit, first_mask) result(error)
-  !< Where the trees of a HyperTreeGrid of the step read are: their ids, depths, cells of each depth (tree after tree),
-  !< the first byte of their descriptors and of their mask (a time series: each step from a new byte).
-  class(vtkhdf_reader),      intent(in)  :: self        !< Reader.
-  integer(I8P), allocatable, intent(out) :: tree_ids(:) !< Ids of the trees.
-  integer(I8P), allocatable, intent(out) :: depths(:)   !< Depths of each tree.
-  integer(I8P), allocatable, intent(out) :: counts(:)   !< Cells of each depth of each tree.
-  integer(I8P),              intent(out) :: first_bit   !< First byte of the descriptors.
-  integer(I8P),              intent(out) :: first_mask  !< First byte of the mask.
-  integer(I4P)                           :: error       !< Error status.
-  integer(I8P)                           :: n_trees, n_depths, first_tree, first_count !< Counts, starts of the step.
+  function tree_layout(self, piece, tree_ids, depths, counts, first_bit, first_mask) result(error)
+  !< Where the trees of a piece (a partition) of a HyperTreeGrid of the step read are: their ids (as in the file), depths,
+  !< cells of each depth (tree after tree), the first byte of their descriptors and of their mask (each partition, and each
+  !< step, from a new byte).
+  class(vtkhdf_reader),      intent(in)           :: self        !< Reader.
+  integer(I4P),              intent(in), optional :: piece       !< Piece, from 1 (default 1).
+  integer(I8P), allocatable, intent(out)          :: tree_ids(:) !< Ids of the trees.
+  integer(I8P), allocatable, intent(out)          :: depths(:)   !< Depths of each tree.
+  integer(I8P), allocatable, intent(out)          :: counts(:)   !< Cells of each depth of each tree.
+  integer(I8P),              intent(out)          :: first_bit   !< First byte of the descriptors.
+  integer(I8P),              intent(out)          :: first_mask  !< First byte of the mask.
+  integer(I4P)                                    :: error       !< Error status.
+  integer(I8P)                                    :: n_parts     !< Parts of the step.
+  integer(I8P)                                    :: start(6)    !< Starts of the partition.
+  integer(I8P)                                    :: count(3)    !< Trees, depth entries, cells of the partition.
 
   allocate(tree_ids(0), depths(0), counts(0))
   first_bit = 0_I8P ; first_mask = 0_I8P
-  error = 4
-  if (.not.self%is_initialized) return
-  if (self%mesh_topology /= 'HyperTreeGrid') return
-  n_trees = self%step_entry('NumberOfTrees', error) ; if (error /= 0) return
-  n_depths = self%step_entry('NumberOfDepths', error) ; if (error /= 0) return
-  first_tree = 0_I8P ; first_count = 0_I8P
-  if (self%n_steps > 0_I8P) then
-    first_tree = self%step_value('TreeIdsOffsets', 1_I4P, error) ; if (error /= 0) return
-    first_count = self%step_value('NumberOfCellsPerTreeDepthOffsets', 1_I4P, error) ; if (error /= 0) return
-    first_bit = self%step_value('DescriptorsOffsets', 1_I4P, error) ; if (error /= 0) return
-    if (h5_link_exists(self%root, 'Steps/MaskOffsets')) then
-      first_mask = self%step_value('MaskOffsets', 1_I4P, error) ; if (error /= 0) return
-    endif
-  endif
-  error = read_I8P(self%root, 'TreeIds', first_tree, n_trees, tree_ids) ; if (error /= 0) return
-  error = read_I8P(self%root, 'DepthPerTree', first_tree, n_trees, depths) ; if (error /= 0) return
-  error = read_I8P(self%root, 'NumberOfCellsPerTreeDepth', first_count, n_depths, counts) ; if (error /= 0) return
+  error = self%htg_part(piece, n_parts, start, count) ; if (error /= 0) return
+  first_bit = start(3) ; first_mask = start(4)
+  error = read_I8P(self%root, 'TreeIds', start(1), count(1), tree_ids) ; if (error /= 0) return
+  error = read_I8P(self%root, 'DepthPerTree', start(1), count(1), depths) ; if (error /= 0) return
+  error = read_I8P(self%root, 'NumberOfCellsPerTreeDepth', start(2), count(2), counts) ; if (error /= 0) return
   error = 6
-  if (size(tree_ids) /= n_trees .or. size(depths) /= n_trees .or. size(counts) /= n_depths) return
-  if (any(depths < 1_I8P) .or. sum(depths) /= n_depths .or. any(counts < 1_I8P)) return
+  if (size(tree_ids, kind=I8P) /= count(1) .or. size(depths, kind=I8P) /= count(1) .or. &
+      size(counts, kind=I8P) /= count(2)) return
+  if (any(depths < 1_I8P) .or. sum(depths) /= count(2) .or. any(counts < 1_I8P)) return
   error = 0
   endfunction tree_layout
 
-  function step_entry(self, name, error) result(value)
-  !< The entry of the step read of a dataset with one entry per step (one for a dataset that is not a time series):
-  !< `NumberOfTrees`, `NumberOfCells`, ... of a HyperTreeGrid.
-  class(vtkhdf_reader), intent(in)  :: self   !< Reader.
-  character(*),         intent(in)  :: name   !< Dataset.
-  integer(I4P),         intent(out) :: error  !< Error status.
-  integer(I8P)                      :: value  !< Entry.
-  integer(I8P), allocatable         :: values(:) !< Values.
+  function htg_part(self, piece, n_parts, start, count) result(error)
+  !< The partition `piece` (from 1, default 1) of a HyperTreeGrid of the step read, the parts of the step, and where the
+  !< partition starts: `start` = its first tree (`TreeIds`, `DepthPerTree`), depth entry (`NumberOfCellsPerTreeDepth`),
+  !< descriptor byte, mask byte, cell (cell data, from the step's start), and its index in the step (0 for the first: the
+  !< coordinates are `Dimensions` values per partition); `count` = its trees, depth entries and cells. The parts of a step
+  !< come from `Steps/PartOffsets` and `NumberOfParts` (a step without them: one part, the step's); a static file has
+  !< every entry of `NumberOfTrees` as a partition. Each partition's descriptors and mask start on a new byte
+  !< (`DescriptorsSize` bits, `NumberOfCells` mask bits, of the partitions before). Error 4 for another dataset or a
+  !< piece out of the step, 6 for an inconsistent file.
+  class(vtkhdf_reader), intent(in)           :: self     !< Reader.
+  integer(I4P),         intent(in), optional :: piece    !< Piece, from 1 (default 1).
+  integer(I8P),         intent(out)          :: n_parts  !< Parts of the step.
+  integer(I8P),         intent(out)          :: start(6) !< Starts of the partition.
+  integer(I8P),         intent(out)          :: count(3) !< Trees, depth entries, cells of the partition.
+  integer(I4P)                               :: error    !< Error status.
+  integer(I8P), allocatable                  :: trees(:), depths(:), cells(:), bits(:) !< Per partition.
+  integer(I8P)                               :: p0       !< Partitions before the step.
+  integer(I8P)                               :: p        !< Piece, from 1.
+  integer(I8P)                               :: q        !< Counter.
 
-  value = 0_I8P
+  n_parts = 0_I8P ; start = 0_I8P ; count = 0_I8P
+  error = 4
+  if (.not.self%is_initialized) return
+  if (self%mesh_topology /= 'HyperTreeGrid') return
   error = 6
-  if (h5_dataset_read(self%root, name, values) /= 0_I4P) return
-  if (size(values, kind=I8P) < max(self%step, 1_I8P)) return
-  value = values(max(self%step, 1_I8P))
-  if (value < 0_I8P) return
+  if (h5_dataset_read(self%root, 'NumberOfTrees', trees) /= 0_I4P) return
+  if (h5_dataset_read(self%root, 'NumberOfDepths', depths) /= 0_I4P) return
+  if (h5_dataset_read(self%root, 'NumberOfCells', cells) /= 0_I4P) return
+  if (self%n_steps > 0_I8P) then
+    p0 = self%step - 1_I8P
+    n_parts = 1_I8P
+    if (h5_link_exists(self%root, 'Steps/PartOffsets')) then
+      p0 = self%step_value('PartOffsets', 1_I4P, error) ; if (error /= 0) return
+    endif
+    if (h5_link_exists(self%root, 'Steps/NumberOfParts')) then
+      n_parts = self%step_value('NumberOfParts', 1_I4P, error) ; if (error /= 0) return
+    endif
+    start(1) = self%step_value('TreeIdsOffsets', 1_I4P, error) ; if (error /= 0) return
+    start(2) = self%step_value('NumberOfCellsPerTreeDepthOffsets', 1_I4P, error) ; if (error /= 0) return
+    start(3) = self%step_value('DescriptorsOffsets', 1_I4P, error) ; if (error /= 0) return
+    if (h5_link_exists(self%root, 'Steps/MaskOffsets')) then
+      start(4) = self%step_value('MaskOffsets', 1_I4P, error) ; if (error /= 0) return
+    endif
+  else
+    p0 = 0_I8P
+    n_parts = size(trees, kind=I8P)
+  endif
+  error = 6
+  if (p0 < 0_I8P .or. n_parts < 0_I8P .or. p0 + n_parts > min(size(trees, kind=I8P), size(depths, kind=I8P), &
+                                                                  size(cells, kind=I8P))) return
+  p = 1_I8P
+  if (present(piece)) p = int(piece, I8P)
+  error = 4
+  if (p < 1_I8P .or. p > n_parts) return
+  error = 6
+  if (p > 1_I8P) then ! the partitions of the step before it
+    if (h5_dataset_read(self%root, 'DescriptorsSize', bits) /= 0_I4P) return
+    if (size(bits, kind=I8P) < p0 + p - 1_I8P) return
+    do q=p0 + 1_I8P, p0 + p - 1_I8P
+      start(1) = start(1) + trees(q)
+      start(2) = start(2) + depths(q)
+      start(3) = start(3) + (bits(q) + 7_I8P) / 8_I8P
+      start(4) = start(4) + (cells(q) + 7_I8P) / 8_I8P
+      start(5) = start(5) + cells(q)
+    enddo
+  endif
+  start(6) = p - 1_I8P
+  count = [trees(p0 + p), depths(p0 + p), cells(p0 + p)]
+  if (any(count < 0_I8P) .or. any(start < 0_I8P)) return
   error = 0
-  endfunction step_entry
+  endfunction htg_part
+
+  elemental function tree_id(self, file_id) result(id)
+  !< A tree id of the file in the documented indexing, x fastest (i + nx(j + ny k), nx, ny, nz the root cells per axis):
+  !< unchanged, or converted from z fastest (k + nz(j + ny i)) for a file with `TransposedRootIndexing` (as VTK reads it).
+  class(vtkhdf_reader), intent(in) :: self    !< Reader.
+  integer(I8P),         intent(in) :: file_id !< Tree id in the file.
+  integer(I8P)                     :: id      !< Tree id, x fastest.
+  integer(I8P)                     :: n(3)    !< Root cells per axis.
+  integer(I8P)                     :: i, j, k !< Root cell indices.
+
+  id = file_id
+  if (.not.self%transposed) return
+  n = max(int(self%whole_extent(2::2) - self%whole_extent(1::2), I8P), 1_I8P)
+  k = mod(file_id, n(3))
+  j = mod(file_id / n(3), n(2))
+  i = file_id / (n(3) * n(2))
+  id = i + n(1) * (j + n(2) * k)
+  endfunction tree_id
 
   pure function grid_points(self) result(grid)
   !< Points of the grid along each axis.
@@ -1057,6 +1159,9 @@ contains
   integer(I8P)                                        :: g, starts(9), n_parts, b !< Partition, starts, parts, counter.
   integer(I8P)                                        :: grid(3)      !< Points of a grid along each axis.
   integer(I4P)                                        :: n_axes       !< Axes of the grid in the arrays.
+  integer(I8P), allocatable                           :: axes(:)      !< Sizes of those axes (Fortran order).
+  integer(I4P)                                        :: t_axes, c_axes !< Time axis, components axis (0 or 1).
+  integer(I8P)                                        :: hstart(6), hcount(3) !< A HyperTreeGrid partition.
 
   path = '' ; data_type = '' ; first = 0_I8P ; count = 0_I8P ; n_components = 1 ; n_tuples = 0_I8P
   error = 4
@@ -1091,16 +1196,16 @@ contains
       first = first + b
     endif
     n_tuples = count
-  elseif (self%mesh_topology == 'HyperTreeGrid' .and. group /= 'FieldData') then ! the cells of the trees of the step
+  elseif (self%mesh_topology == 'HyperTreeGrid' .and. group /= 'FieldData') then ! the cells of the trees of the piece
     error = 4
     if (group /= 'CellData') return ! a HyperTreeGrid has cell data only
-    if (present(piece)) then
-      if (piece /= 1) return
-    endif
+    error = self%htg_part(piece, n_parts, hstart, hcount) ; if (error /= 0) return
     if (size(dims) > 1) n_components = int(dims(1), I4P)
-    count = self%step_entry('NumberOfCells', error) ; if (error /= 0) return
+    count = hcount(3)
+    first = hstart(5) ! the cells of the partitions of the step before it
     if (self%n_steps > 0_I8P) then
-      first = self%step_value('CellDataOffsets/'//trim(data_name), 1_I4P, error) ; if (error /= 0) return
+      b = self%step_value('CellDataOffsets/'//trim(data_name), 1_I4P, error) ; if (error /= 0) return
+      first = first + b
     endif
     n_tuples = count
   elseif (group == 'RowData') then ! a column of a Table: the rows of the step read (NumberOfRows, one entry per step)
@@ -1118,7 +1223,11 @@ contains
     if (size(dims) > 1) n_components = int(product(dims(1:size(dims)-1)), I4P)
     if (self%n_steps > 0_I8P .and. h5_link_exists(self%root, 'Steps/FieldDataOffsets/'//trim(data_name))) then
       first = self%step_value('FieldDataOffsets/'//trim(data_name), 1_I4P, error) ; if (error /= 0) return
-      count = self%step_value('FieldDataSizes/'//trim(data_name), 2_I4P, error) ; if (error /= 0) return
+      ! the tuples of the step from FieldDataSizes (components, tuples); without it, one tuple per step (specification)
+      count = 1_I8P
+      if (h5_link_exists(self%root, 'Steps/FieldDataSizes/'//trim(data_name))) then
+        count = self%step_value('FieldDataSizes/'//trim(data_name), 2_I4P, error) ; if (error /= 0) return
+      endif
     endif
     n_tuples = count
   elseif (self%is_grid()) then
@@ -1127,19 +1236,33 @@ contains
       if (piece /= 1) return
     endif
     grid = self%grid_points()
-    n_axes = max(1, size(pack(grid, grid > 1_I8P))) ! (count is a dummy here)
-    if (self%n_steps > 0_I8P) then ! the time axis last: one slice, the one of the step or of the array's offset
+    ! the axes of the array (Fortran order, x first): those of more than one point, as VTK writes and reads them; any
+    ! other layout (e.g. the axes of one point kept) is refused, never reinterpreted
+    if (group == 'PointData') then
+      axes = pack(grid, grid > 1_I8P)
+    else
+      axes = pack(grid - 1_I8P, grid > 1_I8P)
+    endif
+    if (size(axes) == 0) axes = [1_I8P]
+    n_axes = size(axes)
+    t_axes = 0
+    if (self%n_steps > 0_I8P) t_axes = 1 ! the time axis last
+    c_axes = size(dims) - n_axes - t_axes ! 1 with components
+    error = 6
+    if (c_axes /= 0 .and. c_axes /= 1) return
+    if (any(dims(c_axes + 1:c_axes + n_axes) /= axes)) return
+    if (c_axes == 1) n_components = int(dims(1), I4P)
+    if (self%n_steps > 0_I8P) then ! one slice, the one of the step or of the array's offset
       first = self%step - 1_I8P
       count = 1_I8P
       if (h5_link_exists(self%root, 'Steps/'//group//'Offsets/'//trim(data_name))) then
         first = self%step_value(group//'Offsets/'//trim(data_name), 1_I4P, error) ; if (error /= 0) return
       endif
-      if (size(dims) > n_axes + 1) n_components = int(dims(1), I4P)
     else
       first = 0_I8P
       count = dims(size(dims))
-      if (size(dims) > n_axes) n_components = int(dims(1), I4P)
     endif
+    error = 0
     if (group == 'PointData') then
       n_tuples = product(grid)
     else
@@ -1244,7 +1367,8 @@ contains
   endfunction count_of
 
   function axis_bytes(self, a, piece, bytes, data_type) result(error)
-  !< The bytes of the coordinates along the axis `a` (1 x, 2 y, 3 z) of a RectilinearGrid (of the step read).
+  !< The bytes of the coordinates along the axis `a` (1 x, 2 y, 3 z) of a RectilinearGrid or of a partition of a
+  !< HyperTreeGrid (of the step read).
   class(vtkhdf_reader),          intent(in)           :: self      !< Reader.
   integer(I4P),                  intent(in)           :: a         !< Axis.
   integer(I4P),                  intent(in), optional :: piece     !< Piece, from 1 (default 1).
@@ -1253,21 +1377,28 @@ contains
   integer(I4P)                                        :: error     !< Error status.
   integer(I8P), allocatable                           :: dims(:)   !< Shape.
   integer(I8P)                                        :: grid(3), start !< Points along each axis, offset of the step.
+  integer(I8P)                                        :: part_start !< Offset of a HyperTreeGrid partition.
+  integer(I8P)                                        :: n_parts, hstart(6), hcount(3) !< A HyperTreeGrid partition.
   character(*), parameter                             :: AXES(3) = ['X', 'Y', 'Z'] !< Axes.
 
   allocate(bytes(0))
   data_type = ''
   error = 4
-  if (present(piece)) then
+  grid = self%grid_points()
+  part_start = 0_I8P
+  if (self%mesh_topology == 'HyperTreeGrid') then ! a partition: its coordinates after those of the partitions before it
+    error = self%htg_part(piece, n_parts, hstart, hcount) ; if (error /= 0) return
+    part_start = hstart(6) * grid(a)
+  elseif (present(piece)) then
     if (piece /= 1) return
   endif
-  grid = self%grid_points()
   start = 0_I8P
   if (self%n_steps > 0_I8P) then
     if (h5_link_exists(self%root, 'Steps/'//AXES(a)//'CoordinatesOffsets')) then
       start = self%step_value(AXES(a)//'CoordinatesOffsets', 1_I4P, error) ; if (error /= 0) return
     endif
   endif
+  start = start + part_start
   error = 6
   if (h5_dataset_info(self%root, AXES(a)//'Coordinates', data_type, dims) /= 0_I4P) return
   if (h5_dataset_read_bytes(self%root, AXES(a)//'Coordinates', start, grid(a), bytes) /= 0_I4P) return

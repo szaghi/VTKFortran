@@ -758,35 +758,38 @@ contains
   error = 4
   endfunction set_level
 
-  function get_trees(self, tree_ids, branch_factor) result(error)
-  !< Return the trees of a VTKHDF HyperTreeGrid (of the step read): the ids of their root cells (i + (nx-1)(j + (ny-1)k),
-  !< from 0), in the order of the file (that of their cells in the cell data), and its branch factor (2 or 3). Error 4 for
-  !< another dataset, 3 for an XML file.
+  function get_trees(self, tree_ids, branch_factor, piece) result(error)
+  !< Return the trees of a piece (a partition) of a VTKHDF HyperTreeGrid (of the step read): the ids of their root cells
+  !< (i + (nx-1)(j + (ny-1)k), from 0, also for a file with `TransposedRootIndexing`), in the order of the file (that of
+  !< their cells in the cell data), and its branch factor (2 or 3). Error 4 for another dataset or piece, 3 for an XML file.
   class(xml_reader),         intent(in)            :: self          !< XML reader.
   integer(I8P), allocatable, intent(out)           :: tree_ids(:)   !< Ids of the trees.
   integer(I4P),              intent(out), optional :: branch_factor !< Branch factor.
+  integer(I4P),              intent(in),  optional :: piece         !< Piece, from 1 (default 1).
   integer(I4P)                                     :: error         !< Error status.
 
   if (self%is_hdf) then
-    error = self%hdf%get_trees(tree_ids=tree_ids, branch_factor=branch_factor)
+    error = self%hdf%get_trees(tree_ids=tree_ids, branch_factor=branch_factor, piece=piece)
     return
   endif
   allocate(tree_ids(0))
   error = 3
   endfunction get_trees
 
-  function read_tree(self, tree_id, descriptor, mask) result(error)
-  !< Read the tree `tree_id` of a VTKHDF HyperTreeGrid (of the step read) as `write_tree` takes it: `descriptor` the
-  !< refinement of its cells breadth first, every depth but the deepest; `mask` one value per cell (all false when the
-  !< file has none). Error 4 for another dataset or a tree not in the file, 3 for an XML file, 6 for an inconsistent file.
+  function read_tree(self, tree_id, descriptor, mask, piece) result(error)
+  !< Read the tree `tree_id` of a piece of a VTKHDF HyperTreeGrid (of the step read) as `write_tree` takes it:
+  !< `descriptor` the refinement of its cells breadth first, every depth but the deepest; `mask` one value per cell (all
+  !< false when the file has none). Error 4 for another dataset or a tree not in the piece, 3 for an XML file, 6 for an
+  !< inconsistent file.
   class(xml_reader),    intent(in)            :: self          !< XML reader.
-  integer(I8P),         intent(in)            :: tree_id       !< Id of the tree (its root cell).
+  integer(I8P),         intent(in)            :: tree_id       !< Id of the tree (its root cell, as get_trees gives it).
   logical, allocatable, intent(out)           :: descriptor(:) !< Refinement of its cells.
   logical, allocatable, intent(out), optional :: mask(:)       !< Masked cells.
+  integer(I4P),         intent(in),  optional :: piece         !< Piece, from 1 (default 1).
   integer(I4P)                                :: error         !< Error status.
 
   if (self%is_hdf) then
-    error = self%hdf%read_tree(tree_id=tree_id, descriptor=descriptor, mask=mask)
+    error = self%hdf%read_tree(tree_id=tree_id, descriptor=descriptor, mask=mask, piece=piece)
     return
   endif
   allocate(descriptor(0))

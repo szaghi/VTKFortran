@@ -23,7 +23,9 @@ program vtk_fortran_write_vtkhdf_vtm
 !< `.vtm`, an unknown composite, a collection in XML; a composite (multi-block, collection) or an OverlappingAMR as the
 !< source of a block, in a multi-block file and in a collection. The four composite files are read back with `vtm_file`
 !< (`action='read'`: the entries of the Assembly, the dataset of each) and every dataset with `vtk_file%initialize(...,
-!< action='read', dataset=)`, compared with its source file step by step; the refusals of `dataset`. Without HDF5 the
+!< action='read', dataset=)`, compared with its source file step by step; the refusals of `dataset`; a collection with
+!< two datasets the Assembly does not reach (added with the bindings, `Index` 2 and 1), listed after the tree in the
+!< order of their `Index`. Without HDF5 the
 !< VTKHDF format of `vtm_file` is refused.
 use penf
 use vtk_fortran, only : vtk_file, vtm_file
@@ -176,6 +178,11 @@ else
                       'series_tetra'], &
                      [character(14) :: '', 'series_tetra', 'series_tetra_2', '', 'series_skin', '', 'series_skin', &
                       'series_tetra']) .and. test_passed(9)
+  ! a collection with a dataset the Assembly does not reach (as vtkHDFWriter writes some): listed after the tree
+  if (.not.unlinked_dataset()) test_passed(9) = .false. ! its file is read next: called in a statement of its own
+  test_passed(9) = read_composite('unlinked_pdc.vtkhdf', [1, 2, 1, 1], 'bddd', &
+                     [character(6) :: 'a', 'part_1', 'second', 'third'], [character(6) :: '', 'part_1', 'second', 'third'], &
+                     [character(6) :: '', 'part_1', 'part_2', 'bolt_1']) .and. test_passed(9)
   test_passed(9) = composite_refusals() .and. test_passed(9)
   print '(A,9L2)', 'VTKHDF multi-block: files, refusals, tree, reads, series steps, series reads, collections, read back:', &
                    test_passed
@@ -282,6 +289,37 @@ contains
   eb = b%finalize()
   if (.not.same_dataset) print '(A)', filename//': '//dataset//' differs from '//source
   endfunction same_dataset
+
+  logical function unlinked_dataset()
+  !< A collection of one block, then two datasets copied in with the bindings, with an `Index` (2 for `third`, 1 for
+  !< `second`: listed in Index order) and no link from the Assembly.
+  integer(hid_kind) :: file_id, root, src, group
+  integer(I4P)      :: ee(4)
+
+  ! one call per statement: the order of the calls of an expression is the processor's
+  ee = 0
+  ee(1) = a_vtm_file%initialize(filename='unlinked_pdc.vtkhdf', format='vtkhdf', composite='PartitionedDataSetCollection')
+  ee(1) = ee(1) + abs(a_vtm_file%write_block(filenames='part_1.vtkhdf', name='a'))
+  ee(1) = ee(1) + abs(a_vtm_file%finalize())
+  ee(2) = h5_file_open('unlinked_pdc.vtkhdf', file_id, readwrite=.true.)
+  ee(2) = ee(2) + abs(h5_group_open(file_id, 'VTKHDF', root))
+  ee(3) = h5_file_open('bolt_1.vtkhdf', src)
+  ee(3) = ee(3) + abs(h5_object_copy(src, 'VTKHDF', root, 'third'))
+  ee(3) = ee(3) + abs(h5_file_close(src))
+  ee(3) = ee(3) + abs(h5_group_open(root, 'third', group))
+  ee(3) = ee(3) + abs(h5_attribute_write(group, 'Index', [2_I8P]))
+  ee(3) = ee(3) + abs(h5_group_close(group))
+  ee(4) = h5_file_open('part_2.vtkhdf', src)
+  ee(4) = ee(4) + abs(h5_object_copy(src, 'VTKHDF', root, 'second'))
+  ee(4) = ee(4) + abs(h5_file_close(src))
+  ee(4) = ee(4) + abs(h5_group_open(root, 'second', group))
+  ee(4) = ee(4) + abs(h5_attribute_write(group, 'Index', [1_I8P]))
+  ee(4) = ee(4) + abs(h5_group_close(group))
+  ee(4) = ee(4) + abs(h5_group_close(root))
+  ee(4) = ee(4) + abs(h5_file_close(file_id))
+  unlinked_dataset = all(ee == 0)
+  if (.not.unlinked_dataset) print '(A,4I3)', 'collection with unlinked datasets: errors ', ee
+  endfunction unlinked_dataset
 
   logical function composite_refusals()
   !< Reading a composite: a missing dataset (4), a dataset of an XML file (3), dataset without action read (1), a
