@@ -93,10 +93,8 @@ contains
   ee(23) = r%xml_reader%get_info(mesh_topology=topology, npieces=np)
   c(5) = topology == 'Table' .and. np == 0
   ee(24) = r%xml_reader%get_dataarray_names(location='row', names=names)
-  c(6) = size(names) == 8 ! each name (the order is not checked: h5_group_names lists them by name)
-  do i=1, size(expected)
-    c(6) = c(6) .and. any(names == expected(i))
-  enddo
+  c(6) = size(names) == 8 ! in the order written
+  if (c(6)) c(6) = all(names == expected)
   ee(25) = r%xml_reader%get_dataarray_info(location='row', data_name='velocity', data_type=dtype, n_components=nc, n_tuples=nt)
   c(7) = dtype == 'Float64' .and. nc == 3 .and. nt == n
   ee(26) = r%xml_reader%read_dataarray(location='row', data_name='time', x=x)

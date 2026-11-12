@@ -649,14 +649,16 @@ contains
   endfunction h5_object_copy
 
   function h5_group_names(loc_id, group, names) result(error)
-  !< Return the names of the members (links) of the group `group` of `loc_id`, in the order of their names, each one
-  !< followed by a NUL character (`achar(0)`); empty if the group has none.
+  !< Return the names of the members (links) of the group `group` of `loc_id`, in their creation order when the group
+  !< tracks it (the groups VTKFortran and VTK write), otherwise in the order of their names; each one followed by a NUL
+  !< character (`achar(0)`); empty if the group has none.
   integer(hid_kind),             intent(in)  :: loc_id !< Parent (file or group).
   character(*),                  intent(in)  :: group  !< Group name (or path).
   character(len=:), allocatable, intent(out) :: names  !< Names, each followed by NUL.
 #ifdef VTKFORTRAN_USE_HDF5
   integer(c_int64_t)                         :: n      !< Length of a name (ssize_t).
   integer(c_long_long)                       :: m      !< Member index.
+  integer(c_int)                             :: by     !< Index: creation order (1), or names (0).
   character(kind=c_char), allocatable, target :: chars(:) !< A name, as C characters.
 #endif
   integer(I4P)                               :: error  !< Error status.
@@ -666,12 +668,16 @@ contains
 #ifdef VTKFORTRAN_USE_HDF5
   if (.not.h5_link_exists(loc_id, group)) return
   error = 0_I4P
+  ! the creation order if the group tracks it (the call fails otherwise, silently: the error stack is not printed)
+  by = 1_c_int
+  if (H5Lget_name_by_idx(loc_id, trim(group)//c_null_char, by, 0_c_int, 0_c_long_long, c_null_ptr, 0_c_size_t, &
+                         H5P_DEFAULT) < 0) by = 0_c_int
   m = 0_c_long_long
   do
-    n = H5Lget_name_by_idx(loc_id, trim(group)//c_null_char, 0_c_int, 0_c_int, m, c_null_ptr, 0_c_size_t, H5P_DEFAULT)
+    n = H5Lget_name_by_idx(loc_id, trim(group)//c_null_char, by, 0_c_int, m, c_null_ptr, 0_c_size_t, H5P_DEFAULT)
     if (n < 0) exit ! past the last member
     allocate(chars(n + 1))
-    n = H5Lget_name_by_idx(loc_id, trim(group)//c_null_char, 0_c_int, 0_c_int, m, c_loc(chars), &
+    n = H5Lget_name_by_idx(loc_id, trim(group)//c_null_char, by, 0_c_int, m, c_loc(chars), &
                            int(n + 1, c_size_t), H5P_DEFAULT)
     if (n < 0) then
       error = 1_I4P

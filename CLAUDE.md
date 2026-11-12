@@ -159,8 +159,8 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
 roles list `ACTIVE_ROLES` and `active_role` in `vtk_fortran_parameters`, shared with the VTKHDF reader); error codes 0–7 documented in the module. `pvtk_file` uses it too (`action='read'`); `vtm_file` and `pvd_file` read with `get_entries`/`get_datasets`
 - `vtk_fortran_dataarray_decoder` — inverse of the encoder: ASCII/Base64/zlib data into bytes, bytes into arrays of the requested kind
 - `vtk_fortran_dataarray_encoder` — overloaded encoding routines for ASCII and Base64 (optionally zlib-compressed), covering all PENF numeric kinds and ranks 1–4
-- `vtk_fortran_hdf5` — HDF5 C API bindings (files, groups and their members, links, attributes (overwritten),
-  datasets of every kind, appendable, resized, deflate, read back); always compiled, stubs without
+- `vtk_fortran_hdf5` — HDF5 C API bindings (files, groups and their members (in creation order when tracked), links,
+  attributes (overwritten), datasets of every kind, appendable, resized, deflate, read back); always compiled, stubs without
   `VTKFORTRAN_USE_HDF5`. With `comm` (`VTKFORTRAN_USE_MPI`): `h5_file_create` opens a parallel file, an appendable
   dataset is created by every rank (empty, chunks sized by all the rows, the widest kind the ranks give) and appended to
   collectively (`MPI_Allgather` of the rows, every rank extends by the total, writes its hyperslab after the ranks

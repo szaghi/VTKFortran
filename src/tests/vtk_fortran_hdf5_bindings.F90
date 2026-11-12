@@ -5,7 +5,8 @@ program vtk_fortran_hdf5_bindings
 !< With HDF5 (`VTKFORTRAN_USE_HDF5`) the test writes a small VTKHDF ImageData through the bindings (string and numeric
 !< attributes, datasets of rank 3 in the Fortran order, deflate if HDF5 has it), an appendable dataset grown twice, an
 !< unsigned dataset,
-!< a group with tracked creation order and a soft link, then reads everything back. The ImageData is a valid VTKHDF
+!< a group with tracked creation order and a soft link, then reads everything back; the members of a group are listed in
+!< their creation order when the group tracks it, by name otherwise. The ImageData is a valid VTKHDF
 !< file (`vtkfortran_hdf5_bindings.vtkhdf`), opened by VTK readers outside this test. Without HDF5 it checks that the
 !< procedures are stubs returning an error.
 use penf
@@ -23,13 +24,14 @@ real(R4P)               :: c(ni-1,nj-1,nk-1)                         !< Cell dat
 integer(I8P)            :: ids(5)                                    !< Values appended.
 integer(I1P)            :: bytes(3)                                  !< Unsigned values.
 character(len=:), allocatable :: text                                !< String read back.
+character(len=:), allocatable :: names                               !< Members of a group, NUL terminated.
 integer(I8P), allocatable :: version(:), dims(:), ids_read(:)        !< Values read back.
 real(R8P),    allocatable :: f_read(:)                               !< Values read back.
 real(R4P),    allocatable :: c_read(:)                               !< Values read back.
 integer(I2P), allocatable :: bytes_read(:)                           !< Values read back.
 integer(I4P)            :: e(32)                                     !< Errors of each call.
 integer(I4P)            :: i, j, k                                   !< Counters.
-logical                 :: test_passed(6)                            !< List of passed tests.
+logical                 :: test_passed(7)                            !< List of passed tests.
 
 if (.not.is_hdf5_enabled) then
   ! without HDF5: every procedure is a stub returning an error
@@ -98,9 +100,15 @@ else
   e(11) = h5_dataset_read(file_id, 'extra/link_to_f', f_read)
   test_passed(6) = e(11) == 0 .and. all(f_read == reshape(f, [ni*nj*nk])) .and. h5_link_exists(file_id, 'extra') .and. &
                    .not.h5_link_exists(file_id, 'missing')
+  ! the members: in creation order (extra tracks it), by name (/VTKHDF does not)
+  e(14) = h5_group_names(file_id, 'extra', text)
+  e(15) = h5_group_names(file_id, 'VTKHDF', names)
+  test_passed(7) = all(e(14:15) == 0) .and. text == 'ids'//achar(0)//'bytes'//achar(0)//'link_to_f'//achar(0) .and. &
+                   names == 'CellData'//achar(0)//'PointData'//achar(0)
   e(12) = h5_group_close(root)
   e(13) = h5_file_close(file_id)
-  print '(A,6L2)', 'HDF5 bindings: write, attributes, rank 3, deflate, append+unsigned, soft link:', test_passed
+  print '(A,7L2)', 'HDF5 bindings: write, attributes, rank 3, deflate, append+unsigned, soft link, members order:', &
+                   test_passed
 endif
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
