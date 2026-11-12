@@ -21,6 +21,7 @@ type, abstract, extends(vtk_writer_abstract) :: xml_writer_abstract
   type(string)  :: data_type_override              !< If set, type of the next DataArray tag (then unset).
   type(string)  :: tag_name_override               !< If set, element name of the next DataArray tag (then unset).
   integer(I8P)  :: tuples_override=-1_I8P          !< If >= 0, number of tuples of the next DataArray tag (then unset).
+  character(len=:), allocatable :: component_names !< Names of the components of the next DataArray, NUL ended (then unset).
   integer(I8P)  :: ioffset=0_I8P                   !< Offset count.
   integer(I4P)  :: xml=0_I4P                       !< XML Logical unit.
   integer(I4P), allocatable :: vtm_index(:)       !< Next child index of each open level of a multi-block file.
@@ -76,6 +77,9 @@ type, abstract, extends(vtk_writer_abstract) :: xml_writer_abstract
     procedure, pass(self) :: write_fielddata1_rank1            !< Write FieldData tag (data 1, rank 1).
     procedure, pass(self), private :: write_fielddata_strings           !< Write FieldData tag (strings).
     procedure, pass(self) :: write_dataarray_strings           !< Write a string array (point, cell data, Table column).
+    procedure, pass(self) :: set_component_names               !< Name the components of the next DataArray.
+    procedure, pass(self), private :: component_names_attributes !< The ComponentName<i> attributes of the next DataArray.
+    procedure, pass(self) :: write_fielddata1_rank2            !< Write FieldData tag (several components).
     procedure, pass(self), private :: dataarray_tag_overrides           !< Apply the one-shot overrides of DataArray tag.
     procedure, pass(self), private :: next_vtm_index                    !< Return (and count) the next multi-block child index.
     procedure, pass(self) :: write_fielddata_tag               !< Write FieldData tag.
@@ -414,14 +418,14 @@ contains
    if (present(is_tuples)) is_tuples_ = is_tuples
    if (is_tuples_) then
       tag_attributes = 'type="'//data_type_//             &
-        '" NumberOfTuples="'//count// &
+        components_of(number_of_components)//'" NumberOfTuples="'//count// &
         '" Name="'//attr_text(data_name)//                          &
-        '" format="'//self%format_ch//'"'
+        self%component_names_attributes()//'" format="'//self%format_ch//'"'
    else
       tag_attributes = 'type="'//data_type_//                 &
         '" NumberOfComponents="'//count// &
         '" Name="'//attr_text(data_name)//                              &
-        '" format="'//self%format_ch//'"'
+        self%component_names_attributes()//'" format="'//self%format_ch//'"'
    endif
    ! content streamed as is between start and end tags: no copy of it (issue #70)
    call self%write_tag(name=tag_name, attributes=tag_attributes%chars(), content=data_content)
@@ -447,19 +451,47 @@ contains
    if (present(is_tuples)) is_tuples_ = is_tuples
    if (is_tuples_) then
       tag_attributes =  'type="'//data_type_//            &
-        '" NumberOfTuples="'//count// &
+        components_of(number_of_components)//'" NumberOfTuples="'//count// &
         '" Name="'//attr_text(data_name)//                          &
-        '" format="'//self%format_ch//                                  &
+        self%component_names_attributes()//'" format="'//self%format_ch// &
         '" offset="'//trim(str(self%ioffset, .true.))//'"'
    else
       tag_attributes = 'type="'//data_type_//                 &
         '" NumberOfComponents="'//count// &
         '" Name="'//attr_text(data_name)//                              &
-        '" format="'//self%format_ch//                                      &
+        self%component_names_attributes()//'" format="'//self%format_ch// &
         '" offset="'//trim(str(self%ioffset, .true.))//'"'
    endif
    call self%write_self_closing_tag(name=tag_name, attributes=tag_attributes%chars())
    endsubroutine write_dataarray_tag_appended
+
+   pure function components_of(number_of_components) result(attribute)
+   !< `" NumberOfComponents="n` for a tuples-counted DataArray (field data) of more than one component, empty otherwise (the
+   !< bytes of the one-component tags unchanged).
+   integer(I4P), intent(in)      :: number_of_components !< Number of components.
+   character(len=:), allocatable :: attribute            !< Attribute text, to put after the type value.
+
+   attribute = ''
+   if (number_of_components > 1) attribute = '" NumberOfComponents="'//trim(str(number_of_components, .true.))
+   endfunction components_of
+
+   function component_names_attributes(self) result(attributes)
+   !< The `ComponentName<i>` attributes of the names set by `set_component_names` (then unset), as VTK writes them, to put
+   !< after the value of Name; empty if none.
+   class(xml_writer_abstract), intent(inout) :: self       !< Writer.
+   character(len=:), allocatable             :: attributes !< Attributes text.
+   integer(I4P)                              :: first, c, i !< Positions, counter.
+
+   attributes = ''
+   if (.not.allocated(self%component_names)) return
+   first = 1 ; i = 0
+   do c=1, len(self%component_names)
+      if (self%component_names(c:c) /= achar(0)) cycle
+      attributes = attributes//'" ComponentName'//trim(str(i, .true.))//'="'//attr_text(self%component_names(first:c-1))
+      i = i + 1 ; first = c + 1
+   enddo
+   deallocate(self%component_names)
+   endfunction component_names_attributes
 
    subroutine dataarray_tag_overrides(self, data_type, number_of_components, tag_name, data_type_, count)
    !< Return element name, type and count of the next DataArray tag, applying (then unsetting) the one-shot overrides.
@@ -808,6 +840,55 @@ contains
    self%tuples_override = size(x, kind=I8P)
    error = self%write_dataarray(data_name=data_name, x=bytes, is_tuples=.true.)
    endfunction write_fielddata_strings
+
+   function set_component_names(self, names) result(error)
+   !< Name the components of the next DataArray written: `ComponentName0="..." ComponentName1="..."`, as VTK writes them
+   !< (ParaView shows them in its component lists); one name per component (trailing blanks trimmed).
+   !<
+   !<```fortran
+   !< error = vtk%xml_writer%set_component_names(['u', 'v', 'w'])
+   !< error = vtk%xml_writer%write_dataarray(data_name='velocity', x=vx, y=vy, z=vz)
+   !<```
+   class(xml_writer_abstract), intent(inout) :: self      !< Writer.
+   character(*),               intent(in)    :: names(1:) !< Names of the components.
+   integer(I4P)                              :: error     !< Error status.
+   integer(I4P)                              :: i         !< Counter.
+
+   self%component_names = ''
+   do i=1, size(names)
+      self%component_names = self%component_names//trim(names(i))//achar(0)
+   enddo
+   error = 0
+   endfunction set_component_names
+
+   function write_fielddata1_rank2(self, data_name, x) result(error)
+   !< Write a FieldData array of several components, `x(components, tuples)`: `<DataArray NumberOfComponents="n"
+   !< NumberOfTuples="m">` (numbers of any kind).
+   class(xml_writer_abstract), intent(inout) :: self      !< Writer.
+   character(*),               intent(in)    :: data_name !< Data name.
+   class(*),                   intent(in)    :: x(1:,1:)  !< Data variable, components then tuples.
+   integer(I4P)                              :: error     !< Error status.
+
+   self%tuples_override = size(x, dim=2, kind=I8P)
+   select type(x)
+   type is(real(R8P))
+      self%error = self%write_dataarray(data_name=data_name, x=x, is_tuples=.true.)
+   type is(real(R4P))
+      self%error = self%write_dataarray(data_name=data_name, x=x, is_tuples=.true.)
+   type is(integer(I8P))
+      self%error = self%write_dataarray(data_name=data_name, x=x, is_tuples=.true.)
+   type is(integer(I4P))
+      self%error = self%write_dataarray(data_name=data_name, x=x, is_tuples=.true.)
+   type is(integer(I2P))
+      self%error = self%write_dataarray(data_name=data_name, x=x, is_tuples=.true.)
+   type is(integer(I1P))
+      self%error = self%write_dataarray(data_name=data_name, x=x, is_tuples=.true.)
+   class default
+      self%tuples_override = -1_I8P
+      self%error = 1
+   endselect
+   error = self%error
+   endfunction write_fielddata1_rank2
 
    function write_dataarray_strings(self, data_name, x) result(error)
    !< Write a string array of the open location (point data, cell data, a Table column) as VTK does: `<Array type="String"

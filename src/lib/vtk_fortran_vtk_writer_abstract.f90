@@ -32,6 +32,8 @@ type, abstract :: vtk_writer_abstract
     procedure(write_connectivity_I8P_interface), deferred, pass(self) :: write_connectivity_I8P
     procedure(write_dataarray_location_tag_interface), deferred, pass(self) :: write_dataarray_location_tag
     procedure(write_dataarray_strings_interface), deferred, pass(self) :: write_dataarray_strings
+    procedure(set_component_names_interface), deferred, pass(self) :: set_component_names
+    procedure(write_fielddata1_rank2_interface), deferred, pass(self) :: write_fielddata1_rank2
     procedure(write_fielddata1_rank0_interface), deferred, pass(self) :: write_fielddata1_rank0
     procedure(write_fielddata1_rank1_interface), deferred, pass(self) :: write_fielddata1_rank1
     procedure(write_fielddata_tag_interface), deferred, pass(self) :: write_fielddata_tag
@@ -174,6 +176,7 @@ type, abstract :: vtk_writer_abstract
     generic :: write_fielddata => &
                write_fielddata1_rank0, &
                write_fielddata1_rank1, &
+               write_fielddata1_rank2, &
                write_fielddata_tag
     generic :: write_dataarray_unsigned => &
                write_dataarray_unsigned_I1P, &
@@ -874,6 +877,24 @@ abstract interface
   character(*),               intent(in)    :: x(1:)
   integer(I4P)                             :: error
   endfunction write_dataarray_strings_interface
+
+  function set_component_names_interface(self, names) result(error)
+  !< Name the components of the next data array written (one name per component; XML `ComponentName<i>`, read back by
+  !< `get_dataarray_info(..., component_names=)`; VTKHDF has none: accepted, not written).
+  import :: vtk_writer_abstract, I4P
+  class(vtk_writer_abstract), intent(inout) :: self
+  character(*),               intent(in)    :: names(1:)
+  integer(I4P)                             :: error
+  endfunction set_component_names_interface
+
+  function write_fielddata1_rank2_interface(self, data_name, x) result(error)
+  !< Write a field data array of several components: `x(components, tuples)`.
+  import :: vtk_writer_abstract, I4P
+  class(vtk_writer_abstract), intent(inout) :: self
+  character(*),               intent(in)   :: data_name
+  class(*),                   intent(in)   :: x(1:,1:)
+  integer(I4P)                             :: error
+  endfunction write_fielddata1_rank2_interface
 
   function write_fielddata1_rank0_interface(self, data_name, x) result(error)
   import :: vtk_writer_abstract, I4P

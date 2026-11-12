@@ -75,6 +75,7 @@ version, a history of residuals, etc. Write it right after `initialize`, before 
 |-----|------------|
 | scalar of any PENF kind (`R8P`, `R4P`, `I8P`, `I4P`, `I2P`, `I1P`) | `DataArray` with 1 tuple |
 | rank-1 array of any PENF kind | `DataArray` with `size(x)` tuples, one component each |
+| rank-2 array `x(components, tuples)` of any PENF kind | `DataArray` with `size(x, 2)` tuples of `size(x, 1)` components |
 | `character` scalar | `Array type="String"` with 1 tuple |
 | `character` rank-1 array | `Array type="String"` with `size(x)` tuples, one string each |
 
@@ -86,6 +87,19 @@ VTKFortran reads them back with `read_dataarray(location='field', ...)`, see [Re
 In the VTKHDF format, field data are the datasets of the group `FieldData`; strings are variable-length string datasets,
 as VTK's `vtkHDFWriter` writes them (in a time series the strings of each step, of any number; refused with `comm`:
 parallel HDF5 writes no variable-length type). VTK 9.7.2 reads them, static and step by step.
+
+## Component names
+
+`set_component_names(names)` names the components of the next data array written (one name per component, trailing
+blanks trimmed), written as VTK writes them, `ComponentName0="u" ComponentName1="v" ...`: ParaView shows them in its lists
+of components. They apply to the next array only. Read back with `get_dataarray_info(..., component_names=names)`. The
+VTKHDF format has no component names (not in the specification; VTK's `vtkHDFWriter` drops them): the call is accepted,
+nothing is written.
+
+```fortran
+error = a_vtk_file%xml_writer%set_component_names(['u', 'v', 'w'])
+error = a_vtk_file%xml_writer%write_dataarray(data_name='velocity', x=vx, y=vy, z=vz)
+```
 
 ## String arrays
 

@@ -225,6 +225,8 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
     procedure, pass(self) :: write_fielddata1_rank0
     procedure, pass(self) :: write_fielddata1_rank1
     procedure, pass(self) :: free
+    procedure, pass(self) :: set_component_names
+    procedure, pass(self) :: write_fielddata1_rank2
     procedure, pass(self) :: write_dataarray_strings
     procedure, pass(self) :: get_xml_volatile
     procedure, pass(self) :: write_dataarray1_rank1_R8P
@@ -1003,6 +1005,44 @@ contains
   self%is_parallel = .false.
   if (present(error)) error = 0_I4P
   endsubroutine free
+
+  function set_component_names(self, names) result(error)
+  !< Component names: none in VTKHDF (not in the specification; vtkHDFWriter drops them): accepted, not written.
+  class(vtkhdf_writer),       intent(inout) :: self
+  character(*),               intent(in)    :: names(1:)
+  integer(I4P)                              :: error
+
+  error = 0_I4P
+  if (size(names) < 0) error = 1_I4P ! (names unused)
+  endfunction set_component_names
+
+  function write_fielddata1_rank2(self, data_name, x) result(error)
+  !< Write a field data array of several components, `x(components, tuples)`: a dataset of FieldData.
+  class(vtkhdf_writer),       intent(inout) :: self
+  character(*),               intent(in)    :: data_name
+  class(*),                   intent(in)    :: x(1:,1:)
+  integer(I4P)                              :: error
+
+  error = 1_I4P
+  if (self%group < 0_hid_kind) return
+  if (self%group_name /= 'FieldData') return
+  select type(x)
+  type is(real(R8P))
+    error = put_R8P(self, data_name, x, size(x, kind=I8P), size(x, dim=1, kind=I4P))
+  type is(real(R4P))
+    error = put_R4P(self, data_name, x, size(x, kind=I8P), size(x, dim=1, kind=I4P))
+  type is(integer(I8P))
+    error = put_I8P(self, data_name, x, size(x, kind=I8P), size(x, dim=1, kind=I4P))
+  type is(integer(I4P))
+    error = put_I4P(self, data_name, x, size(x, kind=I8P), size(x, dim=1, kind=I4P))
+  type is(integer(I2P))
+    error = put_I2P(self, data_name, x, size(x, kind=I8P), size(x, dim=1, kind=I4P))
+  type is(integer(I1P))
+    error = put_I1P(self, data_name, x, size(x, kind=I8P), size(x, dim=1, kind=I4P))
+  class default
+    error = refuse('field data of this type are not supported')
+  endselect
+  endfunction write_fielddata1_rank2
 
   function write_dataarray_strings(self, data_name, x) result(error)
   !< A string array of point, cell data or a Table column: refused (VTK 9.7.2 reads the strings of a
@@ -5585,7 +5625,8 @@ contains
     if (error == 0_I4P .and. reused) then
       error = self%step_entry('FieldDataSizes/'//name, sizes(2_I8P * k - 3_I8P:2_I8P * k - 2_I8P))
     elseif (error == 0_I4P) then
-      error = self%step_entry('FieldDataSizes/'//name, [1_I8P, dims(size(dims)) - offset])
+      ! components (the first Fortran dimension of a field array of several), tuples of the step
+      error = self%step_entry('FieldDataSizes/'//name, [merge(dims(1), 1_I8P, size(dims) > 1), dims(size(dims)) - offset])
     endif
     first = last + 1_I8P
   enddo

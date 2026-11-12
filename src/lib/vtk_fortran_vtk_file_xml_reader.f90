@@ -457,8 +457,10 @@ contains
   enddo
   endfunction get_dataarray_names
 
-  function get_dataarray_info(self, location, data_name, piece, data_type, n_components, n_tuples) result(error)
-  !< Return the VTK type, the number of components and the number of tuples of a dataarray, without reading it.
+  function get_dataarray_info(self, location, data_name, piece, data_type, n_components, n_tuples, component_names) &
+    result(error)
+  !< Return the VTK type, the number of components, the number of tuples and the component names of a dataarray, without
+  !< reading it.
   !<
   !< The number of tuples is the `NumberOfTuples` attribute when present, otherwise the number of points or cells of the
   !< piece; -1 when unknown (field data without `NumberOfTuples`, arrays declared by a parallel header).
@@ -469,8 +471,11 @@ contains
   character(len=:), allocatable, intent(out), optional :: data_type    !< VTK type, e.g. Float64, Int32, UInt8, String.
   integer(I4P),                  intent(out), optional :: n_components !< Number of components.
   integer(I8P),                  intent(out), optional :: n_tuples     !< Number of tuples.
+  character(len=:), allocatable, intent(out), optional :: component_names(:) !< Names of the components (`ComponentName<i>`),
+                                                                       !< blank padded, empty names if none (VTKHDF: none).
   integer(I4P)                                         :: error        !< Error status.
   integer(I4P)                                         :: id           !< Index of the dataarray element.
+  integer(I4P)                                         :: nc, c, l     !< Components, counter, longest name.
   integer(I4P)                                         :: section      !< Index of the location element.
   integer(I4P)                                         :: p            !< Index of the piece element.
   integer(I8P)                                         :: counts(6)    !< Points, cells, verts, lines, strips, polys.
@@ -480,11 +485,25 @@ contains
 
   if (self%is_hdf) then
     error = self%hdf%get_dataarray_info(location=location, data_name=data_name, piece=piece, data_type=data_type, &
-                                        n_components=n_components, n_tuples=n_tuples)
+                                        n_components=nc, n_tuples=n_tuples)
+    if (present(n_components)) n_components = nc
+    if (present(component_names)) allocate(character(len=0) :: component_names(max(nc, 0)))
     return
   endif
   error = self%find_dataarray(location=location, data_name=data_name, piece=piece, id=id, section=section)
   if (error /= 0) return
+  if (present(component_names)) then
+    nc = 1
+    call self%xml%get_attribute(id=id, name='NumberOfComponents', value=nc)
+    l = 0
+    do c=0, nc - 1
+      l = max(l, len(self%xml%attribute(id=id, name='ComponentName'//trim(str(c, no_sign=.true.)))))
+    enddo
+    allocate(character(len=l) :: component_names(max(nc, 0)))
+    do c=0, nc - 1
+      component_names(c+1) = self%xml%attribute(id=id, name='ComponentName'//trim(str(c, no_sign=.true.)))
+    enddo
+  endif
   iostat = 0
   if (present(data_type)) data_type = self%xml%attribute(id=id, name='type')
   if (present(n_components)) then

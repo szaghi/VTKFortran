@@ -22,7 +22,7 @@ indexed, and its data are then read, array by array, through the `xml_reader` co
 | `read_connectivity(connectivity, offset, cell_type, face, faceoffset, piece)` | cells of an `UnstructuredGrid`, ids `I4P` or `I8P`, cell types `I1P`, polyhedra faces if present, as the face stream of `write_connectivity` |
 | `read_polydata_cells(block, connectivity, offset, piece)` | one block of `PolyData` cells: `block` is `'verts'`, `'lines'`, `'strips'` or `'polys'`; ids `I4P` or `I8P` |
 | `get_dataarray_names(location, names, piece)` | names of the arrays of `location`, in the order of the file |
-| `get_dataarray_info(location, data_name, piece, data_type, n_components, n_tuples)` | VTK type, components and tuples of an array, without reading it |
+| `get_dataarray_info(location, data_name, piece, data_type, n_components, n_tuples, component_names)` | VTK type, components, tuples and component names (`ComponentName<i>`, empty if none) of an array, without reading it |
 | `get_active(location, role, data_name, piece)` | name of the active array of a role (`Scalars`, ..., `GlobalIds`, ..., `ProcessIds`, case insensitive), empty if none |
 | `read_dataarray(location, data_name, x, piece)` | the values of an array |
 

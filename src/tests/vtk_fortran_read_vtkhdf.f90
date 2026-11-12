@@ -17,7 +17,8 @@ program vtk_fortran_read_vtkhdf
 !< components, an array keeping the axis of one point (the literal shape of the specification) refused (error 6); string
 !< arrays as vtkHDFWriter writes them (variable-length strings: field data and point data), added with the bindings;
 !< string field data written by the writer, static (an ImageData) and in a time series (an UnstructuredGrid of 2 steps,
-!< other strings at each step), read back step by step.
+!< other strings at each step), read back step by step; field data of several components (`x(components, tuples)`)
+!< static and in a 2-step series (`FieldDataSizes` with the components), component names accepted (none in VTKHDF).
 !< Without HDF5 the reader refuses a VTKHDF file.
 use penf
 use vtk_fortran, only : vtk_file
@@ -25,7 +26,7 @@ use vtk_fortran_hdf5
 
 implicit none
 type(vtk_file)                :: w, r                    !< Writer, reader.
-logical                       :: ok(16)                  !< Checks.
+logical                       :: ok(17)                  !< Checks.
 integer(I4P)                  :: e, i                    !< Error, counter.
 integer(I4P), parameter       :: cube(31) = [6, 4, 0, 3, 2, 1,  4, 4, 5, 6, 7,  4, 0, 1, 5, 4,  4, 1, 2, 6, 5, &
                                              4, 2, 3, 7, 6,  4, 3, 0, 4, 7] !< Faces of a unit cube.
@@ -54,8 +55,10 @@ else
   ok(14) = grid_axes()
   ok(15) = string_arrays()
   ok(16) = string_field_data()
-  print '(A,16L2)', 'VTKHDF read: image, rect, strg, unst, poly, series, image series, I4P, errors, shared faces, reused, '// &
-                    'vlen strings, FieldDataSizes optional, grid axes, string arrays, string field data:', ok
+  ok(17) = field_components()
+  print '(A,17L2)', 'VTKHDF read: image, rect, strg, unst, poly, series, image series, I4P, errors, shared faces, reused, '// &
+                    'vlen strings, FieldDataSizes optional, grid axes, string arrays, string field data, '// &
+                    'field components:', ok
 endif
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(ok)
@@ -677,6 +680,51 @@ contains
   e = r%finalize()
   if (.not.string_field_data) print '(A,8I3)', 'string field data: errors ', ee
   endfunction string_field_data
+
+  logical function field_components()
+  !< Field data of 3 components (`x(3, tuples)`): static (2 tuples) and in a 2-step series (1 then 2 tuples), read back
+  !< with their components; `set_component_names` accepted (VTKHDF has no component names: none read back).
+  real(R8P), allocatable        :: fd(:,:)
+  character(len=:), allocatable :: names(:)
+  integer(I4P)                  :: ee(8), s, nc
+
+  ee = 0
+  ee(1) = w%initialize(format='vtkhdf', filename='read_field_components.vtkhdf', mesh_topology='UnstructuredGrid')
+  ee(2) = w%xml_writer%write_fielddata(action='open')
+  ee(2) = ee(2) + abs(w%xml_writer%write_fielddata(data_name='bounds', x=reshape([(real(i, R8P), i=1, 6)], [3, 2])))
+  ee(2) = ee(2) + abs(w%xml_writer%write_fielddata(action='close'))
+  ee(3) = abs(tetra(4, 0._R8P))
+  ee(3) = ee(3) + abs(w%xml_writer%set_component_names([character(1) :: 'a', 'b', 'c']))
+  ee(3) = ee(3) + abs(w%finalize())
+  field_components = all(ee == 0) .and. r%initialize(filename='read_field_components.vtkhdf', action='read') == 0
+  e = r%xml_reader%get_dataarray_info(location='field', data_name='bounds', n_components=nc, component_names=names)
+  e = e + abs(r%xml_reader%read_dataarray(location='field', data_name='bounds', x=fd))
+  field_components = field_components .and. e == 0 .and. nc == 3
+  if (field_components) field_components = all(shape(fd) == [3, 2]) .and. size(names) == 3
+  if (field_components) field_components = all(fd == reshape([(real(i, R8P), i=1, 6)], [3, 2]))
+  e = r%finalize()
+  ee(4) = w%initialize(format='vtkhdf', filename='read_field_components_series.vtkhdf', mesh_topology='UnstructuredGrid')
+  do s=1, 2
+    ee(5) = ee(5) + abs(w%xml_writer%write_step(time=real(s, R8P)))
+    ee(6) = ee(6) + abs(w%xml_writer%write_fielddata(action='open'))
+    ee(6) = ee(6) + abs(w%xml_writer%write_fielddata(data_name='probe', x=reshape([(real(10 * s + i, R8P), i=1, 3 * s)], [3, s])))
+    ee(6) = ee(6) + abs(w%xml_writer%write_fielddata(action='close'))
+    ee(7) = ee(7) + abs(tetra(4, 0._R8P))
+  enddo
+  ee(8) = w%finalize()
+  field_components = field_components .and. all(ee == 0) .and. &
+                     r%initialize(filename='read_field_components_series.vtkhdf', action='read') == 0
+  do s=1, 2
+    e = r%xml_reader%set_step(s)
+    e = e + abs(r%xml_reader%read_dataarray(location='field', data_name='probe', x=fd))
+    field_components = field_components .and. e == 0
+    if (field_components) field_components = all(shape(fd) == [3, s])
+    if (field_components) field_components = all(fd == reshape([(real(10 * s + i, R8P), i=1, 3 * s)], [3, s]))
+    if (.not.field_components) exit
+  enddo
+  e = r%finalize()
+  if (.not.field_components) print '(A,8I3)', 'field data components: errors ', ee
+  endfunction field_components
 
   function cell_data(cid) result(error)
   !< The cell data cid of a piece, then the end of the piece.

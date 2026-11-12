@@ -12,7 +12,8 @@ program vtk_fortran_read
 !< non-finite values written in every format and read back, and in a `.pvd`; a 6-component ASCII array (written
 !< u v w x y z, w and x joined) with non-finite values where w and x meet; `type="Bit"` arrays of two files written by
 !< VTK 9.7.2 (ascii, binary), embedded below; string arrays written as point and cell data in every format and as a column
-!< of a `.vtt` Table (a column of other rows refused, the next column unaffected), read back.
+!< of a `.vtt` Table (a column of other rows refused, the next column unaffected), read back; component names
+!< (`set_component_names`, the next array only) and field data of several components in every format, read back.
 use penf
 use, intrinsic :: ieee_arithmetic, only : ieee_is_nan, ieee_is_finite, ieee_value, ieee_quiet_nan, &
                                           ieee_positive_inf, ieee_negative_inf
@@ -27,7 +28,7 @@ real(R8P),    parameter :: p(4)=[1.5_R8P, -2.25_R8P, 1.e-300_R8P, 4._R8P/3._R8P]
 real(R4P),    parameter :: v(3,4)=reshape([1,2,3, 4,5,6, 7,8,9, 10,11,12], [3,4]) * 0.1_R4P !< Point vectors.
 type(vtk_file)          :: a_vtk_file      !< A VTK file.
 integer(I4P)            :: f               !< Counter.
-logical                 :: test_passed(16) !< List of passed tests.
+logical                 :: test_passed(17) !< List of passed tests.
 
 test_passed = .true.
 do f=1, size(formats)
@@ -54,6 +55,7 @@ test_passed(13) = check_names_and_non_finite()
 test_passed(14) = check_six_non_finite()
 test_passed(15) = check_vtk_bits()
 test_passed(16) = check_string_arrays()
+test_passed(17) = check_components()
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 if (.not.all(test_passed)) error stop 'some tests failed'
@@ -761,6 +763,60 @@ contains
                              ieee_is_nan(t(4,2)) .and. t(3,3) == 3._R8P .and. t(4,3) == -4._R8P
   if (.not.is_passed) print '(A,*(1X,I0))', 'failed: vtkfortran_read-six.vtu', e
   endfunction check_six_non_finite
+
+  function check_components() result(is_passed)
+  !< Component names (`set_component_names`: `ComponentName<i>` of the next array only) of a 3-component point array, and
+  !< a field data array of 3 components and 2 tuples, in every format; read back (names, values, counts).
+  logical                       :: is_passed !< Check result.
+  character(len=:), allocatable :: names(:)  !< Component names read.
+  real(R8P),        allocatable :: fd(:,:)   !< Field data read.
+  integer(I4P)                  :: nc, f     !< Components, counter.
+  integer(I8P)                  :: nt        !< Tuples.
+  integer(I4P)                  :: e(12)     !< Errors.
+
+  is_passed = .true.
+  do f=1, size(formats)
+    e = 0
+    e(1) = a_vtk_file%initialize(format=trim(formats(f)), filename='vtkfortran_read-components-'//trim(formats(f))//'.vtu', &
+                                 mesh_topology='UnstructuredGrid')
+    e(2) = a_vtk_file%xml_writer%write_fielddata(action='open')
+    e(2) = e(2) + abs(a_vtk_file%xml_writer%write_fielddata(data_name='bounds', &
+                                                            x=reshape([0._R8P, 1._R8P, 2._R8P, 3._R8P, 4._R8P, 5._R8P], [3, 2])))
+    e(2) = e(2) + abs(a_vtk_file%xml_writer%write_fielddata(action='close'))
+    e(3) = a_vtk_file%xml_writer%write_piece(np=4, nc=1)
+    e(4) = a_vtk_file%xml_writer%write_geo(np=4, nc=1, x=x, y=y, z=z)
+    e(5) = a_vtk_file%xml_writer%write_connectivity(nc=1, connectivity=[0_I4P, 1_I4P, 2_I4P, 3_I4P], offset=[4_I4P], &
+                                                    cell_type=[10_I1P])
+    e(6) = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
+    e(7) = a_vtk_file%xml_writer%set_component_names([character(4) :: 'u', 'v', 'wall'])
+    e(8) = a_vtk_file%xml_writer%write_dataarray(data_name='vel', x=v)
+    e(9) = a_vtk_file%xml_writer%write_dataarray(data_name='p', x=p) ! no names: they apply to the next array only
+    e(10) = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
+    e(11) = a_vtk_file%xml_writer%write_piece()
+    e(12) = a_vtk_file%finalize()
+    is_passed = is_passed .and. all(e == 0)
+    e = 0
+    e(1) = a_vtk_file%initialize(filename='vtkfortran_read-components-'//trim(formats(f))//'.vtu', action='read')
+    e(2) = a_vtk_file%xml_reader%get_dataarray_info(location='node', data_name='vel', n_components=nc, component_names=names)
+    is_passed = is_passed .and. e(2) == 0 .and. nc == 3
+    if (is_passed) is_passed = size(names) == 3
+    if (is_passed) is_passed = names(1) == 'u' .and. names(2) == 'v' .and. names(3) == 'wall'
+    e(3) = a_vtk_file%xml_reader%get_dataarray_info(location='node', data_name='p', component_names=names)
+    is_passed = is_passed .and. e(3) == 0
+    if (is_passed) is_passed = size(names) == 1
+    if (is_passed) is_passed = len_trim(names(1)) == 0
+    e(4) = a_vtk_file%xml_reader%get_dataarray_info(location='field', data_name='bounds', n_components=nc, n_tuples=nt)
+    e(5) = a_vtk_file%xml_reader%read_dataarray(location='field', data_name='bounds', x=fd)
+    e(6) = a_vtk_file%finalize()
+    is_passed = is_passed .and. all(e == 0) .and. nc == 3 .and. nt == 2_I8P
+    if (is_passed) is_passed = all(shape(fd) == [3, 2])
+    if (is_passed) is_passed = all(fd == reshape([0._R8P, 1._R8P, 2._R8P, 3._R8P, 4._R8P, 5._R8P], [3, 2]))
+    if (.not.is_passed) then
+      print '(A,*(1X,I0))', 'failed: vtkfortran_read-components-'//trim(formats(f))//'.vtu', e
+      return
+    endif
+  enddo
+  endfunction check_components
 
   function check_string_arrays() result(is_passed)
   !< String arrays (VTK's String): point and cell data written in every format, a column of a Table (`.vtt`) next to a
