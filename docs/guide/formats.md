@@ -133,8 +133,13 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
   it: `Dimensions`, `BranchFactor`, `XCoordinates`..., `Descriptors` and `Mask` (bits packed MSB first, contiguous across
   the trees), `DescriptorsSize` (bits), `TreeIds`, `DepthPerTree`, `NumberOfCellsPerTreeDepth`, `NumberOfTrees`,
   `NumberOfDepths`, `NumberOfCells`, `CellData`. Checked: each descriptor against its depths, the mask, the tree ids
-  (in the root grid, once), the size of the cell data. Refused: point data, field data, a time series, `comm`, the XML
-  formats; the reader of the library does not read it (error 3). VTK 9.7.2 reads it; ParaView 6.1.1 reads it too, but
+  (in the root grid, once), the size of the cell data. A time series (`write_step`): every step writes its piece (its
+  coordinates, trees and cell data) appended to those of the steps before, each step's bits from a new byte, the mask
+  always, with the `Steps` entries VTK 9.7.2 writes (`TreeIdsOffsets`, `DepthPerTreeOffsets`,
+  `NumberOfCellsPerTreeDepthOffsets`, `DescriptorsOffsets`, `MaskOffsets`, `X/Y/ZCoordinatesOffsets`, `PartOffsets`,
+  `NumberOfParts`, `CellDataOffsets/<name>`); VTK 9.7.2 reads each step (its pipeline time too). Refused: point data,
+  field data, a step without its piece, `comm`, `action='append'`, the XML formats; the reader of the library does not
+  read it (error 3). VTK 9.7.2 reads it; ParaView 6.1.1 reads it too, but
   not the test's grid with a masked leaf and a root cell without tree (nor the same grid as VTK 9.7.2 writes it). A
   complete program: [A tree-based AMR](/manual/cookbook#a-tree-based-amr).
 - **Time series** (`Steps`): each output starts with `xml_writer%write_step(time)`; the pieces of every step are

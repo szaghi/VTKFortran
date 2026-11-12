@@ -195,6 +195,7 @@ coordinates, its trees (`write_tree`, each the refinement of its cells breadth f
 - A tree is given breadth first, the children of a cell x fastest, every depth but the deepest (its cells are all
   leaves); a mask can hide leaves.
 - Cell data only, one value per cell of the trees, after the trees, in their order.
+- In a time series (`write_step` before each output) every step writes its piece: coordinates, trees, cell data.
 - The layout, the refusals and the readers: [VTKHDF](/guide/formats#vtkhdf-hdf5); a complete program:
   [A tree-based AMR](/manual/cookbook#a-tree-based-amr).
 

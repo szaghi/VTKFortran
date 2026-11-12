@@ -4,12 +4,14 @@ program vtk_fortran_write_vtkhdf_htg
 !<
 !< With HDF5 the test writes a HyperTreeGrid of a 2x2 root grid, branch factor 2: tree 0 of depth 3 (its root and its first
 !< child refined), tree 1 of depth 2, tree 3 a masked leaf (tree 2 not written), cell data (R8P, I4P); and one of a single
-!< tree of branch factor 3 and depth 3. It reads them back with the HDF5 bindings: the attributes, every dataset, the
-!< descriptors and the mask unpacked (bits MSB first) and compared with the bits written. VTK readers compare them with
+!< tree of branch factor 3 and depth 3; and a time series of 2 steps (the trees of the probe, then others, a mask in
+!< each step). It reads them back with the HDF5 bindings: the attributes, every dataset, the descriptors and the mask
+!< unpacked (bits MSB first) and compared with the bits written, the `Steps` entries of the series. VTK readers compare them with
 !< the same trees built in VTK outside this test. Then the refusals: a descriptor ending inside a depth or giving the
 !< deepest depth, a mask of the wrong size or masking a refined cell, a tree out of the root grid or written twice, point
 !< data, field data, a tree after the cell data, cell data of the wrong size, a piece without trees or coordinates, a
-!< branch factor of 4, a time series, `write_tree` in another topology. The reader refuses a HyperTreeGrid (error 3).
+!< branch factor of 4, a step without its piece, `write_tree` in another topology, the series continued
+!< (`action='append'`). The reader refuses a HyperTreeGrid (error 3).
 !< Without HDF5 the writer refuses a HyperTreeGrid; the XML formats refuse it always.
 use penf
 use vtk_fortran, only : vtk_file
@@ -17,7 +19,7 @@ use vtk_fortran_hdf5
 
 implicit none
 type(vtk_file) :: w     !< Writer.
-logical        :: ok(4) !< Checks.
+logical        :: ok(5) !< Checks.
 integer(I4P)   :: e     !< Error.
 
 ok = .false.
@@ -33,8 +35,9 @@ else
   ok(2) = binary_htg()
   ok(3) = ternary_htg()
   ok(4) = refusals()
+  ok(5) = series_htg()
 endif
-print '(A,4L2)', 'VTKHDF HyperTreeGrid: XML refused, branch factor 2, branch factor 3, refusals:', ok
+print '(A,5L2)', 'VTKHDF HyperTreeGrid: XML refused, branch factor 2, branch factor 3, refusals, series:', ok
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(ok)
 if (.not.all(ok)) error stop 'some tests failed'
@@ -178,6 +181,63 @@ contains
   if (error == 0) error = h5_group_close(root)
   endfunction h5_attribute_read_in
 
+  logical function series_htg()
+  !< A time series of 2 steps: the trees of the probe (step 1), then tree 0 a leaf, tree 1 of depth 3, tree 2 a refined
+  !< root with a masked child (step 2); the cell data of each step its cells, from 0; the Steps entries read back.
+  logical, parameter        :: t=.true., f=.false.
+  integer(hid_kind)         :: file_id
+  integer(I8P), allocatable :: ivalues(:)
+  integer(I4P)              :: ee(8), s, i
+  logical                   :: c(4)
+
+  ee = 0 ; c = .false.
+  ee(1) = w%initialize(format='vtkhdf', filename='htg_series.vtkhdf', mesh_topology='HyperTreeGrid', &
+                       nx1=0, nx2=2, ny1=0, ny2=2, nz1=0, nz2=0)
+  do s=1, 2
+    ee(2) = ee(2) + abs(w%xml_writer%write_step(time=0.5_R8P * s))
+    ee(3) = ee(3) + abs(w%xml_writer%write_piece(nx1=0, nx2=2, ny1=0, ny2=2, nz1=0, nz2=0))
+    ee(3) = ee(3) + abs(w%xml_writer%write_geo(x=[0._R8P, 1._R8P, 2._R8P] + s, y=[0._R8P, 1._R8P, 2._R8P], z=[0._R8P]))
+    if (s == 1) then ! 15 cells
+      ee(4) = ee(4) + abs(w%xml_writer%write_tree(tree_id=0, descriptor=[t, t, f, f, f]))
+      ee(4) = ee(4) + abs(w%xml_writer%write_tree(tree_id=1, descriptor=[t]))
+      ee(4) = ee(4) + abs(w%xml_writer%write_tree(tree_id=3, descriptor=[logical ::], mask=[t]))
+    else             ! 1 + 9 + 5 = 15 cells
+      ee(5) = ee(5) + abs(w%xml_writer%write_tree(tree_id=0, descriptor=[logical ::]))
+      ee(5) = ee(5) + abs(w%xml_writer%write_tree(tree_id=1, descriptor=[t, f, f, f, t]))
+      ee(5) = ee(5) + abs(w%xml_writer%write_tree(tree_id=2, descriptor=[t], mask=[f, f, t, f, f]))
+    endif
+    ee(6) = ee(6) + abs(w%xml_writer%write_dataarray(location='cell', action='open'))
+    ee(6) = ee(6) + abs(w%xml_writer%write_dataarray(data_name='cd', x=[(real(i + 100 * s, R8P), i=0, 14)]))
+    ee(6) = ee(6) + abs(w%xml_writer%write_dataarray(location='cell', action='close'))
+    ee(6) = ee(6) + abs(w%xml_writer%write_piece())
+  enddo
+  ee(7) = w%finalize()
+  ee(8) = h5_file_open('htg_series.vtkhdf', file_id)
+  e = h5_dataset_read(file_id, 'VTKHDF/Steps/TreeIdsOffsets', ivalues)
+  c(1) = all(ivalues == [0, 3])
+  e = h5_dataset_read(file_id, 'VTKHDF/Steps/NumberOfCellsPerTreeDepthOffsets', ivalues)
+  c(1) = c(1) .and. all(ivalues == [0, 6])
+  e = h5_dataset_read(file_id, 'VTKHDF/Steps/DescriptorsOffsets', ivalues)
+  c(2) = all(ivalues == [0, 1])
+  e = h5_dataset_read(file_id, 'VTKHDF/Steps/MaskOffsets', ivalues)
+  c(2) = c(2) .and. all(ivalues == [0, 2])
+  e = h5_dataset_read(file_id, 'VTKHDF/Steps/CellDataOffsets/cd', ivalues)
+  c(3) = all(ivalues == [0, 15])
+  e = h5_dataset_read(file_id, 'VTKHDF/Steps/XCoordinatesOffsets', ivalues)
+  c(3) = c(3) .and. all(ivalues == [0, 3])
+  e = h5_dataset_read(file_id, 'VTKHDF/NumberOfCells', ivalues)
+  c(4) = all(ivalues == [15, 15])
+  e = h5_dataset_read(file_id, 'VTKHDF/DescriptorsSize', ivalues)
+  c(4) = c(4) .and. all(ivalues == [6, 6])
+  e = h5_file_close(file_id)
+  ! not continued (action='append'): refused, the file left as it was
+  e = w%initialize(format='vtkhdf', filename='htg_series.vtkhdf', action='append')
+  c(4) = c(4) .and. e /= 0
+  e = w%finalize()
+  series_htg = all(c) .and. all(ee == 0)
+  if (.not.series_htg) print '(A,8I3,A,4L2)', 'HyperTreeGrid series: errors ', ee, ' checks ', c
+  endfunction series_htg
+
   logical function refusals()
   !< What a HyperTreeGrid refuses (each a non-zero error). One call per statement: the order of the calls of an
   !< expression is the processor's.
@@ -196,7 +256,8 @@ contains
   e = w%xml_writer%write_fielddata(action='open')
   r(2) = e /= 0                                                              ! field data
   e = w%xml_writer%write_step(time=0._R8P)
-  r(3) = e /= 0                                                              ! a time series
+  e = w%xml_writer%write_step(time=1._R8P)
+  r(3) = e /= 0                                                              ! a step without its piece
   e = w%xml_writer%write_piece(nx1=0, nx2=2, ny1=0, ny2=2, nz1=0, nz2=0)
   e = w%xml_writer%write_geo(x=[0._R8P, 1._R8P, 2._R8P], y=[0._R8P, 1._R8P, 2._R8P], z=[0._R8P])
   e = w%xml_writer%write_tree(tree_id=0, descriptor=[t, t, f])

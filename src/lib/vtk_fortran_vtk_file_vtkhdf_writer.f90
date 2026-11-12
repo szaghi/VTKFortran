@@ -86,7 +86,12 @@ module vtk_fortran_vtk_file_vtkhdf_writer
 !< the trees written, breadth first in each), `write_piece()`. The layout, as VTK 9.7.2 writes it: `Dimensions`,
 !< `BranchFactor`, `Descriptors` and `Mask` (bits packed MSB first, contiguous across the trees), `DescriptorsSize` (bits),
 !< `TreeIds`, `DepthPerTree`, `NumberOfCellsPerTreeDepth`, `NumberOfTrees`, `NumberOfDepths`, `NumberOfCells`, `CellData`.
-!< Refused: point data, field data, time series, `comm`, the XML formats.
+!< A time series (`write_step`): every step writes its piece (its coordinates, trees and cell data), appended to the
+!< datasets of the steps before, each step's bits from a new byte, the mask always; `Steps` holds `PartOffsets`,
+!< `NumberOfParts`, `X/Y/ZCoordinatesOffsets`, `TreeIdsOffsets`, `DepthPerTreeOffsets` (trees),
+!< `NumberOfCellsPerTreeDepthOffsets`, `DescriptorsOffsets`, `MaskOffsets` (bytes), `CellDataOffsets/<name>`, as VTK
+!< 9.7.2 writes them; the file is valid after each step.
+!< Refused: point data, field data, a step without its piece, `comm`, `action='append'`, the XML formats.
 !<
 !< `Version` is written by `finalize` (and after every piece of a time series): 2.0, 2.5 with polyhedra, 2.6 when an
 !< active array is marked, 2.7 for a RectilinearGrid or a StructuredGrid, 2.8 for a Table, 2.2 for an OverlappingAMR time
@@ -195,6 +200,8 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
   integer(I8P)                  :: n_tree_counts=0_I8P     !< Entries of `tree_counts` used.
   integer(I8P)                  :: n_tree_bits=0_I8P       !< Refinement bits used.
   logical                       :: is_tree_data=.false.    !< The cell data of the trees are started.
+  integer(I8P)                  :: tree_totals(5)=0_I8P    !< Of the steps before (HyperTreeGrid series): trees, depth
+                                                           !< entries, descriptor bytes, mask bytes, cells.
   logical                       :: is_parallel=.false.     !< The file is written by the ranks of an MPI communicator.
   integer(I4P)                  :: region(6)=0_I4P         !< Region of this rank of a grid written from ranks: its extent.
   integer(I4P)                  :: rank=0_I4P              !< Rank of this process in `comm`.
@@ -486,6 +493,8 @@ contains
     elseif (self%step_pieces == 0_I8P) then
       error = refuse('the Table, or its last step, has no columns')
     endif
+  elseif (self%topology == TOPOLOGY_HTG .and. self%is_temporal .and. self%step_pieces == 0_I8P) then
+    error = refuse('the last step of the HyperTreeGrid has no piece')
   elseif (self%topology == TOPOLOGY_AMR) then ! every box closed; every step with boxes
     if (self%is_piece_open) then
       error = refuse('the last box of the OverlappingAMR is not closed (write_piece())')
@@ -586,13 +595,14 @@ contains
       error = refuse('the piece of a HyperTreeGrid needs write_geo (its root coordinates)')
     else
       error = self%end_trees()
+      if (error == 0_I4P .and. self%is_temporal) error = self%check_arrays('CellData', self%tree_cells, .false.)
     endif
   elseif ((self%topology == TOPOLOGY_RECT .or. self%topology == TOPOLOGY_STRG) .and. .not.self%is_geo_written &
           .and. .not.(self%is_temporal .and. self%geo_slices > 0_I8P)) then ! a later step reuses the geometry
     error = refuse('the piece of a RectilinearGrid or StructuredGrid needs write_geo (in the first step)')
   endif
   if (error == 0_I4P .and. self%is_temporal) then
-    if (.not.self%is_partitioned() .and. self%topology /= TOPOLOGY_AMR) then ! a grid: one time slice, or none after step 1
+    if (.not.self%is_partitioned() .and. self%topology /= TOPOLOGY_AMR .and. self%topology /= TOPOLOGY_HTG) then ! a grid
       error = self%check_arrays('PointData', 1_I8P, self%n_steps > 1_I8P)
       if (error == 0_I4P) error = self%check_arrays('CellData', 1_I8P, self%n_steps > 1_I8P)
     endif
@@ -630,8 +640,8 @@ contains
     error = refuse('write_step: a time series starts with write_step, before its first piece and field data')
   elseif (self%topology == TOPOLOGY_TABLE .and. (self%step_pieces > 0_I8P .neqv. self%is_temporal)) then
     error = refuse('write_step: a time series of a Table starts with write_step, every step with its columns')
-  elseif (self%topology == TOPOLOGY_HTG) then
-    error = refuse('write_step: a time series of a HyperTreeGrid is not supported')
+  elseif (self%topology == TOPOLOGY_HTG .and. self%is_temporal .and. self%step_pieces == 0_I8P) then
+    error = refuse('write_step: every step of a HyperTreeGrid writes its piece')
   elseif (self%topology == TOPOLOGY_AMR .and. self%is_temporal .and. self%step_pieces == 0_I8P) then
     error = refuse('write_step: every step of an OverlappingAMR writes its boxes')
   elseif (self%is_temporal .and. self%step_pieces == 0_I8P .and. self%n_steps == 1_I8P) then
@@ -656,6 +666,12 @@ contains
       self%step_time = time
       self%step_pieces = 0_I8P
       self%step_local = 0_I4P
+      if (self%topology == TOPOLOGY_HTG) then ! the totals of the steps before; the trees of the new step
+        self%tree_totals = self%tree_totals + [self%n_tree_ids, self%n_tree_counts, (self%n_tree_bits + 7_I8P) / 8_I8P, &
+                                               (self%tree_cells + 7_I8P) / 8_I8P, self%tree_cells]
+        self%n_tree_ids = 0_I8P ; self%n_tree_counts = 0_I8P ; self%n_tree_bits = 0_I8P ; self%tree_cells = 0_I8P
+        self%has_mask = .false. ; self%is_tree_data = .false.
+      endif
       if (self%topology == TOPOLOGY_AMR) then ! the levels are started again; the counts at the start of the step
         self%version_minor = max(self%version_minor, 2_I8P)
         if (allocated(self%level_counts)) self%level_counts(4:6, :) = self%level_counts(1:3, :)
@@ -2494,6 +2510,8 @@ contains
     endif
     self%table_rows = dims(size(dims))
     error = store_R8P(self, self%group, data_name, x, dims)
+  elseif (self%topology == TOPOLOGY_HTG .and. self%is_temporal .and. self%group_name /= 'FieldData') then
+    error = store_R8P(self, self%group, data_name, x, dims) ! appended
   elseif (self%topology == TOPOLOGY_AMR .and. self%group_name /= 'FieldData') then ! a box
     if (is_new .and. (self%level_counts(1, self%level + 1_I4P) > 1_I8P .or. &
                       (.not.self%is_recorded(data_name) .and. self%n_pieces > 1_I4P))) then
@@ -2562,6 +2580,8 @@ contains
     endif
     self%table_rows = dims(size(dims))
     error = store_R4P(self, self%group, data_name, x, dims)
+  elseif (self%topology == TOPOLOGY_HTG .and. self%is_temporal .and. self%group_name /= 'FieldData') then
+    error = store_R4P(self, self%group, data_name, x, dims) ! appended
   elseif (self%topology == TOPOLOGY_AMR .and. self%group_name /= 'FieldData') then ! a box
     if (is_new .and. (self%level_counts(1, self%level + 1_I4P) > 1_I8P .or. &
                       (.not.self%is_recorded(data_name) .and. self%n_pieces > 1_I4P))) then
@@ -2631,6 +2651,8 @@ contains
     endif
     self%table_rows = dims(size(dims))
     error = store_I8P(self, self%group, data_name, x, dims, unsigned=unsigned)
+  elseif (self%topology == TOPOLOGY_HTG .and. self%is_temporal .and. self%group_name /= 'FieldData') then
+    error = store_I8P(self, self%group, data_name, x, dims, unsigned=unsigned) ! appended
   elseif (self%topology == TOPOLOGY_AMR .and. self%group_name /= 'FieldData') then ! a box
     if (is_new .and. (self%level_counts(1, self%level + 1_I4P) > 1_I8P .or. &
                       (.not.self%is_recorded(data_name) .and. self%n_pieces > 1_I4P))) then
@@ -2700,6 +2722,8 @@ contains
     endif
     self%table_rows = dims(size(dims))
     error = store_I4P(self, self%group, data_name, x, dims, unsigned=unsigned)
+  elseif (self%topology == TOPOLOGY_HTG .and. self%is_temporal .and. self%group_name /= 'FieldData') then
+    error = store_I4P(self, self%group, data_name, x, dims, unsigned=unsigned) ! appended
   elseif (self%topology == TOPOLOGY_AMR .and. self%group_name /= 'FieldData') then ! a box
     if (is_new .and. (self%level_counts(1, self%level + 1_I4P) > 1_I8P .or. &
                       (.not.self%is_recorded(data_name) .and. self%n_pieces > 1_I4P))) then
@@ -2769,6 +2793,8 @@ contains
     endif
     self%table_rows = dims(size(dims))
     error = store_I2P(self, self%group, data_name, x, dims, unsigned=unsigned)
+  elseif (self%topology == TOPOLOGY_HTG .and. self%is_temporal .and. self%group_name /= 'FieldData') then
+    error = store_I2P(self, self%group, data_name, x, dims, unsigned=unsigned) ! appended
   elseif (self%topology == TOPOLOGY_AMR .and. self%group_name /= 'FieldData') then ! a box
     if (is_new .and. (self%level_counts(1, self%level + 1_I4P) > 1_I8P .or. &
                       (.not.self%is_recorded(data_name) .and. self%n_pieces > 1_I4P))) then
@@ -2838,6 +2864,8 @@ contains
     endif
     self%table_rows = dims(size(dims))
     error = store_I1P(self, self%group, data_name, x, dims, unsigned=unsigned)
+  elseif (self%topology == TOPOLOGY_HTG .and. self%is_temporal .and. self%group_name /= 'FieldData') then
+    error = store_I1P(self, self%group, data_name, x, dims, unsigned=unsigned) ! appended
   elseif (self%topology == TOPOLOGY_AMR .and. self%group_name /= 'FieldData') then ! a box
     if (is_new .and. (self%level_counts(1, self%level + 1_I4P) > 1_I8P .or. &
                       (.not.self%is_recorded(data_name) .and. self%n_pieces > 1_I4P))) then
@@ -4136,7 +4164,7 @@ contains
   logical                          :: is_reusing_ !< Check result.
 
   is_reusing_ = self%is_temporal .and. self%n_steps > 1_I8P .and. self%step_pieces == 0_I8P .and. &
-                self%topology /= TOPOLOGY_AMR .and. self%topology /= TOPOLOGY_TABLE
+                self%topology /= TOPOLOGY_AMR .and. self%topology /= TOPOLOGY_TABLE .and. self%topology /= TOPOLOGY_HTG
   endfunction is_reusing
 
   subroutine region_block(self, cells, n_components, dims, mem_dims, mem_start, file_start, count)
@@ -4466,9 +4494,32 @@ contains
   endfunction end_box
 
   function end_trees(self) result(error)
-  !< End the piece of a HyperTreeGrid: its trees written (bits packed, MSB first: `Descriptors`, `Mask`), their counts.
+  !< End the piece of a HyperTreeGrid: its trees written (bits packed, MSB first: `Descriptors`, `Mask`), their counts;
+  !< in a time series appended to those of the steps before (each step from a new byte), the mask always written.
   class(vtkhdf_writer), intent(inout) :: self  !< Writer.
   integer(I4P)                        :: error !< Error status.
+
+  if (self%is_temporal) then
+    if (self%n_tree_ids == 0_I8P) then
+      error = refuse('the piece of a HyperTreeGrid needs its trees (write_tree)')
+      return
+    endif
+    error = store_I1P(self, self%root, 'Descriptors', pack_bits(self%tree_bits(1:self%n_tree_bits)), &
+                      [(self%n_tree_bits + 7_I8P) / 8_I8P], unsigned=.true.)
+    if (error == 0_I4P) error = store_I8P(self, self%root, 'DescriptorsSize', [self%n_tree_bits], [1_I8P])
+    if (error == 0_I4P) error = store_I8P(self, self%root, 'TreeIds', self%tree_ids(1:self%n_tree_ids), [self%n_tree_ids])
+    if (error == 0_I4P) error = store_I8P(self, self%root, 'DepthPerTree', self%tree_depths(1:self%n_tree_ids), &
+                                          [self%n_tree_ids])
+    if (error == 0_I4P) error = store_I8P(self, self%root, 'NumberOfCellsPerTreeDepth', &
+                                          self%tree_counts(1:self%n_tree_counts), [self%n_tree_counts])
+    if (error == 0_I4P) error = store_I8P(self, self%root, 'NumberOfTrees', [self%n_tree_ids], [1_I8P])
+    if (error == 0_I4P) error = store_I8P(self, self%root, 'NumberOfDepths', [self%n_tree_counts], [1_I8P])
+    if (error == 0_I4P) error = store_I8P(self, self%root, 'NumberOfCells', [self%tree_cells], [1_I8P])
+    if (error == 0_I4P) error = store_I1P(self, self%root, 'Mask', pack_bits(self%tree_mask(1:self%tree_cells)), &
+                                          [(self%tree_cells + 7_I8P) / 8_I8P], unsigned=.true.)
+    if (error /= 0_I4P) error = refuse('cannot write the trees of the HyperTreeGrid')
+    return
+  endif
 
   if (self%n_tree_ids == 0_I8P) then
     error = refuse('the piece of a HyperTreeGrid needs its trees (write_tree)')
@@ -5026,6 +5077,7 @@ contains
   self%n_tree_counts = 0_I8P
   self%n_tree_bits = 0_I8P
   self%is_tree_data = .false.
+  self%tree_totals = 0_I8P
   do r=1, size(ROLES)
     if (allocated(self%active(r)%name)) deallocate(self%active(r)%name)
   enddo
@@ -5234,6 +5286,18 @@ contains
       if (error == 0_I4P) error = self%step_entry('CellOffsets', self%mesh_blocks([1, 2, 4, 3]))
       if (error == 0_I4P) error = self%step_entry('ConnectivityIdOffsets', self%mesh_blocks([5, 6, 8, 7]))
     endif
+  elseif (self%topology == TOPOLOGY_HTG) then ! where the coordinates, trees, bits and cells of the step start
+    grid = self%grid_points()
+    if (error == 0_I4P) error = self%step_entry('PartOffsets', [k - 1_I8P])
+    if (error == 0_I4P) error = self%step_entry('NumberOfParts', [1_I8P])
+    if (error == 0_I4P) error = self%step_entry('XCoordinatesOffsets', [(k - 1_I8P) * grid(1)])
+    if (error == 0_I4P) error = self%step_entry('YCoordinatesOffsets', [(k - 1_I8P) * grid(2)])
+    if (error == 0_I4P) error = self%step_entry('ZCoordinatesOffsets', [(k - 1_I8P) * grid(3)])
+    if (error == 0_I4P) error = self%step_entry('TreeIdsOffsets', [self%tree_totals(1)])
+    if (error == 0_I4P) error = self%step_entry('DepthPerTreeOffsets', [self%tree_totals(1)])
+    if (error == 0_I4P) error = self%step_entry('NumberOfCellsPerTreeDepthOffsets', [self%tree_totals(2)])
+    if (error == 0_I4P) error = self%step_entry('DescriptorsOffsets', [self%tree_totals(3)])
+    if (error == 0_I4P) error = self%step_entry('MaskOffsets', [self%tree_totals(4)])
   elseif (self%topology == TOPOLOGY_RECT) then ! the coordinates of the last step that wrote them
     grid = self%grid_points()
     if (error == 0_I4P) error = self%step_entry('XCoordinatesOffsets', [(self%geo_slices - 1_I8P) * grid(1)])
