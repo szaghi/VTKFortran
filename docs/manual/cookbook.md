@@ -289,8 +289,10 @@ UnstructuredGrid, a PolyData), or its own region of the grid (ImageData, Rectili
   stops calling leaves the others waiting.
 - An UnstructuredGrid or a PolyData, one piece per rank; a rank can have an empty piece (`np=0`, `nc=0`). A PolyData
   piece without cells still calls `write_polydata_cells()`, with no blocks.
-- Refused with `comm`: a time series of a grid, polyhedra, `compressor='zlib'` (a deflated dataset needs collective
-  writes), the XML formats, `action='read'`. A refusal comes on every rank, also when only one rank's values are
+- Polyhedra (on any ranks: the others write zero entries for their pieces) and `compressor='zlib'` (an HDF5 1.10.2 or
+  later with the deflate filter: a deflated dataset needs collective writes, which the ranks then make) are written as
+  in serial. Refused with `comm`: a time series of a grid, `compressor='zlib'` for a grid, the XML formats,
+  `action='read'`. A refusal comes on every rank, also when only one rank's values are
   wrong (their size, say): the ranks agree on the error before the collective calls, none is left waiting.
 
 A **time series** from the ranks: every rank calls `write_step` with the same time (checked: different times are an

@@ -44,7 +44,8 @@ module vtk_fortran_vtk_file_vtkhdf_writer
 !<
 !< From MPI ranks (`set_comm`): an UnstructuredGrid or PolyData piece per rank (a partition, appended after the ranks
 !< before; in a time series a piece per rank in each step, every rank calling `write_step` with the same time, the
-!< `Steps` entries the totals of all the ranks, written once; `reopen` by the ranks for a parallel restart), or a region
+!< `Steps` entries the totals of all the ranks, written once; `reopen` by the ranks for a parallel restart; polyhedra on
+!< any ranks; compressed datasets with an HDF5 of parallel filtered writes, see `set_comm`), or a region
 !< per rank of one ImageData, RectilinearGrid or StructuredGrid (`write_piece(nx1, ..., nz2)` with
 !< the rank's sub-extent): the datasets are created with the whole extent, by every rank, and each rank writes the block
 !< of its region, the points of a boundary shared with the next region excluded (that region writes them), the
@@ -83,6 +84,7 @@ character(*), parameter :: STEP_GROUPS(4) = ['PointDataOffsets', 'CellDataOffset
 character(*), parameter :: BLOCKS(4) = ['Vertices', 'Lines   ', 'Strips  ', 'Polygons'] !< Groups of the PolyData cells.
 integer(I8P), parameter :: VTK_COLUMN(4) = [1_I8P, 2_I8P, 4_I8P, 3_I8P] !< Column of each block in the rows of Steps.
 character(*), parameter :: NAMES_SEPARATOR = achar(0)    !< Separator of the names of a list (a name has no NUL).
+integer(I8P), parameter :: ZERO_BLOCK = 1048576_I8P     !< Zeros appended at once (polyhedra starting late, with comm).
 
 type :: active_array
   !< Name of the active array of a role.
@@ -247,6 +249,7 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
     procedure, pass(self), private :: mark_active   !< Mark a dataset as active array.
     procedure, pass(self), private :: open_group    !< Open (or create) a data group.
     procedure, pass(self), private :: no_faces      !< Write the zero entries of a piece without polyhedra.
+    procedure, pass(self), private :: add_face_totals !< Add the faces of a piece to the totals (with comm, of the ranks).
     procedure, pass(self), private :: poly_block    !< Check or write a block of cells of a PolyData piece.
     procedure, pass(self), private :: poly_blocks   !< Check or write the four blocks of cells of a PolyData piece.
     procedure, pass(self), private :: end_reusing   !< Check the arrays of a step without pieces, write its entries.
@@ -340,8 +343,12 @@ contains
     error = 0_I4P
     if (.not.is_mpi_enabled) then
       error = refuse('comm: the library is built without MPI (VTKFORTRAN_USE_MPI)')
-    elseif (self%is_compressed) then
-      error = refuse('comm: compressor zlib is not supported (a deflated dataset needs collective writes)')
+    elseif (self%is_compressed .and. .not.self%is_partitioned()) then
+      error = refuse('comm: compressor zlib is for an UnstructuredGrid or a PolyData (the regions of a grid are '// &
+                     'written by each rank alone)')
+    elseif (self%is_compressed .and. .not.h5_parallel_filters_available()) then
+      error = refuse('comm: compressor zlib needs an HDF5 1.10.2 or later with the deflate filter (parallel filtered '// &
+                     'writes)')
     endif
     if (error /= 0_I4P) return
     error = h5_file_create(filename, self%file_id, comm=self%comm)
@@ -1858,16 +1865,29 @@ contains
     error = refuse('write_connectivity: face and faceoffset go together')
     return
   endif
+  error = 0_I4P
   if (present(face)) then
     error = put_faces_I4P(self, int(nc, I8P), face, faceoffset, cell_type, .true.)
-    if (error /= 0_I4P) return
   elseif (any(cell_type == CELL_POLYHEDRON)) then
     error = refuse('write_connectivity: a polyhedron (cell type 42) needs face and faceoffset')
-    return
   endif
+  error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
+  if (error /= 0_I4P) return
   error = put_cells_I4P(self, int(nc, I8P), connectivity, offset, cell_type)
   if (error /= 0_I4P) return
-  if (present(face)) error = put_faces_I4P(self, int(nc, I8P), face, faceoffset, cell_type, .false.)
+  if (self%is_parallel) then ! the file has polyhedra if a rank has some: every rank writes its faces, or none
+    if (h5_mpi_max(self%comm, merge(1_I8P, 0_I8P, present(face))) > 0_I8P) then
+      error = self%start_polyhedra()
+      if (error == 0_I4P .and. present(face)) then
+        error = put_faces_I4P(self, int(nc, I8P), face, faceoffset, cell_type, .false.)
+      elseif (error == 0_I4P) then
+        error = self%no_faces(int(nc, I8P))
+      endif
+      if (error == 0_I4P) self%is_faces_written = .true.
+    endif
+  elseif (present(face)) then
+    error = put_faces_I4P(self, int(nc, I8P), face, faceoffset, cell_type, .false.)
+  endif
   endfunction write_connectivity_I4P
 
   function write_connectivity_I8P(self, nc, connectivity, offset, cell_type, face, faceoffset) result(error)
@@ -1887,16 +1907,29 @@ contains
     error = refuse('write_connectivity: face and faceoffset go together')
     return
   endif
+  error = 0_I4P
   if (present(face)) then
     error = put_faces_I8P(self, int(nc, I8P), face, faceoffset, cell_type, .true.)
-    if (error /= 0_I4P) return
   elseif (any(cell_type == CELL_POLYHEDRON)) then
     error = refuse('write_connectivity: a polyhedron (cell type 42) needs face and faceoffset')
-    return
   endif
+  error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
+  if (error /= 0_I4P) return
   error = put_cells_I8P(self, int(nc, I8P), connectivity, offset, cell_type)
   if (error /= 0_I4P) return
-  if (present(face)) error = put_faces_I8P(self, int(nc, I8P), face, faceoffset, cell_type, .false.)
+  if (self%is_parallel) then ! the file has polyhedra if a rank has some: every rank writes its faces, or none
+    if (h5_mpi_max(self%comm, merge(1_I8P, 0_I8P, present(face))) > 0_I8P) then
+      error = self%start_polyhedra()
+      if (error == 0_I4P .and. present(face)) then
+        error = put_faces_I8P(self, int(nc, I8P), face, faceoffset, cell_type, .false.)
+      elseif (error == 0_I4P) then
+        error = self%no_faces(int(nc, I8P))
+      endif
+      if (error == 0_I4P) self%is_faces_written = .true.
+    endif
+  elseif (present(face)) then
+    error = put_faces_I8P(self, int(nc, I8P), face, faceoffset, cell_type, .false.)
+  endif
   endfunction write_connectivity_I8P
 
   function write_piece_start_tag_unst(self, np, nc) result(error)
@@ -2489,7 +2522,8 @@ contains
     if (h5_link_exists(loc_id, name)) then
       error = h5_dataset_append_R8P(loc_id, name, x, dims, comm=self%comm)
     else
-      error = h5_dataset_write_R8P(loc_id, name, x, dims, appendable=.true., comm=self%comm)
+      error = h5_dataset_write_R8P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), &
+                                     comm=self%comm)
     endif
   elseif (h5_link_exists(loc_id, name)) then
     error = h5_dataset_append_R8P(loc_id, name, x, dims)
@@ -2511,7 +2545,8 @@ contains
     if (h5_link_exists(loc_id, name)) then
       error = h5_dataset_append_R4P(loc_id, name, x, dims, comm=self%comm)
     else
-      error = h5_dataset_write_R4P(loc_id, name, x, dims, appendable=.true., comm=self%comm)
+      error = h5_dataset_write_R4P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), &
+                                     comm=self%comm)
     endif
   elseif (h5_link_exists(loc_id, name)) then
     error = h5_dataset_append_R4P(loc_id, name, x, dims)
@@ -2534,7 +2569,8 @@ contains
     if (h5_link_exists(loc_id, name)) then
       error = h5_dataset_append_I8P(loc_id, name, x, dims, unsigned=unsigned, comm=self%comm)
     else
-      error = h5_dataset_write_I8P(loc_id, name, x, dims, appendable=.true., unsigned=unsigned, comm=self%comm)
+      error = h5_dataset_write_I8P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), unsigned=unsigned, &
+                                     comm=self%comm)
     endif
   elseif (h5_link_exists(loc_id, name)) then
     error = h5_dataset_append_I8P(loc_id, name, x, dims, unsigned=unsigned)
@@ -2557,7 +2593,8 @@ contains
     if (h5_link_exists(loc_id, name)) then
       error = h5_dataset_append_I4P(loc_id, name, x, dims, unsigned=unsigned, comm=self%comm)
     else
-      error = h5_dataset_write_I4P(loc_id, name, x, dims, appendable=.true., unsigned=unsigned, comm=self%comm)
+      error = h5_dataset_write_I4P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), unsigned=unsigned, &
+                                     comm=self%comm)
     endif
   elseif (h5_link_exists(loc_id, name)) then
     error = h5_dataset_append_I4P(loc_id, name, x, dims, unsigned=unsigned)
@@ -2580,7 +2617,8 @@ contains
     if (h5_link_exists(loc_id, name)) then
       error = h5_dataset_append_I2P(loc_id, name, x, dims, unsigned=unsigned, comm=self%comm)
     else
-      error = h5_dataset_write_I2P(loc_id, name, x, dims, appendable=.true., unsigned=unsigned, comm=self%comm)
+      error = h5_dataset_write_I2P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), unsigned=unsigned, &
+                                     comm=self%comm)
     endif
   elseif (h5_link_exists(loc_id, name)) then
     error = h5_dataset_append_I2P(loc_id, name, x, dims, unsigned=unsigned)
@@ -2603,7 +2641,8 @@ contains
     if (h5_link_exists(loc_id, name)) then
       error = h5_dataset_append_I1P(loc_id, name, x, dims, unsigned=unsigned, comm=self%comm)
     else
-      error = h5_dataset_write_I1P(loc_id, name, x, dims, appendable=.true., unsigned=unsigned, comm=self%comm)
+      error = h5_dataset_write_I1P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), unsigned=unsigned, &
+                                     comm=self%comm)
     endif
   elseif (h5_link_exists(loc_id, name)) then
     error = h5_dataset_append_I1P(loc_id, name, x, dims, unsigned=unsigned)
@@ -2959,10 +2998,6 @@ contains
   integer(I8P)                        :: c, f, i, n, nf         !< Counters, sizes.
 
   error = 0_I4P
-  if (self%is_parallel) then
-    error = refuse('write_connectivity: polyhedra are not written by the ranks of comm')
-    return
-  endif
   if (size(faceoffset, kind=I8P) /= nc .or. size(cell_type, kind=I8P) < nc) then
     error = refuse('write_connectivity: faceoffset needs one value per cell')
     return
@@ -3039,7 +3074,7 @@ contains
   if (error /= 0_I4P) error = refuse('cannot write the faces of the polyhedra')
   if (error == 0_I4P) then
     self%is_faces_written = .true.
-    self%totals(5:7) = self%totals(5:7) + [n_face_ids, n_faces, n_faces]
+    error = self%add_face_totals(n_face_ids, n_faces)
   endif
   endfunction put_faces_I4P
 
@@ -3066,10 +3101,6 @@ contains
   integer(I8P)                        :: c, f, i, n, nf         !< Counters, sizes.
 
   error = 0_I4P
-  if (self%is_parallel) then
-    error = refuse('write_connectivity: polyhedra are not written by the ranks of comm')
-    return
-  endif
   if (size(faceoffset, kind=I8P) /= nc .or. size(cell_type, kind=I8P) < nc) then
     error = refuse('write_connectivity: faceoffset needs one value per cell')
     return
@@ -3146,7 +3177,7 @@ contains
   if (error /= 0_I4P) error = refuse('cannot write the faces of the polyhedra')
   if (error == 0_I4P) then
     self%is_faces_written = .true.
-    self%totals(5:7) = self%totals(5:7) + [n_face_ids, n_faces, n_faces]
+    error = self%add_face_totals(n_face_ids, n_faces)
   endif
   endfunction put_faces_I8P
 
@@ -3459,6 +3490,9 @@ contains
 
   level = 0_I4P
   if (self%is_compressed) level = DEFLATE_LEVEL_ZLIB
+  ! from ranks, the field data of a file that is not a time series are written by every rank alone: not deflated (a
+  ! deflated dataset of a parallel file needs collective writes)
+  if (self%is_parallel .and. .not.self%is_temporal .and. self%group_name == 'FieldData') level = 0_I4P
   endfunction deflate_level
 
   elemental function is_partitioned(self) result(is_partitioned_)
@@ -3515,6 +3549,23 @@ contains
   enddo
   endfunction open_group
 
+  function add_face_totals(self, n_face_ids, n_faces) result(error)
+  !< Add the faces of the polyhedra of a piece to the running totals: point ids of the faces, faces, faces of the
+  !< polyhedra; with comm, those of all the ranks (collective: every rank calls it, its own counts or zeros).
+  class(vtkhdf_writer), intent(inout) :: self       !< Writer.
+  integer(I8P),         intent(in)    :: n_face_ids !< Point ids of the faces of the piece.
+  integer(I8P),         intent(in)    :: n_faces    !< Faces of the piece.
+  integer(I4P)                        :: error      !< Error status.
+
+  if (self%is_parallel) then
+    self%totals(5:7) = self%totals(5:7) + [h5_mpi_sum(self%comm, n_face_ids), h5_mpi_sum(self%comm, n_faces), &
+                                           h5_mpi_sum(self%comm, n_faces)]
+  else
+    self%totals(5:7) = self%totals(5:7) + [n_face_ids, n_faces, n_faces]
+  endif
+  error = 0_I4P
+  endfunction add_face_totals
+
   function no_faces(self, nc) result(error)
   !< Write the zero entries of a piece without polyhedra, of `nc` cells, in a file with polyhedra: no faces, and the
   !< `nc+1` polyhedron offsets all 0.
@@ -3532,6 +3583,8 @@ contains
   if (error == 0_I4P) error = store_I8P(self, self%root, 'NumberOfFaces', [0_I8P], [1_I8P])
   if (error == 0_I4P) error = store_I8P(self, self%root, 'NumberOfFaceConnectivityIds', [0_I8P], [1_I8P])
   if (error == 0_I4P) error = store_I8P(self, self%root, 'NumberOfPolyhedronToFaceIds', [0_I8P], [1_I8P])
+  ! with comm, the sums of the ranks: collective, after the stores as in put_faces (the same calls in the same order)
+  if (error == 0_I4P) error = self%add_face_totals(0_I8P, 0_I8P)
   if (error /= 0_I4P) error = refuse('cannot write the (empty) polyhedra of a piece')
   endfunction no_faces
 
@@ -3917,8 +3970,10 @@ contains
   !< set before `initialize` (`vtk_file%initialize(..., comm=)`), forgotten by `finalize`.
   !<
   !< Every rank calls every procedure, with the same arrays in the same order (the HDF5 calls are collective): its piece is
-  !< one partition of the UnstructuredGrid or PolyData, appended after the pieces of the ranks before. One piece per rank;
-  !< refused: the grids, time series, polyhedra, compressor zlib.
+  !< one partition of the UnstructuredGrid or PolyData, appended after the pieces of the ranks before (one piece per rank,
+  !< in each step of a time series; polyhedra on some ranks only: the others write zero entries; compressor zlib with an
+  !< HDF5 of parallel filtered writes, the writes collective), or its region of a grid. Refused: a time series of a grid,
+  !< compressor zlib for a grid.
   class(vtkhdf_writer), intent(inout) :: self !< Writer.
   integer(I4P),         intent(in)    :: comm !< MPI communicator (Fortran handle).
 
@@ -4430,6 +4485,9 @@ contains
   integer(I4P)                        :: error  !< Error status.
   integer(I8P), allocatable           :: nc(:)  !< Cells of each piece started.
   integer(I8P)                        :: p      !< Counter.
+  integer(I8P)                        :: n      !< Pieces before the open step (with comm).
+  integer(I8P)                        :: rows   !< 1 on rank 0, 0 on the others (with comm).
+  integer(I8P), allocatable           :: zeros(:) !< Zero entries.
 
   error = 0_I4P
   if (self%has_polyhedra) return
@@ -4438,10 +4496,30 @@ contains
     error = refuse('cannot read the counts of cells of the pieces')
     return
   endif
-  do p=1_I8P, size(nc, kind=I8P) - 1_I8P ! the open piece is the last one
-    error = self%no_faces(nc(p))
-    if (error /= 0_I4P) return
-  enddo
+  if (self%is_parallel) then ! the parts before those of the open step (a part per rank), written once (rank 0)
+    ! (the zeros in blocks of at most ZERO_BLOCK values, on rank 0 alone: the parts before may be many; the number of
+    ! blocks is the same on every rank, each block a collective append)
+    n = size(nc, kind=I8P) - h5_mpi_sum(self%comm, 1_I8P)
+    rows = merge(1_I8P, 0_I8P, self%rank == 0_I4P)
+    allocate(zeros(rows * min(ZERO_BLOCK, max(n, sum(nc(1:n)) + n))))
+    zeros = 0_I8P
+    error = store_I8P(self, self%root, 'FaceConnectivity', [integer(I8P) ::], [0_I8P])
+    if (error == 0_I4P) error = store_zeros(self, zeros, rows, 'FaceOffsets', n)
+    if (error == 0_I4P) error = store_I8P(self, self%root, 'PolyhedronToFaces', [integer(I8P) ::], [0_I8P])
+    if (error == 0_I4P) error = store_zeros(self, zeros, rows, 'PolyhedronOffsets', sum(nc(1:n)) + n)
+    if (error == 0_I4P) error = store_zeros(self, zeros, rows, 'NumberOfFaces', n)
+    if (error == 0_I4P) error = store_zeros(self, zeros, rows, 'NumberOfFaceConnectivityIds', n)
+    if (error == 0_I4P) error = store_zeros(self, zeros, rows, 'NumberOfPolyhedronToFaceIds', n)
+    if (error /= 0_I4P) then
+      error = refuse('cannot write the (empty) polyhedra of the pieces before')
+      return
+    endif
+  else
+    do p=1_I8P, size(nc, kind=I8P) - 1_I8P ! the open piece is the last one
+      error = self%no_faces(nc(p))
+      if (error /= 0_I4P) return
+    enddo
+  endif
   self%has_polyhedra = .true.
   self%version_minor = max(self%version_minor, 5_I8P)
   endfunction start_polyhedra
@@ -4604,6 +4682,28 @@ contains
   endfunction write_steps
 
   ! non type-bound helpers
+  function store_zeros(self, zeros, rows, name, count) result(error)
+  !< Append `count` zeros to the dataset `name`, from rank 0 (`rows` 1, 0 on the others), in blocks of at most ZERO_BLOCK
+  !< values (`zeros`, of that size on rank 0): collective, as many blocks on every rank; the dataset is created by the
+  !< first block even when `count` is 0.
+  class(vtkhdf_writer), intent(in) :: self     !< Writer.
+  integer(I8P),         intent(in) :: zeros(:) !< Zeros (a block, on rank 0).
+  integer(I8P),         intent(in) :: rows     !< 1 on rank 0, 0 on the others.
+  character(*),         intent(in) :: name     !< Dataset.
+  integer(I8P),         intent(in) :: count    !< Zeros appended.
+  integer(I4P)                     :: error    !< Error status.
+  integer(I8P)                     :: done     !< Zeros appended so far.
+  integer(I8P)                     :: m        !< Zeros of a block.
+
+  done = 0_I8P
+  do
+    m = min(ZERO_BLOCK, count - done)
+    error = store_I8P(self, self%root, name, zeros, [rows * m])
+    done = done + m
+    if (error /= 0_I4P .or. done >= count) exit
+  enddo
+  endfunction store_zeros
+
   function array_tuples(root, group, names, tuples) result(error)
   !< Return the tuples (time slices for a grid of a time series), the last dimension, of every array of the list.
   integer(hid_kind),         intent(in)  :: root      !< Group /VTKHDF.

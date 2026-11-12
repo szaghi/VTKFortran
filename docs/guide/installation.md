@@ -229,5 +229,10 @@ fobis build --mode tests-gnu-debug-hdf5-mpi --varset ubuntu-openmpi
 mpirun -np 4 exe/vtk_fortran_write_vtkhdf_ranks
 ```
 
+**Compression from ranks** (`compressor='zlib'` with `comm`): an HDF5 1.10.2 or later built parallel with the deflate
+filter (zlib), which has *parallel filtered writes* (`H5_HAVE_PARALLEL_FILTERED_WRITES` in `H5pubconf.h`); `initialize`
+returns an error otherwise. The writes of a deflated dataset are collective (a transfer property list made by the C
+source).
+
 **fpm**: not supported (the C source, outside `src/lib`, needs the macro and the HDF5 headers).
 

@@ -66,6 +66,7 @@ public :: h5_dataset_info
 public :: h5_dataset_read_bytes
 public :: h5_dataset_read
 public :: h5_deflate_available
+public :: h5_parallel_filters_available
 
 integer, parameter :: hid_kind = c_int64_t !< Kind of the HDF5 identifiers (`hid_t`, 64-bit since HDF5 1.10).
 
@@ -129,6 +130,28 @@ interface
     import :: c_int, c_int64_t
     integer(c_int), value :: fcomm
   end function vtkfortran_h5_fapl_mpio
+  integer(c_int64_t) function vtkfortran_h5_dxpl_mpio_collective() bind(C, name='vtkfortran_h5_dxpl_mpio_collective')
+    import :: c_int64_t
+  end function vtkfortran_h5_dxpl_mpio_collective
+  integer(c_int) function H5Tconvert(src, dst, nelmts, buf, background, plist) bind(C, name='H5Tconvert')
+    import :: c_int, c_int64_t, c_size_t, c_ptr
+    integer(c_int64_t), value :: src, dst
+    integer(c_size_t),  value :: nelmts
+    type(c_ptr),        value :: buf, background
+    integer(c_int64_t), value :: plist
+  end function H5Tconvert
+  integer(c_int) function H5Tequal(type1, type2) bind(C, name='H5Tequal')
+    import :: c_int, c_int64_t
+    integer(c_int64_t), value :: type1, type2
+  end function H5Tequal
+  integer(c_int) function H5Sselect_none(space) bind(C, name='H5Sselect_none')
+    import :: c_int, c_int64_t
+    integer(c_int64_t), value :: space
+  end function H5Sselect_none
+  integer(c_int) function H5get_libversion(majnum, minnum, relnum) bind(C, name='H5get_libversion')
+    import :: c_int
+    integer(c_int), intent(out) :: majnum, minnum, relnum
+  end function H5get_libversion
   integer(c_int64_t) function H5Fcreate(name, flags, fcpl, fapl) bind(C, name='H5Fcreate')
     import :: c_int64_t, c_char, c_int
     character(kind=c_char), intent(in) :: name(*)
@@ -850,6 +873,22 @@ contains
   available = H5Zfilter_avail(H5Z_FILTER_DEFLATE) > 0
 #endif
   endfunction h5_deflate_available
+
+  function h5_parallel_filters_available() result(available)
+  !< Return true if the ranks of a communicator can write deflated datasets: the library built with MPI, an HDF5 with the
+  !< deflate filter and parallel filtered writes (HDF5 1.10.2 or later; the writes are then collective).
+  logical        :: available            !< True if deflated datasets can be written from the ranks.
+  integer(c_int) :: majnum, minnum, relnum !< HDF5 version.
+
+  available = .false.
+#ifdef VTKFORTRAN_USE_HDF5
+  if (.not.(is_mpi_enabled .and. h5_deflate_available())) return
+  if (H5get_libversion(majnum, minnum, relnum) < 0) return
+  available = majnum > 1 .or. (majnum == 1 .and. (minnum > 10 .or. (minnum == 10 .and. relnum >= 2)))
+#else
+  majnum = 0 ; minnum = 0 ; relnum = 0
+#endif
+  endfunction h5_parallel_filters_available
 
   function h5_dataset_open(loc_id, name, dset_id) result(error)
   !< Open a dataset (e.g. to write attributes on it).
@@ -1850,6 +1889,12 @@ contains
   integer(c_long_long)           :: cnew(size(dims))   !< New shape, C order.
   integer(c_long_long)           :: cstart(size(dims)) !< Start of the appended values, C order.
   integer(c_long_long)           :: ccount(size(dims)) !< Shape of the appended values, C order.
+  integer(c_int64_t)             :: dxpl      !< Data transfer properties (collective with comm).
+  integer(c_int8_t), target      :: none(1)   !< A buffer for a rank without rows (nothing is read from it).
+  integer(c_int64_t)             :: ftype     !< Type of the dataset (with comm).
+  integer(c_size_t)              :: fsize, msize !< Bytes of a value in the file, in memory.
+  integer(c_int8_t), allocatable, target :: converted(:) !< The values converted to the type of the dataset.
+  integer(c_int8_t), pointer     :: bytes(:)  !< The values, as bytes.
 
   error = 1_I4P
   first = 0_I8P
@@ -1874,7 +1919,50 @@ contains
       cnew(1) = cnew(1) + int(total, c_long_long)
       if (H5Dset_extent(dset, cnew) < 0) then
         continue
-      elseif (ccount(1) == 0_c_long_long) then ! a rank with no rows: it extends with the others, writes nothing
+      elseif (present(comm)) then ! collective: every rank writes (a deflated dataset needs it), its rows or none
+        dxpl = -1_c_int64_t
+#ifdef VTKFORTRAN_USE_MPI
+        dxpl = vtkfortran_h5_dxpl_mpio_collective()
+#endif
+        filespace = H5Dget_space(dset)
+        memspace = H5Screate_simple(int(size(dims), c_int), max(ccount, 1_c_long_long), c_null_ptr)
+        ! the values written in the type of the dataset (the widest kind of the ranks), converted here when they are of
+        ! another: a collective write with a type conversion, even of an empty selection, falls back to independent
+        ! writes, which a deflated dataset refuses
+        ftype = H5Dget_type(dset)
+        if (filespace >= 0 .and. memspace >= 0 .and. dxpl >= 0 .and. ftype >= 0) then
+          if (ccount(1) == 0_c_long_long) then ! a rank with no rows: it extends with the others, selects nothing
+            if (H5Sselect_none(filespace) >= 0 .and. H5Sselect_none(memspace) >= 0) then
+              if (H5Dwrite(dset, ftype, memspace, filespace, dxpl, c_loc(none)) >= 0) error = 0_I4P
+            endif
+          elseif (H5Sselect_hyperslab(filespace, H5S_SELECT_SET, cstart, c_null_ptr, ccount, c_null_ptr) >= 0) then
+            if (H5Tequal(memtype, ftype) > 0) then
+              if (H5Dwrite(dset, memtype, memspace, filespace, dxpl, buffer) >= 0) error = 0_I4P
+            else
+              fsize = H5Tget_size(ftype) ; msize = H5Tget_size(memtype)
+              allocate(converted(max(fsize, msize) * product(ccount)))
+              call c_f_pointer(buffer, bytes, [msize * product(ccount)])
+              converted(1:msize * product(ccount)) = bytes
+              if (H5Tconvert(memtype, ftype, int(product(ccount), c_size_t), c_loc(converted), c_null_ptr, &
+                             H5P_DEFAULT) >= 0) then
+                if (H5Dwrite(dset, ftype, memspace, filespace, dxpl, c_loc(converted)) >= 0) error = 0_I4P
+              endif
+            endif
+          endif
+        endif
+        if (ftype >= 0) then
+          if (H5Tclose(ftype) < 0) error = 1_I4P
+        endif
+        if (memspace >= 0) then
+          if (H5Sclose(memspace) < 0) error = 1_I4P
+        endif
+        if (filespace >= 0) then
+          if (H5Sclose(filespace) < 0) error = 1_I4P
+        endif
+        if (dxpl >= 0) then
+          if (H5Pclose(dxpl) < 0) error = 1_I4P
+        endif
+      elseif (ccount(1) == 0_c_long_long) then ! nothing to append
         error = 0_I4P
       else
         filespace = H5Dget_space(dset)

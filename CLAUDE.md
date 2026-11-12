@@ -129,7 +129,12 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   (`h5_dataset_slab_<kind>`), the points of an upper boundary inside the extent left to the next region; RG coordinates
   by `axis_runs`, the entries no lower rank has, as many writes on every rank); a check of a rank's own values before
   a collective call goes through `agree` (`h5_mpi_max` of the errors: every rank refuses, none hangs); refused:
-  a grid time series, polyhedra, zlib, a second piece or region in a step. Time series (UG/PolyData) with comm:
+  a grid time series, zlib for a grid, a second piece or region in a step. Polyhedra with comm: decided at
+  `write_connectivity` (`h5_mpi_max` of a flag), `start_polyhedra` writes the zero entries of the earlier parts once
+  (rank 0), ranks without faces `no_faces` (the same store sequence as `put_faces`, `add_face_totals` after it); zlib with
+  comm: `h5_parallel_filters_available` (HDF5 >= 1.10.2 + deflate), appends collective (`vtkfortran_h5_dxpl_mpio_collective`
+  of `src/mpi`, an empty selection for a rank without rows, values converted in memory to the dataset type: a
+  conversion breaks the collective write), static parallel field data not deflated. Time series (UG/PolyData) with comm:
   `write_step` checks the same time (max/min of its bits), `n_pieces`/`step_pieces` global (sums), `local_pieces`/
   `step_local` per process, `Steps` entries and temporal field data written by rank 0 (others append 0 rows), totals of
   ids/blocks summed; a reusing step: each rank its part (`np_piece`); `reopen` with comm (`h5_file_open(comm=)`; the
@@ -201,6 +206,7 @@ blocks, three pieces with different blocks (one without cells),
 I8P, each also written as a `.vtp`; `vtk_fortran_write_vtkhdf_ranks.F90`: an UnstructuredGrid and a PolyData from MPI
 ranks (one rank empty, I4P and I8P ids by rank), an ImageData, a RectilinearGrid and a StructuredGrid by regions (on 4
 ranks two along x, one across, one empty; otherwise rank 0 whole), an UnstructuredGrid series (pieces changing size,
-continued by the ranks after a restart, a step reusing the mesh) and a PolyData series, compared with the same files written serially and
+continued by the ranks after a restart, a step reusing the mesh), a PolyData series, polyhedra appearing at step 2 on the odd ranks,
+the UG and PolyData compressed (with parallel filtered writes, skipped otherwise), compared with the same files written serially and
 as `.vtu`/`.vtp`/`.vti`/`.vtr`/`.vts`, the refusals of `comm` (grid regions outside, overlapping, not covering, two); without MPI `comm` refused, its name without "mpi" since `scripts/run_tests.sh` runs those with
 mpirun; without HDF5 the writer refuses to start); `vtk_fortran_read.F90` reads files back (every topology and format, and two files written by VTK, embedded in the test), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.

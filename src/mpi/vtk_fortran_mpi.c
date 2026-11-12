@@ -1,4 +1,5 @@
-/* VTKFortran: the MPI file access of a parallel HDF5 file (VTKHDF written by the ranks of a communicator).
+/* VTKFortran: the MPI file access and collective transfers of a parallel HDF5 file (VTKHDF written by the ranks of a
+ * communicator).
  *
  * The HDF5 C API takes an MPI_Comm, the Fortran caller has a Fortran handle (mpi_f08 `MPI_Comm%MPI_VAL`): MPI_Comm_f2c
  * converts it, and only C can call it. Built only with VTKFORTRAN_USE_MPI (and a parallel HDF5): the other builds leave
@@ -16,6 +17,18 @@ hid_t vtkfortran_h5_fapl_mpio(MPI_Fint fcomm) {
     return -1;
   }
   return fapl;
+}
+
+/* A data transfer property list for collective MPI-IO transfers (every rank calls H5Dwrite, a rank without values with
+ * an empty selection): parallel HDF5 writes a deflated (filtered) dataset only so; negative on error. */
+hid_t vtkfortran_h5_dxpl_mpio_collective(void) {
+  hid_t dxpl = H5Pcreate(H5P_DATASET_XFER);
+  if (dxpl < 0) return -1;
+  if (H5Pset_dxpl_mpio(dxpl, H5FD_MPIO_COLLECTIVE) < 0) {
+    H5Pclose(dxpl);
+    return -1;
+  }
+  return dxpl;
 }
 #else
 typedef int vtkfortran_mpi_disabled; /* ISO C forbids an empty translation unit */

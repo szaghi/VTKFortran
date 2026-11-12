@@ -19,6 +19,12 @@ program vtk_fortran_write_vtkhdf_ranks
 !<  `comm`, a parallel restart) with step 3 and step 4, which reuses the mesh of step 3 (each rank the point data of its
 !<  part), field data at every step; `vtkfortran_series_poly_mpi.vtkhdf`: a PolyData series of three steps.
 !<
+!< `vtkfortran_polyh_mpi.vtkhdf`: a time series of two steps whose polyhedra appear at step 2, on the odd ranks only (a
+!< tetrahedron on every rank at step 1, a hexahedron as a polyhedron on the odd ranks at step 2); with an HDF5 that
+!< writes deflated datasets from ranks (`h5_parallel_filters_available`), `vtkfortran_unst_zlib_mpi.vtkhdf` and
+!< `vtkfortran_poly_zlib_mpi.vtkhdf`, the UnstructuredGrid and the PolyData compressed (skipped with a message
+!< otherwise).
+!<
 !< Rank 0 then writes the same pieces (the same grids, the same series) alone, in rank order: a serial `.vtkhdf` of
 !< each, compared here dataset by dataset (values: the parallel file stores the widest kind of ids the ranks give), and
 !< a `.vtu`/`.vtp`/`.vti`/`.vtr`/`.vts` of each (VTK readers compare the two outside this test). The refusals of
@@ -87,8 +93,19 @@ else
   e(10) = series_unst('vtkfortran_series_unst_mpi.vtkhdf', is_parallel=.true., first=1, last=2)
   e(11) = series_unst('vtkfortran_series_unst_mpi.vtkhdf', is_parallel=.true., first=3, last=4)
   e(12) = series_poly('vtkfortran_series_poly_mpi.vtkhdf', is_parallel=.true.)
-  test_passed(1) = all(e(1:12) == 0)
-  if (.not.test_passed(1)) print '(A,I0,A,12I2)', 'rank ', rank, ' errors of the parallel files: ', e(1:12)
+  e(13) = series_polyh('vtkfortran_polyh_mpi.vtkhdf', is_parallel=.true.)
+  if (h5_parallel_filters_available()) then ! the UnstructuredGrid and the PolyData compressed
+    e(14) = a_vtk_file%initialize(format='vtkhdf', filename='vtkfortran_unst_zlib_mpi.vtkhdf', &
+                                  mesh_topology='UnstructuredGrid', compressor='zlib', comm=comm)
+    e(14) = max(e(14), abs(unst_piece(a_vtk_file, rank, field=.true.)), abs(a_vtk_file%finalize()))
+    e(15) = a_vtk_file%initialize(format='vtkhdf', filename='vtkfortran_poly_zlib_mpi.vtkhdf', mesh_topology='PolyData', &
+                                  compressor='zlib', comm=comm)
+    e(15) = max(e(15), abs(poly_piece(a_vtk_file, rank, cells_call=.true.)), abs(a_vtk_file%finalize()))
+  elseif (rank == 0) then
+    print '(A)', 'HDF5 without parallel filtered writes (deflate): the compressed files from ranks are skipped'
+  endif
+  test_passed(1) = all(e(1:15) == 0)
+  if (.not.test_passed(1)) print '(A,I0,A,15I2)', 'rank ', rank, ' errors of the parallel files: ', e(1:15)
   test_passed(2) = refusals()
 
   ! rank 0: the same pieces alone, compared with the parallel files
@@ -105,13 +122,31 @@ else
     enddo
     e(11) = series_unst('serial_series_unst_mpi.vtkhdf', is_parallel=.false., first=1, last=4)
     e(12) = series_poly('serial_series_poly_mpi.vtkhdf', is_parallel=.false.)
-    test_passed(3) = all(e(1:12) == 0)
-    if (.not.test_passed(3)) print '(A,12I2)', 'errors of the serial files: ', e(1:12)
+    e(13) = series_polyh('serial_polyh_mpi.vtkhdf', is_parallel=.false.)
+    test_passed(3) = all(e(1:13) == 0)
+    if (.not.test_passed(3)) print '(A,13I2)', 'errors of the serial files: ', e(1:13)
     test_passed(4) = same_datasets('vtkfortran_unst_mpi.vtkhdf', 'serial_unst_mpi.vtkhdf', UNST_DATASETS)
     test_passed(4) = same_datasets('vtkfortran_poly_mpi.vtkhdf', 'serial_poly_mpi.vtkhdf', POLY_DATASETS) .and. test_passed(4)
     test_passed(4) = same_datasets('vtkfortran_series_unst_mpi.vtkhdf', 'serial_series_unst_mpi.vtkhdf', &
                                    UNST_DATASETS//' '//SERIES_DATASETS//' Steps/PointDataOffsets/pd Steps/CellDataOffsets/cd') &
                      .and. test_passed(4)
+    if (n_ranks > 1) then ! polyhedra on the odd ranks
+      test_passed(4) = same_datasets('vtkfortran_polyh_mpi.vtkhdf', 'serial_polyh_mpi.vtkhdf', 'NumberOfPoints '// &
+                                     'NumberOfCells NumberOfConnectivityIds Points Connectivity Offsets Types '// &
+                                     'FaceConnectivity FaceOffsets PolyhedronToFaces PolyhedronOffsets NumberOfFaces '// &
+                                     'NumberOfFaceConnectivityIds NumberOfPolyhedronToFaceIds Steps/PartOffsets '// &
+                                     'Steps/FaceConnectivityOffsets Steps/FaceOffsetsOffsets Steps/PolyhedronToFaceIdOffsets') &
+                       .and. test_passed(4)
+    else ! one rank, even: no polyhedra
+      test_passed(4) = same_datasets('vtkfortran_polyh_mpi.vtkhdf', 'serial_polyh_mpi.vtkhdf', 'NumberOfPoints '// &
+                                     'NumberOfCells Points Connectivity Offsets Types Steps/PartOffsets') .and. test_passed(4)
+    endif
+    if (h5_parallel_filters_available()) then
+      test_passed(4) = same_datasets('vtkfortran_unst_zlib_mpi.vtkhdf', 'serial_unst_mpi.vtkhdf', UNST_DATASETS) .and. &
+                       test_passed(4)
+      test_passed(4) = same_datasets('vtkfortran_poly_zlib_mpi.vtkhdf', 'serial_poly_mpi.vtkhdf', POLY_DATASETS) .and. &
+                       test_passed(4)
+    endif
     test_passed(4) = same_datasets('vtkfortran_series_poly_mpi.vtkhdf', 'serial_series_poly_mpi.vtkhdf', &
                                    POLY_DATASETS//' Steps/Values Steps/PartOffsets Steps/NumberOfParts Steps/PointOffsets '// &
                                    'Steps/CellOffsets Steps/ConnectivityIdOffsets Steps/PointDataOffsets/pd') .and. test_passed(4)
@@ -336,6 +371,45 @@ contains
   error = max(error, abs(a_vtk_file%finalize()))
   endfunction series_unst
 
+  function series_polyh(filename, is_parallel) result(error)
+  !< Two steps: a tetrahedron on every rank at step 1; at step 2 a hexahedron as a polyhedron on the odd ranks, a
+  !< tetrahedron on the even ones (the polyhedra start at a later step, on some ranks only). By every rank of comm
+  !< (`is_parallel`), or by one rank, the pieces of all the ranks in rank order.
+  character(*), intent(in) :: filename    !< File name.
+  logical,      intent(in) :: is_parallel !< Written by the ranks, otherwise by one rank.
+  integer(I4P)             :: error       !< Error status.
+  integer(I4P), parameter  :: cube(31) = [6, 4, 0, 3, 2, 1,  4, 4, 5, 6, 7,  4, 0, 1, 5, 4,  4, 1, 2, 6, 5, &
+                                          4, 2, 3, 7, 6,  4, 3, 0, 4, 7] !< Faces of a unit cube.
+  integer(I4P)             :: s, r, p     !< Counters.
+
+  if (is_parallel) then
+    error = a_vtk_file%initialize(format='vtkhdf', filename=filename, mesh_topology='UnstructuredGrid', comm=comm)
+  else
+    error = a_vtk_file%initialize(format='vtkhdf', filename=filename, mesh_topology='UnstructuredGrid')
+  endif
+  do s=1, 2
+    error = max(error, abs(a_vtk_file%xml_writer%write_step(time=real(s, R8P))))
+    do r=0, n_ranks-1
+      if (is_parallel .and. r /= rank) cycle
+      if (s == 2 .and. mod(r, 2) == 1) then
+        error = max(error, abs(a_vtk_file%xml_writer%write_piece(np=8, nc=1)))
+        error = max(error, abs(a_vtk_file%xml_writer%write_geo(np=8, nc=1, x=[(real(mod(p, 2) + 3 * r, R8P), p=0, 7)], &
+                               y=[(real(mod(p / 2, 2), R8P), p=0, 7)], z=[(real(p / 4, R8P), p=0, 7)])))
+        error = max(error, abs(a_vtk_file%xml_writer%write_connectivity(nc=1, connectivity=[0, 1, 3, 2, 4, 5, 7, 6], &
+                               offset=[8], cell_type=[42_I1P], face=cube, faceoffset=[31])))
+      else
+        error = max(error, abs(a_vtk_file%xml_writer%write_piece(np=4, nc=1)))
+        error = max(error, abs(a_vtk_file%xml_writer%write_geo(np=4, nc=1, x=[0._R8P, 1._R8P, 0._R8P, 0._R8P] + 3 * r, &
+                               y=[0._R8P, 0._R8P, 1._R8P, 0._R8P], z=[0._R8P, 0._R8P, 0._R8P, 1._R8P])))
+        error = max(error, abs(a_vtk_file%xml_writer%write_connectivity(nc=1, connectivity=[0, 1, 2, 3], offset=[4], &
+                                                                         cell_type=[10_I1P])))
+      endif
+      error = max(error, abs(a_vtk_file%xml_writer%write_piece()))
+    enddo
+  enddo
+  error = max(error, abs(a_vtk_file%finalize()))
+  endfunction series_polyh
+
   pure function part_points(r) result(np)
   !< The points of the piece of rank r at step 3 of the UnstructuredGrid series (unst_piece r+3: 4 per tetrahedron).
   integer(I4P), intent(in) :: r  !< Rank.
@@ -495,8 +569,10 @@ contains
   error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
   error = a_vtk_file%xml_writer%write_piece()
   error = a_vtk_file%finalize()
-  ok(2) = a_vtk_file%initialize(format='vtkhdf', filename='refused_zlib.vtkhdf', mesh_topology='UnstructuredGrid', &
-                                compressor='zlib', comm=comm) /= 0
+  ok(2) = a_vtk_file%initialize(format='vtkhdf', filename='refused_zlib.vtkhdf', mesh_topology='ImageData', &
+                                nx1=0, nx2=1, ny1=0, ny2=1, nz1=0, nz2=0,                                  &
+                                origin=[0._R8P, 0._R8P, 0._R8P], spacing=[1._R8P, 1._R8P, 1._R8P],         &
+                                compressor='zlib', comm=comm) /= 0                 ! zlib for a grid from ranks
   ok(3) = a_vtk_file%initialize(format='raw', filename='refused.vtu', mesh_topology='UnstructuredGrid', comm=comm) /= 0
   ok(4) = a_vtk_file%initialize(filename='vtkfortran_unst_mpi.vtkhdf', action='read', comm=comm) /= 0
   error = a_vtk_file%initialize(format='vtkhdf', filename='refused_pieces.vtkhdf', mesh_topology='UnstructuredGrid', &
@@ -511,7 +587,7 @@ contains
                                          z=[0._R8P, 0._R8P, 0._R8P, 1._R8P])
   ok(7) = a_vtk_file%xml_writer%write_connectivity(nc=1, connectivity=[0, 1, 2, 3], offset=[4], cell_type=[42_I1P], &
                                                    face=[4, 3, 0, 1, 2, 3, 0, 1, 3, 3, 0, 2, 3, 3, 1, 2, 3],         &
-                                                   faceoffset=[17]) /= 0     ! a polyhedron
+                                                   faceoffset=[merge(16, 17, rank == 0)]) /= 0 ! malformed on rank 0
   error = a_vtk_file%finalize()
   refusals = all(ok)
   if (.not.refusals) print '(A,I0,A,12L2)', 'rank ', rank, ' refusals: ', ok
