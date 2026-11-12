@@ -4,6 +4,143 @@ All notable changes to this project are documented here.
 Versions follow [Semantic Versioning](https://semver.org/).
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [3.1.0] — 2026-11-12
+### Added
+- **vtkhdf**: Write ImageData in the VTKHDF format
+
+- **vtkhdf**: Write UnstructuredGrid in the VTKHDF format
+
+- **vtkhdf**: Write PolyData in the VTKHDF format
+
+- **vtkhdf**: Write RectilinearGrid and StructuredGrid in the VTKHDF format
+
+- **vtkhdf**: Write the polyhedra of an UnstructuredGrid in the VTKHDF format
+
+- **vtkhdf**: Time series in one VTKHDF file, write_step
+
+- **vtkhdf**: Continue a VTKHDF time series, action='append'
+
+- **vtkhdf**: Read VTKHDF files with action='read'
+
+- **vtkhdf**: Multi-block datasets in one VTKHDF file, vtm_file format='vtkhdf'
+
+- **vtkhdf**: One .vtkhdf written by MPI ranks, vtk_file%initialize(..., comm=)
+
+- **vtkhdf**: Multi-block files of time-series UnstructuredGrid and PolyData blocks
+
+- **vtkhdf**: Time series store an unchanged mesh and unchanged arrays once
+
+- **vtkhdf**: ImageData, RectilinearGrid and StructuredGrid from MPI ranks, a region per rank
+
+- **active-arrays**: Every attribute role of VTK, written and read back
+
+- **vtkhdf**: Time series from MPI ranks, and a parallel restart
+
+- **vtkhdf**: Polyhedra and compression from MPI ranks
+
+- **vtkhdf**: Table, columns of values in a VTKHDF file, static or a time series
+
+- **vtkhdf**: PartitionedDataSetCollection, datasets referenced from several blocks
+
+- **vtkhdf**: OverlappingAMR, the levels of a block-structured AMR in one file
+
+- **vtkhdf**: HyperTreeGrid, the trees of a tree-based AMR in one file
+
+- **vtkhdf**: HyperTreeGrid time series
+
+- **vtkhdf**: Configurable chunk size, vtk_file%initialize(..., chunk_bytes=)
+
+- **vtkhdf**: Grid time series from MPI ranks
+
+- **xml**: Table as a .vtt file, written and read back
+
+- **vtkhdf**: Read back HyperTreeGrids and composite files
+
+- **read**: String arrays of VTKHDF files, Bit arrays of XML files
+
+- **composite**: Empty datasets in VTKHDF multi-block files; PArray in parallel headers
+
+- **write**: String arrays as point, cell and row data (XML); string field data in VTKHDF
+
+- **data**: Component names; multi-component field data
+
+- **composite**: XML partitioned composites (.vtpc, .vtpd)
+
+- **parallel**: Parallel Tables (.pvtt); blocks of pieces in .vtm files
+
+- **vtkhdf**: HyperTreeGrid interface arrays; references in multi-block files
+
+- **composite**: Grid time series as blocks of a VTKHDF multi-block file
+
+- **pvd**: ParaView file series (.series)
+
+- **composite**: XML OverlappingAMR files (.vthb)
+
+- **xml**: HyperTreeGrid files (.htg)
+
+- **read**: HyperTreeGrid files (.htg)
+
+- **read**: BigEndian files; docs of the compression level and the .pvti direction
+
+
+### Changed
+- **writers**: A format-neutral abstract writer for vtk_file
+
+
+### Documentation
+- **vtkhdf**: The VTKHDF format, its reference program and the HDF5 examples
+
+- **vtkhdf**: UnstructuredGrid in VTKHDF, and the recipe "Write a .vtkhdf file"
+
+- **vtkhdf**: PolyData in VTKHDF, and the recipe "A PolyData in a .vtkhdf file"
+
+- **vtkhdf**: RectilinearGrid and StructuredGrid in VTKHDF, and the recipe "A grid in a .vtkhdf file"
+
+- **vtkhdf**: Polyhedra in VTKHDF
+
+- **vtkhdf**: Time series in one .vtkhdf file, and the VTKHDF anatomy diagram
+
+- **vtkhdf**: Reading VTKHDF files and multi-block VTKHDF files
+
+- VTKHDF in the README, the landing page and the formats chapter
+
+- **vtkhdf**: One .vtkhdf from MPI ranks
+
+- **claude**: The toolchain image needs FoBiS >= 3.16.5, released
+
+
+### Fixed
+- **appended**: Close the scratch file once, and stop on a read error
+
+- **vtkhdf**: Read polyhedra with shared, reversed faces (VTKHDF 2.9)
+
+- **vtkhdf**: A restart reads the array offsets of the last complete step
+
+- **vtkhdf**: Refuse array, block and dataset names with '/' or '.'
+
+- **vtkhdf**: Refuse on every rank the wrong arguments of one rank
+
+- **vtkhdf**: List the members of a group in the order they were written
+
+- **vtkhdf**: Leave the file of a refused append as it was
+
+- **vtkhdf**: Finalize refuses what it would lose; malformed AMR files read safely
+
+- Review of the grid series from ranks, the .vtt Table and the reading of composites
+
+- **xml**: Read VTK 9.7.2 polyhedra, non-finite ASCII values, quotes in names, large UInt64
+
+- **vtkhdf**: AMR series Steps names of VTKHDF 2.3; refuse composite and AMR blocks
+
+- **vtkhdf**: Read collections, vlen strings, partitioned and transposed HyperTreeGrids
+
+- **fpm**: Evaluate the #ifdef blocks when fpm scans the module dependencies
+
+- Read AMR series of the former layout; separate non-finite 6-component ASCII values
+
+- Review of the #90 work
+
+
 ## [3.0.1] — 2026-11-10
 ### Changed
 - **reader**: Index files with FoXy xml_index, drop the private scanner
