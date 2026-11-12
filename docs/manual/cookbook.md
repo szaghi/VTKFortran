@@ -88,7 +88,9 @@ arrays of strings (trailing blanks trimmed).
 <<< @/examples/output/ghost_cells.ansi{ansi}
 
 `write_dataarray_unsigned` writes `I1P`...`I8P` arrays as `UInt8`...`UInt64`. In `vtkGhostType`, `1` marks a duplicate cell
-and `32` a hidden one: ParaView does not draw them.
+and `32` a hidden one: ParaView does not draw them. For partitions (one piece per rank), the duplicated boundary points
+are ghosts and global ids (`global_ids=` when opening the point or cell data) tell VTK which points are the same:
+[Partitions, ghosts and global ids](/guide/data#partitions-ghosts-and-global-ids).
 
 ## Choose the format
 

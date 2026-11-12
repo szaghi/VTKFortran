@@ -86,7 +86,8 @@ In the VTKHDF format, field data are the datasets of the group `FieldData`, nume
 Readers such as ParaView color a dataset by its *active* scalars and use its *active* vectors, normals, tensors and texture
 coordinates by default. Without a designation they pick the first suitable array, which is often not the one wanted. Designate
 the active array of each role when opening the node or cell data, with the optional `scalars`, `vectors`, `normals`, `tensors`
-and `tcoords` arguments: each one is the `data_name` of an array written inside that tag.
+and `tcoords` arguments, and the other roles of VTK (below): each one is the `data_name` of an array written inside that
+tag.
 
 <<< @/examples/snippets/ref_data-active.f90
 
@@ -99,6 +100,13 @@ writes `<PointData Scalars="pressure" Vectors="velocity">` (`<CellData ...>` for
 | `normals` | `Normals` | 3 |
 | `tensors` | `Tensors` | 9 (or 6, symmetric) |
 | `tcoords` | `TCoords` | 1 to 3 |
+| `global_ids` | `GlobalIds` | 1, integer: the global id of each point or cell |
+| `pedigree_ids` | `PedigreeIds` | 1: the id of each point or cell in the original data |
+| `edge_flags` | `EdgeFlag` | 1 (`UInt8`, `write_dataarray_unsigned`) |
+| `tangents` | `Tangents` | 3 |
+| `rational_weights` | `RationalWeights` | 1: the weights of rational (NURBS) cells |
+| `higher_order_degrees` | `HigherOrderDegrees` | 3: the degrees of higher-order (Lagrange, Bézier) cells |
+| `process_ids` | `ProcessIds` | 1, integer: the process of each point or cell |
 
 - Each argument is optional and independent: omit them all and the tag is written as before, without attributes.
 - The names are written as given, not checked: make sure an array with that name is written inside the same tag.
@@ -108,8 +116,22 @@ writes `<PointData Scalars="pressure" Vectors="velocity">` (`<CellData ...>` for
 
 - In the VTKHDF format the role is the `Attribute` attribute of the dataset of the array (e.g. `Attribute = "Scalars"`),
   written when the array is: the name must match an array written in the same location, or nothing is marked.
+- Reading back: `xml_reader%get_active(location, role, data_name, piece)` returns the name of the active array of a role
+  (case insensitive), empty if none, in every format VTKHDF included; see [Reading](/guide/reading).
 
-See `src/tests/vtk_fortran_write_active_arrays.f90` for a complete program, parallel header included.
+See `src/tests/vtk_fortran_write_active_arrays.f90` for a complete program, parallel header and every role included.
+
+### Partitions, ghosts and global ids
+
+A mesh split into pieces (partitions, one per rank) has the points of the boundaries in more than one piece. VTK finds
+them from two arrays: the **global ids** (`global_ids=`), the same id for the same point (or cell) in every piece, and
+the **ghosts** (`vtkGhostType`, unsigned, see below), `1` marking a duplicate: filters that merge, clean or extract the
+surface of the partitions then remove the seams. Here two tetrahedra sharing a face, a piece each:
+
+<<< @/examples/snippets/ref_data-partitions.f90
+
+The three points of the shared face are in both pieces, with the same global ids, ghosts in the second. The same calls
+in VTKHDF (each piece a partition) write the `Attribute` of the datasets `GlobalIds`.
 
 ## Unsigned integer arrays
 

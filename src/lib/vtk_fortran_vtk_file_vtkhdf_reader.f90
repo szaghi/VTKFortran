@@ -18,6 +18,7 @@ module vtk_fortran_vtk_file_vtkhdf_reader
 use penf
 use vtk_fortran_dataarray_decoder, only : bytes_to_array
 use vtk_fortran_hdf5
+use vtk_fortran_parameters, only : ACTIVE_ROLES, active_role
 
 implicit none
 private
@@ -42,6 +43,7 @@ type :: vtkhdf_reader
     procedure, pass(self) :: close                !< Close the file and reset the reader.
     procedure, pass(self) :: forget               !< Reset the reader without closing the file (pure).
     procedure, pass(self) :: get_dataarray_info   !< Return the type, components and tuples of a dataarray.
+    procedure, pass(self) :: get_active           !< Return the name of the active array of a role.
     procedure, pass(self) :: get_dataarray_names  !< Return the names of the dataarrays of a location.
     procedure, pass(self) :: get_info             !< Return the information of the dataset.
     procedure, pass(self) :: get_steps            !< Return the times of the steps.
@@ -298,6 +300,53 @@ contains
   if (present(nz1)) nz1 = self%whole_extent(5)
   if (present(nz2)) nz2 = self%whole_extent(6)
   endfunction read_piece
+
+  function get_active(self, location, role, data_name, piece) result(error)
+  !< Return the name of the active array of a role (see `xml_reader%get_active`) of a location (node or cell): the
+  !< dataset of the group whose `Attribute` attribute is the role (case insensitive); empty if none.
+  class(vtkhdf_reader),          intent(in)           :: self      !< Reader.
+  character(*),                  intent(in)           :: location  !< Location: node or cell.
+  character(*),                  intent(in)           :: role      !< Role.
+  character(len=:), allocatable, intent(out)          :: data_name !< Name of the active array, empty if none.
+  integer(I4P),                  intent(in), optional :: piece     !< Piece, from 1 (default 1).
+  integer(I4P)                                        :: error     !< Error status.
+  character(len=:), allocatable                       :: group     !< Group of the location.
+  character(len=:), allocatable                       :: list      !< Names, each followed by NUL.
+  character(len=:), allocatable                       :: text      !< Attribute of a dataset.
+  integer(hid_kind)                                   :: dset      !< A dataset.
+  integer(I8P)                                        :: g, first(9), n_parts !< Partition, starts, parts of the step.
+  integer(I4P)                                        :: i, j, e   !< Counters, error of a closing.
+
+  data_name = ''
+  error = 4
+  if (.not.self%is_initialized .or. active_role(role) == 0) return
+  group = location_group(location)
+  if (group /= 'PointData' .and. group /= 'CellData') return
+  if (.not.self%is_grid()) then
+    error = self%part(piece, g, first, n_parts)
+    if (error /= 0) return
+  endif
+  error = 0
+  if (.not.h5_link_exists(self%root, group)) return
+  if (h5_group_names(self%root, group, list) /= 0_I4P) then
+    error = 6
+    return
+  endif
+  j = 0
+  do i=1, len(list)
+    if (list(i:i) /= achar(0)) cycle
+    if (h5_dataset_open(self%root, group//'/'//list(j+1:i-1), dset) == 0_I4P) then
+      if (h5_attribute_exists(dset, 'Attribute')) then
+        if (h5_attribute_read(dset, 'Attribute', text) == 0_I4P) then
+          if (active_role(text) == active_role(role)) data_name = list(j+1:i-1)
+        endif
+      endif
+      e = h5_dataset_close(dset)
+    endif
+    if (len(data_name) > 0) return
+    j = i
+  enddo
+  endfunction get_active
 
   function get_dataarray_names(self, location, names, piece) result(error)
   !< Return the names of the dataarrays of a location (node, cell or field), in the order they were written (their names'

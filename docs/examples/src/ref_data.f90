@@ -2,7 +2,8 @@
 !run ref_data-trap grep NumberOfComponents ref_trap.vts
 program ref_data
 !< The examples of the reference page "Data arrays": every shape write_dataarray accepts, read back to show the number of
-!< components and tuples each one is written with; field data, active arrays, unsigned arrays.
+!< components and tuples each one is written with; field data, active arrays, unsigned arrays, partitions with global
+!< ids and ghost points (their roles read back).
 use penf, only : I1P, I4P, I8P, R8P
 use vtk_fortran, only : vtk_file
 implicit none
@@ -12,6 +13,7 @@ call trap
 call field_data
 call active_arrays
 call unsigned_arrays
+call partitions
 call report('ref_shapes.vts', 'node', show=.true.)
 call report('ref_fielddata.vtu', 'field')
 call report('ref_active.vtu', 'node')
@@ -128,6 +130,48 @@ contains
   error = a_vtk_file%xml_writer%write_piece()
   error = a_vtk_file%finalize()
   endsubroutine unsigned_arrays
+
+  subroutine partitions
+  !< Two tetrahedra sharing a face, a piece each: the points of the face are in both, with the same global ids, ghosts
+  !< (duplicates) in the second; the active arrays of the roles read back.
+  type(vtk_file)                :: a_vtk_file
+  character(len=:), allocatable :: name
+  integer(I4P)                  :: error
+
+  error = a_vtk_file%initialize(format='binary', filename='ref_partitions.vtu', mesh_topology='UnstructuredGrid')
+  call piece(a_vtk_file, x=[0._R8P, 1._R8P, 0._R8P, 0._R8P], y=[0._R8P, 0._R8P, 1._R8P, 0._R8P], z=[0._R8P, 0._R8P, 0._R8P, 1._R8P], &
+             ids=[0_I8P, 1_I8P, 2_I8P, 3_I8P], ghost=[0_I1P, 0_I1P, 0_I1P, 0_I1P], cell_id=0_I8P)
+  call piece(a_vtk_file, x=[1._R8P, 0._R8P, 0._R8P, 1._R8P], y=[0._R8P, 1._R8P, 0._R8P, 1._R8P], z=[0._R8P, 0._R8P, 1._R8P, 1._R8P], &
+             ids=[1_I8P, 2_I8P, 3_I8P, 4_I8P], ghost=[1_I1P, 1_I1P, 1_I1P, 0_I1P], cell_id=1_I8P)
+  error = a_vtk_file%finalize()
+  error = a_vtk_file%initialize(filename='ref_partitions.vtu', action='read')
+  error = max(error, a_vtk_file%xml_reader%get_active(location='node', role='GlobalIds', data_name=name, piece=2))
+  if (error /= 0 .or. name /= 'id') error stop 'GlobalIds not read back'
+  error = a_vtk_file%finalize()
+  endsubroutine partitions
+
+  subroutine piece(a_vtk_file, x, y, z, ids, ghost, cell_id)
+  !< A tetrahedron as a piece, its global ids and ghost points, its cell global id.
+  type(vtk_file), intent(inout) :: a_vtk_file
+  real(R8P),    intent(in) :: x(4), y(4), z(4)
+  integer(I8P), intent(in) :: ids(4), cell_id
+  integer(I1P), intent(in) :: ghost(4)
+  integer(I4P)              :: error
+
+  !region partitions
+  error = a_vtk_file%xml_writer%write_piece(np=4, nc=1)
+  error = a_vtk_file%xml_writer%write_geo(np=4, nc=1, x=x, y=y, z=z)
+  error = a_vtk_file%xml_writer%write_connectivity(nc=1, connectivity=[0,1,2,3], offset=[4], cell_type=[10_I1P])
+  error = a_vtk_file%xml_writer%write_dataarray(location='node', action='open', global_ids='id')
+  error = a_vtk_file%xml_writer%write_dataarray(data_name='id', x=ids)                       ! the same id in both
+  error = a_vtk_file%xml_writer%write_dataarray_unsigned(data_name='vtkGhostType', x=ghost)  ! 1: a duplicate
+  error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
+  error = a_vtk_file%xml_writer%write_dataarray(location='cell', action='open', global_ids='cell_id')
+  error = a_vtk_file%xml_writer%write_dataarray(data_name='cell_id', x=[cell_id])
+  error = a_vtk_file%xml_writer%write_dataarray(location='cell', action='close')
+  error = a_vtk_file%xml_writer%write_piece()
+  !endregion partitions
+  endsubroutine piece
 
   subroutine one_tetrahedron(a_vtk_file, open_piece_only)
   !< Write a piece of one tetrahedron: closed, or left open for its data.

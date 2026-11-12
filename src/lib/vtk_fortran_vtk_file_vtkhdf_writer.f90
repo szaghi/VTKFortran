@@ -66,7 +66,9 @@ implicit none
 private
 public :: vtkhdf_writer
 
-character(*), parameter :: ROLES(5) = ['Scalars', 'Vectors', 'Normals', 'Tensors', 'TCoords'] !< Roles of active arrays.
+character(*), parameter :: ROLES(12) = [character(18) :: 'Scalars', 'Vectors', 'Normals', 'Tensors', 'TCoords',      &
+                                        'GlobalIds', 'PedigreeIds', 'EdgeFlag', 'Tangents', 'RationalWeights', &
+                                        'HigherOrderDegrees', 'ProcessIds'] !< Roles of active arrays (VTK's names).
 integer(I4P), parameter :: DEFLATE_LEVEL_ZLIB = 6_I4P !< Deflate level of compressed datasets (the zlib default).
 integer(I4P), parameter :: TOPOLOGY_IMAGE = 1_I4P        !< ImageData.
 integer(I4P), parameter :: TOPOLOGY_UNSTRUCTURED = 2_I4P !< UnstructuredGrid.
@@ -96,7 +98,7 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
   integer(I4P)                  :: n_pieces=0_I4P          !< Pieces started.
   logical                       :: is_piece_open=.false.   !< A piece is open.
   integer(I8P)                  :: version_minor=0_I8P     !< Minor version needed by the features written.
-  type(active_array)            :: active(5)               !< Active arrays of the open group, one per role.
+  type(active_array)            :: active(12)              !< Active arrays of the open group, one per role.
   integer(I4P)                  :: topology=0_I4P          !< Topology: one of the TOPOLOGY_* constants.
   integer(I8P)                  :: np_piece=0_I8P          !< Points of the open piece (UnstructuredGrid, PolyData).
   integer(I8P)                  :: nc_piece=0_I8P          !< Cells of the open piece (UnstructuredGrid, PolyData).
@@ -520,12 +522,16 @@ contains
   endif
   endfunction write_step
 
-  function write_dataarray_location_tag(self, location, action, scalars, vectors, normals, tensors, tcoords) result(error)
+  function write_dataarray_location_tag(self, location, action, scalars, vectors, normals, tensors, tcoords, &
+      global_ids, pedigree_ids, edge_flags, tangents, rational_weights, higher_order_degrees, process_ids) &
+      result(error)
   !< Open or close the group of the point (`node`) or cell (`cell`) data, inside the piece (or in a step without pieces,
   !< which reuses the mesh of the step before: its arrays hold the points or cells of all the parts reused).
   !<
-  !< When opening, `scalars`, `vectors`, `normals`, `tensors` and `tcoords` name the active array of each role: the
-  !< dataset of that name, when written, gets the `Attribute` attribute (VTKHDF 2.6) holding the role.
+  !< When opening, `scalars`, `vectors`, `normals`, `tensors`, `tcoords`, `global_ids`, `pedigree_ids`, `edge_flags`,
+  !< `tangents`, `rational_weights`, `higher_order_degrees` and `process_ids` name the active array of each role of VTK:
+  !< the dataset of that name, when written, gets the `Attribute` attribute (VTKHDF 2.6) holding the role (`Scalars`,
+  !< ..., `ProcessIds`, the names VTK writes).
   class(vtkhdf_writer),       intent(inout)        :: self
   character(*),               intent(in)           :: location
   character(*),               intent(in)           :: action
@@ -534,10 +540,17 @@ contains
   character(*),               intent(in), optional :: normals
   character(*),               intent(in), optional :: tensors
   character(*),               intent(in), optional :: tcoords
+  character(*),               intent(in), optional :: global_ids
+  character(*),               intent(in), optional :: pedigree_ids
+  character(*),               intent(in), optional :: edge_flags
+  character(*),               intent(in), optional :: tangents
+  character(*),               intent(in), optional :: rational_weights
+  character(*),               intent(in), optional :: higher_order_degrees
+  character(*),               intent(in), optional :: process_ids
   integer(I4P)                                     :: error
-  character(len=:), allocatable                    :: location_ !< Location, upper case.
-  character(len=:), allocatable                    :: action_   !< Action, upper case.
-  character(len=:), allocatable                    :: name      !< Group name.
+  character(len=:), allocatable                    :: location_            !< Location, upper case.
+  character(len=:), allocatable                    :: action_              !< Action, upper case.
+  character(len=:), allocatable                    :: name                 !< Group name.
 
   location_ = upper(location) ; action_ = upper(action)
   error = 1_I4P
@@ -557,6 +570,13 @@ contains
     if (present(normals)) self%active(3)%name = normals
     if (present(tensors)) self%active(4)%name = tensors
     if (present(tcoords)) self%active(5)%name = tcoords
+    if (present(global_ids)) self%active(6)%name = global_ids
+    if (present(pedigree_ids)) self%active(7)%name = pedigree_ids
+    if (present(edge_flags)) self%active(8)%name = edge_flags
+    if (present(tangents)) self%active(9)%name = tangents
+    if (present(rational_weights)) self%active(10)%name = rational_weights
+    if (present(higher_order_degrees)) self%active(11)%name = higher_order_degrees
+    if (present(process_ids)) self%active(12)%name = process_ids
   elseif (action_ == 'CLOSE') then
     if (self%group < 0_hid_kind) return
     if (self%group_name /= name) return

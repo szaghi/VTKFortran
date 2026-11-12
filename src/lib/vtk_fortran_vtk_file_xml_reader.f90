@@ -35,6 +35,7 @@ use vtk_fortran_dataarray_decoder
 use foxy, only : xml_index, XML_MALFORMED, XML_NOT_FOUND
 use vtk_fortran_zlib, only : zlib_uncompress_blocks
 use vtk_fortran_vtk_file_vtkhdf_reader, only : vtkhdf_reader, is_hdf5_file
+use vtk_fortran_parameters, only : ACTIVE_ROLES, active_role
 
 implicit none
 private
@@ -67,6 +68,7 @@ type :: xml_reader
     procedure, pass(self) :: close                !< Close the file read and finalize the reader.
     procedure, pass(self) :: finalize             !< Finalize the reader (free memory).
     procedure, pass(self) :: get_dataarray_info   !< Return the type, components and tuples of a dataarray.
+    procedure, pass(self) :: get_active           !< Return the name of the active array of a role.
     procedure, pass(self) :: get_dataarray_names  !< Return the names of the dataarrays of a location.
     procedure, pass(self) :: get_info             !< Return the information of the dataset.
     procedure, pass(self) :: get_sources          !< Return the files of the pieces of a parallel header.
@@ -337,6 +339,44 @@ contains
   if (present(nz1)) nz1 = extent(5)
   if (present(nz2)) nz2 = extent(6)
   endfunction read_piece
+
+  function get_active(self, location, role, data_name, piece) result(error)
+  !< Return the name of the active array of a role of a location (node or cell): `role` one of Scalars, Vectors, Normals,
+  !< Tensors, TCoords, GlobalIds, PedigreeIds, EdgeFlag, Tangents, RationalWeights, HigherOrderDegrees, ProcessIds (case
+  !< insensitive); `data_name` empty if no array has the role. Error 4 for an unknown location or role, or a missing
+  !< piece.
+  class(xml_reader),             intent(in)           :: self      !< XML reader.
+  character(*),                  intent(in)           :: location  !< Location: node or cell.
+  character(*),                  intent(in)           :: role      !< Role.
+  character(len=:), allocatable, intent(out)          :: data_name !< Name of the active array, empty if none.
+  integer(I4P),                  intent(in), optional :: piece     !< Piece, from 1 (default 1).
+  integer(I4P)                                        :: error     !< Error status.
+  integer(I4P)                                        :: section   !< Index of the location element.
+  integer(I4P)                                        :: id        !< Index of an element.
+  integer(I4P)                                        :: r         !< Role.
+
+  data_name = ''
+  if (self%is_hdf) then
+    error = self%hdf%get_active(location=location, role=role, data_name=data_name, piece=piece)
+    return
+  endif
+  error = 4
+  r = active_role(role)
+  if (r == 0) return
+  select case(lower_case(trim(adjustl(location))))
+  case('node', 'cell')
+    if (.not.self%is_parallel) then
+      error = self%piece_element(piece=piece, id=id) ; if (error /= 0) return
+    endif
+    if (.not.self%is_initialized) return
+  case default
+    return
+  endselect
+  error = self%find_dataarray(location=location, data_name='', piece=piece, id=id, section=section)
+  error = 0
+  if (section == 0) return
+  data_name = self%xml%attribute(id=section, name=trim(ACTIVE_ROLES(r)))
+  endfunction get_active
 
   function get_dataarray_names(self, location, names, piece) result(error)
   !< Return the names of the dataarrays of a location (node, cell or field), in the order of the file.

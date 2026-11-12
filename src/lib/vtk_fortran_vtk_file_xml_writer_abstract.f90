@@ -441,7 +441,10 @@ contains
    endif
    endsubroutine dataarray_tag_overrides
 
-   function write_dataarray_location_tag(self, location, action, scalars, vectors, normals, tensors, tcoords) result(error)
+   function write_dataarray_location_tag(self, location, action, scalars, vectors, normals, tensors, tcoords, &
+                                         global_ids, pedigree_ids, edge_flags, tangents, rational_weights, &
+                                         higher_order_degrees, process_ids) &
+                                         result(error)
    !< Write `<[/]PointData>` or `<[/]CellData>` open/close tag (`<[/]PPointData>` or `<[/]PCellData>` for parallel files).
    !<
    !< @note **must** be called before saving the data related to geometric mesh, this function initializes the
@@ -450,10 +453,14 @@ contains
    !< @note A single file can contain both cell and node centered variables. In this case this function must be
    !< called two times, before saving cell-centered variables and before saving node-centered variables.
    !<
-   !< @note When opening, the optional `scalars`, `vectors`, `normals`, `tensors` and `tcoords` arguments designate the
-   !< *active* array of each role, written as the `Scalars`, `Vectors`, `Normals`, `Tensors` and `TCoords` attributes of the
-   !< tag: readers (e.g. ParaView) use it as the default array of that role. Each argument is the `data_name` of an array
-   !< written (or, for parallel files, declared) inside this tag; the name is not checked. They are ignored when closing.
+   !< @note When opening, the optional `scalars`, `vectors`, `normals`, `tensors`, `tcoords`, `global_ids`,
+   !< `pedigree_ids`, `edge_flags`, `tangents`, `rational_weights`, `higher_order_degrees` and `process_ids` arguments
+   !< designate the *active* array of each role of VTK, written as the `Scalars`, `Vectors`, `Normals`, `Tensors`,
+   !< `TCoords`, `GlobalIds`, `PedigreeIds`, `EdgeFlag`, `Tangents`, `RationalWeights`, `HigherOrderDegrees` and
+   !< `ProcessIds` attributes of the tag (the names VTK writes): readers use it as the array of that role (ParaView the
+   !< default array to show; VTK the global ids that match the points and cells of partitions, ...).
+   !< Each argument is the `data_name` of an array written (or, for parallel files, declared) inside this tag; the name is
+   !< not checked. They are ignored when closing.
    !<
    !<### Examples of usage
    !<
@@ -489,6 +496,13 @@ contains
    character(*),               intent(in), optional :: normals    !< Name of the active normals array.
    character(*),               intent(in), optional :: tensors    !< Name of the active tensors array.
    character(*),               intent(in), optional :: tcoords    !< Name of the active texture coordinates array.
+   character(*),               intent(in), optional :: global_ids !< Name of the active global ids (one integer component) array.
+   character(*),               intent(in), optional :: pedigree_ids !< Name of the active pedigree ids array.
+   character(*),               intent(in), optional :: edge_flags !< Name of the active edge flags array.
+   character(*),               intent(in), optional :: tangents   !< Name of the active tangents (3 components) array.
+   character(*),               intent(in), optional :: rational_weights !< Name of the active rational weights array.
+   character(*),               intent(in), optional :: higher_order_degrees !< Name of the active higher order degrees array.
+   character(*),               intent(in), optional :: process_ids !< Name of the active process ids array.
    integer(I4P)                                     :: error      !< Error status.
    type(string)                                     :: location_  !< Location string.
    type(string)                                     :: action_    !< Action string.
@@ -514,6 +528,13 @@ contains
       if (present(normals)) attributes = attributes//' Normals="'//trim(adjustl(normals))//'"'
       if (present(tensors)) attributes = attributes//' Tensors="'//trim(adjustl(tensors))//'"'
       if (present(tcoords)) attributes = attributes//' TCoords="'//trim(adjustl(tcoords))//'"'
+      if (present(global_ids)) attributes = attributes//' GlobalIds="'//trim(adjustl(global_ids))//'"'
+      if (present(pedigree_ids)) attributes = attributes//' PedigreeIds="'//trim(adjustl(pedigree_ids))//'"'
+      if (present(edge_flags)) attributes = attributes//' EdgeFlag="'//trim(adjustl(edge_flags))//'"'
+      if (present(tangents)) attributes = attributes//' Tangents="'//trim(adjustl(tangents))//'"'
+      if (present(rational_weights)) attributes = attributes//' RationalWeights="'//trim(adjustl(rational_weights))//'"'
+      if (present(higher_order_degrees)) attributes = attributes//' HigherOrderDegrees="'//trim(adjustl(higher_order_degrees))//'"'
+      if (present(process_ids)) attributes = attributes//' ProcessIds="'//trim(adjustl(process_ids))//'"'
       if (len(attributes) > 0) then
          call self%write_start_tag(name=location_%chars(), attributes=attributes(2:))
       else

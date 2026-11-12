@@ -835,7 +835,10 @@ abstract interface
   integer(I4P)                             :: error
   endfunction write_connectivity_I8P_interface
 
-  function write_dataarray_location_tag_interface(self, location, action, scalars, vectors, normals, tensors, tcoords) result(error)
+  function write_dataarray_location_tag_interface(self, location, action, scalars, vectors, normals, tensors, tcoords, &
+                                                  global_ids, pedigree_ids, edge_flags, tangents, rational_weights, &
+                                                  higher_order_degrees, process_ids) &
+                                                  result(error)
   import :: vtk_writer_abstract, I4P
   class(vtk_writer_abstract), intent(inout) :: self
   character(*),               intent(in)   :: location
@@ -845,6 +848,13 @@ abstract interface
   character(*),               intent(in), optional :: normals
   character(*),               intent(in), optional :: tensors
   character(*),               intent(in), optional :: tcoords
+  character(*),               intent(in), optional :: global_ids
+  character(*),               intent(in), optional :: pedigree_ids
+  character(*),               intent(in), optional :: edge_flags
+  character(*),               intent(in), optional :: tangents
+  character(*),               intent(in), optional :: rational_weights
+  character(*),               intent(in), optional :: higher_order_degrees
+  character(*),               intent(in), optional :: process_ids
   integer(I4P)                             :: error
   endfunction write_dataarray_location_tag_interface
 

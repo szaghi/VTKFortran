@@ -124,8 +124,8 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
 - **ImageData, RectilinearGrid, StructuredGrid: one piece**, whose extent is the whole extent: `write_piece` is called
   once, with the extents of `initialize`; the piece of a RectilinearGrid or StructuredGrid needs its `write_geo`.
 - **Data arrays**: every kind, rank and layout of `write_dataarray`, and `write_dataarray_unsigned` (HDF5 unsigned types).
-  An array whose size does not match the grid or the piece is refused. Active arrays (`scalars=`, `vectors=`, ...)
-  become the `Attribute` attribute of their dataset; field data are numeric only: a string is refused (VTK 9.7 crashes
+  An array whose size does not match the grid or the piece is refused. Active arrays (`scalars=`, `vectors=`, ...,
+  `global_ids=`, ..., `process_ids=`: every role of VTK) become the `Attribute` attribute of their dataset; field data are numeric only: a string is refused (VTK 9.7 crashes
   on string field data, or drops them). See [Data arrays](/guide/data).
 - **Compression**: `compressor='zlib'` deflates every dataset (level 6, in chunks of up to 1 MiB). It needs the deflate
   filter of the HDF5 library, not `VTKFORTRAN_USE_ZLIB`: without it `initialize` returns a non-zero error.

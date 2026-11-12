@@ -1,11 +1,19 @@
-!< VTK_Fortran test: designate the active arrays of PointData/CellData (Scalars, Vectors, Normals, Tensors, TCoords).
+!< VTK_Fortran test: designate the active arrays of PointData/CellData (every attribute role of VTK).
 program vtk_fortran_write_active_arrays
-!< VTK_Fortran test: designate the active arrays of PointData/CellData (Scalars, Vectors, Normals, Tensors, TCoords).
+!< VTK_Fortran test: designate the active arrays of PointData/CellData (every attribute role of VTK).
 !<
-!< One hexahedron with an array for each role, written in a `.vtu` file and declared in a `.pvtu` header: the test checks
-!< the attributes written in the data tags of both files.
+!< One hexahedron with an array for each of the roles Scalars, Vectors, Normals, Tensors and TCoords, written in a `.vtu`
+!< file and declared in a `.pvtu` header: the test checks the attributes written in the data tags of both files.
+!<
+!< Then the other roles: two hexahedra sharing a face, each a piece (a partition), with point data of global ids (the
+!< shared points with the same id in both pieces), pedigree ids, edge flags, tangents, rational weights, higher order
+!< degrees, process ids and the ghost points (`vtkGhostType`: the shared points of the second piece are duplicates), and
+!< cell global ids: `vtkfortran_active_roles.vtu` and, with HDF5, `vtkfortran_active_roles.vtkhdf`. The tag of the `.vtu`
+!< is checked, and both files are read back: the active array of each role (`get_active`). VTK readers check the roles
+!< outside this test.
 use penf
 use vtk_fortran, only : vtk_file, pvtk_file
+use vtk_fortran_hdf5, only : is_hdf5_enabled
 
 implicit none
 integer(I4P), parameter :: np=8_I4P                                     !< Number of points.
@@ -20,9 +28,11 @@ character(*), parameter :: point_tag='<PointData Scalars="pressure" Vectors="vel
                                      'TCoords="uv">'                    !< Expected PointData tag.
 character(*), parameter :: cell_tag='<CellData Scalars="part">'         !< Expected CellData tag.
 character(*), parameter :: ppoint_tag='<PPointData Scalars="pressure" Vectors="velocity">' !< Expected PPointData tag.
+character(*), parameter :: roles_tag='<PointData GlobalIds="gid" PedigreeIds="ped" EdgeFlag="edge" Tangents="tan" '// &
+                                     'RationalWeights="w" HigherOrderDegrees="hod" ProcessIds="pid">' !< Expected tag.
 real(R8P)               :: stress(9,np)                                 !< Tensor at points (9 components).
 integer(I4P)            :: error                                        !< Status error.
-logical                 :: test_passed(4)                               !< List of passed tests.
+logical                 :: test_passed(7)                               !< List of passed tests.
 
 stress = 1._R8P
 call write_vtu(filename='vtkfortran_write_active_arrays.vtu')
@@ -31,6 +41,15 @@ test_passed(1) = has_line(filename='vtkfortran_write_active_arrays.vtu', tag=poi
 test_passed(2) = has_line(filename='vtkfortran_write_active_arrays.vtu', tag=cell_tag)
 test_passed(3) = has_line(filename='vtkfortran_write_active_arrays.pvtu', tag=ppoint_tag)
 test_passed(4) = error == 0
+call write_roles(format='ascii', filename='vtkfortran_active_roles.vtu')
+test_passed(5) = has_line(filename='vtkfortran_active_roles.vtu', tag=roles_tag) .and. error == 0
+test_passed(6) = read_roles(filename='vtkfortran_active_roles.vtu')
+test_passed(7) = .true.
+if (is_hdf5_enabled) then
+  call write_roles(format='vtkhdf', filename='vtkfortran_active_roles.vtkhdf')
+  test_passed(7) = read_roles(filename='vtkfortran_active_roles.vtkhdf') .and. error == 0
+endif
+print '(A,7L2)', 'active arrays: vtu, cells, pvtu, errors, roles tag, roles read (vtu), roles (vtkhdf):', test_passed
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 if (.not.all(test_passed)) error stop 'some tests failed'
@@ -82,6 +101,72 @@ contains
   error = a_pvtk_file%xml_writer%write_parallel_geo(source=source)
   error = a_pvtk_file%finalize()
   endsubroutine write_pvtu
+
+  subroutine write_roles(format, filename)
+  !< Two hexahedra sharing the face x=1, a piece each, with an array for each of the other roles and the ghost points.
+  character(*), intent(in) :: format     !< Format.
+  character(*), intent(in) :: filename   !< Output file name.
+  type(vtk_file)           :: a_vtk_file !< A VTK file.
+  integer(I8P)             :: gid(np)    !< Global ids of the points of a piece.
+  integer(I1P)             :: ghost(np)  !< Ghost points (1: a duplicate point) of a piece.
+  integer(I4P)             :: p, i       !< Piece, counter.
+
+  error = a_vtk_file%initialize(format=format, filename=filename, mesh_topology='UnstructuredGrid')
+  do p=1, 2
+    if (p == 1) then
+      gid = [0, 1, 2, 3, 4, 5, 6, 7] ; ghost = 0_I1P
+    else ! the points of x=0 are those of x=1 of the first piece
+      gid = [1, 8, 9, 2, 5, 10, 11, 6] ; ghost = [1, 0, 0, 1, 1, 0, 0, 1]
+    endif
+    error = max(error, abs(a_vtk_file%xml_writer%write_piece(np=np, nc=nc)))
+    error = max(error, abs(a_vtk_file%xml_writer%write_geo(np=np, nc=nc, x=x + p - 1, y=y, z=z)))
+    error = max(error, abs(a_vtk_file%xml_writer%write_connectivity(nc=nc, connectivity=connect, offset=offset, &
+                                                                      cell_type=cell_type)))
+    error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(location='node', action='open', global_ids='gid',     &
+                                                                   pedigree_ids='ped', edge_flags='edge', tangents='tan', &
+                                                                   rational_weights='w', higher_order_degrees='hod',     &
+                                                                   process_ids='pid')))
+    error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(data_name='gid', x=gid)))
+    error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(data_name='ped', x=int(gid + 100_I8P, I4P))))
+    error = max(error, abs(a_vtk_file%xml_writer%write_dataarray_unsigned(data_name='edge', x=[(1_I1P, i=1, np)])))
+    error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(data_name='tan', x=y, y=-x, z=0*z)))
+    error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(data_name='w', x=1 + 0*x)))
+    error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(data_name='hod', x=1 + 0*x, y=1 + 0*y, z=1 + 0*z)))
+    error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(data_name='pid', x=[(p - 1, i=1, np)])))
+    error = max(error, abs(a_vtk_file%xml_writer%write_dataarray_unsigned(data_name='vtkGhostType', x=ghost)))
+    error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(location='node', action='close')))
+    error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(location='cell', action='open', global_ids='cgid')))
+    error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(data_name='cgid', x=[int(p - 1, I8P)])))
+    error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(location='cell', action='close')))
+    error = max(error, abs(a_vtk_file%xml_writer%write_piece()))
+  enddo
+  error = max(error, abs(a_vtk_file%finalize()))
+  endsubroutine write_roles
+
+  logical function read_roles(filename)
+  !< Read back the active array of each role of the second piece; a role without array is empty, an unknown one error 4.
+  character(*), intent(in)      :: filename   !< File name.
+  type(vtk_file)                :: a_vtk_file !< A VTK file.
+  character(len=:), allocatable :: name       !< Name of an active array.
+  character(18), parameter      :: roles(7) = ['GlobalIds         ', 'PedigreeIds       ', 'EdgeFlag          ', &
+                                               'Tangents          ', 'RationalWeights   ', 'HigherOrderDegrees', &
+                                               'ProcessIds        '] !< Roles.
+  character(4), parameter       :: names(7) = ['gid ', 'ped ', 'edge', 'tan ', 'w   ', 'hod ', 'pid '] !< Their arrays.
+  integer(I4P)                  :: r, e       !< Counter, error.
+
+  read_roles = a_vtk_file%initialize(filename=filename, action='read') == 0
+  do r=1, size(roles)
+    e = a_vtk_file%xml_reader%get_active(location='node', role=trim(roles(r)), data_name=name, piece=2)
+    read_roles = read_roles .and. e == 0 .and. name == trim(names(r))
+  enddo
+  e = a_vtk_file%xml_reader%get_active(location='cell', role='globalids', data_name=name, piece=2) ! case insensitive
+  read_roles = read_roles .and. e == 0 .and. name == 'cgid'
+  e = a_vtk_file%xml_reader%get_active(location='node', role='Scalars', data_name=name, piece=2)  ! no array
+  read_roles = read_roles .and. e == 0 .and. len(name) == 0
+  read_roles = read_roles .and. a_vtk_file%xml_reader%get_active(location='node', role='Speed', data_name=name) == 4
+  e = a_vtk_file%finalize()
+  if (.not.read_roles) print '(A)', 'roles of '//filename//': different'
+  endfunction read_roles
 
   function has_line(filename, tag) result(is_found)
   !< Check that the file contains a line made of the given tag (leading indentation apart).
