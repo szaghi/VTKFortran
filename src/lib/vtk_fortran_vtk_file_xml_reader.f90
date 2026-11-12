@@ -105,6 +105,9 @@ type :: xml_reader
     procedure, pass(self), private :: find_dataarray          !< Return the index of a named dataarray element.
     procedure, pass(self), private :: geometry_dataarrays     !< Return the indexes of the geometry dataarray elements.
     procedure, pass(self), private :: piece_element           !< Return the index of a piece element.
+    procedure, pass(self), private :: htg_extent              !< The extent of the root grid of a .htg.
+    procedure, pass(self), private :: htg_layout              !< The trees of a .htg.
+    procedure, pass(self), private :: htg_tree_id             !< Tree ids of a .htg, x fastest.
     procedure, pass(self), private :: read_connectivity_I4P   !< Read the cells (I4P).
     procedure, pass(self), private :: read_connectivity_I8P   !< Read the cells (I8P).
     procedure, pass(self), private :: read_dataarray_rank1_R8P !< Read a dataarray (rank 1, R8P).
@@ -171,6 +174,9 @@ contains
     self%is_parallel = .false.
   case('PImageData', 'PRectilinearGrid', 'PStructuredGrid', 'PUnstructuredGrid', 'PPolyData', 'PTable')
     self%is_parallel = .true.
+  case('HyperTreeGrid') ! the layout of version 2.0, as VTK 9.7.2 (and the library) write it
+    self%is_parallel = .false.
+    if (self%xml%attribute(id=root, name='version') /= '2.0') return
   case default
     return
   endselect
@@ -213,6 +219,7 @@ contains
     endif
   endif
   self%pieces_number = size(self%xml%find_all(name='Piece', parent=self%dataset), dim=1)
+  if (self%mesh_topology == 'HyperTreeGrid') self%pieces_number = 1 ! one piece: the HyperTreeGrid element itself
   self%filename = filename
   self%is_initialized = .true.
   error = 0
@@ -289,6 +296,7 @@ contains
   if (present(compressor)) compressor = trim(merge('zlib', 'none', self%is_compressed))
   extent = 0
   call get_fixed_attribute(xml=self%xml, id=self%dataset, name='WholeExtent', values=extent, error=error)
+  if (self%mesh_topology == 'HyperTreeGrid') error = self%htg_extent(extent)
   if (present(nx1)) nx1 = extent(1)
   if (present(nx2)) nx2 = extent(2)
   if (present(ny1)) ny1 = extent(3)
@@ -337,6 +345,7 @@ contains
   integer(I4P)                             :: p         !< Index of the piece element.
   integer(I8P)                             :: counts(6) !< Points, cells, verts, lines, strips, polys.
   integer(I4P)                             :: extent(6) !< Extent.
+  integer(I8P), allocatable                :: ids(:), depths(:), n_cells(:) !< Trees of a HyperTreeGrid.
 
   if (self%is_hdf) then
     error = self%hdf%read_piece(piece=piece, np=np, nc=nc, nx1=nx1, nx2=nx2, ny1=ny1, ny2=ny2, nz1=nz1, nz2=nz2, &
@@ -345,7 +354,15 @@ contains
   endif
   error = self%piece_element(piece=piece, id=p)
   if (error /= 0) return
-  call piece_counts(xml=self%xml, id=p, mesh_topology=self%mesh_topology, counts=counts, extent=extent, error=error)
+  if (self%mesh_topology == 'HyperTreeGrid') then ! the points of the root grid, the cells of the trees
+    counts = 0_I8P
+    error = self%htg_extent(extent)
+    counts(1) = product(int(extent(2::2) - extent(1::2), I8P) + 1_I8P)
+    if (error == 0) error = self%htg_layout(ids, depths, n_cells)
+    if (error == 0) counts(2) = sum(n_cells)
+  else
+    call piece_counts(xml=self%xml, id=p, mesh_topology=self%mesh_topology, counts=counts, extent=extent, error=error)
+  endif
   if (present(np)) np = counts(1)
   if (present(nc)) nc = counts(2)
   if (present(nverts)) nverts = counts(3)
@@ -779,10 +796,10 @@ contains
   endfunction set_level
 
   function get_trees(self, tree_ids, branch_factor, piece, interface_normals, interface_intercepts) result(error)
-  !< Return the trees of a piece (a partition) of a VTKHDF HyperTreeGrid (of the step read): the ids of their root cells
-  !< (i + (nx-1)(j + (ny-1)k), from 0, also for a file with `TransposedRootIndexing`), in the order of the file (that of
-  !< their cells in the cell data), and its branch factor (2 or 3); the names of its interface cell arrays (empty without,
-  !< `set_interface` of the writer). Error 4 for another dataset or piece, 3 for an XML file.
+  !< Return the trees of a piece (a partition) of a HyperTreeGrid (a `.htg`, one piece; a VTKHDF file, of the step read):
+  !< the ids of their root cells (i + (nx-1)(j + (ny-1)k), from 0, also for a file with `TransposedRootIndexing`), in the
+  !< order of the file (that of their cells in the cell data), and its branch factor (2 or 3); the names of its interface
+  !< cell arrays (empty without, `set_interface` of the writer). Error 4 for another dataset or piece.
   class(xml_reader),             intent(in)            :: self          !< XML reader.
   integer(I8P), allocatable,     intent(out)           :: tree_ids(:)   !< Ids of the trees.
   integer(I4P),                  intent(out), optional :: branch_factor !< Branch factor.
@@ -790,6 +807,8 @@ contains
   character(len=:), allocatable, intent(out), optional :: interface_normals    !< Cell array of the interface normals.
   character(len=:), allocatable, intent(out), optional :: interface_intercepts !< Cell array of the interface intercepts.
   integer(I4P)                                         :: error         !< Error status.
+  integer(I8P), allocatable                            :: depths(:), counts(:) !< Layout of the trees.
+  integer(I4P)                                         :: iostat        !< IO status.
 
   if (self%is_hdf) then
     error = self%hdf%get_trees(tree_ids=tree_ids, branch_factor=branch_factor, piece=piece, &
@@ -799,13 +818,28 @@ contains
   if (present(interface_normals)) interface_normals = ''
   if (present(interface_intercepts)) interface_intercepts = ''
   allocate(tree_ids(0))
-  error = 3
+  error = 4
+  if (self%mesh_topology /= 'HyperTreeGrid') return
+  if (present(piece)) then
+    if (piece /= 1) return
+  endif
+  error = self%htg_layout(tree_ids, depths, counts)
+  if (error /= 0) return
+  tree_ids = self%htg_tree_id(tree_ids)
+  if (present(interface_normals)) interface_normals = self%xml%attribute(id=self%dataset, name='InterfaceNormalsName')
+  if (present(interface_intercepts)) interface_intercepts = self%xml%attribute(id=self%dataset, &
+                                                                               name='InterfaceInterceptsName')
+  if (present(branch_factor)) then
+    branch_factor = 0
+    call self%xml%get_attribute(id=self%dataset, name='BranchFactor', value=branch_factor, iostat=iostat)
+    if (iostat /= 0) error = 6
+  endif
   endfunction get_trees
 
   function read_tree(self, tree_id, descriptor, mask, piece) result(error)
-  !< Read the tree `tree_id` of a piece of a VTKHDF HyperTreeGrid (of the step read) as `write_tree` takes it:
-  !< `descriptor` the refinement of its cells breadth first, every depth but the deepest; `mask` one value per cell (all
-  !< false when the file has none). Error 4 for another dataset or a tree not in the piece, 3 for an XML file, 6 for an
+  !< Read the tree `tree_id` of a piece of a HyperTreeGrid (a `.htg`; a VTKHDF file, of the step read) as `write_tree`
+  !< takes it: `descriptor` the refinement of its cells breadth first, every depth but the deepest; `mask` one value per
+  !< cell (all false when the file has none). Error 4 for another dataset or a tree not in the piece, 6 for an
   !< inconsistent file.
   class(xml_reader),    intent(in)            :: self          !< XML reader.
   integer(I8P),         intent(in)            :: tree_id       !< Id of the tree (its root cell, as get_trees gives it).
@@ -813,6 +847,11 @@ contains
   logical, allocatable, intent(out), optional :: mask(:)       !< Masked cells.
   integer(I4P),         intent(in),  optional :: piece         !< Piece, from 1 (default 1).
   integer(I4P)                                :: error         !< Error status.
+  integer(I8P), allocatable                   :: ids(:), depths(:), counts(:) !< Layout of the trees.
+  integer(I1P), allocatable                   :: bits(:)       !< Descriptors or mask of every tree, 0 or 1.
+  integer(I8P)                                :: bits_before, cells_before, c0 !< Bits, cells, depths of the trees before.
+  integer(I8P)                                :: n_bits, n_cells !< Descriptor bits and cells of the tree.
+  integer(I4P)                                :: t, id, section  !< Counter, elements.
 
   if (self%is_hdf) then
     error = self%hdf%read_tree(tree_id=tree_id, descriptor=descriptor, mask=mask, piece=piece)
@@ -820,7 +859,43 @@ contains
   endif
   allocate(descriptor(0))
   if (present(mask)) allocate(mask(0))
-  error = 3
+  error = 4
+  if (self%mesh_topology /= 'HyperTreeGrid') return
+  if (present(piece)) then
+    if (piece /= 1) return
+  endif
+  error = self%htg_layout(ids, depths, counts)
+  if (error /= 0) return
+  ids = self%htg_tree_id(ids)
+  ! the descriptor bits and cells of the trees before this one (the deepest depth of a tree has no descriptor bits)
+  bits_before = 0_I8P ; cells_before = 0_I8P ; c0 = 0_I8P
+  do t=1, size(ids)
+    if (ids(t) == tree_id) exit
+    bits_before = bits_before + sum(counts(c0+1:c0+depths(t)-1))
+    cells_before = cells_before + sum(counts(c0+1:c0+depths(t)))
+    c0 = c0 + depths(t)
+  enddo
+  error = 4
+  if (t > size(ids)) return ! a root cell without tree
+  n_bits = sum(counts(c0+1:c0+depths(t)-1))
+  n_cells = sum(counts(c0+1:c0+depths(t)))
+  error = self%read_dataarray(location='trees', data_name='Descriptors', x=bits)
+  if (error /= 0) return
+  error = 6
+  if (bits_before + n_bits > size(bits, kind=I8P)) return
+  descriptor = bits(bits_before+1:bits_before+n_bits) /= 0_I1P
+  error = 0
+  if (.not.present(mask)) return
+  if (self%find_dataarray(location='trees', data_name='Mask', id=id, section=section) /= 0) then
+    mask = spread(.false., 1, int(n_cells)) ! no mask: no cell masked
+    return
+  endif
+  error = self%read_dataarray(location='trees', data_name='Mask', x=bits)
+  if (error /= 0) return
+  error = 6
+  if (cells_before + n_cells > size(bits, kind=I8P)) return
+  mask = bits(cells_before+1:cells_before+n_cells) /= 0_I1P
+  error = 0
   endfunction read_tree
 
   function get_sources(self, sources) result(error)
@@ -1121,6 +1196,8 @@ contains
     endif
   case('field')
     section = self%xml%find(name='FieldData', parent=self%dataset)
+  case('trees') ! the arrays of the trees of a HyperTreeGrid (.htg)
+    if (self%mesh_topology == 'HyperTreeGrid') section = self%xml%find(name='Trees', parent=self%dataset)
   case('row') ! the columns of a Table: its RowData, in its one Piece (the PRowData of a PTable header)
     if (self%mesh_topology == 'PTable') then
       section = self%xml%find(name='PRowData', parent=self%dataset)
@@ -1164,6 +1241,8 @@ contains
   select case(self%mesh_topology)
   case('RectilinearGrid')
     g = self%xml%find(name='Coordinates', parent=p)
+  case('HyperTreeGrid') ! its Grid: the coordinates of the root grid, as a RectilinearGrid
+    g = self%xml%find(name='Grid', parent=p)
   case('StructuredGrid', 'UnstructuredGrid', 'PolyData')
     g = self%xml%find(name='Points', parent=p)
   case default
@@ -1177,10 +1256,17 @@ contains
     id(n) = kids(c)
     if (n == 3) exit
   enddo
-  if ((self%mesh_topology == 'RectilinearGrid' .and. n == 3) .or. (self%mesh_topology /= 'RectilinearGrid' .and. n >= 1)) then
-    if (self%mesh_topology /= 'RectilinearGrid') n = 1
+  if ((is_rect(self%mesh_topology) .and. n == 3) .or. (.not.is_rect(self%mesh_topology) .and. n >= 1)) then
+    if (.not.is_rect(self%mesh_topology)) n = 1
     error = 0
   endif
+  contains
+    pure logical function is_rect(topology)
+    !< The geometry is 3 coordinates arrays (a RectilinearGrid, the root grid of a HyperTreeGrid).
+    character(*), intent(in) :: topology !< Dataset type.
+
+    is_rect = topology == 'RectilinearGrid' .or. topology == 'HyperTreeGrid'
+    endfunction is_rect
   endfunction geometry_dataarrays
 
   function piece_element(self, piece, id) result(error)
@@ -1197,6 +1283,11 @@ contains
   if (.not.self%is_initialized) return
   piece_ = 1 ; if (present(piece)) piece_ = piece
   if (piece_ < 1 .or. piece_ > self%pieces_number) return
+  if (self%mesh_topology == 'HyperTreeGrid') then ! its Grid, Trees and CellData are children of its element
+    id = self%dataset
+    error = 0
+    return
+  endif
   pieces = self%xml%find_all(name='Piece', parent=self%dataset)
   if (piece_ > size(pieces, dim=1)) return
   id = pieces(piece_)
@@ -1961,4 +2052,55 @@ contains
     if (string(i:i) >= 'A' .and. string(i:i) <= 'Z') lower(i:i) = achar(iachar(string(i:i)) + 32)
   enddo
   endfunction lower_case
+  function htg_extent(self, extent) result(error)
+  !< The extent of the root grid of a `.htg` (its points, from 0), from its `Dimensions`. Error 6 if malformed.
+  class(xml_reader), intent(in)    :: self      !< XML reader.
+  integer(I4P),      intent(inout) :: extent(6) !< Extent.
+  integer(I4P)                     :: error     !< Error status.
+  integer(I4P)                     :: dims(3)   !< Points along each axis.
+
+  error = 0
+  dims = 1
+  call get_fixed_attribute(xml=self%xml, id=self%dataset, name='Dimensions', values=dims, error=error, is_required=.true.)
+  extent = 0
+  extent(2::2) = dims - 1
+  endfunction htg_extent
+
+  function htg_layout(self, ids, depths, counts) result(error)
+  !< The trees of a `.htg`: their ids in the file (`TreeIds`), depths (`DepthPerTree`) and the cells of each of their
+  !< depths (`NumberOfVerticesPerDepth`), checked against each other (error 6 if they disagree, 4 without trees).
+  class(xml_reader),         intent(in)  :: self      !< XML reader.
+  integer(I8P), allocatable, intent(out) :: ids(:)    !< Ids of the trees, as in the file.
+  integer(I8P), allocatable, intent(out) :: depths(:) !< Depth of each tree.
+  integer(I8P), allocatable, intent(out) :: counts(:) !< Cells of each depth of each tree.
+  integer(I4P)                           :: error     !< Error status.
+
+  allocate(ids(0), depths(0), counts(0))
+  error = self%read_dataarray(location='trees', data_name='TreeIds', x=ids)
+  if (error == 0) error = self%read_dataarray(location='trees', data_name='DepthPerTree', x=depths)
+  if (error == 0) error = self%read_dataarray(location='trees', data_name='NumberOfVerticesPerDepth', x=counts)
+  if (error /= 0) return
+  error = 6
+  if (size(depths) /= size(ids)) return
+  if (sum(depths) /= size(counts, kind=I8P) .or. any(depths < 1_I8P)) return
+  error = 0
+  endfunction htg_layout
+
+  function htg_tree_id(self, file_ids) result(ids)
+  !< Tree ids of a `.htg` in the documented indexing, x fastest: unchanged, or converted from z fastest for a file with
+  !< `TransposedRootIndexing="1"` (as VTK reads it).
+  class(xml_reader), intent(in) :: self        !< XML reader.
+  integer(I8P),      intent(in) :: file_ids(:) !< Tree ids in the file.
+  integer(I8P)                  :: ids(size(file_ids)) !< Tree ids, x fastest.
+  integer(I4P)                  :: dims(3)     !< Points along each axis.
+  integer(I8P)                  :: n(3)        !< Root cells per axis.
+  integer(I4P)                  :: error       !< Error of the attribute.
+
+  ids = file_ids
+  if (self%xml%attribute(id=self%dataset, name='TransposedRootIndexing') /= '1') return
+  dims = 1 ; error = 0
+  call get_fixed_attribute(xml=self%xml, id=self%dataset, name='Dimensions', values=dims, error=error)
+  n = max(int(dims - 1, I8P), 1_I8P)
+  ids = file_ids / (n(3) * n(2)) + n(1) * (mod(file_ids / n(3), n(2)) + n(2) * mod(file_ids, n(3)))
+  endfunction htg_tree_id
 endmodule vtk_fortran_vtk_file_xml_reader

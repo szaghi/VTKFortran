@@ -58,7 +58,7 @@ VTKFortran or by VTK and ParaView. Only the array asked for is loaded and decode
 
 | Type | Extension | Status |
 |------|-----------|--------|
-| Serial datasets | `.vti`, `.vtp`, `.vtr`, `.vts`, `.vtu`, `.vtt` | ✅ |
+| Serial datasets | `.vti`, `.vtp`, `.vtr`, `.vts`, `.vtu`, `.vtt`, `.htg` | ✅ |
 | Parallel (partitioned) headers, with the check of the pieces | `.pvti`, `.pvtp`, `.pvtr`, `.pvts`, `.pvtu`, `.pvtt` | ✅ |
 | Multi-block entries and time series datasets | `.vtm`, `.pvd`, `.series` | ✅ |
 | OverlappingAMR entries (levels as blocks, boxes as datasets) | `.vthb`, `.vth` | ✅ |

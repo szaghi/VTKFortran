@@ -114,6 +114,9 @@ keeping the axis of one point is refused (error 6), as VTK refuses it.
   the partition, in their order, breadth first in each (no point data); `get_dataarray_names`, `get_active` and
   `read_piece` (`nc` the cells of the partition, `np` the points of the root grid) as for any dataset. In a time series,
   those of the step read. A complete program: [A tree-based AMR](/manual/cookbook#a-tree-based-amr).
+  An XML `.htg` (version 2.0, as VTK 9.7.2 and the library write it; an older one is error 3) is read by the same calls:
+  one piece, `get_info` the extent from its `Dimensions`, its `Grid` as the coordinates, its `Trees` by `get_trees` and
+  `read_tree`, its `CellData`.
 - **A dataset of a composite file** (a VTKHDF `MultiBlockDataSet` or `PartitionedDataSetCollection`):
   `initialize(filename, action='read', dataset=path)`, `path` the group of the dataset under `/VTKHDF` (`Block_3`, or
   its name in a collection), as `vtm_file%get_entries` gives it in `file` (see

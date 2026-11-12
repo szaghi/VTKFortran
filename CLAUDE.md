@@ -244,7 +244,7 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   `read_piece` per partition), grid arrays: the axes of more than one point only, another shape error 6, a dataset of a composite
   (`initialize(filename, dataset)`: root `/VTKHDF/<dataset>`, through the Assembly's soft links too).
   `xml_reader%finalize` stays pure (forgets the file); `close` closes it
-- `vtk_fortran_vtk_file_xml_reader` — `xml_reader` type: reader of serial files (any format, header type, zlib; a `.vtt` Table: `npieces` 0, `location='row'` = `Piece/RowData`, tuples from `NumberOfRows`); polyhedra from `faces`/`faceoffsets` or from VTK 9.7.2's four arrays (`read_faces`: XML 2.3
+- `vtk_fortran_vtk_file_xml_reader` — `xml_reader` type: reader of serial files (any format, header type, zlib; a `.vtt` Table: `npieces` 0, `location='row'` = `Piece/RowData`, tuples from `NumberOfRows`; a `.htg` HyperTreeGrid of version 2.0 (#90 B3): one piece = its element (`piece_element`), extent from `Dimensions` (`htg_extent`), `Grid` read as RG coordinates, `location='trees'` = its `Trees`, `htg_layout` (TreeIds, DepthPerTree, NumberOfVerticesPerDepth), `get_trees`/`read_tree` slice Descriptors/Mask per tree, `htg_tree_id` for TransposedRootIndexing="1"); polyhedra from `faces`/`faceoffsets` or from VTK 9.7.2's four arrays (`read_faces`: XML 2.3
 `face_connectivity`, `face_offsets`, `polyhedron_to_faces`, `polyhedron_offsets`, 2.5 shared faces `-(n+1)`; converted
 by `polyhedra_stream` of the VTKHDF reader, shared) and parallel headers (`check_pieces`); indexes the file once with FoXy `xml_index` (tags and content positions, scan stopped at `AppendedData`), then decodes only the arrays asked for; `get_active(location, role, data_name)` the active array of a role (the
 roles list `ACTIVE_ROLES` and `active_role` in `vtk_fortran_parameters`, shared with the VTKHDF reader); error codes 0–7 documented in the module. `pvtk_file` uses it too (`action='read'`); `vtm_file` and `pvd_file` read with `get_entries`/`get_datasets` (`vtm_file` a VTKHDF composite too:
@@ -321,7 +321,8 @@ values), the same Table as VTKHDF (VTK compares them outside the test), the refu
 format, the file holding the others), columns left open closed by finalize, a time series as a `.pvd` of two `.vtt`
 read back;
 `vtk_fortran_write_htg.f90`: the XML `.htg` (the grid of the VTKHDF test with interface arrays, in the four XML
-formats; the ASCII text; 14 refusals; VTK reads them as the VTKHDF grid outside the test);
+formats; the ASCII text; 14 refusals; read back by the reader, every tree and array; a `.htg` of VTK 9.7.2 embedded and read;
+VTK reads them as the VTKHDF grid outside the test);
 `vtk_fortran_write_vtkhdf_htg.f90`: HyperTreeGrids (the 2x2 root grid of the VTK probe: trees of depth 3, 2, a
 masked leaf, a root cell without tree; branch factor 3; a 2-step series), checked with the bindings (descriptors and
 mask unpacked, the Steps entries; append refused), 16 refusals, the three files read back with the reader (every
