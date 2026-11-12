@@ -33,7 +33,7 @@ use penf
 use stringifor
 use vtk_fortran_vtk_file_xml_writer_abstract
 use vtk_fortran_vtk_file_xml_writer_ascii_local
-use foxy, only : xml_index, XML_MALFORMED
+use foxy, only : xml_index, xml_file, XML_MALFORMED
 use vtk_fortran_hdf5
 use vtk_fortran_vtk_file_vtkhdf_reader, only : is_hdf5_file
 use vtk_fortran_parameters, only : stderr
@@ -67,6 +67,16 @@ type :: vtm_file
    integer(I4P), allocatable,  private             :: entry_text(:,:)    !< Start and length in entry_chars of the
                                                                           !< name, file (dataset) and Assembly path.
    character(len=:), allocatable, private          :: entry_chars        !< Names, files and paths of the entries.
+   logical,      allocatable,  private             :: entry_is_piece(:)  !< The entry is a piece (XML .vtpc partitions).
+   ! an XML PartitionedDataSetCollection (.vtpc) or PartitionedDataSet (.vtpd) written: its datasets and assembly, kept
+   ! until finalize (each name, file and open node followed by NUL)
+   logical,                    private             :: is_xml_collection=.false. !< An XML .vtpc is written.
+   logical,                    private             :: is_xml_pds=.false.        !< An XML .vtpd is written.
+   character(len=:), allocatable, private          :: xml_names          !< Names of the datasets written.
+   character(len=:), allocatable, private          :: xml_files          !< Files of the datasets written.
+   character(len=:), allocatable, private          :: xml_assembly       !< Body of the DataAssembly.
+   character(len=:), allocatable, private          :: xml_open           !< Open nodes of the assembly.
+   integer(I4P),               private             :: xml_ids=0_I4P      !< Assembly node ids given (the root is 0).
    contains
       ! public methods
       procedure, pass(self) :: initialize          !< Initialize file.
@@ -91,6 +101,15 @@ type :: vtm_file
       procedure, pass(self), private :: vtkhdf_dataset      !< Copy a dataset file into a VTKHDF file.
       procedure, pass(self), private :: vtkhdf_open_block   !< Open a block of a VTKHDF file.
       procedure, pass(self), private :: vtkhdf_reference    !< Place a dataset already copied in the open block.
+      ! XML partitioned composites (.vtpc, .vtpd)
+      procedure, pass(self), private :: xml_part_open_block   !< Open a node of the assembly of a .vtpc.
+      procedure, pass(self), private :: xml_part_close_block  !< Close the open node of the assembly.
+      procedure, pass(self), private :: xml_part_dataset      !< A dataset of a .vtpc (a Partitions) or .vtpd (a DataSet).
+      procedure, pass(self), private :: xml_part_reference    !< Place a dataset already written in the open node.
+      procedure, pass(self), private :: xml_part_finalize     !< Write the Partitions/DataSets and the DataAssembly.
+      procedure, pass(self), private :: xml_part_entries      !< Gather the entries of a .vtpc or .vtpd read.
+      procedure, pass(self), private :: add_entry             !< Append an entry to the entries read.
+      procedure, pass(self), private :: add_partitions        !< Append the entries of a Partitions element.
 endtype vtm_file
 contains
   ! public methods
@@ -100,12 +119,14 @@ contains
   !< With `format='vtkhdf'` (case insensitive) the file is a VTKHDF `MultiBlockDataSet` (the library built with HDF5),
   !< built by the same `write_block` calls from `.vtkhdf` files, which are copied into it; scratch units are not used.
   !< Its blocks are all static or all time series of UnstructuredGrid and PolyData with the same steps (module header).
-  !< `composite='PartitionedDataSetCollection'` (case insensitive; VTKHDF only, `MultiBlockDataSet` by default) writes a
-  !< collection instead, whose datasets can be referenced from several blocks (module header).
+  !< `composite='PartitionedDataSetCollection'` (case insensitive; `MultiBlockDataSet` by default) writes a collection
+  !< instead, whose datasets can be referenced from several blocks (module header): VTKHDF, or an XML `.vtpc` (its
+  !< `Partitions` and `DataAssembly`); `composite='PartitionedDataSet'` an XML `.vtpd` (a flat list of DataSets).
   !<
   !< With `action='read'` (case insensitive) the file is indexed: its blocks and datasets are returned by `get_entries`, and
   !< each dataset file can then be read with `vtk_file` (or `pvtk_file`); `finalize` frees the index. The error is 1 if the
-  !< file cannot be read, 2 if it is not a multi-block file (`vtkMultiBlockDataSet`). A VTKHDF `MultiBlockDataSet` or
+  !< file cannot be read, 2 if it is not a multi-block file (`vtkMultiBlockDataSet`) nor a partitioned one (`.vtpc`,
+  !< `.vtpd`). A VTKHDF `MultiBlockDataSet` or
   !< `PartitionedDataSetCollection` is read too: its blocks are the groups of its `Assembly`, its datasets the links in
   !< them, the `file` of each the dataset path for `vtk_file%initialize(filename, action='read', dataset=file)`.
   class(vtm_file), intent(inout)        :: self                  !< VTM file.
@@ -122,6 +143,7 @@ contains
   integer(I4P)                          :: root                  !< Index of the VTKFile element.
   integer(I4P)                          :: iostat                !< IO status of the scan.
   type(string)                          :: action_               !< Action, upper case.
+  logical                               :: is_pds                !< An XML PartitionedDataSet (.vtpd).
 
   if (.not.is_initialized) call penf_init
   if (.not.is_b64_initialized) call b64_init
@@ -144,6 +166,13 @@ contains
         root = self%xml%find(name='VTKFile', parent=0)
         if (root == 0) return
         value = self%xml%attribute(id=root, name='type')
+        if (value == 'vtkPartitionedDataSet' .or. value == 'vtkPartitionedDataSetCollection') then
+           ! (its entries gathered at once, then served as those of a VTKHDF composite)
+           error = self%xml_part_entries(root, value)
+           call self%xml%free
+           self%is_reading_vtkhdf = error == 0
+           return
+        endif
         if (value /= 'vtkMultiBlockDataSet') return
         if (self%xml%find(name='vtkMultiBlockDataSet', parent=root) == 0) return
         self%is_reading = .true.
@@ -157,20 +186,26 @@ contains
   endif
   scratch_units_number_ = 0_I4P ; if (present(scratch_units_number)) scratch_units_number_ = scratch_units_number
   self%is_collection = .false.
+  is_pds = .false.
   if (present(composite)) then
      action_ = trim(adjustl(composite)) ; action_ = action_%upper()
      if (action_ == 'PARTITIONEDDATASETCOLLECTION') then
         self%is_collection = .true.
+     elseif (action_ == 'PARTITIONEDDATASET') then
+        is_pds = .true.
      elseif (action_ /= 'MULTIBLOCKDATASET') then
         error = 1
         return
      endif
   endif
-  if (self%is_collection) then ! a collection is a VTKHDF file
+  if (is_pds .or. ((self%is_collection .or. is_pds) .and. scratch_units_number_ > 0_I4P)) then
+     ! a partitioned dataset is XML only (a .vtkhdf has partitions of its own); no scratch units for them
      error = 1
-     if (.not.present(format)) return
-     action_ = trim(adjustl(format)) ; action_ = action_%upper()
-     if (action_ /= 'VTKHDF') return
+     if (scratch_units_number_ > 0_I4P) return
+     if (present(format)) then
+        action_ = trim(adjustl(format)) ; action_ = action_%upper()
+        if (action_ /= 'XML') return
+     endif
   endif
   if (present(format)) then
      action_ = trim(adjustl(format)) ; action_ = action_%upper()
@@ -206,7 +241,16 @@ contains
   error = self%finalize()
   if (allocated(self%xml_writer)) deallocate(self%xml_writer)
   allocate(xml_writer_ascii_local :: self%xml_writer)
-  error = self%xml_writer%initialize(format='ascii', filename=filename, mesh_topology='vtkMultiBlockDataSet')
+  self%is_xml_collection = self%is_collection
+  self%is_xml_pds = is_pds
+  self%xml_names = '' ; self%xml_files = '' ; self%xml_assembly = '' ; self%xml_open = '' ; self%xml_ids = 0_I4P
+  if (self%is_xml_collection) then
+     error = self%xml_writer%initialize(format='ascii', filename=filename, mesh_topology='vtkPartitionedDataSetCollection')
+  elseif (self%is_xml_pds) then
+     error = self%xml_writer%initialize(format='ascii', filename=filename, mesh_topology='vtkPartitionedDataSet')
+  else
+     error = self%xml_writer%initialize(format='ascii', filename=filename, mesh_topology='vtkMultiBlockDataSet')
+  endif
   if (scratch_units_number_>0_I4P) allocate(self%scratch_unit(scratch_units_number_))
   endfunction initialize
 
@@ -214,6 +258,7 @@ contains
   !< Finalize file (writer).
   class(vtm_file), intent(inout) :: self  !< VTM file.
   integer(I4P)                   :: error !< Error status.
+  integer(I4P)                   :: e     !< Error of the writer's finalize after a refusal.
 
   error = 1
   if (self%is_vtkhdf) then
@@ -241,6 +286,15 @@ contains
   if (allocated(self%scratch_unit)) then
      error = self%parse_scratch_files()
      deallocate(self%scratch_unit)
+  endif
+  if (allocated(self%xml_writer) .and. (self%is_xml_collection .or. self%is_xml_pds)) then
+     error = self%xml_part_finalize() ! its Partitions/DataSets and assembly, kept until now
+     self%is_xml_collection = .false. ; self%is_xml_pds = .false.
+     if (error /= 0) then
+        e = self%xml_writer%finalize()
+        deallocate(self%xml_writer)
+        return
+     endif
   endif
   if (allocated(self%xml_writer)) then
      error = self%xml_writer%finalize()
@@ -296,6 +350,9 @@ contains
         allocate(character(len=7) :: kind(1:n))
         do e=1, n
            kind(e) = trim(merge('block  ', 'dataset', self%entry_is_block(e)))
+           if (allocated(self%entry_is_piece)) then
+              if (self%entry_is_piece(e)) kind(e) = 'piece'
+           endif
         enddo
      endif
      if (present(index)) index = self%entry_index
@@ -414,6 +471,20 @@ contains
 
   is_new_block = .true.
   if (present(action)) is_new_block = trim(adjustl(action)) /= 'write' .and. trim(adjustl(action)) /= 'WRITE'
+  if (self%is_xml_collection .or. self%is_xml_pds) then
+     error = 0
+     if (is_new_block) error = self%xml_part_open_block(name=name)
+     do f=1, size(filenames, dim=1)
+        if (error /= 0) exit
+        if (present(names)) then
+           error = self%xml_part_dataset(filename=filenames(f), name=names(f))
+        else
+           error = self%xml_part_dataset(filename=filenames(f))
+        endif
+     enddo
+     if (is_new_block .and. error == 0) error = self%xml_part_close_block()
+     return
+  endif
   if (self%is_vtkhdf) then
      error = 0
      if (is_new_block) error = self%vtkhdf_open_block(name=name)
@@ -472,13 +543,19 @@ contains
    type(string), allocatable             :: labels(:) !< Dataset names.
    integer(I4P)                          :: f         !< Counter.
 
-   if (self%is_vtkhdf) then
+   if (self%is_vtkhdf .or. self%is_xml_collection .or. self%is_xml_pds) then
       action_ = 'BLOCK'
       if (present(action)) then
          action_ = trim(adjustl(action)) ; action_ = action_%upper()
       endif
       error = 0
-      if (action_ == 'OPEN' .or. action_ == 'BLOCK') error = self%vtkhdf_open_block(name=name)
+      if (action_ == 'OPEN' .or. action_ == 'BLOCK') then
+         if (self%is_vtkhdf) then
+            error = self%vtkhdf_open_block(name=name)
+         else
+            error = self%xml_part_open_block(name=name)
+         endif
+      endif
       if ((action_ == 'WRITE' .or. action_ == 'BLOCK') .and. present(filenames) .and. error == 0) then
          list = trim(adjustl(filenames)) ; call list%split(tokens=files, sep=' ')
          allocate(labels(size(files)))
@@ -488,10 +565,14 @@ contains
          endif
          do f=1, size(files)
             if (error /= 0) exit
-            if (present(names)) then
+            if (self%is_vtkhdf .and. present(names)) then
                error = self%vtkhdf_dataset(filename=files(f)%chars(), name=labels(f)%chars())
-            else
+            elseif (self%is_vtkhdf) then
                error = self%vtkhdf_dataset(filename=files(f)%chars())
+            elseif (present(names)) then
+               error = self%xml_part_dataset(filename=files(f)%chars(), name=labels(f)%chars())
+            else
+               error = self%xml_part_dataset(filename=files(f)%chars())
             endif
          enddo
       endif
@@ -499,15 +580,25 @@ contains
          list = trim(adjustl(references)) ; call list%split(tokens=files, sep=' ')
          do f=1, size(files)
             if (error /= 0) exit
-            error = self%vtkhdf_reference(files(f)%chars())
+            if (self%is_vtkhdf) then
+               error = self%vtkhdf_reference(files(f)%chars())
+            else
+               error = self%xml_part_reference(files(f)%chars())
+            endif
          enddo
       endif
-      if ((action_ == 'CLOSE' .or. action_ == 'BLOCK') .and. error == 0) error = self%vtkhdf_close_block()
+      if ((action_ == 'CLOSE' .or. action_ == 'BLOCK') .and. error == 0) then
+         if (self%is_vtkhdf) then
+            error = self%vtkhdf_close_block()
+         else
+            error = self%xml_part_close_block()
+         endif
+      endif
       return
    endif
-   if (present(references)) then ! references: a VTKHDF collection only
+   if (present(references)) then ! references: datasets of a collection only
       error = 1
-      write(stderr, '(A)') 'error: VTKFortran vtm_file: references are datasets of a VTKHDF PartitionedDataSetCollection'
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: references are datasets of a PartitionedDataSetCollection'
       return
    endif
    if (present(action)) then
@@ -630,6 +721,7 @@ contains
    if (allocated(self%entry_index)) deallocate(self%entry_index)
    if (allocated(self%entry_text)) deallocate(self%entry_text)
    if (allocated(self%entry_chars)) deallocate(self%entry_chars)
+   if (allocated(self%entry_is_piece)) deallocate(self%entry_is_piece)
    endsubroutine free_entries
 
    function vtkhdf_entries(self, filename) result(error)
@@ -788,6 +880,341 @@ contains
    self%entry_text = reshape([self%entry_text(:, 1:after), tx, self%entry_text(:, after+1:)], &
                              [6, size(self%entry_level)])
    endfunction vtkhdf_add_entries
+
+   function xml_part_open_block(self, name) result(error)
+   !< Open a node of the assembly of an XML collection (.vtpc): an element named `name` (`block_<n>` by default), as VTK
+   !< names the nodes of a vtkDataAssembly. Refused in a .vtpd (no blocks) and for a name that is not an XML element name.
+   class(vtm_file), intent(inout)        :: self  !< VTM file.
+   character(*),    intent(in), optional :: name  !< Block name.
+   integer(I4P)                          :: error !< Error status.
+   character(len=:), allocatable         :: node  !< Node name.
+
+   error = 1
+   if (self%is_xml_pds) then
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: a PartitionedDataSet (.vtpd) has no blocks: its datasets only'
+      return
+   endif
+   node = 'block_'//trim(str(n=self%xml_ids + 1_I4P, no_sign=.true.))
+   if (present(name)) then
+      if (len_trim(name) > 0) node = trim(adjustl(name))
+   endif
+   if (.not.is_xml_name(node)) then
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: the block name "'//node//'" is not an XML element name (the '// &
+                           'nodes of a vtkDataAssembly are)'
+      return
+   endif
+   self%xml_ids = self%xml_ids + 1_I4P
+   self%xml_assembly = self%xml_assembly//'<'//node//' id="'//trim(str(n=self%xml_ids, no_sign=.true.))//'">'//new_line('a')
+   self%xml_open = self%xml_open//node//achar(0)
+   error = 0
+   endfunction xml_part_open_block
+
+   function xml_part_close_block(self) result(error)
+   !< Close the open node of the assembly of an XML collection.
+   class(vtm_file), intent(inout) :: self  !< VTM file.
+   integer(I4P)                   :: error !< Error status.
+   integer(I4P)                   :: c     !< Start of the open node.
+
+   error = 1
+   if (len(self%xml_open) == 0) return
+   c = index(self%xml_open(:len(self%xml_open)-1), achar(0), back=.true.)
+   self%xml_assembly = self%xml_assembly//'</'//self%xml_open(c+1:len(self%xml_open)-1)//'>'//new_line('a')
+   self%xml_open = self%xml_open(:c)
+   error = 0
+   endfunction xml_part_close_block
+
+   function xml_part_dataset(self, filename, name) result(error)
+   !< A dataset of an XML collection (a `Partitions` of one `DataSet`, named `name` or after the file, placed in the open
+   !< node of the assembly) or of a .vtpd (a `DataSet`). An empty file name is an empty dataset (no `file`). A name is
+   !< used once in a collection (place a dataset in other blocks with `references`).
+   class(vtm_file), intent(inout)        :: self     !< VTM file.
+   character(*),    intent(in)           :: filename !< File of the dataset.
+   character(*),    intent(in), optional :: name     !< Dataset name.
+   integer(I4P)                          :: error    !< Error status.
+   character(len=:), allocatable         :: file     !< File, trimmed.
+   character(len=:), allocatable         :: label    !< Dataset name.
+
+   error = 1
+   file = trim(adjustl(filename))
+   label = file(index(file, '/', back=.true.)+1:)
+   if (index(label, '.', back=.true.) > 1) label = label(1:index(label, '.', back=.true.)-1)
+   if (present(name)) then
+      if (len_trim(name) > 0) label = trim(adjustl(name))
+   endif
+   if (index(file, achar(0)) > 0 .or. index(label, achar(0)) > 0) return
+   if (self%is_xml_collection .and. index(achar(0)//self%xml_names, achar(0)//label//achar(0)) > 0) then
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: the dataset name "'//label//'" is used twice (a collection '// &
+                           'writes each dataset once: reference it with references=)'
+      return
+   endif
+   if (self%is_xml_collection) self%xml_assembly = self%xml_assembly//'<dataset id="'// &
+      trim(str(n=count_nul(self%xml_names), no_sign=.true.))//'"/>'//new_line('a')
+   self%xml_names = self%xml_names//label//achar(0)
+   self%xml_files = self%xml_files//file//achar(0)
+   error = 0
+   endfunction xml_part_dataset
+
+   function xml_part_reference(self, label) result(error)
+   !< Place a dataset already written into the open node of the assembly of an XML collection: a `dataset` element with
+   !< its index, no new `Partitions`.
+   class(vtm_file), intent(inout) :: self  !< VTM file.
+   character(*),    intent(in)    :: label !< Name of the dataset.
+   integer(I4P)                   :: error !< Error status.
+   integer(I4P)                   :: c     !< Position of the name.
+
+   error = 1
+   c = index(achar(0)//self%xml_names, achar(0)//trim(label)//achar(0))
+   if (.not.self%is_xml_collection .or. c == 0) then
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: '//trim(label)//' is not a dataset written in this collection'
+      return
+   endif
+   self%xml_assembly = self%xml_assembly//'<dataset id="'//trim(str(n=count_nul(self%xml_names(:c-1)), no_sign=.true.))// &
+                       '"/>'//new_line('a')
+   error = 0
+   endfunction xml_part_reference
+
+   function xml_part_finalize(self) result(error)
+   !< Write the datasets of an XML collection (`Partitions index name`, a `DataSet index file` each) and its assembly
+   !< (`DataAssembly encoding="base64"`: the vtkDataAssembly XML, as VTK writes it), or the `DataSet`s of a .vtpd.
+   class(vtm_file), intent(inout) :: self      !< VTM file.
+   integer(I4P)                   :: error     !< Error status.
+   character(len=:), allocatable  :: assembly  !< The vtkDataAssembly XML.
+   character(len=:), allocatable  :: code      !< Its base64.
+   character(len=:), allocatable  :: file      !< A file.
+   integer(I4P)                   :: d, n, f1, f2, n1, n2 !< Counter, datasets, positions.
+
+   error = 1
+   if (len(self%xml_open) > 0) return ! a block left open
+   n = count_nul(self%xml_names)
+   f1 = 1 ; n1 = 1
+   do d=0, n - 1
+      f2 = f1 - 1 + index(self%xml_files(f1:), achar(0))
+      n2 = n1 - 1 + index(self%xml_names(n1:), achar(0))
+      file = self%xml_files(f1:f2-1)
+      if (self%is_xml_collection) then
+         call self%xml_writer%write_start_tag(name='Partitions', attributes='index="'//trim(str(n=d, no_sign=.true.))// &
+                                              '" name="'//attr_text(self%xml_names(n1:n2-1))//'"')
+         if (len(file) > 0) then
+            call self%xml_writer%write_self_closing_tag(name='DataSet', attributes='index="0" file="'//attr_text(file)//'"')
+         else
+            call self%xml_writer%write_self_closing_tag(name='DataSet', attributes='index="0"')
+         endif
+         call self%xml_writer%write_end_tag(name='Partitions')
+      else
+         if (len(file) > 0) then
+            call self%xml_writer%write_self_closing_tag(name='DataSet', attributes='index="'//trim(str(n=d, no_sign=.true.))// &
+                                                        '" file="'//attr_text(file)//'"')
+         else
+            call self%xml_writer%write_self_closing_tag(name='DataSet', attributes='index="'//trim(str(n=d, no_sign=.true.))//'"')
+         endif
+      endif
+      f1 = f2 + 1 ; n1 = n2 + 1
+   enddo
+   if (self%is_xml_collection) then
+      assembly = '<?xml version="1.0"?>'//new_line('a')//'<root type="vtkDataAssembly" version="1.0" id="0">'// &
+                 new_line('a')//self%xml_assembly//'</root>'//new_line('a')
+      call b64_encode(s=assembly, code=code)
+      call self%xml_writer%write_tag(name='DataAssembly', attributes='encoding="base64"', content=code)
+   endif
+   error = self%xml_writer%error
+   endfunction xml_part_finalize
+
+   function xml_part_entries(self, root, file_type) result(error)
+   !< Gather the entries of an XML PartitionedDataSet (its `DataSet`s, datasets at level 1) or PartitionedDataSetCollection
+   !< (the nodes of its `DataAssembly`, depth first: elements are blocks, `dataset` elements its `Partitions` of that
+   !< index, then the `Partitions` the assembly does not reach, at level 1). A `Partitions` of one `DataSet` is a dataset
+   !< with its file; of several, a dataset without file followed by its `DataSet`s as pieces.
+   class(vtm_file), intent(inout)  :: self      !< VTM file.
+   integer(I4P),    intent(in)     :: root      !< Index of the VTKFile element.
+   character(*),    intent(in)     :: file_type !< vtkPartitionedDataSet or vtkPartitionedDataSetCollection.
+   integer(I4P)                    :: error     !< Error status.
+   integer(I4P), allocatable       :: parts(:)  !< The Partitions elements.
+   integer(I4P), allocatable       :: kids(:)   !< Children of an element.
+   integer(I4P), allocatable       :: stack(:), levels(:), sibling(:) !< Assembly nodes to visit: tag, level, index.
+   logical,      allocatable       :: reached(:) !< The Partitions reached by the assembly.
+   type(xml_file)                  :: assembly  !< The DataAssembly, parsed.
+   character(len=:), allocatable   :: code      !< Its base64.
+   character(len=:), allocatable   :: text      !< Its XML.
+   character(len=:), allocatable   :: value     !< An attribute.
+   integer(I4P)                    :: top, d, a, k, c, t, i, lv, iostat, top_index !< Elements, counters.
+
+   call self%free_entries
+   allocate(self%entry_level(0), self%entry_is_block(0), self%entry_index(0), self%entry_text(6, 0), &
+            self%entry_is_piece(0))
+   self%entry_chars = ''
+   error = 2
+   top = self%xml%find(name=file_type, parent=root)
+   if (top == 0) return
+   error = 0
+   if (file_type == 'vtkPartitionedDataSet') then
+      kids = self%xml%children(top)
+      do c=1, size(kids)
+         if (self%xml%name(kids(c)) /= 'DataSet') cycle
+         call self%add_entry(1, .false., .false., index_of(self%xml%attribute(id=kids(c), name='index'), c - 1), &
+                             '', self%xml%attribute(id=kids(c), name='file'))
+      enddo
+      return
+   endif
+   kids = self%xml%children(top)
+   allocate(parts(0))
+   do c=1, size(kids)
+      if (self%xml%name(kids(c)) == 'Partitions') parts = [parts, kids(c)]
+   enddo
+   allocate(reached(size(parts)))
+   reached = .false.
+   top_index = 0
+   a = self%xml%find(name='DataAssembly', parent=top)
+   if (a > 0) then ! the assembly: base64 of the vtkDataAssembly XML
+      code = self%xml%content(id=a)
+      code = strip(code)
+      error = 6
+      if (len(code) == 0 .or. mod(len(code), 4) /= 0) return
+      k = len(code) / 4 * 3
+      if (code(len(code):len(code)) == '=') k = k - 1
+      if (code(len(code)-1:len(code)-1) == '=') k = k - 1
+      allocate(character(len=k) :: text)
+      call b64_decode(code=code, s=text)
+      call assembly%parse(string=text, iostat=iostat)
+      if (iostat /= 0) return
+      t = assembly%find(name='root', parent=0)
+      if (t == 0) return
+      error = 0
+      ! depth first: a stack of the nodes to visit, the children of a node pushed in reverse order
+      kids = assembly%children(t)
+      stack = [(kids(c), c=size(kids), 1, -1)]
+      levels = [(1, c=1, size(kids))]
+      sibling = [(c - 1, c=size(kids), 1, -1)]
+      do while (size(stack) > 0)
+         t = stack(size(stack)) ; lv = levels(size(levels)) ; i = sibling(size(sibling))
+         stack = stack(:size(stack)-1) ; levels = levels(:size(levels)-1) ; sibling = sibling(:size(sibling)-1)
+         if (lv == 1) top_index = top_index + 1
+         if (assembly%name(t) == 'dataset') then
+            value = assembly%attribute(id=t, name='id')
+            d = index_of(value, -1) + 1
+            if (d >= 1 .and. d <= size(parts)) then
+               reached(d) = .true.
+               call self%add_partitions(parts(d), lv, i)
+            endif
+         else
+            call self%add_entry(lv, .true., .false., i, assembly%name(t), '')
+            kids = assembly%children(t)
+            stack = [stack, (kids(c), c=size(kids), 1, -1)]
+            levels = [levels, (lv + 1, c=1, size(kids))]
+            sibling = [sibling, (c - 1, c=size(kids), 1, -1)]
+         endif
+      enddo
+   endif
+   do d=1, size(parts) ! the Partitions the assembly does not reach
+      if (reached(d)) cycle
+      call self%add_partitions(parts(d), 1, top_index)
+      top_index = top_index + 1
+   enddo
+   endfunction xml_part_entries
+
+   subroutine add_partitions(self, part, level, sibling)
+   !< Append the entries of a `Partitions` element: a dataset with the file of its only `DataSet`, or without file and
+   !< its `DataSet`s as pieces.
+   class(vtm_file), intent(inout) :: self    !< VTM file.
+   integer(I4P),    intent(in)    :: part    !< The Partitions element.
+   integer(I4P),    intent(in)    :: level   !< Its level.
+   integer(I4P),    intent(in)    :: sibling !< Its index among its siblings.
+   integer(I4P), allocatable      :: kids(:), sets(:) !< Its children, its DataSets.
+   integer(I4P)                   :: c        !< Counter.
+
+   kids = self%xml%children(part)
+   allocate(sets(0))
+   do c=1, size(kids)
+      if (self%xml%name(kids(c)) == 'DataSet') sets = [sets, kids(c)]
+   enddo
+   if (size(sets) == 1) then
+      call self%add_entry(level, .false., .false., sibling, self%xml%attribute(id=part, name='name'), &
+                          self%xml%attribute(id=sets(1), name='file'))
+   else
+      call self%add_entry(level, .false., .false., sibling, self%xml%attribute(id=part, name='name'), '')
+      do c=1, size(sets)
+         call self%add_entry(level + 1, .false., .true., c - 1, '', self%xml%attribute(id=sets(c), name='file'))
+      enddo
+   endif
+   endsubroutine add_partitions
+
+   subroutine add_entry(self, level, is_block, is_piece, sibling, name, file)
+   !< Append an entry to the entries read (no path).
+   class(vtm_file), intent(inout) :: self     !< VTM file.
+   integer(I4P),    intent(in)    :: level    !< Nesting level.
+   logical,         intent(in)    :: is_block !< A block.
+   logical,         intent(in)    :: is_piece !< A piece.
+   integer(I4P),    intent(in)    :: sibling  !< Index among its siblings.
+   character(*),    intent(in)    :: name     !< Name.
+   character(*),    intent(in)    :: file     !< File.
+   integer(I4P)                   :: base     !< Length of the text before.
+   integer(I4P), allocatable      :: text(:,:) !< The texts, one more.
+
+   base = len(self%entry_chars)
+   self%entry_level = [self%entry_level, level]
+   self%entry_is_block = [self%entry_is_block, is_block]
+   self%entry_is_piece = [self%entry_is_piece, is_piece]
+   self%entry_index = [self%entry_index, sibling]
+   allocate(text(6, size(self%entry_level)))
+   text(:, :size(self%entry_level)-1) = self%entry_text
+   text(:, size(self%entry_level)) = [base + 1, len(name), base + len(name) + 1, len(file), 1, 0]
+   call move_alloc(text, self%entry_text)
+   self%entry_chars = self%entry_chars//name//file
+   endsubroutine add_entry
+
+   pure function index_of(text, default) result(n)
+   !< An integer attribute value, `default` if it is not one.
+   character(*), intent(in) :: text    !< Attribute value.
+   integer(I4P), intent(in) :: default !< Default.
+   integer(I4P)             :: n       !< Value.
+   integer                  :: iostat  !< IO status.
+
+   n = default
+   if (len_trim(text) == 0) return
+   read(text, *, iostat=iostat) n
+   if (iostat /= 0) n = default
+   endfunction index_of
+
+   pure function count_nul(text) result(n)
+   !< The NUL characters of a text: the names of a NUL-ended list.
+   character(*), intent(in) :: text !< Text.
+   integer(I4P)             :: n    !< NUL characters.
+   integer(I4P)             :: c    !< Counter.
+
+   n = 0
+   do c=1, len(text)
+      if (text(c:c) == achar(0)) n = n + 1
+   enddo
+   endfunction count_nul
+
+   pure function is_xml_name(name) result(is_name)
+   !< True if `name` is an XML element name (ASCII: a letter or `_`, then letters, digits, `_`, `-`, `.`), as the nodes of a
+   !< vtkDataAssembly are; `xml` is reserved.
+   character(*), intent(in) :: name    !< Name.
+   logical                  :: is_name !< Inquire result.
+   character(*), parameter  :: FIRST = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_' !< First characters.
+
+   is_name = .false.
+   if (len(name) == 0) return
+   if (index(FIRST, name(1:1)) == 0) return
+   if (verify(name, FIRST//'0123456789-.') /= 0) return
+   is_name = name(1:min(3, len(name))) /= 'xml' .and. name(1:min(3, len(name))) /= 'XML'
+   endfunction is_xml_name
+
+   pure function strip(text) result(stripped)
+   !< A text without its white space (blanks, tabs, line ends).
+   character(*), intent(in)      :: text     !< Text.
+   character(len=:), allocatable :: stripped !< Text stripped.
+   integer                       :: c, n     !< Counters.
+
+   allocate(character(len=len(text)) :: stripped)
+   n = 0
+   do c=1, len(text)
+      if (text(c:c) == ' ' .or. text(c:c) == achar(9) .or. text(c:c) == achar(10) .or. text(c:c) == achar(13)) cycle
+      n = n + 1
+      stripped(n:n) = text(c:c)
+   enddo
+   stripped = stripped(:n)
+   endfunction strip
 
    function has_type(root, dataset) result(has)
    !< Return true if the dataset group `dataset` of /VTKHDF has a `Type` attribute (false for an empty dataset).

@@ -20,7 +20,7 @@ program vtk_fortran_write_vtkhdf_vtm
 !< Refusals are checked too: a time-series ImageData block, a static block after a series block and the reverse, a
 !< series with another number of steps or other times, block and dataset names with '/' or '.'; in a collection a
 !< dataset name used twice or `Assembly`, a reference to a dataset not copied; references in a multi-block file or an XML
-!< `.vtm`, an unknown composite, a collection in XML; a composite (multi-block, collection) or an OverlappingAMR as the
+!< `.vtm`, an unknown composite, a VTKHDF PartitionedDataSet; a composite (multi-block, collection) or an OverlappingAMR as the
 !< source of a block, in a multi-block file and in a collection. The four composite files are read back with `vtm_file`
 !< (`action='read'`: the entries of the Assembly, the dataset of each) and every dataset with `vtk_file%initialize(...,
 !< action='read', dataset=)`, compared with its source file step by step; the refusals of `dataset`; a collection with
@@ -598,7 +598,8 @@ contains
   ok(19) = a_vtm_file%write_block(references='part_1', name='b') /= 0                      ! an XML .vtm
   error = a_vtm_file%finalize()
   ok(20) = a_vtm_file%initialize(filename='refused_composite.vtkhdf', format='vtkhdf', composite='Collection') /= 0
-  ok(21) = a_vtm_file%initialize(filename='refused_collection.vtm', composite='PartitionedDataSetCollection') /= 0
+  ! a PartitionedDataSet is an XML .vtpd only (a .vtkhdf has partitions of its own)
+  ok(21) = a_vtm_file%initialize(filename='refused_pds.vtkhdf', format='vtkhdf', composite='PartitionedDataSet') /= 0
   refusals = all(ok)
   if (.not.refusals) print '(A,21L2)', 'refusals: ', ok
   endfunction refusals

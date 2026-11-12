@@ -6,14 +6,15 @@ program vtk_fortran_read_composite
 !< pieces) and checked against the pieces: a correct header, one declaring a missing array and one declaring a wrong type.
 !< The pieces extents of a parallel rectilinear grid header are read. A nested multi-block file and a time series are
 !< written and their entries read back. String arrays declared as `PArray`: a header and a piece written by VTK 9.7.2
-!< (embedded), and a header of the library over the same piece.
+!< (embedded), and a header of the library over the same piece. XML partitioned composites (`.vtpc`, `.vtpd`) written
+!< and read back, and the two written by VTK 9.7.2 (embedded) read.
 use penf
 use vtk_fortran, only : pvd_file, pvtk_file, vtk_file, vtm_file
 
 implicit none
 character(*), parameter :: pieces(2)=['vtkfortran_read_composite_01.vtu', 'vtkfortran_read_composite_02.vtu'] !< Pieces.
 type(pvtk_file)         :: a_pvtk_file    !< A parallel VTK file.
-logical                 :: test_passed(6) !< List of passed tests.
+logical                 :: test_passed(7) !< List of passed tests.
 integer(I4P)            :: p              !< Counter.
 
 do p=1, size(pieces)
@@ -25,6 +26,7 @@ test_passed(3) = check_pvtr()
 test_passed(4) = check_vtm()
 test_passed(5) = check_pvd()
 test_passed(6) = check_parray()
+test_passed(7) = check_partitioned()
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 if (.not.all(test_passed)) error stop 'some tests failed'
@@ -306,4 +308,113 @@ contains
     endif
   enddo
   endfunction check_parray
+  function check_partitioned() result(is_passed)
+  !< XML partitioned composites: a PartitionedDataSetCollection (`.vtpc`: blocks `solid` with two datasets and `checked`
+  !< referencing one of them, an empty dataset at the top) and a PartitionedDataSet (`.vtpd`) of the two pieces, written
+  !< with `vtm_file` and read back (`get_entries`); the `.vtpc` and `.vtpd` written by VTK 9.7.2 (embedded below: a
+  !< Partitions of two DataSets, one outside the assembly) read too. Refusals: a block in a `.vtpd`, a block name that
+  !< is not an XML name, a dataset name used twice, a reference to an unknown dataset.
+  logical                       :: is_passed !< Check result.
+  type(vtm_file)                :: vtm       !< Composite file.
+  character(len=:), allocatable :: text      !< File content.
+  character(len=:), allocatable :: kind(:), name(:), file(:) !< Entries read.
+  integer(I4P),     allocatable :: level(:), index(:)       !< Entries read.
+  character(len=1), parameter   :: nl=new_line('a') !< New line.
+  integer(I4P)                  :: u         !< File unit.
+  integer(I4P)                  :: e(12)     !< Errors.
+  logical                       :: c(7)      !< Checks.
+
+  e = 0 ; c = .false.
+  e(1) = vtm%initialize(filename='vtkfortran_read_composite.vtpc', composite='PartitionedDataSetCollection')
+  e(2) = vtm%write_block(filenames=pieces, names=['part_1', 'part_2'], name='solid')
+  e(3) = vtm%write_block(references='part_1', name='checked')
+  e(4) = vtm%write_block(filenames=[character(1) :: ''], names=['void'], action='write')
+  c(1) = vtm%write_block(filenames=[pieces(1)], names=['part_2'], name='again') /= 0 ! part_2 written twice
+  e(5) = vtm%write_block(action='close')                                             ! (the block it opened)
+  c(1) = c(1) .and. vtm%write_block(action='open', name='not a name') /= 0         ! not an XML element name
+  c(1) = c(1) .and. vtm%write_block(references='nothing', name='bad') /= 0          ! an unknown dataset
+  e(6) = vtm%write_block(action='close')                                             ! (the block it opened)
+  e(7) = vtm%finalize()
+  e(8) = vtm%initialize(filename='vtkfortran_read_composite.vtpd', composite='PartitionedDataSet')
+  e(9) = vtm%write_block(filenames=pieces, action='write')
+  c(1) = c(1) .and. vtm%write_block(action='open', name='blk') /= 0                ! no blocks in a .vtpd
+  e(10) = vtm%finalize()
+  ! read back
+  e(11) = vtm%initialize(filename='vtkfortran_read_composite.vtpc', action='read')
+  e(11) = e(11) + vtm%get_entries(level=level, kind=kind, index=index, name=name, file=file)
+  e(11) = e(11) + vtm%finalize()
+  ! solid (part_1, part_2), checked (part_1, referenced), void (empty, at the top), again and bad (the blocks of the
+  ! refused calls, left empty)
+  if (e(11) == 0) c(2) = size(level) == 8
+  if (c(2)) c(2) = all(level == [1, 2, 2, 1, 2, 1, 1, 1]) .and. &
+                   all(kind == [character(7) :: 'block', 'dataset', 'dataset', 'block', 'dataset', 'dataset', 'block', &
+                                'block']) .and. &
+                   name(1) == 'solid' .and. name(2) == 'part_1' .and. file(2) == pieces(1) .and. file(3) == pieces(2) .and. &
+                   name(4) == 'checked' .and. name(5) == 'part_1' .and. file(5) == pieces(1) .and. name(6) == 'void' .and. &
+                   len_trim(file(6)) == 0 .and. name(7) == 'again' .and. name(8) == 'bad'
+  e(12) = vtm%initialize(filename='vtkfortran_read_composite.vtpd', action='read')
+  e(12) = e(12) + vtm%get_entries(level=level, kind=kind, file=file)
+  e(12) = e(12) + vtm%finalize()
+  if (e(12) == 0) c(3) = size(level) == 2
+  if (c(3)) c(3) = all(level == 1) .and. all(kind == 'dataset') .and. file(1) == pieces(1) .and. file(2) == pieces(2)
+  ! the files written by VTK 9.7.2
+  text = &
+    '<?xml version="1.0"?>'//nl//&
+    '<VTKFile type="vtkPartitionedDataSetCollection" version="1.0" byte_order="LittleEndian" header_type='//&
+    '"UInt32" compressor="vtkZLibDataCompressor">'//nl//&
+    '  <vtkPartitionedDataSetCollection>'//nl//&
+    '    <Partitions index="0" name="first">'//nl//&
+    '      <DataSet index="0" file="pdc/pdc_0_0.vtu"/>'//nl//&
+    '      <DataSet index="1" file="pdc/pdc_0_1.vtp"/>'//nl//&
+    '    </Partitions>'//nl//&
+    '    <Partitions index="1">'//nl//&
+    '      <DataSet index="0" file="pdc/pdc_1_0.vti"/>'//nl//&
+    '    </Partitions>'//nl//&
+    '    <DataAssembly encoding="base64">'//nl//&
+    '      PD94bWwgdmVyc2lvbj0iMS4wIj8+Cjxyb290IHR5cGU9InZ0a0RhdGFBc3NlbWJseSIgdmVyc2lvbj0iMS4wIiBpZD0iMC'//&
+    'I+CiAgPGdyb3VwIGlkPSIxIj4KICAgIDxkYXRhc2V0IGlkPSIwIiAvPgogIDwvZ3JvdXA+CiAgPGRhdGFzZXQgaWQ9IjEiIC8+Cj'//&
+    'wvcm9vdD4K'//nl//&
+    '    </DataAssembly>'//nl//&
+    '  </vtkPartitionedDataSetCollection>'//nl//&
+    '</VTKFile>'
+  open(newunit=u, file='vtkfortran_read_composite-vtk.vtpc', access='stream', form='unformatted', action='write', &
+       status='replace')
+  write(u) text//nl
+  close(u)
+  text = &
+    '<?xml version="1.0"?>'//nl//&
+    '<VTKFile type="vtkPartitionedDataSet" version="1.0" byte_order="LittleEndian" header_type="UInt32" c'//&
+    'ompressor="vtkZLibDataCompressor">'//nl//&
+    '  <vtkPartitionedDataSet>'//nl//&
+    '    <DataSet index="0" file="pds/pds_0.vtu"/>'//nl//&
+    '    <DataSet index="1" file="pds/pds_1.vtp"/>'//nl//&
+    '  </vtkPartitionedDataSet>'//nl//&
+    '</VTKFile>'
+  open(newunit=u, file='vtkfortran_read_composite-vtk.vtpd', access='stream', form='unformatted', action='write', &
+       status='replace')
+  write(u) text//nl
+  close(u)
+  ! .vtpc: group (block, its dataset 0: Partitions first of 2 DataSets), dataset 1 (Partitions of 1 DataSet)
+  if (vtm%initialize(filename='vtkfortran_read_composite-vtk.vtpc', action='read') == 0) then
+    if (vtm%get_entries(level=level, kind=kind, name=name, file=file) == 0) then
+      c(4) = size(level) == 5
+      if (c(4)) c(4) = all(level == [1, 2, 3, 3, 1]) .and. &
+                       all(kind == [character(7) :: 'block', 'dataset', 'piece', 'piece', 'dataset']) .and. &
+                       name(1) == 'group' .and. name(2) == 'first' .and. file(3) == 'pdc/pdc_0_0.vtu' .and. &
+                       file(4) == 'pdc/pdc_0_1.vtp' .and. file(5) == 'pdc/pdc_1_0.vti'
+    endif
+  endif
+  e(1) = e(1) + vtm%finalize()
+  if (vtm%initialize(filename='vtkfortran_read_composite-vtk.vtpd', action='read') == 0) then
+    if (vtm%get_entries(level=level, kind=kind, file=file) == 0) then
+      c(5) = size(level) == 2
+      if (c(5)) c(5) = file(1) == 'pds/pds_0.vtu' .and. file(2) == 'pds/pds_1.vtp'
+    endif
+  endif
+  e(1) = e(1) + vtm%finalize()
+  c(6) = vtm%initialize(filename='vtkfortran_read_composite.vtpd', format='vtkhdf', composite='PartitionedDataSet') /= 0
+  c(7) = .true.
+  is_passed = all(c) .and. all(e == 0)
+  if (.not.is_passed) print '(A,12(1X,I0),A,7L2)', 'failed: partitioned composites, errors', e, ' checks', c
+  endfunction check_partitioned
 endprogram vtk_fortran_read_composite

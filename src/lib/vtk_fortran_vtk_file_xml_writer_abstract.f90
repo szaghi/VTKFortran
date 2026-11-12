@@ -10,6 +10,7 @@ use vtk_fortran_vtk_writer_abstract
 implicit none
 private
 public :: xml_writer_abstract
+public :: attr_text
 
 character(len=1), parameter :: QUOTE_MARK = achar(1) !< A `"` of a user value inside an attribute string (`attr_text`).
 

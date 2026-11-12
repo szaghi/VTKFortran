@@ -89,6 +89,12 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   after its dataset (VTK names a partitioned dataset after its group) with `Index`, unique names (not `Assembly`),
   `write_block(references='name ...')` (string form) soft-links a copy into the open block (`vtkhdf_reference`);
   references refused outside a collection; the same time series rules (VTK 9.7.2 pipeline time likewise at step 1)
+- XML partitioned composites (in `vtm_file`, #90): `composite='PartitionedDataSetCollection'` without vtkhdf writes a
+  `.vtpc` (`xml_part_*`: datasets and assembly kept NUL-separated until `finalize`, `<Partitions index name>` of one
+  `DataSet`, `<DataAssembly encoding="base64">` of the vtkDataAssembly XML, node names XML element names, ids from 1
+  in order, `references`, empty datasets); `composite='PartitionedDataSet'` a `.vtpd` (DataSets, no blocks; refused
+  with vtkhdf); read back by `xml_part_entries` (FoXy `xml_file%parse` of the decoded assembly, depth first without
+  recursion; several DataSets = `piece` entries, `entry_is_piece`)
 - `vtk_fortran_pvd_file` — `pvd_file` type: time series collections (`.pvd`), valid after each `write_dataset` (`file`,
   `group`, `name` escaped with FoXy `xml_escape`)
 - `vtk_fortran_vtk_writer_abstract` — format-neutral abstract writer (`vtk_writer_abstract`): the state `vtk_file` sets
@@ -339,4 +345,6 @@ a polyhedron `.vtu` written by VTK 9.7.2 (XML 2.3) and the same with the shared 
 the active scalars, and in a `.pvd`; a 6-component ASCII array with non-finite values where w and x join; `type="Bit"` arrays of two files written by VTK 9.7.2,
 ascii and binary; string point and cell data in every format and a `.vtt` string column (a column of other
 rows refused, the next one unaffected); component names and 3-component field data in every format), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files, `PArray`
-string arrays (a VTK 9.7.2 header and piece embedded, and a header of the library over that piece).
+string arrays (a VTK 9.7.2 header and piece embedded, and a header of the library over that piece); `.vtpc` and `.vtpd`
+written and read back (blocks, references, an empty dataset, the refusals), and VTK 9.7.2's own `.vtpc`/`.vtpd`
+embedded and read).

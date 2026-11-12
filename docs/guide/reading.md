@@ -155,6 +155,10 @@ then read with `vtk_file` (or `pvtk_file`). Relative files are relative to the d
   `block`, `dataset`, or `piece` (the pieces of a `vtkMultiPieceDataSet` written by VTK), `index` the index among the
   siblings, `file` empty for blocks. The children of an entry are the entries that follow it with the next level.
 - `get_datasets` returns the attributes of each `DataSet` of the collection; missing ones are 0 (`timestep`, `part`) or empty.
+- An XML `.vtpc` (vtkPartitionedDataSetCollection) is read by `vtm_file` too: the nodes of its `DataAssembly` are the
+  blocks, its `dataset` nodes the `Partitions` of that index (the `file` of its `DataSet`; a `Partitions` of several
+  `DataSet`s is a dataset without file followed by its files as `piece`s), then the `Partitions` the assembly does not
+  reach, at the top level; a `.vtpd` (vtkPartitionedDataSet) gives its `DataSet`s as datasets.
 - A VTKHDF `MultiBlockDataSet` or `PartitionedDataSetCollection` (`.vtkhdf`) is read by `vtm_file` too: its entries are
   the groups of its `Assembly` (`block`) and the links in them (`dataset`, a collection's references included), in the
   order written, then, for a collection, the datasets (groups of `/VTKHDF` with an `Index`) that no link of the

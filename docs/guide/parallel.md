@@ -150,10 +150,18 @@ calls. The two compared:
 
 `references` is an argument of the string form of `write_block` (blank separated, as `filenames`), alone
 (`write_block(references='pump', name='rotating')`, a new block) or with `action='write'` (the open block); it is
-refused in a multi-block file and in an XML `.vtm`. The time series rules below are
+refused in a multi-block file and in an XML `.vtm` (an XML `.vtpc` takes them, below). The time series rules below are
 the same. ParaView 6.1.1 reads a collection and plays every step; VTK 9.7.2 as for a multi-block file (each step with
 `SetStep`). `src/tests/vtk_fortran_write_vtkhdf_vtm.f90` writes the nested assembly and a time series as collections,
 each with a block referencing two datasets already copied.
+
+**XML partitioned composites.** Without `format='vtkhdf'`, `composite='PartitionedDataSetCollection'` writes VTK's
+XML collection, a `.vtpc`, with the same calls: each dataset (one file) a `<Partitions name=...>` written once, the
+blocks the nodes of its `vtkDataAssembly` (stored base64 in `<DataAssembly>`, as VTK writes it; a block name must be an
+XML element name), `references` placing a dataset in other blocks, an empty file name an empty dataset.
+`composite='PartitionedDataSet'` writes a `.vtpd`, a flat list of partitions: `write_block(filenames=[...],
+action='write')`, no blocks (refused, as `format='vtkhdf'`: a `.vtkhdf` has partitions of its own). VTK 9.7.2 and
+ParaView read both; `vtm_file` reads them back (`get_entries`).
 
 **A time series of several meshes.** The blocks can be time series (`write_step`), so that one file holds several
 meshes moving together: see [A time series of several meshes in one .vtkhdf file](/manual/cookbook#a-time-series-of-several-meshes-in-one-vtkhdf-file).
