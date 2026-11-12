@@ -74,6 +74,7 @@ type :: vtkhdf_reader
     ! private methods
     procedure, pass(self), private :: amr_box      !< A box of the level and step read of an OverlappingAMR.
     procedure, pass(self), private :: is_v23       !< The file is VTKHDF 2.3 or later (OverlappingAMR Steps names).
+    procedure, pass(self), private :: amr_steps_name !< The name of an OverlappingAMR Steps entry in the file.
     procedure, pass(self), private :: grid_points  !< Points of the grid along each axis.
     procedure, pass(self), private :: prefix       !< Group of the point and cell data of the level read (AMR).
     procedure, pass(self), private :: is_grid      !< The dataset is a grid (one piece).
@@ -976,9 +977,9 @@ contains
   if (mod(size(boxes, kind=I8P), 6_I8P) /= 0_I8P) return
   first = 0_I8P
   if (self%n_steps > 0_I8P) then ! the names of VTKHDF 2.3 (plural), singular before, as VTK reads them
-    first = self%step_value(level//'/AMRBoxOffset'//trim(merge('s', ' ', self%is_v23())), 1_I4P, error)
+    first = self%step_value(self%amr_steps_name(level//'/AMRBoxOffset', 's'), 1_I4P, error)
     if (error /= 0) return
-    n_boxes = self%step_value(level//'/NumberOfAMRBox'//trim(merge('es', '  ', self%is_v23())), 1_I4P, error)
+    n_boxes = self%step_value(self%amr_steps_name(level//'/NumberOfAMRBox', 'es'), 1_I4P, error)
     if (error /= 0) then
       n_boxes = 0_I8P
       return
@@ -1019,6 +1020,26 @@ contains
   if (self%mesh_topology == 'OverlappingAMR' .and. (group == 'PointData' .or. group == 'CellData')) &
     path = 'Level'//trim(str(n=self%level, no_sign=.true.))//'/'
   endfunction prefix
+
+  function amr_steps_name(self, singular, suffix) result(name)
+  !< The name of an OverlappingAMR Steps entry (from Steps), as the file's Version gives it: plural (`singular//suffix`)
+  !< from VTKHDF 2.3, singular before (as VTK 9.7.2 reads them); the other spelling when that one is missing (VTKFortran
+  !< before #89 wrote the singular names with Version 2.6 for a series with an active array).
+  class(vtkhdf_reader), intent(in) :: self     !< Reader.
+  character(*),         intent(in) :: singular !< Singular name, e.g. `Level0/AMRBoxOffset`.
+  character(*),         intent(in) :: suffix   !< Plural suffix, `s` or `es`.
+  character(len=:), allocatable    :: name     !< Name.
+  character(len=:), allocatable    :: other    !< The other spelling.
+
+  if (self%is_v23()) then
+    name = singular//suffix
+    other = singular
+  else
+    name = singular
+    other = singular//suffix
+  endif
+  if (.not.h5_link_exists(self%root, 'Steps/'//name) .and. h5_link_exists(self%root, 'Steps/'//other)) name = other
+  endfunction amr_steps_name
 
   elemental function is_v23(self) result(is_v23_)
   !< Return true if the file is VTKHDF 2.3 or later: the OverlappingAMR Steps names are plural (`AMRBoxOffsets`,
@@ -1190,8 +1211,9 @@ contains
     endif
     if (self%n_steps > 0_I8P) then ! where the arrays of the step start
       b = first
-      first = self%step_value(self%prefix(group)//trim(merge('PointDataOffset', 'CellDataOffset ', group == 'PointData'))// &
-                              trim(merge('s', ' ', self%is_v23()))//'/'//trim(data_name), 1_I4P, error)
+      first = self%step_value(self%amr_steps_name(self%prefix(group)// &
+                              trim(merge('PointDataOffset', 'CellDataOffset ', group == 'PointData')), 's')// &
+                              '/'//trim(data_name), 1_I4P, error)
       if (error /= 0) return
       first = first + b
     endif

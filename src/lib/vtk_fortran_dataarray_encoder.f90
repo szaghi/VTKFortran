@@ -46,6 +46,11 @@ interface real_str
   module procedure real_str_R8P, real_str_R4P
 endinterface real_str
 
+interface real_sep
+  !< The separator of two reals written without a blank (`str` starts with the sign): a blank if either is not finite.
+  module procedure real_sep_R8P, real_sep_R4P
+endinterface real_sep
+
 interface encode_ascii_dataarray
   !< Ascii DataArray encoder.
   module procedure encode_ascii_dataarray1_rank1_R8P, &
@@ -183,6 +188,28 @@ contains
     text = str(n=n)
   endif
   endfunction real_str_R4P
+
+  pure function real_sep_R8P(a, b) result(sep)
+  !< The separator of two reals (R8P) written one after the other: none for two finite values (the sign of `str` separates
+  !< them, as VTKFortran always wrote them), a blank otherwise (`nan`, `inf` have no sign).
+  real(R8P), intent(in)         :: a   !< First value.
+  real(R8P), intent(in)         :: b   !< Second value.
+  character(len=:), allocatable :: sep !< Separator.
+
+  sep = ''
+  if (.not.(ieee_is_finite(a) .and. ieee_is_finite(b))) sep = ' '
+  endfunction real_sep_R8P
+
+  pure function real_sep_R4P(a, b) result(sep)
+  !< The separator of two reals (R4P) written one after the other: none for two finite values (the sign of `str` separates
+  !< them, as VTKFortran always wrote them), a blank otherwise (`nan`, `inf` have no sign).
+  real(R4P), intent(in)         :: a   !< First value.
+  real(R4P), intent(in)         :: b   !< Second value.
+  character(len=:), allocatable :: sep !< Separator.
+
+  sep = ''
+  if (.not.(ieee_is_finite(a) .and. ieee_is_finite(b))) sep = ' '
+  endfunction real_sep_R4P
 
   function encode_ascii_dataarray1_rank1_R16P(x) result(code)
   !< Encode (Base64) a dataarray with 1 components of rank 1 (R8P).
@@ -1426,7 +1453,7 @@ contains
   allocate(character(len=l*size_n) :: code)
   code(:) = ''
   do n=1, size_n
-    code(sp+1:sp+l) = real_str(n=u(n))//' '//real_str(n=v(n))//' '//real_str(n=w(n))// &
+    code(sp+1:sp+l) = real_str(n=u(n))//' '//real_str(n=v(n))//' '//real_str(n=w(n))//real_sep(w(n), x(n))// &
                 real_str(n=x(n))//' '//real_str(n=y(n))//' '//real_str(n=z(n))
     sp = sp + l
   enddo
@@ -1452,7 +1479,7 @@ contains
   allocate(character(len=l*size_n) :: code)
   code(:) = ''
   do n=1, size_n
-    code(sp+1:sp+l) = real_str(n=u(n))//' '//real_str(n=v(n))//' '//real_str(n=w(n))// &
+    code(sp+1:sp+l) = real_str(n=u(n))//' '//real_str(n=v(n))//' '//real_str(n=w(n))//real_sep(w(n), x(n))// &
                 real_str(n=x(n))//' '//real_str(n=y(n))//' '//real_str(n=z(n))
     sp = sp + l
   enddo
@@ -1629,6 +1656,7 @@ contains
     do n2=1, size_n2
       do n1=1, size_n1
         code(sp+1:sp+l) = real_str(n=u(n1, n2, n3))//' '//real_str(n=v(n1, n2, n3))//' '//real_str(n=w(n1, n2, n3))// &
+                          real_sep(w(n1, n2, n3), x(n1, n2, n3))// &
           real_str(n=x(n1, n2, n3))//' '//real_str(n=y(n1, n2, n3))//' '//real_str(n=z(n1, n2, n3))
         sp = sp + l
       enddo
@@ -1666,6 +1694,7 @@ contains
     do n2=1, size_n2
       do n1=1, size_n1
         code(sp+1:sp+l) = real_str(n=u(n1, n2, n3))//' '//real_str(n=v(n1, n2, n3))//' '//real_str(n=w(n1, n2, n3))// &
+                          real_sep(w(n1, n2, n3), x(n1, n2, n3))// &
           real_str(n=x(n1, n2, n3))//' '//real_str(n=y(n1, n2, n3))//' '//real_str(n=z(n1, n2, n3))
         sp = sp + l
       enddo

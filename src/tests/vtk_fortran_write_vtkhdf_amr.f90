@@ -9,7 +9,8 @@ program vtk_fortran_write_vtkhdf_amr
 !< of 2 steps, level 1 with two boxes then one (`Version` 2.3, the `Steps/Level<n>` entries checked under their VTKHDF 2.3
 !< names, each step read back), the same series with an active array (`Version` 2.6, the same names) and rebuilt with the
 !< bindings as a VTKHDF 2.2 file (the singular names of 2.2: `AMRBoxOffset`, `NumberOfAMRBox`, `PointDataOffset`, ...),
-!< both read back step by step (the reader chooses the names by `Version`, as VTK); then the
+!< both read back step by step (the reader chooses the names by `Version`, as VTK), and the 2.2 rebuild with `Version`
+!< 2.6 (as VTKFortran wrote a series with an active array before: the reader falls back to the singular names); then the
 !< refusals: a box outside the boxes of level 0, a box of a finer level before those of level 0, a flat box, an array of
 !< the wrong size, an array missing in a box or new in a later box, levels out of order, another spacing for a level,
 !< field data, a step without boxes, a box left open, `write_level` in another topology, `action='append'`. A malformed
@@ -306,13 +307,26 @@ contains
   ee(8) = ee(8) + abs(h5_group_close(root))
   ee(8) = ee(8) + abs(h5_file_close(dst))
   ee(8) = ee(8) + abs(h5_file_close(src))
-  e = r%initialize(filename='amr_series_v22.vtkhdf', action='read')
-  c = e == 0
-  do s=1, 2
-    e = r%xml_reader%set_step(s)
-    c = c .and. e == 0 .and. read_level(r, s, 0, 1) .and. read_level(r, s, 1, 3 - s)
+  ! the same with Version 2.6: as VTKFortran wrote a series with an active array before #89 (singular names)
+  ee(8) = ee(8) + abs(h5_file_open('amr_series_v22.vtkhdf', src))
+  ee(8) = ee(8) + abs(h5_file_create('amr_series_v26_singular.vtkhdf', dst))
+  ee(8) = ee(8) + abs(h5_object_copy(src, 'VTKHDF', dst, 'VTKHDF'))
+  ee(8) = ee(8) + abs(h5_group_open(dst, 'VTKHDF', root))
+  ee(8) = ee(8) + abs(h5_attribute_write(root, 'Version', [2_I8P, 6_I8P]))
+  ee(8) = ee(8) + abs(h5_group_close(root))
+  ee(8) = ee(8) + abs(h5_file_close(dst))
+  ee(8) = ee(8) + abs(h5_file_close(src))
+  c = .true.
+  do l=1, 2
+    if (l == 1) e = r%initialize(filename='amr_series_v22.vtkhdf', action='read')
+    if (l == 2) e = r%initialize(filename='amr_series_v26_singular.vtkhdf', action='read')
+    c = c .and. e == 0
+    do s=1, 2
+      e = r%xml_reader%set_step(s)
+      c = c .and. e == 0 .and. read_level(r, s, 0, 1) .and. read_level(r, s, 1, 3 - s)
+    enddo
+    e = r%finalize()
   enddo
-  e = r%finalize()
   series_v22 = c .and. all(ee == 0)
   if (.not.series_v22) print '(A,8I3,A,L2)', 'AMR series as VTKHDF 2.2: errors ', ee, ' read back ', c
   endfunction series_v22

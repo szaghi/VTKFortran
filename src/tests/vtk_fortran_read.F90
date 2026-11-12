@@ -9,7 +9,8 @@ program vtk_fortran_read
 !< missing files, arrays and of kinds that cannot hold the values are checked. Polyhedra in the layout of VTK 9.7.2 (XML
 !< 2.3, a file written by VTK embedded below, and a shared face stored once, 2.5); ASCII non-finite reals (VTK's
 !< `nan inf -inf`, VTKFortran's former `+    Infinity`) and UInt64 values above huge(I8P); names holding `"&<>'` and
-!< non-finite values written in every format and read back, and in a `.pvd`.
+!< non-finite values written in every format and read back, and in a `.pvd`; a 6-component ASCII array (written
+!< u v w x y z, w and x joined) with non-finite values where w and x meet.
 use penf
 use, intrinsic :: ieee_arithmetic, only : ieee_is_nan, ieee_is_finite, ieee_value, ieee_quiet_nan, &
                                           ieee_positive_inf, ieee_negative_inf
@@ -24,7 +25,7 @@ real(R8P),    parameter :: p(4)=[1.5_R8P, -2.25_R8P, 1.e-300_R8P, 4._R8P/3._R8P]
 real(R4P),    parameter :: v(3,4)=reshape([1,2,3, 4,5,6, 7,8,9, 10,11,12], [3,4]) * 0.1_R4P !< Point vectors.
 type(vtk_file)          :: a_vtk_file      !< A VTK file.
 integer(I4P)            :: f               !< Counter.
-logical                 :: test_passed(13) !< List of passed tests.
+logical                 :: test_passed(14) !< List of passed tests.
 
 test_passed = .true.
 do f=1, size(formats)
@@ -48,6 +49,7 @@ test_passed(10) = check_ascii_not_separated()
 test_passed(11) = check_vtk_polyhedra()
 test_passed(12) = check_ascii_special()
 test_passed(13) = check_names_and_non_finite()
+test_passed(14) = check_six_non_finite()
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 if (.not.all(test_passed)) error stop 'some tests failed'
@@ -718,6 +720,43 @@ contains
   if (is_passed) is_passed = trim(files(1)) == name//'.vtu' .and. trim(groups(1)) == name .and. trim(labels(1)) == name
   if (.not.is_passed) print '(A,*(1X,I0))', 'failed: vtkfortran_read-names.pvd', e
   endfunction check_names_and_non_finite
+
+  function check_six_non_finite() result(is_passed)
+  !< A 6-component array in ascii (`write_dataarray(u, v, w, x, y, z)`: w and x are joined, the sign of x separating
+  !< them) with non-finite values at the join, read back: a blank separates them then.
+  logical                :: is_passed !< Check result.
+  real(R8P)              :: c(3)      !< Components u, v, y, z.
+  real(R8P)              :: cw(3)     !< Component w.
+  real(R8P)              :: cx(3)     !< Component x.
+  real(R8P), allocatable :: t(:,:)    !< Values read (components, tuples).
+  integer(I4P)           :: e(9)      !< Errors.
+
+  c = [1._R8P, 2._R8P, 3._R8P]
+  cw = [ieee_value(1._R8P, ieee_quiet_nan), ieee_value(1._R8P, ieee_negative_inf), 3._R8P]
+  cx = [ieee_value(1._R8P, ieee_positive_inf), ieee_value(1._R8P, ieee_quiet_nan), -4._R8P]
+  e = 0
+  e(1) = a_vtk_file%initialize(format='ascii', filename='vtkfortran_read-six.vtu', mesh_topology='UnstructuredGrid')
+  e(2) = a_vtk_file%xml_writer%write_piece(np=3, nc=1)
+  e(3) = a_vtk_file%xml_writer%write_geo(np=3, nc=1, x=x(1:3), y=y(1:3), z=z(1:3))
+  e(4) = a_vtk_file%xml_writer%write_connectivity(nc=1, connectivity=[0_I4P, 1_I4P, 2_I4P], offset=[3_I4P], &
+                                                  cell_type=[5_I1P])
+  e(5) = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
+  e(6) = a_vtk_file%xml_writer%write_dataarray(data_name='six', u=c, v=c, w=cw, x=cx, y=c, z=c)
+  e(7) = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
+  e(8) = a_vtk_file%xml_writer%write_piece()
+  e(9) = a_vtk_file%finalize()
+  is_passed = all(e == 0)
+  e = 0
+  e(1) = a_vtk_file%initialize(filename='vtkfortran_read-six.vtu', action='read')
+  e(2) = a_vtk_file%xml_reader%read_dataarray(location='node', data_name='six', x=t)
+  e(3) = a_vtk_file%finalize()
+  is_passed = is_passed .and. all(e == 0)
+  if (is_passed) is_passed = all(shape(t) == [6, 3])
+  if (is_passed) is_passed = all(t(1:2,:) == spread(c, 1, 2)) .and. all(t(5:6,:) == spread(c, 1, 2)) .and. &
+                             ieee_is_nan(t(3,1)) .and. is_inf(t(4,1), 1) .and. is_inf(t(3,2), -1) .and. &
+                             ieee_is_nan(t(4,2)) .and. t(3,3) == 3._R8P .and. t(4,3) == -4._R8P
+  if (.not.is_passed) print '(A,*(1X,I0))', 'failed: vtkfortran_read-six.vtu', e
+  endfunction check_six_non_finite
 
   elemental function is_inf(v, sign) result(is_it)
   !< Return .true. if a value is an infinity of a sign.

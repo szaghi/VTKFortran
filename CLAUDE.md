@@ -131,7 +131,8 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   `write_piece(nx1..nz2)` (`start_box`: `AMRBox` row = cells, inside the level-0 bounds `domain`, >= 1 cell per axis)
   closed by `write_piece()` (`end_box`: every recorded array holds the level's tuples, `level_counts`); series:
   `Steps/Level<n>/AMRBoxOffsets`, `NumberOfAMRBoxes`, `PointDataOffsets/`, `CellDataOffsets/` (VTKHDF 2.3 names, Version
-  >= 2.3: VTK 9.7.2 picks the names by Version, singular below 2.3; the reader likewise, `is_v23`);
+  >= 2.3: VTK 9.7.2 picks the names by Version, singular below 2.3; the reader likewise, `is_v23`, falling back to the
+  other spelling when missing, `amr_steps_name`: before #89 a series with an active array had Version 2.6 + singular);
   no field data, comm, reopen; VTK 9.7.2 reads it (pipeline time too), ParaView 6.1.1 not (vtkGroupDataSetsFilter).
   HyperTreeGrid (`TOPOLOGY_HTG`, Version 2.4): `branch_factor` (vtk_writer_abstract state, set by vtk_file),
   one piece + `write_geo(x, y, z)` (rect coordinates path), `write_tree(tree_id, descriptor, mask)` (new deferred
@@ -217,7 +218,8 @@ block's path copied before the call that grows the buffer; `free_entries` at fin
   VTKFortran 3.x), `UInt64` above `huge(I8P)` kept with its bits (`uint64_bits`, no intermediate overflow))
 - `vtk_fortran_dataarray_encoder` — overloaded encoding routines for ASCII and Base64 (optionally zlib-compressed), covering all PENF numeric kinds and ranks 1–4
   (ASCII reals through `real_str`: non-finite values as VTK writes them, `nan`, `inf`, `-inf`; VTK 9.7.2 reads `-inf` as
-  `+inf`, its own files too)
+  `+inf`, its own files too; the 6-component encoders join w and x without a blank, `real_sep` adds one only around a
+  non-finite value, so finite files keep their bytes)
 - `vtk_fortran_hdf5` — HDF5 C API bindings (files, groups and their members (in creation order when tracked), links,
   attributes (overwritten; strings fixed or variable length: `h5_attribute_write(..., variable_length=)`, read either way,
   `H5Tis_variable_str` + `H5free_memory`), datasets of every kind, appendable, resized, deflate, read back; chunks of whole rows up to
@@ -282,7 +284,8 @@ tree and mask as written, cell data, coordinates, the series step by step, a mis
 bits: VTK 9.7.2 crashes on int8 ones), read partition by partition and in the documented indexing);
 `vtk_fortran_write_vtkhdf_amr.f90`: OverlappingAMRs (two levels, three boxes, point/cell data and a vector; a
 2-step series with level 1 going from two boxes to one, Version 2.3 with the plural Steps names; the same with an active
-array, Version 2.6; rebuilt with the bindings as VTKHDF 2.2 with the singular names, read back), read back with the
+array, Version 2.6; rebuilt with the bindings as VTKHDF 2.2 with the singular names, and that one with Version 2.6,
+read back), read back with the
 bindings and the reader (`set_level`), 15
 refusals (levels, boxes outside or flat or out of order, array sizes, missing/new arrays, field data, steps, append);
 `vtk_fortran_write_vtkhdf_append.f90`: series continued with `action='append'` (restart, interrupted run), reuse across
@@ -317,4 +320,4 @@ a parallel restart refused; without MPI `comm` refused, its name without "mpi" s
 mpirun; without HDF5 the writer refuses to start); `vtk_fortran_read.F90` reads files back (every topology and format, and two files written by VTK, embedded in the test;
 a polyhedron `.vtu` written by VTK 9.7.2 (XML 2.3) and the same with the shared face stored once (2.5); ASCII
 `nan inf -inf`, the former `+   Infinity`, UInt64 above huge(I8P); a name with `"&<>'` and NaN/±Inf in every format,
-the active scalars, and in a `.pvd`), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.
+the active scalars, and in a `.pvd`; a 6-component ASCII array with non-finite values where w and x join), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.
