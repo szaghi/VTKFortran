@@ -47,6 +47,7 @@ type, abstract, extends(vtk_writer_abstract) :: xml_writer_abstract
     procedure,                                 pass(self) :: write_step                   !< Start a time step (VTKHDF only).
     procedure,                                 pass(self) :: write_level                  !< Start an AMR level (VTKHDF only).
     procedure,                                 pass(self) :: write_tree                   !< Write a hyper tree (VTKHDF only).
+    procedure,                                 pass(self) :: set_interface                !< HyperTreeGrid interface (VTKHDF only).
     procedure,                                 pass(self) :: write_dataarray_location_tag !< Write dataarray location tag.
     procedure,                                 pass(self) :: write_dataarray_tag          !< Write dataarray tag.
     procedure,                                 pass(self) :: write_dataarray_tag_appended !< Write dataarray appended tag.
@@ -1662,6 +1663,16 @@ contains
 
    error = 1_I4P
    endfunction write_tree
+
+   function set_interface(self, normals, intercepts) result(error)
+   !< Name the interface arrays of a HyperTreeGrid: a VTKHDF feature (`format='vtkhdf'`), an error in the XML formats.
+   class(xml_writer_abstract), intent(inout) :: self       !< Writer.
+   character(*),               intent(in)    :: normals    !< Cell array of the interface normals.
+   character(*),               intent(in)    :: intercepts !< Cell array of the interface intercepts.
+   integer(I4P)                              :: error      !< Error status.
+
+   error = 1_I4P
+   endfunction set_interface
 
    ! write_parallel methods
    function write_parallel_open_block(self, name, pieces) result(error)

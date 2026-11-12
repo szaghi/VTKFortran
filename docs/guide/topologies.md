@@ -183,7 +183,7 @@ piece of it, its point extent in the indices of the level, with its point and ce
 
 - Levels 0, 1, ... in order; the boxes of level 0 come first (they bound the boxes of the finer levels).
 - A box has at least one cell along every axis: VTK reads every box in 3D, so a 2D AMR is one cell thick.
-- Every box of every level writes the same arrays; no field data. In a time series every step writes its levels and
+- Every box of every level writes the same arrays; no field data (VTK 9.7.2 reads none of an OverlappingAMR). In a time series every step writes its levels and
   boxes again.
 - The layout, the refusals and the readers: [VTKHDF](/guide/formats#vtkhdf-hdf5); a complete program:
   [A block-structured AMR](/manual/cookbook#a-block-structured-amr).

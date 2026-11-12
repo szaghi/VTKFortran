@@ -69,6 +69,7 @@ type, abstract :: vtk_writer_abstract
     procedure(write_step_interface), deferred, pass(self) :: write_step
     procedure(write_level_interface), deferred, pass(self) :: write_level
     procedure(write_tree_interface), deferred, pass(self) :: write_tree
+    procedure(set_interface_interface), deferred, pass(self) :: set_interface
     procedure(free_interface), deferred, pass(self) :: free
     procedure(get_xml_volatile_interface), deferred, pass(self) :: get_xml_volatile
     procedure(write_dataarray1_rank1_R8P_interface), deferred, pass(self) :: write_dataarray1_rank1_R8P
@@ -1211,6 +1212,14 @@ abstract interface
   logical,                    intent(in), optional :: mask(:)
   integer(I4P)                                     :: error
   endfunction write_tree_interface
+
+  function set_interface_interface(self, normals, intercepts) result(error)
+  import :: vtk_writer_abstract, I4P
+  class(vtk_writer_abstract), intent(inout) :: self
+  character(*),               intent(in)    :: normals
+  character(*),               intent(in)    :: intercepts
+  integer(I4P)                              :: error
+  endfunction set_interface_interface
 
   elemental subroutine free_interface(self, error)
   import :: vtk_writer_abstract, I4P

@@ -749,15 +749,18 @@ contains
   endfunction read_ids
 
   ! private methods
-  function get_trees(self, tree_ids, branch_factor, piece) result(error)
+  function get_trees(self, tree_ids, branch_factor, piece, interface_normals, interface_intercepts) result(error)
   !< Return the trees of a piece (a partition, default 1) of a HyperTreeGrid, of the step read: the ids of their root cells
   !< (i + (nx-1)(j + (ny-1)k), from 0; a file with `TransposedRootIndexing` has them z fastest, converted), in the order of
-  !< the file (that of their cells in the cell data), and its branch factor. Error 4 for another dataset or piece.
-  class(vtkhdf_reader),      intent(in)            :: self          !< Reader.
-  integer(I8P), allocatable, intent(out)           :: tree_ids(:)   !< Ids of the trees.
-  integer(I4P),              intent(out), optional :: branch_factor !< Branch factor: 2 or 3.
-  integer(I4P),              intent(in),  optional :: piece         !< Piece, from 1 (default 1).
-  integer(I4P)                                     :: error         !< Error status.
+  !< the file (that of their cells in the cell data), and its branch factor; the names of its interface cell arrays
+  !< (`InterfaceNormalsName`, `InterfaceInterceptsName`; empty without). Error 4 for another dataset or piece.
+  class(vtkhdf_reader),          intent(in)            :: self          !< Reader.
+  integer(I8P), allocatable,     intent(out)           :: tree_ids(:)   !< Ids of the trees.
+  integer(I4P),                  intent(out), optional :: branch_factor !< Branch factor: 2 or 3.
+  integer(I4P),                  intent(in),  optional :: piece         !< Piece, from 1 (default 1).
+  character(len=:), allocatable, intent(out), optional :: interface_normals    !< Cell array of the interface normals.
+  character(len=:), allocatable, intent(out), optional :: interface_intercepts !< Cell array of the interface intercepts.
+  integer(I4P)                                         :: error         !< Error status.
   integer(I8P), allocatable                        :: depths(:), counts(:), ivalues(:) !< Layout of the trees.
   integer(I8P)                                     :: first_bit, first_mask !< Bits of the step (unused here).
   integer(I8P)                                     :: t             !< Counter.
@@ -768,6 +771,18 @@ contains
   do t=1_I8P, size(tree_ids, kind=I8P)
     tree_ids(t) = self%tree_id(tree_ids(t))
   enddo
+  if (present(interface_normals)) then
+    interface_normals = ''
+    if (h5_attribute_exists(self%root, 'InterfaceNormalsName')) then
+      if (h5_attribute_read(self%root, 'InterfaceNormalsName', interface_normals) /= 0_I4P) interface_normals = ''
+    endif
+  endif
+  if (present(interface_intercepts)) then
+    interface_intercepts = ''
+    if (h5_attribute_exists(self%root, 'InterfaceInterceptsName')) then
+      if (h5_attribute_read(self%root, 'InterfaceInterceptsName', interface_intercepts) /= 0_I4P) interface_intercepts = ''
+    endif
+  endif
   if (.not.present(branch_factor)) return
   error = 6
   if (h5_attribute_read(self%root, 'BranchFactor', ivalues) /= 0_I4P) return

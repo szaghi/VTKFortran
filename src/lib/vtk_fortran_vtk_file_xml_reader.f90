@@ -778,20 +778,26 @@ contains
   error = 4
   endfunction set_level
 
-  function get_trees(self, tree_ids, branch_factor, piece) result(error)
+  function get_trees(self, tree_ids, branch_factor, piece, interface_normals, interface_intercepts) result(error)
   !< Return the trees of a piece (a partition) of a VTKHDF HyperTreeGrid (of the step read): the ids of their root cells
   !< (i + (nx-1)(j + (ny-1)k), from 0, also for a file with `TransposedRootIndexing`), in the order of the file (that of
-  !< their cells in the cell data), and its branch factor (2 or 3). Error 4 for another dataset or piece, 3 for an XML file.
-  class(xml_reader),         intent(in)            :: self          !< XML reader.
-  integer(I8P), allocatable, intent(out)           :: tree_ids(:)   !< Ids of the trees.
-  integer(I4P),              intent(out), optional :: branch_factor !< Branch factor.
-  integer(I4P),              intent(in),  optional :: piece         !< Piece, from 1 (default 1).
-  integer(I4P)                                     :: error         !< Error status.
+  !< their cells in the cell data), and its branch factor (2 or 3); the names of its interface cell arrays (empty without,
+  !< `set_interface` of the writer). Error 4 for another dataset or piece, 3 for an XML file.
+  class(xml_reader),             intent(in)            :: self          !< XML reader.
+  integer(I8P), allocatable,     intent(out)           :: tree_ids(:)   !< Ids of the trees.
+  integer(I4P),                  intent(out), optional :: branch_factor !< Branch factor.
+  integer(I4P),                  intent(in),  optional :: piece         !< Piece, from 1 (default 1).
+  character(len=:), allocatable, intent(out), optional :: interface_normals    !< Cell array of the interface normals.
+  character(len=:), allocatable, intent(out), optional :: interface_intercepts !< Cell array of the interface intercepts.
+  integer(I4P)                                         :: error         !< Error status.
 
   if (self%is_hdf) then
-    error = self%hdf%get_trees(tree_ids=tree_ids, branch_factor=branch_factor, piece=piece)
+    error = self%hdf%get_trees(tree_ids=tree_ids, branch_factor=branch_factor, piece=piece, &
+                               interface_normals=interface_normals, interface_intercepts=interface_intercepts)
     return
   endif
+  if (present(interface_normals)) interface_normals = ''
+  if (present(interface_intercepts)) interface_intercepts = ''
   allocate(tree_ids(0))
   error = 3
   endfunction get_trees

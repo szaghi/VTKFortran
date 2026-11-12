@@ -13,15 +13,17 @@ program vtk_fortran_write_vtkhdf_vtm
 !<
 !<- `vtkfortran_pdc_nested`, `vtkfortran_pdc_series`: the same two as `PartitionedDataSetCollection`s
 !<  (`composite='PartitionedDataSetCollection'`), each with one more block, `checked`, that references two datasets
-!<  already copied (`references=`), without a new copy.
+!<  already copied (`references=`), without a new copy;
+!<- `vtkfortran_vtm_references`: a multi-block file whose block `checked` references two datasets of the other blocks.
 !<
 !< The files are read back with the HDF5 bindings (the type, the links of the tree; the steps of each block of the
 !< series; the copies of a collection named after their datasets, their `Index`, a referenced dataset copied once).
 !< Refusals are checked too: a time-series ImageData block, a static block after a series block and the reverse, a
 !< series with another number of steps or other times, block and dataset names with '/' or '.'; in a collection a
-!< dataset name used twice or `Assembly`, a reference to a dataset not copied; references in a multi-block file or an XML
-!< `.vtm`, an unknown composite, a VTKHDF PartitionedDataSet; a composite (multi-block, collection) or an OverlappingAMR as the
-!< source of a block, in a multi-block file and in a collection. The four composite files are read back with `vtm_file`
+!< dataset name used twice or `Assembly`, a reference to a dataset not copied; in a multi-block file a reference to a name
+!< given to two datasets or never written; references in an XML `.vtm`, an unknown composite, a VTKHDF
+!< PartitionedDataSet; a composite (multi-block, collection) or an OverlappingAMR as the source of a block, in a
+!< multi-block file and in a collection. The four composite files are read back with `vtm_file`
 !< (`action='read'`: the entries of the Assembly, the dataset of each) and every dataset with `vtk_file%initialize(...,
 !< action='read', dataset=)`, compared with its source file step by step; the refusals of `dataset`; a collection with
 !< two datasets the Assembly does not reach (added with the bindings, `Index` 2 and 1), listed after the tree in the
@@ -115,8 +117,30 @@ else
                   'surface/series_skin series_skin.vtkhdf', 'checked/series_skin series_skin.vtkhdf', &
                   'checked/series_tetra series_tetra.vtkhdf'
   close(u)
-  test_passed(1) = all(e(1:15) == 0)
-  if (.not.test_passed(1)) print '(A,15I2)', 'errors of the files: ', e(1:15)
+  ! a multi-block file placing two datasets in a second block (references): soft links to their copies
+  e(16) = a_vtm_file%initialize(filename='vtkfortran_vtm_references.vtkhdf', format='vtkhdf')
+  e(16) = max(e(16), abs(a_vtm_file%write_block(filenames=['part_1.vtkhdf', 'part_2.vtkhdf'], name='parts')))
+  e(16) = max(e(16), abs(a_vtm_file%write_block(filenames='bolt_1.vtkhdf', names='bolt-1', name='bolts')))
+  e(16) = max(e(16), abs(a_vtm_file%write_block(references='part_2 bolt-1', name='checked')))
+  e(16) = max(e(16), abs(a_vtm_file%finalize()))
+  open(newunit=u, file='vtkfortran_vtm_references.txt', status='replace')
+  write(u, '(A)') 'parts/part_1 part_1.vtkhdf', 'parts/part_2 part_2.vtkhdf', 'bolts/bolt-1 bolt_1.vtkhdf', &
+                  'checked/part_2 part_2.vtkhdf', 'checked/bolt-1 bolt_1.vtkhdf'
+  close(u)
+  if (e(16) == 0) then ! three copies, the references linked to them
+    e(16) = h5_file_open('vtkfortran_vtm_references.vtkhdf', file_id)
+    if (e(16) == 0) e(16) = h5_group_open(file_id, 'VTKHDF', root)
+    if (e(16) == 0) then
+      if (.not.(h5_link_exists(root, 'Block_3') .and. .not.h5_link_exists(root, 'Block_4') .and. &
+                h5_link_exists(root, 'Assembly/checked/part_2') .and. h5_link_exists(root, 'Assembly/checked/bolt-1'))) e(16) = 1
+      if (e(16) == 0) e(16) = h5_link_target(root, 'Assembly/checked/bolt-1', text)
+      if (e(16) == 0 .and. text /= '/VTKHDF/Block_3') e(16) = 1
+      u = h5_group_close(root)
+    endif
+    u = h5_file_close(file_id)
+  endif
+  test_passed(1) = all(e(1:16) == 0)
+  if (.not.test_passed(1)) print '(A,16I2)', 'errors of the files: ', e(1:16)
   test_passed(2) = refusals()
 
   ! read back the nested assembly
@@ -592,7 +616,9 @@ contains
   ! references outside a collection, an unknown composite, a collection in XML
   error = a_vtm_file%initialize(filename='refused_vtm_references.vtkhdf', format='vtkhdf')
   error = a_vtm_file%write_block(filenames='part_1.vtkhdf', name='a')
-  ok(18) = a_vtm_file%write_block(references='part_1', name='b') /= 0                      ! a multi-block file
+  error = a_vtm_file%write_block(filenames='part_2.vtkhdf', names='part_1', name='c')     ! a name used twice
+  ok(18) = a_vtm_file%write_block(references='part_1', name='b') /= 0                      ! ambiguous in a multi-block
+  ok(18) = ok(18) .and. a_vtm_file%write_block(references='bolt', name='d') /= 0           ! never written
   error = a_vtm_file%finalize()
   error = a_vtm_file%initialize(filename='refused_references.vtm')
   ok(19) = a_vtm_file%write_block(references='part_1', name='b') /= 0                      ! an XML .vtm

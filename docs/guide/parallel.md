@@ -159,16 +159,18 @@ calls. The two compared:
 | | `MultiBlockDataSet` (default) | `PartitionedDataSetCollection` |
 |---|---|---|
 | Copy of a dataset | the group `Block_<n>` | the group of its name, with the attribute `Index` (0, 1, ... as written) |
-| A dataset in two blocks | copied twice | copied once, then placed in other blocks with `write_block(references='name ...')` (soft links) |
+| A dataset in two blocks | copied twice, or copied once and placed in other blocks with `references` (its name must be unique) | copied once, then placed in other blocks with `write_block(references='name ...')` |
 | Dataset names | unique in a block | unique in the file (a second one is refused: reference the first), not `Assembly` |
 | VTK output | `vtkMultiBlockDataSet`, the blocks nested | `vtkPartitionedDataSetCollection`, flat, the tree in its `vtkDataAssembly` |
 
 `references` is an argument of the string form of `write_block` (blank separated, as `filenames`), alone
-(`write_block(references='pump', name='rotating')`, a new block) or with `action='write'` (the open block); it is
-refused in a multi-block file and in an XML `.vtm` (an XML `.vtpc` takes them, below). The time series rules below are
+(`write_block(references='pump', name='rotating')`, a new block) or with `action='write'` (the open block): soft links
+to the copies, no new copy. In a multi-block file a name given to several datasets cannot be referenced (ambiguous); an
+XML `.vtm` refuses `references` (it repeats the file; an XML `.vtpc` takes them, below). VTK 9.7.2 reads a referenced
+dataset in each of its blocks. The time series rules below are
 the same. ParaView 6.1.1 reads a collection and plays every step; VTK 9.7.2 as for a multi-block file (each step with
 `SetStep`). `src/tests/vtk_fortran_write_vtkhdf_vtm.f90` writes the nested assembly and a time series as collections,
-each with a block referencing two datasets already copied.
+each with a block referencing two datasets already copied, and a multi-block file referencing two datasets.
 
 **XML partitioned composites.** Without `format='vtkhdf'`, `composite='PartitionedDataSetCollection'` writes VTK's
 XML collection, a `.vtpc`, with the same calls: each dataset (one file) a `<Partitions name=...>` written once, the

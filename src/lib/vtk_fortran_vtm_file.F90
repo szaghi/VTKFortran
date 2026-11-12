@@ -27,7 +27,8 @@ module vtk_fortran_vtm_file
 !< the nodes of `Assembly`, as for a multi-block file, and a dataset already copied can be placed in other blocks without a
 !< new copy (`write_block(references='name ...')`, soft links to the copy). A dataset name is then unique in the file (a
 !< second dataset of the same name is refused: reference the first one) and cannot be `Assembly`. The time series rules
-!< are those of the multi-block file.
+!< are those of the multi-block file. A multi-block file places a dataset in other blocks the same way (`references`, the
+!< name of one dataset written before; a name given to several datasets cannot be referenced): VTK reads it in each.
 use befor64
 use penf
 use stringifor
@@ -54,6 +55,8 @@ type :: vtm_file
    character(len=:), allocatable, private          :: node               !< Path of the open block in the Assembly.
    integer(I4P), allocatable,  private             :: children(:)        !< Children written in each open level.
    integer(I4P),               private             :: n_leaves=0_I4P     !< Datasets copied.
+   character(len=:), allocatable, private          :: leaf_links         !< Each dataset linked: its name, NUL, its group
+                                                                          !< (Block_<n>), NUL (references of a multi-block).
    integer(I8P),               private             :: version_minor=1_I8P !< Minor version (the highest of the blocks).
    integer(I8P),               private             :: n_steps=-1_I8P     !< Steps of the blocks: -1 none yet, 0 static.
    real(R8P), allocatable,     private             :: times(:)           !< Times of the steps of a time series.
@@ -229,6 +232,7 @@ contains
         self%node = 'Assembly'
         self%children = [0_I4P]
         self%n_leaves = 0_I4P
+        self%leaf_links = ''
         self%version_minor = 1_I8P
         self%n_steps = -1_I8P
         if (allocated(self%times)) deallocate(self%times)
@@ -533,8 +537,9 @@ contains
    !< error = vtm%write_block(filenames='file_1.vts file_2.vts file_3.vtu', names='block-bar block-foo block-baz', name='my_block')
    !<```
    !<
-   !< In a VTKHDF `PartitionedDataSetCollection`, `references` (blank separated) places datasets already copied (by their
-   !< names) in the block too, without a new copy: soft links to their copies, after the datasets of `filenames`.
+   !< In a VTKHDF file (`PartitionedDataSetCollection` or multi-block) or a `.vtpc`, `references` (blank separated) places
+   !< datasets already written (by their names) in the block too, without a new copy: soft links to their copies (VTKHDF),
+   !< after the datasets of `filenames`.
    !<
    !<#### Example of usage: a dataset in two blocks of a collection
    !<```fortran
@@ -547,7 +552,7 @@ contains
    character(*),    intent(in), optional :: filenames !< File names of VTK files grouped into current block.
    character(*),    intent(in), optional :: names     !< Auxiliary names attributed to each files.
    character(*),    intent(in), optional :: name      !< Block name
-   character(*),    intent(in), optional :: references !< Datasets already copied, placed in the block (a collection).
+   character(*),    intent(in), optional :: references !< Datasets already written, placed in the block.
    integer(I4P)                          :: error     !< Error status.
    type(string)                          :: action_   !< Action string.
    type(string)                          :: list      !< A list of names, blank separated.
@@ -615,7 +620,8 @@ contains
    endif
    if (present(references)) then ! references: datasets of a collection only
       error = 1
-      write(stderr, '(A)') 'error: VTKFortran vtm_file: references are datasets of a PartitionedDataSetCollection'
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: references are for a VTKHDF file or a .vtpc (an XML .vtm '// &
+                           'repeats the file)'
       return
    endif
    if (present(action)) then
@@ -1327,6 +1333,7 @@ contains
          error = h5_link_soft('/VTKHDF/'//leaf, group, label)
          e = h5_group_close(group)
       endif
+      if (error == 0) self%leaf_links = self%leaf_links//label//achar(0)//leaf//achar(0)
       if (error /= 0) write(stderr, '(A)') 'error: VTKFortran vtm_file: cannot write the empty dataset '//label
       return
    endif
@@ -1415,37 +1422,60 @@ contains
       error = h5_link_soft('/VTKHDF/'//leaf, group, label)
       e = h5_group_close(group)
    endif
+   if (error == 0) self%leaf_links = self%leaf_links//label//achar(0)//leaf//achar(0)
    if (error /= 0) write(stderr, '(A)') 'error: VTKFortran vtm_file: cannot link '//label//' (a name used twice?)'
    endfunction vtkhdf_dataset
 
    function vtkhdf_reference(self, label) result(error)
-   !< Place a dataset already copied into a collection (`/VTKHDF/<label>`, with its `Index`) in the open block: a soft link
-   !< to the copy, named `label`, no new copy.
-   class(vtm_file), intent(inout) :: self  !< VTM file.
-   character(*),    intent(in)    :: label !< Name of the dataset.
-   integer(I4P)                   :: error !< Error status.
-   integer(hid_kind)              :: group !< A group.
-   integer(I4P)                   :: e     !< Error of a closing.
-   logical                        :: is_copy !< The dataset is a copy of the collection.
+   !< Place a dataset already copied in the open block: a soft link to the copy, named `label`, no new copy. In a collection
+   !< the copy `/VTKHDF/<label>` (with its `Index`); in a multi-block the copy (`Block_<n>`) of the one dataset written
+   !< before under that name (a name given to several datasets is refused: ambiguous).
+   class(vtm_file), intent(inout) :: self    !< VTM file.
+   character(*),    intent(in)    :: label   !< Name of the dataset.
+   integer(I4P)                   :: error   !< Error status.
+   character(len=:), allocatable  :: leaf    !< Group of the copy.
+   integer(hid_kind)              :: group   !< A group.
+   integer(I4P)                   :: e       !< Error of a closing.
+   integer(I4P)                   :: matches !< Datasets of a multi-block written under the name.
+   integer(I4P)                   :: i, j, k !< Positions in leaf_links.
 
    error = 1
-   is_copy = .false.
-   if (self%is_collection .and. len(h5_name_invalid(label)) == 0 .and. label /= 'Assembly') then
+   leaf = ''
+   if (len(h5_name_invalid(label)) > 0 .or. label == 'Assembly') then
+      continue
+   elseif (self%is_collection) then
       if (h5_link_exists(self%root, label)) then
          if (h5_group_open(self%root, label, group) == 0) then
-            is_copy = h5_attribute_exists(group, 'Index')
+            if (h5_attribute_exists(group, 'Index')) leaf = label
             e = h5_group_close(group)
          endif
       endif
+   else ! a multi-block: the pairs name NUL group NUL of the datasets linked
+      matches = 0
+      i = 1
+      do while (i <= len(self%leaf_links))
+         j = index(self%leaf_links(i:), achar(0)) + i - 1
+         k = index(self%leaf_links(j+1:), achar(0)) + j
+         if (self%leaf_links(i:j-1) == label) then
+            matches = matches + 1
+            leaf = self%leaf_links(j+1:k-1)
+         endif
+         i = k + 1
+      enddo
+      if (matches > 1) then
+         write(stderr, '(A)') 'error: VTKFortran vtm_file: cannot reference "'//label//'": several datasets have that '// &
+                              'name (give them unique names with names=)'
+         return
+      endif
    endif
-   if (.not.is_copy) then
-      write(stderr, '(A)') 'error: VTKFortran vtm_file: cannot reference "'//label//'": not a dataset copied before into '// &
-                           'a PartitionedDataSetCollection'
+   if (len(leaf) == 0) then
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: cannot reference "'//label//'": not a dataset written before '// &
+                           'into this file'
       return
    endif
    error = h5_group_open(self%root, self%node, group)
    if (error == 0) then
-      error = h5_link_soft('/VTKHDF/'//label, group, label)
+      error = h5_link_soft('/VTKHDF/'//leaf, group, label)
       e = h5_group_close(group)
    endif
    if (error /= 0) then

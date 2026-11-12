@@ -16,7 +16,9 @@ program vtk_fortran_write_vtkhdf_htg
 !< descriptor and mask as written; the cell data; the series step by step; a tree not in the file); the names, the active
 !< array and the cells of a piece (`get_dataarray_names`, `get_active`, `read_piece`); a file of two partitions and one
 !< with `TransposedRootIndexing`, both built with the bindings from the first one, read back partition by partition (trees,
-!< masks, cell data, coordinates) and in the documented indexing. Without HDF5 the writer refuses a HyperTreeGrid; the XML
+!< masks, cell data, coordinates) and in the documented indexing. A HyperTreeGrid with interface arrays (`set_interface`,
+!< 3-component normals and intercepts) read back (`get_trees`: the names; empty for htg.vtkhdf), the refusals of
+!< `set_interface` (another topology, a name with '/', XML). Without HDF5 the writer refuses a HyperTreeGrid; the XML
 !< formats refuse it always.
 use penf
 use vtk_fortran, only : vtk_file
@@ -24,7 +26,7 @@ use vtk_fortran_hdf5
 
 implicit none
 type(vtk_file) :: w     !< Writer.
-logical        :: ok(7) !< Checks.
+logical        :: ok(8) !< Checks.
 integer(I4P)   :: e     !< Error.
 
 ok = .false.
@@ -43,9 +45,10 @@ else
   ok(5) = series_htg()
   ok(6) = read_back()
   ok(7) = read_parts()
+  ok(8) = interface_htg()
 endif
-print '(A,7L2)', 'VTKHDF HyperTreeGrid: XML refused, branch factor 2, branch factor 3, refusals, series, read back, '// &
-                 'partitions and transposed:', ok
+print '(A,8L2)', 'VTKHDF HyperTreeGrid: XML refused, branch factor 2, branch factor 3, refusals, series, read back, '// &
+                 'partitions and transposed, interface:', ok
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(ok)
 if (.not.all(ok)) error stop 'some tests failed'
@@ -563,4 +566,55 @@ contains
   refusals = all(r)
   if (.not.refusals) print '(A,18L2)', 'HyperTreeGrid refusals: ', r
   endfunction refusals
+  logical function interface_htg()
+  !< A HyperTreeGrid of one tree (a refined root: 5 cells) with interface cell arrays of 3 components, named with
+  !< `set_interface` (root attributes `InterfaceNormalsName`, `InterfaceInterceptsName`), read back with `get_trees`;
+  !< htg.vtkhdf has none (empty names); the refusals: an ImageData, a name with '/', an XML file.
+  logical, parameter            :: t=.true.
+  type(vtk_file)                :: r
+  integer(I8P), allocatable     :: ids(:)
+  real(R8P),    allocatable     :: normals(:,:)
+  character(len=:), allocatable :: nn, ni
+  integer(I4P)                  :: ee(6), i
+
+  ee = 0
+  normals = reshape([(real(merge(1, 0, mod(i, 3) == 0), R8P), i=0, 14)], [3, 5])
+  ee(1) = w%initialize(format='vtkhdf', filename='htg_interface.vtkhdf', mesh_topology='HyperTreeGrid', &
+                       nx1=0, nx2=1, ny1=0, ny2=1, nz1=0, nz2=0)
+  ee(1) = ee(1) + abs(w%xml_writer%set_interface(normals='Normals', intercepts='Intercepts'))
+  ee(1) = ee(1) + abs(w%xml_writer%write_piece(nx1=0, nx2=1, ny1=0, ny2=1, nz1=0, nz2=0))
+  ee(1) = ee(1) + abs(w%xml_writer%write_geo(x=[0._R8P, 1._R8P], y=[0._R8P, 1._R8P], z=[0._R8P]))
+  ee(1) = ee(1) + abs(w%xml_writer%write_tree(tree_id=0, descriptor=[t]))
+  ee(1) = ee(1) + abs(w%xml_writer%write_dataarray(location='cell', action='open'))
+  ee(1) = ee(1) + abs(w%xml_writer%write_dataarray(data_name='Normals', x=normals))
+  ee(1) = ee(1) + abs(w%xml_writer%write_dataarray(data_name='Intercepts', x=normals * 0.5_R8P))
+  ee(1) = ee(1) + abs(w%xml_writer%write_dataarray(location='cell', action='close'))
+  ee(1) = ee(1) + abs(w%xml_writer%write_piece())
+  ee(1) = ee(1) + abs(w%finalize())
+  ee(2) = r%initialize(filename='htg_interface.vtkhdf', action='read')
+  ee(2) = ee(2) + abs(r%xml_reader%get_trees(tree_ids=ids, interface_normals=nn, interface_intercepts=ni))
+  if (ee(2) == 0) ee(2) = merge(0, 1, nn == 'Normals' .and. ni == 'Intercepts' .and. size(ids) == 1)
+  ee(2) = ee(2) + abs(r%finalize())
+  ee(3) = r%initialize(filename='htg.vtkhdf', action='read')
+  ee(3) = ee(3) + abs(r%xml_reader%get_trees(tree_ids=ids, interface_normals=nn, interface_intercepts=ni))
+  if (ee(3) == 0) ee(3) = merge(0, 1, len(nn) == 0 .and. len(ni) == 0)
+  ee(3) = ee(3) + abs(r%finalize())
+  ! refusals
+  ee(4) = w%initialize(format='vtkhdf', filename='htg_interface_refused.vtkhdf', mesh_topology='ImageData', &
+                       nx1=0, nx2=1, ny1=0, ny2=1, nz1=0, nz2=0, origin=[0._R8P, 0._R8P, 0._R8P], &
+                       spacing=[1._R8P, 1._R8P, 1._R8P])
+  ee(4) = ee(4) + merge(0, 1, w%xml_writer%set_interface(normals='Normals', intercepts='Intercepts') /= 0) ! not an HTG
+  ee(4) = ee(4) + abs(w%finalize())
+  ee(5) = w%initialize(format='vtkhdf', filename='htg_interface_refused.vtkhdf', mesh_topology='HyperTreeGrid', &
+                       nx1=0, nx2=1, ny1=0, ny2=1, nz1=0, nz2=0)
+  ee(5) = ee(5) + merge(0, 1, w%xml_writer%set_interface(normals='a/b', intercepts='Intercepts') /= 0) ! a '/'
+  e = w%finalize() ! no piece: the finalize of a HyperTreeGrid without its piece
+  ee(6) = w%initialize(format='ascii', filename='htg_interface_refused.vti', mesh_topology='ImageData', &
+                       nx1=0, nx2=1, ny1=0, ny2=1, nz1=0, nz2=0, origin=[0._R8P, 0._R8P, 0._R8P], &
+                       spacing=[1._R8P, 1._R8P, 1._R8P])
+  ee(6) = ee(6) + merge(0, 1, w%xml_writer%set_interface(normals='Normals', intercepts='Intercepts') /= 0) ! XML
+  e = w%finalize()
+  interface_htg = all(ee == 0)
+  if (.not.interface_htg) print '(A,6I3)', 'failed: interface', ee
+  endfunction interface_htg
 endprogram vtk_fortran_write_vtkhdf_htg

@@ -105,9 +105,10 @@ keeping the axis of one point is refused (error 6), as VTK refuses it.
 - **HyperTreeGrid**: its partitions are the pieces (`get_info` `npieces`: one for the files VTKFortran writes; VTK
   writes several for a `vtkPartitionedDataSet` of HyperTreeGrids). `get_info` gives the extent of the root grid (its
   points), `read_geo(..., piece)` the coordinates of the partition (as a RectilinearGrid);
-  `get_trees(tree_ids, branch_factor, piece)` the ids of its trees (their root cells, i + (nx-1)(j + (ny-1)k) from 0;
-  a file with `TransposedRootIndexing`, z fastest, is converted to these ids, as VTK places its trees) in the order of the
-  file and the branch factor; `read_tree(tree_id, descriptor, mask, piece)` a tree as `write_tree` takes it (the
+  `get_trees(tree_ids, branch_factor, piece, interface_normals, interface_intercepts)` the ids of its trees (their root
+  cells, i + (nx-1)(j + (ny-1)k) from 0; a file with `TransposedRootIndexing`, z fastest, is converted to these ids, as
+  VTK places its trees) in the order of the file, the branch factor and the names of its interface arrays (empty
+  without); `read_tree(tree_id, descriptor, mask, piece)` a tree as `write_tree` takes it (the
   refinement of its cells breadth first, every depth but the deepest; `mask` one value per cell, all false when the file
   has none), error 4 for a root cell without tree; `read_dataarray(location='cell', ..., piece)` the cells of the trees of
   the partition, in their order, breadth first in each (no point data); `get_dataarray_names`, `get_active` and

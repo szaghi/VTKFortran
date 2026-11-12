@@ -91,7 +91,8 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   multi-block (fine on a single dataset). `composite='PartitionedDataSetCollection'` (`is_collection`): each copy named
   after its dataset (VTK names a partitioned dataset after its group) with `Index`, unique names (not `Assembly`),
   `write_block(references='name ...')` (string form) soft-links a copy into the open block (`vtkhdf_reference`);
-  references refused outside a collection; the same time series rules (VTK 9.7.2 pipeline time likewise at step 1)
+  in a multi-block too (#90 C5: `leaf_links` = name NUL Block_<n> NUL of each linked dataset; a name of several
+  datasets refused, ambiguous); refused in an XML `.vtm`; the same time series rules (VTK 9.7.2 pipeline time likewise at step 1)
 - XML partitioned composites (in `vtm_file`, #90): `composite='PartitionedDataSetCollection'` without vtkhdf writes a
   `.vtpc` (`xml_part_*`: datasets and assembly kept NUL-separated until `finalize`, `<Partitions index name>` of one
   `DataSet`, `<DataAssembly encoding="base64">` of the vtkDataAssembly XML, node names XML element names, ids from 1
@@ -150,16 +151,20 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   `Steps/Level<n>/AMRBoxOffsets`, `NumberOfAMRBoxes`, `PointDataOffsets/`, `CellDataOffsets/` (VTKHDF 2.3 names, Version
   >= 2.3: VTK 9.7.2 picks the names by Version, singular below 2.3; the reader likewise, `is_v23`, falling back to the
   other spelling when missing, `amr_steps_name`: before #89 a series with an active array had Version 2.6 + singular);
-  no field data, comm, reopen; VTK 9.7.2 reads it (pipeline time too), ParaView 6.1.1 not (vtkGroupDataSetsFilter).
+  no field data (C6 of #90: VTK 9.7.2 reads none, root or level, measured + its source), comm, reopen; VTK 9.7.2
+  reads it (pipeline time too), ParaView 6.1.1 not (vtkGroupDataSetsFilter).
   HyperTreeGrid (`TOPOLOGY_HTG`, Version 2.4): `branch_factor` (vtk_writer_abstract state, set by vtk_file),
   one piece + `write_geo(x, y, z)` (rect coordinates path), `write_tree(tree_id, descriptor, mask)` (new deferred
   binding; depths derived from the descriptor, appended with capacity doubling `append_I8P`/`append_bits`), cell data
   after the trees (`is_tree_data`), `end_trees` writes the datasets at the piece end (`pack_bits`, MSB first, as VTK);
   series: every step its piece, the trees appended (`store_*`, the mask always), `tree_totals` = the trees, depth
   entries, bytes, cells of the steps before, the `Steps` entries VTK writes (TreeIdsOffsets, DescriptorsOffsets in
-  bytes, ...); refused: point/field data, a step without its piece, comm, append; read back by the reader (#87).
+  bytes, ...); `set_interface(normals, intercepts)` (#90 C2, deferred binding, XML refuses) writes the root attributes
+  `InterfaceNormalsName`/`InterfaceInterceptsName` (VTK: `GetHasInterface`), `get_trees(..., interface_normals,
+  interface_intercepts)` reads them; refused: point/field data, a step without its piece, comm, append; read back by
+  the reader (#87).
   Point/cell/field data (field data strings: variable-length string datasets, `put_strings`, appended per step, refused
-  with comm; string point/cell/row data refused: VTK reads VTKHDF strings as field data only; 93 bindings),
+  with comm; string point/cell/row data refused: VTK reads VTKHDF strings as field data only; 94 bindings),
   active arrays as the `Attribute` attribute, unsigned,
   deflate for `compressor='zlib'`; refusals return an error with a message on stderr (a data name empty or with `/` or
   `.`: `h5_name_invalid`, also used by `vtm_file` for block and dataset names; never renamed; HDF5 has no length limit). Arrays stored as in memory
@@ -304,7 +309,8 @@ masked leaf, a root cell without tree; branch factor 3; a 2-step series), checke
 mask unpacked, the Steps entries; append refused), 16 refusals, the three files read back with the reader (every
 tree and mask as written, cell data, coordinates, the series step by step, a missing tree); names, active array and
 `read_piece` of a HyperTreeGrid; a 2-partition file and a `TransposedRootIndexing` one built with the bindings (uint8
-bits: VTK 9.7.2 crashes on int8 ones), read partition by partition and in the documented indexing);
+bits: VTK 9.7.2 crashes on int8 ones), read partition by partition and in the documented indexing; interface arrays
+(`set_interface`) read back, its refusals);
 `vtk_fortran_write_vtkhdf_amr.f90`: OverlappingAMRs (two levels, three boxes, point/cell data and a vector; a
 2-step series with level 1 going from two boxes to one, Version 2.3 with the plural Steps names; the same with an active
 array, Version 2.6; rebuilt with the bindings as VTKHDF 2.2 with the singular names, and that one with Version 2.6,
@@ -315,7 +321,7 @@ refusals (levels, boxes outside or flat or out of order, array sizes, missing/ne
 the restart, an orphan offset entry, a restart after a step with an empty piece;
 `vtk_fortran_write_vtkhdf_vtm.f90`: VTKHDF multi-block files (`vtm_file`, `format='vtkhdf'`): the nested assembly, a
 time series of two UnstructuredGrid series (one of two parts) and a PolyData series, both also as
-PartitionedDataSetCollections with a block of references, the refusals (grid series, static and series mixed, other
+PartitionedDataSetCollections with a block of references, a multi-block referencing two datasets, the refusals (grid series, static and series mixed, other
 steps or times; collection names, references, composites; a composite or an OverlappingAMR as a block source); the four files read back (`vtm_file` read: the entries;
 a collection with two datasets the Assembly misses, added with the bindings, listed by Index; empty datasets in a
 multi-block file (read back without file) and refused in a collection;

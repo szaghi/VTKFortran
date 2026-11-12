@@ -120,7 +120,8 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
   `CellDataOffsets/<name>`, the names of VTKHDF 2.3, with `Version` 2.3 or more: VTK 9.7.2 chooses the names by `Version`,
   the singular ones of 2.2 below 2.3, so both are read back, by VTK and by the library; the library also reads the
 singular names in a file of a later Version, as VTKFortran wrote a series with an active array before), the file valid
-after each box. Refused: field data, `comm`, a step without boxes, the XML formats. Read back level by level
+after each box. Refused: field data (the specification puts it in each level; VTK 9.7.2 reads none, at the root or in
+a level: its reader reads point and cell data only), `comm`, a step without boxes, the XML formats. Read back level by level
   (`get_levels`, `set_level`), see [Reading](/guide/reading#vtkhdf-files). **VTK 9.7 reads it** (its pipeline time too);
   **ParaView 6.1 does not** (its reader groups the output with a filter that refuses an OverlappingAMR). A complete
   program: [A block-structured AMR](/manual/cookbook#a-block-structured-amr).
@@ -139,7 +140,10 @@ after each box. Refused: field data, `comm`, a step without boxes, the XML forma
   coordinates, trees and cell data) appended to those of the steps before, each step's bits from a new byte, the mask
   always, with the `Steps` entries VTK 9.7.2 writes (`TreeIdsOffsets`, `DepthPerTreeOffsets`,
   `NumberOfCellsPerTreeDepthOffsets`, `DescriptorsOffsets`, `MaskOffsets`, `X/Y/ZCoordinatesOffsets`, `PartOffsets`,
-  `NumberOfParts`, `CellDataOffsets/<name>`); VTK 9.7.2 reads each step (its pipeline time too). Refused: point data,
+  `NumberOfParts`, `CellDataOffsets/<name>`); VTK 9.7.2 reads each step (its pipeline time too).
+  `xml_writer%set_interface(normals, intercepts)` names its interface arrays, cell arrays of 3 components (root
+  attributes `InterfaceNormalsName` and `InterfaceInterceptsName`, as VTK writes them; VTK 9.7.2 reads them as the
+  interface of the grid, `GetHasInterface`), at any time while the file is open. Refused: point data,
   field data, a step without its piece, `comm`, `action='append'`, the XML formats. The reader of the library reads it
   back tree by tree (`get_trees`, `read_tree`: [Reading](/guide/reading#vtkhdf-files)). VTK 9.7.2 reads it; ParaView 6.1.1 reads it too, but
   not the test's grid with a masked leaf and a root cell without tree (nor the same grid as VTK 9.7.2 writes it). A

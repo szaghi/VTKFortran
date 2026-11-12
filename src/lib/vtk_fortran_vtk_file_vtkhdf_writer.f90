@@ -221,6 +221,7 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
     procedure, pass(self) :: write_dataarray_location_tag
     procedure, pass(self) :: write_level
     procedure, pass(self) :: write_tree
+    procedure, pass(self) :: set_interface
     procedure, pass(self) :: write_fielddata_tag
     procedure, pass(self) :: write_fielddata1_rank0
     procedure, pass(self) :: write_fielddata1_rank1
@@ -910,6 +911,29 @@ contains
   if (present(mask)) self%has_mask = .true.
   error = 0_I4P
   endfunction write_tree
+
+  function set_interface(self, normals, intercepts) result(error)
+  !< Name the interface arrays of a HyperTreeGrid (VTKHDF root attributes `InterfaceNormalsName` and
+  !< `InterfaceInterceptsName`, as vtkHDFWriter writes them; VTK reads them as `GetHasInterface`): `normals` and
+  !< `intercepts` are cell arrays of 3 components (VTK: the normal of the interface in a cell; its intercepts and type),
+  !< written in the piece. Any time while the file is open; a second call renames them.
+  class(vtkhdf_writer),       intent(inout) :: self
+  character(*),               intent(in)    :: normals
+  character(*),               intent(in)    :: intercepts
+  integer(I4P)                              :: error
+
+  error = 1_I4P
+  if (self%file_id < 0_hid_kind) return
+  if (self%topology /= TOPOLOGY_HTG) then
+    error = refuse('set_interface is for a HyperTreeGrid')
+  elseif (len(h5_name_invalid(normals)) > 0 .or. len(h5_name_invalid(intercepts)) > 0) then
+    error = refuse('set_interface: the array names //normals//, //intercepts//: '// &
+                   h5_name_invalid(normals)//' '//h5_name_invalid(intercepts))
+  else
+    error = h5_attribute_write(self%root, 'InterfaceNormalsName', normals)
+    if (error == 0_I4P) error = h5_attribute_write(self%root, 'InterfaceInterceptsName', intercepts)
+  endif
+  endfunction set_interface
 
   function write_fielddata_tag(self, action) result(error)
   !< Open or close the group of the field data (outside the piece).
