@@ -9,14 +9,16 @@ program vtk_fortran_read_vtkhdf
 !< (its blocks), a time series of an UnstructuredGrid (two parts, then one) and of an ImageData (steps, times, the data
 !< of each step), I8P ids read as I4P; the error codes; two polyhedra sharing a face (VTKHDF 2.9: the face stored once,
 !< referenced reversed by the second polyhedron), the file built with the HDF5 bindings, read back as the face stream of
-!< each polyhedron, and a face id out of range (error 6). Without HDF5 the reader refuses a VTKHDF file.
+!< each polyhedron, and a face id out of range (error 6); time series storing once what does not change (an
+!< UnstructuredGrid whose mesh is reused by steps without pieces, an ImageData whose cell data are reused), each step
+!< read as written. Without HDF5 the reader refuses a VTKHDF file.
 use penf
 use vtk_fortran, only : vtk_file
 use vtk_fortran_hdf5
 
 implicit none
 type(vtk_file)                :: w, r                    !< Writer, reader.
-logical                       :: ok(10)                  !< Checks.
+logical                       :: ok(11)                  !< Checks.
 integer(I4P)                  :: e, i                    !< Error, counter.
 integer(I4P), parameter       :: cube(31) = [6, 4, 0, 3, 2, 1,  4, 4, 5, 6, 7,  4, 0, 1, 5, 4,  4, 1, 2, 6, 5, &
                                              4, 2, 3, 7, 6,  4, 3, 0, 4, 7] !< Faces of a unit cube.
@@ -39,7 +41,8 @@ else
   ok(8) = ids_i4p()
   ok(9) = errors()
   ok(10) = shared_faces()
-  print '(A,10L2)', 'VTKHDF read: image, rect, strg, unst, poly, series, image series, I4P, errors, shared faces:', ok
+  ok(11) = reused()
+  print '(A,11L2)', 'VTKHDF read: image, rect, strg, unst, poly, series, image series, I4P, errors, shared faces, reused:', ok
 endif
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(ok)
@@ -374,6 +377,61 @@ contains
   e = max(e, h5_dataset_write_I8P(root, 'PolyhedronOffsets', [0_I8P, 6_I8P, 12_I8P], [3_I8P]))
   ok = e == 0 .and. h5_group_close(root) == 0 .and. h5_file_close(file_id) == 0
   endfunction polyhedra_file
+
+  logical function reused()
+  !< Series that store once what does not change, read step by step: an UnstructuredGrid (a tetrahedron of 4 points at
+  !< step 1; step 2 without pieces, new point data; step 3 without pieces nor arrays), an ImageData (step 2: point data
+  !< only, the cell data of step 1 reused).
+  real(R8P), allocatable    :: rx(:), ry(:), rz(:), pd(:)
+  integer(I4P), allocatable :: connect(:), offset(:), c(:)
+  integer(I4P)              :: s
+
+  e = w%initialize(format='vtkhdf', filename='read_reused.vtkhdf', mesh_topology='UnstructuredGrid')
+  e = w%xml_writer%write_step(time=0._R8P)
+  e = max(e, tetra(4, 0._R8P))
+  e = max(e, w%xml_writer%write_step(time=1._R8P))
+  e = max(e, w%xml_writer%write_dataarray(location='node', action='open'))
+  e = max(e, w%xml_writer%write_dataarray(data_name='pd', x=[(30._R8P + i, i=1, 4)]))
+  e = max(e, w%xml_writer%write_dataarray(location='node', action='close'))
+  e = max(e, w%xml_writer%write_step(time=2._R8P))
+  e = max(e, w%finalize())
+  reused = e == 0 .and. r%initialize(filename='read_reused.vtkhdf', action='read') == 0
+  do s=1, 3
+    e = r%xml_reader%set_step(step=s)
+    e = max(e, abs(r%xml_reader%read_geo(x=rx, y=ry, z=rz)))
+    e = max(e, abs(r%xml_reader%read_connectivity(connectivity=connect, offset=offset)))
+    e = max(e, abs(r%xml_reader%read_dataarray(location='node', data_name='pd', x=pd)))
+    reused = reused .and. e == 0 .and. size(rx) == 4 .and. size(pd) == 4
+    if (reused) reused = all(rx == [(real(i, R8P), i=0, 3)]) .and. all(connect == [0, 1, 2, 3]) .and. all(offset == [4])
+    if (reused .and. s == 1) reused = all(pd == [(real(i, R8P), i=1, 4)])
+    if (reused .and. s > 1) reused = all(pd == [(30._R8P + i, i=1, 4)])
+  enddo
+  e = r%finalize()
+  e = w%initialize(format='vtkhdf', filename='read_reused_image.vtkhdf', mesh_topology='ImageData', &
+                   nx1=0, nx2=2, ny1=0, ny2=1, nz1=0, nz2=0, origin=[0._R8P, 0._R8P, 0._R8P], spacing=[1._R8P, 1._R8P, 1._R8P])
+  do s=1, 2
+    e = max(e, w%xml_writer%write_step(time=real(s, R8P)))
+    e = max(e, w%xml_writer%write_piece(nx1=0, nx2=2, ny1=0, ny2=1, nz1=0, nz2=0))
+    e = max(e, w%xml_writer%write_dataarray(location='node', action='open'))
+    e = max(e, w%xml_writer%write_dataarray(data_name='pd', x=[(real(10 * s + i, R8P), i=1, 6)]))
+    e = max(e, w%xml_writer%write_dataarray(location='node', action='close'))
+    if (s == 1) then
+      e = max(e, w%xml_writer%write_dataarray(location='cell', action='open'))
+      e = max(e, w%xml_writer%write_dataarray(data_name='cd', x=[7, 8]))
+      e = max(e, w%xml_writer%write_dataarray(location='cell', action='close'))
+    endif
+    e = max(e, w%xml_writer%write_piece())
+  enddo
+  e = max(e, w%finalize())
+  reused = reused .and. e == 0 .and. r%initialize(filename='read_reused_image.vtkhdf', action='read') == 0
+  e = r%xml_reader%set_step(step=2)
+  e = max(e, abs(r%xml_reader%read_dataarray(location='node', data_name='pd', x=pd)))
+  e = max(e, abs(r%xml_reader%read_dataarray(location='cell', data_name='cd', x=c)))
+  reused = reused .and. e == 0 .and. size(pd) == 6 .and. size(c) == 2
+  if (reused) reused = all(pd == [(real(20 + i, R8P), i=1, 6)]) .and. all(c == [7, 8])
+  e = r%finalize()
+  if (.not.reused) print '(A)', 'reused: different'
+  endfunction reused
 
   function cell_data(cid) result(error)
   !< The cell data cid of a piece, then the end of the piece.

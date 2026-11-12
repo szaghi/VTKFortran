@@ -1,0 +1,5 @@
+$ vtkhdf_fixed
+plate.vtkhdf:   153 points stored,  3672 bytes of coordinates
+  PointOffsets of the steps:   0   0   0   0   0   0
+every_step.vtkhdf:   918 points stored, 22032 bytes of coordinates
+  PointOffsets of the steps:   0 153 306 459 612 765

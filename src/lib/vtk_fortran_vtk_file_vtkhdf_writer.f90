@@ -25,8 +25,20 @@ module vtk_fortran_vtk_file_vtkhdf_writer
 !<
 !< Time series (VTKHDF `Steps`): a file whose first output starts with `write_step(time)` is one; each output then starts
 !< with `write_step`, its pieces appended as for a single dataset (the grids get a time axis, their arrays `[t, k, j, i]`),
-!< and the `Steps` entries of the open step are rewritten at the end of every piece, with `NSteps` and `Version`, and the
-!< file flushed: the file is valid after every piece.
+!< and the `Steps` entries of the open step are rewritten at the end of every piece (and of every data group of a step
+!< without pieces), with `NSteps` and `Version`, and the file flushed: the file is valid after every piece.
+!<
+!< What does not change is stored once, the `Steps` offsets of a step repeating those of the step before:
+!<- **the mesh**: a step after the first one without pieces (UnstructuredGrid, PolyData: `write_step`, then its data
+!<  groups opened directly, `write_dataarray(location=..., action='open')`) reuses all the parts of the step before; a
+!<  RectilinearGrid or StructuredGrid piece without `write_geo` reuses the coordinates or points of the step before (an
+!<  ImageData has no geometry to store);
+!<- **an array**: an array not written in a step reuses its values of the step before; that is possible in a step of a
+!<  grid and in a step without pieces; a step with pieces writes every point and cell array (its parts may differ from
+!<  those of the arrays' step). The arrays of a step without pieces hold the points (cells) of all the parts reused, in
+!<  their order. A field data array not written in a step reuses its values too.
+!< The first step writes everything; an array first written at a later step is refused. The offsets of the point and cell
+!< data are written for every array (`PointDataOffsets`, `CellDataOffsets`): tuples, time slices for a grid.
 !<
 !< `reopen` (`vtk_file%initialize(..., action='append')`) continues a time series written before (a restart): the state is
 !< read from the file, and every dataset is trimmed to the pieces recorded by the last complete piece (a run interrupted
@@ -54,6 +66,7 @@ integer(I1P), parameter :: CELL_POLYHEDRON = 42_I1P     !< VTK type of a polyhed
 character(*), parameter :: STEP_GROUPS(4) = ['PointDataOffsets', 'CellDataOffsets ', 'FieldDataOffsets', & !< Groups of
                                               'FieldDataSizes  ']                                       !< Steps.
 character(*), parameter :: BLOCKS(4) = ['Vertices', 'Lines   ', 'Strips  ', 'Polygons'] !< Groups of the PolyData cells.
+integer(I8P), parameter :: VTK_COLUMN(4) = [1_I8P, 2_I8P, 4_I8P, 3_I8P] !< Column of each block in the rows of Steps.
 character(*), parameter :: NAMES_SEPARATOR = achar(0)    !< Separator of the names of a list (a name has no NUL).
 
 type :: active_array
@@ -92,6 +105,17 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
   integer(I8P)                  :: step_blocks(8)=0_I8P    !< PolyData totals at the start of the step: cells, ids per block.
   integer(I8P)                  :: totals(9)=0_I8P         !< Running totals, as `step_start`.
   integer(I8P)                  :: block_totals(8)=0_I8P   !< Running PolyData totals: cells of each block, then ids.
+  integer(I8P)                  :: mesh_start(9)=0_I8P     !< Entries of the last step with pieces (the mesh that a step
+                                                           !< without pieces reuses), as `step_start`.
+  integer(I8P)                  :: mesh_blocks(8)=0_I8P    !< PolyData entries of that step, as `step_blocks`.
+  integer(I8P)                  :: mesh_pieces=0_I8P       !< Parts of that step.
+  integer(I8P)                  :: geo_slices=0_I8P        !< Steps that wrote the geometry of a RectilinearGrid or
+                                                           !< StructuredGrid series (its time slices).
+  integer(I8P), allocatable     :: point_start(:)          !< Tuples (slices for a grid) of each point array at the start
+                                                           !< of the open step, in the order of `point_arrays`.
+  integer(I8P), allocatable     :: point_prev(:)           !< Offset of each point array at the step before.
+  integer(I8P), allocatable     :: cell_start(:)           !< As `point_start`, for the cell arrays.
+  integer(I8P), allocatable     :: cell_prev(:)            !< As `point_prev`, for the cell arrays.
   character(len=:), allocatable :: field_arrays            !< Names of the field data arrays of a time series.
   logical                       :: is_reopened=.false.     !< A time series reopened (`reopen`): the extent start unknown.
   character(len=:), allocatable :: point_arrays            !< Names of the point data arrays, NUL terminated.
@@ -190,6 +214,7 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
     ! private helpers
     procedure, pass(self)          :: reopen        !< Reopen a time series to append steps (`action='append'`).
     procedure, pass(self)          :: set_comm      !< Write the file from the ranks of an MPI communicator.
+    procedure, pass(self), private :: check_arrays  !< Check the tuples written in the open step by each array.
     procedure, pass(self), private :: check_cells   !< Check a write_connectivity call of an UnstructuredGrid piece.
     procedure, pass(self), private :: check_geo     !< Check a write_geo call of an UnstructuredGrid or PolyData piece.
     procedure, pass(self), private :: close_group   !< Close the open data group.
@@ -204,7 +229,11 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
     procedure, pass(self), private :: no_faces      !< Write the zero entries of a piece without polyhedra.
     procedure, pass(self), private :: poly_block    !< Check or write a block of cells of a PolyData piece.
     procedure, pass(self), private :: poly_blocks   !< Check or write the four blocks of cells of a PolyData piece.
+    procedure, pass(self), private :: end_reusing   !< Check the arrays of a step without pieces, write its entries.
+    procedure, pass(self), private :: is_reusing    !< The open step has no piece: it reuses the mesh of the step before.
+    procedure, pass(self), private :: is_written_in_step !< A point or cell array is written in the open step.
     procedure, pass(self), private :: record_array  !< Record the name of a point or cell data array.
+    procedure, pass(self), private :: roll_arrays   !< Start the bookkeeping of the arrays for a new step.
     procedure, pass(self), private :: reset         !< Reset the state of the writer.
     procedure, pass(self), private :: start_partition !< Start a piece of an UnstructuredGrid or PolyData.
     procedure, pass(self), private :: start_polyhedra !< Start the polyhedra of the file: zero entries for the earlier pieces.
@@ -324,15 +353,21 @@ contains
   function finalize(self) result(error)
   !< Finalize the writer: write the version (the lowest one with the features used) and close the file.
   !<
-  !< A group or a piece left open is closed.
+  !< A group or a piece left open is closed. The last step of a time series can be a step without pieces (it reuses the
+  !< mesh of the step before), not the first one.
   class(vtkhdf_writer),       intent(inout) :: self  !< Writer.
   integer(I4P)                              :: error !< Error status.
 
   error = 1_I4P
   if (self%file_id < 0_hid_kind) return
   error = 0_I4P
-  if (self%is_temporal .and. self%step_pieces == 0_I8P) then
-    error = refuse('the last step has no piece: the file holds the steps before it')
+  if (self%is_temporal .and. self%step_pieces == 0_I8P .and. self%n_steps == 1_I8P) then
+    error = refuse('the first step has no piece: the file holds no step')
+  elseif (self%is_reusing()) then ! a step without pieces: the arrays written, the entries
+    if (self%group >= 0_hid_kind) then
+      if (self%close_group() /= 0_I4P) error = 1_I4P
+    endif
+    if (error == 0_I4P) error = self%end_reusing()
   endif
   if (self%group >= 0_hid_kind) then
     if (h5_group_close(self%group) /= 0_I4P) error = 1_I4P
@@ -364,6 +399,8 @@ contains
                    'write_piece(np, ...)')
   elseif (self%is_temporal .and. self%step_pieces > 0_I8P) then
     error = refuse('a grid (ImageData, RectilinearGrid, StructuredGrid) has one piece per step')
+  elseif (self%is_reusing() .and. self%is_written_in_step()) then
+    error = refuse('write_piece: arrays are already written in this step without its piece')
   elseif (.not.self%is_temporal .and. self%n_pieces > 0_I4P) then
     error = refuse('a grid (ImageData, RectilinearGrid, StructuredGrid) has one piece in VTKHDF')
   ! a RectilinearGrid or StructuredGrid reopened (action append): its extent start is not in the file, its size is
@@ -382,8 +419,10 @@ contains
 
   function write_piece_end_tag(self) result(error)
   !< End the piece. A piece of an UnstructuredGrid or PolyData needs its points and cells, and every array of the first
-  !< piece; the piece of a RectilinearGrid or StructuredGrid needs its geometry. In a time series, the arrays of a grid
-  !< are checked (one time slice per step) and the `Steps` entries of the step written (the file is valid after it).
+  !< piece; the piece of a RectilinearGrid or StructuredGrid needs its geometry (in a time series, in the first step only:
+  !< a later piece without it reuses the geometry of the step before). In a time series, the arrays of a grid are checked
+  !< (one time slice, or none after the first step: the values of the step before) and the `Steps` entries of the step
+  !< written (the file is valid after it).
   class(vtkhdf_writer),       intent(inout) :: self
   integer(I4P)                              :: error
 
@@ -393,13 +432,14 @@ contains
   error = 0_I4P
   if (self%is_partitioned()) then
     error = self%end_partition()
-  elseif ((self%topology == TOPOLOGY_RECT .or. self%topology == TOPOLOGY_STRG) .and. .not.self%is_geo_written) then
-    error = refuse('the piece of a RectilinearGrid or StructuredGrid needs write_geo')
+  elseif ((self%topology == TOPOLOGY_RECT .or. self%topology == TOPOLOGY_STRG) .and. .not.self%is_geo_written &
+          .and. .not.(self%is_temporal .and. self%geo_slices > 0_I8P)) then ! a later step reuses the geometry
+    error = refuse('the piece of a RectilinearGrid or StructuredGrid needs write_geo (in the first step)')
   endif
   if (error == 0_I4P .and. self%is_temporal) then
-    if (.not.self%is_partitioned()) then ! the arrays of a grid: one time slice per step
-      error = check_array_list(self%root, 'PointData', self%point_arrays, self%n_steps, 'step')
-      if (error == 0_I4P) error = check_array_list(self%root, 'CellData', self%cell_arrays, self%n_steps, 'step')
+    if (.not.self%is_partitioned()) then ! the arrays of a grid: one time slice, or none after the first step
+      error = self%check_arrays('PointData', 1_I8P, self%n_steps > 1_I8P)
+      if (error == 0_I4P) error = self%check_arrays('CellData', 1_I8P, self%n_steps > 1_I8P)
     endif
     if (error == 0_I4P) error = self%write_steps()
   endif
@@ -408,7 +448,11 @@ contains
   function write_step(self, time) result(error)
   !< Start a time step: a file whose first output starts with `write_step` is a time series (VTKHDF `Steps`), each of
   !< its outputs then starts with `write_step(time)`, times increasing, followed by its field data and its pieces (one
-  !< for a grid). Every step writes the same arrays. The `Steps` entries are written at the end of every piece.
+  !< for a grid). The `Steps` entries are written at the end of every piece.
+  !<
+  !< After the first step, what does not change is stored once: a step without pieces reuses the mesh of the step before
+  !< (its point and cell data written in data groups opened directly); a grid piece without `write_geo` reuses the
+  !< geometry; an array not written reuses its values (see the module header for the rules).
   class(vtkhdf_writer),       intent(inout) :: self
   real(R8P),                  intent(in)    :: time
   integer(I4P)                              :: error
@@ -423,8 +467,8 @@ contains
     error = refuse('write_step: outside the pieces and the data groups')
   elseif (.not.self%is_temporal .and. (self%n_pieces > 0_I4P .or. h5_link_exists(self%root, 'FieldData'))) then
     error = refuse('write_step: a time series starts with write_step, before its first piece and field data')
-  elseif (self%is_temporal .and. self%step_pieces == 0_I8P) then
-    error = refuse('write_step: the step before has no piece')
+  elseif (self%is_temporal .and. self%step_pieces == 0_I8P .and. self%n_steps == 1_I8P) then
+    error = refuse('write_step: the first step has no piece')
   elseif (self%is_temporal .and. time <= self%step_time) then
     error = refuse('write_step: the times must increase')
   else
@@ -438,6 +482,7 @@ contains
       enddo
       if (error /= 0_I4P) error = refuse('cannot create the group Steps')
     endif
+    if (self%is_reusing()) error = self%end_reusing() ! the step before, without pieces
     if (error == 0_I4P) then
       self%is_temporal = .true.
       self%n_steps = self%n_steps + 1_I8P
@@ -445,12 +490,14 @@ contains
       self%step_pieces = 0_I8P
       self%step_start = [int(self%n_pieces, I8P), self%total_points, self%total_cells, self%totals(4:)]
       self%step_blocks = self%block_totals
+      error = self%roll_arrays()
     endif
   endif
   endfunction write_step
 
   function write_dataarray_location_tag(self, location, action, scalars, vectors, normals, tensors, tcoords) result(error)
-  !< Open or close the group of the point (`node`) or cell (`cell`) data, inside the piece.
+  !< Open or close the group of the point (`node`) or cell (`cell`) data, inside the piece (or in a step without pieces,
+  !< which reuses the mesh of the step before: its arrays hold the points or cells of all the parts reused).
   !<
   !< When opening, `scalars`, `vectors`, `normals`, `tensors` and `tcoords` name the active array of each role: the
   !< dataset of that name, when written, gets the `Attribute` attribute (VTKHDF 2.6) holding the role.
@@ -477,7 +524,8 @@ contains
     return
   endif
   if (action_ == 'OPEN') then
-    if (.not.self%is_piece_open .or. self%group >= 0_hid_kind) return
+    ! inside the piece, or in a step without pieces (it reuses the mesh of the step before)
+    if (.not.(self%is_piece_open .or. self%is_reusing()) .or. self%group >= 0_hid_kind) return
     error = self%open_group(name)
     if (present(scalars)) self%active(1)%name = scalars
     if (present(vectors)) self%active(2)%name = vectors
@@ -488,6 +536,7 @@ contains
     if (self%group < 0_hid_kind) return
     if (self%group_name /= name) return
     error = self%close_group()
+    if (error == 0_I4P .and. self%is_reusing()) error = self%end_reusing() ! the file valid after the group
   endif
   endfunction write_dataarray_location_tag
 
@@ -2044,8 +2093,7 @@ contains
   error = self%dataset_dims(data_name, n, n_components, dims)
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
-  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P .and. &
-      (self%group_name == 'FieldData' .or. .not.self%is_partitioned())) then
+  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P) then
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
     return
   endif
@@ -2084,8 +2132,7 @@ contains
   error = self%dataset_dims(data_name, n, n_components, dims)
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
-  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P .and. &
-      (self%group_name == 'FieldData' .or. .not.self%is_partitioned())) then
+  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P) then
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
     return
   endif
@@ -2125,8 +2172,7 @@ contains
   error = self%dataset_dims(data_name, n, n_components, dims)
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
-  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P .and. &
-      (self%group_name == 'FieldData' .or. .not.self%is_partitioned())) then
+  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P) then
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
     return
   endif
@@ -2166,8 +2212,7 @@ contains
   error = self%dataset_dims(data_name, n, n_components, dims)
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
-  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P .and. &
-      (self%group_name == 'FieldData' .or. .not.self%is_partitioned())) then
+  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P) then
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
     return
   endif
@@ -2207,8 +2252,7 @@ contains
   error = self%dataset_dims(data_name, n, n_components, dims)
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
-  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P .and. &
-      (self%group_name == 'FieldData' .or. .not.self%is_partitioned())) then
+  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P) then
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
     return
   endif
@@ -2248,8 +2292,7 @@ contains
   error = self%dataset_dims(data_name, n, n_components, dims)
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
-  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P .and. &
-      (self%group_name == 'FieldData' .or. .not.self%is_partitioned())) then
+  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P) then
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
     return
   endif
@@ -2534,6 +2577,7 @@ contains
   endif
   if (error /= 0_I4P) error = refuse('cannot write the coordinates')
   if (error == 0_I4P) self%is_geo_written = .true.
+  if (error == 0_I4P .and. self%is_temporal) self%geo_slices = self%geo_slices + 1_I8P
   endfunction put_coordinates_R8P
 
   function put_grid_points_R8P(self, xyz, n1, n) result(error)
@@ -2561,6 +2605,7 @@ contains
   endif
   if (error /= 0_I4P) error = refuse('cannot write the points')
   if (error == 0_I4P) self%is_geo_written = .true.
+  if (error == 0_I4P .and. self%is_temporal) self%geo_slices = self%geo_slices + 1_I8P
   endfunction put_grid_points_R8P
 
   function put_coordinates_R4P(self, x, y, z) result(error)
@@ -2592,6 +2637,7 @@ contains
   endif
   if (error /= 0_I4P) error = refuse('cannot write the coordinates')
   if (error == 0_I4P) self%is_geo_written = .true.
+  if (error == 0_I4P .and. self%is_temporal) self%geo_slices = self%geo_slices + 1_I8P
   endfunction put_coordinates_R4P
 
   function put_grid_points_R4P(self, xyz, n1, n) result(error)
@@ -2619,6 +2665,7 @@ contains
   endif
   if (error /= 0_I4P) error = refuse('cannot write the points')
   if (error == 0_I4P) self%is_geo_written = .true.
+  if (error == 0_I4P .and. self%is_temporal) self%geo_slices = self%geo_slices + 1_I8P
   endfunction put_grid_points_R4P
 
   function put_faces_I4P(self, nc, face, faceoffset, cell_type, check_only) result(error)
@@ -3039,9 +3086,20 @@ contains
   elseif (self%is_partitioned()) then
     grid = [self%np_piece, 1_I8P, 1_I8P]
     if (self%group_name == 'CellData') grid(1) = self%nc_piece
+    if (self%is_reusing()) then ! a step without pieces: the points or cells of all the parts of the mesh reused
+      grid(1) = self%total_points - self%mesh_start(2)
+      if (self%group_name == 'CellData') then
+        if (self%topology == TOPOLOGY_UNSTRUCTURED) then
+          grid(1) = self%total_cells - self%mesh_start(3)
+        else
+          grid(1) = self%total_cells - sum(self%mesh_blocks(1:4))
+        endif
+      endif
+    endif
     is_axis = [.true., .false., .false.]
     if (n /= grid(1) * n_components) then
-      error = refuse('the array '//data_name//' has '//trim(str(n=n, no_sign=.true.))//' values, the piece needs '// &
+      error = refuse('the array '//data_name//' has '//trim(str(n=n, no_sign=.true.))//' values, the '// &
+                     trim(merge('mesh reused', 'piece      ', self%is_reusing()))//' needs '// &
                      trim(str(n=grid(1) * n_components, no_sign=.true.))//' ('//                                   &
                      trim(str(n=n_components, no_sign=.true.))//' components)')
       return
@@ -3092,8 +3150,9 @@ contains
     error = self%no_faces(self%nc_piece)
     if (error /= 0_I4P) return
   endif
-  error = check_array_list(self%root, 'PointData', self%point_arrays, self%total_points, 'piece')
-  if (error == 0_I4P) error = check_array_list(self%root, 'CellData', self%cell_arrays, self%total_cells, 'piece')
+  ! every array written in every piece: the tuples of the pieces of the step (of the file, without steps)
+  error = self%check_arrays('PointData', self%total_points - self%step_start(2), .false.)
+  if (error == 0_I4P) error = self%check_arrays('CellData', self%total_cells - self%step_start(3), .false.)
   endfunction end_partition
 
   pure function grid_points(self) result(grid)
@@ -3270,11 +3329,130 @@ contains
   elseif (self%group_name == 'PointData') then
     names = self%point_arrays//data_name//NAMES_SEPARATOR
     self%point_arrays = names
+    call grow(self%point_start) ; call grow(self%point_prev)
   elseif (self%group_name == 'CellData') then
     names = self%cell_arrays//data_name//NAMES_SEPARATOR
     self%cell_arrays = names
+    call grow(self%cell_start) ; call grow(self%cell_prev)
   endif
+  contains
+    subroutine grow(values)
+    !< One more value, 0: a new array starts at the start of the datasets (first step, or a file without steps).
+    integer(I8P), allocatable, intent(inout) :: values(:) !< Values.
+    integer(I8P), allocatable                :: more(:)   !< Values, one more.
+
+    if (.not.allocated(values)) allocate(values(0))
+    allocate(more(size(values) + 1))
+    more(1:size(values)) = values
+    more(size(more)) = 0_I8P
+    call move_alloc(more, values)
+    endsubroutine grow
   endsubroutine record_array
+
+  function check_arrays(self, group, rows, may_reuse) result(error)
+  !< Check that every point (`group` PointData) or cell (CellData) array holds `rows` tuples (time slices for a grid) more
+  !< than at the start of the open step, or none when `may_reuse` (it reuses its values of the step before).
+  class(vtkhdf_writer), intent(in) :: self      !< Writer.
+  character(*),         intent(in) :: group     !< PointData or CellData.
+  integer(I8P),         intent(in) :: rows      !< Tuples (slices) written in the open step by an array written in it.
+  logical,              intent(in) :: may_reuse !< An array may be left out of the open step.
+  integer(I4P)                     :: error     !< Error status.
+  character(len=:), allocatable    :: names     !< Names of the arrays.
+  integer(I8P), allocatable        :: start(:)  !< Tuples of each array at the start of the step.
+  integer(I8P), allocatable        :: dims(:)   !< Shape of a dataset, Fortran order.
+  integer(I8P)                     :: first     !< First character of a name.
+  integer(I8P)                     :: last      !< Separator after a name.
+  integer(I8P)                     :: a         !< Counter.
+  integer(I8P)                     :: written   !< Tuples written in the step.
+
+  if (group == 'PointData') then
+    names = self%point_arrays ; start = self%point_start
+  else
+    names = self%cell_arrays ; start = self%cell_start
+  endif
+  error = 0_I4P
+  first = 1_I8P
+  a = 0_I8P
+  do while (first <= len(names, kind=I8P))
+    last = first - 1_I8P + index(names(first:), NAMES_SEPARATOR, kind=I8P)
+    a = a + 1_I8P
+    error = h5_dataset_dims(self%root, group//'/'//names(first:last-1), dims)
+    if (error == 0_I4P) then
+      written = dims(size(dims)) - start(a)
+      if (written /= rows .and. .not.(may_reuse .and. written == 0_I8P)) error = 1_I4P
+    endif
+    if (error /= 0_I4P) then
+      if (self%is_temporal .and. may_reuse) then
+        error = refuse('the array '//names(first:last-1)//' of '//group//' is written once in a step, for all its '// &
+                       trim(str(n=rows, no_sign=.true.))//' tuples, or not at all (its values of the step before)')
+      elseif (self%is_temporal .and. self%is_partitioned()) then
+        error = refuse('the array '//names(first:last-1)//' of '//group//' is not written once in every piece: a '// &
+                       'step with pieces writes every array')
+      else
+        error = refuse('the array '//names(first:last-1)//' of '//group//' is not written once in every piece')
+      endif
+      return
+    endif
+    first = last + 1_I8P
+  enddo
+  endfunction check_arrays
+
+  elemental function is_reusing(self) result(is_reusing_)
+  !< Return true if the open step is a step after the first one without pieces: it reuses the mesh of the step before.
+  class(vtkhdf_writer), intent(in) :: self        !< Writer.
+  logical                          :: is_reusing_ !< Check result.
+
+  is_reusing_ = self%is_temporal .and. self%n_steps > 1_I8P .and. self%step_pieces == 0_I8P
+  endfunction is_reusing
+
+  function end_reusing(self) result(error)
+  !< Check the arrays of a step without pieces (each one written for all the points or cells of the mesh reused, or
+  !< not at all) and write the `Steps` entries of the step.
+  class(vtkhdf_writer), intent(inout) :: self     !< Writer.
+  integer(I4P)                        :: error    !< Error status.
+  integer(I8P)                        :: rows(2)  !< Tuples of a point and of a cell array written in the step.
+
+  rows = 1_I8P ! a grid: one time slice
+  if (self%topology == TOPOLOGY_UNSTRUCTURED) then
+    rows = [self%total_points - self%mesh_start(2), self%total_cells - self%mesh_start(3)]
+  elseif (self%topology == TOPOLOGY_POLY) then
+    rows = [self%total_points - self%mesh_start(2), self%total_cells - sum(self%mesh_blocks(1:4))]
+  endif
+  error = self%check_arrays('PointData', rows(1), .true.)
+  if (error == 0_I4P) error = self%check_arrays('CellData', rows(2), .true.)
+  if (error == 0_I4P) error = self%write_steps()
+  endfunction end_reusing
+
+  function is_written_in_step(self) result(is_written)
+  !< Return true if a point or cell array is written in the open step (or its shape cannot be read).
+  class(vtkhdf_writer), intent(in) :: self       !< Writer.
+  logical                          :: is_written !< Check result.
+  integer(I8P), allocatable        :: tuples(:)  !< Tuples of each array.
+
+  is_written = .true.
+  if (array_tuples(self%root, 'PointData', self%point_arrays, tuples) /= 0_I4P) return
+  if (any(tuples > self%point_start)) return
+  if (array_tuples(self%root, 'CellData', self%cell_arrays, tuples) /= 0_I4P) return
+  if (any(tuples > self%cell_start)) return
+  is_written = .false.
+  endfunction is_written_in_step
+
+  function roll_arrays(self) result(error)
+  !< Start the bookkeeping of the point and cell arrays for a new step: the offset of the step before (where the array
+  !< was written in it, or its offset before when it was not) and the tuples (slices) of the array at the new start.
+  class(vtkhdf_writer), intent(inout) :: self  !< Writer.
+  integer(I4P)                        :: error !< Error status.
+  integer(I8P), allocatable           :: tuples(:) !< Tuples of each array.
+
+  error = array_tuples(self%root, 'PointData', self%point_arrays, tuples)
+  if (error /= 0_I4P) return
+  where (tuples > self%point_start) self%point_prev = self%point_start
+  self%point_start = tuples
+  error = array_tuples(self%root, 'CellData', self%cell_arrays, tuples)
+  if (error /= 0_I4P) return
+  where (tuples > self%cell_start) self%cell_prev = self%cell_start
+  self%cell_start = tuples
+  endfunction roll_arrays
 
   subroutine set_comm(self, comm)
   !< Write the next file from the ranks of the MPI communicator `comm` (Fortran handle: `MPI_Comm%MPI_VAL` of mpi_f08):
@@ -3307,6 +3485,7 @@ contains
   integer(I8P)                        :: b         !< Counter.
   integer(I8P)                        :: grid(3)   !< Points of a grid along each axis.
   integer(hid_kind)                   :: steps     !< Group Steps.
+  integer(I8P)                        :: rows(2)   !< Points and cells of the mesh of the last step.
 
   self%file_id = -1_hid_kind ; self%root = -1_hid_kind ; self%group = -1_hid_kind
   call self%reset
@@ -3395,8 +3574,31 @@ contains
       enddo
       self%total_cells = sum(self%block_totals(1:4))
     endif
-    if (error == 0_I4P) error = trimmed_arrays(self%root, 'PointData', self%total_points, self%point_arrays)
-    if (error == 0_I4P) error = trimmed_arrays(self%root, 'CellData', self%total_cells, self%cell_arrays)
+    ! the mesh of the last step (the one a step without pieces would reuse): its entries
+    self%mesh_pieces = counts(k)
+    self%mesh_start(1) = ivalues(k)
+    if (error == 0_I4P) error = step_value(self%root, 'PointOffsets', k, 1_I8P, self%mesh_start(2))
+    if (self%topology == TOPOLOGY_UNSTRUCTURED) then
+      if (error == 0_I4P) error = step_value(self%root, 'CellOffsets', k, 1_I8P, self%mesh_start(3))
+      if (error == 0_I4P) error = step_value(self%root, 'ConnectivityIdOffsets', k, 1_I8P, self%mesh_start(4))
+      if (self%has_polyhedra) then
+        if (error == 0_I4P) error = step_value(self%root, 'FaceConnectivityOffsets', k, 1_I8P, self%mesh_start(5))
+        if (error == 0_I4P) error = step_value(self%root, 'FaceOffsetsOffsets', k, 1_I8P, self%mesh_start(6))
+        if (error == 0_I4P) error = step_value(self%root, 'PolyhedronToFaceIdOffsets', k, 1_I8P, self%mesh_start(7))
+      endif
+      rows = [self%total_points - self%mesh_start(2), self%total_cells - self%mesh_start(3)]
+    else
+      do b=1_I8P, size(BLOCKS, kind=I8P) ! the blocks in the order of VTKHDF: Vertices, Lines, Polygons, Strips
+        if (error == 0_I4P) error = step_value(self%root, 'CellOffsets', k, VTK_COLUMN(b), self%mesh_blocks(b))
+        if (error == 0_I4P) error = step_value(self%root, 'ConnectivityIdOffsets', k, VTK_COLUMN(b), self%mesh_blocks(4+b))
+      enddo
+      rows = [self%total_points - self%mesh_start(2), self%total_cells - sum(self%mesh_blocks(1:4))]
+    endif
+    ! the arrays: the tuples of the mesh from their offset of the last step (repeated by the steps that reused them)
+    if (error == 0_I4P) error = trimmed_arrays(self%root, 'PointData', rows(1), self%mesh_start(2), self%point_arrays, &
+                                               self%point_start, self%point_prev)
+    if (error == 0_I4P) error = trimmed_arrays(self%root, 'CellData', rows(2), self%total_cells - rows(2), &
+                                               self%cell_arrays, self%cell_start, self%cell_prev)
   else
     ! a grid: its extent (the start of a RectilinearGrid or StructuredGrid one is not stored), a time slice per step
     if (self%topology == TOPOLOGY_IMAGE) then
@@ -3411,15 +3613,23 @@ contains
     endif
     self%n_pieces = int(k, I4P)
     grid = self%grid_points()
+    ! the geometry of the last step that wrote it (its offset at the last step), one time slice per such step
     if (error == 0_I4P .and. self%topology == TOPOLOGY_RECT) then
-      error = trim_to(self%root, 'XCoordinates', k * grid(1))
-      if (error == 0_I4P) error = trim_to(self%root, 'YCoordinates', k * grid(2))
-      if (error == 0_I4P) error = trim_to(self%root, 'ZCoordinates', k * grid(3))
+      error = step_value(self%root, 'XCoordinatesOffsets', k, 1_I8P, self%geo_slices)
+      self%geo_slices = self%geo_slices / grid(1) + 1_I8P
+      if (error == 0_I4P) error = trim_to(self%root, 'XCoordinates', self%geo_slices * grid(1))
+      if (error == 0_I4P) error = trim_to(self%root, 'YCoordinates', self%geo_slices * grid(2))
+      if (error == 0_I4P) error = trim_to(self%root, 'ZCoordinates', self%geo_slices * grid(3))
     elseif (error == 0_I4P .and. self%topology == TOPOLOGY_STRG) then
-      error = trim_to(self%root, 'Points', k)
+      error = step_value(self%root, 'PointOffsets', k, 1_I8P, self%geo_slices)
+      self%geo_slices = self%geo_slices + 1_I8P
+      if (error == 0_I4P) error = trim_to(self%root, 'Points', self%geo_slices)
     endif
-    if (error == 0_I4P) error = trimmed_arrays(self%root, 'PointData', k, self%point_arrays)
-    if (error == 0_I4P) error = trimmed_arrays(self%root, 'CellData', k, self%cell_arrays)
+    ! the arrays: one time slice from their offset of the last step (k - 1 for a file without data offsets)
+    if (error == 0_I4P) error = trimmed_arrays(self%root, 'PointData', 1_I8P, k - 1_I8P, self%point_arrays, &
+                                               self%point_start, self%point_prev)
+    if (error == 0_I4P) error = trimmed_arrays(self%root, 'CellData', 1_I8P, k - 1_I8P, self%cell_arrays, &
+                                               self%cell_start, self%cell_prev)
   endif
   ! field data: the tuples of the complete steps (a group not written is empty)
   names = ''
@@ -3479,26 +3689,62 @@ contains
     error = trim_to(root, name, n_parts)
     endfunction trimmed_counts
 
-    function trimmed_arrays(root, group, n, list) result(error)
-    !< Trim every array of `group` to `n` along its last dimension, and list their names (none if the group was never
-    !< written).
-    integer(hid_kind),             intent(in)  :: root  !< Group /VTKHDF.
-    character(*),                  intent(in)  :: group !< Group of the arrays.
-    integer(I8P),                  intent(in)  :: n     !< Size kept.
-    character(len=:), allocatable, intent(out) :: list  !< Names, each followed by NAMES_SEPARATOR.
-    integer(I4P)                               :: error !< Error status.
+    function trimmed_arrays(root, group, rows, default, list, start, prev) result(error)
+    !< Trim every array of `group` to the `rows` tuples (slices) of the last step from its offset at that step
+    !< (`Steps/<group>Offsets/<name>`, `default` without it), list their names (none if the group was never written), and
+    !< start their bookkeeping: tuples at the start of the next step, offset of the last one.
+    integer(hid_kind),             intent(in)  :: root     !< Group /VTKHDF.
+    character(*),                  intent(in)  :: group    !< PointData or CellData.
+    integer(I8P),                  intent(in)  :: rows     !< Tuples (slices) of the last step.
+    integer(I8P),                  intent(in)  :: default  !< Offset of an array without its offsets dataset.
+    character(len=:), allocatable, intent(out) :: list     !< Names, each followed by NAMES_SEPARATOR.
+    integer(I8P), allocatable,     intent(out) :: start(:) !< Tuples of each array kept.
+    integer(I8P), allocatable,     intent(out) :: prev(:)  !< Offset of each array at the last step.
+    integer(I4P)                               :: error    !< Error status.
+    integer(I8P), allocatable                  :: offsets(:) !< Offsets of an array.
     integer(I8P)                               :: first, last !< Bounds of a name.
+    integer(I8P)                               :: offset   !< Offset of an array at the last step.
 
     list = ''
+    allocate(start(0), prev(0))
     error = 0_I4P
     if (h5_link_exists(root, group)) error = h5_group_names(root, group, list)
     first = 1_I8P
     do while (first <= len(list, kind=I8P) .and. error == 0_I4P)
       last = first - 1_I8P + index(list(first:), NAMES_SEPARATOR, kind=I8P)
-      error = trim_to(root, group//'/'//list(first:last-1), n)
+      offset = default
+      if (h5_link_exists(root, 'Steps/'//group//'Offsets/'//list(first:last-1))) then
+        error = h5_dataset_read(root, 'Steps/'//group//'Offsets/'//list(first:last-1), offsets)
+        if (error == 0_I4P) offset = offsets(size(offsets))
+      endif
+      if (error == 0_I4P) error = trim_to(root, group//'/'//list(first:last-1), offset + rows)
+      start = [start, offset + rows]
+      prev = [prev, offset]
       first = last + 1_I8P
     enddo
     endfunction trimmed_arrays
+
+    function step_value(root, name, k, column, value) result(error)
+    !< The entry of the step k of `Steps/name`: its value, or its value of the column `column` (VTK order of the blocks:
+    !< Vertices, Lines, Polygons, Strips) for a PolyData, whose datasets have a row per step.
+    integer(hid_kind), intent(in)  :: root      !< Group /VTKHDF.
+    character(*),      intent(in)  :: name      !< Dataset of Steps.
+    integer(I8P),      intent(in)  :: k         !< Step.
+    integer(I8P),      intent(in)  :: column    !< Column; 1 for a dataset of one value per step.
+    integer(I8P),      intent(out) :: value     !< Value.
+    integer(I4P)                   :: error     !< Error status.
+    integer(I8P), allocatable      :: values(:) !< Values of the steps.
+    integer(I8P), allocatable      :: dims(:)   !< Shape, Fortran order.
+    integer(I8P)                   :: n         !< Values per step.
+
+    value = 0_I8P
+    error = h5_dataset_dims(root, 'Steps/'//name, dims)
+    if (error == 0_I4P) error = h5_dataset_read(root, 'Steps/'//name, values)
+    if (error /= 0_I4P) return
+    n = 1_I8P
+    if (size(dims) > 1) n = dims(1)
+    value = values((k - 1_I8P) * n + column)
+    endfunction step_value
 
     function trimmed_steps(root, group, n_steps) result(error)
     !< Trim every dataset of the group `group` (Steps or one of its groups) to the complete steps.
@@ -3553,6 +3799,12 @@ contains
   self%step_blocks = 0_I8P
   self%totals = 0_I8P
   self%block_totals = 0_I8P
+  self%mesh_start = 0_I8P
+  self%mesh_blocks = 0_I8P
+  self%mesh_pieces = 0_I8P
+  self%geo_slices = 0_I8P
+  self%point_start = [integer(I8P) ::] ; self%point_prev = [integer(I8P) ::]
+  self%cell_start = [integer(I8P) ::] ; self%cell_prev = [integer(I8P) ::]
   self%field_arrays = ''
   self%is_reopened = .false.
   self%point_arrays = ''
@@ -3600,6 +3852,12 @@ contains
   if (self%is_parallel .and. self%n_pieces > 0_I4P) then
     error = refuse('write_piece: one piece per rank of comm')
     return
+  endif
+  if (self%is_reusing()) then
+    if (self%is_written_in_step()) then
+      error = refuse('write_piece: arrays are already written in this step without its pieces')
+      return
+    endif
   endif
   self%n_pieces = self%n_pieces + 1_I4P
   self%step_pieces = self%step_pieces + 1_I8P
@@ -3697,6 +3955,7 @@ contains
   integer(I8P)                        :: first     !< First character of a name.
   integer(I8P)                        :: last      !< Separator after a name.
   character(len=:), allocatable       :: name      !< An array name.
+  logical                             :: reused    !< A field data array not written in the step.
 
   k = self%n_steps
   if (h5_link_exists(self%root, 'Steps/Values')) then
@@ -3705,57 +3964,65 @@ contains
   endif
   error = store_R8P(self, self%root, 'Steps/Values', [self%step_time], [1_I8P])
   if (self%is_partitioned()) then
-    if (error == 0_I4P) error = self%step_entry('PartOffsets', [self%step_start(1)])
-    if (error == 0_I4P) error = self%step_entry('NumberOfParts', [self%step_pieces])
-    if (error == 0_I4P) error = self%step_entry('PointOffsets', [self%step_start(2)])
+    ! the parts of the step, or those of the last step with pieces (a step without pieces reuses its mesh)
+    if (self%step_pieces > 0_I8P) then
+      self%mesh_start = self%step_start
+      self%mesh_blocks = self%step_blocks
+      self%mesh_pieces = self%step_pieces
+    endif
+    if (error == 0_I4P) error = self%step_entry('PartOffsets', [self%mesh_start(1)])
+    if (error == 0_I4P) error = self%step_entry('NumberOfParts', [self%mesh_pieces])
+    if (error == 0_I4P) error = self%step_entry('PointOffsets', [self%mesh_start(2)])
     if (self%topology == TOPOLOGY_UNSTRUCTURED) then
-      if (error == 0_I4P) error = self%step_entry('CellOffsets', [self%step_start(3)])
-      if (error == 0_I4P) error = self%step_entry('ConnectivityIdOffsets', [self%step_start(4)])
+      if (error == 0_I4P) error = self%step_entry('CellOffsets', [self%mesh_start(3)])
+      if (error == 0_I4P) error = self%step_entry('ConnectivityIdOffsets', [self%mesh_start(4)])
       if (self%has_polyhedra) then
-        if (error == 0_I4P) error = self%step_entry('FaceConnectivityOffsets', [self%step_start(5)])
-        if (error == 0_I4P) error = self%step_entry('FaceOffsetsOffsets', [self%step_start(6)])
-        if (error == 0_I4P) error = self%step_entry('PolyhedronToFaceIdOffsets', [self%step_start(7)])
+        if (error == 0_I4P) error = self%step_entry('FaceConnectivityOffsets', [self%mesh_start(5)])
+        if (error == 0_I4P) error = self%step_entry('FaceOffsetsOffsets', [self%mesh_start(6)])
+        if (error == 0_I4P) error = self%step_entry('PolyhedronToFaceIdOffsets', [self%mesh_start(7)])
       endif
     else ! PolyData: the blocks in the order of VTKHDF, Vertices, Lines, Polygons, Strips
-      if (error == 0_I4P) error = self%step_entry('CellOffsets', self%step_blocks([1, 2, 4, 3]))
-      if (error == 0_I4P) error = self%step_entry('ConnectivityIdOffsets', self%step_blocks([5, 6, 8, 7]))
+      if (error == 0_I4P) error = self%step_entry('CellOffsets', self%mesh_blocks([1, 2, 4, 3]))
+      if (error == 0_I4P) error = self%step_entry('ConnectivityIdOffsets', self%mesh_blocks([5, 6, 8, 7]))
     endif
-    first = 1_I8P
-    do while (first <= len(self%point_arrays, kind=I8P) .and. error == 0_I4P)
-      last = first - 1_I8P + index(self%point_arrays(first:), NAMES_SEPARATOR, kind=I8P)
-      name = self%point_arrays(first:last-1)
-      error = self%step_entry('PointDataOffsets/'//name, [self%step_start(2)])
-      first = last + 1_I8P
-    enddo
-    first = 1_I8P
-    do while (first <= len(self%cell_arrays, kind=I8P) .and. error == 0_I4P)
-      last = first - 1_I8P + index(self%cell_arrays(first:), NAMES_SEPARATOR, kind=I8P)
-      name = self%cell_arrays(first:last-1)
-      error = self%step_entry('CellDataOffsets/'//name, [self%step_start(3)])
-      first = last + 1_I8P
-    enddo
-  elseif (self%topology == TOPOLOGY_RECT) then
+  elseif (self%topology == TOPOLOGY_RECT) then ! the coordinates of the last step that wrote them
     grid = self%grid_points()
-    if (error == 0_I4P) error = self%step_entry('XCoordinatesOffsets', [(k - 1_I8P) * grid(1)])
-    if (error == 0_I4P) error = self%step_entry('YCoordinatesOffsets', [(k - 1_I8P) * grid(2)])
-    if (error == 0_I4P) error = self%step_entry('ZCoordinatesOffsets', [(k - 1_I8P) * grid(3)])
-  elseif (self%topology == TOPOLOGY_STRG) then
-    if (error == 0_I4P) error = self%step_entry('PointOffsets', [k - 1_I8P]) ! in time slices (required by VTK)
+    if (error == 0_I4P) error = self%step_entry('XCoordinatesOffsets', [(self%geo_slices - 1_I8P) * grid(1)])
+    if (error == 0_I4P) error = self%step_entry('YCoordinatesOffsets', [(self%geo_slices - 1_I8P) * grid(2)])
+    if (error == 0_I4P) error = self%step_entry('ZCoordinatesOffsets', [(self%geo_slices - 1_I8P) * grid(3)])
+  elseif (self%topology == TOPOLOGY_STRG) then ! in time slices (required by VTK)
+    if (error == 0_I4P) error = self%step_entry('PointOffsets', [self%geo_slices - 1_I8P])
   endif
+  ! point and cell data: where each array was written in the step, or its offset of the step before (reused); tuples,
+  ! time slices for a grid
+  if (error == 0_I4P) error = array_entries('PointData', 'PointDataOffsets', self%point_arrays, self%point_start, &
+                                            self%point_prev)
+  if (error == 0_I4P) error = array_entries('CellData', 'CellDataOffsets', self%cell_arrays, self%cell_start, &
+                                            self%cell_prev)
   ! field data: one component, their tuples of the step after those of the steps before
   first = 1_I8P
   do while (first <= len(self%field_arrays, kind=I8P) .and. error == 0_I4P)
     last = first - 1_I8P + index(self%field_arrays(first:), NAMES_SEPARATOR, kind=I8P)
     name = self%field_arrays(first:last-1)
     offset = 0_I8P
+    reused = .false.
+    if (error == 0_I4P) error = h5_dataset_dims(self%root, 'FieldData/'//name, dims)
     if (k > 1_I8P .and. h5_link_exists(self%root, 'Steps/FieldDataOffsets/'//name)) then
       error = h5_dataset_read(self%root, 'Steps/FieldDataOffsets/'//name, offsets)
       if (error == 0_I4P) error = h5_dataset_read(self%root, 'Steps/FieldDataSizes/'//name, sizes)
-      if (error == 0_I4P) offset = offsets(k - 1_I8P) + sizes(2_I8P * (k - 1_I8P))
+      if (error == 0_I4P) then
+        offset = offsets(k - 1_I8P) + sizes(2_I8P * (k - 1_I8P))
+        ! not written in the step: its values of the step before
+        reused = dims(size(dims)) == offset .and. sizes(2_I8P * (k - 1_I8P)) > 0_I8P
+        if (reused) offset = offsets(k - 1_I8P)
+      endif
     endif
-    if (error == 0_I4P) error = h5_dataset_dims(self%root, 'FieldData/'//name, dims)
     if (error == 0_I4P) error = self%step_entry('FieldDataOffsets/'//name, [offset])
-    if (error == 0_I4P) error = self%step_entry('FieldDataSizes/'//name, [1_I8P, dims(size(dims)) - offset])
+    if (error == 0_I4P .and. reused) then
+      error = self%step_entry('FieldDataSizes/'//name, sizes(2_I8P * k - 3_I8P:2_I8P * k - 2_I8P))
+    elseif (error == 0_I4P) then
+      error = self%step_entry('FieldDataSizes/'//name, [1_I8P, dims(size(dims)) - offset])
+    endif
     first = last + 1_I8P
   enddo
   if (error == 0_I4P) error = h5_group_open(self%root, 'Steps', steps)
@@ -3766,36 +4033,62 @@ contains
   if (error == 0_I4P) error = h5_attribute_write(self%root, 'Version', [2_I8P, self%version_minor])
   if (error == 0_I4P) error = h5_file_flush(self%file_id)
   if (error /= 0_I4P) error = refuse('cannot write the entries of the step')
+  contains
+    function array_entries(group, steps_group, names, start, prev) result(error)
+    !< Write the offsets of the arrays of `group` for the open step: `start` if the array was written in it, `prev` if
+    !< not (its values of the step before).
+    character(*), intent(in)  :: group       !< PointData or CellData.
+    character(*), intent(in)  :: steps_group !< PointDataOffsets or CellDataOffsets.
+    character(*), intent(in)  :: names       !< Names, each followed by NAMES_SEPARATOR.
+    integer(I8P), intent(in)  :: start(:)    !< Tuples of each array at the start of the step.
+    integer(I8P), intent(in)  :: prev(:)     !< Offset of each array at the step before.
+    integer(I4P)              :: error       !< Error status.
+    integer(I8P), allocatable :: tuples(:)   !< Tuples of each array.
+    integer(I8P)              :: first, last !< Bounds of a name.
+    integer(I8P)              :: a           !< Counter.
+
+    error = array_tuples(self%root, group, names, tuples)
+    first = 1_I8P
+    a = 0_I8P
+    do while (first <= len(names, kind=I8P) .and. error == 0_I4P)
+      last = first - 1_I8P + index(names(first:), NAMES_SEPARATOR, kind=I8P)
+      a = a + 1_I8P
+      error = self%step_entry(steps_group//'/'//names(first:last-1), [merge(start(a), prev(a), tuples(a) > start(a))])
+      first = last + 1_I8P
+    enddo
+    endfunction array_entries
   endfunction write_steps
 
   ! non type-bound helpers
-  function check_array_list(root, group, names, total, unit) result(error)
-  !< Check that every array of the list holds the tuples (or time slices) written so far: `total` along its last dimension.
-  integer(hid_kind), intent(in) :: root    !< Group /VTKHDF.
-  character(*),      intent(in) :: group   !< Group of the arrays.
-  character(*),      intent(in) :: names   !< Names, each followed by NAMES_SEPARATOR.
-  integer(I8P),      intent(in) :: total   !< Size of the last dimension expected.
-  character(*),      intent(in) :: unit    !< What each array is written once in (for the message).
-  integer(I4P)                  :: error   !< Error status.
-  integer(I8P), allocatable     :: dims(:) !< Shape of a dataset, Fortran order.
-  integer(I8P)                  :: first   !< First character of a name.
-  integer(I8P)                  :: last    !< Separator after a name.
+  function array_tuples(root, group, names, tuples) result(error)
+  !< Return the tuples (time slices for a grid of a time series), the last dimension, of every array of the list.
+  integer(hid_kind),         intent(in)  :: root      !< Group /VTKHDF.
+  character(*),              intent(in)  :: group     !< Group of the arrays.
+  character(*),              intent(in)  :: names     !< Names, each followed by NAMES_SEPARATOR.
+  integer(I8P), allocatable, intent(out) :: tuples(:) !< Tuples of each array.
+  integer(I4P)                           :: error     !< Error status.
+  integer(I8P), allocatable              :: dims(:)   !< Shape of a dataset, Fortran order.
+  integer(I8P)                           :: first     !< First character of a name.
+  integer(I8P)                           :: last      !< Separator after a name.
+  integer(I8P)                           :: a         !< Counter.
 
+  a = 0_I8P
+  do first=1_I8P, len(names, kind=I8P)
+    if (names(first:first) == NAMES_SEPARATOR) a = a + 1_I8P
+  enddo
+  allocate(tuples(a))
   error = 0_I4P
   first = 1_I8P
-  do while (first <= len(names, kind=I8P))
+  a = 0_I8P
+  do while (first <= len(names, kind=I8P) .and. error == 0_I4P)
     last = first - 1_I8P + index(names(first:), NAMES_SEPARATOR, kind=I8P)
+    a = a + 1_I8P
     error = h5_dataset_dims(root, group//'/'//names(first:last-1), dims)
-    if (error == 0_I4P) then
-      if (dims(size(dims)) /= total) error = 1_I4P
-    endif
-    if (error /= 0_I4P) then
-      error = refuse('the array '//names(first:last-1)//' of '//group//' is not written once in every '//unit)
-      return
-    endif
+    if (error == 0_I4P) tuples(a) = dims(size(dims))
     first = last + 1_I8P
   enddo
-  endfunction check_array_list
+  if (error /= 0_I4P) error = refuse('cannot read the shape of the arrays of '//group)
+  endfunction array_tuples
 
   function refuse(message) result(error)
   !< Print an error message on stderr and return a non-zero error.

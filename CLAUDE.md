@@ -111,9 +111,14 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   `finalize` (2.0, 2.5 with polyhedra, 2.6 with active arrays, 2.7 for RG/SG). Its procedures repeat the abstract
   interfaces, one per kind and layout, all funnelled into the private `put_<kind>` (and `store_<kind>` for the appended
   datasets of an UnstructuredGrid and PolyData): change the kinds together. Time series (`write_step`, `Steps`): the
-  `Steps` entries of the open step rewritten at the end of every piece (file valid after it); `reopen`
-  (`vtk_file%initialize(..., action='append')`, reached by `select type`) reads the state back and trims every dataset
-  to the last complete piece. vtkHDFReader 9.7.2 misreads a PolyData block first appearing at a later step, and a series
+  `Steps` entries of the open step rewritten at the end of every piece (file valid after it); what a step does not
+  write is stored once, its offsets repeating the step before (`mesh_start`/`mesh_blocks`/`mesh_pieces` = the last step
+  with pieces, reused by a step without pieces whose data groups open directly; `geo_slices` for RG/SG; per-array
+  `point_start`/`point_prev`, `cell_start`/`cell_prev` in the order of the name lists, `roll_arrays` at `write_step`;
+  `PointDataOffsets`/`CellDataOffsets` written for every array, time slices for grids, as VTK 9.7.2 reads them); a
+  step with pieces writes every point/cell array; no `StaticMesh` (no reader reads it). `reopen`
+  (`vtk_file%initialize(..., action='append')`, reached by `select type`) reads the state back (the reuse state too) and
+  trims every dataset to the last complete piece. vtkHDFReader 9.7.2 misreads a PolyData block first appearing at a later step, and a series
   of one part at step 1 (its own files too): the tests avoid both. MPI (`set_comm`, called by
   `vtk_file%initialize(..., comm=)` through `select type` before `initialize`, forgotten by `finalize`): every
   `store_<kind>` collective, totals summed over the ranks, one piece per rank; refused: grids, `write_step`, polyhedra,
@@ -166,13 +171,16 @@ Each test program in `src/tests/` writes actual VTK XML files, then prints `"Are
 VTKHDF ImageData written and read back; stubs checked without HDF5) and the VTKHDF writer (`vtk_fortran_write_vtkhdf.f90`:
 3D and 2D ImageData through `vtk_file`, read back with the bindings, refusals; `vtk_fortran_write_vtkhdf_unst.f90`:
 UnstructuredGrid, every cell type but polyhedra, two pieces, I8P ids, each also written as a `.vtu` to compare in VTK;
-`vtk_fortran_write_vtkhdf_steps.f90`: time series of every topology, each step also written as an XML file;
-`vtk_fortran_write_vtkhdf_append.f90`: series continued with `action='append'` (restart, interrupted run);
+`vtk_fortran_write_vtkhdf_steps.f90`: time series of every topology, each step also written as an XML file, and five
+storing once what does not change (a mesh reused by steps without pieces, grid geometry and arrays reused), their
+offsets read back, the reuse refusals;
+`vtk_fortran_write_vtkhdf_append.f90`: series continued with `action='append'` (restart, interrupted run), reuse across
+the restart;
 `vtk_fortran_write_vtkhdf_vtm.f90`: VTKHDF multi-block files (`vtm_file`, `format='vtkhdf'`): the nested assembly, a
 time series of two UnstructuredGrid series (one of two parts) and a PolyData series, the refusals (grid series, static
 and series mixed, other steps or times);
 `vtk_fortran_read_vtkhdf.f90`: VTKHDF files read back (every topology, time series, two polyhedra sharing a face
-(Version 2.9, the file built with the bindings), a face id out of range);
+(Version 2.9, the file built with the bindings), a face id out of range, series storing once the mesh and arrays);
 `vtk_fortran_write_vtkhdf_polyh.f90`: polyhedra (one piece; three pieces with polyhedra in the second), each also
 written as a `.vtu`; `vtk_fortran_write_vtkhdf_grids.f90`: RectilinearGrid and StructuredGrid (3D/2D/1D, the four StructuredGrid
 `write_geo` layouts), each also written as a `.vtr`/`.vts`; `vtk_fortran_write_vtkhdf_poly.f90`: PolyData, the four

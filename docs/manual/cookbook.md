@@ -174,10 +174,36 @@ Each output:
 - **The file is valid after every piece**: a run killed in the middle leaves the steps written so far, as a `.pvd`
   collection does. `action='append'` continues the file, and drops what an interrupted run left after its last complete
   piece. The times must increase: a restart from an earlier time is refused.
-- Every step writes the same arrays. A grid (ImageData, RectilinearGrid, StructuredGrid) has one piece per step; the parts
-  of an UnstructuredGrid or a PolyData can change from step to step, and so can the mesh.
+- The first step writes every array. A grid (ImageData, RectilinearGrid, StructuredGrid) has one piece per step; the
+  parts of an UnstructuredGrid or a PolyData can change from step to step, and so can the mesh. What does not change
+  is stored once: see the next recipe.
 - The layout of the file: [VTKHDF](/guide/formats#vtkhdf-hdf5); the two kinds of series compared:
   [Time series](/guide/parallel#time-series-pvd).
+
+### A fixed mesh stored once
+
+A simulation on a fixed mesh need not write it at every output: after the first step, a step **without pieces**
+reuses the mesh of the step before, and writes its arrays only, in data groups opened directly after `write_step`. Here
+a plate of quadrilaterals (an UnstructuredGrid) and its temperature, six steps:
+
+<<< @/examples/snippets/vtkhdf_fixed-write.f90
+
+<<< @/examples/snippets/vtkhdf_fixed-temperature.f90
+
+The program writes the same series with the mesh at every step too, and prints what each file stores:
+
+<<< @/examples/output/vtkhdf_fixed.ansi{ansi}
+
+<p align="center"><img src="../examples/images/vtkhdf_fixed.gif" alt="a hot spot moving along the plate, the six steps of the VTKHDF file whose mesh is stored once, played by ParaView"></p>
+
+- The offsets of `Steps` repeat those of the step before for what a step does not write: here `PointOffsets` is 0 at
+  every step. The arrays of a step without pieces hold the points (cells) of all the parts of the mesh, in their order.
+- **An array** not written in a step reuses its values of the step before: in a step of a grid, or in a step without
+  pieces; a step with pieces writes every point and cell array. A field data array not written reuses its values too.
+- **A grid**: a RectilinearGrid or StructuredGrid piece without `write_geo` reuses the coordinates or points of the
+  step before; a step of a grid can also have no piece at all (every array reused).
+- `action='append'` keeps reusing after a restart. The rules: [One VTKHDF file instead of a
+  collection](/guide/parallel#one-vtkhdf-file-instead-of-a-collection).
 
 ### A time series of several meshes in one .vtkhdf file
 

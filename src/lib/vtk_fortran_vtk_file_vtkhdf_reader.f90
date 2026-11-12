@@ -5,7 +5,8 @@ module vtk_fortran_vtk_file_vtkhdf_reader
 !<
 !< It reads every dataset the VTKHDF writer writes, and the same layouts written by VTK: ImageData, RectilinearGrid,
 !< StructuredGrid (one piece), UnstructuredGrid (polyhedra included) and PolyData (each partition a piece), static or time
-!< series (`Steps`: `get_steps`, `set_step`; the step 1 by default). The values are read as HDF5 hyperslabs of the piece
+!< series (`Steps`: `get_steps`, `set_step`; the step 1 by default; through the offsets of `Steps`, so that a step reusing
+!< the mesh or an array of the step before reads it as written in full). The values are read as HDF5 hyperslabs of the piece
 !< and step asked for, as the bytes of their type in the file (`read_dataarray_bytes`), then converted by the caller: the
 !< memory used is about the size of the array read. The offsets are returned as VTKFortran writes them (the end of each
 !< cell), the faces of the polyhedra as the face stream of `write_connectivity`: a face shared by two polyhedra (VTKHDF
@@ -752,9 +753,12 @@ contains
     endif
     grid = self%grid_points()
     n_axes = max(1, size(pack(grid, grid > 1_I8P))) ! (count is a dummy here)
-    if (self%n_steps > 0_I8P) then ! the time axis last: one slice
+    if (self%n_steps > 0_I8P) then ! the time axis last: one slice, the one of the step or of the array's offset
       first = self%step - 1_I8P
       count = 1_I8P
+      if (h5_link_exists(self%root, 'Steps/'//group//'Offsets/'//trim(data_name))) then
+        first = self%step_value(group//'Offsets/'//trim(data_name), 1_I4P, error) ; if (error /= 0) return
+      endif
       if (size(dims) > n_axes + 1) n_components = int(dims(1), I4P)
     else
       first = 0_I8P

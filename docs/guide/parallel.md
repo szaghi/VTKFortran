@@ -210,11 +210,28 @@ of the file tells where each step starts in the datasets that the steps share. A
 | Files | one per step, any XML format, plus the collection | one |
 | Valid during the run | after every step | after every piece |
 | Restart | `pvd_file%initialize(..., action='append')` | `vtk_file%initialize(format='vtkhdf', ..., action='append')` |
-| Steps | any time, any order | increasing times; the same arrays in every step |
-| Reading back with VTKFortran | yes | not yet |
+| Steps | any time, any order | increasing times; the arrays of the first step |
+| What does not change | written again in every file | stored once: the offsets of the step before repeated |
+| Reading back with VTKFortran | yes | yes, step by step (`set_step`) |
 
-- `action='append'` reads the state of the series from the file (topology, extent, steps, parts, arrays) and drops what
-  an interrupted run left after its last complete piece; the next `write_step` needs a later time.
+- `action='append'` reads the state of the series from the file (topology, extent, steps, parts, arrays and where each
+  one was last written) and drops what an interrupted run left after its last complete piece; the next `write_step`
+  needs a later time.
+- **What does not change is stored once**: a step repeats the offsets of the step before for what it does not write,
+  as the diagram shows for the mesh of step 3 ([A fixed mesh stored once](/manual/cookbook#a-fixed-mesh-stored-once)):
+  - **the mesh** of an UnstructuredGrid or a PolyData: a step after the first one without pieces (`write_step`, then
+    its data groups opened directly with `write_dataarray(location=..., action='open')`) reuses all the parts of the
+    step before; its arrays hold the points (cells) of all those parts, in their order;
+  - **the geometry** of a RectilinearGrid or StructuredGrid: a piece without `write_geo` reuses the coordinates or
+    points of the step before (an ImageData has none);
+  - **an array** not written in a step reuses its values of the step before: in a step of a grid (with or without its
+    piece) and in a step without pieces. A step with pieces writes every point and cell array, since its parts can
+    differ from those the values were written for. A field data array not written reuses its values too.
+
+  The first step writes everything, and an array first written at a later step is refused. The files are read by VTK
+  9.7.2 and ParaView 6.1.1 as if every step were written in full (checked step by step against the XML files of the
+  same steps). Point and cell data offsets (`PointDataOffsets`, `CellDataOffsets`) are written for every array: tuples,
+  time slices for a grid.
 - VTK 9.7.2 reads two kinds of series wrongly, in the files of its own writer too: a PolyData block of cells (lines,
   say) that first appears at a later step is read empty at that step; a series of one part at its first step is read as
   one dataset, of which a later step with more parts keeps only the last. Write every block from the first step (empty

@@ -77,7 +77,8 @@ the polyhedra as the face stream of `write_connectivity`; `get_info` returns `he
 
 - **Time series**: `get_steps(times)` returns the times of the steps (none for a file that is not a time series), and
   `set_step(step)` selects the step that the following calls read (the step 1 by default). The pieces are those of the
-  step.
+  step. A step that stores nothing new for its mesh or an array (the offsets of the step before repeated) reads them
+  as if written in full.
 - **Memory**: each read is an HDF5 hyperslab of the piece and step asked for: memory use is about the size of the array
   read.
 - `finalize` closes the file (`free` alone forgets it without closing it: call `finalize`).

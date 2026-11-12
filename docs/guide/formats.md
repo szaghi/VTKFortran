@@ -97,9 +97,12 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
   [A PolyData in a .vtkhdf file](/manual/cookbook#a-polydata-in-a-vtkhdf-file).
 - **Time series** (`Steps`): each output starts with `xml_writer%write_step(time)`; the pieces of every step are
   appended to the same datasets, a grid's arrays get a time axis (`[t, k, j, i]` in C order), and the group `Steps` holds
-  the times and, for each step, where it starts in the datasets (`PartOffsets`, `PointOffsets`, ...). The file is
-  valid after every piece; `action='append'` continues it. See [One VTKHDF file instead of a
-  collection](/guide/parallel#one-vtkhdf-file-instead-of-a-collection), whose diagram shows the layout.
+  the times and, for each step, where it starts in the datasets (`PartOffsets`, `PointOffsets`, ...,
+  `PointDataOffsets/<name>` and `CellDataOffsets/<name>` for every array, in tuples, in time slices for a grid). What a
+  step does not write (the mesh, in a step without pieces; the geometry of a grid; an array) is stored once, the step
+  repeating the offsets of the step before. The file is valid after every piece; `action='append'` continues it. See
+  [One VTKHDF file instead of a collection](/guide/parallel#one-vtkhdf-file-instead-of-a-collection), whose diagram
+  shows the layout.
 - **From MPI ranks** (`initialize(..., comm=)`, the library built with `VTKFORTRAN_USE_MPI` and a parallel HDF5): the
   ranks of the communicator write one UnstructuredGrid or PolyData file, the piece of each rank a partition, in rank
   order. The file is the one the pieces would make written by one process, but for the kind of the ids: a dataset gets
