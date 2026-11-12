@@ -135,7 +135,8 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   `PointDataOffsets`/`CellDataOffsets` written for every array, time slices for grids, as VTK 9.7.2 reads them); a
   step with pieces writes every point/cell array; no `StaticMesh` (no reader reads it). `reopen`
   (`vtk_file%initialize(..., action='append')`, reached by `select type`) reads the state back (the reuse state too) and
-  trims every dataset to the last complete piece. vtkHDFReader 9.7.2 misreads a PolyData block first appearing at a later step, and a series
+  trims every dataset to the last complete piece (`reopen_file`; a refusal closes the file and resets the writer, so the
+  caller's `finalize` writes nothing: it used to rewrite `Version` as 2.0). vtkHDFReader 9.7.2 misreads a PolyData block first appearing at a later step, and a series
   of one part at step 1 (its own files too): the tests avoid both. MPI (`set_comm`, called by
   `vtk_file%initialize(..., comm=)` through `select type` before `initialize`, forgotten by `finalize`): every
   `store_<kind>` collective, totals summed over the ranks, one piece per rank; grids by regions (`write_piece` with the

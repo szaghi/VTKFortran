@@ -127,7 +127,8 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
   the times and, for each step, where it starts in the datasets (`PartOffsets`, `PointOffsets`, ...,
   `PointDataOffsets/<name>` and `CellDataOffsets/<name>` for every array, in tuples, in time slices for a grid). What a
   step does not write (the mesh, in a step without pieces; the geometry of a grid; an array) is stored once, the step
-  repeating the offsets of the step before. The file is valid after every piece; `action='append'` continues it. See
+  repeating the offsets of the step before. The file is valid after every piece; `action='append'` continues it (a
+  refused one, e.g. of a file that is not a time series, leaves the file as it was). See
   [One VTKHDF file instead of a collection](/guide/parallel#one-vtkhdf-file-instead-of-a-collection), whose diagram
   shows the layout.
 - **From MPI ranks** (`initialize(..., comm=)`, the library built with `VTKFORTRAN_USE_MPI` and a parallel HDF5): the

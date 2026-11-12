@@ -22,7 +22,8 @@ program vtk_fortran_write_vtkhdf_append
 !<- `vtkfortran_restart_empty.vtkhdf`: a series whose step 2 has an empty piece (no points), continued after it: the
 !<  restart keeps the data of step 1 (the arrays trimmed to the end of the steps, not to the last one).
 !<
-!< Refusals are checked too. Without HDF5 the writer refuses to start.
+!< Refusals are checked too, and that a refused file is left as it was (a static RectilinearGrid, Version 2.7, refused:
+!< its finalize writes nothing, its Version is kept). Without HDF5 the writer refuses to start.
 use penf
 use vtk_fortran, only : vtk_file
 use vtk_fortran_hdf5
@@ -458,7 +459,9 @@ contains
   logical function refusals()
   !< The refusals of `action='append'`, each one a non-zero error.
   integer(I4P) :: error
-  logical      :: ok(4)
+  logical      :: ok(5)
+  integer(hid_kind)         :: file_id, root !< A file read back.
+  integer(I8P), allocatable :: version(:)    !< Its Version.
 
   ok = .false.
   ! a file that is not a time series; an XML format; a missing file
@@ -472,7 +475,24 @@ contains
   error = a_vtk_file%initialize(format='vtkhdf', filename='vtkfortran_steps_restartunst.vtkhdf', action='append')
   ok(4) = a_vtk_file%xml_writer%write_step(time=times(3)) /= 0
   error = a_vtk_file%finalize()
+  ! a refused file left as it was: a static RectilinearGrid (Version 2.7), its finalize after the refusal writes nothing
+  error = a_vtk_file%initialize(format='vtkhdf', filename='refused_rect.vtkhdf', mesh_topology='RectilinearGrid', &
+                                nx1=0, nx2=1, ny1=0, ny2=1, nz1=0, nz2=0)
+  error = a_vtk_file%xml_writer%write_piece(nx1=0, nx2=1, ny1=0, ny2=1, nz1=0, nz2=0)
+  error = a_vtk_file%xml_writer%write_geo(x=[0._R8P, 1._R8P], y=[0._R8P, 1._R8P], z=[0._R8P])
+  error = a_vtk_file%xml_writer%write_piece()
+  error = a_vtk_file%finalize()
+  ok(5) = a_vtk_file%initialize(format='vtkhdf', filename='refused_rect.vtkhdf', action='append') /= 0
+  error = a_vtk_file%finalize()
+  ok(5) = ok(5) .and. error /= 0 ! nothing to finalize
+  error = h5_file_open('refused_rect.vtkhdf', file_id)
+  if (error == 0) error = h5_group_open(file_id, 'VTKHDF', root)
+  if (error == 0) error = h5_attribute_read(root, 'Version', version)
+  ok(5) = ok(5) .and. error == 0
+  if (ok(5)) ok(5) = all(version == [2_I8P, 7_I8P])
+  if (error == 0) error = h5_group_close(root)
+  error = h5_file_close(file_id)
   refusals = all(ok)
-  if (.not.refusals) print '(A,4L2)', 'refusals: ', ok
+  if (.not.refusals) print '(A,5L2)', 'refusals: ', ok
   endfunction refusals
 endprogram vtk_fortran_write_vtkhdf_append

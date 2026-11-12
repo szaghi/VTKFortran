@@ -54,7 +54,8 @@ module vtk_fortran_vtk_file_vtkhdf_writer
 !< nothing. A refusal by one rank of its own values (their size, say) is agreed by all the ranks (`agree`) before the
 !< collective calls: every rank returns the error, none is left waiting.
 !<
-!< `reopen` (`vtk_file%initialize(..., action='append')`) continues a time series written before (a restart): the state is
+!< `reopen` (`vtk_file%initialize(..., action='append')`; a refused one leaves the file as it was) continues a time series
+!< written before (a restart): the state is
 !< read from the file, and every dataset is trimmed to the pieces recorded by the last complete piece (a run interrupted
 !< in a piece leaves the data of that piece, dropped).
 !<
@@ -268,6 +269,7 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
     procedure, pass(self) :: write_geo_strg_data3_rank3_R4P
     ! private helpers
     procedure, pass(self)          :: reopen        !< Reopen a time series to append steps (`action='append'`).
+    procedure, pass(self), private :: reopen_file   !< Read the state of a time series reopened, trim its datasets.
     procedure, pass(self)          :: set_comm      !< Write the file from the ranks of an MPI communicator.
     procedure, pass(self), private :: check_arrays  !< Check the tuples written in the open step by each array.
     procedure, pass(self), private :: check_cells   !< Check a write_connectivity call of an UnstructuredGrid piece.
@@ -4410,7 +4412,26 @@ contains
   endsubroutine set_comm
 
   function reopen(self, filename) result(error)
-  !< Reopen a VTKHDF time series to append steps (`vtk_file%initialize(format='vtkhdf', filename=..., action='append')`):
+  !< Reopen a VTKHDF time series to append steps (`vtk_file%initialize(format='vtkhdf', filename=..., action='append')`),
+  !< `reopen_file`; when it is refused, the file is closed as it is and the writer reset: a `finalize` after a refused
+  !< reopen writes nothing (it returns an error).
+  class(vtkhdf_writer), intent(inout) :: self     !< Writer.
+  character(*),         intent(in)    :: filename !< File name.
+  integer(I4P)                        :: error    !< Error status.
+  integer(I4P)                        :: e        !< Error of a closing.
+
+  error = self%reopen_file(filename)
+  if (error == 0_I4P) return
+  if (self%group >= 0_hid_kind) e = h5_group_close(self%group)
+  if (self%root >= 0_hid_kind) e = h5_group_close(self%root)
+  if (self%file_id >= 0_hid_kind) e = h5_file_close(self%file_id)
+  self%file_id = -1_hid_kind ; self%root = -1_hid_kind ; self%group = -1_hid_kind ; self%level_group = -1_hid_kind
+  call self%reset
+  self%is_parallel = .false.
+  endfunction reopen
+
+  function reopen_file(self, filename) result(error)
+  !< Read the state of a VTKHDF time series reopened to append steps:
   !< its topology, extent, steps, the totals of its pieces and its arrays are read from the file, and its datasets trimmed to
   !< the pieces recorded by the last complete piece (the `Steps` entries): what an interrupted run left after it is dropped.
   !< The next `write_step` needs a time after the last one of the file.
@@ -4781,7 +4802,7 @@ contains
       first = last + 1_I8P
     enddo
     endfunction trimmed_steps
-  endfunction reopen
+  endfunction reopen_file
 
   elemental subroutine reset(self)
   !< Reset the state of the writer, but the HDF5 identifiers.
