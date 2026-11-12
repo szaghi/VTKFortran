@@ -47,6 +47,7 @@ type :: vtkhdf_reader
   integer(I4P)                  :: whole_extent(6)=0_I4P  !< Whole extent of a grid.
   integer(I4P)                  :: n_levels=0_I4P         !< Levels of an OverlappingAMR.
   integer(I4P)                  :: level=0_I4P            !< Level read (from 0).
+  integer(I8P)                  :: version(2)=[2_I8P, 0_I8P] !< Version of the file (of the composite if the dataset has none).
   contains
     ! public methods
     procedure, pass(self) :: close                !< Close the file and reset the reader.
@@ -70,6 +71,7 @@ type :: vtkhdf_reader
     procedure, pass(self) :: set_step             !< Select the step read.
     ! private methods
     procedure, pass(self), private :: amr_box      !< A box of the level and step read of an OverlappingAMR.
+    procedure, pass(self), private :: is_v23       !< The file is VTKHDF 2.3 or later (OverlappingAMR Steps names).
     procedure, pass(self), private :: grid_points  !< Points of the grid along each axis.
     procedure, pass(self), private :: prefix       !< Group of the point and cell data of the level read (AMR).
     procedure, pass(self), private :: is_grid      !< The dataset is a grid (one piece).
@@ -114,6 +116,18 @@ contains
     return
   endif
   if (h5_attribute_read(self%root, 'Type', text) /= 0_I4P) return
+  ! the Version (of the composite file for a dataset without one): VTK chooses the Steps names of an OverlappingAMR by it
+  self%version = [2_I8P, 0_I8P]
+  if (h5_attribute_read(self%root, 'Version', ivalues) == 0_I4P) then
+    if (size(ivalues) == 2) self%version = ivalues
+  elseif (present(dataset)) then
+    if (h5_group_open(self%file_id, 'VTKHDF', steps) == 0_I4P) then
+      if (h5_attribute_read(steps, 'Version', ivalues) == 0_I4P) then
+        if (size(ivalues) == 2) self%version = ivalues
+      endif
+      if (h5_group_close(steps) /= 0_I4P) return
+    endif
+  endif
   error = 3
   select case(text)
   case('ImageData', 'RectilinearGrid', 'StructuredGrid', 'UnstructuredGrid', 'PolyData', 'Table', 'OverlappingAMR', &
@@ -179,6 +193,7 @@ contains
   self%whole_extent = 0_I4P
   self%n_levels = 0
   self%level = 0
+  self%version = [2_I8P, 0_I8P]
   endsubroutine forget
 
   function get_info(self, mesh_topology, npieces, header_type, compressor, nx1, nx2, ny1, ny2, nz1, nz2, &
@@ -222,7 +237,7 @@ contains
     elseif (self%mesh_topology == 'OverlappingAMR') then ! the boxes of the level read
       error = self%amr_box(1, ext, starts, n_boxes) ! n_boxes even when the level has no box in the step
       npieces = int(n_boxes, I4P)
-      error = 0
+      if (error == 4) error = 0 ! no box in the step; Steps entries missing or inconsistent stay an error
     elseif (.not.self%is_grid()) then
       error = self%part(1, g, first, n_parts) ! n_parts even when the step has no part
       npieces = int(n_parts, I4P)
@@ -858,12 +873,21 @@ contains
   if (h5_dataset_read(self%root, level//'/AMRBox', boxes) /= 0_I4P) return
   if (mod(size(boxes, kind=I8P), 6_I8P) /= 0_I8P) return
   first = 0_I8P
-  n_boxes = size(boxes, kind=I8P) / 6_I8P
-  if (self%n_steps > 0_I8P) then
-    first = self%step_value(level//'/AMRBoxOffset', 1_I4P, error) ; if (error /= 0) return
-    n_boxes = self%step_value(level//'/NumberOfAMRBox', 1_I4P, error) ; if (error /= 0) return
+  if (self%n_steps > 0_I8P) then ! the names of VTKHDF 2.3 (plural), singular before, as VTK reads them
+    first = self%step_value(level//'/AMRBoxOffset'//trim(merge('s', ' ', self%is_v23())), 1_I4P, error)
+    if (error /= 0) return
+    n_boxes = self%step_value(level//'/NumberOfAMRBox'//trim(merge('es', '  ', self%is_v23())), 1_I4P, error)
+    if (error /= 0) then
+      n_boxes = 0_I8P
+      return
+    endif
     error = 6
-    if (first < 0_I8P .or. n_boxes < 0_I8P .or. 6_I8P * (first + n_boxes) > size(boxes, kind=I8P)) return
+    if (first < 0_I8P .or. n_boxes < 0_I8P .or. 6_I8P * (first + n_boxes) > size(boxes, kind=I8P)) then
+      n_boxes = 0_I8P
+      return
+    endif
+  else
+    n_boxes = size(boxes, kind=I8P) / 6_I8P
   endif
   p = 1_I8P
   if (present(piece)) p = int(piece, I8P)
@@ -893,6 +917,15 @@ contains
   if (self%mesh_topology == 'OverlappingAMR' .and. (group == 'PointData' .or. group == 'CellData')) &
     path = 'Level'//trim(str(n=self%level, no_sign=.true.))//'/'
   endfunction prefix
+
+  elemental function is_v23(self) result(is_v23_)
+  !< Return true if the file is VTKHDF 2.3 or later: the OverlappingAMR Steps names are plural (`AMRBoxOffsets`,
+  !< `NumberOfAMRBoxes`, `PointDataOffsets`, `CellDataOffsets`), singular before, as VTK 9.7.2 reads them.
+  class(vtkhdf_reader), intent(in) :: self    !< Reader.
+  logical                          :: is_v23_ !< Check result.
+
+  is_v23_ = self%version(1) > 2_I8P .or. (self%version(1) == 2_I8P .and. self%version(2) >= 3_I8P)
+  endfunction is_v23
 
   elemental function is_grid(self) result(is_grid_)
   !< Return true if the dataset is a grid (ImageData, RectilinearGrid, StructuredGrid: one piece).
@@ -1053,7 +1086,7 @@ contains
     if (self%n_steps > 0_I8P) then ! where the arrays of the step start
       b = first
       first = self%step_value(self%prefix(group)//trim(merge('PointDataOffset', 'CellDataOffset ', group == 'PointData'))// &
-                              '/'//trim(data_name), 1_I4P, error)
+                              trim(merge('s', ' ', self%is_v23()))//'/'//trim(data_name), 1_I4P, error)
       if (error /= 0) return
       first = first + b
     endif

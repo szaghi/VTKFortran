@@ -13,7 +13,10 @@ module vtk_fortran_vtm_file
 !< exactly), as the VTKHDF specification requires. ParaView 6.1.1 plays every step of every block; VTK 9.7.2 reads every
 !< step with `vtkHDFReader%SetStep`, but its pipeline time (`UpdateTimeStep`) leaves a multi-block file at the first step.
 !< Refused: a time-series ImageData, RectilinearGrid or StructuredGrid block (VTK 9.7.2 reads it without any array), a
-!< static block in a time series or the reverse (VTK fails on the mix, VTK issue 19963), a series with other steps.
+!< static block in a time series or the reverse (VTK fails on the mix, VTK issue 19963), a series with other steps; a
+!< composite source (a MultiBlockDataSet or a PartitionedDataSetCollection: the blocks of a composite are not composite,
+!< VTKHDF specification; its absolute Assembly links would point at this file's blocks, and VTK 9.7.2 crashes on it) and
+!< an OverlappingAMR (a composite in VTK: VTK 9.7.2 reads the multi-block without that block).
 !< A refused file leaves the block that `write_block` opened for it open (as a missing file does).
 !< The names of the blocks and of the datasets (`names`, or the file names without directory and extension) cannot be
 !< empty nor contain `/` or `.` (VTKHDF names): such a name is refused, never renamed.
@@ -797,7 +800,12 @@ contains
       if (size(times) /= n_steps) reason = 'has unreadable steps'
    endif
    if (len(reason) == 0) then
-      if (n_steps > 0_I8P .and. topology /= 'UnstructuredGrid' .and. topology /= 'PolyData') then
+      if (topology == 'MultiBlockDataSet' .or. topology == 'PartitionedDataSetCollection') then
+         reason = 'is a '//topology//': the blocks of a composite cannot be composite (VTKHDF specification); its '// &
+                  'own Assembly would point at the blocks of this file'
+      elseif (topology == 'OverlappingAMR') then
+         reason = 'is an OverlappingAMR, a composite in VTK: VTK 9.7.2 reads a multi-block with such a block without it'
+      elseif (n_steps > 0_I8P .and. topology /= 'UnstructuredGrid' .and. topology /= 'PolyData') then
          reason = 'is a time series of a '//topology//': VTK 9.7.2 reads the time-series grid blocks of a multi-block '// &
                   'file without their arrays (UnstructuredGrid and PolyData series are accepted)'
       elseif (self%n_steps == 0_I8P .and. n_steps > 0_I8P) then

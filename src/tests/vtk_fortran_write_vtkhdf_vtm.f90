@@ -20,7 +20,8 @@ program vtk_fortran_write_vtkhdf_vtm
 !< Refusals are checked too: a time-series ImageData block, a static block after a series block and the reverse, a
 !< series with another number of steps or other times, block and dataset names with '/' or '.'; in a collection a
 !< dataset name used twice or `Assembly`, a reference to a dataset not copied; references in a multi-block file or an XML
-!< `.vtm`, an unknown composite, a collection in XML. The four composite files are read back with `vtm_file`
+!< `.vtm`, an unknown composite, a collection in XML; a composite (multi-block, collection) or an OverlappingAMR as the
+!< source of a block, in a multi-block file and in a collection. The four composite files are read back with `vtm_file`
 !< (`action='read'`: the entries of the Assembly, the dataset of each) and every dataset with `vtk_file%initialize(...,
 !< action='read', dataset=)`, compared with its source file step by step; the refusals of `dataset`. Without HDF5 the
 !< VTKHDF format of `vtm_file` is refused.
@@ -152,6 +153,7 @@ else
                               [character(14) :: 'series_tetra', 'series_tetra_2', 'series_skin'], &
                               [character(32) :: 'Assembly/surface/series_skin', 'Assembly/checked/series_skin', &
                                'Assembly/checked/series_tetra'])
+  if (.not.composite_sources()) test_passed(2) = .false. ! (a call in an expression can be skipped)
   ! read back with the reader: the entries of the Assembly, each dataset compared with its file
   test_passed(9) = read_composite('vtkfortran_vtm_nested.vtkhdf', [1, 2, 2, 2, 3, 3, 1, 2], 'bddbddbd', &
                      [character(8) :: 'assembly', 'part_1', 'part_2', 'bolts', 'bolt-1', 'bolt-2', 'domain', 'fluid'], &
@@ -437,6 +439,37 @@ contains
   enddo
   error = max(error, abs(a_vtk_file%finalize()))
   endfunction image
+
+  logical function composite_sources()
+  !< A composite (MultiBlockDataSet, PartitionedDataSetCollection) or an OverlappingAMR as the source of a block is
+  !< refused (the blocks of a composite are not composite, VTKHDF specification), in a multi-block file and in a collection;
+  !< a dataset after them is still copied.
+  type(vtk_file) :: amr
+  integer(I4P)   :: error
+  logical        :: ok(9)
+
+  ok = .false.
+  error = amr%initialize(format='vtkhdf', filename='amr_block.vtkhdf', mesh_topology='OverlappingAMR')
+  error = error + amr%xml_writer%write_level(0, [1._R8P, 1._R8P, 1._R8P])
+  error = error + amr%xml_writer%write_piece(nx1=0, nx2=2, ny1=0, ny2=2, nz1=0, nz2=2)
+  error = error + amr%xml_writer%write_piece()
+  ok(1) = error == 0 .and. amr%finalize() == 0
+  error = a_vtm_file%initialize(filename='refused_vtm_composite.vtkhdf', format='vtkhdf')
+  ok(2) = a_vtm_file%write_block(filenames='vtkfortran_vtm_nested.vtkhdf', name='a') /= 0 ! a multi-block file
+  ok(3) = a_vtm_file%write_block(filenames='vtkfortran_pdc_nested.vtkhdf', name='b') /= 0 ! a collection
+  ok(4) = a_vtm_file%write_block(filenames='amr_block.vtkhdf', name='c') /= 0             ! an OverlappingAMR
+  ok(5) = a_vtm_file%write_block(filenames='part_1.vtkhdf', name='d') == 0                ! a dataset
+  error = a_vtm_file%finalize() ! not 0: each refused file left its new block open
+  error = a_vtm_file%initialize(filename='refused_pdc_composite.vtkhdf', format='vtkhdf', &
+                                composite='PartitionedDataSetCollection')
+  ok(6) = a_vtm_file%write_block(filenames='vtkfortran_vtm_nested.vtkhdf', name='a') /= 0 ! a multi-block file
+  ok(7) = a_vtm_file%write_block(filenames='vtkfortran_pdc_nested.vtkhdf', name='b') /= 0 ! a collection
+  ok(8) = a_vtm_file%write_block(filenames='amr_block.vtkhdf', name='c') /= 0             ! an OverlappingAMR
+  ok(9) = a_vtm_file%write_block(filenames='part_1.vtkhdf', name='d') == 0                ! a dataset
+  error = a_vtm_file%finalize()
+  composite_sources = all(ok)
+  if (.not.composite_sources) print '(A,9L2)', 'composite sources refused: ', ok
+  endfunction composite_sources
 
   logical function refusals()
   !< The refusals of the VTKHDF format of vtm_file, each one a non-zero error.

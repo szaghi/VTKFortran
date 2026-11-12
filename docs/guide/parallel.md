@@ -128,7 +128,9 @@ the same `write_block` calls: each dataset, a `.vtkhdf` file written by `vtk_fil
 `Block_<n>` of `/VTKHDF`), and the tree of the blocks is the group `Assembly`, whose groups are the blocks and whose soft
 links, named after the datasets (`names`, or the file names without directory and extension), point to the copies; the
 names of a block must differ. The copied files can be deleted afterwards. `scratch` units are refused (the blocks are
-written in order). `src/tests/vtk_fortran_write_vtkhdf_vtm.f90` writes the nested assembly above in VTKHDF.
+written in order). A block is a single dataset: a composite file (a multi-block file or a collection) or an
+OverlappingAMR is refused as its source (the blocks of a composite are not composite, VTKHDF specification; VTK 9.7.2
+crashes on a composite copied in, and reads the multi-block without an OverlappingAMR block). `src/tests/vtk_fortran_write_vtkhdf_vtm.f90` writes the nested assembly above in VTKHDF.
 
 **A PartitionedDataSetCollection.** With `initialize(..., format='vtkhdf', composite='PartitionedDataSetCollection')`
 the file is VTK's other composite (`vtkPartitionedDataSetCollection`, VTKHDF 2.1), written by the same `write_block`

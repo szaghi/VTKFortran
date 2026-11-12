@@ -79,6 +79,7 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
 - `vtk_fortran_vtm_file` — `vtm_file` type: multi-block composite datasets (`.vtm`); with `initialize(...,
   format='vtkhdf')` one VTKHDF
   `MultiBlockDataSet`: the `.vtkhdf` datasets copied in (`H5Ocopy`, `Block_<n>`), the tree as `Assembly` soft links;
+  a composite or OverlappingAMR source refused (blocks are not composite: its Assembly would point at this file's blocks);
   all static or all time series (the first block decides), series blocks UnstructuredGrid or PolyData with the same
   `NSteps` and times (grid series refused: VTK 9.7.2 reads them without arrays), checked on the file before the copy.
   ParaView 6.1.1 plays every step; VTK 9.7.2 reads each with `SetStep`, its pipeline time stays at step 1 on a
@@ -129,7 +130,8 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   refuse) opens `Level<n>` (`open_level`, `level_group`; `open_group` puts PointData/CellData in it), each box a
   `write_piece(nx1..nz2)` (`start_box`: `AMRBox` row = cells, inside the level-0 bounds `domain`, >= 1 cell per axis)
   closed by `write_piece()` (`end_box`: every recorded array holds the level's tuples, `level_counts`); series:
-  `Steps/Level<n>/AMRBoxOffset`, `NumberOfAMRBox`, `PointDataOffset/`, `CellDataOffset/` (VTK 9.7.2's singular names);
+  `Steps/Level<n>/AMRBoxOffsets`, `NumberOfAMRBoxes`, `PointDataOffsets/`, `CellDataOffsets/` (VTKHDF 2.3 names, Version
+  >= 2.3: VTK 9.7.2 picks the names by Version, singular below 2.3; the reader likewise, `is_v23`);
   no field data, comm, reopen; VTK 9.7.2 reads it (pipeline time too), ParaView 6.1.1 not (vtkGroupDataSetsFilter).
   HyperTreeGrid (`TOPOLOGY_HTG`, Version 2.4): `branch_factor` (vtk_writer_abstract state, set by vtk_file),
   one piece + `write_geo(x, y, z)` (rect coordinates path), `write_tree(tree_id, descriptor, mask)` (new deferred
@@ -272,14 +274,16 @@ masked leaf, a root cell without tree; branch factor 3; a 2-step series), checke
 mask unpacked, the Steps entries; append refused), 16 refusals, the three files read back with the reader (every
 tree and mask as written, cell data, coordinates, the series step by step, a missing tree);
 `vtk_fortran_write_vtkhdf_amr.f90`: OverlappingAMRs (two levels, three boxes, point/cell data and a vector; a
-2-step series with level 1 going from two boxes to one), read back with the bindings and the reader (`set_level`), 15
+2-step series with level 1 going from two boxes to one, Version 2.3 with the plural Steps names; the same with an active
+array, Version 2.6; rebuilt with the bindings as VTKHDF 2.2 with the singular names, read back), read back with the
+bindings and the reader (`set_level`), 15
 refusals (levels, boxes outside or flat or out of order, array sizes, missing/new arrays, field data, steps, append);
 `vtk_fortran_write_vtkhdf_append.f90`: series continued with `action='append'` (restart, interrupted run), reuse across
 the restart, an orphan offset entry, a restart after a step with an empty piece;
 `vtk_fortran_write_vtkhdf_vtm.f90`: VTKHDF multi-block files (`vtm_file`, `format='vtkhdf'`): the nested assembly, a
 time series of two UnstructuredGrid series (one of two parts) and a PolyData series, both also as
 PartitionedDataSetCollections with a block of references, the refusals (grid series, static and series mixed, other
-steps or times; collection names, references, composites); the four files read back (`vtm_file` read: the entries;
+steps or times; collection names, references, composites; a composite or an OverlappingAMR as a block source); the four files read back (`vtm_file` read: the entries;
 every dataset with `dataset=` compared with its source step by step, integer arrays as I8P), the refusals of `dataset`,
 the same `vtm_file` reading a composite after a refused read;
 `vtk_fortran_read_vtkhdf.f90`: VTKHDF files read back (every topology, time series, two polyhedra sharing a face

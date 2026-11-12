@@ -76,9 +76,10 @@ module vtk_fortran_vtk_file_vtkhdf_writer
 !< (`[n]` or `[n, components]`, x fastest), `write_piece()`. The layout, as VTK 9.7.2 reads it: `Origin`, `GridDescription`
 !< `XYZ`, the groups `Level<n>` with `Spacing`, `AMRBox` (one row per box: the cells `nx1, nx2-1, ny1, ny2-1, nz1, nz2-1`)
 !< and the data of the boxes appended in `PointData`, `CellData`; every box of every level writes the same arrays. In a
-!< time series every step writes its levels and boxes again (`Steps/Level<n>/AMRBoxOffset`, `NumberOfAMRBox`,
-!< `PointDataOffset/<name>`, `CellDataOffset/<name>`: the names VTK 9.7.2 reads, singular, not those of the specification
-!< page), the file valid after each box. Refused: field data, `comm`, a step without boxes, the XML formats.
+!< time series every step writes its levels and boxes again (`Steps/Level<n>/AMRBoxOffsets`, `NumberOfAMRBoxes`,
+!< `PointDataOffsets/<name>`, `CellDataOffsets/<name>`: the names of the specification since VTKHDF 2.3, so `Version`
+!< is at least 2.3: VTK 9.7.2 reads the singular names of 2.2 only below 2.3), the file valid after each box. Refused:
+!< field data, `comm`, a step without boxes, the XML formats.
 !<
 !< HyperTreeGrid (`mesh_topology='HyperTreeGrid'`, `nx1`...`nz2` the points of its root grid, `branch_factor` of
 !< `vtk_file%initialize` 2 or 3): one piece, `write_piece(nx1, ..., nz2)`, its root coordinates `write_geo(x, y, z)` (as a
@@ -97,8 +98,8 @@ module vtk_fortran_vtk_file_vtkhdf_writer
 !< Refused: point data, field data, a step without its piece, `comm`, `action='append'`, the XML formats.
 !<
 !< `Version` is written by `finalize` (and after every piece of a time series): 2.0, 2.5 with polyhedra, 2.6 when an
-!< active array is marked, 2.7 for a RectilinearGrid or a StructuredGrid, 2.8 for a Table, 2.2 for an OverlappingAMR time
-!< series, 2.4 for a HyperTreeGrid.
+!< active array is marked, 2.7 for a RectilinearGrid or a StructuredGrid, 2.8 for a Table, 2.3 for an OverlappingAMR time
+!< series, 2.4 for a HyperTreeGrid (the highest of the features written).
 use penf
 use vtk_fortran_hdf5
 use vtk_fortran_parameters, only : stderr
@@ -682,7 +683,8 @@ contains
         self%has_mask = .false. ; self%is_tree_data = .false.
       endif
       if (self%topology == TOPOLOGY_AMR) then ! the levels are started again; the counts at the start of the step
-        self%version_minor = max(self%version_minor, 2_I8P)
+        ! 2.3: the Steps names of the specification (plural); VTK reads them by Version, singular before 2.3
+        self%version_minor = max(self%version_minor, 3_I8P)
         if (allocated(self%level_counts)) self%level_counts(4:6, :) = self%level_counts(1:3, :)
         self%has_domain = .false.
         if (self%level_group >= 0_hid_kind) error = h5_group_close(self%level_group)
@@ -5472,23 +5474,23 @@ contains
       if (error == 0_I4P .and. .not.h5_link_exists(self%root, 'Steps/'//name)) then
         error = h5_group_create(self%root, 'Steps/'//name, steps, track_order=.true.)
         if (error == 0_I4P) error = h5_group_close(steps)
-        if (error == 0_I4P) error = h5_group_create(self%root, 'Steps/'//name//'/PointDataOffset', steps, track_order=.true.)
+        if (error == 0_I4P) error = h5_group_create(self%root, 'Steps/'//name//'/PointDataOffsets', steps, track_order=.true.)
         if (error == 0_I4P) error = h5_group_close(steps)
-        if (error == 0_I4P) error = h5_group_create(self%root, 'Steps/'//name//'/CellDataOffset', steps, track_order=.true.)
+        if (error == 0_I4P) error = h5_group_create(self%root, 'Steps/'//name//'/CellDataOffsets', steps, track_order=.true.)
         if (error == 0_I4P) error = h5_group_close(steps)
       endif
-      if (error == 0_I4P) error = self%step_entry(name//'/AMRBoxOffset', [self%level_counts(4, lv)])
-      if (error == 0_I4P) error = self%step_entry(name//'/NumberOfAMRBox', [self%level_counts(1, lv) - self%level_counts(4, lv)])
+      if (error == 0_I4P) error = self%step_entry(name//'/AMRBoxOffsets', [self%level_counts(4, lv)])
+      if (error == 0_I4P) error = self%step_entry(name//'/NumberOfAMRBoxes', [self%level_counts(1, lv) - self%level_counts(4, lv)])
       first = 1_I8P
       do while (first <= len(self%point_arrays, kind=I8P) .and. error == 0_I4P)
         last = first - 1_I8P + index(self%point_arrays(first:), NAMES_SEPARATOR, kind=I8P)
-        error = self%step_entry(name//'/PointDataOffset/'//self%point_arrays(first:last-1), [self%level_counts(5, lv)])
+        error = self%step_entry(name//'/PointDataOffsets/'//self%point_arrays(first:last-1), [self%level_counts(5, lv)])
         first = last + 1_I8P
       enddo
       first = 1_I8P
       do while (first <= len(self%cell_arrays, kind=I8P) .and. error == 0_I4P)
         last = first - 1_I8P + index(self%cell_arrays(first:), NAMES_SEPARATOR, kind=I8P)
-        error = self%step_entry(name//'/CellDataOffset/'//self%cell_arrays(first:last-1), [self%level_counts(6, lv)])
+        error = self%step_entry(name//'/CellDataOffsets/'//self%cell_arrays(first:last-1), [self%level_counts(6, lv)])
         first = last + 1_I8P
       enddo
     enddo
