@@ -1,3 +1,13 @@
 $ vtkhdf_htg
 quadtree.vtkhdf: 8 trees, 184 cells
   cells of each depth: 8 16 48 112
+read back: 8 trees, branch factor 2
+  tree 0: 0 descriptor bits, 0 refined
+  tree 1: 17 descriptor bits, 11 refined
+  tree 2: 17 descriptor bits, 11 refined
+  tree 3: 0 descriptor bits, 0 refined
+  tree 4: 0 descriptor bits, 0 refined
+  tree 5: 17 descriptor bits, 11 refined
+  tree 6: 17 descriptor bits, 11 refined
+  tree 7: 0 descriptor bits, 0 refined
+  the cell data as written: T

@@ -5,14 +5,19 @@ program vtkhdf_htg
 !< A tree-based AMR in one VTKHDF file (a HyperTreeGrid): a root grid of 4x2 cells, each the root of a quadtree (branch
 !< factor 2 in 2D: 4 children per refined cell), refined down to depth 4 around a circle. Each tree is given breadth
 !< first: the refinement of its cells, depth by depth (the deepest depth left out, its cells all leaves), the children of a
-!< cell x fastest. The depth of each cell is its cell data. The program prints the trees written.
-use penf, only : I4P, R8P
+!< cell x fastest. The depth of each cell is its cell data. The file is read back with the reader of the library: its
+!< trees (`get_trees`, `read_tree`) and the cell data.
+use penf, only : I4P, I8P, R8P
 use vtk_fortran, only : vtk_file
 implicit none
 integer(I4P), parameter :: nx=4, ny=2, max_depth=4    ! root cells, depths of a tree (0 to max_depth-1)
-type(vtk_file)          :: a_vtk_file
+type(vtk_file)          :: a_vtk_file, reader
 integer(I4P)            :: i, j, error
 integer(I4P), allocatable :: depths(:)                 ! the cell data: depth of each cell, tree after tree
+integer(I8P), allocatable :: ids(:)                    ! the trees read back
+logical, allocatable    :: descriptor(:)               ! the refinement of a tree read back
+integer(I4P), allocatable :: depths_read(:)            ! the cell data read back
+integer(I4P)            :: bf, t                       ! branch factor, counter
 
 !region write
 error = a_vtk_file%initialize(format='vtkhdf', filename='quadtree.vtkhdf', mesh_topology='HyperTreeGrid', &
@@ -32,6 +37,20 @@ error = a_vtk_file%finalize()
 if (error /= 0) error stop 'write error'
 print '(A,I0,A,I0,A)', 'quadtree.vtkhdf: ', nx * ny, ' trees, ', size(depths), ' cells'
 print '(A,4(1X,I0))', '  cells of each depth:', (count(depths == i), i=0, max_depth - 1)
+
+!region read
+error = reader%initialize(filename='quadtree.vtkhdf', action='read')
+error = reader%xml_reader%get_trees(tree_ids=ids, branch_factor=bf)
+print '(A,I0,A,I0)', 'read back: ', size(ids), ' trees, branch factor ', bf
+do t=1, size(ids) ! each tree as write_tree took it
+  error = reader%xml_reader%read_tree(tree_id=ids(t), descriptor=descriptor)
+  print '(A,I0,A,I0,A,I0,A)', '  tree ', ids(t), ': ', size(descriptor), ' descriptor bits, ', count(descriptor), ' refined'
+enddo
+error = reader%xml_reader%read_dataarray(location='cell', data_name='depth', x=depths_read)
+print '(A,L1)', '  the cell data as written: ', all(depths_read == depths)
+error = reader%finalize()
+!endregion read
+if (error /= 0) error stop 'read error'
 contains
   function tree(x0, y0) result(descriptor)
   !< The refinement of the tree of the root cell at (x0, y0), breadth first: a cell is refined when the circle of centre

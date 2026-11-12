@@ -90,7 +90,19 @@ the polyhedra as the face stream of `write_connectivity`; `get_info` returns `he
   the `origin`; `read_piece(piece, nx1, ..., nz2, np, nc)` the point extent and counts of a box; `read_dataarray(...,
   piece)` its arrays (of the step read in a time series). A complete program:
   [A block-structured AMR](/manual/cookbook#a-block-structured-amr).
-- **HyperTreeGrid**: not read (error 3, unsupported).
+- **HyperTreeGrid**: one piece, its root grid: `get_info` its extent (the points of the root grid), `read_geo` its
+  coordinates (as a RectilinearGrid); `get_trees(tree_ids, branch_factor)` the ids of its trees (their root cells,
+  i + (nx-1)(j + (ny-1)k) from 0) in the order of the file and its branch factor; `read_tree(tree_id, descriptor, mask)`
+  a tree as `write_tree` takes it (the refinement of its cells breadth first, every depth but the deepest; `mask` one
+  value per cell, all false when the file has none), error 4 for a root cell without tree; `read_dataarray(location=
+  'cell')` the cells of all the trees, in their order, breadth first in each (no point data). In a time series, those
+  of the step read. A complete program: [A tree-based AMR](/manual/cookbook#a-tree-based-amr).
+- **A dataset of a composite file** (a VTKHDF `MultiBlockDataSet` or `PartitionedDataSetCollection`):
+  `initialize(filename, action='read', dataset=path)`, `path` the group of the dataset under `/VTKHDF` (`Block_3`, or
+  its name in a collection), as `vtm_file%get_entries` gives it in `file` (see
+  [Multi-block and time series files](#multi-block-and-time-series-files)); the dataset is then read as a `.vtkhdf` of
+  its own, time series included. Without `dataset` a composite is error 3, a missing dataset error 4; `dataset` with an
+  XML file is error 3.
 - **Memory**: each read is an HDF5 hyperslab of the piece and step asked for: memory use is about the size of the array
   read.
 - `finalize` closes the file (`free` alone forgets it without closing it: call `finalize`).
@@ -127,5 +139,10 @@ then read with `vtk_file` (or `pvtk_file`). Relative files are relative to the d
   `block`, `dataset`, or `piece` (the pieces of a `vtkMultiPieceDataSet` written by VTK), `index` the index among the
   siblings, `file` empty for blocks. The children of an entry are the entries that follow it with the next level.
 - `get_datasets` returns the attributes of each `DataSet` of the collection; missing ones are 0 (`timestep`, `part`) or empty.
+- A VTKHDF `MultiBlockDataSet` or `PartitionedDataSetCollection` (`.vtkhdf`) is read by `vtm_file` too: its entries are
+  the groups of its `Assembly` (`block`) and the links in them (`dataset`, a collection's references included), in the
+  order written; the `file` of a dataset is its group under `/VTKHDF`, read with
+  `vtk_file%initialize(filename, action='read', dataset=file)`. A complete program:
+  [A time series of several meshes in one .vtkhdf file](/manual/cookbook#a-time-series-of-several-meshes-in-one-vtkhdf-file).
 - All outputs are optional and allocatable; strings are blank padded to the longest one. `initialize` returns 1 if the file
   cannot be read, 2 if it is not a multi-block file or a collection.

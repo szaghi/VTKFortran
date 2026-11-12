@@ -43,6 +43,7 @@ public :: h5_group_open
 public :: h5_group_close
 public :: h5_link_exists
 public :: h5_link_soft
+public :: h5_link_target
 public :: h5_object_copy
 public :: h5_group_names
 public :: h5_attribute_write
@@ -208,6 +209,14 @@ interface
     character(kind=c_char), intent(in) :: name(*)
     integer(c_int64_t), value          :: lcpl, lapl
   end function H5Lcreate_soft
+  integer(c_int) function H5Lget_val(loc, name, buf, size, lapl) bind(C, name='H5Lget_val')
+    import :: c_int, c_int64_t, c_char, c_size_t
+    integer(c_int64_t), value              :: loc
+    character(kind=c_char), intent(in)     :: name(*)
+    character(kind=c_char), intent(out)    :: buf(*)
+    integer(c_size_t), value               :: size
+    integer(c_int64_t), value              :: lapl
+  end function H5Lget_val
   integer(c_int64_t) function H5Screate(class) bind(C, name='H5Screate')
     import :: c_int64_t, c_int
     integer(c_int), value :: class
@@ -651,6 +660,33 @@ contains
     error = 0_I4P
 #endif
   endfunction h5_link_soft
+
+  function h5_link_target(loc_id, name, target) result(error)
+  !< Return the path a soft (symbolic) link `name` of `loc_id` points to; an error (`target` empty) for a hard link (a
+  !< group or dataset) or a missing one.
+  integer(hid_kind),             intent(in)  :: loc_id !< Group of the link.
+  character(*),                  intent(in)  :: name   !< Link name.
+  character(len=:), allocatable, intent(out) :: target !< Path of the linked object.
+  integer(I4P)                               :: error  !< Error status.
+#ifdef VTKFORTRAN_USE_HDF5
+  integer(c_size_t), parameter               :: N = 4096_c_size_t !< Longest path read.
+  character(kind=c_char)                     :: buf(N) !< The path, NUL terminated.
+  integer                                    :: c      !< Counter.
+#endif
+
+  target = ''
+  error = 1_I4P
+#ifdef VTKFORTRAN_USE_HDF5
+  if (.not.h5_link_exists(loc_id, name)) return
+  buf = c_null_char
+  if (H5Lget_val(loc_id, trim(name)//c_null_char, buf, N, H5P_DEFAULT) < 0) return ! a hard link (the stack silenced)
+  do c=1, int(N)
+    if (buf(c) == c_null_char) exit
+    target = target//buf(c)
+  enddo
+  if (len(target) > 0) error = 0_I4P
+#endif
+  endfunction h5_link_target
 
   function h5_object_copy(src_loc, src_name, dst_loc, dst_name) result(error)
   !< Copy the object (group or dataset, with all it holds) `src_name` of `src_loc` to `dst_name` of `dst_loc`, in the same

@@ -20,7 +20,9 @@ program vtk_fortran_write_vtkhdf_vtm
 !< Refusals are checked too: a time-series ImageData block, a static block after a series block and the reverse, a
 !< series with another number of steps or other times, block and dataset names with '/' or '.'; in a collection a
 !< dataset name used twice or `Assembly`, a reference to a dataset not copied; references in a multi-block file or an XML
-!< `.vtm`, an unknown composite, a collection in XML. Without HDF5 the VTKHDF format of `vtm_file` is refused.
+!< `.vtm`, an unknown composite, a collection in XML. The four composite files are read back with `vtm_file`
+!< (`action='read'`: the entries of the Assembly, the dataset of each) and every dataset with `vtk_file%initialize(...,
+!< action='read', dataset=)`, compared with its source file step by step; the refusals of `dataset`. Without HDF5 the VTKHDF format of `vtm_file` is refused.
 use penf
 use vtk_fortran, only : vtk_file, vtm_file
 use vtk_fortran_hdf5
@@ -35,7 +37,7 @@ integer(I4P)                  :: u                          !< Unit.
 integer(I8P), allocatable     :: n_steps(:)                 !< Steps read back.
 real(R8P), allocatable        :: times(:)                   !< Times read back.
 integer(I4P)                  :: b                          !< Counter.
-logical                       :: test_passed(8)             !< List of passed tests.
+logical                       :: test_passed(9)             !< List of passed tests.
 
 test_passed = .false.
 if (.not.is_hdf5_enabled) then
@@ -149,13 +151,156 @@ else
                               [character(14) :: 'series_tetra', 'series_tetra_2', 'series_skin'], &
                               [character(32) :: 'Assembly/surface/series_skin', 'Assembly/checked/series_skin', &
                                'Assembly/checked/series_tetra'])
-  print '(A,8L2)', 'VTKHDF multi-block: files, refusals, tree, reads, series steps, series reads, collections:', test_passed
+  ! read back with the reader: the entries of the Assembly, each dataset compared with its file
+  test_passed(9) = read_composite('vtkfortran_vtm_nested.vtkhdf', [1, 2, 2, 2, 3, 3, 1, 2], 'bddbddbd', &
+                     [character(8) :: 'assembly', 'part_1', 'part_2', 'bolts', 'bolt-1', 'bolt-2', 'domain', 'fluid'], &
+                     [character(7) :: '', 'Block_1', 'Block_2', '', 'Block_3', 'Block_4', '', 'Block_5'], &
+                     [character(14) :: '', 'part_1', 'part_2', '', 'bolt_1', 'bolt_2', '', 'fluid'])
+  test_passed(9) = read_composite('vtkfortran_pdc_nested.vtkhdf', [1, 2, 2, 2, 3, 3, 1, 2, 1, 2, 2], 'bddbddbdbdd', &
+                     [character(8) :: 'assembly', 'part_1', 'part_2', 'bolts', 'bolt-1', 'bolt-2', 'domain', 'fluid', &
+                      'checked', 'bolt-1', 'part_2'], &
+                     [character(7) :: '', 'part_1', 'part_2', '', 'bolt-1', 'bolt-2', '', 'fluid', '', 'bolt-1', 'part_2'], &
+                     [character(14) :: '', 'part_1', 'part_2', '', 'bolt_1', 'bolt_2', '', 'fluid', '', 'bolt_1', &
+                      'part_2']) .and. test_passed(9)
+  test_passed(9) = read_composite('vtkfortran_vtm_series.vtkhdf', [1, 2, 2, 1, 2], 'bddbd', &
+                     [character(14) :: 'solid', 'series_tetra', 'series_tetra_2', 'surface', 'series_skin'], &
+                     [character(7) :: '', 'Block_1', 'Block_2', '', 'Block_3'], &
+                     [character(14) :: '', 'series_tetra', 'series_tetra_2', '', 'series_skin']) .and. test_passed(9)
+  test_passed(9) = read_composite('vtkfortran_pdc_series.vtkhdf', [1, 2, 2, 1, 2, 1, 2, 2], 'bddbdbdd', &
+                     [character(14) :: 'solid', 'series_tetra', 'series_tetra_2', 'surface', 'series_skin', 'checked', &
+                      'series_skin', 'series_tetra'], &
+                     [character(14) :: '', 'series_tetra', 'series_tetra_2', '', 'series_skin', '', 'series_skin', &
+                      'series_tetra'], &
+                     [character(14) :: '', 'series_tetra', 'series_tetra_2', '', 'series_skin', '', 'series_skin', &
+                      'series_tetra']) .and. test_passed(9)
+  test_passed(9) = composite_refusals() .and. test_passed(9)
+  print '(A,9L2)', 'VTKHDF multi-block: files, refusals, tree, reads, series steps, series reads, collections, read back:', &
+                   test_passed
 endif
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 if (.not.all(test_passed)) error stop 'some tests failed'
 stop
 contains
+  logical function read_composite(filename, levels, kinds, names, files, sources)
+  !< Read a composite file back with `vtm_file` (`action='read'`): its entries (levels, kinds b/d, names, files: the
+  !< dataset under /VTKHDF), then each dataset with `vtk_file%initialize(..., action='read', dataset=)`, compared with its
+  !< source `.vtkhdf` (`sources`): type, steps, pieces, points and the arrays of every piece of every step.
+  character(*), intent(in)      :: filename  !< Composite file.
+  integer(I4P), intent(in)      :: levels(:) !< Levels expected.
+  character(*), intent(in)      :: kinds     !< Kinds expected: b block, d dataset.
+  character(*), intent(in)      :: names(:)  !< Names expected.
+  character(*), intent(in)      :: files(:)  !< Files expected (datasets).
+  character(*), intent(in)      :: sources(:) !< Source files of the datasets, without .vtkhdf.
+  type(vtm_file)                :: vtm
+  integer(I4P), allocatable     :: level(:), index(:)
+  character(len=:), allocatable :: kind(:), name(:), file(:)
+  integer(I4P)                  :: i, error
+
+  read_composite = .false.
+  error = vtm%initialize(filename=filename, action='read')
+  error = error + vtm%get_entries(level=level, kind=kind, index=index, name=name, file=file)
+  if (error /= 0 .or. size(level) /= size(levels)) then
+    print '(A,I0,A,I0)', filename//': entries read with error ', error, ', number ', size(level)
+    return
+  endif
+  read_composite = all(level == levels)
+  do i=1, size(levels)
+    read_composite = read_composite .and. kind(i) == trim(merge('block  ', 'dataset', kinds(i:i) == 'b')) .and. &
+                     name(i) == names(i) .and. file(i) == files(i)
+    if (kinds(i:i) == 'd') read_composite = read_composite .and. &
+                                            same_dataset(filename, trim(files(i)), trim(sources(i))//'.vtkhdf')
+  enddo
+  error = vtm%finalize()
+  if (.not.read_composite) print '(A)', filename//': entries or datasets read back differ'
+  endfunction read_composite
+
+  logical function same_dataset(filename, dataset, source)
+  !< The dataset `dataset` of the composite file is its source file: type, steps, pieces, points, the node and cell arrays.
+  character(*), intent(in)      :: filename !< Composite file.
+  character(*), intent(in)      :: dataset  !< Dataset under /VTKHDF.
+  character(*), intent(in)      :: source   !< Source file.
+  type(vtk_file)                :: a, b
+  character(len=:), allocatable :: ta, tb, na(:), nb(:)
+  real(R8P), allocatable        :: ta_(:), tb_(:), xa(:), ya(:), za(:), xb(:), yb(:), zb(:), va(:), vb(:)
+  integer(I8P), allocatable     :: ia(:), ib(:)
+  integer(I4P)                  :: pa, pb, s, p, l, k, ea, eb, n_steps
+  character(4), parameter       :: LOCATIONS(2) = ['node', 'cell']
+
+  ea = a%initialize(filename=filename, action='read', dataset=dataset)
+  eb = b%initialize(filename=source, action='read')
+  same_dataset = ea == 0 .and. eb == 0
+  if (.not.same_dataset) return
+  ea = a%xml_reader%get_steps(times=ta_)
+  eb = b%xml_reader%get_steps(times=tb_)
+  same_dataset = ea == eb .and. size(ta_) == size(tb_)
+  if (same_dataset) same_dataset = all(ta_ == tb_)
+  n_steps = max(1, size(ta_))
+  do s=1, n_steps
+    if (.not.same_dataset) exit
+    if (size(ta_) > 0) then
+      ea = a%xml_reader%set_step(s)
+      eb = b%xml_reader%set_step(s)
+    endif
+    ea = a%xml_reader%get_info(mesh_topology=ta, npieces=pa)
+    eb = b%xml_reader%get_info(mesh_topology=tb, npieces=pb)
+    same_dataset = same_dataset .and. ea == 0 .and. eb == 0 .and. ta == tb .and. pa == pb
+    do p=1, pa
+      if (.not.same_dataset) exit
+      if (ta /= 'ImageData') then
+        ea = a%xml_reader%read_geo(x=xa, y=ya, z=za, piece=p)
+        eb = b%xml_reader%read_geo(x=xb, y=yb, z=zb, piece=p)
+        same_dataset = ea == 0 .and. eb == 0 .and. size(xa) == size(xb)
+        if (same_dataset) same_dataset = all(xa == xb) .and. all(ya == yb) .and. all(za == zb)
+      endif
+      do l=1, 2
+        ea = a%xml_reader%get_dataarray_names(location=LOCATIONS(l), names=na, piece=p)
+        eb = b%xml_reader%get_dataarray_names(location=LOCATIONS(l), names=nb, piece=p)
+        same_dataset = same_dataset .and. ea == 0 .and. eb == 0 .and. size(na) == size(nb)
+        if (.not.same_dataset) exit
+        do k=1, size(na)
+          ea = a%xml_reader%get_dataarray_info(location=LOCATIONS(l), data_name=trim(na(k)), piece=p, data_type=ta)
+          if (ta(1:min(5, len(ta))) == 'Float') then
+            ea = ea + a%xml_reader%read_dataarray(location=LOCATIONS(l), data_name=trim(na(k)), x=va, piece=p)
+            eb = b%xml_reader%read_dataarray(location=LOCATIONS(l), data_name=trim(na(k)), x=vb, piece=p)
+            same_dataset = same_dataset .and. ea == 0 .and. eb == 0 .and. na(k) == nb(k) .and. size(va) == size(vb)
+            if (same_dataset) same_dataset = all(va == vb)
+          else ! an integer array
+            ea = ea + a%xml_reader%read_dataarray(location=LOCATIONS(l), data_name=trim(na(k)), x=ia, piece=p)
+            eb = b%xml_reader%read_dataarray(location=LOCATIONS(l), data_name=trim(na(k)), x=ib, piece=p)
+            same_dataset = same_dataset .and. ea == 0 .and. eb == 0 .and. na(k) == nb(k) .and. size(ia) == size(ib)
+            if (same_dataset) same_dataset = all(ia == ib)
+          endif
+        enddo
+      enddo
+    enddo
+  enddo
+  ea = a%finalize()
+  eb = b%finalize()
+  if (.not.same_dataset) print '(A)', filename//': '//dataset//' differs from '//source
+  endfunction same_dataset
+
+  logical function composite_refusals()
+  !< Reading a composite: a missing dataset (4), a dataset of an XML file (3), dataset without action read (1), a
+  !< composite without dataset (3), a .vtkhdf that is not a composite to vtm_file (2).
+  type(vtk_file) :: r
+  type(vtm_file) :: vtm
+  logical        :: ok(5)
+
+  ok(1) = r%initialize(filename='vtkfortran_vtm_nested.vtkhdf', action='read', dataset='Block_9') == 4
+  e = r%finalize()
+  ok(2) = r%initialize(filename='refused_references.vtm', action='read', dataset='Block_1') == 3
+  e = r%finalize()
+  ok(3) = r%initialize(format='vtkhdf', filename='refused_dataset.vtkhdf', mesh_topology='UnstructuredGrid', &
+                       dataset='Block_1') == 1
+  ok(4) = r%initialize(filename='vtkfortran_vtm_nested.vtkhdf', action='read') == 3
+  e = r%finalize()
+  ok(5) = vtm%initialize(filename='part_1.vtkhdf', action='read') == 2
+  e = vtm%finalize()
+  composite_refusals = all(ok)
+  if (.not.composite_refusals) print '(A,5L2)', 'composite refusals: ', ok
+  endfunction composite_refusals
+
   logical function collection(filename, copies, links)
   !< A collection read back: its type, its copies named after their datasets with the Index of the order written, no
   !< other dataset group (a referenced dataset copied once), the links of the tree given.

@@ -133,7 +133,7 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   after the trees (`is_tree_data`), `end_trees` writes the datasets at the piece end (`pack_bits`, MSB first, as VTK);
   series: every step its piece, the trees appended (`store_*`, the mask always), `tree_totals` = the trees, depth
   entries, bytes, cells of the steps before, the `Steps` entries VTK writes (TreeIdsOffsets, DescriptorsOffsets in
-  bytes, ...); refused: point/field data, a step without its piece, comm, append; the reader refuses it (error 3).
+  bytes, ...); refused: point/field data, a step without its piece, comm, append; read back by the reader (#87).
   Point/cell/field data, active arrays as the `Attribute` attribute, unsigned,
   deflate for `compressor='zlib'`; refusals return an error with a message on stderr (a data name empty or with `/` or
   `.`: `h5_name_invalid`, also used by `vtm_file` for block and dataset names; never renamed; HDF5 has no length limit). Arrays stored as in memory
@@ -186,9 +186,16 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   otherwise, as VTK), an OverlappingAMR level by level (`get_levels`, `set_level` from 0; its boxes as pieces, `amr_box`,
   `prefix` = `Level<n>/`), polyhedra back to the face stream (VTKHDF 2.9 shared faces, `-(n+1)` in `PolyhedronToFaces`, given to each
   polyhedron, reversed where marked; a face id out of range is error 6; VTK 9.7.2 cannot read such files, the nightly
-  of 2026-11-08 misreads the reversed faces). `xml_reader%finalize` stays pure (forgets the file); `close` closes it
+  of 2026-11-08 misreads the reversed faces), a HyperTreeGrid (#87: `get_trees(tree_ids, branch_factor)`,
+  `read_tree(tree_id, descriptor, mask)` via `tree_layout` (ids, depths, cells per depth, first bytes of the step) and
+  `read_bits` (MSB first, `skip` bits from a byte); cell data from `NumberOfCells`/`Steps/CellDataOffsets` in
+  `array_slice`; `step_entry` = the step's entry of a one-per-step dataset), a dataset of a composite
+  (`initialize(filename, dataset)`: root `/VTKHDF/<dataset>`, through the Assembly's soft links too).
+  `xml_reader%finalize` stays pure (forgets the file); `close` closes it
 - `vtk_fortran_vtk_file_xml_reader` — `xml_reader` type: reader of serial files (any format, header type, zlib; a `.vtt` Table: `npieces` 0, `location='row'` = `Piece/RowData`, tuples from `NumberOfRows`) and parallel headers (`check_pieces`); indexes the file once with FoXy `xml_index` (tags and content positions, scan stopped at `AppendedData`), then decodes only the arrays asked for; `get_active(location, role, data_name)` the active array of a role (the
-roles list `ACTIVE_ROLES` and `active_role` in `vtk_fortran_parameters`, shared with the VTKHDF reader); error codes 0–7 documented in the module. `pvtk_file` uses it too (`action='read'`); `vtm_file` and `pvd_file` read with `get_entries`/`get_datasets`
+roles list `ACTIVE_ROLES` and `active_role` in `vtk_fortran_parameters`, shared with the VTKHDF reader); error codes 0–7 documented in the module. `pvtk_file` uses it too (`action='read'`); `vtm_file` and `pvd_file` read with `get_entries`/`get_datasets` (`vtm_file` a VTKHDF composite too:
+`vtkhdf_entries` walks its `Assembly` once at `initialize`, groups = blocks, soft links = datasets (`h5_link_target`,
+H5Lget_val: a hard link fails silently), `file` = the link target under /VTKHDF)
 - `vtk_fortran_dataarray_decoder` — inverse of the encoder: ASCII/Base64/zlib data into bytes, bytes into arrays of the requested kind
 - `vtk_fortran_dataarray_encoder` — overloaded encoding routines for ASCII and Base64 (optionally zlib-compressed), covering all PENF numeric kinds and ranks 1–4
 - `vtk_fortran_hdf5` — HDF5 C API bindings (files, groups and their members (in creation order when tracked), links,
@@ -247,7 +254,8 @@ values), the same Table as VTKHDF (VTK compares them outside the test), the refu
 `.vtt` read back;
 `vtk_fortran_write_vtkhdf_htg.f90`: HyperTreeGrids (the 2x2 root grid of the VTK probe: trees of depth 3, 2, a
 masked leaf, a root cell without tree; branch factor 3; a 2-step series), checked with the bindings (descriptors and
-mask unpacked, the Steps entries; append refused), 16 refusals, the reader refusing it;
+mask unpacked, the Steps entries; append refused), 16 refusals, the three files read back with the reader (every
+tree and mask as written, cell data, coordinates, the series step by step, a missing tree);
 `vtk_fortran_write_vtkhdf_amr.f90`: OverlappingAMRs (two levels, three boxes, point/cell data and a vector; a
 2-step series with level 1 going from two boxes to one), read back with the bindings and the reader (`set_level`), 15
 refusals (levels, boxes outside or flat or out of order, array sizes, missing/new arrays, field data, steps, append);
@@ -256,7 +264,8 @@ the restart, an orphan offset entry, a restart after a step with an empty piece;
 `vtk_fortran_write_vtkhdf_vtm.f90`: VTKHDF multi-block files (`vtm_file`, `format='vtkhdf'`): the nested assembly, a
 time series of two UnstructuredGrid series (one of two parts) and a PolyData series, both also as
 PartitionedDataSetCollections with a block of references, the refusals (grid series, static and series mixed, other
-steps or times; collection names, references, composites);
+steps or times; collection names, references, composites); the four files read back (`vtm_file` read: the entries;
+every dataset with `dataset=` compared with its source step by step, integer arrays as I8P), the refusals of `dataset`;
 `vtk_fortran_read_vtkhdf.f90`: VTKHDF files read back (every topology, time series, two polyhedra sharing a face
 (Version 2.9, the file built with the bindings), a face id out of range, series storing once the mesh and arrays);
 `vtk_fortran_write_vtkhdf_polyh.f90`: polyhedra (one piece; three pieces with polyhedra in the second), each also

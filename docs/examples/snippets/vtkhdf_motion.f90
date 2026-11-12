@@ -1,19 +1,18 @@
 program vtkhdf_motion
 !< A time series of several meshes in one VTKHDF file: a wave (a PolyData surface) and a buoy riding it (an
 !< UnstructuredGrid of hexahedra), each written as its own time series, then copied as the blocks of one multi-block
-!< file by `vtm_file`. A static block is refused in a time series. The steps of each block are read back with the HDF5
-!< bindings of the library.
-use penf, only : I1P, I4P, I8P, R8P
+!< file by `vtm_file`. A static block is refused in a time series. The file is read back with the library: its entries
+!< with `vtm_file`, the steps of each dataset with `vtk_file` (`dataset=`).
+use penf, only : I1P, I4P, R8P
 use vtk_fortran, only : vtk_file, vtm_file
-use vtk_fortran_hdf5
 implicit none
 integer(I4P), parameter   :: nx=16, ny=8, n_steps=6
 real(R8P),    parameter   :: pi = acos(-1._R8P)
 type(vtk_file)            :: a_vtk_file
 type(vtm_file)            :: a_vtm_file
-integer(I4P)              :: s, b, error
-integer(hid_kind)         :: file_id, steps
-integer(I8P), allocatable :: nsteps(:)
+integer(I4P)              :: s, e, error
+integer(I4P), allocatable :: level(:)
+character(len=:), allocatable :: kind(:), name(:), file(:), topology
 real(R8P),    allocatable :: times(:)
 
 ! each mesh is a time series of its own, with the same times
@@ -47,17 +46,24 @@ error = a_vtm_file%write_block(filenames='buoy.vtkhdf', name='bodies')
 error = a_vtm_file%write_block(filenames='pier.vtkhdf', name='pier')
 print '(A,I0)', 'the static block: error ', error
 
-error = h5_file_open('harbour.vtkhdf', file_id)
-if (error /= 0) error stop 'read error'
-print '(A)', 'harbour.vtkhdf, the steps of each block:'
-do b=1, 2
-  error = h5_group_open(file_id, 'VTKHDF/Block_'//achar(48 + b)//'/Steps', steps)
-  error = h5_attribute_read(steps, 'NSteps', nsteps)
-  error = h5_dataset_read(steps, 'Values', times)
-  print '(A,I0,A,I0,A,*(F5.2))', '  Block_', b, ': ', nsteps(1), ' steps, at', times
-  error = h5_group_close(steps)
+! the entries of the multi-block file, then each dataset (its path in the file) read as a .vtkhdf of its own
+error = a_vtm_file%initialize(filename='harbour.vtkhdf', action='read')
+error = a_vtm_file%get_entries(level=level, kind=kind, name=name, file=file)
+error = a_vtm_file%finalize()
+print '(A)', 'harbour.vtkhdf, its blocks and datasets:'
+do e=1, size(level)
+  if (trim(kind(e)) == 'block') then
+    print '(A)', repeat('  ', level(e))//'block '//trim(name(e))
+  else
+    error = a_vtk_file%initialize(filename='harbour.vtkhdf', action='read', dataset=trim(file(e)))
+    error = a_vtk_file%xml_reader%get_info(mesh_topology=topology)
+    error = a_vtk_file%xml_reader%get_steps(times=times)
+    print '(A,I0,A,*(F5.2))', repeat('  ', level(e))//'dataset '//trim(name(e))//' ('//trim(file(e))//', '// &
+                              topology//'): ', size(times), ' steps, at', times
+    error = a_vtk_file%finalize()
+  endif
 enddo
-error = h5_file_close(file_id)
+if (error /= 0) error stop 'read error'
 contains
   function sea(time) result(error)
   !< One step of the sea: a surface of nx x ny quadrilaterals, its height a wave travelling along x.

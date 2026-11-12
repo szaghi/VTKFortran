@@ -15,7 +15,10 @@ module vtk_fortran_vtk_file_xml_reader
 !< HDF5 signature, and every call is then answered by a `vtkhdf_reader` (`vtk_fortran_vtk_file_vtkhdf_reader`), the API
 !< unchanged; a VTKHDF time series is read one step at a time (`get_steps`, `set_step`; the step 1 by default). A VTKHDF
 !< Table has no pieces (`npieces` 0): its columns are the data arrays of `location='row'`. A VTKHDF OverlappingAMR is
-!< read one level at a time (`get_levels`, `set_level`; level 0 by default), its boxes the pieces of the level.
+!< read one level at a time (`get_levels`, `set_level`; level 0 by default), its boxes the pieces of the level. A VTKHDF
+!< HyperTreeGrid has one piece (its root grid, `read_geo` its coordinates), its trees read with `get_trees` and
+!< `read_tree`, its cell data the cells of its trees. A dataset of a VTKHDF composite file is read with
+!< `initialize(filename, dataset=)` (its path under `/VTKHDF`, from `vtm_file%get_entries`).
 !<
 !< It reads the parallel headers too (PImageData, PRectilinearGrid, PStructuredGrid, PUnstructuredGrid, PPolyData): their
 !< information, the declared arrays (`get_dataarray_names`, `get_dataarray_info`), the pieces (`get_sources`, `read_piece`
@@ -90,6 +93,8 @@ type :: xml_reader
     procedure, pass(self) :: set_step             !< Select the step read of a VTKHDF time series.
     procedure, pass(self) :: get_levels           !< Return the number of levels of a VTKHDF OverlappingAMR.
     procedure, pass(self) :: set_level            !< Select the level read of a VTKHDF OverlappingAMR.
+    procedure, pass(self) :: get_trees            !< Return the trees of a VTKHDF HyperTreeGrid.
+    procedure, pass(self) :: read_tree            !< Read a tree of a VTKHDF HyperTreeGrid.
     generic               :: read_polydata_cells => read_polydata_cells_I4P, read_polydata_cells_I8P !< Read polydata cells.
     ! private methods
     procedure, pass(self), private :: dataarray_bytes         !< Return the bytes of a dataarray element.
@@ -121,10 +126,12 @@ endtype xml_reader
 
 contains
   ! public methods
-  function initialize(self, filename) result(error)
-  !< Initialize the reader: index the file.
-  class(xml_reader), intent(inout) :: self      !< XML reader.
-  character(*),      intent(in)    :: filename  !< File name.
+  function initialize(self, filename, dataset) result(error)
+  !< Initialize the reader: index the file. `dataset` (VTKHDF only) reads a dataset of a VTKHDF composite file (its path
+  !< under `/VTKHDF`, as `vtm_file%get_entries` gives it); error 3 with an XML file, 4 for a missing dataset.
+  class(xml_reader), intent(inout)        :: self      !< XML reader.
+  character(*),      intent(in)           :: filename  !< File name.
+  character(*),      intent(in), optional :: dataset   !< A dataset of a VTKHDF composite file.
   integer(I4P)                     :: error     !< Error status.
   character(len=:), allocatable    :: value     !< Attribute value.
   integer(I4P)                     :: root      !< Index of the VTKFile element.
@@ -133,7 +140,7 @@ contains
 
   call self%close
   if (is_hdf5_file(filename)) then ! a VTKHDF file: read by the VTKHDF reader
-    error = self%hdf%initialize(filename=filename)
+    error = self%hdf%initialize(filename=filename, dataset=dataset)
     if (error /= 0) return
     error = self%hdf%get_info(mesh_topology=self%mesh_topology)
     self%filename = filename
@@ -141,6 +148,8 @@ contains
     self%is_initialized = .true.
     return
   endif
+  error = 3
+  if (present(dataset)) return ! a dataset of a composite: VTKHDF files only
   call self%xml%scan(filename=filename, stop_at='AppendedData', iostat=iostat)
   error = scan_error(iostat)
   if (error /= 0) return
@@ -744,6 +753,42 @@ contains
   endif
   error = 4
   endfunction set_level
+
+  function get_trees(self, tree_ids, branch_factor) result(error)
+  !< Return the trees of a VTKHDF HyperTreeGrid (of the step read): the ids of their root cells (i + (nx-1)(j + (ny-1)k),
+  !< from 0), in the order of the file (that of their cells in the cell data), and its branch factor (2 or 3). Error 4 for
+  !< another dataset, 3 for an XML file.
+  class(xml_reader),         intent(in)            :: self          !< XML reader.
+  integer(I8P), allocatable, intent(out)           :: tree_ids(:)   !< Ids of the trees.
+  integer(I4P),              intent(out), optional :: branch_factor !< Branch factor.
+  integer(I4P)                                     :: error         !< Error status.
+
+  if (self%is_hdf) then
+    error = self%hdf%get_trees(tree_ids=tree_ids, branch_factor=branch_factor)
+    return
+  endif
+  allocate(tree_ids(0))
+  error = 3
+  endfunction get_trees
+
+  function read_tree(self, tree_id, descriptor, mask) result(error)
+  !< Read the tree `tree_id` of a VTKHDF HyperTreeGrid (of the step read) as `write_tree` takes it: `descriptor` the
+  !< refinement of its cells breadth first, every depth but the deepest; `mask` one value per cell (all false when the
+  !< file has none). Error 4 for another dataset or a tree not in the file, 3 for an XML file, 6 for an inconsistent file.
+  class(xml_reader),    intent(in)            :: self          !< XML reader.
+  integer(I8P),         intent(in)            :: tree_id       !< Id of the tree (its root cell).
+  logical, allocatable, intent(out)           :: descriptor(:) !< Refinement of its cells.
+  logical, allocatable, intent(out), optional :: mask(:)       !< Masked cells.
+  integer(I4P)                                :: error         !< Error status.
+
+  if (self%is_hdf) then
+    error = self%hdf%read_tree(tree_id=tree_id, descriptor=descriptor, mask=mask)
+    return
+  endif
+  allocate(descriptor(0))
+  if (present(mask)) allocate(mask(0))
+  error = 3
+  endfunction read_tree
 
   function get_sources(self, sources) result(error)
   !< Return the files of the pieces of a parallel header (the `Source` attributes), as written in the file.

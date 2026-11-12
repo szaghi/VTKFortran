@@ -12,7 +12,8 @@ program vtk_fortran_write_vtkhdf_htg
 !< written twice, point data, field data, a tree after the cell data, cell data of the wrong size, a piece without trees
 !< or coordinates, a branch factor of 4, a step without its piece, `write_tree` in another topology, the series
 !< continued (`action='append'`), the piece left open at finalize; a refused cell data open not blocking the trees. The
-!< reader refuses a HyperTreeGrid (error 3). Without HDF5 the writer refuses a HyperTreeGrid; the XML formats refuse it
+!< three files are read back with the reader of the library (`get_info`, `read_geo`, `get_trees`, `read_tree`: every
+!< descriptor and mask as written; the cell data; the series step by step; a tree not in the file). Without HDF5 the writer refuses a HyperTreeGrid; the XML formats refuse it
 !< always.
 use penf
 use vtk_fortran, only : vtk_file
@@ -20,7 +21,7 @@ use vtk_fortran_hdf5
 
 implicit none
 type(vtk_file) :: w     !< Writer.
-logical        :: ok(5) !< Checks.
+logical        :: ok(6) !< Checks.
 integer(I4P)   :: e     !< Error.
 
 ok = .false.
@@ -37,8 +38,9 @@ else
   ok(3) = ternary_htg()
   ok(4) = refusals()
   ok(5) = series_htg()
+  ok(6) = read_back()
 endif
-print '(A,5L2)', 'VTKHDF HyperTreeGrid: XML refused, branch factor 2, branch factor 3, refusals, series:', ok
+print '(A,6L2)', 'VTKHDF HyperTreeGrid: XML refused, branch factor 2, branch factor 3, refusals, series, read back:', ok
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(ok)
 if (.not.all(ok)) error stop 'some tests failed'
@@ -119,11 +121,98 @@ contains
   e = h5_group_close(root)
   e = h5_file_close(file_id)
   c(7) = .not.h5_link_exists_in('htg.vtkhdf', 'VTKHDF/PointData')
-  c(8) = r%initialize(filename='htg.vtkhdf', action='read') == 3 ! not read (yet)
-  e = r%finalize()
+  c(8) = .true. ! read back by read_back
   binary_htg = all(c) .and. all(ee == 0)
   if (.not.binary_htg) print '(A,10I3,A,8L2)', 'HyperTreeGrid: errors ', ee, ' checks ', c
   endfunction binary_htg
+
+  logical function read_back()
+  !< The three files read back with the reader of the library: their root grid, coordinates, branch factor, trees (each
+  !< descriptor and mask as write_tree took them), cell data; the series step by step; a tree not in the file (error 4).
+  logical, parameter            :: t=.true., f=.false.
+  type(vtk_file)                :: r
+  integer(I8P), allocatable     :: ids(:)
+  logical, allocatable          :: d(:), m(:)
+  real(R8P), allocatable        :: x(:), y(:), z(:), cd(:)
+  integer(I4P), allocatable     :: depth(:)
+  character(len=:), allocatable :: topology
+  integer(I4P)                  :: bf, np, ext(6), i, s, ee(12)
+  logical                       :: c(12)
+
+  ee = 0 ; c = .false.
+  ee(1) = r%initialize(filename='htg.vtkhdf', action='read')
+  ee(2) = r%xml_reader%get_info(mesh_topology=topology, npieces=np, nx1=ext(1), nx2=ext(2), ny1=ext(3), ny2=ext(4), &
+                                nz1=ext(5), nz2=ext(6))
+  c(1) = topology == 'HyperTreeGrid' .and. np == 1 .and. all(ext == [0, 2, 0, 2, 0, 0])
+  ee(3) = r%xml_reader%get_trees(tree_ids=ids, branch_factor=bf)
+  c(2) = all(ids == [0, 1, 3]) .and. bf == 2
+  ee(4) = r%xml_reader%read_tree(tree_id=0_I8P, descriptor=d, mask=m)
+  c(3) = same(d, [t, t, f, f, f]) .and. same(m, [(f, i=1, 9)])
+  ee(5) = r%xml_reader%read_tree(tree_id=1_I8P, descriptor=d, mask=m)
+  c(4) = same(d, [t]) .and. same(m, [(f, i=1, 5)])
+  ee(6) = r%xml_reader%read_tree(tree_id=3_I8P, descriptor=d, mask=m)
+  c(5) = same(d, [logical ::]) .and. same(m, [t])
+  c(6) = r%xml_reader%read_tree(tree_id=2_I8P, descriptor=d, mask=m) == 4 ! a root cell without tree
+  ee(7) = r%xml_reader%read_dataarray(location='cell', data_name='cd', x=cd)
+  ee(8) = r%xml_reader%read_dataarray(location='cell', data_name='depth', x=depth)
+  c(7) = all(cd == [(real(i, R8P), i=0, 14)]) .and. all(depth == [0, 1, 1, 1, 1, 2, 2, 2, 2, 0, 1, 1, 1, 1, 0])
+  ee(9) = r%xml_reader%read_geo(x=x, y=y, z=z)
+  c(8) = all(x == [0._R8P, 1._R8P, 2._R8P]) .and. all(y == x) .and. all(z == [0._R8P])
+  e = r%finalize()
+  ! branch factor 3, no mask
+  ee(10) = r%initialize(filename='htg3.vtkhdf', action='read')
+  e = r%xml_reader%get_trees(tree_ids=ids, branch_factor=bf)
+  ee(10) = ee(10) + e
+  e = r%xml_reader%read_tree(tree_id=0_I8P, descriptor=d, mask=m)
+  c(9) = e == 0 .and. bf == 3 .and. all(ids == [0]) .and. same(d, [t, f, f, f, f, t, f, f, f, t]) .and. &
+         same(m, [(f, i=1, 28)])
+  e = r%finalize()
+  ! the series: the trees, cells and coordinates of each step
+  ee(11) = r%initialize(filename='htg_series.vtkhdf', action='read')
+  c(10) = .true. ; c(11) = .true.
+  do s=1, 2
+    e = r%xml_reader%set_step(s)
+    ee(12) = ee(12) + abs(e)
+    e = r%xml_reader%get_trees(tree_ids=ids)
+    ee(12) = ee(12) + abs(e)
+    e = r%xml_reader%read_dataarray(location='cell', data_name='cd', x=cd)
+    ee(12) = ee(12) + abs(e)
+    c(10) = c(10) .and. all(cd == [(real(i + 100 * s, R8P), i=0, 14)])
+    e = r%xml_reader%read_geo(x=x, y=y, z=z)
+    ee(12) = ee(12) + abs(e)
+    c(10) = c(10) .and. all(x == [0._R8P, 1._R8P, 2._R8P] + s)
+    if (s == 1) then
+      c(11) = c(11) .and. all(ids == [0, 1, 3])
+      e = r%xml_reader%read_tree(tree_id=0_I8P, descriptor=d, mask=m)
+      c(11) = c(11) .and. e == 0 .and. same(d, [t, t, f, f, f])
+      e = r%xml_reader%read_tree(tree_id=3_I8P, descriptor=d, mask=m)
+      c(11) = c(11) .and. e == 0 .and. same(d, [logical ::]) .and. same(m, [t])
+    else
+      c(11) = c(11) .and. all(ids == [0, 1, 2])
+      e = r%xml_reader%read_tree(tree_id=0_I8P, descriptor=d, mask=m)
+      c(11) = c(11) .and. e == 0 .and. same(d, [logical ::]) .and. same(m, [f])
+      e = r%xml_reader%read_tree(tree_id=1_I8P, descriptor=d, mask=m)
+      c(11) = c(11) .and. e == 0 .and. same(d, [t, f, f, f, t]) .and. same(m, [(f, i=1, 9)])
+      e = r%xml_reader%read_tree(tree_id=2_I8P, descriptor=d, mask=m)
+      c(11) = c(11) .and. e == 0 .and. same(d, [t]) .and. same(m, [f, f, t, f, f])
+    endif
+  enddo
+  e = r%finalize()
+  ! no point data in a HyperTreeGrid; read_tree of another dataset
+  ee(1) = ee(1) + r%initialize(filename='htg.vtkhdf', action='read')
+  c(12) = r%xml_reader%read_dataarray(location='node', data_name='cd', x=cd) /= 0
+  e = r%finalize()
+  read_back = all(c) .and. all(ee == 0)
+  if (.not.read_back) print '(A,12I3,A,12L2)', 'HyperTreeGrid read back: errors ', ee, ' checks ', c
+  endfunction read_back
+
+  logical function same(a, b)
+  !< The bits a are b (the same size, the same values).
+  logical, intent(in) :: a(:), b(:)
+
+  same = size(a) == size(b)
+  if (same) same = all(a .eqv. b)
+  endfunction same
 
   logical function h5_link_exists_in(filename, path)
   !< True if the link path exists in the file.

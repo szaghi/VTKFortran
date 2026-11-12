@@ -42,14 +42,16 @@ contains
 
    function initialize(self, format, filename, mesh_topology, is_volatile, nx1, nx2, ny1, ny2, nz1, nz2, &
                        origin, spacing, direction, header_type, compressor, action, comm, branch_factor, &
-                       chunk_bytes) result(error)
+                       chunk_bytes, dataset) result(error)
    !< Initialize file: open it for writing (default) or for reading.
    !<
    !< @note This function must be the first to be called.
    !<
    !<### Reading
    !<
-   !< With `action='read'` only `filename` is used: the file is indexed and its data are then read through the `xml_reader`
+   !< With `action='read'` only `filename` is used (and `dataset`: a dataset of a VTKHDF `MultiBlockDataSet` or
+   !< `PartitionedDataSetCollection`, its path under `/VTKHDF` as `vtm_file%get_entries` gives it as the `file` of the
+   !< dataset; refused without `action='read'`): the file is indexed and its data are then read through the `xml_reader`
    !< component (`get_info`, `read_piece`, `read_geo`, `read_connectivity`, `read_polydata_cells`, `get_dataarray_names`,
    !< `get_dataarray_info`, `read_dataarray`); `finalize` frees it. Its format, topology, header type and compressor come from
    !< the file. The error codes of reading are listed in the `vtk_fortran_vtk_file_xml_reader` module.
@@ -189,6 +191,7 @@ contains
    integer(I4P),    intent(in), optional :: comm           !< MPI communicator (Fortran handle): one VTKHDF file from its ranks.
    integer(I4P),    intent(in), optional :: branch_factor  !< Branch factor of a HyperTreeGrid (VTKHDF): 2 (default) or 3.
    integer(I4P),    intent(in), optional :: chunk_bytes    !< Bytes of a chunk of the VTKHDF datasets at most (default 1 MiB).
+   character(*),    intent(in), optional :: dataset        !< With action read: a dataset of a VTKHDF composite file.
    integer(I4P)                          :: error         !< Error status.
    type(string)                          :: fformat       !< File format.
    logical                               :: is_compressed !< Compress the binary data.
@@ -216,6 +219,11 @@ contains
          if (upper_case(trim(adjustl(action))) == 'READ') return
       endif
    endif
+   if (present(dataset)) then ! a dataset of a composite: read only
+      error = 1_I4P
+      if (.not.present(action)) return
+      if (upper_case(trim(adjustl(action))) /= 'READ') return
+   endif
    if (present(action)) then
       if (present(comm) .and. upper_case(trim(adjustl(action))) == 'READ') then
          error = 1_I4P ! a file is read by one rank
@@ -223,7 +231,7 @@ contains
       endif
       select case(upper_case(trim(adjustl(action))))
       case('READ')
-         error = self%xml_reader%initialize(filename=filename)
+         error = self%xml_reader%initialize(filename=filename, dataset=dataset)
          self%is_reading = error == 0_I4P
          return
       case('APPEND')

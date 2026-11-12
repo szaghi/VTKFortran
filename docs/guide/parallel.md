@@ -163,6 +163,11 @@ meshes moving together: see [A time series of several meshes in one .vtkhdf file
 - A refused file leaves the block opened for it by `write_block` open, as a missing file does: `finalize` then returns
   an error.
 
+**Reading it back.** `vtm_file%initialize(filename, action='read')` lists the blocks and datasets of a VTKHDF
+multi-block file or collection (`get_entries`: the groups of its `Assembly` and the links in them, in the order
+written); the `file` of a dataset is its group under `/VTKHDF`, which `vtk_file%initialize(filename, action='read',
+dataset=file)` reads as a `.vtkhdf` of its own, steps included. See [Reading](/guide/reading#multi-block-and-time-series-files).
+
 ### Blocks filled in any order
 
 When the files of the blocks are known one at a time, interleaved (e.g. a solver that writes, at each output, one file

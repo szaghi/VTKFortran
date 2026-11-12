@@ -73,11 +73,11 @@ built with HDF5 ([Installation](/guide/installation#optional-hdf5-vtkhdf)). It i
 | Rectilinear and Structured Grids, one piece: coordinates or points, point, cell and field data (read by VTK 9.7, not ParaView 6.1) | ✅ |
 | Table (columns of values, VTK `vtkTable`), static or a time series (read by VTK 9.7, not ParaView 6.1: write a `.vtt` for ParaView) | ✅ |
 | OverlappingAMR (levels of uniform boxes, point and cell data), static or a time series (read by VTK 9.7, not ParaView 6.1) | ✅ |
-| HyperTreeGrid (trees of branch factor 2 or 3 on a root grid, masks, cell data), static or a time series (not read back by the library) | ✅ |
+| HyperTreeGrid (trees of branch factor 2 or 3 on a root grid, masks, cell data), static or a time series | ✅ |
 | Time series in one file (`Steps`): `write_step`, valid after every piece, restart with `action='append'`; a fixed mesh, unchanged geometry or arrays stored once | ✅ |
 | Multi-block (`vtm_file` with `format='vtkhdf'`): the `.vtkhdf` datasets copied in, the tree of the blocks as `Assembly`; static, or time series of Unstructured Grids and Polydata | ✅ |
 | PartitionedDataSetCollection (`vtm_file` with `composite='PartitionedDataSetCollection'`): each dataset copied once, with its `Index`, referenced from several blocks | ✅ |
-| Reading VTKHDF files back (`action='read'`): every topology, Tables, OverlappingAMRs level by level, time series step by step | ✅ |
+| Reading VTKHDF files back (`action='read'`): every topology, Tables, OverlappingAMRs level by level, HyperTreeGrids tree by tree, time series step by step; the entries of a MultiBlockDataSet or PartitionedDataSetCollection (`vtm_file`) and each of its datasets (`dataset=`) | ✅ |
 | One file from MPI ranks (`comm`, a parallel HDF5): Unstructured Grid and Polydata, one partition per rank, time series too (restart with `action='append'`), polyhedra, compression; Image Data, Rectilinear and Structured Grids, one region per rank | ✅ |
 
 ## VTK Legacy Exporters

@@ -32,6 +32,7 @@ use vtk_fortran_vtk_file_xml_writer_abstract
 use vtk_fortran_vtk_file_xml_writer_ascii_local
 use foxy, only : xml_index, XML_MALFORMED
 use vtk_fortran_hdf5
+use vtk_fortran_vtk_file_vtkhdf_reader, only : is_hdf5_file
 use vtk_fortran_parameters, only : stderr
 
 implicit none
@@ -54,6 +55,15 @@ type :: vtm_file
    integer(I8P),               private             :: n_steps=-1_I8P     !< Steps of the blocks: -1 none yet, 0 static.
    real(R8P), allocatable,     private             :: times(:)           !< Times of the steps of a time series.
    logical,                    private             :: is_collection=.false. !< A PartitionedDataSetCollection.
+   ! a VTKHDF composite read (action read): its entries, gathered from its Assembly when it is opened
+   logical,                    private             :: is_reading_vtkhdf=.false. !< A VTKHDF composite is read.
+   ! (plain integer arrays and one character buffer: nvfortran 26.9 corrupts arrays of strings grown by constructors)
+   integer(I4P), allocatable,  private             :: entry_level(:)     !< Nesting level of the entries, from 1.
+   logical,      allocatable,  private             :: entry_is_block(:)  !< The entry is a block (else a dataset).
+   integer(I4P), allocatable,  private             :: entry_index(:)     !< Index of the entries among their siblings.
+   integer(I4P), allocatable,  private             :: entry_text(:,:)    !< Start and length in entry_chars of the
+                                                                          !< name, file (dataset) and Assembly path.
+   character(len=:), allocatable, private          :: entry_chars        !< Names, files and paths of the entries.
    contains
       ! public methods
       procedure, pass(self) :: initialize          !< Initialize file.
@@ -71,6 +81,8 @@ type :: vtm_file
       procedure, pass(self), private :: write_block_scratch !< Write one block dataset on scratch files.
       ! VTKHDF methods
       procedure, pass(self), private :: vtkhdf_close_block  !< Close the open block of a VTKHDF file.
+      procedure, pass(self), private :: vtkhdf_entries      !< Gather the entries of a VTKHDF composite read.
+      procedure, pass(self), private :: vtkhdf_add_entries  !< Gather the entries of a block of its Assembly.
       procedure, pass(self), private :: vtkhdf_dataset      !< Copy a dataset file into a VTKHDF file.
       procedure, pass(self), private :: vtkhdf_open_block   !< Open a block of a VTKHDF file.
       procedure, pass(self), private :: vtkhdf_reference    !< Place a dataset already copied in the open block.
@@ -88,7 +100,9 @@ contains
   !<
   !< With `action='read'` (case insensitive) the file is indexed: its blocks and datasets are returned by `get_entries`, and
   !< each dataset file can then be read with `vtk_file` (or `pvtk_file`); `finalize` frees the index. The error is 1 if the
-  !< file cannot be read, 2 if it is not a multi-block file (`vtkMultiBlockDataSet`).
+  !< file cannot be read, 2 if it is not a multi-block file (`vtkMultiBlockDataSet`). A VTKHDF `MultiBlockDataSet` or
+  !< `PartitionedDataSetCollection` is read too: its blocks are the groups of its `Assembly`, its datasets the links in
+  !< them, the `file` of each the dataset path for `vtk_file%initialize(filename, action='read', dataset=file)`.
   class(vtm_file), intent(inout)        :: self                  !< VTM file.
   character(*),    intent(in)           :: filename              !< File name of output VTM file.
   integer(I4P),    intent(in), optional :: scratch_units_number  !< Number of scratch units for very large list of named blocks.
@@ -111,6 +125,11 @@ contains
      select case(action_%chars())
      case('READ')
         error = self%finalize()
+        if (is_hdf5_file(filename)) then ! a VTKHDF MultiBlockDataSet or PartitionedDataSetCollection
+           error = self%vtkhdf_entries(filename)
+           self%is_reading_vtkhdf = error == 0
+           return
+        endif
         call self%xml%scan(filename=filename, iostat=iostat)
         if (iostat /= 0) then ! 2 if malformed XML, 1 if it cannot be read
            error = merge(2_I4P, 1_I4P, iostat == XML_MALFORMED)
@@ -202,6 +221,12 @@ contains
      self%is_vtkhdf = .false.
      return
   endif
+  if (self%is_reading_vtkhdf) then
+     deallocate(self%entry_level, self%entry_is_block, self%entry_index, self%entry_text, self%entry_chars)
+     self%is_reading_vtkhdf = .false.
+     error = 0
+     return
+  endif
   if (self%is_reading) then
      call self%xml%free
      self%is_reading = .false.
@@ -253,6 +278,35 @@ contains
   integer(I4P)                                         :: iostat   !< IO status.
 
   error = 4
+  if (self%is_reading_vtkhdf) then ! the entries gathered from the Assembly
+     n = size(self%entry_level)
+     ln = 0 ; lf = 0
+     do e=1, n
+        ln = max(ln, self%entry_text(2, e)) ; lf = max(lf, self%entry_text(4, e))
+     enddo
+     if (present(level)) level = self%entry_level
+     if (present(kind)) then
+        allocate(character(len=7) :: kind(1:n))
+        do e=1, n
+           kind(e) = trim(merge('block  ', 'dataset', self%entry_is_block(e)))
+        enddo
+     endif
+     if (present(index)) index = self%entry_index
+     if (present(name)) then
+        allocate(character(len=ln) :: name(1:n))
+        do e=1, n
+           name(e) = self%entry_chars(self%entry_text(1, e):self%entry_text(1, e) + self%entry_text(2, e) - 1)
+        enddo
+     endif
+     if (present(file)) then
+        allocate(character(len=lf) :: file(1:n))
+        do e=1, n
+           file(e) = self%entry_chars(self%entry_text(3, e):self%entry_text(3, e) + self%entry_text(4, e) - 1)
+        enddo
+     endif
+     error = 0
+     return
+  endif
   if (.not.self%is_reading) return
   base = self%xml%level(self%xml%find(name='vtkMultiBlockDataSet', parent=self%xml%find(name='VTKFile', parent=0)))
   allocate(ids(1:size(self%xml%find_all(name='Block'))+size(self%xml%find_all(name='DataSet'))+ &
@@ -559,6 +613,91 @@ contains
    stack = [self%children, 0_I4P]
    call move_alloc(stack, self%children)
    endfunction vtkhdf_open_block
+
+   function vtkhdf_entries(self, filename) result(error)
+   !< Open a VTKHDF composite file (action read) and gather its entries from its `Assembly`: the groups are blocks, the
+   !< soft links datasets (their file the dataset under `/VTKHDF` they point to, the `dataset` of
+   !< `vtk_file%initialize(..., action='read', dataset=)`), in creation order, depth first: the members of a block are
+   !< inserted right after it, and the list is walked forward. The file is closed after. Error 1 if it cannot be read,
+   !< 2 if it is not a VTKHDF MultiBlockDataSet or PartitionedDataSetCollection.
+   class(vtm_file), intent(inout) :: self     !< VTM file.
+   character(*),    intent(in)    :: filename !< File name.
+   integer(I4P)                   :: error    !< Error status.
+   integer(hid_kind)              :: file_id  !< File.
+   integer(hid_kind)              :: root     !< Group /VTKHDF.
+   character(len=:), allocatable  :: text     !< Type of the file.
+   character(len=:), allocatable  :: path     !< Path of a block.
+   integer(I4P)                   :: e        !< Entry, error of a closing.
+
+   allocate(self%entry_level(0), self%entry_is_block(0), self%entry_index(0), self%entry_text(6, 0))
+   self%entry_chars = ''
+   error = 1
+   if (h5_file_open(filename, file_id) /= 0) return
+   error = 2
+   if (h5_group_open(file_id, 'VTKHDF', root) == 0) then
+      if (h5_attribute_read(root, 'Type', text) == 0) then
+         if ((text == 'MultiBlockDataSet' .or. text == 'PartitionedDataSetCollection') .and. &
+             h5_link_exists(root, 'Assembly')) then
+            error = self%vtkhdf_add_entries(root, 'Assembly', 1, 0) ! the members of the Assembly, at the start
+            e = 1
+            do while (error == 0 .and. e <= size(self%entry_level)) ! each block expanded in place, in turn
+               if (self%entry_is_block(e)) then ! (its path copied: entry_chars grows, an argument would alias it)
+                  path = self%entry_chars(self%entry_text(5, e):self%entry_text(5, e) + self%entry_text(6, e) - 1)
+                  error = self%vtkhdf_add_entries(root, path, self%entry_level(e) + 1, e)
+               endif
+               e = e + 1
+            enddo
+         endif
+      endif
+      e = h5_group_close(root)
+   endif
+   e = h5_file_close(file_id)
+   endfunction vtkhdf_entries
+
+   function vtkhdf_add_entries(self, root, path, level, after) result(error)
+   !< Insert the members of the block `path` of the Assembly (nesting level `level`) after the entry `after` (0: first).
+   class(vtm_file),   intent(inout) :: self    !< VTM file.
+   integer(hid_kind), intent(in)    :: root    !< Group /VTKHDF.
+   character(*),      intent(in)    :: path    !< Block, from /VTKHDF.
+   integer(I4P),      intent(in)    :: level   !< Nesting level of its members.
+   integer(I4P),      intent(in)    :: after   !< Entry after which they go.
+   integer(I4P)                     :: error   !< Error status.
+   character(len=:), allocatable    :: names   !< Its members, each followed by NUL.
+   character(len=:), allocatable    :: target  !< Where a dataset links.
+   integer(I4P), allocatable        :: lv(:), ix(:), tx(:,:) !< The members: levels, indices, texts.
+   logical,      allocatable        :: bl(:)   !< The members: blocks.
+   integer(I4P)                     :: first   !< First character of a member.
+   integer(I4P)                     :: c       !< Its NUL.
+   integer(I4P)                     :: m       !< Number of members.
+   integer(I4P)                     :: base    !< Length of the text before.
+
+   error = 2
+   if (h5_group_names(root, path, names) /= 0) return
+   error = 0
+   m = count([(names(c:c) == achar(0), c=1, len(names))])
+   allocate(lv(m), ix(m), bl(m), tx(6, m))
+   first = 1
+   do m=1, size(lv)
+      c = first - 1 + index(names(first:), achar(0))
+      lv(m) = level
+      ix(m) = m - 1
+      base = len(self%entry_chars)
+      tx(1:2, m) = [base + 1, c - first] ! the name
+      tx(5:6, m) = [base + c - first + 1, len(path) + 1 + c - first] ! the path, path/name
+      self%entry_chars = self%entry_chars//names(first:c-1)//path//'/'//names(first:c-1)
+      bl(m) = h5_link_target(root, path//'/'//names(first:c-1), target) /= 0 ! a group: no link target
+      if (bl(m)) target = ''
+      if (index(target, '/VTKHDF/') == 1) target = target(9:)
+      tx(3:4, m) = [len(self%entry_chars) + 1, len(target)] ! the dataset
+      self%entry_chars = self%entry_chars//target
+      first = c + 1
+   enddo
+   self%entry_level = [self%entry_level(1:after), lv, self%entry_level(after+1:)]
+   self%entry_index = [self%entry_index(1:after), ix, self%entry_index(after+1:)]
+   self%entry_is_block = [self%entry_is_block(1:after), bl, self%entry_is_block(after+1:)]
+   self%entry_text = reshape([self%entry_text(:, 1:after), tx, self%entry_text(:, after+1:)], &
+                             [6, size(self%entry_level)])
+   endfunction vtkhdf_add_entries
 
    function vtkhdf_close_block(self) result(error)
    !< Close the open block of a VTKHDF file.

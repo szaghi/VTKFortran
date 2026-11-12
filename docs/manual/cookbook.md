@@ -219,6 +219,11 @@ The steps of each mesh, written as for a single series:
 
 <<< @/examples/snippets/vtkhdf_motion-steps.f90
 
+The file is read back with the library: `vtm_file` lists its blocks and datasets, and each dataset (its group in the
+file, the `file` of the entry) is read by `vtk_file` with `dataset=` as a `.vtkhdf` of its own:
+
+<<< @/examples/snippets/vtkhdf_motion-read.f90
+
 <<< @/examples/output/vtkhdf_motion.ansi{ansi}
 
 <p align="center"><img src="../examples/images/vtkhdf_motion.gif" alt="the wave travelling along the surface and the buoy rising and falling with it, the six steps of the multi-block VTKHDF file played by ParaView"></p>
@@ -291,6 +296,10 @@ depth 3 around a circle. Each tree is its refinement, breadth first (the deepest
 leaves); the depth of each cell is its cell data:
 
 <<< @/examples/snippets/vtkhdf_htg-write.f90
+
+Read back, each tree comes as `write_tree` took it:
+
+<<< @/examples/snippets/vtkhdf_htg-read.f90
 
 <<< @/examples/output/vtkhdf_htg.ansi{ansi}
 
