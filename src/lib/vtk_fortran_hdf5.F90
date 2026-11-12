@@ -17,6 +17,9 @@ module vtk_fortran_hdf5
 !< `x(nc, ni, nj, nk)` is the HDF5 dataset `[nk, nj, ni, nc]`. An appendable dataset grows along its last Fortran
 !< dimension (the first HDF5 one). A dataset written by blocks (`h5_dataset_slab_<kind>`: in a parallel file, each rank
 !< its block of a grid) is created with its whole shape, then each block written where it goes.
+!< An appendable or deflated dataset is chunked by whole rows (its last Fortran dimension): as many as fit in the optional
+!< `chunk_bytes` of `h5_dataset_write_<kind>` (default `DEFAULT_CHUNK_BYTES`, 1 MiB), at least one, at most the rows
+!< written when it is created; `h5_dataset_chunk` reads the chunk shape back.
 use, intrinsic :: iso_c_binding
 use penf, only : I1P, I2P, I4P, I8P, R4P, R8P
 #ifdef VTKFORTRAN_USE_MPI
@@ -61,12 +64,14 @@ public :: h5_name_invalid
 public :: h5_dataset_open
 public :: h5_dataset_close
 public :: h5_dataset_dims
+public :: h5_dataset_chunk
 public :: h5_dataset_resize
 public :: h5_dataset_info
 public :: h5_dataset_read_bytes
 public :: h5_dataset_read
 public :: h5_deflate_available
 public :: h5_parallel_filters_available
+public :: DEFAULT_CHUNK_BYTES
 
 integer, parameter :: hid_kind = c_int64_t !< Kind of the HDF5 identifiers (`hid_t`, 64-bit since HDF5 1.10).
 
@@ -96,7 +101,7 @@ integer(c_int),     parameter :: H5Z_FILTER_DEFLATE = 1_c_int        !< The defl
 integer(c_int),     parameter :: H5P_CRT_ORDER_TRACKED = 1_c_int     !< Track the creation order of links.
 integer(c_int),     parameter :: H5P_CRT_ORDER_INDEXED = 2_c_int     !< Index the creation order of links.
 integer(c_long_long), parameter :: H5S_UNLIMITED = -1_c_long_long    !< Unlimited dimension ((hsize_t)-1).
-integer(I8P),       parameter :: CHUNK_BYTES = 1048576_I8P           !< Bytes of a chunk at most (but one row).
+integer(I8P),       parameter :: DEFAULT_CHUNK_BYTES = 1048576_I8P   !< Bytes of a chunk at most (but one row), default.
 
 #ifdef VTKFORTRAN_USE_HDF5
 ! the predefined types and property list classes: C globals, defined by HDF5 and valid after H5open. They must be PUBLIC:
@@ -382,6 +387,20 @@ interface
     integer(c_int),       value      :: ndims
     integer(c_long_long), intent(in) :: dims(*)
   end function H5Pset_chunk
+  integer(c_int) function H5Pget_chunk(plist, max_ndims, dims) bind(C, name='H5Pget_chunk')
+    import :: c_int, c_int64_t, c_long_long
+    integer(c_int64_t),   value       :: plist
+    integer(c_int),       value       :: max_ndims
+    integer(c_long_long), intent(out) :: dims(*)
+  end function H5Pget_chunk
+  integer(c_int) function H5Pget_layout(plist) bind(C, name='H5Pget_layout')
+    import :: c_int, c_int64_t
+    integer(c_int64_t), value :: plist
+  end function H5Pget_layout
+  integer(c_int64_t) function H5Dget_create_plist(dset) bind(C, name='H5Dget_create_plist')
+    import :: c_int64_t
+    integer(c_int64_t), value :: dset
+  end function H5Dget_create_plist
   integer(c_int) function H5Pset_deflate(plist, level) bind(C, name='H5Pset_deflate')
     import :: c_int, c_int64_t
     integer(c_int64_t), value :: plist
@@ -946,6 +965,44 @@ contains
 #endif
   endfunction h5_dataset_dims
 
+  function h5_dataset_chunk(loc_id, name, chunk) result(error)
+  !< Return the chunk shape of a dataset, in Fortran order; empty for a dataset that is not chunked.
+  integer(hid_kind),         intent(in)  :: loc_id   !< Parent (file or group).
+  character(*),              intent(in)  :: name     !< Dataset name (or path).
+  integer(I8P), allocatable, intent(out) :: chunk(:) !< Chunk shape, Fortran order.
+  integer(I4P)                           :: error    !< Error status.
+#ifdef VTKFORTRAN_USE_HDF5
+  integer(c_int), parameter              :: H5D_CHUNKED = 2_c_int !< Chunked layout (H5D_layout_t).
+  integer(c_int64_t)                     :: dset     !< Dataset.
+  integer(c_int64_t)                     :: dcpl     !< Its creation properties.
+  integer(c_int)                         :: rank     !< Rank of the chunks.
+  integer(c_long_long)                   :: cchunk(32) !< Chunk shape, C order.
+  integer                                :: d        !< Counter.
+
+  error = 1_I4P
+  allocate(chunk(0))
+  dset = H5Dopen2(loc_id, trim(name)//c_null_char, H5P_DEFAULT)
+  if (dset < 0) return
+  dcpl = H5Dget_create_plist(dset)
+  if (dcpl >= 0) then
+    if (H5Pget_layout(dcpl) == H5D_CHUNKED) then
+      rank = H5Pget_chunk(dcpl, int(size(cchunk), c_int), cchunk)
+      if (rank >= 0) then
+        chunk = [(int(cchunk(rank - d + 1), I8P), d=1, rank)]
+        error = 0_I4P
+      endif
+    else
+      error = 0_I4P
+    endif
+    if (H5Pclose(dcpl) < 0) error = 1_I4P
+  endif
+  if (H5Dclose(dset) < 0) error = 1_I4P
+#else
+  error = 1_I4P
+  allocate(chunk(0))
+#endif
+  endfunction h5_dataset_chunk
+
   function h5_dataset_info(loc_id, name, data_type, dims) result(error)
   !< Return the VTK type of a numeric dataset (Float64, Float32, Int64, ..., UInt8) and its shape (Fortran order).
   integer(hid_kind),             intent(in)  :: loc_id    !< Parent (file or group).
@@ -1082,7 +1139,7 @@ contains
   endfunction h5_dataset_resize
 
   ! datasets of every kind: thin front ends of dataset_write, dataset_append and dataset_read
-  function h5_dataset_write_R8P(loc_id, name, x, dims, appendable, deflate, comm) result(error)
+  function h5_dataset_write_R8P(loc_id, name, x, dims, appendable, deflate, comm, chunk_bytes) result(error)
   !< Create a dataset of `R8P` values (HDF5 native double), shape `dims` in Fortran order.
   integer(hid_kind), intent(in)           :: loc_id     !< Parent (file or group).
   character(*),      intent(in)           :: name       !< Dataset name.
@@ -1091,16 +1148,17 @@ contains
   logical,           intent(in), optional :: appendable !< Chunked, unlimited along the last dimension.
   integer(I4P),      intent(in), optional :: deflate    !< Deflate level (1-9), implies chunking.
   integer(I4P),      intent(in), optional :: comm       !< MPI communicator: every rank writes its rows (appendable, collective).
+  integer(I8P),      intent(in), optional :: chunk_bytes !< Bytes of a chunk at most (default 1 MiB), at least 1.
   integer(I4P)                            :: error      !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
-  error = dataset_write(loc_id, name, H5T_NATIVE_DOUBLE_g, 8_I8P, dims, c_loc(x), appendable, deflate, comm)
+  error = dataset_write(loc_id, name, H5T_NATIVE_DOUBLE_g, 8_I8P, dims, c_loc(x), appendable, deflate, comm, chunk_bytes)
 #else
   error = 1_I4P
 #endif
   endfunction h5_dataset_write_R8P
 
-  function h5_dataset_write_R4P(loc_id, name, x, dims, appendable, deflate, comm) result(error)
+  function h5_dataset_write_R4P(loc_id, name, x, dims, appendable, deflate, comm, chunk_bytes) result(error)
   !< Create a dataset of `R4P` values (HDF5 native float), shape `dims` in Fortran order.
   integer(hid_kind), intent(in)           :: loc_id     !< Parent (file or group).
   character(*),      intent(in)           :: name       !< Dataset name.
@@ -1109,16 +1167,17 @@ contains
   logical,           intent(in), optional :: appendable !< Chunked, unlimited along the last dimension.
   integer(I4P),      intent(in), optional :: deflate    !< Deflate level (1-9), implies chunking.
   integer(I4P),      intent(in), optional :: comm       !< MPI communicator: every rank writes its rows (appendable, collective).
+  integer(I8P),      intent(in), optional :: chunk_bytes !< Bytes of a chunk at most (default 1 MiB), at least 1.
   integer(I4P)                            :: error      !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
-  error = dataset_write(loc_id, name, H5T_NATIVE_FLOAT_g, 4_I8P, dims, c_loc(x), appendable, deflate, comm)
+  error = dataset_write(loc_id, name, H5T_NATIVE_FLOAT_g, 4_I8P, dims, c_loc(x), appendable, deflate, comm, chunk_bytes)
 #else
   error = 1_I4P
 #endif
   endfunction h5_dataset_write_R4P
 
-  function h5_dataset_write_I8P(loc_id, name, x, dims, appendable, deflate, unsigned, comm) result(error)
+  function h5_dataset_write_I8P(loc_id, name, x, dims, appendable, deflate, unsigned, comm, chunk_bytes) result(error)
   !< Create a dataset of `I8P` values (HDF5 native int64, or uint64 with `unsigned=.true.`), shape `dims` in Fortran order.
   integer(hid_kind), intent(in)           :: loc_id     !< Parent (file or group).
   character(*),      intent(in)           :: name       !< Dataset name.
@@ -1128,17 +1187,18 @@ contains
   integer(I4P),      intent(in), optional :: deflate    !< Deflate level (1-9), implies chunking.
   logical,           intent(in), optional :: unsigned   !< Store the bits as the unsigned type of the same width.
   integer(I4P),      intent(in), optional :: comm       !< MPI communicator: every rank writes its rows (appendable, collective).
+  integer(I8P),      intent(in), optional :: chunk_bytes !< Bytes of a chunk at most (default 1 MiB), at least 1.
   integer(I4P)                            :: error      !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
   error = dataset_write(loc_id, name, merge(H5T_NATIVE_UINT64_g, H5T_NATIVE_INT64_g, is_true(unsigned)), 8_I8P, dims, &
-                        c_loc(x), appendable, deflate, comm)
+                        c_loc(x), appendable, deflate, comm, chunk_bytes)
 #else
   error = 1_I4P
 #endif
   endfunction h5_dataset_write_I8P
 
-  function h5_dataset_write_I4P(loc_id, name, x, dims, appendable, deflate, unsigned, comm) result(error)
+  function h5_dataset_write_I4P(loc_id, name, x, dims, appendable, deflate, unsigned, comm, chunk_bytes) result(error)
   !< Create a dataset of `I4P` values (HDF5 native int32, or uint32 with `unsigned=.true.`), shape `dims` in Fortran order.
   integer(hid_kind), intent(in)           :: loc_id     !< Parent (file or group).
   character(*),      intent(in)           :: name       !< Dataset name.
@@ -1148,17 +1208,18 @@ contains
   integer(I4P),      intent(in), optional :: deflate    !< Deflate level (1-9), implies chunking.
   logical,           intent(in), optional :: unsigned   !< Store the bits as the unsigned type of the same width.
   integer(I4P),      intent(in), optional :: comm       !< MPI communicator: every rank writes its rows (appendable, collective).
+  integer(I8P),      intent(in), optional :: chunk_bytes !< Bytes of a chunk at most (default 1 MiB), at least 1.
   integer(I4P)                            :: error      !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
   error = dataset_write(loc_id, name, merge(H5T_NATIVE_UINT32_g, H5T_NATIVE_INT32_g, is_true(unsigned)), 4_I8P, dims, &
-                        c_loc(x), appendable, deflate, comm)
+                        c_loc(x), appendable, deflate, comm, chunk_bytes)
 #else
   error = 1_I4P
 #endif
   endfunction h5_dataset_write_I4P
 
-  function h5_dataset_write_I2P(loc_id, name, x, dims, appendable, deflate, unsigned, comm) result(error)
+  function h5_dataset_write_I2P(loc_id, name, x, dims, appendable, deflate, unsigned, comm, chunk_bytes) result(error)
   !< Create a dataset of `I2P` values (HDF5 native int16, or uint16 with `unsigned=.true.`), shape `dims` in Fortran order.
   integer(hid_kind), intent(in)           :: loc_id     !< Parent (file or group).
   character(*),      intent(in)           :: name       !< Dataset name.
@@ -1168,17 +1229,18 @@ contains
   integer(I4P),      intent(in), optional :: deflate    !< Deflate level (1-9), implies chunking.
   logical,           intent(in), optional :: unsigned   !< Store the bits as the unsigned type of the same width.
   integer(I4P),      intent(in), optional :: comm       !< MPI communicator: every rank writes its rows (appendable, collective).
+  integer(I8P),      intent(in), optional :: chunk_bytes !< Bytes of a chunk at most (default 1 MiB), at least 1.
   integer(I4P)                            :: error      !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
   error = dataset_write(loc_id, name, merge(H5T_NATIVE_UINT16_g, H5T_NATIVE_INT16_g, is_true(unsigned)), 2_I8P, dims, &
-                        c_loc(x), appendable, deflate, comm)
+                        c_loc(x), appendable, deflate, comm, chunk_bytes)
 #else
   error = 1_I4P
 #endif
   endfunction h5_dataset_write_I2P
 
-  function h5_dataset_write_I1P(loc_id, name, x, dims, appendable, deflate, unsigned, comm) result(error)
+  function h5_dataset_write_I1P(loc_id, name, x, dims, appendable, deflate, unsigned, comm, chunk_bytes) result(error)
   !< Create a dataset of `I1P` values (HDF5 native int8, or uint8 with `unsigned=.true.`), shape `dims` in Fortran order.
   integer(hid_kind), intent(in)           :: loc_id     !< Parent (file or group).
   character(*),      intent(in)           :: name       !< Dataset name.
@@ -1188,11 +1250,12 @@ contains
   integer(I4P),      intent(in), optional :: deflate    !< Deflate level (1-9), implies chunking.
   logical,           intent(in), optional :: unsigned   !< Store the bits as the unsigned type of the same width.
   integer(I4P),      intent(in), optional :: comm       !< MPI communicator: every rank writes its rows (appendable, collective).
+  integer(I8P),      intent(in), optional :: chunk_bytes !< Bytes of a chunk at most (default 1 MiB), at least 1.
   integer(I4P)                            :: error      !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
   error = dataset_write(loc_id, name, merge(H5T_NATIVE_UINT8_g, H5T_NATIVE_INT8_g, is_true(unsigned)), 1_I8P, dims, &
-                        c_loc(x), appendable, deflate, comm)
+                        c_loc(x), appendable, deflate, comm, chunk_bytes)
 #else
   error = 1_I4P
 #endif
@@ -1723,11 +1786,15 @@ contains
   if (H5Sclose(space) < 0) error = 1_I4P
   endfunction dataset_dims
 
-  function dataset_write(loc_id, name, memtype, bytes, dims, buffer, appendable, deflate, comm) result(error)
+  function dataset_write(loc_id, name, memtype, bytes, dims, buffer, appendable, deflate, comm, chunk_bytes) result(error)
   !< Create a dataset of the type `memtype` (stored as it is), shape `dims` (Fortran order), and write its values.
   !<
   !< With `comm` (an appendable dataset of a parallel file) the ranks create the dataset empty, its chunks sized for the
   !< rows of all of them, then each one appends its rows after the ranks before (collective).
+  !<
+  !< A chunked dataset (appendable or deflated) is chunked by whole rows (its last Fortran dimension): as many as fit in
+  !< `chunk_bytes` (default `DEFAULT_CHUNK_BYTES`), at least one, at most the rows written now (all the ranks' with `comm`).
+  !< With `comm` the largest `chunk_bytes` of the ranks is used: the chunk shape is the same on every rank.
   integer(hid_kind),  intent(in)           :: loc_id     !< Parent (file or group).
   character(*),       intent(in)           :: name       !< Dataset name.
   integer(c_int64_t), intent(in)           :: memtype    !< Type of the values in memory (and in the file).
@@ -1737,7 +1804,9 @@ contains
   logical,            intent(in), optional :: appendable !< Chunked, unlimited along the last Fortran dimension.
   integer(I4P),       intent(in), optional :: deflate    !< Deflate level (1-9), implies chunking.
   integer(I4P),       intent(in), optional :: comm       !< MPI communicator (Fortran handle).
+  integer(I8P),       intent(in), optional :: chunk_bytes !< Bytes of a chunk at most (default 1 MiB), at least 1.
   integer(I4P)                             :: error      !< Error status.
+  integer(I8P)                             :: cbytes     !< Bytes of a chunk at most.
   integer(I8P)                             :: first      !< Rows of the ranks before this one.
   integer(I8P)                             :: total      !< Rows of all the ranks.
   integer(I8P)                             :: fbytes     !< Bytes of a value in the file.
@@ -1754,6 +1823,8 @@ contains
 
   error = 1_I4P
   if (size(dims) < 1 .or. bytes < 1) return
+  cbytes = DEFAULT_CHUNK_BYTES
+  if (present(chunk_bytes)) cbytes = chunk_bytes
   cdims = c_dims(dims)
   total = dims(size(dims))
   ftype = memtype
@@ -1761,10 +1832,12 @@ contains
   if (present(comm)) then ! created empty by every rank, its chunks sized for the rows of all, of the widest kind given
     if (.not.is_true(appendable)) return
     if (mpi_rows(comm, dims(size(dims)), first, total) /= 0_I4P) return
+    cbytes = mpi_maximum(comm, cbytes) ! one chunk shape on every rank (the dataset is created collectively)
     cdims(1) = 0_c_long_long
     fbytes = mpi_maximum(comm, bytes)
     ftype = widest_type(memtype, fbytes)
   endif
+  if (cbytes < 1_I8P) return ! with comm, the same on every rank
   level = 0_I4P ; if (present(deflate)) level = max(0_I4P, min(9_I4P, deflate))
   chunked = is_true(appendable) .or. level > 0
   maxdims = cdims
@@ -1780,8 +1853,8 @@ contains
   if (chunked) then
     dcpl = H5Pcreate(H5P_CLS_DATASET_CREATE_ID_g)
     chunk = max(1_c_long_long, cdims)
-    ! whole rows (slowest dimension) up to CHUNK_BYTES: a rank-3 grid is chunked by planes, not as one chunk
-    chunk(1) = max(1_c_long_long, min(int(total, c_long_long), int(CHUNK_BYTES / (fbytes * product(chunk(2:))), c_long_long)))
+    ! whole rows (slowest dimension) up to cbytes: a rank-3 grid is chunked by planes, not as one chunk
+    chunk(1) = max(1_c_long_long, min(int(total, c_long_long), int(cbytes / (fbytes * product(chunk(2:))), c_long_long)))
     ok = dcpl >= 0
     if (ok) ok = H5Pset_chunk(dcpl, int(size(dims), c_int), chunk) >= 0
     if (ok .and. level > 0) ok = H5Pset_deflate(dcpl, int(level, c_int)) >= 0

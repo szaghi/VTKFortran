@@ -26,8 +26,13 @@ program vtk_fortran_write_vtkhdf_steps
 !<- `vtkfortran_steps_strg_fixed`: a StructuredGrid whose points are written at step 1 only.
 !<
 !< The UnstructuredGrid series are read back with the HDF5 bindings (NSteps, Values, the parts and offsets of each step,
-!< the points stored once), and the offsets of the grids. Refusals are checked too. Without HDF5 the writer refuses to
-!< start.
+!< the points stored once), and the offsets of the grids. Refusals are checked too. The chunks (`chunk_bytes`): the
+!< UnstructuredGrid and RectilinearGrid series written again with small chunks (`vtkfortran_steps_chunks_unst`,
+!< `vtkfortran_steps_chunks_rect`), their chunk shapes read back against those of the default; the UnstructuredGrid one
+!< continued (`action='append'`) with another `chunk_bytes` by a step with a polyhedron: its datasets keep their chunks,
+!< the face datasets created after the reopen get the new one; a deflated ImageData
+!< (`vtkfortran_steps_chunks_image`, if HDF5 has deflate); the refusals of `chunk_bytes`. Without HDF5 the writer refuses
+!< to start.
 use penf
 use vtk_fortran, only : vtk_file
 use vtk_fortran_hdf5
@@ -39,10 +44,11 @@ integer(I8P),     allocatable :: ivalues(:)                 !< Values read back.
 real(R8P),        allocatable :: rvalues(:)                 !< Values read back.
 integer(I4P)                  :: e(30)                      !< Errors of each call.
 integer(I4P)                  :: f                          !< Counter.
-logical                       :: test_passed(6)             !< List of passed tests.
+logical                       :: test_passed(7)             !< List of passed tests.
 real(R8P),        parameter   :: times(4) = [0._R8P, 0.5_R8P, 1._R8P, 1.5_R8P] !< Times of the steps.
 logical                       :: hdf=.false.                !< The series written is the VTKHDF file (not the XML files).
 integer(I4P)                  :: skip_cycle=0               !< Step whose VTKHDF file does not write the cycle (reused).
+integer(I4P)                  :: chunk_set=0                !< chunk_bytes of the VTKHDF files written, 0 for the default.
 
 test_passed = .false.
 if (.not.is_hdf5_enabled) then
@@ -91,7 +97,8 @@ else
   e(12) = h5_file_close(file_id)
   test_passed(5) = all(e(1:12) == 0)
   test_passed(6) = stored_once()
-  print '(A,6L2)', 'VTKHDF time series: series, refusals, steps, offsets, reads, stored once:', test_passed
+  test_passed(7) = chunks()
+  print '(A,7L2)', 'VTKHDF time series: series, refusals, steps, offsets, reads, stored once, chunks:', test_passed
 endif
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
@@ -144,10 +151,19 @@ contains
                                   nx1=0, nx2=2, ny1=0, ny2=1, nz1=0, nz2=0,                 &
                                   origin=[0._R8P, 0._R8P, 0._R8P], spacing=[1._R8P, 1._R8P, 1._R8P])
   case('RectilinearGrid', 'StructuredGrid')
-    error = a_vtk_file%initialize(format=format, filename=filename, mesh_topology=topology, &
-                                  nx1=0, nx2=2, ny1=0, ny2=1, nz1=0, nz2=0)
+    if (chunk_set > 0) then
+      error = a_vtk_file%initialize(format=format, filename=filename, mesh_topology=topology, &
+                                    nx1=0, nx2=2, ny1=0, ny2=1, nz1=0, nz2=0, chunk_bytes=chunk_set)
+    else
+      error = a_vtk_file%initialize(format=format, filename=filename, mesh_topology=topology, &
+                                    nx1=0, nx2=2, ny1=0, ny2=1, nz1=0, nz2=0)
+    endif
   case default
-    error = a_vtk_file%initialize(format=format, filename=filename, mesh_topology=topology)
+    if (chunk_set > 0) then
+      error = a_vtk_file%initialize(format=format, filename=filename, mesh_topology=topology, chunk_bytes=chunk_set)
+    else
+      error = a_vtk_file%initialize(format=format, filename=filename, mesh_topology=topology)
+    endif
   endselect
   endfunction initialize
 
@@ -475,6 +491,81 @@ contains
   stored_once = all(ok) .and. all(e(1:24) == 0)
   if (.not.stored_once) print '(A,12L2)', 'stored once: ', ok
   endfunction stored_once
+
+  logical function chunks()
+  !< The chunks of the datasets: whole rows, at most `chunk_bytes` (default 1 MiB), at least one row, at most the rows of
+  !< the first write; kept by a series continued with another `chunk_bytes`; the refusals of `chunk_bytes`.
+  integer(I4P) :: error, i
+  logical      :: ok(12)
+
+  ok = .false.
+  ! 64 bytes: 2 points of 24 bytes (the first piece has 5); 16 bytes: 2 x coordinates (3 per step)
+  chunk_set = 64
+  ok(1) = series('vtkfortran_steps_chunks_unst', 'UnstructuredGrid', '.vtu', 3, .true., unst_step) == 0
+  chunk_set = 16
+  ok(2) = series('vtkfortran_steps_chunks_rect', 'RectilinearGrid', '.vtr', 2, .true., rect_step) == 0
+  chunk_set = 0
+  ok(3) = shape_of('vtkfortran_steps_unst.vtkhdf', 'Points', [3_I8P, 5_I8P])               ! default: the rows written
+  ok(4) = shape_of('vtkfortran_steps_chunks_unst.vtkhdf', 'Points', [3_I8P, 2_I8P])        ! 64 bytes
+  ok(5) = shape_of('vtkfortran_steps_chunks_unst.vtkhdf', 'Steps/Values', [1_I8P])         ! one row at least
+  ok(6) = shape_of('vtkfortran_steps_rect.vtkhdf', 'XCoordinates', [3_I8P])
+  ok(7) = shape_of('vtkfortran_steps_chunks_rect.vtkhdf', 'XCoordinates', [2_I8P])         ! 16 bytes
+  ! continued with chunk_bytes=16: the datasets of the file keep their chunks, those created after the reopen with rows
+  ! get 16 bytes, 2 int64 (the offsets of the polyhedra of step 4, with zeros for the parts and steps before; a
+  ! dataset created empty, as FaceConnectivity, has chunks of one row whatever chunk_bytes)
+  error = a_vtk_file%initialize(format='vtkhdf', filename='vtkfortran_steps_chunks_unst.vtkhdf', action='append', &
+                                chunk_bytes=16)
+  error = max(error, abs(a_vtk_file%xml_writer%write_step(time=times(4))))
+  error = max(error, abs(field_data(4)))
+  error = max(error, abs(polyh_step(2)))
+  error = max(error, abs(a_vtk_file%finalize()))
+  ok(8) = error == 0 .and. shape_of('vtkfortran_steps_chunks_unst.vtkhdf', 'Points', [3_I8P, 2_I8P]) .and. &
+          shape_of('vtkfortran_steps_chunks_unst.vtkhdf', 'PolyhedronOffsets', [2_I8P]) .and. &
+          shape_of('vtkfortran_steps_chunks_unst.vtkhdf', 'Steps/FaceOffsetsOffsets', [2_I8P])
+  ! a deflated ImageData: planes of 3x4 points (96 bytes), 200 bytes = 2 planes; contiguous without deflate
+  error = a_vtk_file%initialize(format='vtkhdf', filename='vtkfortran_steps_chunks_image.vtkhdf', &
+                                mesh_topology='ImageData', nx1=0, nx2=2, ny1=0, ny2=3, nz1=0, nz2=4, &
+                                origin=[0._R8P, 0._R8P, 0._R8P], spacing=[1._R8P, 1._R8P, 1._R8P], &
+                                compressor='zlib', chunk_bytes=200)
+  if (h5_deflate_available()) then
+    error = max(error, abs(a_vtk_file%xml_writer%write_piece(nx1=0, nx2=2, ny1=0, ny2=3, nz1=0, nz2=4)))
+    error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(location='node', action='open')))
+    error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(data_name='pd', x=[(real(i, R8P), i=1, 60)])))
+    error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(location='node', action='close')))
+    error = max(error, abs(a_vtk_file%xml_writer%write_piece()))
+    error = max(error, abs(a_vtk_file%finalize()))
+    ok(9) = error == 0 .and. shape_of('vtkfortran_steps_chunks_image.vtkhdf', 'PointData/pd', [3_I8P, 4_I8P, 2_I8P])
+  else
+    ok(9) = error /= 0 ! zlib refused without the deflate filter
+  endif
+  ! refused: not positive, an XML format, a file read
+  ok(10) = a_vtk_file%initialize(format='vtkhdf', filename='refused_chunks.vtkhdf', mesh_topology='UnstructuredGrid', &
+                                 chunk_bytes=0) /= 0
+  ok(11) = a_vtk_file%initialize(format='binary', filename='refused_chunks.vtu', mesh_topology='UnstructuredGrid', &
+                                 chunk_bytes=4096) /= 0
+  ok(12) = a_vtk_file%initialize(format='vtkhdf', filename='vtkfortran_steps_unst.vtkhdf', action='read', &
+                                 chunk_bytes=4096) /= 0
+  chunks = all(ok)
+  if (.not.chunks) print '(A,12L2)', 'chunks: ', ok
+  endfunction chunks
+
+  logical function shape_of(filename, name, expected)
+  !< The chunk shape of the dataset `name` of `/VTKHDF` in the file is `expected`.
+  character(*), intent(in)  :: filename    !< File name.
+  character(*), intent(in)  :: name        !< Dataset, in /VTKHDF.
+  integer(I8P), intent(in)  :: expected(:) !< Chunk shape expected, Fortran order.
+  integer(I8P), allocatable :: chunk(:)    !< Chunk shape read.
+  integer(hid_kind)         :: file_id     !< File.
+  integer(I4P)              :: error       !< Error status.
+
+  shape_of = .false.
+  if (h5_file_open(filename, file_id) /= 0) return
+  error = h5_dataset_chunk(file_id, 'VTKHDF/'//name, chunk)
+  shape_of = error == 0 .and. size(chunk) == size(expected)
+  if (shape_of) shape_of = all(chunk == expected)
+  if (.not.shape_of) print '(A,10I8)', filename//' '//name//' chunk: ', chunk
+  error = h5_file_close(file_id)
+  endfunction shape_of
 
   logical function refusals()
   !< The refusals of the time series, each one a non-zero error.

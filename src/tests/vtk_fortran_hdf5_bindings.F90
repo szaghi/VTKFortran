@@ -6,7 +6,9 @@ program vtk_fortran_hdf5_bindings
 !< attributes, datasets of rank 3 in the Fortran order, deflate if HDF5 has it), an appendable dataset grown twice, an
 !< unsigned dataset,
 !< a group with tracked creation order and a soft link, then reads everything back; the members of a group are listed in
-!< their creation order when the group tracks it, by name otherwise. The ImageData is a valid VTKHDF
+!< their creation order when the group tracks it, by name otherwise; the chunks of appendable datasets (whole rows, at
+!< most 1 MiB by default or `chunk_bytes`, at least one row, at most the rows written), a refused `chunk_bytes`, a
+!< dataset not chunked. The ImageData is a valid VTKHDF
 !< file (`vtkfortran_hdf5_bindings.vtkhdf`), opened by VTK readers outside this test. Without HDF5 it checks that the
 !< procedures are stubs returning an error.
 use penf
@@ -29,9 +31,12 @@ integer(I8P), allocatable :: version(:), dims(:), ids_read(:)        !< Values r
 real(R8P),    allocatable :: f_read(:)                               !< Values read back.
 real(R4P),    allocatable :: c_read(:)                               !< Values read back.
 integer(I2P), allocatable :: bytes_read(:)                           !< Values read back.
+integer(I8P), allocatable :: rows(:,:)                               !< Rows of 3 values (24 bytes), chunked.
+integer(I8P), allocatable :: chunk(:,:)                              !< Chunk shapes read back.
+integer(I8P), allocatable :: shape_read(:)                           !< A chunk shape read back.
 integer(I4P)            :: e(32)                                     !< Errors of each call.
 integer(I4P)            :: i, j, k                                   !< Counters.
-logical                 :: test_passed(7)                            !< List of passed tests.
+logical                 :: test_passed(8)                            !< List of passed tests.
 
 if (.not.is_hdf5_enabled) then
   ! without HDF5: every procedure is a stub returning an error
@@ -72,9 +77,17 @@ else
   e(21) = h5_dataset_append_I8P(group, 'ids', ids(3:5), [3_I8P])
   e(22) = h5_dataset_write_I1P(group, 'bytes', bytes, [3_I8P], unsigned=.true.)
   e(23) = h5_link_soft('/VTKHDF/PointData/f', group, 'link_to_f')
+  ! chunks: 50000 rows of 24 bytes; default (1 MiB: 43690 rows), 4096 bytes (170 rows), 1 byte (one row), 10 rows
+  allocate(rows(3, 50000)) ; rows = 1_I8P
+  e(26) = h5_dataset_write_I8P(group, 'chunk_default', rows, [3_I8P, 50000_I8P], appendable=.true.)
+  e(27) = h5_dataset_write_I8P(group, 'chunk_4096', rows, [3_I8P, 50000_I8P], appendable=.true., chunk_bytes=4096_I8P)
+  e(28) = h5_dataset_write_I8P(group, 'chunk_1', rows, [3_I8P, 50000_I8P], appendable=.true., chunk_bytes=1_I8P)
+  e(29) = h5_dataset_write_I8P(group, 'chunk_rows', rows, [3_I8P, 10_I8P], appendable=.true., chunk_bytes=4096_I8P)
+  e(30) = merge(0_I4P, 1_I4P, h5_dataset_write_I8P(group, 'chunk_0', rows, [3_I8P, 10_I8P], appendable=.true., &
+                                                  chunk_bytes=0_I8P) /= 0) ! refused
   e(24) = h5_group_close(group)
   e(25) = h5_file_close(file_id)
-  test_passed(1) = all(e(1:25) == 0)
+  test_passed(1) = all(e(1:30) == 0)
 
   ! read back
   e = 0
@@ -103,11 +116,23 @@ else
   ! the members: in creation order (extra tracks it), by name (/VTKHDF does not)
   e(14) = h5_group_names(file_id, 'extra', text)
   e(15) = h5_group_names(file_id, 'VTKHDF', names)
-  test_passed(7) = all(e(14:15) == 0) .and. text == 'ids'//achar(0)//'bytes'//achar(0)//'link_to_f'//achar(0) .and. &
+  test_passed(7) = all(e(14:15) == 0) .and. text == 'ids'//achar(0)//'bytes'//achar(0)//'link_to_f'//achar(0)// &
+                   'chunk_default'//achar(0)//'chunk_4096'//achar(0)//'chunk_1'//achar(0)//'chunk_rows'//achar(0) .and. &
                    names == 'CellData'//achar(0)//'PointData'//achar(0)
+  ! the chunks: default, chunk_bytes, one row at least, the rows written at most; f is not chunked; chunk_0 not created
+  allocate(chunk(2,4))
+  e(16) = h5_dataset_chunk(file_id, 'extra/chunk_default', shape_read) ; chunk(:,1) = shape_read
+  e(17) = h5_dataset_chunk(file_id, 'extra/chunk_4096', shape_read) ; chunk(:,2) = shape_read
+  e(18) = h5_dataset_chunk(file_id, 'extra/chunk_1', shape_read) ; chunk(:,3) = shape_read
+  e(19) = h5_dataset_chunk(file_id, 'extra/chunk_rows', shape_read) ; chunk(:,4) = shape_read
+  e(20) = h5_dataset_chunk(root, 'PointData/f', shape_read)
+  test_passed(8) = all(e(16:20) == 0) .and. all(chunk(1,:) == 3_I8P) .and. &
+                   all(chunk(2,:) == [DEFAULT_CHUNK_BYTES / 24_I8P, 4096_I8P / 24_I8P, 1_I8P, 10_I8P]) .and. &
+                   DEFAULT_CHUNK_BYTES == 1048576_I8P .and. size(shape_read) == 0 .and. &
+                   .not.h5_link_exists(file_id, 'extra/chunk_0')
   e(12) = h5_group_close(root)
   e(13) = h5_file_close(file_id)
-  print '(A,7L2)', 'HDF5 bindings: write, attributes, rank 3, deflate, append+unsigned, soft link, members order:', &
+  print '(A,8L2)', 'HDF5 bindings: write, attributes, rank 3, deflate, append+unsigned, soft link, members order, chunks:', &
                    test_passed
 endif
 

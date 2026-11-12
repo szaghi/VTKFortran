@@ -23,14 +23,15 @@ program vtk_fortran_write_vtkhdf_ranks
 !< tetrahedron on every rank at step 1, a hexahedron as a polyhedron on the odd ranks at step 2); with an HDF5 that
 !< writes deflated datasets from ranks (`h5_parallel_filters_available`), `vtkfortran_unst_zlib_mpi.vtkhdf` and
 !< `vtkfortran_poly_zlib_mpi.vtkhdf`, the UnstructuredGrid and the PolyData compressed (skipped with a message
-!< otherwise).
+!< otherwise). `vtkfortran_unst_chunks_mpi.vtkhdf`: the UnstructuredGrid again, with `chunk_bytes=48` (chunks of 2 points,
+!< sized from the rows of all the ranks), its `.vtu` twin written by rank 0.
 !<
 !< Rank 0 then writes the same pieces (the same grids, the same series) alone, in rank order: a serial `.vtkhdf` of
 !< each, compared here dataset by dataset (values: the parallel file stores the widest kind of ids the ranks give), and
 !< a `.vtu`/`.vtp`/`.vti`/`.vtr`/`.vts` of each (VTK readers compare the two outside this test). The refusals of
 !< `comm` are checked too, those of the grid regions (outside the whole extent, overlapping, not covering it, two per
-!< rank), of the time series (different times on the ranks, a grid), of a Table, an OverlappingAMR and a HyperTreeGrid
-!< included.
+!< rank), of the time series (different times on the ranks, a grid), of a Table, an OverlappingAMR and a HyperTreeGrid,
+!< of `chunk_bytes` different on the ranks, included.
 !< Without MPI `comm` is refused.
 !<
 !< Its name has no "mpi": `scripts/run_tests.sh` runs those with `mpirun` in every build, MPI or not. Without MPI it
@@ -46,7 +47,9 @@ implicit none
 type(vtk_file)          :: a_vtk_file     !< VTK file.
 integer(I4P)            :: rank, n_ranks  !< MPI rank, ranks.
 integer(I4P)            :: comm           !< MPI communicator (Fortran handle).
-integer(I4P)            :: e(16)          !< Errors.
+integer(I4P)            :: e(17)          !< Errors.
+integer(I8P), allocatable :: chunk(:)     !< A chunk shape read back.
+integer(hid_kind)       :: file_id        !< A file read back.
 logical                 :: test_passed(4) !< List of passed tests.
 character(*), parameter :: GRIDS(3) = ['ImageData      ', 'RectilinearGrid', 'StructuredGrid '] !< Grid topologies.
 character(*), parameter :: GRID_NAMES(3) = ['image', 'rect ', 'strg '] !< Their names in the files.
@@ -106,8 +109,13 @@ else
   elseif (rank == 0) then
     print '(A)', 'HDF5 without parallel filtered writes (deflate): the compressed files from ranks are skipped'
   endif
-  test_passed(1) = all(e(1:15) == 0)
-  if (.not.test_passed(1)) print '(A,I0,A,15I2)', 'rank ', rank, ' errors of the parallel files: ', e(1:15)
+  ! the UnstructuredGrid with chunks of 48 bytes, 2 points
+  e(16) = a_vtk_file%initialize(format='vtkhdf', filename='vtkfortran_unst_chunks_mpi.vtkhdf', &
+                                mesh_topology='UnstructuredGrid', chunk_bytes=48, comm=comm)
+  e(17) = abs(unst_piece(a_vtk_file, rank, field=.true.))
+  e(16) = max(e(16), abs(a_vtk_file%finalize()))
+  test_passed(1) = all(e(1:17) == 0)
+  if (.not.test_passed(1)) print '(A,I0,A,17I2)', 'rank ', rank, ' errors of the parallel files: ', e(1:17)
   test_passed(2) = refusals()
 
   ! rank 0: the same pieces alone, compared with the parallel files
@@ -125,8 +133,9 @@ else
     e(11) = series_unst('serial_series_unst_mpi.vtkhdf', is_parallel=.false., first=1, last=4)
     e(12) = series_poly('serial_series_poly_mpi.vtkhdf', is_parallel=.false.)
     e(13) = series_polyh('serial_polyh_mpi.vtkhdf', is_parallel=.false.)
-    test_passed(3) = all(e(1:13) == 0)
-    if (.not.test_passed(3)) print '(A,13I2)', 'errors of the serial files: ', e(1:13)
+    e(14) = serial_unst('raw', 'vtkfortran_unst_chunks_mpi.vtu') ! the XML twin of the file with chunk_bytes
+    test_passed(3) = all(e(1:14) == 0)
+    if (.not.test_passed(3)) print '(A,14I2)', 'errors of the serial files: ', e(1:14)
     test_passed(4) = same_datasets('vtkfortran_unst_mpi.vtkhdf', 'serial_unst_mpi.vtkhdf', UNST_DATASETS)
     test_passed(4) = same_datasets('vtkfortran_poly_mpi.vtkhdf', 'serial_poly_mpi.vtkhdf', POLY_DATASETS) .and. test_passed(4)
     test_passed(4) = same_datasets('vtkfortran_series_unst_mpi.vtkhdf', 'serial_series_unst_mpi.vtkhdf', &
@@ -156,6 +165,17 @@ else
       test_passed(4) = same_datasets('vtkfortran_'//trim(GRID_NAMES(g))//'_mpi.vtkhdf', &
                                      'serial_'//trim(GRID_NAMES(g))//'_mpi.vtkhdf', trim(GRID_DATASETS(g))) .and. test_passed(4)
     enddo
+    test_passed(4) = same_datasets('vtkfortran_unst_chunks_mpi.vtkhdf', 'serial_unst_mpi.vtkhdf', UNST_DATASETS) .and. &
+                     test_passed(4)
+    e(1) = h5_file_open('vtkfortran_unst_chunks_mpi.vtkhdf', file_id)
+    e(2) = h5_dataset_chunk(file_id, 'VTKHDF/Points', chunk)
+    e(3) = h5_file_close(file_id)
+    if (any(e(1:3) /= 0) .or. size(chunk) /= 2) then
+      test_passed(4) = .false.
+    elseif (any(chunk /= [3_I8P, 2_I8P])) then
+      test_passed(4) = .false.
+    endif
+    if (.not.test_passed(4)) print '(A,10I6)', 'chunk of the points of vtkfortran_unst_chunks_mpi.vtkhdf: ', chunk
   endif
 #ifdef VTKFORTRAN_USE_MPI
   call MPI_Allreduce(MPI_IN_PLACE, test_passed, size(test_passed), MPI_LOGICAL, MPI_LAND, MPI_COMM_WORLD)
@@ -541,7 +561,7 @@ contains
   logical function refusals()
   !< The refusals of comm, by every rank (the files created are finalized by all of them).
   integer(I4P) :: error
-  logical      :: ok(17)
+  logical      :: ok(19)
   integer(I4P) :: ext(6) !< Region of this rank.
 
   ok = .false.
@@ -583,6 +603,19 @@ contains
                                  nx1=0, nx2=1, ny1=0, ny2=1, nz1=0, nz2=0, comm=comm) /= 0 ! an HTG: one process
   ok(3) = a_vtk_file%initialize(format='raw', filename='refused.vtu', mesh_topology='UnstructuredGrid', comm=comm) /= 0
   ok(4) = a_vtk_file%initialize(filename='vtkfortran_unst_mpi.vtkhdf', action='read', comm=comm) /= 0
+  ! chunk_bytes different on the ranks (more than one), or given by rank 0 only: refused on every rank
+  ok(18:19) = n_ranks == 1
+  if (n_ranks > 1) then
+    ok(18) = a_vtk_file%initialize(format='vtkhdf', filename='refused_chunks.vtkhdf', mesh_topology='UnstructuredGrid', &
+                                   chunk_bytes=48 * (rank + 1), comm=comm) /= 0
+    if (rank == 0) then
+      ok(19) = a_vtk_file%initialize(format='vtkhdf', filename='refused_chunks.vtkhdf', &
+                                     mesh_topology='UnstructuredGrid', chunk_bytes=48, comm=comm) /= 0
+    else
+      ok(19) = a_vtk_file%initialize(format='vtkhdf', filename='refused_chunks.vtkhdf', &
+                                     mesh_topology='UnstructuredGrid', comm=comm) /= 0
+    endif
+  endif
   error = a_vtk_file%initialize(format='vtkhdf', filename='refused_pieces.vtkhdf', mesh_topology='UnstructuredGrid', &
                                 comm=comm)
   error = unst_piece(a_vtk_file, rank, field=.false.)
@@ -612,6 +645,6 @@ contains
   endif
   error = a_vtk_file%finalize()
   refusals = all(ok)
-  if (.not.refusals) print '(A,I0,A,17L2)', 'rank ', rank, ' refusals: ', ok
+  if (.not.refusals) print '(A,I0,A,19L2)', 'rank ', rank, ' refusals: ', ok
   endfunction refusals
 endprogram vtk_fortran_write_vtkhdf_ranks

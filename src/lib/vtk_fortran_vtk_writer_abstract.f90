@@ -23,6 +23,8 @@ type, abstract :: vtk_writer_abstract
   logical       :: is_uint64=.false.               !< Use UInt64 (instead of UInt32) bytes count headers.
   logical       :: is_compressed=.false.           !< Compress (zlib) the binary data.
   integer(I4P)  :: branch_factor=2_I4P             !< Branch factor of a HyperTreeGrid (VTKHDF): 2 or 3.
+  integer(I8P)  :: chunk_bytes=1048576_I8P         !< Bytes of a chunk of the VTKHDF datasets at most (default
+                                                 !< `DEFAULT_CHUNK_BYTES` of `vtk_fortran_hdf5`, 1 MiB).
   contains
     procedure(initialize_interface), deferred, pass(self) :: initialize !< Initialize the writer.
     procedure(finalize_interface),   deferred, pass(self) :: finalize   !< Finalize the writer.

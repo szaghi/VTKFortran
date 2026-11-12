@@ -180,8 +180,17 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
   An array whose size does not match the grid or the piece is refused. Active arrays (`scalars=`, `vectors=`, ...,
   `global_ids=`, ..., `process_ids=`: every role of VTK) become the `Attribute` attribute of their dataset; field data are numeric only: a string is refused (VTK 9.7 crashes
   on string field data, or drops them). See [Data arrays](/guide/data).
-- **Compression**: `compressor='zlib'` deflates every dataset (level 6, in chunks of up to 1 MiB). It needs the deflate
-  filter of the HDF5 library, not `VTKFORTRAN_USE_ZLIB`: without it `initialize` returns a non-zero error.
+- **Compression**: `compressor='zlib'` deflates every dataset (level 6, by chunks). It needs the deflate filter of the
+  HDF5 library, not `VTKFORTRAN_USE_ZLIB`: without it `initialize` returns a non-zero error.
+- **Chunks**: the datasets that grow (the partitions of an UnstructuredGrid or a PolyData, every dataset of a time
+  series) or are deflated are stored by chunks of whole rows (the last dimension of the values: points, cells, time
+  slices of a grid): as many as fit in `initialize(..., chunk_bytes=)` (default 1 MiB), at least one, at most the rows
+  of the first write (of all the ranks with `comm`). Larger chunks mean fewer HDF5 metadata operations (large parallel
+  runs, a chunk aligned to the stripe of a parallel file system), smaller ones less unused space in short series.
+  A dataset created empty (the faces of polyhedra first appearing at a later step) has chunks of one row. Refused: a
+  value that is not positive, an XML format, `action='read'`, different values on the ranks of `comm`; with
+  `action='append'` it applies to the datasets created from then on, the others keep their chunks. The other datasets
+  are contiguous.
 - **Version**: the lowest one with the features written: 2.0, 2.5 with polyhedra, 2.6 when an active array is
   designated, 2.7 for a RectilinearGrid or StructuredGrid, 2.8 for a Table, 2.2 for an OverlappingAMR time series, 2.4
   for a HyperTreeGrid. The

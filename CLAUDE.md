@@ -88,7 +88,7 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   references refused outside a collection; the same time series rules (VTK 9.7.2 pipeline time likewise at step 1)
 - `vtk_fortran_pvd_file` — `pvd_file` type: time series collections (`.pvd`), valid after each `write_dataset`
 - `vtk_fortran_vtk_writer_abstract` — format-neutral abstract writer (`vtk_writer_abstract`): the state `vtk_file` sets
-  (origin, spacing, direction, header type, compression) and every procedure `vtk_file%xml_writer` exposes (`initialize`,
+  (origin, spacing, direction, header type, compression, `branch_factor`, `chunk_bytes`) and every procedure `vtk_file%xml_writer` exposes (`initialize`,
   `finalize`, `write_piece`, `write_geo`, `write_connectivity`, `write_polydata_cells`, `write_dataarray`,
   `write_dataarray_unsigned`, `write_fielddata`, `write_step`, `free`, `get_xml_volatile`; `write_dataarray` opening a
   location takes the 12 attribute roles of VTK, `scalars` ... `tcoords`, `global_ids` ... `process_ids`), all deferred and PUBLIC (ifx does not
@@ -131,7 +131,10 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   Point/cell/field data, active arrays as the `Attribute` attribute, unsigned,
   deflate for `compressor='zlib'`; refusals return an error with a message on stderr (a data name empty or with `/` or
   `.`: `h5_name_invalid`, also used by `vtm_file` for block and dataset names; never renamed; HDF5 has no length limit). Arrays stored as in memory
-  (`x(nc,i,j,k)` = VTKHDF `[k,j,i,nc]`), the axes of one point of a grid dropped (VTK requires it); `Version` written by
+  (`x(nc,i,j,k)` = VTKHDF `[k,j,i,nc]`), the axes of one point of a grid dropped (VTK requires it); every chunked
+  dataset (appendable or deflated) created with `chunk_bytes=self%chunk_bytes` (`vtk_file%initialize(..., chunk_bytes=)`,
+  #85; refused not positive, with XML or `action='read'`, different on the ranks (`h5_mpi_max` in `vtk_file`; the
+  binding takes the ranks' maximum); with `append` only the new datasets; created empty: one-row chunks); `Version` written by
   `finalize` (2.0, 2.5 with polyhedra, 2.6 with active arrays, 2.7 for RG/SG, 2.8 Table). Its procedures repeat the abstract
   interfaces, one per kind and layout, all funnelled into the private `put_<kind>` (and `store_<kind>` for the appended
   datasets of an UnstructuredGrid and PolyData): change the kinds together. Time series (`write_step`, `Steps`): the
@@ -179,7 +182,10 @@ roles list `ACTIVE_ROLES` and `active_role` in `vtk_fortran_parameters`, shared 
 - `vtk_fortran_dataarray_decoder` — inverse of the encoder: ASCII/Base64/zlib data into bytes, bytes into arrays of the requested kind
 - `vtk_fortran_dataarray_encoder` — overloaded encoding routines for ASCII and Base64 (optionally zlib-compressed), covering all PENF numeric kinds and ranks 1–4
 - `vtk_fortran_hdf5` — HDF5 C API bindings (files, groups and their members (in creation order when tracked), links,
-  attributes (overwritten), datasets of every kind, appendable, resized, deflate, read back); always compiled, stubs without
+  attributes (overwritten), datasets of every kind, appendable, resized, deflate, read back; chunks of whole rows up to
+  the optional `chunk_bytes` of `h5_dataset_write_<kind>` (default `DEFAULT_CHUNK_BYTES` = 1 MiB; never named
+  `CHUNK_BYTES`: Fortran is case insensitive, it would be the dummy), at most the rows of the creation, read back by
+  `h5_dataset_chunk`); always compiled, stubs without
   `VTKFORTRAN_USE_HDF5`. With `comm` (`VTKFORTRAN_USE_MPI`): `h5_file_create` opens a parallel file, an appendable
   dataset is created by every rank (empty, chunks sized by all the rows, the widest kind the ranks give) and appended to
   collectively (`MPI_Allgather` of the rows, every rank extends by the total, writes its hyperslab after the ranks
@@ -213,12 +219,15 @@ CMake pulls all dependencies via `add_subdirectory()` and centralises `.mod` fil
 ## Test Infrastructure
 
 Each test program in `src/tests/` writes actual VTK XML files, then prints `"Are all tests passed? T"` or `"F"`. `scripts/run_tests.sh` and CTest judge each test by its exit status only, so every test ends with `if (.not.all(test_passed)) error stop 'some tests failed'`; a new test must be added to `src/tests/CMakeLists.txt` too. Tests cover major topologies: VTI and PVTI (image data), VTR and PVTR (rectilinear), VTS (structured), VTU (unstructured, polyhedra), VTP and PVTP (polydata), VTM (multi-block, nested blocks, blocks filled through scratch units), PVTS and PVTU (parallel), files with several pieces, files from OpenMP threads (CMake `-DVTKFORTRAN_TEST_OPENMP=ON`, 25 rounds of concurrent writing and reading, since a race shows now and then; passes with ifx and nvfortran, whose builds add `-recursive` and `-mp` to the library and its dependencies; gfortran fails, GCC bug 113797), unsigned arrays, PVD (time series), active arrays (every role of VTK, XML and VTKHDF, read back with `get_active`; partitions with global ids and ghosts), large arrays, UInt64 headers, 64-bit (I8P) counts and connectivity, zlib compressed binary data, volatile XML output, the HDF5 bindings (`vtk_fortran_hdf5_bindings.F90`: a small
-VTKHDF ImageData written and read back; stubs checked without HDF5) and the VTKHDF writer (`vtk_fortran_write_vtkhdf.f90`:
+VTKHDF ImageData written and read back, chunk shapes (default, `chunk_bytes`, one row at least, the rows written at
+most, a refusal); stubs checked without HDF5) and the VTKHDF writer (`vtk_fortran_write_vtkhdf.f90`:
 3D and 2D ImageData through `vtk_file`, read back with the bindings, refusals; `vtk_fortran_write_vtkhdf_unst.f90`:
 UnstructuredGrid, every cell type but polyhedra, two pieces, I8P ids, each also written as a `.vtu` to compare in VTK;
 `vtk_fortran_write_vtkhdf_steps.f90`: time series of every topology, each step also written as an XML file, and five
 storing once what does not change (a mesh reused by steps without pieces, grid geometry and arrays reused), their
-offsets read back, the reuse refusals;
+offsets read back, the reuse refusals; `chunk_bytes`: chunk shapes of a UG and an RG series with small chunks, kept by
+an append with another value (the polyhedron offsets created after it get the new one), a deflated ImageData, the
+refusals;
 `vtk_fortran_write_vtkhdf_table.f90`: Tables (a column of each kind, unsigned, 3 components; a 3-step series), read
 back with the bindings and the reader, the refusals (rows, names, missing/new columns, steps without columns, pieces,
 locations; XML refuses a Table);
@@ -246,5 +255,6 @@ ranks two along x, one across, one empty; otherwise rank 0 whole), an Unstructur
 continued by the ranks after a restart, a step reusing the mesh), a PolyData series, polyhedra appearing at step 2 on the odd ranks,
 the UG and PolyData compressed (with parallel filtered writes, skipped otherwise), compared with the same files written serially and
 as `.vtu`/`.vtp`/`.vti`/`.vtr`/`.vts`, the refusals of `comm` (grid regions outside, overlapping, not covering, two; a Table, an OverlappingAMR, a
-HyperTreeGrid); without MPI `comm` refused, its name without "mpi" since `scripts/run_tests.sh` runs those with
+HyperTreeGrid), an UnstructuredGrid with `chunk_bytes` (chunks sized from all the ranks' rows, its `.vtu` twin), `chunk_bytes`
+different on the ranks refused; without MPI `comm` refused, its name without "mpi" since `scripts/run_tests.sh` runs those with
 mpirun; without HDF5 the writer refuses to start); `vtk_fortran_read.F90` reads files back (every topology and format, and two files written by VTK, embedded in the test), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.

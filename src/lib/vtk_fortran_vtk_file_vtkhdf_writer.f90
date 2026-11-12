@@ -7,6 +7,9 @@ module vtk_fortran_vtk_file_vtkhdf_writer
 !< `WholeExtent`, `Origin`, `Spacing`, `Direction`, the groups `PointData`, `CellData` and `FieldData`, one dataset per
 !< data array. A Fortran array `x(n_components, i, j, k)` is stored as it is in memory: it is the VTKHDF dataset of shape
 !< `[k, j, i, n_components]` (C order), so nothing is transposed. With `compressor='zlib'` the datasets are deflated.
+!< The datasets that grow or are deflated are chunked by whole rows, at most `chunk_bytes` (the writer state set by
+!< `vtk_file%initialize(..., chunk_bytes=)`, default 1 MiB) and the rows of the first write, at least one row
+!< (`dataset_write` of `vtk_fortran_hdf5`); every call creating one passes `chunk_bytes=self%chunk_bytes`.
 !<
 !< Supported: ImageData, RectilinearGrid and StructuredGrid, one piece each (its extent is the whole extent; the
 !< coordinates of a RectilinearGrid are `XCoordinates`, `YCoordinates`, `ZCoordinates`, the points of a StructuredGrid the
@@ -2543,7 +2546,8 @@ contains
   elseif (self%is_temporal) then
     error = store_R8P(self, self%group, data_name, x, dims)
   else
-    error = h5_dataset_write_R8P(self%group, data_name, x, dims, deflate=self%deflate_level())
+    error = h5_dataset_write_R8P(self%group, data_name, x, dims, deflate=self%deflate_level(), &
+                                chunk_bytes=self%chunk_bytes)
   endif
   if (error /= 0_I4P) error = refuse('cannot write the dataset '//data_name)
   if (error == 0_I4P .and. is_new) then
@@ -2613,7 +2617,8 @@ contains
   elseif (self%is_temporal) then
     error = store_R4P(self, self%group, data_name, x, dims)
   else
-    error = h5_dataset_write_R4P(self%group, data_name, x, dims, deflate=self%deflate_level())
+    error = h5_dataset_write_R4P(self%group, data_name, x, dims, deflate=self%deflate_level(), &
+                                chunk_bytes=self%chunk_bytes)
   endif
   if (error /= 0_I4P) error = refuse('cannot write the dataset '//data_name)
   if (error == 0_I4P .and. is_new) then
@@ -2684,7 +2689,8 @@ contains
   elseif (self%is_temporal) then
     error = store_I8P(self, self%group, data_name, x, dims, unsigned=unsigned)
   else
-    error = h5_dataset_write_I8P(self%group, data_name, x, dims, deflate=self%deflate_level(), unsigned=unsigned)
+    error = h5_dataset_write_I8P(self%group, data_name, x, dims, deflate=self%deflate_level(), unsigned=unsigned, &
+                                chunk_bytes=self%chunk_bytes)
   endif
   if (error /= 0_I4P) error = refuse('cannot write the dataset '//data_name)
   if (error == 0_I4P .and. is_new) then
@@ -2755,7 +2761,8 @@ contains
   elseif (self%is_temporal) then
     error = store_I4P(self, self%group, data_name, x, dims, unsigned=unsigned)
   else
-    error = h5_dataset_write_I4P(self%group, data_name, x, dims, deflate=self%deflate_level(), unsigned=unsigned)
+    error = h5_dataset_write_I4P(self%group, data_name, x, dims, deflate=self%deflate_level(), unsigned=unsigned, &
+                                chunk_bytes=self%chunk_bytes)
   endif
   if (error /= 0_I4P) error = refuse('cannot write the dataset '//data_name)
   if (error == 0_I4P .and. is_new) then
@@ -2826,7 +2833,8 @@ contains
   elseif (self%is_temporal) then
     error = store_I2P(self, self%group, data_name, x, dims, unsigned=unsigned)
   else
-    error = h5_dataset_write_I2P(self%group, data_name, x, dims, deflate=self%deflate_level(), unsigned=unsigned)
+    error = h5_dataset_write_I2P(self%group, data_name, x, dims, deflate=self%deflate_level(), unsigned=unsigned, &
+                                chunk_bytes=self%chunk_bytes)
   endif
   if (error /= 0_I4P) error = refuse('cannot write the dataset '//data_name)
   if (error == 0_I4P .and. is_new) then
@@ -2897,7 +2905,8 @@ contains
   elseif (self%is_temporal) then
     error = store_I1P(self, self%group, data_name, x, dims, unsigned=unsigned)
   else
-    error = h5_dataset_write_I1P(self%group, data_name, x, dims, deflate=self%deflate_level(), unsigned=unsigned)
+    error = h5_dataset_write_I1P(self%group, data_name, x, dims, deflate=self%deflate_level(), unsigned=unsigned, &
+                                chunk_bytes=self%chunk_bytes)
   endif
   if (error /= 0_I4P) error = refuse('cannot write the dataset '//data_name)
   if (error == 0_I4P .and. is_new) then
@@ -2920,12 +2929,13 @@ contains
       error = h5_dataset_append_R8P(loc_id, name, x, dims, comm=self%comm)
     else
       error = h5_dataset_write_R8P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), &
-                                     comm=self%comm)
+                                     comm=self%comm, chunk_bytes=self%chunk_bytes)
     endif
   elseif (h5_link_exists(loc_id, name)) then
     error = h5_dataset_append_R8P(loc_id, name, x, dims)
   else
-    error = h5_dataset_write_R8P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level())
+    error = h5_dataset_write_R8P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), &
+                                   chunk_bytes=self%chunk_bytes)
   endif
   endfunction store_R8P
 
@@ -2943,12 +2953,13 @@ contains
       error = h5_dataset_append_R4P(loc_id, name, x, dims, comm=self%comm)
     else
       error = h5_dataset_write_R4P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), &
-                                     comm=self%comm)
+                                     comm=self%comm, chunk_bytes=self%chunk_bytes)
     endif
   elseif (h5_link_exists(loc_id, name)) then
     error = h5_dataset_append_R4P(loc_id, name, x, dims)
   else
-    error = h5_dataset_write_R4P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level())
+    error = h5_dataset_write_R4P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), &
+                                   chunk_bytes=self%chunk_bytes)
   endif
   endfunction store_R4P
 
@@ -2967,12 +2978,13 @@ contains
       error = h5_dataset_append_I8P(loc_id, name, x, dims, unsigned=unsigned, comm=self%comm)
     else
       error = h5_dataset_write_I8P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), unsigned=unsigned, &
-                                     comm=self%comm)
+                                     comm=self%comm, chunk_bytes=self%chunk_bytes)
     endif
   elseif (h5_link_exists(loc_id, name)) then
     error = h5_dataset_append_I8P(loc_id, name, x, dims, unsigned=unsigned)
   else
-    error = h5_dataset_write_I8P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), unsigned=unsigned)
+    error = h5_dataset_write_I8P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), unsigned=unsigned, &
+                                   chunk_bytes=self%chunk_bytes)
   endif
   endfunction store_I8P
 
@@ -2991,12 +3003,13 @@ contains
       error = h5_dataset_append_I4P(loc_id, name, x, dims, unsigned=unsigned, comm=self%comm)
     else
       error = h5_dataset_write_I4P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), unsigned=unsigned, &
-                                     comm=self%comm)
+                                     comm=self%comm, chunk_bytes=self%chunk_bytes)
     endif
   elseif (h5_link_exists(loc_id, name)) then
     error = h5_dataset_append_I4P(loc_id, name, x, dims, unsigned=unsigned)
   else
-    error = h5_dataset_write_I4P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), unsigned=unsigned)
+    error = h5_dataset_write_I4P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), unsigned=unsigned, &
+                                   chunk_bytes=self%chunk_bytes)
   endif
   endfunction store_I4P
 
@@ -3015,12 +3028,13 @@ contains
       error = h5_dataset_append_I2P(loc_id, name, x, dims, unsigned=unsigned, comm=self%comm)
     else
       error = h5_dataset_write_I2P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), unsigned=unsigned, &
-                                     comm=self%comm)
+                                     comm=self%comm, chunk_bytes=self%chunk_bytes)
     endif
   elseif (h5_link_exists(loc_id, name)) then
     error = h5_dataset_append_I2P(loc_id, name, x, dims, unsigned=unsigned)
   else
-    error = h5_dataset_write_I2P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), unsigned=unsigned)
+    error = h5_dataset_write_I2P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), unsigned=unsigned, &
+                                   chunk_bytes=self%chunk_bytes)
   endif
   endfunction store_I2P
 
@@ -3039,12 +3053,13 @@ contains
       error = h5_dataset_append_I1P(loc_id, name, x, dims, unsigned=unsigned, comm=self%comm)
     else
       error = h5_dataset_write_I1P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), unsigned=unsigned, &
-                                     comm=self%comm)
+                                     comm=self%comm, chunk_bytes=self%chunk_bytes)
     endif
   elseif (h5_link_exists(loc_id, name)) then
     error = h5_dataset_append_I1P(loc_id, name, x, dims, unsigned=unsigned)
   else
-    error = h5_dataset_write_I1P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), unsigned=unsigned)
+    error = h5_dataset_write_I1P(loc_id, name, x, dims, appendable=.true., deflate=self%deflate_level(), unsigned=unsigned, &
+                                   chunk_bytes=self%chunk_bytes)
   endif
   endfunction store_I1P
 
@@ -3183,11 +3198,12 @@ contains
     if (error == 0_I4P) error = store_R8P(self, self%root, 'YCoordinates', y, [grid(2)])
     if (error == 0_I4P) error = store_R8P(self, self%root, 'ZCoordinates', z, [grid(3)])
   else
-    error = h5_dataset_write_R8P(self%root, 'XCoordinates', x, [grid(1)], deflate=self%deflate_level())
+    error = h5_dataset_write_R8P(self%root, 'XCoordinates', x, [grid(1)], deflate=self%deflate_level(), &
+                                 chunk_bytes=self%chunk_bytes)
     if (error == 0_I4P) error = h5_dataset_write_R8P(self%root, 'YCoordinates', y, [grid(2)], &
-                                         deflate=self%deflate_level())
+                                         deflate=self%deflate_level(), chunk_bytes=self%chunk_bytes)
     if (error == 0_I4P) error = h5_dataset_write_R8P(self%root, 'ZCoordinates', z, [grid(3)], &
-                                         deflate=self%deflate_level())
+                                         deflate=self%deflate_level(), chunk_bytes=self%chunk_bytes)
   endif
   if (error /= 0_I4P) error = refuse('cannot write the coordinates')
   if (error == 0_I4P) self%is_geo_written = .true.
@@ -3255,7 +3271,8 @@ contains
   elseif (self%is_temporal) then ! the time axis last: Points [t, k, j, i, 3] in C order
     error = store_R8P(self, self%root, 'Points', xyz, [3_I8P, grid, 1_I8P])
   else
-    error = h5_dataset_write_R8P(self%root, 'Points', xyz, [3_I8P, grid], deflate=self%deflate_level())
+    error = h5_dataset_write_R8P(self%root, 'Points', xyz, [3_I8P, grid], deflate=self%deflate_level(), &
+                                 chunk_bytes=self%chunk_bytes)
   endif
   if (error /= 0_I4P) error = refuse('cannot write the points')
   if (error == 0_I4P) self%is_geo_written = .true.
@@ -3293,11 +3310,12 @@ contains
     if (error == 0_I4P) error = store_R4P(self, self%root, 'YCoordinates', y, [grid(2)])
     if (error == 0_I4P) error = store_R4P(self, self%root, 'ZCoordinates', z, [grid(3)])
   else
-    error = h5_dataset_write_R4P(self%root, 'XCoordinates', x, [grid(1)], deflate=self%deflate_level())
+    error = h5_dataset_write_R4P(self%root, 'XCoordinates', x, [grid(1)], deflate=self%deflate_level(), &
+                                 chunk_bytes=self%chunk_bytes)
     if (error == 0_I4P) error = h5_dataset_write_R4P(self%root, 'YCoordinates', y, [grid(2)], &
-                                         deflate=self%deflate_level())
+                                         deflate=self%deflate_level(), chunk_bytes=self%chunk_bytes)
     if (error == 0_I4P) error = h5_dataset_write_R4P(self%root, 'ZCoordinates', z, [grid(3)], &
-                                         deflate=self%deflate_level())
+                                         deflate=self%deflate_level(), chunk_bytes=self%chunk_bytes)
   endif
   if (error /= 0_I4P) error = refuse('cannot write the coordinates')
   if (error == 0_I4P) self%is_geo_written = .true.
@@ -3365,7 +3383,8 @@ contains
   elseif (self%is_temporal) then ! the time axis last: Points [t, k, j, i, 3] in C order
     error = store_R4P(self, self%root, 'Points', xyz, [3_I8P, grid, 1_I8P])
   else
-    error = h5_dataset_write_R4P(self%root, 'Points', xyz, [3_I8P, grid], deflate=self%deflate_level())
+    error = h5_dataset_write_R4P(self%root, 'Points', xyz, [3_I8P, grid], deflate=self%deflate_level(), &
+                                 chunk_bytes=self%chunk_bytes)
   endif
   if (error /= 0_I4P) error = refuse('cannot write the points')
   if (error == 0_I4P) self%is_geo_written = .true.

@@ -11,6 +11,8 @@ use vtk_fortran_vtk_file_xml_writer_binary_local
 use vtk_fortran_vtk_file_vtkhdf_writer
 use vtk_fortran_vtk_file_xml_reader
 use vtk_fortran_zlib, only : is_zlib_enabled
+use vtk_fortran_hdf5, only : h5_mpi_max
+use vtk_fortran_parameters, only : stderr
 
 implicit none
 private
@@ -39,7 +41,8 @@ contains
    endsubroutine get_xml_volatile
 
    function initialize(self, format, filename, mesh_topology, is_volatile, nx1, nx2, ny1, ny2, nz1, nz2, &
-                       origin, spacing, direction, header_type, compressor, action, comm, branch_factor) result(error)
+                       origin, spacing, direction, header_type, compressor, action, comm, branch_factor, &
+                       chunk_bytes) result(error)
    !< Initialize file: open it for writing (default) or for reading.
    !<
    !< @note This function must be the first to be called.
@@ -119,6 +122,18 @@ contains
    !< returns a non-zero error. RAW-ZLIB with `compressor='none'` is an error too. With VTKHDF, zlib deflates the HDF5
    !< datasets: it needs the deflate filter of the HDF5 library, not `VTKFORTRAN_USE_ZLIB`.
    !<
+   !<### Chunks of the VTKHDF datasets
+   !<
+   !< The VTKHDF datasets that grow (the partitions of an UnstructuredGrid or a PolyData, the steps of a time series) or
+   !< are deflated (`compressor='zlib'`) are stored by chunks. A chunk holds whole rows (the last dimension of the values,
+   !< e.g. the points, or the time slices of a grid): as many as fit in `chunk_bytes` (default 1 MiB), at least one, at most
+   !< the rows written when the dataset is created (those of all the ranks with `comm`; one row for a dataset created
+   !< empty). Larger chunks mean fewer HDF5 metadata operations (large parallel runs, a chunk aligned to the stripe size
+   !< of a parallel file system), smaller ones less unused space in short series. `chunk_bytes` is refused when not
+   !< positive, and with the XML formats or `action='read'`; with `action='append'` it applies to the datasets created
+   !< from then on, those of the file keep their chunks. With `comm` every rank gives the same `chunk_bytes` (or none):
+   !< different ones are refused on every rank.
+   !<
    !<### Bytes count header of binary data
    !<
    !< Each binary DataArray (formats BINARY, RAW, RAW-ZLIB, BINARY-APPENDED) is prefixed by its bytes count (by the header of
@@ -169,15 +184,34 @@ contains
    character(*),    intent(in), optional :: action         !< Action: **write** (default), **read** or **append** (VTKHDF).
    integer(I4P),    intent(in), optional :: comm           !< MPI communicator (Fortran handle): one VTKHDF file from its ranks.
    integer(I4P),    intent(in), optional :: branch_factor  !< Branch factor of a HyperTreeGrid (VTKHDF): 2 (default) or 3.
+   integer(I4P),    intent(in), optional :: chunk_bytes    !< Bytes of a chunk of the VTKHDF datasets at most (default 1 MiB).
    integer(I4P)                          :: error         !< Error status.
    type(string)                          :: fformat       !< File format.
    logical                               :: is_compressed !< Compress the binary data.
+   integer(I8P)                          :: chunk         !< chunk_bytes of this rank, 0 if absent (comm).
 
    if (.not.is_initialized) call penf_init
    if (.not.is_b64_initialized) call b64_init
    if (allocated(self%xml_writer)) deallocate(self%xml_writer)
    call self%xml_reader%close
    self%is_reading = .false.
+   if (present(comm)) then ! the ranks give the same chunk_bytes (0 if absent): checked by all, before any refusal
+      chunk = 0_I8P ; if (present(chunk_bytes)) chunk = int(chunk_bytes, I8P)
+      if (h5_mpi_max(comm, chunk) /= -h5_mpi_max(comm, -chunk)) then
+         write(stderr, '(A)') 'error: VTKFortran vtk_file%initialize: the ranks of comm give different chunk_bytes'
+         error = 1_I4P
+         return
+      endif
+   endif
+   if (present(chunk_bytes)) then ! VTKHDF only, positive
+      error = 1_I4P
+      if (chunk_bytes < 1_I4P) return
+      if (.not.present(format)) return
+      if (upper_case(trim(adjustl(format))) /= 'VTKHDF') return
+      if (present(action)) then
+         if (upper_case(trim(adjustl(action))) == 'READ') return
+      endif
+   endif
    if (present(action)) then
       if (present(comm) .and. upper_case(trim(adjustl(action))) == 'READ') then
          error = 1_I4P ! a file is read by one rank
@@ -194,6 +228,7 @@ contains
          if (.not.present(format)) return
          if (upper_case(trim(adjustl(format))) /= 'VTKHDF') return
          allocate(vtkhdf_writer :: self%xml_writer)
+         if (present(chunk_bytes)) self%xml_writer%chunk_bytes = int(chunk_bytes, I8P) ! the datasets created from now on
          select type(writer => self%xml_writer)
          type is(vtkhdf_writer)
             if (present(comm)) call writer%set_comm(comm) ! continued by the ranks of comm
@@ -272,6 +307,7 @@ contains
    if (present(origin)) self%xml_writer%origin = origin
    if (present(spacing)) self%xml_writer%spacing = spacing
    if (present(branch_factor)) self%xml_writer%branch_factor = branch_factor
+   if (present(chunk_bytes)) self%xml_writer%chunk_bytes = int(chunk_bytes, I8P)
    if (present(direction)) then
       self%xml_writer%direction = direction
       self%xml_writer%is_direction_set = .true.
