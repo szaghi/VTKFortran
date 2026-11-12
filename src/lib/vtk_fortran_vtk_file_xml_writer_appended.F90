@@ -203,6 +203,7 @@ contains
    integer(I4P)                              :: error !< Error status.
 
    if (self%is_row_open) error = self%write_table_rows(action='CLOSE') ! the columns of a Table left open
+   if (self%topology == 'HyperTreeGrid') error = self%htg_finish() ! its element, its trees
    call self%write_end_tag(name=self%topology%chars())
    call self%write_dataarray_appended
    error = self%error ! the error of the data, kept: the I/O below sets self%error again

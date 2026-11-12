@@ -82,9 +82,11 @@ contains
    !< `format` and `mesh_topology` are required. `mesh_topology='Table'` (columns of values, no mesh) is a `.vtt` file in
    !< the XML formats (one Piece: `NumberOfCols`, `NumberOfRows` and the columns in `RowData`, written between
    !< `write_dataarray(location='row', action='open')` and `...'close')`) or a VTKHDF Table. `'OverlappingAMR'` (the
-   !< boxes of the levels of a block-structured AMR, `origin` its origin) and `'HyperTreeGrid'` (the trees of a tree-based
-   !< AMR on a root grid, `nx1...nz2` its points, `branch_factor` 2 or 3) are written in the VTKHDF format only: the XML
-   !< formats refuse them.
+   !< boxes of the levels of a block-structured AMR, `origin` its origin) is written in the VTKHDF format only (an XML
+   !< OverlappingAMR is a `.vthb` of `.vti` boxes, `vtm_file`). `'HyperTreeGrid'` (the trees of a tree-based AMR on a root
+   !< grid, `nx1...nz2` its points, `branch_factor` 2 or 3) is a `.htg` in the XML formats (one piece: `write_piece` with
+   !< the whole root grid, `write_geo(x, y, z)`, `write_tree` for each tree, its cell data, `write_piece()`), or a VTKHDF
+   !< HyperTreeGrid.
    !<
    !<### Writing one file from MPI ranks
    !<
@@ -189,7 +191,7 @@ contains
    character(*),    intent(in), optional :: compressor     !< Compressor of binary data: none (default) or zlib.
    character(*),    intent(in), optional :: action         !< Action: **write** (default), **read** or **append** (VTKHDF).
    integer(I4P),    intent(in), optional :: comm           !< MPI communicator (Fortran handle): one VTKHDF file from its ranks.
-   integer(I4P),    intent(in), optional :: branch_factor  !< Branch factor of a HyperTreeGrid (VTKHDF): 2 (default) or 3.
+   integer(I4P),    intent(in), optional :: branch_factor  !< Branch factor of a HyperTreeGrid: 2 (default) or 3.
    integer(I4P),    intent(in), optional :: chunk_bytes    !< Bytes of a chunk of the VTKHDF datasets at most (default 1 MiB).
    character(*),    intent(in), optional :: dataset        !< With action read: a dataset of a VTKHDF composite file.
    integer(I4P)                          :: error         !< Error status.
@@ -257,9 +259,9 @@ contains
    if (.not.(present(format).and.present(mesh_topology))) return
    fformat = trim(adjustl(format))
    fformat = fformat%upper()
-   ! an OverlappingAMR, a HyperTreeGrid: VTKHDF only (a Table is a .vtt in the XML formats)
-   if (any(upper_case(trim(adjustl(mesh_topology))) == ['OVERLAPPINGAMR', 'HYPERTREEGRID ']) .and. &
-       fformat /= 'VTKHDF') return
+   ! an OverlappingAMR: VTKHDF only (an XML one is a .vthb of .vti boxes, vtm_file); a Table is a .vtt, a HyperTreeGrid a
+   ! .htg in the XML formats
+   if (upper_case(trim(adjustl(mesh_topology))) == 'OVERLAPPINGAMR' .and. fformat /= 'VTKHDF') return
    error = 0_I4P
    select case(fformat%chars())
    case('ASCII')

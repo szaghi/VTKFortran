@@ -38,6 +38,18 @@ type, abstract, extends(vtk_writer_abstract) :: xml_writer_abstract
   integer(I4P)  :: table_columns=0_I4P             !< Columns of a Table written.
   logical       :: is_row_open=.false.             !< The columns of a Table are being written (location row open).
   logical       :: is_rows_written=.false.         !< The columns of the Table are written (one RowData).
+  ! a HyperTreeGrid (`.htg`): its element opened by write_piece, its trees kept until its cell data (or the piece end)
+  logical       :: is_htg_open=.false.             !< The HyperTreeGrid element is written.
+  logical       :: is_htg_trees=.false.            !< Its Trees element is written.
+  integer(I4P)  :: htg_dims(3)=1_I4P               !< Points of the root grid along each axis.
+  character(len=:), allocatable :: htg_normals     !< Cell array of the interface normals (empty: none).
+  character(len=:), allocatable :: htg_intercepts  !< Cell array of the interface intercepts.
+  integer(I8P), allocatable :: htg_ids(:)          !< Ids of the trees written (their root cells).
+  integer(I8P), allocatable :: htg_depths(:)       !< Depth of each tree.
+  integer(I8P), allocatable :: htg_counts(:)       !< Cells of each depth of each tree.
+  logical,      allocatable :: htg_bits(:)         !< Descriptors of the trees, one after the other.
+  logical,      allocatable :: htg_mask(:)         !< Mask of the cells of the trees.
+  logical       :: htg_has_mask=.false.            !< A tree has a mask.
   contains
     ! public methods (some deferred)
     procedure,                                 pass(self) :: close_xml_file               !< Close xml file.
@@ -47,8 +59,12 @@ type, abstract, extends(vtk_writer_abstract) :: xml_writer_abstract
     procedure,                                 pass(self) :: write_polydata_cells         !< Write cell blocks of polydata.
     procedure,                                 pass(self) :: write_step                   !< Start a time step (VTKHDF only).
     procedure,                                 pass(self) :: write_level                  !< Start an AMR level (VTKHDF only).
-    procedure,                                 pass(self) :: write_tree                   !< Write a hyper tree (VTKHDF only).
-    procedure,                                 pass(self) :: set_interface                !< HyperTreeGrid interface (VTKHDF only).
+    procedure,                                 pass(self) :: write_tree                   !< Write a hyper tree.
+    procedure,                                 pass(self) :: set_interface                !< HyperTreeGrid interface.
+    procedure,                                 pass(self) :: htg_finish                   !< Close a HyperTreeGrid at finalize.
+    procedure, private,                        pass(self) :: htg_trees                    !< Write the Trees of a HyperTreeGrid.
+    procedure, private,                        pass(self) :: htg_bit_array                !< Write a Bit DataArray.
+    procedure, private,                        pass(self) :: htg_attributes               !< Attributes of a HyperTreeGrid.
     procedure,                                 pass(self) :: write_dataarray_location_tag !< Write dataarray location tag.
     procedure,                                 pass(self) :: write_dataarray_tag          !< Write dataarray tag.
     procedure,                                 pass(self) :: write_dataarray_tag_appended !< Write dataarray appended tag.
@@ -211,9 +227,15 @@ contains
    call self%writer%declaration(iostat=self%error)
    call self%writer%start(name='VTKFile', iostat=self%error)
    call self%writer%attribute(name='type', value=self%topology%chars(), iostat=self%error)
-   ! version 1.1 for an OverlappingAMR: amr_box in cells (VTK reads 1.0 as the former vtkHierarchicalBoxDataSet layout)
-   call self%writer%attribute(name='version', value=trim(merge('1.1', '1.0', self%topology == 'vtkOverlappingAMR')), &
-                              iostat=self%error)
+   ! version 1.1 for an OverlappingAMR: amr_box in cells (VTK reads 1.0 as the former vtkHierarchicalBoxDataSet layout);
+   ! 2.0 for a HyperTreeGrid: the layout VTK 9.7.2 writes (Trees with DepthPerTree, NumberOfVerticesPerDepth, ...)
+   if (self%topology == 'vtkOverlappingAMR') then
+      call self%writer%attribute(name='version', value='1.1', iostat=self%error)
+   elseif (self%topology == 'HyperTreeGrid') then
+      call self%writer%attribute(name='version', value='2.0', iostat=self%error)
+   else
+      call self%writer%attribute(name='version', value='1.0', iostat=self%error)
+   endif
    if (endian==endianL) then
       call self%writer%attribute(name='byte_order', value='LittleEndian', iostat=self%error)
    else
@@ -326,6 +348,14 @@ contains
    type(string)                                     :: buffer    !< Buffer string.
 
    buffer = ''
+   if (self%topology == 'HyperTreeGrid') then ! its element is written by write_piece (set_interface may come before)
+      self%htg_dims = [nx2 - nx1 + 1, ny2 - ny1 + 1, nz2 - nz1 + 1]
+      self%is_htg_open = .false. ; self%is_htg_trees = .false. ; self%htg_has_mask = .false.
+      self%htg_normals = '' ; self%htg_intercepts = ''
+      self%htg_ids = [integer(I8P) ::] ; self%htg_depths = [integer(I8P) ::] ; self%htg_counts = [integer(I8P) ::]
+      self%htg_bits = [logical ::] ; self%htg_mask = [logical ::]
+      return
+   endif
    select case(self%topology%chars())
    case('RectilinearGrid', 'StructuredGrid')
       buffer = 'WholeExtent="'//                             &
@@ -544,6 +574,17 @@ contains
    integer(I8P)                              :: rows      !< Rows of the column.
 
    is_ok = .true.
+   if (self%topology == 'HyperTreeGrid' .and. self%is_htg_trees .and. self%tuples_override < 0_I8P) then
+      ! a cell array of a HyperTreeGrid: one value per cell of its trees
+      if (self%n_tuples /= sum(self%htg_counts)) then
+         write(stderr, '(A)') 'error: VTKFortran XML writer: the cell array '//trim(adjustl(data_name))//' has '// &
+                              trim(str(n=self%n_tuples, no_sign=.true.))//' values, the trees '// &
+                              trim(str(n=sum(self%htg_counts), no_sign=.true.))//' cells'
+         self%error = 1_I4P
+         is_ok = .false.
+      endif
+      return
+   endif
    if (.not.self%is_row_open) return
    rows = self%n_tuples
    if (self%tuples_override >= 0_I8P) rows = self%tuples_override ! a column of strings: one per row, not per byte
@@ -714,6 +755,17 @@ contains
                            'write_dataarray(location=row, ...)'
       error = 1_I4P
       return
+   endif
+   if (self%topology == 'HyperTreeGrid') then ! cell data only, after the trees (written now)
+      error = 1_I4P
+      if (location_ /= 'CellData') then
+         write(stderr, '(A)') 'error: VTKFortran XML writer: a HyperTreeGrid has cell data only'
+         return
+      elseif (.not.self%is_htg_open) then
+         write(stderr, '(A)') 'error: VTKFortran XML writer: the cell data of a HyperTreeGrid come in its piece'
+         return
+      endif
+      if (action_ == 'OPEN' .and. .not.self%is_htg_trees) error = self%htg_trees()
    endif
    select case(self%topology%chars())
    case('PRectilinearGrid', 'PStructuredGrid', 'PUnstructuredGrid', 'PImageData', 'PPolyData', 'PTable')
@@ -937,6 +989,11 @@ contains
    type(string)                              :: action_   !< Action string.
 
    action_ = trim(adjustl(action)) ; action_ = action_%upper()
+   if (self%topology == 'HyperTreeGrid') then
+      write(stderr, '(A)') 'error: VTKFortran XML writer: field data of a HyperTreeGrid are not supported'
+      error = 1_I4P
+      return
+   endif
    select case(action_%chars())
    case('OPEN')
       call self%write_start_tag(name='FieldData')
@@ -963,6 +1020,21 @@ contains
       write(stderr, '(A)') 'error: VTKFortran XML writer: a Table has no pieces: its columns are written with '// &
                            'write_dataarray(location=row, ...)'
       error = 1_I4P
+      return
+   endif
+   if (self%topology == 'HyperTreeGrid') then ! one piece: the HyperTreeGrid element, the whole root grid
+      error = 1_I4P
+      if (self%is_htg_open) then
+         write(stderr, '(A)') 'error: VTKFortran XML writer: a HyperTreeGrid has one piece'
+      elseif (any([nx2 - nx1 + 1, ny2 - ny1 + 1, nz2 - nz1 + 1] /= self%htg_dims)) then
+         write(stderr, '(A)') 'error: VTKFortran XML writer: the piece of a HyperTreeGrid is its whole root grid'
+      elseif (self%branch_factor /= 2_I4P .and. self%branch_factor /= 3_I4P) then
+         write(stderr, '(A)') 'error: VTKFortran XML writer: the branch factor of a HyperTreeGrid is 2 or 3'
+      else
+         call self%write_start_tag(name='HyperTreeGrid', attributes=self%htg_attributes())
+         self%is_htg_open = .true.
+         error = self%error
+      endif
       return
    endif
    tag_attributes = 'Extent="'//trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
@@ -1054,10 +1126,17 @@ contains
    endfunction write_piece_start_tag_poly_I8P
 
    function write_piece_end_tag(self) result(error)
-   !< Write `</Piece>` end tag.
+   !< Write `</Piece>` end tag (a HyperTreeGrid: its trees, if no cell data wrote them; no Piece element).
    class(xml_writer_abstract), intent(inout) :: self  !< Writer.
    integer(I4P)                              :: error !< Error status.
 
+   if (self%topology == 'HyperTreeGrid') then
+      error = 1_I4P
+      if (.not.self%is_htg_open) return
+      if (.not.self%is_htg_trees) error = self%htg_trees()
+      error = self%error
+      return
+   endif
    call self%write_end_tag(name='Piece')
    error = self%error
    endfunction write_piece_end_tag
@@ -1071,6 +1150,27 @@ contains
    real(R8P),                  intent(in)    :: z(1:) !< Z coordinates.
    integer(I4P)                              :: error !< Error status.
 
+   if (self%topology == 'HyperTreeGrid') then ! its Grid: the coordinates of the root grid, before the trees
+      error = 1_I4P
+      if (.not.self%is_htg_open .or. self%is_htg_trees .or. size(self%htg_ids) > 0) then
+         write(stderr, '(A)') 'error: VTKFortran XML writer: the coordinates of a HyperTreeGrid come in its piece, '// &
+                              'before its trees'
+         return
+      elseif (any([size(x), size(y), size(z)] /= self%htg_dims)) then
+         write(stderr, '(A)') 'error: VTKFortran XML writer: the coordinates of a HyperTreeGrid are those of its root grid'
+         return
+      endif
+      call self%write_start_tag(name='Grid')
+      self%tuples_override = size(x, kind=I8P)
+      error = self%write_dataarray(data_name='XCoordinates', x=x, is_tuples=.true.)
+      self%tuples_override = size(y, kind=I8P)
+      error = self%write_dataarray(data_name='YCoordinates', x=y, is_tuples=.true.)
+      self%tuples_override = size(z, kind=I8P)
+      error = self%write_dataarray(data_name='ZCoordinates', x=z, is_tuples=.true.)
+      call self%write_end_tag(name='Grid')
+      error = self%error
+      return
+   endif
    call self%write_start_tag(name='Coordinates')
    error = self%write_dataarray(data_name='X', x=x)
    error = self%write_dataarray(data_name='Y', x=y)
@@ -1087,6 +1187,27 @@ contains
    real(R4P),                  intent(in)    :: z(1:) !< Z coordinates.
    integer(I4P)                              :: error !< Error status.
 
+   if (self%topology == 'HyperTreeGrid') then ! its Grid: the coordinates of the root grid, before the trees
+      error = 1_I4P
+      if (.not.self%is_htg_open .or. self%is_htg_trees .or. size(self%htg_ids) > 0) then
+         write(stderr, '(A)') 'error: VTKFortran XML writer: the coordinates of a HyperTreeGrid come in its piece, '// &
+                              'before its trees'
+         return
+      elseif (any([size(x), size(y), size(z)] /= self%htg_dims)) then
+         write(stderr, '(A)') 'error: VTKFortran XML writer: the coordinates of a HyperTreeGrid are those of its root grid'
+         return
+      endif
+      call self%write_start_tag(name='Grid')
+      self%tuples_override = size(x, kind=I8P)
+      error = self%write_dataarray(data_name='XCoordinates', x=x, is_tuples=.true.)
+      self%tuples_override = size(y, kind=I8P)
+      error = self%write_dataarray(data_name='YCoordinates', x=y, is_tuples=.true.)
+      self%tuples_override = size(z, kind=I8P)
+      error = self%write_dataarray(data_name='ZCoordinates', x=z, is_tuples=.true.)
+      call self%write_end_tag(name='Grid')
+      error = self%error
+      return
+   endif
    call self%write_start_tag(name='Coordinates')
    error = self%write_dataarray(data_name='X', x=x)
    error = self%write_dataarray(data_name='Y', x=y)
@@ -1661,24 +1782,189 @@ contains
    endfunction write_level
 
    function write_tree(self, tree_id, descriptor, mask) result(error)
-   !< Write a tree of a HyperTreeGrid: a VTKHDF feature (`format='vtkhdf'`), an error in the XML formats.
+   !< Write the tree `tree_id` (its root cell, from 0: i + (nx-1)(j + (ny-1)k) of the root grid) of a HyperTreeGrid, in its
+   !< piece, after its coordinates and before its cell data: `descriptor` the refinement (true) of its cells breadth
+   !< first, the children of a cell x fastest, every depth but the deepest (an empty descriptor is a tree of one leaf);
+   !< `mask` (optional) one value per cell, breadth first, a refined cell not masked. The trees are kept and written as
+   !< the `Trees` element (`Descriptors`, `NumberOfVerticesPerDepth`, `TreeIds`, `DepthPerTree`, `Mask`, as VTK 9.7.2
+   !< writes a `.htg`) when the cell data open, or at the end of the piece.
    class(xml_writer_abstract), intent(inout)        :: self          !< Writer.
    integer(I4P),               intent(in)           :: tree_id       !< Tree (root cell), from 0.
    logical,                    intent(in)           :: descriptor(:) !< Refinement of the cells, breadth first.
    logical,                    intent(in), optional :: mask(:)       !< Masked cells, breadth first.
    integer(I4P)                                     :: error         !< Error status.
+   integer(I8P), allocatable                        :: counts(:)     !< Cells of each depth.
+   integer(I8P)                                     :: children      !< Children of a refined cell.
+   integer(I8P)                                     :: n_trees       !< Trees of the root grid.
+   integer(I8P)                                     :: first         !< Bits of the descriptor used.
+   integer(I8P)                                     :: n             !< Cells of a depth.
+   integer(I8P)                                     :: refined       !< Cells refined at a depth.
+   integer(I8P)                                     :: cells         !< Cells of the tree.
 
    error = 1_I4P
+   if (self%topology /= 'HyperTreeGrid') then
+      write(stderr, '(A)') 'error: VTKFortran XML writer: write_tree is for a HyperTreeGrid'
+      return
+   elseif (.not.self%is_htg_open .or. self%is_htg_trees) then
+      write(stderr, '(A)') 'error: VTKFortran XML writer: write_tree: in the piece of the HyperTreeGrid, before its cell data'
+      return
+   endif
+   children = int(self%branch_factor, I8P)**count(self%htg_dims > 1)
+   n_trees = product(int(max(self%htg_dims - 1, 1), I8P))
+   if (tree_id < 0_I4P .or. int(tree_id, I8P) >= n_trees) then
+      write(stderr, '(A)') 'error: VTKFortran XML writer: write_tree: the tree '//trim(str(n=tree_id, no_sign=.true.))// &
+                           ' is not a root cell (0 to '//trim(str(n=n_trees - 1_I8P, no_sign=.true.))//')'
+      return
+   elseif (any(self%htg_ids == int(tree_id, I8P))) then
+      write(stderr, '(A)') 'error: VTKFortran XML writer: write_tree: the tree '//trim(str(n=tree_id, no_sign=.true.))// &
+                           ' is already written'
+      return
+   endif
+   ! the cells of each depth: one root, then the children of the cells refined at the depth before
+   counts = [1_I8P]
+   first = 0_I8P
+   do while (first < size(descriptor, kind=I8P))
+      n = counts(size(counts))
+      if (first + n > size(descriptor, kind=I8P)) then
+         write(stderr, '(A)') 'error: VTKFortran XML writer: write_tree: the descriptor ends inside a depth (the cells of '// &
+                              'a depth are all given)'
+         return
+      endif
+      refined = count(descriptor(first + 1_I8P:first + n), kind=I8P)
+      if (refined == 0_I8P) then
+         write(stderr, '(A)') 'error: VTKFortran XML writer: write_tree: the descriptor gives the deepest depth, whose '// &
+                              'cells are all leaves: leave it out'
+         return
+      endif
+      first = first + n
+      counts = [counts, refined * children]
+   enddo
+   cells = sum(counts)
+   if (present(mask)) then
+      if (size(mask, kind=I8P) /= cells) then
+         write(stderr, '(A)') 'error: VTKFortran XML writer: write_tree: the mask needs one value per cell of the tree, '// &
+                              trim(str(n=cells, no_sign=.true.))
+         return
+      elseif (any(mask(1:size(descriptor)) .and. descriptor)) then
+         write(stderr, '(A)') 'error: VTKFortran XML writer: write_tree: a refined cell cannot be masked'
+         return
+      endif
+   endif
+   self%htg_ids = [self%htg_ids, int(tree_id, I8P)]
+   self%htg_depths = [self%htg_depths, size(counts, kind=I8P)]
+   self%htg_counts = [self%htg_counts, counts]
+   self%htg_bits = [self%htg_bits, descriptor]
+   if (present(mask)) then
+      self%htg_mask = [self%htg_mask, mask]
+      self%htg_has_mask = .true.
+   else
+      self%htg_mask = [self%htg_mask, spread(.false., 1, int(cells))]
+   endif
+   error = 0_I4P
    endfunction write_tree
 
+   function htg_trees(self) result(error)
+   !< Write the `Trees` element of a HyperTreeGrid, as VTK 9.7.2 writes it: `Descriptors` (Bit), `NumberOfVerticesPerDepth`
+   !< (Int64), `TreeIds` (Int64), `DepthPerTree` (UInt32: VTK 9.7.2 crashes on another type), `Mask` (Bit, if a tree has
+   !< one), each with its `NumberOfTuples` (VTK reads no tree without them).
+   class(xml_writer_abstract), intent(inout) :: self  !< Writer.
+   integer(I4P)                              :: error !< Error status.
+
+   self%is_htg_trees = .true.
+   call self%write_start_tag(name='Trees')
+   error = self%htg_bit_array('Descriptors', self%htg_bits)
+   self%tuples_override = size(self%htg_counts, kind=I8P)
+   error = self%write_dataarray(data_name='NumberOfVerticesPerDepth', x=self%htg_counts, is_tuples=.true.)
+   self%tuples_override = size(self%htg_ids, kind=I8P)
+   error = self%write_dataarray(data_name='TreeIds', x=self%htg_ids, is_tuples=.true.)
+   self%tuples_override = size(self%htg_depths, kind=I8P)
+   self%data_type_override = 'UInt32'
+   error = self%write_dataarray(data_name='DepthPerTree', x=int(self%htg_depths, I4P), is_tuples=.true.)
+   if (self%htg_has_mask) error = self%htg_bit_array('Mask', self%htg_mask)
+   call self%write_end_tag(name='Trees')
+   error = self%error
+   endfunction htg_trees
+
+   function htg_bit_array(self, name, bits) result(error)
+   !< Write a `type="Bit"` DataArray: one value (0, 1) per bit in ASCII, the bits packed MSB first in bytes otherwise, as
+   !< vtkBitArray is written; `NumberOfTuples` the bits.
+   class(xml_writer_abstract), intent(inout) :: self    !< Writer.
+   character(*),               intent(in)    :: name    !< Name of the array.
+   logical,                    intent(in)    :: bits(:) !< The bits.
+   integer(I4P)                              :: error   !< Error status.
+   integer(I1P), allocatable                 :: bytes(:) !< The bits, as written.
+   integer(I4P)                              :: b, k, v !< Counters, a byte value.
+
+   if (self%format_ch == 'ascii') then
+      bytes = merge(1_I1P, 0_I1P, bits)
+   else
+      allocate(bytes((size(bits) + 7) / 8))
+      do b=1, size(bytes)
+         v = 0
+         do k=1, 8
+            v = 2 * v
+            if ((b - 1) * 8 + k <= size(bits)) then
+               if (bits((b - 1) * 8 + k)) v = v + 1
+            endif
+         enddo
+         if (v > 127) v = v - 256
+         bytes(b) = int(v, I1P)
+      enddo
+   endif
+   self%data_type_override = 'Bit'
+   self%tuples_override = size(bits, kind=I8P)
+   error = self%write_dataarray(data_name=name, x=bytes, is_tuples=.true.)
+   endfunction htg_bit_array
+
+   function htg_attributes(self) result(attributes)
+   !< The attributes of the HyperTreeGrid element: `BranchFactor`, `TransposedRootIndexing` (0: the trees x fastest),
+   !< `Dimensions` (points of the root grid), and the interface arrays if named.
+   class(xml_writer_abstract), intent(in) :: self       !< Writer.
+   character(len=:), allocatable          :: attributes !< The attributes.
+
+   attributes = 'BranchFactor="'//trim(str(n=self%branch_factor, no_sign=.true.))//'" TransposedRootIndexing="0" '// &
+                'Dimensions="'//trim(str(n=self%htg_dims(1), no_sign=.true.))//' '// &
+                trim(str(n=self%htg_dims(2), no_sign=.true.))//' '//trim(str(n=self%htg_dims(3), no_sign=.true.))//'"'
+   if (len(self%htg_normals) > 0) attributes = attributes//' InterfaceNormalsName="'//attr_text(self%htg_normals)// &
+                                               '" InterfaceInterceptsName="'//attr_text(self%htg_intercepts)//'"'
+   endfunction htg_attributes
+
+   function htg_finish(self) result(error)
+   !< At finalize, close a HyperTreeGrid: its element if no piece wrote it (a grid without trees), its trees if not
+   !< written; nothing for another topology.
+   class(xml_writer_abstract), intent(inout) :: self  !< Writer.
+   integer(I4P)                              :: error !< Error status.
+
+   error = 0_I4P
+   if (self%topology /= 'HyperTreeGrid') return
+   if (.not.self%is_htg_open) then
+      call self%write_start_tag(name='HyperTreeGrid', attributes=self%htg_attributes())
+      self%is_htg_open = .true.
+   endif
+   if (.not.self%is_htg_trees) error = self%htg_trees()
+   error = self%error
+   endfunction htg_finish
+
    function set_interface(self, normals, intercepts) result(error)
-   !< Name the interface arrays of a HyperTreeGrid: a VTKHDF feature (`format='vtkhdf'`), an error in the XML formats.
+   !< Name the interface arrays of a HyperTreeGrid (`InterfaceNormalsName`, `InterfaceInterceptsName` of its element, as
+   !< VTK writes them): cell arrays of 3 components. Before its piece (`write_piece`), which writes the element.
    class(xml_writer_abstract), intent(inout) :: self       !< Writer.
    character(*),               intent(in)    :: normals    !< Cell array of the interface normals.
    character(*),               intent(in)    :: intercepts !< Cell array of the interface intercepts.
    integer(I4P)                              :: error      !< Error status.
 
    error = 1_I4P
+   if (self%topology /= 'HyperTreeGrid') then
+      write(stderr, '(A)') 'error: VTKFortran XML writer: set_interface is for a HyperTreeGrid'
+   elseif (self%is_htg_open) then
+      write(stderr, '(A)') 'error: VTKFortran XML writer: set_interface comes before the piece of the HyperTreeGrid'
+   elseif (len_trim(normals) == 0 .or. len_trim(intercepts) == 0) then
+      write(stderr, '(A)') 'error: VTKFortran XML writer: set_interface needs the names of the two arrays'
+   else
+      self%htg_normals = trim(normals)
+      self%htg_intercepts = trim(intercepts)
+      error = 0_I4P
+   endif
    endfunction set_interface
 
    ! write_parallel methods

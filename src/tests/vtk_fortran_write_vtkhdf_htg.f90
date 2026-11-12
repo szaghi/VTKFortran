@@ -16,10 +16,10 @@ program vtk_fortran_write_vtkhdf_htg
 !< descriptor and mask as written; the cell data; the series step by step; a tree not in the file); the names, the active
 !< array and the cells of a piece (`get_dataarray_names`, `get_active`, `read_piece`); a file of two partitions and one
 !< with `TransposedRootIndexing`, both built with the bindings from the first one, read back partition by partition (trees,
-!< masks, cell data, coordinates) and in the documented indexing. A HyperTreeGrid with interface arrays (`set_interface`,
+!< masks, cell data, coordinates) and in the documented indexing. An XML HyperTreeGrid refuses a time step (its series
+!< are .pvd of .htg files). A HyperTreeGrid with interface arrays (`set_interface`,
 !< 3-component normals and intercepts) read back (`get_trees`: the names; empty for htg.vtkhdf), the refusals of
-!< `set_interface` (another topology, a name with '/', XML). Without HDF5 the writer refuses a HyperTreeGrid; the XML
-!< formats refuse it always.
+!< `set_interface` (another topology, a name with '/'). Without HDF5 the VTKHDF writer refuses a HyperTreeGrid.
 use penf
 use vtk_fortran, only : vtk_file
 use vtk_fortran_hdf5
@@ -30,9 +30,11 @@ logical        :: ok(8) !< Checks.
 integer(I4P)   :: e     !< Error.
 
 ok = .false.
-! the XML formats have no HyperTreeGrid here (VTKHDF only)
-ok(1) = w%initialize(format='ascii', filename='htg.vthtg', mesh_topology='HyperTreeGrid', &
-                     nx1=0, nx2=2, ny1=0, ny2=2, nz1=0, nz2=0) /= 0
+! the XML formats write a HyperTreeGrid as a .htg (vtk_fortran_write_htg); a time step is VTKHDF only
+ok(1) = w%initialize(format='ascii', filename='htg_steps.htg', mesh_topology='HyperTreeGrid', &
+                     nx1=0, nx2=2, ny1=0, ny2=2, nz1=0, nz2=0) == 0
+ok(1) = ok(1) .and. w%xml_writer%write_step(time=0._R8P) /= 0
+e = w%finalize()
 if (.not.is_hdf5_enabled) then
   e = w%initialize(format='vtkhdf', filename='htg.vtkhdf', mesh_topology='HyperTreeGrid', &
                    nx1=0, nx2=2, ny1=0, ny2=2, nz1=0, nz2=0)
@@ -47,7 +49,7 @@ else
   ok(7) = read_parts()
   ok(8) = interface_htg()
 endif
-print '(A,8L2)', 'VTKHDF HyperTreeGrid: XML refused, branch factor 2, branch factor 3, refusals, series, read back, '// &
+print '(A,8L2)', 'VTKHDF HyperTreeGrid: XML steps refused, branch factor 2, branch factor 3, refusals, series, read back, '// &
                  'partitions and transposed, interface:', ok
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(ok)

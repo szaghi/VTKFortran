@@ -100,6 +100,7 @@ contains
    integer(I4P)                                 :: error !< Error status.
 
    if (self%is_row_open) error = self%write_table_rows(action='CLOSE') ! the columns of a Table left open
+   if (self%topology == 'HyperTreeGrid') error = self%htg_finish() ! its element, its trees
    call self%write_end_tag(name=self%topology%chars())
    call self%write_end_tag(name='VTKFile')
    call self%close_xml_file

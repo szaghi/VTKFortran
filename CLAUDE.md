@@ -126,7 +126,13 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
 - `vtk_fortran_vtk_file_xml_writer_abstract` — abstract XML writer, extends `vtk_writer_abstract`: implements the
   format-neutral procedures as XML tags (attributes given as one `name="value" ...` string parsed by `write_attributes`;
   user values, names, files, sources, go through `attr_text`, a `"` as `QUOTE_MARK` = achar(1), turned back by
-  `quotes_back` so FoXy writes `&quot;`), plus the XML-only ones (`write_parallel_*`, used by `pvtk_file` and `vtm_file`,
+  `quotes_back` so FoXy writes `&quot;`), plus the XML-only ones (and the XML HyperTreeGrid, #90 B3: a `.htg` of
+  version 2.0 as VTK 9.7.2 writes it; its element written by `write_piece` (`htg_attributes`, after `set_interface`),
+  `Grid` by `write_geo` (rect), the trees kept by `write_tree` (`htg_ids`, `htg_depths`, `htg_counts`, `htg_bits`,
+  `htg_mask`, concatenated) and written as `Trees` (`htg_trees`: Descriptors/Mask `Bit` via `htg_bit_array`, unpacked
+  0/1 in ascii, packed MSB first otherwise; NumberOfVerticesPerDepth/TreeIds Int64, DepthPerTree UInt32: VTK 9.7.2
+  crashes on Int64; NumberOfTuples needed) when the cell data open or at the piece end (`htg_finish` at finalize);
+  cell array sizes checked in `is_table_column`; field/point data refused) (`write_parallel_*`, used by `pvtk_file` and `vtm_file`,
   whose `xml_writer` stays `class(xml_writer_abstract)`; `write_parallel_dataarray(data_type='String')` writes a
   `PArray`, read like a `PDataArray` and checked by `check_pieces`). Table (`.vtt`, #86): `location='row'` (`write_table_rows`)
   swaps the FoXy writer for one on memory (`table_writer` keeps the file writer) holding `RowData`; at the close the
@@ -314,6 +320,8 @@ kind, unsigned, 3 components as an array and as x, y, z), read back (names in or
 values), the same Table as VTKHDF (VTK compares them outside the test), the refusals (a column of other rows in every
 format, the file holding the others), columns left open closed by finalize, a time series as a `.pvd` of two `.vtt`
 read back;
+`vtk_fortran_write_htg.f90`: the XML `.htg` (the grid of the VTKHDF test with interface arrays, in the four XML
+formats; the ASCII text; 14 refusals; VTK reads them as the VTKHDF grid outside the test);
 `vtk_fortran_write_vtkhdf_htg.f90`: HyperTreeGrids (the 2x2 root grid of the VTK probe: trees of depth 3, 2, a
 masked leaf, a root cell without tree; branch factor 3; a 2-step series), checked with the bindings (descriptors and
 mask unpacked, the Steps entries; append refused), 16 refusals, the three files read back with the reader (every

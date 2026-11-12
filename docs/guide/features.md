@@ -27,6 +27,7 @@ title: Features
 | Structured Grid | `.vts` | ✅ |
 | Unstructured Grid | `.vtu` | ✅ |
 | Table (columns of values, VTK `vtkTable`; a time series through a `.pvd`; read by VTK and ParaView) | `.vtt` | ✅ |
+| HyperTreeGrid (trees on a root grid, masks, cell data, interface; read by VTK 9.7) | `.htg` | ✅ |
 
 ### Parallel (partitioned) datasets
 

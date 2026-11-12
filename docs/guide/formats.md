@@ -145,7 +145,8 @@ OverlappingAMR is a `.vthb` of `.vti` boxes: `vtm_file`, see [Parallel](/guide/p
   `xml_writer%set_interface(normals, intercepts)` names its interface arrays, cell arrays of 3 components (root
   attributes `InterfaceNormalsName` and `InterfaceInterceptsName`, as VTK writes them; VTK 9.7.2 reads them as the
   interface of the grid, `GetHasInterface`), at any time while the file is open. Refused: point data,
-  field data, a step without its piece, `comm`, `action='append'`, the XML formats. The reader of the library reads it
+  field data, a step without its piece, `comm`, `action='append'` (the XML formats write it as a `.htg`, see
+  [Topologies](/guide/topologies#hypertreegrid)). The reader of the library reads it
   back tree by tree (`get_trees`, `read_tree`: [Reading](/guide/reading#vtkhdf-files)). VTK 9.7.2 reads it; ParaView 6.1.1 reads it too, but
   not the test's grid with a masked leaf and a root cell without tree (nor the same grid as VTK 9.7.2 writes it). A
   complete program: [A tree-based AMR](/manual/cookbook#a-tree-based-amr).

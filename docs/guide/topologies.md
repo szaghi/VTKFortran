@@ -188,11 +188,11 @@ piece of it, its point extent in the indices of the level, with its point and ce
 - The layout, the refusals and the readers: [VTKHDF](/guide/formats#vtkhdf-hdf5); a complete program:
   [A block-structured AMR](/manual/cookbook#a-block-structured-amr).
 
-## HyperTreeGrid (VTKHDF)
+## HyperTreeGrid
 
 A tree-based AMR (a VTK `vtkHyperTreeGrid`): a root grid whose cells are the roots of trees, quadtrees or octrees (branch
-factor 2) or their kin of branch factor 3. It is written in the VTKHDF format only (`format='vtkhdf'`,
-`mesh_topology='HyperTreeGrid'`, the extent the points of the root grid, `branch_factor`): one piece with its root
+factor 2) or their kin of branch factor 3. It is a `.htg` file in the XML formats, or a `.vtkhdf` one
+(`mesh_topology='HyperTreeGrid'`, the extent the points of the root grid, `branch_factor`): one piece with its root
 coordinates, its trees (`write_tree`, each the refinement of its cells breadth first) and their cell data:
 
 <<< @/examples/snippets/vtkhdf_htg-write.f90
@@ -200,7 +200,12 @@ coordinates, its trees (`write_tree`, each the refinement of its cells breadth f
 - A tree is given breadth first, the children of a cell x fastest, every depth but the deepest (its cells are all
   leaves); a mask can hide leaves.
 - Cell data only, one value per cell of the trees, after the trees, in their order.
-- In a time series (`write_step` before each output) every step writes its piece: coordinates, trees, cell data.
+- In a time series (`write_step` before each output, VTKHDF) every step writes its piece: coordinates, trees, cell data;
+  an XML `.htg` is one dataset (a series is a `.pvd` of them).
+- The `.htg` is written as VTK 9.7.2 writes it (version 2.0): the `HyperTreeGrid` element (`BranchFactor`,
+  `Dimensions`, the interface names of `set_interface`, called before the piece), its `Grid` (the coordinates), its
+  `Trees` (`Descriptors` and `Mask` as `Bit` arrays, `NumberOfVerticesPerDepth`, `TreeIds`, `DepthPerTree`), its
+  `CellData`; no field data. VTK 9.7.2 reads it in every XML format.
 - The layout, the refusals and the readers: [VTKHDF](/guide/formats#vtkhdf-hdf5); a complete program:
   [A tree-based AMR](/manual/cookbook#a-tree-based-amr).
 
@@ -270,8 +275,8 @@ The `mesh_topology` argument is case-sensitive:
 | `UnstructuredGrid` | `.vtu` file |
 | `PolyData` | `.vtp` file |
 | `Table` | `.vtt` (XML formats) or `.vtkhdf` (`format='vtkhdf'`) |
-| `OverlappingAMR` | `.vtkhdf` file only (`format='vtkhdf'`, `origin`) |
-| `HyperTreeGrid` | `.vtkhdf` file only (`format='vtkhdf'`, `branch_factor`) |
+| `OverlappingAMR` | `.vtkhdf` file only (`format='vtkhdf'`, `origin`); an XML one is a `.vthb` (`vtm_file`) |
+| `HyperTreeGrid` | `.htg` (XML formats) or `.vtkhdf` (`format='vtkhdf'`), `branch_factor` |
 | `PRectilinearGrid` | `.pvtr` file (pvtk_file only) |
 | `PStructuredGrid` | `.pvts` file (pvtk_file only) |
 | `PUnstructuredGrid` | `.pvtu` file (pvtk_file only) |
