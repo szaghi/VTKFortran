@@ -1912,11 +1912,12 @@ contains
   endfunction to_I4P
 
   elemental function is_dataarray(name) result(is_array)
-  !< Return .true. if an element name is a data array: DataArray, Array (field data strings) or PDataArray (parallel).
+  !< Return .true. if an element name is a data array: DataArray, Array (strings), PDataArray or PArray (strings) of a
+  !< parallel header.
   character(*), intent(in) :: name     !< Element name.
   logical                  :: is_array !< Inquire result.
 
-  is_array = name == 'DataArray' .or. name == 'Array' .or. name == 'PDataArray'
+  is_array = name == 'DataArray' .or. name == 'Array' .or. name == 'PDataArray' .or. name == 'PArray'
   endfunction is_dataarray
 
   pure function lower_case(string) result(lower)

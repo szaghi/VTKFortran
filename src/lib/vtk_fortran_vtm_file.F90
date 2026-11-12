@@ -775,6 +775,9 @@ contains
       bl(m) = h5_link_target(root, path//'/'//names(first:c-1), target) /= 0 ! a group: no link target
       if (bl(m)) target = ''
       if (index(target, '/VTKHDF/') == 1) target = target(9:)
+      if (.not.bl(m)) then ! an empty dataset (a group without Type, VTK's null block): no file, as in an XML .vtm
+         if (.not.has_type(root, target)) target = ''
+      endif
       tx(3:4, m) = [len(self%entry_chars) + 1, len(target)] ! the dataset
       self%entry_chars = self%entry_chars//target
       first = c + 1
@@ -785,6 +788,21 @@ contains
    self%entry_text = reshape([self%entry_text(:, 1:after), tx, self%entry_text(:, after+1:)], &
                              [6, size(self%entry_level)])
    endfunction vtkhdf_add_entries
+
+   function has_type(root, dataset) result(has)
+   !< Return true if the dataset group `dataset` of /VTKHDF has a `Type` attribute (false for an empty dataset).
+   integer(hid_kind), intent(in) :: root    !< Group /VTKHDF.
+   character(*),      intent(in) :: dataset !< Dataset group, from /VTKHDF.
+   logical                       :: has     !< Inquire result.
+   integer(hid_kind)             :: group   !< The dataset group.
+   integer(I4P)                  :: e       !< Error of a closing.
+
+   has = .false.
+   if (len(dataset) == 0) return
+   if (h5_group_open(root, dataset, group) /= 0) return
+   has = h5_attribute_exists(group, 'Type')
+   e = h5_group_close(group)
+   endfunction has_type
 
    function vtkhdf_close_block(self) result(error)
    !< Close the open block of a VTKHDF file.
@@ -805,7 +823,9 @@ contains
    !< collection), and link it in the open block, named `name` or after the file (without directory and extension). The
    !< time series rules are checked on the file before the copy: the first block decides whether the file is static or a
    !< time series; a series block must be an UnstructuredGrid or a PolyData with the steps of the first one (their number
-   !< and times, compared exactly).
+   !< and times, compared exactly). An empty `filename` is an empty dataset (VTK's null block) of a multi-block file: a group
+   !< `Block_<n>` without attributes, linked as `name` (or `Block_<n>`); it does not take part in the time series rules. It
+   !< is refused in a collection (VTK 9.7.2 then reads none of its datasets).
    class(vtm_file), intent(inout)        :: self      !< VTM file.
    character(*),    intent(in)           :: filename  !< File of the dataset.
    character(*),    intent(in), optional :: name      !< Dataset name.
@@ -827,6 +847,7 @@ contains
    file = trim(adjustl(filename))
    label = file(index(file, '/', back=.true.)+1:)
    if (index(label, '.', back=.true.) > 1) label = label(1:index(label, '.', back=.true.)-1)
+   if (len(file) == 0) label = 'Block_'//trim(str(n=self%n_leaves + 1_I4P, no_sign=.true.)) ! an empty dataset
    if (present(name)) then
       if (len_trim(name) > 0) label = trim(adjustl(name))
    endif
@@ -841,6 +862,25 @@ contains
                               '(a collection copies each dataset once: reference it with references=)'
          return
       endif
+   endif
+   if (len(file) == 0 .and. self%is_collection) then
+      write(stderr, '(A)') 'error: VTKFortran vtm_file: an empty dataset is refused in a collection (VTK 9.7.2 then '// &
+                           'reads none of its partitioned datasets); a multi-block file accepts it'
+      return
+   endif
+   if (len(file) == 0) then ! an empty dataset (a null block of VTK): a group without attributes, linked as a dataset
+      self%n_leaves = self%n_leaves + 1_I4P
+      self%children(size(self%children)) = self%children(size(self%children)) + 1_I4P
+      leaf = 'Block_'//trim(str(n=self%n_leaves, no_sign=.true.))
+      error = h5_group_create(self%root, leaf, group)
+      if (error == 0) error = h5_group_close(group)
+      if (error == 0) error = h5_group_open(self%root, self%node, group)
+      if (error == 0) then
+         error = h5_link_soft('/VTKHDF/'//leaf, group, label)
+         e = h5_group_close(group)
+      endif
+      if (error /= 0) write(stderr, '(A)') 'error: VTKFortran vtm_file: cannot write the empty dataset '//label
+      return
    endif
    if (h5_file_open(file, source) /= 0) then
       write(stderr, '(A)') 'error: VTKFortran vtm_file: cannot open '//file//' as an HDF5 file'

@@ -80,6 +80,8 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   format='vtkhdf')` one VTKHDF
   `MultiBlockDataSet`: the `.vtkhdf` datasets copied in (`H5Ocopy`, `Block_<n>`), the tree as `Assembly` soft links;
   a composite or OverlappingAMR source refused (blocks are not composite: its Assembly would point at this file's blocks);
+  an empty file name = an empty dataset (`Block_<n>` group without attributes, linked; refused in a collection: VTK 9.7.2
+  then reads none of its datasets), read back with an empty `file` (`has_type`);
   all static or all time series (the first block decides), series blocks UnstructuredGrid or PolyData with the same
   `NSteps` and times (grid series refused: VTK 9.7.2 reads them without arrays), checked on the file before the copy.
   ParaView 6.1.1 plays every step; VTK 9.7.2 reads each with `SetStep`, its pipeline time stays at step 1 on a
@@ -100,7 +102,8 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   format-neutral procedures as XML tags (attributes given as one `name="value" ...` string parsed by `write_attributes`;
   user values, names, files, sources, go through `attr_text`, a `"` as `QUOTE_MARK` = achar(1), turned back by
   `quotes_back` so FoXy writes `&quot;`), plus the XML-only ones (`write_parallel_*`, used by `pvtk_file` and `vtm_file`,
-  whose `xml_writer` stays `class(xml_writer_abstract)`). Table (`.vtt`, #86): `location='row'` (`write_table_rows`)
+  whose `xml_writer` stays `class(xml_writer_abstract)`; `write_parallel_dataarray(data_type='String')` writes a
+  `PArray`, read like a `PDataArray` and checked by `check_pieces`). Table (`.vtt`, #86): `location='row'` (`write_table_rows`)
   swaps the FoXy writer for one on memory (`table_writer` keeps the file writer) holding `RowData`; at the close the
   `Piece NumberOfCols NumberOfRows` tag is written, then the buffered columns (indented by 6) with `raw`: FoXy keeps a
   start tag pending only until its first content, so the counts cannot be patched later. Rows: every one of the 144
@@ -298,7 +301,8 @@ the restart, an orphan offset entry, a restart after a step with an empty piece;
 time series of two UnstructuredGrid series (one of two parts) and a PolyData series, both also as
 PartitionedDataSetCollections with a block of references, the refusals (grid series, static and series mixed, other
 steps or times; collection names, references, composites; a composite or an OverlappingAMR as a block source); the four files read back (`vtm_file` read: the entries;
-a collection with two datasets the Assembly misses, added with the bindings, listed by Index;
+a collection with two datasets the Assembly misses, added with the bindings, listed by Index; empty datasets in a
+multi-block file (read back without file) and refused in a collection;
 every dataset with `dataset=` compared with its source step by step, integer arrays as I8P), the refusals of `dataset`,
 the same `vtm_file` reading a composite after a refused read;
 `vtk_fortran_read_vtkhdf.f90`: VTKHDF files read back (every topology, time series, two polyhedra sharing a face
@@ -326,4 +330,5 @@ mpirun; without HDF5 the writer refuses to start); `vtk_fortran_read.F90` reads 
 a polyhedron `.vtu` written by VTK 9.7.2 (XML 2.3) and the same with the shared face stored once (2.5); ASCII
 `nan inf -inf`, the former `+   Infinity`, UInt64 above huge(I8P); a name with `"&<>'` and NaN/±Inf in every format,
 the active scalars, and in a `.pvd`; a 6-component ASCII array with non-finite values where w and x join; `type="Bit"` arrays of two files written by VTK 9.7.2,
-ascii and binary), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.
+ascii and binary), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files, `PArray`
+string arrays (a VTK 9.7.2 header and piece embedded, and a header of the library over that piece).

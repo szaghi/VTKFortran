@@ -25,7 +25,8 @@ program vtk_fortran_write_vtkhdf_vtm
 !< (`action='read'`: the entries of the Assembly, the dataset of each) and every dataset with `vtk_file%initialize(...,
 !< action='read', dataset=)`, compared with its source file step by step; the refusals of `dataset`; a collection with
 !< two datasets the Assembly does not reach (added with the bindings, `Index` 2 and 1), listed after the tree in the
-!< order of their `Index`. Without HDF5 the
+!< order of their `Index`; empty datasets (VTK's null blocks: an empty file name) in a multi-block file, read back as
+!< datasets without file, refused in a collection. Without HDF5 the
 !< VTKHDF format of `vtm_file` is refused.
 use penf
 use vtk_fortran, only : vtk_file, vtm_file
@@ -180,6 +181,7 @@ else
                       'series_tetra']) .and. test_passed(9)
   ! a collection with a dataset the Assembly does not reach (as vtkHDFWriter writes some): listed after the tree
   if (.not.unlinked_dataset()) test_passed(9) = .false. ! its file is read next: called in a statement of its own
+  if (.not.empty_datasets()) test_passed(9) = .false.
   test_passed(9) = read_composite('unlinked_pdc.vtkhdf', [1, 2, 1, 1], 'bddd', &
                      [character(6) :: 'a', 'part_1', 'second', 'third'], [character(6) :: '', 'part_1', 'second', 'third'], &
                      [character(6) :: '', 'part_1', 'part_2', 'bolt_1']) .and. test_passed(9)
@@ -320,6 +322,42 @@ contains
   unlinked_dataset = all(ee == 0)
   if (.not.unlinked_dataset) print '(A,4I3)', 'collection with unlinked datasets: errors ', ee
   endfunction unlinked_dataset
+
+  logical function empty_datasets()
+  !< Empty datasets (an empty file name: VTK's null block, a group without attributes linked as a dataset) in a multi-block
+  !< file, nested, read back with vtm_file: datasets with an empty file, the others as written; refused in a collection.
+  type(vtm_file)                :: vtm
+  integer(I4P), allocatable     :: level(:), index(:)
+  character(len=:), allocatable :: kind(:), name(:), file(:)
+  integer(I4P)                  :: ee(4), k
+  logical                       :: c(2)
+
+  ee = 0 ; c = .false.
+  ee(1) = a_vtm_file%initialize(filename='empty_vtm.vtkhdf', format='vtkhdf')
+  ee(1) = ee(1) + abs(a_vtm_file%write_block(filenames=[character(13) :: 'part_1.vtkhdf', ''], &
+                                             names=[character(6) :: 'part_1', 'hole'], name='parts'))
+  ee(1) = ee(1) + abs(a_vtm_file%write_block(filenames=[character(1) :: ''], name='nothing'))
+  ee(1) = ee(1) + abs(a_vtm_file%finalize())
+  ! refused in a collection (VTK 9.7.2 would read none of its datasets)
+  ee(2) = a_vtm_file%initialize(filename='empty_pdc.vtkhdf', format='vtkhdf', composite='PartitionedDataSetCollection')
+  c(2) = a_vtm_file%write_block(filenames=[character(1) :: ''], names=[character(4) :: 'void'], name='b') /= 0
+  e = a_vtm_file%finalize() ! not 0: the refused file left its block open
+  do k=1, 1
+    if (k == 1) ee(3) = ee(3) + abs(vtm%initialize(filename='empty_vtm.vtkhdf', action='read'))
+    if (k == 2) ee(3) = ee(3) + abs(vtm%initialize(filename='empty_pdc.vtkhdf', action='read'))
+    ee(4) = ee(4) + abs(vtm%get_entries(level=level, kind=kind, index=index, name=name, file=file))
+    if (all(ee == 0) .and. k == 1) then ! parts: part_1, hole (empty); nothing: Block_3 (empty)
+      c(1) = size(level) == 5
+      if (c(1)) c(1) = all(level == [1, 2, 2, 1, 2]) .and. all(kind == [character(7) :: 'block', 'dataset', 'dataset', &
+                                                                           'block', 'dataset']) .and. &
+                       name(3) == 'hole' .and. name(5) == 'Block_3' .and. file(2) == 'Block_1' .and. len_trim(file(3)) == 0 &
+                       .and. len_trim(file(5)) == 0
+    endif
+    e = vtm%finalize()
+  enddo
+  empty_datasets = all(c) .and. all(ee == 0)
+  if (.not.empty_datasets) print '(A,4I3,A,2L2)', 'empty datasets: errors ', ee, ' checks ', c
+  endfunction empty_datasets
 
   logical function composite_refusals()
   !< Reading a composite: a missing dataset (4), a dataset of an XML file (3), dataset without action read (1), a

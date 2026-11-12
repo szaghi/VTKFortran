@@ -48,8 +48,8 @@ flowchart LR
 
 <<< @/examples/snippets/ref_parallel-pvtu.f90
 
-The names, types and numbers of components declared in the `.pvtu` file must match the data arrays written in every piece:
-`check_pieces` verifies it, see [Parallel headers](/guide/reading#parallel-headers). See `src/tests/vtk_fortran_write_pvtu.f90` for the
+The names, types and numbers of components declared in the `.pvtu` file must match the data arrays written in every piece
+(a string array is declared with `data_type='String'`, written as a `PArray` as VTK writes it): `check_pieces` verifies it, see [Parallel headers](/guide/reading#parallel-headers). See `src/tests/vtk_fortran_write_pvtu.f90` for the
 complete program, pieces included.
 
 ### Ghost cells
@@ -100,6 +100,11 @@ Build the hierarchy step by step with the `action` argument of `write_block`:
 | `write_block(filenames=[...], names=[...], action='write')` | write the files as datasets of the current block |
 | `write_block(filenames=[...], names=[...], name=...)` | write the files wrapped in a new child block |
 | `write_block(action='close')` | close the current block |
+
+An empty file name is an empty dataset (VTK's null block): `<DataSet index="..." file=""/>` in a `.vtm`, read back by VTK
+as an empty block; in a VTKHDF multi-block file a group `Block_<n>` without attributes, linked as the others (named after
+`names`, `Block_<n>` otherwise; outside the time series rules); refused in a VTKHDF collection, which VTK 9.7.2 then
+cannot read. `vtm_file` reading gives an empty dataset an empty `file`.
 
 <<< @/examples/snippets/ref_parallel-vtm-nested.f90
 

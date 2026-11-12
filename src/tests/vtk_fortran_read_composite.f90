@@ -5,14 +5,15 @@ program vtk_fortran_read_composite
 !< A parallel unstructured grid of two tetrahedra pieces is written and its header read back (information, declared arrays,
 !< pieces) and checked against the pieces: a correct header, one declaring a missing array and one declaring a wrong type.
 !< The pieces extents of a parallel rectilinear grid header are read. A nested multi-block file and a time series are
-!< written and their entries read back.
+!< written and their entries read back. String arrays declared as `PArray`: a header and a piece written by VTK 9.7.2
+!< (embedded), and a header of the library over the same piece.
 use penf
 use vtk_fortran, only : pvd_file, pvtk_file, vtk_file, vtm_file
 
 implicit none
 character(*), parameter :: pieces(2)=['vtkfortran_read_composite_01.vtu', 'vtkfortran_read_composite_02.vtu'] !< Pieces.
 type(pvtk_file)         :: a_pvtk_file    !< A parallel VTK file.
-logical                 :: test_passed(5) !< List of passed tests.
+logical                 :: test_passed(6) !< List of passed tests.
 integer(I4P)            :: p              !< Counter.
 
 do p=1, size(pieces)
@@ -23,6 +24,7 @@ test_passed(2) = check_pvtu_mismatch()
 test_passed(3) = check_pvtr()
 test_passed(4) = check_vtm()
 test_passed(5) = check_pvd()
+test_passed(6) = check_parray()
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 if (.not.all(test_passed)) error stop 'some tests failed'
@@ -199,4 +201,109 @@ contains
                              group(2) == 'fluid' .and. file(1) == pieces(1) .and. file(2) == pieces(2)
   if (.not.is_passed) print '(A)', 'failed: vtkfortran_read_composite.pvd'
   endfunction check_pvd
+  function check_parray() result(is_passed)
+  !< String arrays declared in a parallel header (`PArray`): a header and its piece written by VTK 9.7.2
+  !< (vtkXMLPUnstructuredGridWriter: `lab` strings, `pd` Float64 point data), embedded below; the header read back (the
+  !< declared arrays, `PArray` included, checked against the piece), then a header of the library declaring the same
+  !< arrays (`write_parallel_dataarray(data_type='String')` writes a `PArray`) over the same piece, read back.
+  logical                       :: is_passed !< Check result.
+  character(len=:), allocatable :: text      !< File content.
+  character(len=:), allocatable :: names(:)  !< Declared point arrays.
+  character(len=:), allocatable :: message   !< check_pieces message.
+  character(len=:), allocatable :: data_type !< Declared type of lab.
+  character(len=1), parameter   :: nl=new_line('a') !< New line.
+  integer(I4P)                  :: u, f      !< File unit, counter.
+  integer(I4P)                  :: e(6)      !< Errors.
+
+  text = &
+    '<?xml version="1.0"?>'//nl//&
+    '<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32">'//nl//&
+    '  <UnstructuredGrid>'//nl//&
+    '    <Piece NumberOfPoints="3" NumberOfCells="1">'//nl//&
+    '      <PointData>'//nl//&
+    '        <Array type="String" Name="lab" format="ascii">'//nl//&
+    '          97 0 98 98 0 99 32 99 0'//nl//&
+    '        </Array>'//nl//&
+    '        <DataArray type="Float64" Name="pd" format="ascii" RangeMin="1.5" RangeMax="3.5">'//nl//&
+    '          1.5 2.5 3.5'//nl//&
+    '        </DataArray>'//nl//&
+    '      </PointData>'//nl//&
+    '      <CellData>'//nl//&
+    '      </CellData>'//nl//&
+    '      <Points>'//nl//&
+    '        <DataArray type="Float32" Name="Points" NumberOfComponents="3" format="ascii" RangeMin="0" R'//&
+    'angeMax="2">'//nl//&
+    '          0 0 0 1 0 0'//nl//&
+    '          2 0 0'//nl//&
+    '          <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">'//nl//&
+    '            <Value index="0">'//nl//&
+    '              0'//nl//&
+    '            </Value>'//nl//&
+    '            <Value index="1">'//nl//&
+    '              2'//nl//&
+    '            </Value>'//nl//&
+    '          </InformationKey>'//nl//&
+    '        </DataArray>'//nl//&
+    '      </Points>'//nl//&
+    '      <Cells>'//nl//&
+    '        <DataArray type="Int64" Name="connectivity" format="ascii" RangeMin="0" RangeMax="2">'//nl//&
+    '          0 1 2'//nl//&
+    '        </DataArray>'//nl//&
+    '        <DataArray type="Int64" Name="offsets" format="ascii" RangeMin="3" RangeMax="3">'//nl//&
+    '          3'//nl//&
+    '        </DataArray>'//nl//&
+    '        <DataArray type="UInt8" Name="types" format="ascii" RangeMin="5" RangeMax="5">'//nl//&
+    '          5'//nl//&
+    '        </DataArray>'//nl//&
+    '      </Cells>'//nl//&
+    '    </Piece>'//nl//&
+    '  </UnstructuredGrid>'//nl//&
+    '</VTKFile>'
+  open(newunit=u, file='ps_0.vtu', access='stream', form='unformatted', action='write', status='replace')
+  write(u) text//nl
+  close(u)
+  text = &
+    '<?xml version="1.0"?>'//nl//&
+    '<VTKFile type="PUnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32">'//nl//&
+    '  <PUnstructuredGrid GhostLevel="0">'//nl//&
+    '    <PPointData>'//nl//&
+    '      <PArray type="String" Name="lab"/>'//nl//&
+    '      <PDataArray type="Float64" Name="pd"/>'//nl//&
+    '    </PPointData>'//nl//&
+    '    <PPoints>'//nl//&
+    '      <PDataArray type="Float32" Name="Points" NumberOfComponents="3"/>'//nl//&
+    '    </PPoints>'//nl//&
+    '    <Piece Source="ps_0.vtu"/>'//nl//&
+    '  </PUnstructuredGrid>'//nl//&
+    '</VTKFile>'
+  open(newunit=u, file='vtkfortran_read_composite-vtk-parray.pvtu', access='stream', form='unformatted', action='write', &
+       status='replace')
+  write(u) text//nl
+  close(u)
+  e = 0
+  e(1) = abs(a_pvtk_file%initialize(filename='vtkfortran_read_composite-parray.pvtu', mesh_topology='PUnstructuredGrid', &
+                                    mesh_kind='Float32'))
+  e(1) = e(1) + abs(a_pvtk_file%xml_writer%write_dataarray(location='node', action='open'))
+  e(1) = e(1) + abs(a_pvtk_file%xml_writer%write_parallel_dataarray(data_name='lab', data_type='String'))
+  e(1) = e(1) + abs(a_pvtk_file%xml_writer%write_parallel_dataarray(data_name='pd', data_type='Float64'))
+  e(1) = e(1) + abs(a_pvtk_file%xml_writer%write_dataarray(location='node', action='close'))
+  e(1) = e(1) + abs(a_pvtk_file%xml_writer%write_parallel_geo(source='ps_0.vtu'))
+  e(1) = e(1) + abs(a_pvtk_file%finalize())
+  is_passed = e(1) == 0
+  do f=1, 2
+    if (f == 1) e(2) = a_pvtk_file%initialize(filename='vtkfortran_read_composite-vtk-parray.pvtu', action='read')
+    if (f == 2) e(2) = a_pvtk_file%initialize(filename='vtkfortran_read_composite-parray.pvtu', action='read')
+    e(3) = a_pvtk_file%xml_reader%get_dataarray_names(location='node', names=names)
+    e(4) = a_pvtk_file%xml_reader%get_dataarray_info(location='node', data_name='lab', data_type=data_type)
+    e(5) = a_pvtk_file%xml_reader%check_pieces(message=message)
+    e(6) = a_pvtk_file%finalize()
+    is_passed = is_passed .and. all(e == 0)
+    if (is_passed) is_passed = size(names) == 2
+    if (is_passed) is_passed = names(1) == 'lab' .and. names(2) == 'pd' .and. data_type == 'String'
+    if (.not.is_passed) then
+      print '(A,I0,A,*(1X,I0))', 'failed: PArray, header ', f, ': '//message, e
+      exit
+    endif
+  enddo
+  endfunction check_parray
 endprogram vtk_fortran_read_composite

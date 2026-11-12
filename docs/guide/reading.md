@@ -159,7 +159,7 @@ then read with `vtk_file` (or `pvtk_file`). Relative files are relative to the d
   the groups of its `Assembly` (`block`) and the links in them (`dataset`, a collection's references included), in the
   order written, then, for a collection, the datasets (groups of `/VTKHDF` with an `Index`) that no link of the
   `Assembly` reaches, at the top level in the order of their `Index` (`vtkHDFWriter` writes such files); the `file` of a
-  dataset is its group under `/VTKHDF`, read with
+  dataset is its group under `/VTKHDF` (empty for an empty dataset, a group without `Type`: VTK's null block), read with
   `vtk_file%initialize(filename, action='read', dataset=file)`. A complete program:
   [A time series of several meshes in one .vtkhdf file](/manual/cookbook#a-time-series-of-several-meshes-in-one-vtkhdf-file).
 - All outputs are optional and allocatable; strings are blank padded to the longest one. `initialize` returns 1 if the file

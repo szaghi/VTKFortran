@@ -1594,7 +1594,8 @@ contains
    endfunction next_vtm_index
 
    function write_parallel_dataarray(self, data_name, data_type, number_of_components) result(error)
-   !< Write parallel (partitioned) VTK-XML dataarray info.
+   !< Write parallel (partitioned) VTK-XML dataarray info: `PDataArray`, or `PArray` for the type `String` (as VTK declares
+   !< a string array).
    class(xml_writer_abstract), intent(inout)        :: self                 !< Writer.
    character(*),               intent(in)           :: data_name            !< Data name.
    character(*),               intent(in)           :: data_type            !< Type of dataarray.
@@ -1608,7 +1609,11 @@ contains
    else
       buffer = 'type="'//attr_text(data_type)//'" Name="'//attr_text(data_name)//'"'
    endif
-   call self%write_self_closing_tag(name='PDataArray', attributes=buffer%chars())
+   if (trim(adjustl(data_type)) == 'String') then
+      call self%write_self_closing_tag(name='PArray', attributes=buffer%chars())
+   else
+      call self%write_self_closing_tag(name='PDataArray', attributes=buffer%chars())
+   endif
    error = self%error
    endfunction write_parallel_dataarray
 
