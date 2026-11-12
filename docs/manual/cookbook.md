@@ -270,6 +270,22 @@ The file is read back level by level, the boxes of a level as its pieces:
 **VTK 9.7 reads it** (`vtkHDFReader` gives a `vtkOverlappingAMR`); **ParaView 6.1 does not**: its VTKHDF reader passes
 the output to a filter that refuses an OverlappingAMR. See [VTKHDF](/guide/formats#vtkhdf-hdf5) for the layout.
 
+### A tree-based AMR
+
+A tree-based AMR in one file, a HyperTreeGrid: a root grid of 4x2 cells, each the root of a quadtree refined down to
+depth 3 around a circle. Each tree is its refinement, breadth first (the deepest depth left out: its cells are all
+leaves); the depth of each cell is its cell data:
+
+<<< @/examples/snippets/vtkhdf_htg-write.f90
+
+<<< @/examples/output/vtkhdf_htg.ansi{ansi}
+
+<p align="center"><img src="../examples/images/vtkhdf_htg.png" alt="the quadtrees of the HyperTreeGrid example, refined around a circle, coloured by depth, read by ParaView from the VTKHDF file"></p>
+
+The program builds each tree level by level (the function `tree` of
+[`vtkhdf_htg.f90`](https://github.com/szaghi/VTKFortran/tree/master/docs/examples/src/vtkhdf_htg.f90)). VTK 9.7 and
+ParaView 6.1 read it. See [VTKHDF](/guide/formats#vtkhdf-hdf5) for the layout.
+
 ### More than 2^31 points or cells
 
 <<< @/examples/snippets/ids_64bit.f90

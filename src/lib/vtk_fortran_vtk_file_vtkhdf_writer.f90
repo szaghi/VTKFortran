@@ -77,9 +77,20 @@ module vtk_fortran_vtk_file_vtkhdf_writer
 !< `PointDataOffset/<name>`, `CellDataOffset/<name>`: the names VTK 9.7.2 reads, singular, not those of the specification
 !< page), the file valid after each box. Refused: field data, `comm`, a step without boxes, the XML formats.
 !<
+!< HyperTreeGrid (`mesh_topology='HyperTreeGrid'`, `nx1`...`nz2` the points of its root grid, `branch_factor` of
+!< `vtk_file%initialize` 2 or 3): one piece, `write_piece(nx1, ..., nz2)`, its root coordinates `write_geo(x, y, z)` (as a
+!< RectilinearGrid: `XCoordinates`, `YCoordinates`, `ZCoordinates`), its trees `write_tree(tree_id, descriptor, mask)`
+!< (the tree of root cell `tree_id` = i + (nx-1)(j + (ny-1)k), from 0; `descriptor` the refinement of its cells, breadth
+!< first, the children of a cell x fastest, every depth but the deepest, whose cells are all leaves; `mask` one bit per
+!< cell, breadth first, a refined cell not masked), then its cell data (one value per cell of the trees, in the order of
+!< the trees written, breadth first in each), `write_piece()`. The layout, as VTK 9.7.2 writes it: `Dimensions`,
+!< `BranchFactor`, `Descriptors` and `Mask` (bits packed MSB first, contiguous across the trees), `DescriptorsSize` (bits),
+!< `TreeIds`, `DepthPerTree`, `NumberOfCellsPerTreeDepth`, `NumberOfTrees`, `NumberOfDepths`, `NumberOfCells`, `CellData`.
+!< Refused: point data, field data, time series, `comm`, the XML formats.
+!<
 !< `Version` is written by `finalize` (and after every piece of a time series): 2.0, 2.5 with polyhedra, 2.6 when an
 !< active array is marked, 2.7 for a RectilinearGrid or a StructuredGrid, 2.8 for a Table, 2.2 for an OverlappingAMR time
-!< series.
+!< series, 2.4 for a HyperTreeGrid.
 use penf
 use vtk_fortran_hdf5
 use vtk_fortran_parameters, only : stderr
@@ -100,6 +111,7 @@ integer(I4P), parameter :: TOPOLOGY_RECT = 4_I4P         !< RectilinearGrid.
 integer(I4P), parameter :: TOPOLOGY_STRG = 5_I4P         !< StructuredGrid.
 integer(I4P), parameter :: TOPOLOGY_TABLE = 6_I4P        !< Table.
 integer(I4P), parameter :: TOPOLOGY_AMR = 7_I4P          !< OverlappingAMR.
+integer(I4P), parameter :: TOPOLOGY_HTG = 8_I4P          !< HyperTreeGrid.
 integer(I1P), parameter :: CELL_POLYHEDRON = 42_I1P     !< VTK type of a polyhedron.
 character(*), parameter :: STEP_GROUPS(4) = ['PointDataOffsets', 'CellDataOffsets ', 'FieldDataOffsets', & !< Groups of
                                               'FieldDataSizes  ']                                       !< Steps.
@@ -172,6 +184,17 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
                                                            !< at the start of the open step, `(6, n_levels)`.
   logical                       :: has_domain=.false.      !< A box of level 0 is written (in the open step).
   real(R8P)                     :: domain(6)=0._R8P        !< Bounds of the boxes of level 0: x, y, z min and max.
+  logical, allocatable          :: tree_bits(:)            !< Refinement bits of the trees written (HyperTreeGrid).
+  logical, allocatable          :: tree_mask(:)            !< Mask bits of the cells of the trees written.
+  logical                       :: has_mask=.false.        !< A tree written has a mask.
+  integer(I8P), allocatable     :: tree_ids(:)             !< Trees written.
+  integer(I8P), allocatable     :: tree_depths(:)          !< Depths of the trees written.
+  integer(I8P), allocatable     :: tree_counts(:)          !< Cells of each depth of each tree written.
+  integer(I8P)                  :: tree_cells=0_I8P        !< Cells of the trees written (the mask bits used).
+  integer(I8P)                  :: n_tree_ids=0_I8P        !< Trees written (`tree_ids`, `tree_depths` used).
+  integer(I8P)                  :: n_tree_counts=0_I8P     !< Entries of `tree_counts` used.
+  integer(I8P)                  :: n_tree_bits=0_I8P       !< Refinement bits used.
+  logical                       :: is_tree_data=.false.    !< The cell data of the trees are started.
   logical                       :: is_parallel=.false.     !< The file is written by the ranks of an MPI communicator.
   integer(I4P)                  :: region(6)=0_I4P         !< Region of this rank of a grid written from ranks: its extent.
   integer(I4P)                  :: rank=0_I4P              !< Rank of this process in `comm`.
@@ -185,6 +208,7 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
     procedure, pass(self) :: write_step
     procedure, pass(self) :: write_dataarray_location_tag
     procedure, pass(self) :: write_level
+    procedure, pass(self) :: write_tree
     procedure, pass(self) :: write_fielddata_tag
     procedure, pass(self) :: write_fielddata1_rank0
     procedure, pass(self) :: write_fielddata1_rank1
@@ -290,6 +314,7 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
     procedure, pass(self), private :: end_reusing   !< Check the arrays of a step without pieces, write its entries.
     procedure, pass(self), private :: end_table     !< End the columns of a Table (static, or a step).
     procedure, pass(self), private :: end_box       !< End a box of an OverlappingAMR: check its arrays.
+    procedure, pass(self), private :: end_trees     !< End the piece of a HyperTreeGrid: write its trees.
     procedure, pass(self), private :: is_recorded   !< A data array name is recorded (point or cell data).
     procedure, pass(self), private :: open_level    !< Open (or create) a level of an OverlappingAMR.
     procedure, pass(self), private :: start_box     !< Start a box of an OverlappingAMR (write_piece of the level).
@@ -365,11 +390,17 @@ contains
     self%version_minor = 8_I8P
   case('OverlappingAMR')
     self%topology = TOPOLOGY_AMR
+  case('HyperTreeGrid')
+    self%topology = TOPOLOGY_HTG
+    self%version_minor = 4_I8P
   case default
     error = refuse('topology '//trim(adjustl(mesh_topology))//' is not supported')
     return
   endselect
-  if ((self%topology == TOPOLOGY_TABLE .or. self%topology == TOPOLOGY_AMR) .and. self%is_parallel) then
+  if (self%topology == TOPOLOGY_HTG .and. self%branch_factor /= 2_I4P .and. self%branch_factor /= 3_I4P) then
+    error = refuse('the branch factor of a HyperTreeGrid is 2 or 3')
+    return
+  elseif (any(self%topology == [TOPOLOGY_TABLE, TOPOLOGY_AMR, TOPOLOGY_HTG]) .and. self%is_parallel) then
     error = refuse('comm: a '//trim(adjustl(mesh_topology))//' is written by one process')
     return
   elseif (.not.self%is_partitioned() .and. self%topology /= TOPOLOGY_TABLE .and. self%topology /= TOPOLOGY_AMR) then
@@ -420,6 +451,10 @@ contains
     if (error == 0_I4P) error = h5_attribute_write(self%root, 'Type', 'UnstructuredGrid')
   elseif (self%topology == TOPOLOGY_TABLE) then
     if (error == 0_I4P) error = h5_attribute_write(self%root, 'Type', 'Table')
+  elseif (self%topology == TOPOLOGY_HTG) then
+    if (error == 0_I4P) error = h5_attribute_write(self%root, 'Type', 'HyperTreeGrid')
+    if (error == 0_I4P) error = h5_attribute_write(self%root, 'Dimensions', self%grid_points())
+    if (error == 0_I4P) error = h5_attribute_write(self%root, 'BranchFactor', [int(self%branch_factor, I8P)])
   elseif (self%topology == TOPOLOGY_AMR) then
     if (error == 0_I4P) error = h5_attribute_write(self%root, 'Type', 'OverlappingAMR')
     if (error == 0_I4P) error = h5_attribute_write(self%root, 'Origin', self%origin)
@@ -546,6 +581,12 @@ contains
     error = self%end_partition()
   elseif (self%topology == TOPOLOGY_AMR) then
     error = self%end_box()
+  elseif (self%topology == TOPOLOGY_HTG) then ! its root coordinates, its trees
+    if (.not.self%is_geo_written) then
+      error = refuse('the piece of a HyperTreeGrid needs write_geo (its root coordinates)')
+    else
+      error = self%end_trees()
+    endif
   elseif ((self%topology == TOPOLOGY_RECT .or. self%topology == TOPOLOGY_STRG) .and. .not.self%is_geo_written &
           .and. .not.(self%is_temporal .and. self%geo_slices > 0_I8P)) then ! a later step reuses the geometry
     error = refuse('the piece of a RectilinearGrid or StructuredGrid needs write_geo (in the first step)')
@@ -589,6 +630,8 @@ contains
     error = refuse('write_step: a time series starts with write_step, before its first piece and field data')
   elseif (self%topology == TOPOLOGY_TABLE .and. (self%step_pieces > 0_I8P .neqv. self%is_temporal)) then
     error = refuse('write_step: a time series of a Table starts with write_step, every step with its columns')
+  elseif (self%topology == TOPOLOGY_HTG) then
+    error = refuse('write_step: a time series of a HyperTreeGrid is not supported')
   elseif (self%topology == TOPOLOGY_AMR .and. self%is_temporal .and. self%step_pieces == 0_I8P) then
     error = refuse('write_step: every step of an OverlappingAMR writes its boxes')
   elseif (self%is_temporal .and. self%step_pieces == 0_I8P .and. self%n_steps == 1_I8P) then
@@ -679,6 +722,11 @@ contains
   else
     return
   endif
+  if (name == 'PointData' .and. self%topology == TOPOLOGY_HTG) then
+    error = refuse('write_dataarray: a HyperTreeGrid has cell data only')
+    return
+  endif
+  if (name == 'CellData' .and. self%topology == TOPOLOGY_HTG .and. action_ == 'OPEN') self%is_tree_data = .true.
   if ((name == 'RowData') .neqv. (self%topology == TOPOLOGY_TABLE)) then
     error = refuse('write_dataarray: the columns of a Table (location row) go in a Table, and only them')
     return
@@ -752,6 +800,82 @@ contains
   endif
   endfunction write_level
 
+  function write_tree(self, tree_id, descriptor, mask) result(error)
+  !< Write the tree `tree_id` (its root cell, from 0: i + (nx-1)(j + (ny-1)k) of the root grid) of a HyperTreeGrid, in its
+  !< piece, after its coordinates and before its cell data: `descriptor` the refinement (true) of its cells breadth first,
+  !< the children of a cell x fastest, for every depth but the deepest (all its cells are leaves: an empty descriptor is a
+  !< tree of one leaf); `mask` (optional) one value per cell of the tree, breadth first, a refined cell not masked.
+  class(vtkhdf_writer),       intent(inout)        :: self
+  integer(I4P),               intent(in)           :: tree_id
+  logical,                    intent(in)           :: descriptor(:)
+  logical,                    intent(in), optional :: mask(:)
+  integer(I4P)                                     :: error
+  integer(I8P), allocatable                        :: counts(:)     !< Cells of each depth.
+  integer(I8P)                                     :: children      !< Children of a refined cell.
+  integer(I8P)                                     :: n_trees       !< Trees of the root grid.
+  integer(I8P)                                     :: first         !< Bits of the descriptor used.
+  integer(I8P)                                     :: n             !< Cells of a depth.
+  integer(I8P)                                     :: refined       !< Cells refined at a depth.
+  integer(I8P)                                     :: cells         !< Cells of the tree.
+
+  error = 1_I4P
+  if (self%file_id < 0_hid_kind) return
+  children = int(self%branch_factor, I8P)**count(self%grid_points() > 1_I8P)
+  n_trees = product(max(self%grid_points() - 1_I8P, 1_I8P))
+  if (self%topology /= TOPOLOGY_HTG) then
+    error = refuse('write_tree is for a HyperTreeGrid')
+    return
+  elseif (.not.self%is_piece_open .or. self%group >= 0_hid_kind .or. self%is_tree_data) then
+    error = refuse('write_tree: in the piece, outside and before its cell data')
+    return
+  elseif (tree_id < 0_I4P .or. int(tree_id, I8P) >= n_trees) then
+    error = refuse('write_tree: the tree '//trim(str(n=tree_id, no_sign=.true.))//' is not a root cell (0 to '// &
+                   trim(str(n=n_trees - 1_I8P, no_sign=.true.))//')')
+    return
+  endif
+  if (self%n_tree_ids > 0_I8P) then
+    if (any(self%tree_ids(1:self%n_tree_ids) == int(tree_id, I8P))) then
+      error = refuse('write_tree: the tree '//trim(str(n=tree_id, no_sign=.true.))//' is already written')
+      return
+    endif
+  endif
+  ! the cells of each depth: one root, then the children of the cells refined at the depth before
+  counts = [1_I8P]
+  first = 0_I8P
+  do while (first < size(descriptor, kind=I8P))
+    n = counts(size(counts))
+    if (first + n > size(descriptor, kind=I8P)) then
+      error = refuse('write_tree: the descriptor ends inside a depth (the cells of a depth are all given)')
+      return
+    endif
+    refined = count(descriptor(first + 1_I8P:first + n), kind=I8P)
+    if (refined == 0_I8P) then
+      error = refuse('write_tree: the descriptor gives the deepest depth, whose cells are all leaves: leave it out')
+      return
+    endif
+    first = first + n
+    counts = [counts, refined * children]
+  enddo
+  cells = sum(counts)
+  if (present(mask)) then
+    if (size(mask, kind=I8P) /= cells) then
+      error = refuse('write_tree: the mask needs one value per cell of the tree, '//trim(str(n=cells, no_sign=.true.)))
+      return
+    elseif (any(mask(1:size(descriptor)) .and. descriptor)) then
+      error = refuse('write_tree: a refined cell cannot be masked')
+      return
+    endif
+  endif
+  n = self%n_tree_ids
+  call append_I8P(self%tree_ids, self%n_tree_ids, [int(tree_id, I8P)])
+  call append_I8P(self%tree_depths, n, [size(counts, kind=I8P)])
+  call append_I8P(self%tree_counts, self%n_tree_counts, counts)
+  call append_bits(self%tree_bits, self%n_tree_bits, descriptor, size(descriptor, kind=I8P))
+  call append_bits(self%tree_mask, self%tree_cells, mask, cells) ! false without a mask
+  if (present(mask)) self%has_mask = .true.
+  error = 0_I4P
+  endfunction write_tree
+
   function write_fielddata_tag(self, action) result(error)
   !< Open or close the group of the field data (outside the piece).
   class(vtkhdf_writer),       intent(inout) :: self
@@ -763,8 +887,9 @@ contains
   error = 1_I4P
   if (action_ == 'OPEN') then
     if (self%file_id < 0_hid_kind .or. self%is_piece_open .or. self%group >= 0_hid_kind) return
-    if (self%topology == TOPOLOGY_AMR) then
-      error = refuse('field data of an OverlappingAMR are not supported')
+    if (self%topology == TOPOLOGY_AMR .or. self%topology == TOPOLOGY_HTG) then
+      error = refuse('field data of '//trim(merge('an OverlappingAMR', 'a HyperTreeGrid  ', self%topology == TOPOLOGY_AMR))// &
+                     ' are not supported')
       return
     endif
     error = self%open_group('FieldData')
@@ -3002,7 +3127,7 @@ contains
   integer(I4P)                        :: error   !< Error status.
   integer(I8P)                        :: grid(3) !< Points along x, y, z.
 
-  error = self%check_grid_geo(TOPOLOGY_RECT)
+  error = self%check_grid_geo(TOPOLOGY_RECT) ! or the root grid of a HyperTreeGrid
   if (error /= 0_I4P) return
   grid = self%grid_points()
   if (self%is_parallel) then ! the coordinates of the region of this rank
@@ -3112,7 +3237,7 @@ contains
   integer(I4P)                        :: error   !< Error status.
   integer(I8P)                        :: grid(3) !< Points along x, y, z.
 
-  error = self%check_grid_geo(TOPOLOGY_RECT)
+  error = self%check_grid_geo(TOPOLOGY_RECT) ! or the root grid of a HyperTreeGrid
   if (error /= 0_I4P) return
   grid = self%grid_points()
   if (self%is_parallel) then ! the coordinates of the region of this rank
@@ -3573,9 +3698,9 @@ contains
   integer(I4P)                     :: error    !< Error status.
 
   error = 1_I4P
-  if (self%topology /= topology) then
+  if (self%topology /= topology .and. .not.(topology == TOPOLOGY_RECT .and. self%topology == TOPOLOGY_HTG)) then
     if (topology == TOPOLOGY_RECT) then
-      error = refuse('write_geo(x, y, z) is for a RectilinearGrid')
+      error = refuse('write_geo(x, y, z) is for a RectilinearGrid or a HyperTreeGrid (its root grid)')
     else
       error = refuse('write_geo(xyz) and write_geo(n, x, y, z) are for a StructuredGrid')
     endif
@@ -3632,6 +3757,15 @@ contains
     endif
     grid = [n / n_components, 1_I8P, 1_I8P]
     is_axis = [.true., .false., .false.]
+  elseif (self%topology == TOPOLOGY_HTG) then ! the cells of the trees written, breadth first in each tree
+    grid = [self%tree_cells, 1_I8P, 1_I8P]
+    is_axis = [.true., .false., .false.]
+    if (n /= grid(1) * n_components) then
+      error = refuse('the array '//data_name//' has '//trim(str(n=n, no_sign=.true.))//' values, the cells of the '// &
+                     'trees need '//trim(str(n=grid(1) * n_components, no_sign=.true.))//' ('// &
+                     trim(str(n=n_components, no_sign=.true.))//' components)')
+      return
+    endif
   elseif (self%topology == TOPOLOGY_AMR) then ! a box of an OverlappingAMR: its points or cells, x fastest
     grid = [self%np_piece, 1_I8P, 1_I8P]
     if (self%group_name == 'CellData') grid(1) = self%nc_piece
@@ -4331,6 +4465,32 @@ contains
     endfunction level_arrays
   endfunction end_box
 
+  function end_trees(self) result(error)
+  !< End the piece of a HyperTreeGrid: its trees written (bits packed, MSB first: `Descriptors`, `Mask`), their counts.
+  class(vtkhdf_writer), intent(inout) :: self  !< Writer.
+  integer(I4P)                        :: error !< Error status.
+
+  if (self%n_tree_ids == 0_I8P) then
+    error = refuse('the piece of a HyperTreeGrid needs its trees (write_tree)')
+    return
+  endif
+  error = h5_dataset_write_I1P(self%root, 'Descriptors', pack_bits(self%tree_bits(1:self%n_tree_bits)), &
+                               [(self%n_tree_bits + 7_I8P) / 8_I8P], unsigned=.true.)
+  if (error == 0_I4P) error = h5_dataset_write_I8P(self%root, 'DescriptorsSize', [self%n_tree_bits], [1_I8P])
+  if (error == 0_I4P) error = h5_dataset_write_I8P(self%root, 'TreeIds', self%tree_ids(1:self%n_tree_ids), [self%n_tree_ids])
+  if (error == 0_I4P) error = h5_dataset_write_I8P(self%root, 'DepthPerTree', self%tree_depths(1:self%n_tree_ids), &
+                                                   [self%n_tree_ids])
+  if (error == 0_I4P) error = h5_dataset_write_I8P(self%root, 'NumberOfCellsPerTreeDepth', &
+                                                   self%tree_counts(1:self%n_tree_counts), [self%n_tree_counts])
+  if (error == 0_I4P) error = h5_dataset_write_I8P(self%root, 'NumberOfTrees', [self%n_tree_ids], [1_I8P])
+  if (error == 0_I4P) error = h5_dataset_write_I8P(self%root, 'NumberOfDepths', [self%n_tree_counts], [1_I8P])
+  if (error == 0_I4P) error = h5_dataset_write_I8P(self%root, 'NumberOfCells', [self%tree_cells], [1_I8P])
+  if (error == 0_I4P .and. self%has_mask) &
+    error = h5_dataset_write_I1P(self%root, 'Mask', pack_bits(self%tree_mask(1:self%tree_cells)), &
+                                 [(self%tree_cells + 7_I8P) / 8_I8P], unsigned=.true.)
+  if (error /= 0_I4P) error = refuse('cannot write the trees of the HyperTreeGrid')
+  endfunction end_trees
+
   pure function is_recorded(self, data_name) result(is_recorded_)
   !< Return true if `data_name` is recorded in the list of the open data group (point or cell data).
   class(vtkhdf_writer), intent(in) :: self         !< Writer.
@@ -4855,6 +5015,17 @@ contains
   if (allocated(self%level_counts)) deallocate(self%level_counts)
   self%has_domain = .false.
   self%domain = 0._R8P
+  if (allocated(self%tree_bits)) deallocate(self%tree_bits)
+  if (allocated(self%tree_mask)) deallocate(self%tree_mask)
+  self%has_mask = .false.
+  if (allocated(self%tree_ids)) deallocate(self%tree_ids)
+  if (allocated(self%tree_depths)) deallocate(self%tree_depths)
+  if (allocated(self%tree_counts)) deallocate(self%tree_counts)
+  self%tree_cells = 0_I8P
+  self%n_tree_ids = 0_I8P
+  self%n_tree_counts = 0_I8P
+  self%n_tree_bits = 0_I8P
+  self%is_tree_data = .false.
   do r=1, size(ROLES)
     if (allocated(self%active(r)%name)) deallocate(self%active(r)%name)
   enddo
@@ -5225,6 +5396,66 @@ contains
   enddo
   if (error /= 0_I4P) error = refuse('cannot read the shape of the arrays of '//group)
   endfunction array_tuples
+
+  pure function pack_bits(bits) result(bytes)
+  !< Pack bits in bytes, the first bit the most significant one of the first byte (the last byte padded with zeros), as
+  !< VTK packs the `Descriptors` and `Mask` of a HyperTreeGrid.
+  logical, intent(in)       :: bits(:)  !< Bits.
+  integer(I1P), allocatable :: bytes(:) !< Bytes (unsigned values in two's complement).
+  integer(I4P)              :: value    !< Value of a byte, 0 to 255.
+  integer(I8P)              :: b, i     !< Counters.
+
+  allocate(bytes((size(bits, kind=I8P) + 7_I8P) / 8_I8P))
+  do b=1_I8P, size(bytes, kind=I8P)
+    value = 0_I4P
+    do i=1_I8P, 8_I8P
+      value = 2_I4P * value
+      if (8_I8P * (b - 1_I8P) + i <= size(bits, kind=I8P)) then
+        if (bits(8_I8P * (b - 1_I8P) + i)) value = value + 1_I4P
+      endif
+    enddo
+    bytes(b) = int(value - merge(256_I4P, 0_I4P, value > 127_I4P), I1P)
+  enddo
+  endfunction pack_bits
+
+  pure subroutine append_I8P(values, n, more)
+  !< Append `more` to the first `n` entries of `values` (its capacity doubled when full), `n` updated.
+  integer(I8P), allocatable, intent(inout) :: values(:) !< Values, the first n used.
+  integer(I8P),              intent(inout) :: n         !< Entries used.
+  integer(I8P),              intent(in)    :: more(:)   !< Values appended.
+  integer(I8P), allocatable                :: bigger(:) !< Values, a larger capacity.
+
+  if (.not.allocated(values)) allocate(values(max(16_I8P, size(more, kind=I8P))))
+  if (n + size(more, kind=I8P) > size(values, kind=I8P)) then
+    allocate(bigger(max(2_I8P * size(values, kind=I8P), n + size(more, kind=I8P))))
+    bigger(1:n) = values(1:n)
+    call move_alloc(bigger, values)
+  endif
+  values(n + 1_I8P:n + size(more, kind=I8P)) = more
+  n = n + size(more, kind=I8P)
+  endsubroutine append_I8P
+
+  pure subroutine append_bits(values, n, more, n_more)
+  !< Append `n_more` bits (`more`, or false if not present) to the first `n` of `values` (capacity doubled), `n` updated.
+  logical, allocatable, intent(inout)        :: values(:) !< Bits, the first n used.
+  integer(I8P),         intent(inout)        :: n         !< Bits used.
+  logical,              intent(in), optional :: more(:)   !< Bits appended.
+  integer(I8P),         intent(in)           :: n_more    !< Bits appended.
+  logical, allocatable                       :: bigger(:) !< Bits, a larger capacity.
+
+  if (.not.allocated(values)) allocate(values(max(64_I8P, n_more)))
+  if (n + n_more > size(values, kind=I8P)) then
+    allocate(bigger(max(2_I8P * size(values, kind=I8P), n + n_more)))
+    bigger(1:n) = values(1:n)
+    call move_alloc(bigger, values)
+  endif
+  if (present(more)) then
+    values(n + 1_I8P:n + n_more) = more
+  else
+    values(n + 1_I8P:n + n_more) = .false.
+  endif
+  n = n + n_more
+  endsubroutine append_bits
 
   function refuse(message) result(error)
   !< Print an error message on stderr and return a non-zero error.

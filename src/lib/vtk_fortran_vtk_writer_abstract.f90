@@ -22,6 +22,7 @@ type, abstract :: vtk_writer_abstract
   logical       :: is_direction_set=.false.        !< Write the Direction of ImageData topologies.
   logical       :: is_uint64=.false.               !< Use UInt64 (instead of UInt32) bytes count headers.
   logical       :: is_compressed=.false.           !< Compress (zlib) the binary data.
+  integer(I4P)  :: branch_factor=2_I4P             !< Branch factor of a HyperTreeGrid (VTKHDF): 2 or 3.
   contains
     procedure(initialize_interface), deferred, pass(self) :: initialize !< Initialize the writer.
     procedure(finalize_interface),   deferred, pass(self) :: finalize   !< Finalize the writer.
@@ -62,6 +63,7 @@ type, abstract :: vtk_writer_abstract
     procedure(write_polydata_cells_interface), deferred, pass(self) :: write_polydata_cells
     procedure(write_step_interface), deferred, pass(self) :: write_step
     procedure(write_level_interface), deferred, pass(self) :: write_level
+    procedure(write_tree_interface), deferred, pass(self) :: write_tree
     procedure(free_interface), deferred, pass(self) :: free
     procedure(get_xml_volatile_interface), deferred, pass(self) :: get_xml_volatile
     procedure(write_dataarray1_rank1_R8P_interface), deferred, pass(self) :: write_dataarray1_rank1_R8P
@@ -1165,6 +1167,15 @@ abstract interface
   real(R8P),                  intent(in)    :: spacing(3)
   integer(I4P)                             :: error
   endfunction write_level_interface
+
+  function write_tree_interface(self, tree_id, descriptor, mask) result(error)
+  import :: vtk_writer_abstract, I4P
+  class(vtk_writer_abstract), intent(inout)        :: self
+  integer(I4P),               intent(in)           :: tree_id
+  logical,                    intent(in)           :: descriptor(:)
+  logical,                    intent(in), optional :: mask(:)
+  integer(I4P)                                     :: error
+  endfunction write_tree_interface
 
   elemental subroutine free_interface(self, error)
   import :: vtk_writer_abstract, I4P

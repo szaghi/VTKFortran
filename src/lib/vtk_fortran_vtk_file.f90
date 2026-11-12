@@ -39,7 +39,7 @@ contains
    endsubroutine get_xml_volatile
 
    function initialize(self, format, filename, mesh_topology, is_volatile, nx1, nx2, ny1, ny2, nz1, nz2, &
-                       origin, spacing, direction, header_type, compressor, action, comm) result(error)
+                       origin, spacing, direction, header_type, compressor, action, comm, branch_factor) result(error)
    !< Initialize file: open it for writing (default) or for reading.
    !<
    !< @note This function must be the first to be called.
@@ -74,8 +74,9 @@ contains
    !<
    !<### Writing
    !<
-   !< `format` and `mesh_topology` are required. `mesh_topology='Table'` (columns of values, no mesh) and
-   !< `'OverlappingAMR'` (the boxes of the levels of a block-structured AMR, `origin` its origin) are written in the VTKHDF
+   !< `format` and `mesh_topology` are required. `mesh_topology='Table'` (columns of values, no mesh),
+   !< `'OverlappingAMR'` (the boxes of the levels of a block-structured AMR, `origin` its origin) and `'HyperTreeGrid'` (the
+   !< trees of a tree-based AMR on a root grid, `nx1...nz2` its points, `branch_factor` 2 or 3) are written in the VTKHDF
    !< format only: the XML formats refuse them.
    !<
    !<### Writing one file from MPI ranks
@@ -107,8 +108,8 @@ contains
    !<- RAW-ZLIB: shorthand of RAW with `compressor='zlib'`;
    !<- BINARY-APPENDED: data are saved in base64 encoded format in the appended tag of the XML file;
    !<- VTKHDF: an HDF5 file in the VTKHDF layout (needs the library built with `VTKFORTRAN_USE_HDF5`): ImageData,
-   !<  RectilinearGrid, StructuredGrid (one piece), UnstructuredGrid and PolyData (each piece a partition); see the
-   !<  `vtk_fortran_vtk_file_vtkhdf_writer` module.
+   !<  RectilinearGrid, StructuredGrid (one piece), UnstructuredGrid and PolyData (each piece a partition), Table,
+   !<  OverlappingAMR, HyperTreeGrid; see the `vtk_fortran_vtk_file_vtkhdf_writer` module.
    !<
    !<### Compression of binary data
    !<
@@ -167,6 +168,7 @@ contains
    character(*),    intent(in), optional :: compressor     !< Compressor of binary data: none (default) or zlib.
    character(*),    intent(in), optional :: action         !< Action: **write** (default), **read** or **append** (VTKHDF).
    integer(I4P),    intent(in), optional :: comm           !< MPI communicator (Fortran handle): one VTKHDF file from its ranks.
+   integer(I4P),    intent(in), optional :: branch_factor  !< Branch factor of a HyperTreeGrid (VTKHDF): 2 (default) or 3.
    integer(I4P)                          :: error         !< Error status.
    type(string)                          :: fformat       !< File format.
    logical                               :: is_compressed !< Compress the binary data.
@@ -209,7 +211,8 @@ contains
    fformat = trim(adjustl(format))
    fformat = fformat%upper()
    ! a Table, an OverlappingAMR: VTKHDF only
-   if (any(upper_case(trim(adjustl(mesh_topology))) == ['TABLE         ', 'OVERLAPPINGAMR']) .and. fformat /= 'VTKHDF') return
+   if (any(upper_case(trim(adjustl(mesh_topology))) == ['TABLE         ', 'OVERLAPPINGAMR', 'HYPERTREEGRID ']) .and. &
+       fformat /= 'VTKHDF') return
    error = 0_I4P
    select case(fformat%chars())
    case('ASCII')
@@ -268,6 +271,7 @@ contains
    endif
    if (present(origin)) self%xml_writer%origin = origin
    if (present(spacing)) self%xml_writer%spacing = spacing
+   if (present(branch_factor)) self%xml_writer%branch_factor = branch_factor
    if (present(direction)) then
       self%xml_writer%direction = direction
       self%xml_writer%is_direction_set = .true.

@@ -43,8 +43,8 @@ space, e.g. off a small `/tmp` on HPC nodes. The `binary` format writes inline, 
 and one HDF5 dataset per array. VTK's `vtkHDFReader` and ParaView read it; any HDF5 tool (h5py, `h5dump`, HDFView) reads its
 arrays directly. It is being added step by step ([issue #51](https://github.com/szaghi/VTKFortran/issues/51)):
 every topology is written now (**ImageData**, **RectilinearGrid**, **StructuredGrid**, **UnstructuredGrid** with its
-polyhedra, **PolyData**), **Table** (columns of values), **OverlappingAMR** (block-structured AMR), time series in one
-file, and one file written by MPI ranks.
+polyhedra, **PolyData**), **Table** (columns of values), **OverlappingAMR** (block-structured AMR), **HyperTreeGrid**
+(tree-based AMR), time series in one file, and one file written by MPI ranks.
 
 Choose it when the files are read by HDF5 tools too, or to use HDF5 compression; stay with the XML formats for files
 that VTKFortran reads back, and without an HDF5 library. It needs the library built with HDF5 (see
@@ -122,6 +122,21 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
   (`get_levels`, `set_level`), see [Reading](/guide/reading#vtkhdf-files). **VTK 9.7 reads it** (its pipeline time too);
   **ParaView 6.1 does not** (its reader groups the output with a filter that refuses an OverlappingAMR). A complete
   program: [A block-structured AMR](/manual/cookbook#a-block-structured-amr).
+- **HyperTreeGrid** (`mesh_topology='HyperTreeGrid'`, the extent `nx1`...`nz2` the points of its root grid,
+  `branch_factor` of `initialize` 2 (default) or 3, VTKHDF 2.4, a VTK `vtkHyperTreeGrid`): a tree (quadtree, octree, or
+  their branch-factor-3 kin) in each root cell. One piece, `write_piece(nx1, ..., nz2)` (the whole extent); its root
+  coordinates `write_geo(x, y, z)` (as a RectilinearGrid); each tree `write_tree(tree_id, descriptor, mask)`: `tree_id`
+  its root cell (`i + (nx-1)(j + (ny-1)k)`, from 0), `descriptor` the refinement (true) of its cells breadth first, the
+  children of a cell x fastest, every depth but the deepest (whose cells are all leaves; an empty descriptor is one
+  leaf), `mask` (optional) one value per cell, a refined cell not masked; then its cell data, one value per cell of the
+  trees, in the order of the trees written and breadth first in each; `write_piece()`. The layout, as VTK 9.7.2 writes
+  it: `Dimensions`, `BranchFactor`, `XCoordinates`..., `Descriptors` and `Mask` (bits packed MSB first, contiguous across
+  the trees), `DescriptorsSize` (bits), `TreeIds`, `DepthPerTree`, `NumberOfCellsPerTreeDepth`, `NumberOfTrees`,
+  `NumberOfDepths`, `NumberOfCells`, `CellData`. Checked: each descriptor against its depths, the mask, the tree ids
+  (in the root grid, once), the size of the cell data. Refused: point data, field data, a time series, `comm`, the XML
+  formats; the reader of the library does not read it (error 3). VTK 9.7.2 reads it; ParaView 6.1.1 reads it too, but
+  not the test's grid with a masked leaf and a root cell without tree (nor the same grid as VTK 9.7.2 writes it). A
+  complete program: [A tree-based AMR](/manual/cookbook#a-tree-based-amr).
 - **Time series** (`Steps`): each output starts with `xml_writer%write_step(time)`; the pieces of every step are
   appended to the same datasets, a grid's arrays get a time axis (`[t, k, j, i]` in C order), and the group `Steps` holds
   the times and, for each step, where it starts in the datasets (`PartOffsets`, `PointOffsets`, ...,
@@ -163,7 +178,8 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
 - **Compression**: `compressor='zlib'` deflates every dataset (level 6, in chunks of up to 1 MiB). It needs the deflate
   filter of the HDF5 library, not `VTKFORTRAN_USE_ZLIB`: without it `initialize` returns a non-zero error.
 - **Version**: the lowest one with the features written: 2.0, 2.5 with polyhedra, 2.6 when an active array is
-  designated, 2.7 for a RectilinearGrid or StructuredGrid, 2.8 for a Table, 2.2 for an OverlappingAMR time series. The
+  designated, 2.7 for a RectilinearGrid or StructuredGrid, 2.8 for a Table, 2.2 for an OverlappingAMR time series, 2.4
+  for a HyperTreeGrid. The
   files are checked with VTK 9.7.2 and ParaView 6.1.1 (but the RectilinearGrid, StructuredGrid, Table and
   OverlappingAMR files, which ParaView 6.1 cannot read).
 - **Not supported**: more than one piece of a grid (ImageData, RectilinearGrid, StructuredGrid), a volatile

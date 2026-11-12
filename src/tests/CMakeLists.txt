@@ -23,6 +23,7 @@ set(VTKFORTRAN_TESTS
   vtk_fortran_write_vti.f90
   vtk_fortran_write_vtkhdf.f90
   vtk_fortran_write_vtkhdf_grids.f90
+  vtk_fortran_write_vtkhdf_htg.f90
   vtk_fortran_write_vtkhdf_unst.f90
   vtk_fortran_write_vtkhdf_poly.f90
   vtk_fortran_write_vtkhdf_polyh.f90

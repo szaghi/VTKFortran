@@ -183,6 +183,21 @@ piece of it, its point extent in the indices of the level, with its point and ce
 - The layout, the refusals and the readers: [VTKHDF](/guide/formats#vtkhdf-hdf5); a complete program:
   [A block-structured AMR](/manual/cookbook#a-block-structured-amr).
 
+## HyperTreeGrid (VTKHDF)
+
+A tree-based AMR (a VTK `vtkHyperTreeGrid`): a root grid whose cells are the roots of trees, quadtrees or octrees (branch
+factor 2) or their kin of branch factor 3. It is written in the VTKHDF format only (`format='vtkhdf'`,
+`mesh_topology='HyperTreeGrid'`, the extent the points of the root grid, `branch_factor`): one piece with its root
+coordinates, its trees (`write_tree`, each the refinement of its cells breadth first) and their cell data:
+
+<<< @/examples/snippets/vtkhdf_htg-write.f90
+
+- A tree is given breadth first, the children of a cell x fastest, every depth but the deepest (its cells are all
+  leaves); a mask can hide leaves.
+- Cell data only, one value per cell of the trees, after the trees, in their order.
+- The layout, the refusals and the readers: [VTKHDF](/guide/formats#vtkhdf-hdf5); a complete program:
+  [A tree-based AMR](/manual/cookbook#a-tree-based-amr).
+
 ## Multiple pieces in one file
 
 A single file can hold several pieces, e.g. the blocks of a multi-block solver written by one process without a parallel
@@ -250,6 +265,7 @@ The `mesh_topology` argument is case-sensitive:
 | `PolyData` | `.vtp` file |
 | `Table` | `.vtkhdf` file only (`format='vtkhdf'`) |
 | `OverlappingAMR` | `.vtkhdf` file only (`format='vtkhdf'`, `origin`) |
+| `HyperTreeGrid` | `.vtkhdf` file only (`format='vtkhdf'`, `branch_factor`) |
 | `PRectilinearGrid` | `.pvtr` file (pvtk_file only) |
 | `PStructuredGrid` | `.pvts` file (pvtk_file only) |
 | `PUnstructuredGrid` | `.pvtu` file (pvtk_file only) |

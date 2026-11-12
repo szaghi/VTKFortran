@@ -121,6 +121,11 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   closed by `write_piece()` (`end_box`: every recorded array holds the level's tuples, `level_counts`); series:
   `Steps/Level<n>/AMRBoxOffset`, `NumberOfAMRBox`, `PointDataOffset/`, `CellDataOffset/` (VTK 9.7.2's singular names);
   no field data, comm, reopen; VTK 9.7.2 reads it (pipeline time too), ParaView 6.1.1 not (vtkGroupDataSetsFilter).
+  HyperTreeGrid (`TOPOLOGY_HTG`, static, Version 2.4): `branch_factor` (vtk_writer_abstract state, set by vtk_file),
+  one piece + `write_geo(x, y, z)` (rect coordinates path), `write_tree(tree_id, descriptor, mask)` (new deferred
+  binding; depths derived from the descriptor, appended with capacity doubling `append_I8P`/`append_bits`), cell data
+  after the trees (`is_tree_data`), `end_trees` writes the datasets at the piece end (`pack_bits`, MSB first, as VTK);
+  refused: point/field data, steps, comm; the reader refuses it (error 3).
   Point/cell/field data, active arrays as the `Attribute` attribute, unsigned,
   deflate for `compressor='zlib'`; refusals return an error with a message on stderr (a data name empty or with `/` or
   `.`: `h5_name_invalid`, also used by `vtm_file` for block and dataset names; never renamed; HDF5 has no length limit). Arrays stored as in memory
@@ -215,6 +220,9 @@ offsets read back, the reuse refusals;
 `vtk_fortran_write_vtkhdf_table.f90`: Tables (a column of each kind, unsigned, 3 components; a 3-step series), read
 back with the bindings and the reader, the refusals (rows, names, missing/new columns, steps without columns, pieces,
 locations; XML refuses a Table);
+`vtk_fortran_write_vtkhdf_htg.f90`: HyperTreeGrids (the 2x2 root grid of the VTK probe: trees of depth 3, 2, a
+masked leaf, a root cell without tree; branch factor 3), checked with the bindings (descriptors and mask unpacked), 16
+refusals, the reader refusing it;
 `vtk_fortran_write_vtkhdf_amr.f90`: OverlappingAMRs (two levels, three boxes, point/cell data and a vector; a
 2-step series with level 1 going from two boxes to one), read back with the bindings and the reader (`set_level`), 15
 refusals (levels, boxes outside or flat or out of order, array sizes, missing/new arrays, field data, steps, append);
@@ -235,5 +243,6 @@ ranks (one rank empty, I4P and I8P ids by rank), an ImageData, a RectilinearGrid
 ranks two along x, one across, one empty; otherwise rank 0 whole), an UnstructuredGrid series (pieces changing size,
 continued by the ranks after a restart, a step reusing the mesh), a PolyData series, polyhedra appearing at step 2 on the odd ranks,
 the UG and PolyData compressed (with parallel filtered writes, skipped otherwise), compared with the same files written serially and
-as `.vtu`/`.vtp`/`.vti`/`.vtr`/`.vts`, the refusals of `comm` (grid regions outside, overlapping, not covering, two; a Table, an OverlappingAMR); without MPI `comm` refused, its name without "mpi" since `scripts/run_tests.sh` runs those with
+as `.vtu`/`.vtp`/`.vti`/`.vtr`/`.vts`, the refusals of `comm` (grid regions outside, overlapping, not covering, two; a Table, an OverlappingAMR, a
+HyperTreeGrid); without MPI `comm` refused, its name without "mpi" since `scripts/run_tests.sh` runs those with
 mpirun; without HDF5 the writer refuses to start); `vtk_fortran_read.F90` reads files back (every topology and format, and two files written by VTK, embedded in the test), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.

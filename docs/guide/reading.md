@@ -89,6 +89,7 @@ the polyhedra as the face stream of `write_connectivity`; `get_info` returns `he
   the `origin`; `read_piece(piece, nx1, ..., nz2, np, nc)` the point extent and counts of a box; `read_dataarray(...,
   piece)` its arrays (of the step read in a time series). A complete program:
   [A block-structured AMR](/manual/cookbook#a-block-structured-amr).
+- **HyperTreeGrid**: not read (error 3, unsupported).
 - **Memory**: each read is an HDF5 hyperslab of the piece and step asked for: memory use is about the size of the array
   read.
 - `finalize` closes the file (`free` alone forgets it without closing it: call `finalize`).
