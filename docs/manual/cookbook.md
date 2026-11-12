@@ -273,7 +273,8 @@ system, the other ranks write their pieces into memory and send them to it, see
 ### Write one .vtkhdf from MPI ranks
 
 With a parallel HDF5 the ranks write one file together: `comm` (the Fortran handle of a communicator) given to
-`initialize`, every rank makes the same calls, each one with its own piece, which becomes a partition of the file.
+`initialize`, every rank makes the same calls, each one with its own piece, which becomes a partition of the file (an
+UnstructuredGrid, a PolyData), or its own region of the grid (ImageData, RectilinearGrid, StructuredGrid, below).
 
 <<< @/examples/snippets/vtkhdf_mpi-write.f90
 
@@ -283,11 +284,30 @@ With a parallel HDF5 the ranks write one file together: `comm` (the Fortran hand
 
 - **Every call is collective**: the ranks create and extend the datasets together, then each one writes its rows after
   those of the ranks before. Every rank calls every procedure, with the same arrays in the same order; a rank that
-  stops calling (an error on one rank only) leaves the others waiting.
+  stops calling leaves the others waiting.
 - An UnstructuredGrid or a PolyData, one piece per rank; a rank can have an empty piece (`np=0`, `nc=0`). A PolyData
   piece without cells still calls `write_polydata_cells()`, with no blocks.
-- Refused with `comm`: the grids (one piece, the whole extent), time series, polyhedra, `compressor='zlib'` (a deflated
-  dataset needs collective writes), the XML formats, `action='read'` and `'append'`. A refusal comes on every rank.
+- Refused with `comm`: time series, polyhedra, `compressor='zlib'` (a deflated dataset needs collective writes), the
+  XML formats, `action='read'` and `'append'`. A refusal comes on every rank, also when only one rank's values are
+  wrong (their size, say): the ranks agree on the error before the collective calls, none is left waiting.
+
+A grid (ImageData, RectilinearGrid, StructuredGrid) is written by **regions**: `initialize` gets the whole extent,
+`write_piece` the region of the rank, and its arrays (and coordinates or points) are those of the region. Here an
+ImageData of 8x4 cells, one region of 4x2 cells per rank:
+
+<<< @/examples/snippets/vtkhdf_mpi_grid-write.f90
+
+<<< @/examples/output/vtkhdf_mpi_grid.ansi{ansi}
+
+<p align="center"><img src="../examples/images/vtkhdf_mpi_grid.png" alt="an ImageData of 8x4 cells in four regions of 4x2 cells, one colour per rank, read by ParaView from the VTKHDF file written by the four ranks"></p>
+
+- The regions of all the ranks are checked when they start, on every rank: inside the whole extent, not overlapping
+  in cells, covering it. A rank with nothing to write gives an empty region (an upper bound before its lower one) and
+  empty arrays.
+- Neighbouring regions share the points of their boundary: each rank gives all the points of its region, and the
+  boundary is written by the region that starts there. The coordinates of a RectilinearGrid shared by regions must be
+  equal; the lowest rank writes them.
+- The file is the one the whole grid written by one process would make: VTK and ParaView read it as any ImageData.
 - It needs the library built with `VTKFORTRAN_USE_MPI` (CMake `-DVTKFORTRAN_USE_MPI=ON`, FoBiS mode
   `static-gnu-hdf5-mpi`) and a parallel HDF5; `initialize` returns an error otherwise
   ([Installation](/guide/installation#one-file-from-mpi-ranks)). Built with `mpifort`, run with `mpirun -np 4`.

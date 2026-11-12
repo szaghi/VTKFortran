@@ -107,9 +107,15 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
   ranks of the communicator write one UnstructuredGrid or PolyData file, the piece of each rank a partition, in rank
   order. The file is the one the pieces would make written by one process, but for the kind of the ids: a dataset gets
   the widest kind the ranks give (a PolyData block a rank does not have is 64-bit, so its ids are 64-bit unless every
-  rank gives every block in `I4P`). Every call is collective (same calls, same arrays, same order on every rank); the
-  writes of the ranks are independent (MPI-IO). Refused with `comm`: the grids, time series, polyhedra, compression. A
-  complete program: [Write one .vtkhdf from MPI ranks](/manual/cookbook#write-one-vtkhdf-from-mpi-ranks).
+  rank gives every block in `I4P`). An ImageData, RectilinearGrid or StructuredGrid is written by regions: each rank
+  gives its sub-extent to `write_piece` and the arrays (and coordinates or points) of that region; the datasets are
+  created with the whole extent and each rank writes its block, the points of a boundary shared with the next region
+  left to that region, the coordinates of a RectilinearGrid shared by regions written by the lowest rank (they must be
+  equal). The regions must lie inside the whole extent, not overlap in cells and cover it (checked when they start, on
+  every rank); an empty region (an upper bound before its lower one) writes nothing. The file is the one the whole grid
+  written by one process makes. Every call is collective (same calls, same arrays, same order on every rank); the
+  writes of the ranks are independent (MPI-IO). Refused with `comm`: time series, polyhedra, compression. Complete
+  programs: [Write one .vtkhdf from MPI ranks](/manual/cookbook#write-one-vtkhdf-from-mpi-ranks).
 - **No transposition.** An array is stored as it is in memory (an ImageData, RectilinearGrid or StructuredGrid): a
   Fortran `velocity(3,0:nx,0:ny,0:nz)` is the dataset of shape `[nz+1, ny+1, nx+1, 3]` in C order (the order HDF5 tools
   show), which is the shape VTKHDF wants. Point data have the shape of the grid points, cell data of the cells; the

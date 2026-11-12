@@ -8,11 +8,17 @@ program vtk_fortran_write_vtkhdf_ranks
 !<- `vtkfortran_unst_mpi.vtkhdf`: an UnstructuredGrid, rank r with 1, 2, 0, 3 tetrahedra (rank 2 an empty piece), the
 !<  ids I4P on the even ranks and I8P on the odd ones, point data (R8P), cell data (I4P), field data;
 !<- `vtkfortran_poly_mpi.vtkhdf`: a PolyData, a vertex and a poly-vertex on rank 0, a polyline on rank 1 (I8P ids), a
-!<  triangle and a quad on rank 2, points without cells on rank 3, point data.
+!<  triangle and a quad on rank 2, points without cells on rank 3, point data;
+!<- `vtkfortran_image_mpi.vtkhdf`, `vtkfortran_rect_mpi.vtkhdf`, `vtkfortran_strg_mpi.vtkhdf`: an ImageData, a
+!<  RectilinearGrid and a StructuredGrid of extent 0:6 x 0:3 x 0:1, each rank writing its region: on 4 ranks
+!<  0:3 x 0:1 x 0:1, 3:6 x 0:1 x 0:1, 0:6 x 1:3 x 0:1 and an empty one (on other numbers of ranks rank 0 the whole
+!<  extent, the others empty regions), with point data (R8P) and cell data (I4P) of the global point and cell indices.
 !<
-!< Rank 0 then writes the same pieces alone, in rank order: a serial `.vtkhdf` of each, compared here dataset by dataset
-!< (values: the parallel file stores the widest kind of ids the ranks give), and a `.vtu`/`.vtp` of each (VTK readers
-!< compare the two outside this test). The refusals of `comm` are checked too. Without MPI `comm` is refused.
+!< Rank 0 then writes the same pieces (the same grids) alone, in rank order: a serial `.vtkhdf` of each, compared here
+!< dataset by dataset (values: the parallel file stores the widest kind of ids the ranks give), and a `.vtu`/`.vtp`/
+!< `.vti`/`.vtr`/`.vts` of each (VTK readers compare the two outside this test). The refusals of `comm` are checked too,
+!< those of the grid regions (outside the whole extent, overlapping, not covering it, two per rank) included. Without
+!< MPI `comm` is refused.
 !<
 !< Its name has no "mpi": `scripts/run_tests.sh` runs those with `mpirun` in every build, MPI or not. Without MPI it
 !< runs alone; with MPI on any number of ranks (CTest: 4).
@@ -27,8 +33,15 @@ implicit none
 type(vtk_file)          :: a_vtk_file     !< VTK file.
 integer(I4P)            :: rank, n_ranks  !< MPI rank, ranks.
 integer(I4P)            :: comm           !< MPI communicator (Fortran handle).
-integer(I4P)            :: e(8)           !< Errors.
+integer(I4P)            :: e(16)          !< Errors.
 logical                 :: test_passed(4) !< List of passed tests.
+character(*), parameter :: GRIDS(3) = ['ImageData      ', 'RectilinearGrid', 'StructuredGrid '] !< Grid topologies.
+character(*), parameter :: GRID_NAMES(3) = ['image', 'rect ', 'strg '] !< Their names in the files.
+character(*), parameter :: GRID_XML(3) = ['.vti', '.vtr', '.vts']      !< Their XML extensions.
+character(*), parameter :: GRID_DATASETS(3) = [character(63) :: 'PointData/pd CellData/cd', &
+                                               'XCoordinates YCoordinates ZCoordinates PointData/pd CellData/cd', &
+                                               'Points PointData/pd CellData/cd'] !< Datasets compared.
+integer(I4P)            :: g              !< Counter.
 character(*), parameter :: UNST_DATASETS = 'NumberOfPoints NumberOfCells NumberOfConnectivityIds Points Connectivity '// &
                                            'Offsets Types PointData/pd CellData/cd FieldData/TIME'
 character(*), parameter :: POLY_DATASETS = 'NumberOfPoints Points PointData/pd '//                                      &
@@ -60,8 +73,11 @@ else
   e(4) = a_vtk_file%initialize(format='vtkhdf', filename='vtkfortran_poly_mpi.vtkhdf', mesh_topology='PolyData', comm=comm)
   e(5) = poly_piece(a_vtk_file, rank, cells_call=.true.)
   e(6) = abs(a_vtk_file%finalize())
-  test_passed(1) = all(e(1:6) == 0)
-  if (.not.test_passed(1)) print '(A,I0,A,6I2)', 'rank ', rank, ' errors of the parallel files: ', e(1:6)
+  do g=1, 3 ! the grids, a region per rank
+    e(6+g) = grid_file('vtkhdf', GRIDS(g), 'vtkfortran_'//trim(GRID_NAMES(g))//'_mpi.vtkhdf', is_parallel=.true.)
+  enddo
+  test_passed(1) = all(e(1:9) == 0)
+  if (.not.test_passed(1)) print '(A,I0,A,9I2)', 'rank ', rank, ' errors of the parallel files: ', e(1:9)
   test_passed(2) = refusals()
 
   ! rank 0: the same pieces alone, compared with the parallel files
@@ -72,10 +88,18 @@ else
     e(2) = serial_unst('raw', 'vtkfortran_unst_mpi.vtu')
     e(3) = serial_poly('vtkhdf', 'serial_poly_mpi.vtkhdf')
     e(4) = serial_poly('raw', 'vtkfortran_poly_mpi.vtp')
-    test_passed(3) = all(e(1:4) == 0)
-    if (.not.test_passed(3)) print '(A,4I2)', 'errors of the serial files: ', e(1:4)
+    do g=1, 3
+      e(4+g) = grid_file('vtkhdf', GRIDS(g), 'serial_'//trim(GRID_NAMES(g))//'_mpi.vtkhdf', is_parallel=.false.)
+      e(7+g) = grid_file('raw', GRIDS(g), 'vtkfortran_'//trim(GRID_NAMES(g))//'_mpi'//GRID_XML(g), is_parallel=.false.)
+    enddo
+    test_passed(3) = all(e(1:10) == 0)
+    if (.not.test_passed(3)) print '(A,10I2)', 'errors of the serial files: ', e(1:10)
     test_passed(4) = same_datasets('vtkfortran_unst_mpi.vtkhdf', 'serial_unst_mpi.vtkhdf', UNST_DATASETS)
     test_passed(4) = same_datasets('vtkfortran_poly_mpi.vtkhdf', 'serial_poly_mpi.vtkhdf', POLY_DATASETS) .and. test_passed(4)
+    do g=1, 3
+      test_passed(4) = same_datasets('vtkfortran_'//trim(GRID_NAMES(g))//'_mpi.vtkhdf', &
+                                     'serial_'//trim(GRID_NAMES(g))//'_mpi.vtkhdf', trim(GRID_DATASETS(g))) .and. test_passed(4)
+    enddo
   endif
 #ifdef VTKFORTRAN_USE_MPI
   call MPI_Allreduce(MPI_IN_PLACE, test_passed, size(test_passed), MPI_LOGICAL, MPI_LAND, MPI_COMM_WORLD)
@@ -231,15 +255,131 @@ contains
   error = h5_file_close(fb)
   endfunction same_datasets
 
+  function region(r) result(extent)
+  !< The region of rank r of the grids (extent 0:6 x 0:3 x 0:1): on 4 ranks two regions along x of the rows 0:1, the
+  !< rows 1:3 and an empty one; otherwise rank 0 the whole extent, the others empty regions.
+  integer(I4P), intent(in) :: r          !< Rank.
+  integer(I4P)             :: extent(6)  !< Region.
+
+  extent = [0, -1, 0, -1, 0, -1] ! empty
+  if (n_ranks == 4) then
+    select case(r)
+    case(0) ; extent = [0, 3, 0, 1, 0, 1]
+    case(1) ; extent = [3, 6, 0, 1, 0, 1]
+    case(2) ; extent = [0, 6, 1, 3, 0, 1]
+    endselect
+  elseif (r == 0) then
+    extent = [0, 6, 0, 3, 0, 1]
+  endif
+  endfunction region
+
+  pure function region_points(extent) result(n)
+  !< The points of a region (0 for an empty one).
+  integer(I4P), intent(in) :: extent(6) !< Region.
+  integer(I4P)             :: n         !< Points.
+
+  n = product(max(extent(2::2) - extent(1::2) + 1, 0))
+  endfunction region_points
+
+  function grid_file(format, topology, filename, is_parallel) result(error)
+  !< A grid of extent 0:6 x 0:3 x 0:1: written by every rank, its region (`is_parallel`), or by one rank, whole. Point data
+  !< pd = 100 k + 10 j + i, cell data cd = 1000 + 100 k + 10 j + i (global indices); coordinates x = i^2/4, y = 1.5 j,
+  !< z = 0.5 k (RectilinearGrid); points sheared (StructuredGrid).
+  character(*), intent(in)  :: format      !< Format.
+  character(*), intent(in)  :: topology    !< Topology.
+  character(*), intent(in)  :: filename    !< File name.
+  logical,      intent(in)  :: is_parallel !< A region per rank, otherwise the whole grid.
+  integer(I4P)              :: error       !< Error status.
+  integer(I4P)              :: ext(6)      !< Extent written.
+  real(R8P), allocatable    :: pd(:), xyz(:,:)
+  integer(I4P), allocatable :: cd(:)
+  integer(I4P)              :: i, j, k
+
+  ext = [0, 6, 0, 3, 0, 1]
+  if (is_parallel) then
+    ext = region(rank)
+    error = a_vtk_file%initialize(format=format, filename=filename, mesh_topology=trim(topology), &
+                                  nx1=0, nx2=6, ny1=0, ny2=3, nz1=0, nz2=1,                       &
+                                  origin=[0._R8P, 0._R8P, 0._R8P], spacing=[1._R8P, 1._R8P, 1._R8P], comm=comm)
+  else
+    error = a_vtk_file%initialize(format=format, filename=filename, mesh_topology=trim(topology), &
+                                  nx1=0, nx2=6, ny1=0, ny2=3, nz1=0, nz2=1,                       &
+                                  origin=[0._R8P, 0._R8P, 0._R8P], spacing=[1._R8P, 1._R8P, 1._R8P])
+  endif
+  pd = [((((100._R8P * k + 10 * j + i), i=ext(1), ext(2)), j=ext(3), ext(4)), k=ext(5), ext(6))]
+  cd = [((((1000 + 100 * k + 10 * j + i), i=ext(1), ext(2)-1), j=ext(3), ext(4)-1), k=ext(5), ext(6)-1)]
+  allocate(xyz(3, size(pd)))
+  if (size(pd) > 0) xyz = reshape([((([real(i, R8P) + 0.1_R8P * j, real(j, R8P) + 0.05_R8P * i, 0.5_R8P * k], &
+                                      i=ext(1), ext(2)), j=ext(3), ext(4)), k=ext(5), ext(6))], [3, size(pd)])
+  error = max(error, abs(a_vtk_file%xml_writer%write_piece(nx1=ext(1), nx2=ext(2), ny1=ext(3), ny2=ext(4), &
+                                                            nz1=ext(5), nz2=ext(6))))
+  if (trim(topology) == 'RectilinearGrid') then
+    error = max(error, abs(a_vtk_file%xml_writer%write_geo(x=[(real(i, R8P)**2 / 4, i=ext(1), ext(2))], &
+                                                           y=[(1.5_R8P * j, j=ext(3), ext(4))],         &
+                                                           z=[(0.5_R8P * k, k=ext(5), ext(6))])))
+  elseif (trim(topology) == 'StructuredGrid' .and. is_parallel) then ! the layout xyz(3, nx1:nx2, ny1:ny2, nz1:nz2)
+    error = max(error, abs(a_vtk_file%xml_writer%write_geo(xyz=reshape(xyz, [3, max(ext(2) - ext(1) + 1, 0),    &
+                                                                              max(ext(4) - ext(3) + 1, 0),    &
+                                                                              max(ext(6) - ext(5) + 1, 0)]))))
+  elseif (trim(topology) == 'StructuredGrid') then
+    error = max(error, abs(a_vtk_file%xml_writer%write_geo(n=size(pd), x=xyz(1,:), y=xyz(2,:), z=xyz(3,:))))
+  endif
+  error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(location='node', action='open')))
+  error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(data_name='pd', x=pd)))
+  error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(location='node', action='close')))
+  error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(location='cell', action='open')))
+  error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(data_name='cd', x=cd)))
+  error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(location='cell', action='close')))
+  error = max(error, abs(a_vtk_file%xml_writer%write_piece()))
+  error = max(error, abs(a_vtk_file%finalize()))
+  endfunction grid_file
+
+  logical function region_refused(extent, filename, second)
+  !< A grid region of this rank refused (on every rank): `extent`, or with `second` a valid region then a second one.
+  integer(I4P), intent(in) :: extent(6) !< Region of this rank.
+  character(*), intent(in) :: filename  !< File name.
+  logical,      intent(in) :: second    !< Write a valid region first, then `extent` again.
+  integer(I4P)             :: error     !< Error status.
+
+  error = a_vtk_file%initialize(format='vtkhdf', filename=filename, mesh_topology='ImageData', &
+                                nx1=0, nx2=6, ny1=0, ny2=3, nz1=0, nz2=1,                      &
+                                origin=[0._R8P, 0._R8P, 0._R8P], spacing=[1._R8P, 1._R8P, 1._R8P], comm=comm)
+  if (second) then
+    error = a_vtk_file%xml_writer%write_piece(nx1=extent(1), nx2=extent(2), ny1=extent(3), ny2=extent(4), &
+                                              nz1=extent(5), nz2=extent(6))
+    error = a_vtk_file%xml_writer%write_piece()
+  endif
+  region_refused = a_vtk_file%xml_writer%write_piece(nx1=extent(1), nx2=extent(2), ny1=extent(3), ny2=extent(4), &
+                                                     nz1=extent(5), nz2=extent(6)) /= 0
+  error = a_vtk_file%finalize()
+  endfunction region_refused
+
   logical function refusals()
   !< The refusals of comm, by every rank (the files created are finalized by all of them).
   integer(I4P) :: error
-  logical      :: ok(7)
+  logical      :: ok(11)
+  integer(I4P) :: ext(6) !< Region of this rank.
 
   ok = .false.
-  ok(1) = a_vtk_file%initialize(format='vtkhdf', filename='refused_image.vtkhdf', mesh_topology='ImageData', &
-                                nx1=0, nx2=1, ny1=0, ny2=1, nz1=0, nz2=1,                                  &
-                                origin=[0._R8P, 0._R8P, 0._R8P], spacing=[1._R8P, 1._R8P, 1._R8P], comm=comm) /= 0
+  ! the regions of a grid: outside the whole extent, overlapping (on more than one rank), not covering it, two per rank
+  ok(1) = region_refused(merge([0, 7, 0, 3, 0, 1], [0, -1, 0, -1, 0, -1], rank == 0), 'refused_outside.vtkhdf', .false.)
+  ok(8) = n_ranks == 1
+  if (n_ranks > 1) ok(8) = region_refused(merge([0, 6, 0, 3, 0, 1], [0, -1, 0, -1, 0, -1], rank <= 1), &
+                                          'refused_overlap.vtkhdf', .false.)
+  ok(9) = region_refused(merge([0, 3, 0, 3, 0, 1], [0, -1, 0, -1, 0, -1], rank == 0), 'refused_cover.vtkhdf', .false.)
+  ok(10) = region_refused(region(rank), 'refused_second.vtkhdf', .true.)
+  ! an array of the wrong size on rank 0 only: refused on every rank (none left waiting in a collective call)
+  error = a_vtk_file%initialize(format='vtkhdf', filename='refused_size.vtkhdf', mesh_topology='ImageData', &
+                                nx1=0, nx2=6, ny1=0, ny2=3, nz1=0, nz2=1,                                  &
+                                origin=[0._R8P, 0._R8P, 0._R8P], spacing=[1._R8P, 1._R8P, 1._R8P], comm=comm)
+  ext = region(rank)
+  error = a_vtk_file%xml_writer%write_piece(nx1=ext(1), nx2=ext(2), ny1=ext(3), ny2=ext(4), nz1=ext(5), nz2=ext(6))
+  error = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
+  ok(11) = a_vtk_file%xml_writer%write_dataarray(data_name='pd', &
+             x=[(1._R8P, g=1, merge(1, region_points(ext), rank == 0))]) /= 0
+  error = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
+  error = a_vtk_file%xml_writer%write_piece()
+  error = a_vtk_file%finalize()
   ok(2) = a_vtk_file%initialize(format='vtkhdf', filename='refused_zlib.vtkhdf', mesh_topology='UnstructuredGrid', &
                                 compressor='zlib', comm=comm) /= 0
   ok(3) = a_vtk_file%initialize(format='raw', filename='refused.vtu', mesh_topology='UnstructuredGrid', comm=comm) /= 0
@@ -263,6 +403,6 @@ contains
                                                    faceoffset=[17]) /= 0     ! a polyhedron
   error = a_vtk_file%finalize()
   refusals = all(ok)
-  if (.not.refusals) print '(A,I0,A,7L2)', 'rank ', rank, ' refusals: ', ok
+  if (.not.refusals) print '(A,I0,A,11L2)', 'rank ', rank, ' refusals: ', ok
   endfunction refusals
 endprogram vtk_fortran_write_vtkhdf_ranks

@@ -40,6 +40,15 @@ module vtk_fortran_vtk_file_vtkhdf_writer
 !< The first step writes everything; an array first written at a later step is refused. The offsets of the point and cell
 !< data are written for every array (`PointDataOffsets`, `CellDataOffsets`): tuples, time slices for a grid.
 !<
+!< From MPI ranks (`set_comm`): an UnstructuredGrid or PolyData piece per rank (a partition, appended after the ranks
+!< before), or a region per rank of one ImageData, RectilinearGrid or StructuredGrid (`write_piece(nx1, ..., nz2)` with
+!< the rank's sub-extent): the datasets are created with the whole extent, by every rank, and each rank writes the block
+!< of its region, the points of a boundary shared with the next region excluded (that region writes them), the
+!< coordinates of a RectilinearGrid entries no rank before has. The regions are checked when they start (gathered on
+!< every rank): inside the whole extent, cells not overlapping, covering it; an empty region (`nx2 < nx1`, ...) writes
+!< nothing. A refusal by one rank of its own values (their size, say) is agreed by all the ranks (`agree`) before the
+!< collective calls: every rank returns the error, none is left waiting.
+!<
 !< `reopen` (`vtk_file%initialize(..., action='append')`) continues a time series written before (a restart): the state is
 !< read from the file, and every dataset is trimmed to the pieces recorded by the last complete piece (a run interrupted
 !< in a piece leaves the data of that piece, dropped).
@@ -121,6 +130,9 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
   character(len=:), allocatable :: point_arrays            !< Names of the point data arrays, NUL terminated.
   character(len=:), allocatable :: cell_arrays             !< Names of the cell data arrays, NUL terminated.
   logical                       :: is_parallel=.false.     !< The file is written by the ranks of an MPI communicator.
+  integer(I4P)                  :: region(6)=0_I4P         !< Region of this rank of a grid written from ranks: its extent.
+  integer(I4P)                  :: rank=0_I4P              !< Rank of this process in `comm`.
+  integer(I8P), allocatable     :: regions(:,:)            !< Regions of all the ranks, `regions(:, r)` of rank r-1.
   integer(I4P)                  :: comm=0_I4P              !< MPI communicator (Fortran handle), if `is_parallel`.
   contains
     procedure, pass(self) :: initialize
@@ -233,6 +245,11 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
     procedure, pass(self), private :: is_reusing    !< The open step has no piece: it reuses the mesh of the step before.
     procedure, pass(self), private :: is_written_in_step !< A point or cell array is written in the open step.
     procedure, pass(self), private :: record_array  !< Record the name of a point or cell data array.
+    procedure, pass(self), private :: agree         !< With comm, the largest error of the ranks.
+    procedure, pass(self), private :: axis_runs     !< The coordinates of an axis that this rank writes (RectilinearGrid).
+    procedure, pass(self), private :: points_block  !< The block of the points of a StructuredGrid that this rank writes.
+    procedure, pass(self), private :: region_block  !< The block of a grid array that this rank writes.
+    procedure, pass(self), private :: start_region  !< Start the region of this rank of a grid written from ranks.
     procedure, pass(self), private :: roll_arrays   !< Start the bookkeeping of the arrays for a new step.
     procedure, pass(self), private :: reset         !< Reset the state of the writer.
     procedure, pass(self), private :: start_partition !< Start a piece of an UnstructuredGrid or PolyData.
@@ -311,13 +328,10 @@ contains
     error = refuse('compressor zlib: the HDF5 library has no deflate filter')
     return
   endif
-  if (self%is_parallel) then ! the ranks of comm write one file: one partition each, every call collective
+  if (self%is_parallel) then ! the ranks of comm write one file: a partition or a grid region each, every call collective
     error = 0_I4P
     if (.not.is_mpi_enabled) then
       error = refuse('comm: the library is built without MPI (VTKFORTRAN_USE_MPI)')
-    elseif (.not.self%is_partitioned()) then
-      error = refuse('comm: '//trim(adjustl(mesh_topology))//' has one piece, written by one rank (comm is for an '// &
-                     'UnstructuredGrid or a PolyData)')
     elseif (self%is_compressed) then
       error = refuse('comm: compressor zlib is not supported (a deflated dataset needs collective writes)')
     endif
@@ -382,7 +396,8 @@ contains
 
   function write_piece_start_tag(self, nx1, nx2, ny1, ny2, nz1, nz2) result(error)
   !< Start the piece of an ImageData, RectilinearGrid or StructuredGrid: VTKHDF stores one piece, whose extent is the
-  !< whole extent.
+  !< whole extent. From the ranks of `comm`, the region of this rank: its sub-extent (empty: an upper bound before its
+  !< lower one), the regions of all the ranks inside the whole extent, not overlapping in cells, covering it.
   class(vtkhdf_writer),       intent(inout) :: self
   integer(I4P),               intent(in)    :: nx1
   integer(I4P),               intent(in)    :: nx2
@@ -401,6 +416,14 @@ contains
     error = refuse('a grid (ImageData, RectilinearGrid, StructuredGrid) has one piece per step')
   elseif (self%is_reusing() .and. self%is_written_in_step()) then
     error = refuse('write_piece: arrays are already written in this step without its piece')
+  elseif (self%is_parallel) then ! the region of this rank (the regions of all checked on every rank)
+    error = self%start_region([nx1, nx2, ny1, ny2, nz1, nz2])
+    if (error == 0_I4P) then
+      self%n_pieces = self%n_pieces + 1_I4P
+      self%step_pieces = self%step_pieces + 1_I8P
+      self%is_geo_written = .false.
+      self%is_piece_open = .true.
+    endif
   elseif (.not.self%is_temporal .and. self%n_pieces > 0_I4P) then
     error = refuse('a grid (ImageData, RectilinearGrid, StructuredGrid) has one piece in VTKHDF')
   ! a RectilinearGrid or StructuredGrid reopened (action append): its extent start is not in the file, its size is
@@ -1920,6 +1943,7 @@ contains
   else
     error = self%poly_blocks(.true., verts_connectivity, verts_offset, lines_connectivity, lines_offset, &
                             strips_connectivity, strips_offset, polys_connectivity, polys_offset)
+    error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
     if (error == 0_I4P) error = self%poly_blocks(.false., verts_connectivity, verts_offset, lines_connectivity, lines_offset, &
                                                  strips_connectivity, strips_offset, polys_connectivity, polys_offset)
     if (error /= 0_I4P) error = refuse('cannot write the cells of the PolyData piece')
@@ -1952,11 +1976,20 @@ contains
   class(vtkhdf_writer),       intent(inout) :: self
   real(R8P),                  intent(in)    :: xyz(1:,1:,1:,1:)
   integer(I4P)                              :: error
+  integer(I8P)                              :: grid(3)          !< Points along x, y, z (of the region of this rank, with comm).
 
-  if (any(shape(xyz, kind=I8P) /= [3_I8P, self%grid_points()])) then
-    error = refuse('write_geo: xyz is not 3 by the points of the grid along x, y and z')
-    return
+  grid = self%grid_points()
+  if (self%is_parallel) then ! the points of the region of this rank
+    grid = max(int(self%region(2::2) - self%region(1::2), I8P) + 1_I8P, 0_I8P)
+    if (any(self%region(2::2) < self%region(1::2))) grid = 0_I8P
   endif
+  error = 0_I4P
+  if (any(shape(xyz, kind=I8P) /= [3_I8P, grid])) then
+    error = refuse('write_geo: xyz is not 3 by the points of the '//trim(merge('region', 'grid  ', self%is_parallel))// &
+                   ' along x, y and z')
+  endif
+  error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
+  if (error /= 0_I4P) return
   error = put_grid_points_R8P(self, xyz, size(xyz, dim=1, kind=I8P), size(xyz, kind=I8P) / 3_I8P)
   endfunction write_geo_strg_data1_rank4_R8P
 
@@ -2027,11 +2060,20 @@ contains
   class(vtkhdf_writer),       intent(inout) :: self
   real(R4P),                  intent(in)    :: xyz(1:,1:,1:,1:)
   integer(I4P)                              :: error
+  integer(I8P)                              :: grid(3)          !< Points along x, y, z (of the region of this rank, with comm).
 
-  if (any(shape(xyz, kind=I8P) /= [3_I8P, self%grid_points()])) then
-    error = refuse('write_geo: xyz is not 3 by the points of the grid along x, y and z')
-    return
+  grid = self%grid_points()
+  if (self%is_parallel) then ! the points of the region of this rank
+    grid = max(int(self%region(2::2) - self%region(1::2), I8P) + 1_I8P, 0_I8P)
+    if (any(self%region(2::2) < self%region(1::2))) grid = 0_I8P
   endif
+  error = 0_I4P
+  if (any(shape(xyz, kind=I8P) /= [3_I8P, grid])) then
+    error = refuse('write_geo: xyz is not 3 by the points of the '//trim(merge('region', 'grid  ', self%is_parallel))// &
+                   ' along x, y and z')
+  endif
+  error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
+  if (error /= 0_I4P) return
   error = put_grid_points_R4P(self, xyz, size(xyz, dim=1, kind=I8P), size(xyz, kind=I8P) / 3_I8P)
   endfunction write_geo_strg_data1_rank4_R4P
 
@@ -2081,16 +2123,19 @@ contains
   function put_R8P(self, data_name, x, n, n_components) result(error)
   !< Write `n` values (R8P) as the dataset `data_name` of the open group: in an UnstructuredGrid or PolyData, created by
   !< the first piece and appended to by the others.
-  class(vtkhdf_writer), intent(inout) :: self         !< Writer.
-  character(*), intent(in)            :: data_name    !< Data name.
-  real(R8P), intent(in)               :: x(*)         !< Values.
-  integer(I8P), intent(in)            :: n            !< Number of values.
-  integer(I4P), intent(in)            :: n_components !< Number of components.
-  integer(I4P)                        :: error        !< Error status.
-  integer(I8P), allocatable           :: dims(:)      !< Shape of the dataset, Fortran order.
-  logical                             :: is_new       !< The dataset is created (not appended to).
+  class(vtkhdf_writer), intent(inout) :: self                      !< Writer.
+  character(*), intent(in)            :: data_name                 !< Data name.
+  real(R8P), intent(in)               :: x(*)                      !< Values.
+  integer(I8P), intent(in)            :: n                         !< Number of values.
+  integer(I4P), intent(in)            :: n_components              !< Number of components.
+  integer(I4P)                        :: error                     !< Error status.
+  integer(I8P), allocatable           :: dims(:)                   !< Shape of the dataset, Fortran order.
+  logical                             :: is_new                    !< The dataset is created (not appended to).
+  integer(I8P), allocatable           :: mem_dims(:), mem_start(:) !< Grid region: values, block start.
+  integer(I8P), allocatable           :: file_start(:), count(:)   !< Grid region: block start, shape.
 
   error = self%dataset_dims(data_name, n, n_components, dims)
+  error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
   if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P) then
@@ -2103,6 +2148,10 @@ contains
       return
     endif
     error = store_R8P(self, self%group, data_name, x, dims)
+  elseif (self%is_parallel .and. self%group_name /= 'FieldData') then ! a grid: the block of this rank
+    call self%region_block(self%group_name == 'CellData', n_components, dims, mem_dims, mem_start, &
+                           file_start, count)
+    error = h5_dataset_slab_R8P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true.)
   elseif (self%is_temporal .and. self%group_name /= 'FieldData') then ! a grid: the time axis last
     error = store_R8P(self, self%group, data_name, x, [dims, 1_I8P])
   elseif (self%is_temporal) then
@@ -2120,16 +2169,19 @@ contains
   function put_R4P(self, data_name, x, n, n_components) result(error)
   !< Write `n` values (R4P) as the dataset `data_name` of the open group: in an UnstructuredGrid or PolyData, created by
   !< the first piece and appended to by the others.
-  class(vtkhdf_writer), intent(inout) :: self         !< Writer.
-  character(*), intent(in)            :: data_name    !< Data name.
-  real(R4P), intent(in)               :: x(*)         !< Values.
-  integer(I8P), intent(in)            :: n            !< Number of values.
-  integer(I4P), intent(in)            :: n_components !< Number of components.
-  integer(I4P)                        :: error        !< Error status.
-  integer(I8P), allocatable           :: dims(:)      !< Shape of the dataset, Fortran order.
-  logical                             :: is_new       !< The dataset is created (not appended to).
+  class(vtkhdf_writer), intent(inout) :: self                      !< Writer.
+  character(*), intent(in)            :: data_name                 !< Data name.
+  real(R4P), intent(in)               :: x(*)                      !< Values.
+  integer(I8P), intent(in)            :: n                         !< Number of values.
+  integer(I4P), intent(in)            :: n_components              !< Number of components.
+  integer(I4P)                        :: error                     !< Error status.
+  integer(I8P), allocatable           :: dims(:)                   !< Shape of the dataset, Fortran order.
+  logical                             :: is_new                    !< The dataset is created (not appended to).
+  integer(I8P), allocatable           :: mem_dims(:), mem_start(:) !< Grid region: values, block start.
+  integer(I8P), allocatable           :: file_start(:), count(:)   !< Grid region: block start, shape.
 
   error = self%dataset_dims(data_name, n, n_components, dims)
+  error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
   if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P) then
@@ -2142,6 +2194,10 @@ contains
       return
     endif
     error = store_R4P(self, self%group, data_name, x, dims)
+  elseif (self%is_parallel .and. self%group_name /= 'FieldData') then ! a grid: the block of this rank
+    call self%region_block(self%group_name == 'CellData', n_components, dims, mem_dims, mem_start, &
+                           file_start, count)
+    error = h5_dataset_slab_R4P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true.)
   elseif (self%is_temporal .and. self%group_name /= 'FieldData') then ! a grid: the time axis last
     error = store_R4P(self, self%group, data_name, x, [dims, 1_I8P])
   elseif (self%is_temporal) then
@@ -2159,17 +2215,20 @@ contains
   function put_I8P(self, data_name, x, n, n_components, unsigned) result(error)
   !< Write `n` values (I8P) as the dataset `data_name` of the open group: in an UnstructuredGrid or PolyData, created by
   !< the first piece and appended to by the others.
-  class(vtkhdf_writer), intent(inout) :: self         !< Writer.
-  character(*), intent(in)            :: data_name    !< Data name.
-  integer(I8P), intent(in)            :: x(*)         !< Values.
-  integer(I8P), intent(in)            :: n            !< Number of values.
-  integer(I4P), intent(in)            :: n_components !< Number of components.
-  logical, intent(in), optional       :: unsigned     !< Unsigned values.
-  integer(I4P)                        :: error        !< Error status.
-  integer(I8P), allocatable           :: dims(:)      !< Shape of the dataset, Fortran order.
-  logical                             :: is_new       !< The dataset is created (not appended to).
+  class(vtkhdf_writer), intent(inout) :: self                      !< Writer.
+  character(*), intent(in)            :: data_name                 !< Data name.
+  integer(I8P), intent(in)            :: x(*)                      !< Values.
+  integer(I8P), intent(in)            :: n                         !< Number of values.
+  integer(I4P), intent(in)            :: n_components              !< Number of components.
+  logical, intent(in), optional       :: unsigned                  !< Unsigned values.
+  integer(I4P)                        :: error                     !< Error status.
+  integer(I8P), allocatable           :: dims(:)                   !< Shape of the dataset, Fortran order.
+  logical                             :: is_new                    !< The dataset is created (not appended to).
+  integer(I8P), allocatable           :: mem_dims(:), mem_start(:) !< Grid region: values, block start.
+  integer(I8P), allocatable           :: file_start(:), count(:)   !< Grid region: block start, shape.
 
   error = self%dataset_dims(data_name, n, n_components, dims)
+  error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
   if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P) then
@@ -2182,6 +2241,10 @@ contains
       return
     endif
     error = store_I8P(self, self%group, data_name, x, dims, unsigned=unsigned)
+  elseif (self%is_parallel .and. self%group_name /= 'FieldData') then ! a grid: the block of this rank
+    call self%region_block(self%group_name == 'CellData', n_components, dims, mem_dims, mem_start, &
+                           file_start, count)
+    error = h5_dataset_slab_I8P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true., unsigned=unsigned)
   elseif (self%is_temporal .and. self%group_name /= 'FieldData') then ! a grid: the time axis last
     error = store_I8P(self, self%group, data_name, x, [dims, 1_I8P], unsigned=unsigned)
   elseif (self%is_temporal) then
@@ -2199,17 +2262,20 @@ contains
   function put_I4P(self, data_name, x, n, n_components, unsigned) result(error)
   !< Write `n` values (I4P) as the dataset `data_name` of the open group: in an UnstructuredGrid or PolyData, created by
   !< the first piece and appended to by the others.
-  class(vtkhdf_writer), intent(inout) :: self         !< Writer.
-  character(*), intent(in)            :: data_name    !< Data name.
-  integer(I4P), intent(in)            :: x(*)         !< Values.
-  integer(I8P), intent(in)            :: n            !< Number of values.
-  integer(I4P), intent(in)            :: n_components !< Number of components.
-  logical, intent(in), optional       :: unsigned     !< Unsigned values.
-  integer(I4P)                        :: error        !< Error status.
-  integer(I8P), allocatable           :: dims(:)      !< Shape of the dataset, Fortran order.
-  logical                             :: is_new       !< The dataset is created (not appended to).
+  class(vtkhdf_writer), intent(inout) :: self                      !< Writer.
+  character(*), intent(in)            :: data_name                 !< Data name.
+  integer(I4P), intent(in)            :: x(*)                      !< Values.
+  integer(I8P), intent(in)            :: n                         !< Number of values.
+  integer(I4P), intent(in)            :: n_components              !< Number of components.
+  logical, intent(in), optional       :: unsigned                  !< Unsigned values.
+  integer(I4P)                        :: error                     !< Error status.
+  integer(I8P), allocatable           :: dims(:)                   !< Shape of the dataset, Fortran order.
+  logical                             :: is_new                    !< The dataset is created (not appended to).
+  integer(I8P), allocatable           :: mem_dims(:), mem_start(:) !< Grid region: values, block start.
+  integer(I8P), allocatable           :: file_start(:), count(:)   !< Grid region: block start, shape.
 
   error = self%dataset_dims(data_name, n, n_components, dims)
+  error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
   if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P) then
@@ -2222,6 +2288,10 @@ contains
       return
     endif
     error = store_I4P(self, self%group, data_name, x, dims, unsigned=unsigned)
+  elseif (self%is_parallel .and. self%group_name /= 'FieldData') then ! a grid: the block of this rank
+    call self%region_block(self%group_name == 'CellData', n_components, dims, mem_dims, mem_start, &
+                           file_start, count)
+    error = h5_dataset_slab_I4P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true., unsigned=unsigned)
   elseif (self%is_temporal .and. self%group_name /= 'FieldData') then ! a grid: the time axis last
     error = store_I4P(self, self%group, data_name, x, [dims, 1_I8P], unsigned=unsigned)
   elseif (self%is_temporal) then
@@ -2239,17 +2309,20 @@ contains
   function put_I2P(self, data_name, x, n, n_components, unsigned) result(error)
   !< Write `n` values (I2P) as the dataset `data_name` of the open group: in an UnstructuredGrid or PolyData, created by
   !< the first piece and appended to by the others.
-  class(vtkhdf_writer), intent(inout) :: self         !< Writer.
-  character(*), intent(in)            :: data_name    !< Data name.
-  integer(I2P), intent(in)            :: x(*)         !< Values.
-  integer(I8P), intent(in)            :: n            !< Number of values.
-  integer(I4P), intent(in)            :: n_components !< Number of components.
-  logical, intent(in), optional       :: unsigned     !< Unsigned values.
-  integer(I4P)                        :: error        !< Error status.
-  integer(I8P), allocatable           :: dims(:)      !< Shape of the dataset, Fortran order.
-  logical                             :: is_new       !< The dataset is created (not appended to).
+  class(vtkhdf_writer), intent(inout) :: self                      !< Writer.
+  character(*), intent(in)            :: data_name                 !< Data name.
+  integer(I2P), intent(in)            :: x(*)                      !< Values.
+  integer(I8P), intent(in)            :: n                         !< Number of values.
+  integer(I4P), intent(in)            :: n_components              !< Number of components.
+  logical, intent(in), optional       :: unsigned                  !< Unsigned values.
+  integer(I4P)                        :: error                     !< Error status.
+  integer(I8P), allocatable           :: dims(:)                   !< Shape of the dataset, Fortran order.
+  logical                             :: is_new                    !< The dataset is created (not appended to).
+  integer(I8P), allocatable           :: mem_dims(:), mem_start(:) !< Grid region: values, block start.
+  integer(I8P), allocatable           :: file_start(:), count(:)   !< Grid region: block start, shape.
 
   error = self%dataset_dims(data_name, n, n_components, dims)
+  error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
   if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P) then
@@ -2262,6 +2335,10 @@ contains
       return
     endif
     error = store_I2P(self, self%group, data_name, x, dims, unsigned=unsigned)
+  elseif (self%is_parallel .and. self%group_name /= 'FieldData') then ! a grid: the block of this rank
+    call self%region_block(self%group_name == 'CellData', n_components, dims, mem_dims, mem_start, &
+                           file_start, count)
+    error = h5_dataset_slab_I2P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true., unsigned=unsigned)
   elseif (self%is_temporal .and. self%group_name /= 'FieldData') then ! a grid: the time axis last
     error = store_I2P(self, self%group, data_name, x, [dims, 1_I8P], unsigned=unsigned)
   elseif (self%is_temporal) then
@@ -2279,17 +2356,20 @@ contains
   function put_I1P(self, data_name, x, n, n_components, unsigned) result(error)
   !< Write `n` values (I1P) as the dataset `data_name` of the open group: in an UnstructuredGrid or PolyData, created by
   !< the first piece and appended to by the others.
-  class(vtkhdf_writer), intent(inout) :: self         !< Writer.
-  character(*), intent(in)            :: data_name    !< Data name.
-  integer(I1P), intent(in)            :: x(*)         !< Values.
-  integer(I8P), intent(in)            :: n            !< Number of values.
-  integer(I4P), intent(in)            :: n_components !< Number of components.
-  logical, intent(in), optional       :: unsigned     !< Unsigned values.
-  integer(I4P)                        :: error        !< Error status.
-  integer(I8P), allocatable           :: dims(:)      !< Shape of the dataset, Fortran order.
-  logical                             :: is_new       !< The dataset is created (not appended to).
+  class(vtkhdf_writer), intent(inout) :: self                      !< Writer.
+  character(*), intent(in)            :: data_name                 !< Data name.
+  integer(I1P), intent(in)            :: x(*)                      !< Values.
+  integer(I8P), intent(in)            :: n                         !< Number of values.
+  integer(I4P), intent(in)            :: n_components              !< Number of components.
+  logical, intent(in), optional       :: unsigned                  !< Unsigned values.
+  integer(I4P)                        :: error                     !< Error status.
+  integer(I8P), allocatable           :: dims(:)                   !< Shape of the dataset, Fortran order.
+  logical                             :: is_new                    !< The dataset is created (not appended to).
+  integer(I8P), allocatable           :: mem_dims(:), mem_start(:) !< Grid region: values, block start.
+  integer(I8P), allocatable           :: file_start(:), count(:)   !< Grid region: block start, shape.
 
   error = self%dataset_dims(data_name, n, n_components, dims)
+  error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
   if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P) then
@@ -2302,6 +2382,10 @@ contains
       return
     endif
     error = store_I1P(self, self%group, data_name, x, dims, unsigned=unsigned)
+  elseif (self%is_parallel .and. self%group_name /= 'FieldData') then ! a grid: the block of this rank
+    call self%region_block(self%group_name == 'CellData', n_components, dims, mem_dims, mem_start, &
+                           file_start, count)
+    error = h5_dataset_slab_I1P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true., unsigned=unsigned)
   elseif (self%is_temporal .and. self%group_name /= 'FieldData') then ! a grid: the time axis last
     error = store_I1P(self, self%group, data_name, x, [dims, 1_I8P], unsigned=unsigned)
   elseif (self%is_temporal) then
@@ -2463,6 +2547,7 @@ contains
   integer(I4P)                        :: error  !< Error status.
 
   error = self%check_geo(np, nc, n1, n2)
+  error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
   error = store_R8P(self, self%root, 'Points', xyz, [3_I8P, np])
   if (error /= 0_I4P) error = refuse('cannot write the points')
@@ -2480,6 +2565,7 @@ contains
   integer(I4P)                        :: error  !< Error status.
 
   error = self%check_geo(np, nc, n1, n2)
+  error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
   error = store_R4P(self, self%root, 'Points', xyz, [3_I8P, np])
   if (error /= 0_I4P) error = refuse('cannot write the points')
@@ -2498,13 +2584,12 @@ contains
   integer(I8P)                        :: n_ids           !< Ids used by the cells.
 
   error = self%check_cells(nc, size(offset, kind=I8P), size(cell_type, kind=I8P))
-  if (error /= 0_I4P) return
   n_ids = 0_I8P
-  if (nc > 0_I8P) n_ids = int(offset(nc), I8P)
-  if (n_ids < 0_I8P .or. n_ids > size(connectivity, kind=I8P)) then
+  if (error == 0_I4P .and. nc > 0_I8P) n_ids = int(offset(nc), I8P)
+  if (error == 0_I4P .and. (n_ids < 0_I8P .or. n_ids > size(connectivity, kind=I8P))) &
     error = refuse('write_connectivity: the last offset is not within the connectivity')
-    return
-  endif
+  error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
+  if (error /= 0_I4P) return
   allocate(offsets(nc+1_I8P))
   offsets(1) = 0_I4P
   if (nc > 0_I8P) offsets(2:) = offset(1:nc)
@@ -2529,13 +2614,12 @@ contains
   integer(I8P)                        :: n_ids           !< Ids used by the cells.
 
   error = self%check_cells(nc, size(offset, kind=I8P), size(cell_type, kind=I8P))
-  if (error /= 0_I4P) return
   n_ids = 0_I8P
-  if (nc > 0_I8P) n_ids = int(offset(nc), I8P)
-  if (n_ids < 0_I8P .or. n_ids > size(connectivity, kind=I8P)) then
+  if (error == 0_I4P .and. nc > 0_I8P) n_ids = int(offset(nc), I8P)
+  if (error == 0_I4P .and. (n_ids < 0_I8P .or. n_ids > size(connectivity, kind=I8P))) &
     error = refuse('write_connectivity: the last offset is not within the connectivity')
-    return
-  endif
+  error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
+  if (error /= 0_I4P) return
   allocate(offsets(nc+1_I8P))
   offsets(1) = 0_I8P
   if (nc > 0_I8P) offsets(2:) = offset(1:nc)
@@ -2560,11 +2644,21 @@ contains
   error = self%check_grid_geo(TOPOLOGY_RECT)
   if (error /= 0_I4P) return
   grid = self%grid_points()
-  if (any([size(x, kind=I8P), size(y, kind=I8P), size(z, kind=I8P)] /= grid)) then
-    error = refuse('write_geo: x, y and z need one value per point of the grid along each axis')
-    return
+  if (self%is_parallel) then ! the coordinates of the region of this rank
+    grid = max(int(self%region(2::2) - self%region(1::2), I8P) + 1_I8P, 0_I8P)
+    if (any(self%region(2::2) < self%region(1::2))) grid = 0_I8P
   endif
-  if (self%is_temporal) then ! the coordinates of each step after those of the steps before
+  if (any([size(x, kind=I8P), size(y, kind=I8P), size(z, kind=I8P)] /= grid)) then
+    error = refuse('write_geo: x, y and z need one value per point of the '// &
+                   trim(merge('region', 'grid  ', self%is_parallel))//' along each axis')
+  endif
+  error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
+  if (error /= 0_I4P) return
+  if (self%is_parallel) then ! every rank creates the datasets, writes the entries no rank before has
+    error = put_axis_R8P(self, 'XCoordinates', 1_I4P, x)
+    if (error == 0_I4P) error = put_axis_R8P(self, 'YCoordinates', 2_I4P, y)
+    if (error == 0_I4P) error = put_axis_R8P(self, 'ZCoordinates', 3_I4P, z)
+  elseif (self%is_temporal) then ! the coordinates of each step after those of the steps before
     error = store_R8P(self, self%root, 'XCoordinates', x, [grid(1)])
     if (error == 0_I4P) error = store_R8P(self, self%root, 'YCoordinates', y, [grid(2)])
     if (error == 0_I4P) error = store_R8P(self, self%root, 'ZCoordinates', z, [grid(3)])
@@ -2580,25 +2674,65 @@ contains
   if (error == 0_I4P .and. self%is_temporal) self%geo_slices = self%geo_slices + 1_I8P
   endfunction put_coordinates_R8P
 
+  function put_axis_R8P(self, name, a, values) result(error)
+  !< Write the coordinates (R8P) of the axis `a` of a RectilinearGrid from the ranks of `comm`: the dataset created by
+  !< every rank, then the entries of the region of this rank that no rank before has (collective).
+  class(vtkhdf_writer), intent(in) :: self      !< Writer.
+  character(*), intent(in)         :: name      !< Dataset of the coordinates.
+  integer(I4P), intent(in)         :: a         !< Axis: 1 x, 2 y, 3 z.
+  real(R8P), intent(in)            :: values(:) !< Coordinates of the region of this rank along the axis.
+  integer(I4P)                     :: error     !< Error status.
+  integer(I8P), allocatable        :: runs(:,:) !< Runs of entries written by this rank.
+  integer(I8P)                     :: grid(3)   !< Points along x, y, z.
+  integer                          :: r         !< Counter.
+
+  grid = self%grid_points()
+  error = h5_dataset_slab_R8P(self%root, name, values, [grid(a)], [size(values, kind=I8P)], [0_I8P], [0_I8P], &
+                              [0_I8P], .true.)
+  call self%axis_runs(a, runs)
+  ! as many writes on every rank (the largest number of runs; empty ones beyond its own): the dataset is opened
+  ! the same number of times by every rank (H5Dopen is collective with collective metadata operations)
+  do r=1, int(h5_mpi_max(self%comm, size(runs, dim=2, kind=I8P)))
+    if (r <= size(runs, dim=2)) then
+      if (error == 0_I4P) error = h5_dataset_slab_R8P(self%root, name, values, [grid(a)], [size(values, kind=I8P)], &
+                                                    runs(1:1, r), runs(2:2, r), runs(3:3, r), .false.)
+    else
+      if (error == 0_I4P) error = h5_dataset_slab_R8P(self%root, name, values, [grid(a)], [size(values, kind=I8P)], &
+                                                    [0_I8P], [0_I8P], [0_I8P], .false.)
+    endif
+  enddo
+  endfunction put_axis_R8P
+
   function put_grid_points_R8P(self, xyz, n1, n) result(error)
   !< Write the points (R8P) of a StructuredGrid: the dataset Points, `[k, j, i, 3]` in C order (always 4D, as VTK
   !< requires).
-  class(vtkhdf_writer), intent(inout) :: self    !< Writer.
-  real(R8P), intent(in)               :: xyz(*)  !< Coordinates, interleaved (x, y, z of each point), x fastest.
-  integer(I8P), intent(in)            :: n1      !< First dimension of the coordinates (3).
-  integer(I8P), intent(in)            :: n       !< Number of points.
-  integer(I4P)                        :: error   !< Error status.
-  integer(I8P)                        :: grid(3) !< Points along x, y, z.
+  class(vtkhdf_writer), intent(inout) :: self                    !< Writer.
+  real(R8P), intent(in)               :: xyz(*)                  !< Coordinates, interleaved (x, y, z of each point), x fastest.
+  integer(I8P), intent(in)            :: n1                      !< First dimension of the coordinates (3).
+  integer(I8P), intent(in)            :: n                       !< Number of points.
+  integer(I4P)                        :: error                   !< Error status.
+  integer(I8P)                        :: grid(3)                 !< Points along x, y, z.
+  integer(I8P)                        :: mem_dims(4)             !< Points of the region.
+  integer(I8P)                        :: file_start(4), count(4) !< Block of the region.
 
   error = self%check_grid_geo(TOPOLOGY_STRG)
   if (error /= 0_I4P) return
   grid = self%grid_points()
+  if (self%is_parallel) then ! the points of the region of this rank
+    call self%points_block(mem_dims, file_start, count)
+    grid = mem_dims(2:)
+  endif
   if (n1 /= 3_I8P .or. n /= product(grid)) then
     error = refuse('write_geo: the points are not 3 coordinates by the '// &
-                   trim(str(n=product(grid), no_sign=.true.))//' points of the grid')
-    return
+                   trim(str(n=product(grid), no_sign=.true.))//' points of the '// &
+                   trim(merge('region', 'grid  ', self%is_parallel)))
   endif
-  if (self%is_temporal) then ! the time axis last: Points [t, k, j, i, 3] in C order
+  error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
+  if (error /= 0_I4P) return
+  if (self%is_parallel) then ! every rank creates Points, writes its block
+    error = h5_dataset_slab_R8P(self%root, 'Points', xyz, [3_I8P, self%grid_points()], mem_dims, &
+                                [0_I8P, 0_I8P, 0_I8P, 0_I8P], file_start, count, .true.)
+  elseif (self%is_temporal) then ! the time axis last: Points [t, k, j, i, 3] in C order
     error = store_R8P(self, self%root, 'Points', xyz, [3_I8P, grid, 1_I8P])
   else
     error = h5_dataset_write_R8P(self%root, 'Points', xyz, [3_I8P, grid], deflate=self%deflate_level())
@@ -2620,11 +2754,21 @@ contains
   error = self%check_grid_geo(TOPOLOGY_RECT)
   if (error /= 0_I4P) return
   grid = self%grid_points()
-  if (any([size(x, kind=I8P), size(y, kind=I8P), size(z, kind=I8P)] /= grid)) then
-    error = refuse('write_geo: x, y and z need one value per point of the grid along each axis')
-    return
+  if (self%is_parallel) then ! the coordinates of the region of this rank
+    grid = max(int(self%region(2::2) - self%region(1::2), I8P) + 1_I8P, 0_I8P)
+    if (any(self%region(2::2) < self%region(1::2))) grid = 0_I8P
   endif
-  if (self%is_temporal) then ! the coordinates of each step after those of the steps before
+  if (any([size(x, kind=I8P), size(y, kind=I8P), size(z, kind=I8P)] /= grid)) then
+    error = refuse('write_geo: x, y and z need one value per point of the '// &
+                   trim(merge('region', 'grid  ', self%is_parallel))//' along each axis')
+  endif
+  error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
+  if (error /= 0_I4P) return
+  if (self%is_parallel) then ! every rank creates the datasets, writes the entries no rank before has
+    error = put_axis_R4P(self, 'XCoordinates', 1_I4P, x)
+    if (error == 0_I4P) error = put_axis_R4P(self, 'YCoordinates', 2_I4P, y)
+    if (error == 0_I4P) error = put_axis_R4P(self, 'ZCoordinates', 3_I4P, z)
+  elseif (self%is_temporal) then ! the coordinates of each step after those of the steps before
     error = store_R4P(self, self%root, 'XCoordinates', x, [grid(1)])
     if (error == 0_I4P) error = store_R4P(self, self%root, 'YCoordinates', y, [grid(2)])
     if (error == 0_I4P) error = store_R4P(self, self%root, 'ZCoordinates', z, [grid(3)])
@@ -2640,25 +2784,65 @@ contains
   if (error == 0_I4P .and. self%is_temporal) self%geo_slices = self%geo_slices + 1_I8P
   endfunction put_coordinates_R4P
 
+  function put_axis_R4P(self, name, a, values) result(error)
+  !< Write the coordinates (R4P) of the axis `a` of a RectilinearGrid from the ranks of `comm`: the dataset created by
+  !< every rank, then the entries of the region of this rank that no rank before has (collective).
+  class(vtkhdf_writer), intent(in) :: self      !< Writer.
+  character(*), intent(in)         :: name      !< Dataset of the coordinates.
+  integer(I4P), intent(in)         :: a         !< Axis: 1 x, 2 y, 3 z.
+  real(R4P), intent(in)            :: values(:) !< Coordinates of the region of this rank along the axis.
+  integer(I4P)                     :: error     !< Error status.
+  integer(I8P), allocatable        :: runs(:,:) !< Runs of entries written by this rank.
+  integer(I8P)                     :: grid(3)   !< Points along x, y, z.
+  integer                          :: r         !< Counter.
+
+  grid = self%grid_points()
+  error = h5_dataset_slab_R4P(self%root, name, values, [grid(a)], [size(values, kind=I8P)], [0_I8P], [0_I8P], &
+                              [0_I8P], .true.)
+  call self%axis_runs(a, runs)
+  ! as many writes on every rank (the largest number of runs; empty ones beyond its own): the dataset is opened
+  ! the same number of times by every rank (H5Dopen is collective with collective metadata operations)
+  do r=1, int(h5_mpi_max(self%comm, size(runs, dim=2, kind=I8P)))
+    if (r <= size(runs, dim=2)) then
+      if (error == 0_I4P) error = h5_dataset_slab_R4P(self%root, name, values, [grid(a)], [size(values, kind=I8P)], &
+                                                    runs(1:1, r), runs(2:2, r), runs(3:3, r), .false.)
+    else
+      if (error == 0_I4P) error = h5_dataset_slab_R4P(self%root, name, values, [grid(a)], [size(values, kind=I8P)], &
+                                                    [0_I8P], [0_I8P], [0_I8P], .false.)
+    endif
+  enddo
+  endfunction put_axis_R4P
+
   function put_grid_points_R4P(self, xyz, n1, n) result(error)
   !< Write the points (R4P) of a StructuredGrid: the dataset Points, `[k, j, i, 3]` in C order (always 4D, as VTK
   !< requires).
-  class(vtkhdf_writer), intent(inout) :: self    !< Writer.
-  real(R4P), intent(in)               :: xyz(*)  !< Coordinates, interleaved (x, y, z of each point), x fastest.
-  integer(I8P), intent(in)            :: n1      !< First dimension of the coordinates (3).
-  integer(I8P), intent(in)            :: n       !< Number of points.
-  integer(I4P)                        :: error   !< Error status.
-  integer(I8P)                        :: grid(3) !< Points along x, y, z.
+  class(vtkhdf_writer), intent(inout) :: self                    !< Writer.
+  real(R4P), intent(in)               :: xyz(*)                  !< Coordinates, interleaved (x, y, z of each point), x fastest.
+  integer(I8P), intent(in)            :: n1                      !< First dimension of the coordinates (3).
+  integer(I8P), intent(in)            :: n                       !< Number of points.
+  integer(I4P)                        :: error                   !< Error status.
+  integer(I8P)                        :: grid(3)                 !< Points along x, y, z.
+  integer(I8P)                        :: mem_dims(4)             !< Points of the region.
+  integer(I8P)                        :: file_start(4), count(4) !< Block of the region.
 
   error = self%check_grid_geo(TOPOLOGY_STRG)
   if (error /= 0_I4P) return
   grid = self%grid_points()
+  if (self%is_parallel) then ! the points of the region of this rank
+    call self%points_block(mem_dims, file_start, count)
+    grid = mem_dims(2:)
+  endif
   if (n1 /= 3_I8P .or. n /= product(grid)) then
     error = refuse('write_geo: the points are not 3 coordinates by the '// &
-                   trim(str(n=product(grid), no_sign=.true.))//' points of the grid')
-    return
+                   trim(str(n=product(grid), no_sign=.true.))//' points of the '// &
+                   trim(merge('region', 'grid  ', self%is_parallel)))
   endif
-  if (self%is_temporal) then ! the time axis last: Points [t, k, j, i, 3] in C order
+  error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
+  if (error /= 0_I4P) return
+  if (self%is_parallel) then ! every rank creates Points, writes its block
+    error = h5_dataset_slab_R4P(self%root, 'Points', xyz, [3_I8P, self%grid_points()], mem_dims, &
+                                [0_I8P, 0_I8P, 0_I8P, 0_I8P], file_start, count, .true.)
+  elseif (self%is_temporal) then ! the time axis last: Points [t, k, j, i, 3] in C order
     error = store_R4P(self, self%root, 'Points', xyz, [3_I8P, grid, 1_I8P])
   else
     error = h5_dataset_write_R4P(self%root, 'Points', xyz, [3_I8P, grid], deflate=self%deflate_level())
@@ -3072,6 +3256,8 @@ contains
   integer(I4P)                           :: error        !< Error status.
   integer(I8P)                           :: grid(3)      !< Points or cells along each axis.
   logical                                :: is_axis(3)   !< The axis has more than one point.
+  integer(I8P)                           :: expected     !< Values expected.
+  integer(I8P), allocatable              :: mem_dims(:), mem_start(:), file_start(:), count(:) !< Block of a region.
 
   error = 1_I4P
   if (self%group < 0_hid_kind .or. n_components < 1_I4P) return
@@ -3109,9 +3295,15 @@ contains
     is_axis = grid > 1_I8P
     if (.not.any(is_axis)) is_axis(1) = .true. ! one point: one value
     if (self%group_name == 'CellData') grid = max(grid - 1_I8P, 1_I8P)
-    if (n /= product(grid) * n_components) then
-      error = refuse('the array '//data_name//' has '//trim(str(n=n, no_sign=.true.))//' values, the grid needs '// &
-                     trim(str(n=product(grid) * n_components, no_sign=.true.))//' ('//                              &
+    expected = product(grid) * n_components
+    if (self%is_parallel) then ! the values of the region of this rank
+      call self%region_block(self%group_name == 'CellData', n_components, dims, mem_dims, mem_start, file_start, count)
+      expected = product(mem_dims)
+    endif
+    if (n /= expected) then
+      error = refuse('the array '//data_name//' has '//trim(str(n=n, no_sign=.true.))//' values, the '// &
+                     trim(merge('region', 'grid  ', self%is_parallel))//' needs '// &
+                     trim(str(n=expected, no_sign=.true.))//' ('//                              &
                      trim(str(n=n_components, no_sign=.true.))//' components)')
       return
     endif
@@ -3404,6 +3596,175 @@ contains
 
   is_reusing_ = self%is_temporal .and. self%n_steps > 1_I8P .and. self%step_pieces == 0_I8P
   endfunction is_reusing
+
+  subroutine region_block(self, cells, n_components, dims, mem_dims, mem_start, file_start, count)
+  !< The block of a point (`cells` false) or cell array of a grid that this rank writes, its region of the whole extent:
+  !< the shape of the dataset `dims` and of the values of the region `mem_dims`, where the block starts in each, its
+  !< shape `count` (Fortran order, the components first if more than one; the axes of one point dropped, as
+  !< `dataset_dims`). The points of an upper boundary of the region inside the whole extent are left to the region that
+  !< starts there; an empty region has an empty block.
+  class(vtkhdf_writer),      intent(in)  :: self          !< Writer.
+  logical,                   intent(in)  :: cells         !< Cell data, otherwise point data.
+  integer(I4P),              intent(in)  :: n_components  !< Components.
+  integer(I8P), allocatable, intent(out) :: dims(:)       !< Shape of the dataset.
+  integer(I8P), allocatable, intent(out) :: mem_dims(:)   !< Shape of the values of the region.
+  integer(I8P), allocatable, intent(out) :: mem_start(:)  !< Start of the block in the values.
+  integer(I8P), allocatable, intent(out) :: file_start(:) !< Start of the block in the dataset.
+  integer(I8P), allocatable, intent(out) :: count(:)      !< Shape of the block.
+  integer(I8P)                           :: grid(3), lo(3), hi(3), whole(3), n(3), owned(3), first(3) !< Per axis.
+  logical                                :: is_axis(3)    !< The axis is kept (more than one point, or the only one).
+  logical                                :: is_multi(3)   !< The axis has more than one point.
+
+  grid = self%grid_points()
+  is_multi = grid > 1_I8P
+  is_axis = is_multi
+  if (.not.any(is_axis)) is_axis(1) = .true.
+  lo = int(self%region(1::2), I8P) ; hi = int(self%region(2::2), I8P) ; whole = int(self%whole_extent(1::2), I8P)
+  first = lo - whole
+  if (cells) then
+    grid = max(grid - 1_I8P, 1_I8P)
+    n = merge(hi - lo, 1_I8P, is_multi)
+    owned = n
+  else
+    n = hi - lo + 1_I8P
+    owned = merge(hi - lo, n, hi < int(self%whole_extent(2::2), I8P)) ! the upper boundary to the next region
+  endif
+  if (any(hi < lo)) then ! an empty region
+    n = 0_I8P ; owned = 0_I8P ; first = 0_I8P
+  endif
+  if (n_components == 1_I4P) then
+    dims = pack(grid, is_axis) ; mem_dims = pack(n, is_axis) ; file_start = pack(first, is_axis)
+    count = pack(owned, is_axis)
+  else
+    dims = [int(n_components, I8P), pack(grid, is_axis)] ; mem_dims = [int(n_components, I8P), pack(n, is_axis)]
+    file_start = [0_I8P, pack(first, is_axis)] ; count = [int(n_components, I8P), pack(owned, is_axis)]
+    if (product(owned) == 0_I8P) count(1) = 0_I8P
+  endif
+  mem_start = 0_I8P * dims
+  endsubroutine region_block
+
+  function start_region(self, extent) result(error)
+  !< Start the region of this rank of a grid written from the ranks of `comm`: the regions of all the ranks are gathered
+  !< and checked on every rank (the same refusal on each): inside the whole extent, with cells along every axis of more
+  !< than one point (or empty: an upper bound before its lower one), not overlapping, covering the whole extent.
+  class(vtkhdf_writer), intent(inout) :: self      !< Writer.
+  integer(I4P),         intent(in)    :: extent(6) !< Region of this rank: nx1, nx2, ny1, ny2, nz1, nz2.
+  integer(I4P)                        :: error     !< Error status.
+  integer(I8P)                        :: lo(3), hi(3), wlo(3), whi(3), clo(3), chi(3), olo(3), ohi(3) !< Bounds.
+  integer(I8P)                        :: covered   !< Cells of all the regions.
+  logical                             :: is_multi(3) !< Axes of more than one point.
+  integer                             :: r, q      !< Ranks.
+
+  error = 1_I4P
+  if (self%n_pieces > 0_I4P) then
+    error = refuse('write_piece: one region per rank of comm')
+    return
+  endif
+  if (h5_mpi_allgather(self%comm, int(extent, I8P), self%regions) /= 0_I4P) then
+    error = refuse('write_piece: the regions of the ranks cannot be gathered')
+    return
+  endif
+  wlo = int(self%whole_extent(1::2), I8P) ; whi = int(self%whole_extent(2::2), I8P)
+  is_multi = whi > wlo
+  covered = 0_I8P
+  do r=1, size(self%regions, dim=2)
+    lo = self%regions(1::2, r) ; hi = self%regions(2::2, r)
+    if (any(hi < lo)) cycle ! an empty region
+    if (any(lo < wlo .or. hi > whi)) then
+      error = refuse('write_piece: the region of rank '//trim(str(n=r - 1, no_sign=.true.))//' is not inside the whole '// &
+                     'extent')
+      return
+    elseif (any(is_multi .and. hi == lo)) then
+      error = refuse('write_piece: the region of rank '//trim(str(n=r - 1, no_sign=.true.))//' has no cells along an '// &
+                     'axis (an empty region has an upper bound before its lower one)')
+      return
+    endif
+    clo = lo ; chi = merge(hi - 1_I8P, hi, is_multi) ! its cells
+    covered = covered + product(chi - clo + 1_I8P)
+    do q=1, r - 1
+      olo = self%regions(1::2, q) ; ohi = self%regions(2::2, q)
+      if (any(ohi < olo)) cycle
+      ohi = merge(ohi - 1_I8P, ohi, is_multi)
+      if (all(max(clo, olo) <= min(chi, ohi))) then
+        error = refuse('write_piece: the regions of ranks '//trim(str(n=q - 1, no_sign=.true.))//' and '// &
+                       trim(str(n=r - 1, no_sign=.true.))//' have cells in common')
+        return
+      endif
+    enddo
+  enddo
+  if (covered /= product(merge(whi - wlo, 1_I8P, is_multi))) then
+    error = refuse('write_piece: the regions of the ranks do not cover the whole extent')
+    return
+  endif
+  self%region = extent
+  self%rank = h5_mpi_rank(self%comm)
+  error = 0_I4P
+  endfunction start_region
+
+  function agree(self, error) result(agreed)
+  !< With comm, the largest error of the ranks: a refusal by one rank (a size of its own values, say) is a refusal by
+  !< every rank, before the collective calls that would leave the others waiting; the error itself without comm.
+  class(vtkhdf_writer), intent(in) :: self   !< Writer.
+  integer(I4P),         intent(in) :: error  !< Error of this rank.
+  integer(I4P)                     :: agreed !< Error of the ranks.
+
+  agreed = error
+  if (self%is_parallel) agreed = int(h5_mpi_max(self%comm, int(error, I8P)), I4P)
+  endfunction agree
+
+  subroutine axis_runs(self, a, runs)
+  !< The coordinates of the axis `a` (1 x, 2 y, 3 z) of a RectilinearGrid that this rank writes: those of its region that
+  !< no rank before has in its own (the coordinates shared by regions are equal; the lowest rank writes them), as runs of
+  !< consecutive entries: `runs(:, r)` = start in the values of the region, start in the dataset (from 0), length.
+  class(vtkhdf_writer),      intent(in)  :: self      !< Writer.
+  integer(I4P),              intent(in)  :: a         !< Axis.
+  integer(I8P), allocatable, intent(out) :: runs(:,:) !< Runs.
+  integer(I8P), allocatable              :: more(:,:) !< Runs, one more.
+  integer(I8P)                           :: lo, hi, i !< Bounds, entry.
+  integer                                :: q         !< Rank.
+  logical                                :: is_taken  !< A rank before has the entry.
+
+  allocate(runs(3, 0))
+  lo = int(self%region(2 * a - 1), I8P) ; hi = int(self%region(2 * a), I8P)
+  if (any(self%region(2::2) < self%region(1::2))) return ! an empty region
+  do i=lo, hi
+    is_taken = .false.
+    do q=1, int(self%rank)
+      if (any(self%regions(2::2, q) < self%regions(1::2, q))) cycle
+      if (self%regions(2 * a - 1, q) <= i .and. i <= self%regions(2 * a, q)) is_taken = .true.
+    enddo
+    if (is_taken) cycle
+    if (size(runs, dim=2) > 0) then
+      if (runs(1, size(runs, dim=2)) + runs(3, size(runs, dim=2)) == i - lo) then ! the run goes on
+        runs(3, size(runs, dim=2)) = runs(3, size(runs, dim=2)) + 1_I8P
+        cycle
+      endif
+    endif
+    allocate(more(3, size(runs, dim=2) + 1))
+    more(:, 1:size(runs, dim=2)) = runs
+    more(:, size(more, dim=2)) = [i - lo, i - int(self%whole_extent(2 * a - 1), I8P), 1_I8P]
+    call move_alloc(more, runs)
+  enddo
+  endsubroutine axis_runs
+
+  subroutine points_block(self, mem_dims, file_start, count)
+  !< The block of the points of a StructuredGrid that this rank writes (`Points`, `[3, ni, nj, nk]` in Fortran order,
+  !< every axis kept): the shape of the points of its region, where its block starts in the dataset, its shape (the points
+  !< of an upper boundary inside the whole extent left to the region that starts there).
+  class(vtkhdf_writer), intent(in)  :: self          !< Writer.
+  integer(I8P),         intent(out) :: mem_dims(4)   !< Shape of the points of the region.
+  integer(I8P),         intent(out) :: file_start(4) !< Start of the block in the dataset.
+  integer(I8P),         intent(out) :: count(4)      !< Shape of the block.
+  integer(I8P)                      :: lo(3), hi(3)  !< Bounds of the region.
+
+  lo = int(self%region(1::2), I8P) ; hi = int(self%region(2::2), I8P)
+  mem_dims = [3_I8P, max(hi - lo + 1_I8P, 0_I8P)]
+  file_start = [0_I8P, lo - int(self%whole_extent(1::2), I8P)]
+  count = [3_I8P, merge(hi - lo, hi - lo + 1_I8P, hi < int(self%whole_extent(2::2), I8P))]
+  if (any(hi < lo)) then
+    file_start = 0_I8P ; count = 0_I8P
+  endif
+  endsubroutine points_block
 
   function end_reusing(self) result(error)
   !< Check the arrays of a step without pieces (each one written for all the points or cells of the mesh reused, or
@@ -3803,6 +4164,8 @@ contains
   self%mesh_blocks = 0_I8P
   self%mesh_pieces = 0_I8P
   self%geo_slices = 0_I8P
+  self%region = 0_I4P
+  if (allocated(self%regions)) deallocate(self%regions)
   self%point_start = [integer(I8P) ::] ; self%point_prev = [integer(I8P) ::]
   self%cell_start = [integer(I8P) ::] ; self%cell_prev = [integer(I8P) ::]
   self%field_arrays = ''

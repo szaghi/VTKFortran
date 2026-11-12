@@ -121,8 +121,13 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   trims every dataset to the last complete piece. vtkHDFReader 9.7.2 misreads a PolyData block first appearing at a later step, and a series
   of one part at step 1 (its own files too): the tests avoid both. MPI (`set_comm`, called by
   `vtk_file%initialize(..., comm=)` through `select type` before `initialize`, forgotten by `finalize`): every
-  `store_<kind>` collective, totals summed over the ranks, one piece per rank; refused: grids, `write_step`, polyhedra,
-  zlib, a second piece; a PolyData piece without cells calls `write_polydata_cells()` (the implicit empty blocks of
+  `store_<kind>` collective, totals summed over the ranks, one piece per rank; grids by regions (`write_piece` with the
+  rank's sub-extent, `start_region` gathers and checks them: inside, no cell overlap, cover; empty = upper < lower;
+  `region_block`/`points_block`: datasets created with the whole extent by every rank, each writes its block
+  (`h5_dataset_slab_<kind>`), the points of an upper boundary inside the extent left to the next region; RG coordinates
+  by `axis_runs`, the entries no lower rank has, as many writes on every rank); a check of a rank's own values before
+  a collective call goes through `agree` (`h5_mpi_max` of the errors: every rank refuses, none hangs); refused:
+  `write_step`, polyhedra, zlib, a second piece or region; a PolyData piece without cells calls `write_polydata_cells()` (the implicit empty blocks of
   `end_partition` would come out of the collective order)
 - `vtk_fortran_vtk_file_vtkhdf_reader` — `vtkhdf_reader`: VTKHDF files read through `xml_reader` (dispatched when
   `initialize` sees the HDF5 signature): every topology, partitions as pieces, time series (`get_steps`, `set_step`),
@@ -186,6 +191,7 @@ written as a `.vtu`; `vtk_fortran_write_vtkhdf_grids.f90`: RectilinearGrid and S
 `write_geo` layouts), each also written as a `.vtr`/`.vts`; `vtk_fortran_write_vtkhdf_poly.f90`: PolyData, the four
 blocks, three pieces with different blocks (one without cells),
 I8P, each also written as a `.vtp`; `vtk_fortran_write_vtkhdf_ranks.F90`: an UnstructuredGrid and a PolyData from MPI
-ranks (one rank empty, I4P and I8P ids by rank), compared with the same pieces written serially and as `.vtu`/`.vtp`,
-the refusals of `comm`; without MPI `comm` refused, its name without "mpi" since `scripts/run_tests.sh` runs those with
+ranks (one rank empty, I4P and I8P ids by rank), an ImageData, a RectilinearGrid and a StructuredGrid by regions (on 4
+ranks two along x, one across, one empty; otherwise rank 0 whole), compared with the same files written serially and
+as `.vtu`/`.vtp`/`.vti`/`.vtr`/`.vts`, the refusals of `comm` (grid regions outside, overlapping, not covering, two); without MPI `comm` refused, its name without "mpi" since `scripts/run_tests.sh` runs those with
 mpirun; without HDF5 the writer refuses to start); `vtk_fortran_read.F90` reads files back (every topology and format, and two files written by VTK, embedded in the test), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.

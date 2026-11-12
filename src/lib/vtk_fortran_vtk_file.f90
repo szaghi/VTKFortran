@@ -80,9 +80,12 @@ contains
    !<
    !< With `format='vtkhdf'` and `comm` (a Fortran MPI communicator: `MPI_Comm%MPI_VAL` of mpi_f08, or the integer handle of
    !< the `mpi` module) the ranks of `comm` write one file together (the library built with `VTKFORTRAN_USE_MPI` and a
-   !< parallel HDF5): an UnstructuredGrid or a PolyData, each rank one piece, a partition of the file. Every rank makes the
-   !< same calls, with the same arrays in the same order: the HDF5 calls are collective. Refused with `comm`: the grids,
-   !< time series, polyhedra, `compressor='zlib'`, the other formats, `action='read'` and `'append'`.
+   !< parallel HDF5): an UnstructuredGrid or a PolyData, each rank one piece, a partition of the file; or an ImageData,
+   !< RectilinearGrid or StructuredGrid of the whole extent given here, each rank one region of it (`write_piece` with
+   !< its sub-extent, its arrays and geometry of that region; the regions checked: inside the whole extent, not
+   !< overlapping, covering it; an empty one, an upper bound before its lower one, writes nothing). Every rank makes the
+   !< same calls, with the same arrays in the same order: the HDF5 calls are collective. Refused with `comm`: time series,
+   !< polyhedra, `compressor='zlib'`, the other formats, `action='read'` and `'append'`.
    !<
    !<```fortran
    !< error = vtk%initialize(format='vtkhdf', filename='mesh.vtkhdf', mesh_topology='UnstructuredGrid', &

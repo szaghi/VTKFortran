@@ -1,0 +1,7 @@
+$ mpirun -np 4 vtkhdf_mpi_grid
+grid.vtkhdf: PointData/wave, Fortran shape 9 5
+CellData/rank, the 8x4 cells (the row y=0 last):
+   2 2 2 2 3 3 3 3
+   2 2 2 2 3 3 3 3
+   0 0 0 0 1 1 1 1
+   0 0 0 0 1 1 1 1
