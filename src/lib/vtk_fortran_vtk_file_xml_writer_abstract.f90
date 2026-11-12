@@ -349,11 +349,18 @@ contains
 
    buffer = ''
    if (self%topology == 'HyperTreeGrid') then ! its element is written by write_piece (set_interface may come before)
-      self%htg_dims = [nx2 - nx1 + 1, ny2 - ny1 + 1, nz2 - nz1 + 1]
+      self%htg_dims = 1_I4P
       self%is_htg_open = .false. ; self%is_htg_trees = .false. ; self%htg_has_mask = .false.
       self%htg_normals = '' ; self%htg_intercepts = ''
       self%htg_ids = [integer(I8P) ::] ; self%htg_depths = [integer(I8P) ::] ; self%htg_counts = [integer(I8P) ::]
       self%htg_bits = [logical ::] ; self%htg_mask = [logical ::]
+      if (.not.(present(nx1) .and. present(nx2) .and. present(ny1) .and. present(ny2) .and. present(nz1) .and. &
+                present(nz2))) then
+         write(stderr, '(A)') 'error: VTKFortran XML writer: a HyperTreeGrid needs the extent of its root grid'
+         self%error = 1_I4P
+         return
+      endif
+      self%htg_dims = [nx2 - nx1 + 1, ny2 - ny1 + 1, nz2 - nz1 + 1]
       return
    endif
    select case(self%topology%chars())
@@ -582,6 +589,7 @@ contains
                               trim(str(n=sum(self%htg_counts), no_sign=.true.))//' cells'
          self%error = 1_I4P
          is_ok = .false.
+         if (allocated(self%component_names)) deallocate(self%component_names) ! one-shot: not for the next array
       endif
       return
    endif
@@ -594,6 +602,7 @@ contains
                            trim(str(n=self%table_rows, no_sign=.true.))
       self%error = 1_I4P
       is_ok = .false.
+      if (allocated(self%component_names)) deallocate(self%component_names) ! one-shot: not for the next array
       return
    endif
    self%table_rows = rows

@@ -692,6 +692,11 @@ contains
       case('WRITE')
          if (present(filenames)) error = self%xml_writer%write_parallel_block_files(filenames=filenames, names=names)
       case('PIECES')
+         error = 1
+         if (.not.present(filenames)) then
+            write(stderr, '(A)') 'error: VTKFortran vtm_file: a block of pieces (action=pieces) needs its files'
+            return
+         endif
          error = self%xml_writer%write_parallel_open_block(name=name, pieces=.true.)
          error = self%xml_writer%write_parallel_block_files(filenames=filenames, names=names)
          error = self%xml_writer%write_parallel_close_block()
@@ -1023,6 +1028,7 @@ contains
    file = trim(adjustl(filename))
    label = file(index(file, '/', back=.true.)+1:)
    if (index(label, '.', back=.true.) > 1) label = label(1:index(label, '.', back=.true.)-1)
+   if (len(label) == 0) label = 'dataset_'//trim(str(n=count_nul(self%xml_names), no_sign=.true.)) ! an empty dataset
    if (present(name)) then
       if (len_trim(name) > 0) label = trim(adjustl(name))
    endif
@@ -1067,9 +1073,13 @@ contains
    character(len=:), allocatable  :: code      !< Its base64.
    character(len=:), allocatable  :: file      !< A file.
    integer(I4P)                   :: d, n, f1, f2, n1, n2 !< Counter, datasets, positions.
+   logical                        :: is_open   !< A block was left open.
 
-   error = 1
-   if (len(self%xml_open) > 0) return ! a block left open
+   ! a block left open (by a refused dataset): closed here, the file written, the error kept
+   is_open = len(self%xml_open) > 0
+   do while (len(self%xml_open) > 0)
+      if (self%xml_part_close_block() /= 0) exit
+   enddo
    n = count_nul(self%xml_names)
    f1 = 1 ; n1 = 1
    do d=0, n - 1
@@ -1102,6 +1112,7 @@ contains
       call self%xml_writer%write_tag(name='DataAssembly', attributes='encoding="base64"', content=code)
    endif
    error = self%xml_writer%error
+   if (is_open) error = 1
    endfunction xml_part_finalize
 
    function xml_part_entries(self, root, file_type) result(error)
@@ -1273,7 +1284,7 @@ contains
 
    pure function is_xml_name(name) result(is_name)
    !< True if `name` is an XML element name (ASCII: a letter or `_`, then letters, digits, `_`, `-`, `.`), as the nodes of a
-   !< vtkDataAssembly are; `xml` is reserved.
+   !< vtkDataAssembly are; `xml` is reserved, and `dataset` (the dataset nodes of the assembly).
    character(*), intent(in) :: name    !< Name.
    logical                  :: is_name !< Inquire result.
    character(*), parameter  :: FIRST = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_' !< First characters.
@@ -1283,6 +1294,7 @@ contains
    if (index(FIRST, name(1:1)) == 0) return
    if (verify(name, FIRST//'0123456789-.') /= 0) return
    is_name = name(1:min(3, len(name))) /= 'xml' .and. name(1:min(3, len(name))) /= 'XML'
+   if (is_name) is_name = name /= 'dataset' ! the name vtkDataAssembly reserves for its dataset nodes
    endfunction is_xml_name
 
    pure function strip(text) result(stripped)

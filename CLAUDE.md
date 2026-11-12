@@ -103,7 +103,8 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
 - XML partitioned composites (in `vtm_file`, #90): `composite='PartitionedDataSetCollection'` without vtkhdf writes a
   `.vtpc` (`xml_part_*`: datasets and assembly kept NUL-separated until `finalize`, `<Partitions index name>` of one
   `DataSet`, `<DataAssembly encoding="base64">` of the vtkDataAssembly XML, node names XML element names, ids from 1
-  in order, `references`, empty datasets); `composite='PartitionedDataSet'` a `.vtpd` (DataSets, no blocks; refused
+  in order, `references`, empty datasets named `dataset_<n>`, the node name `dataset` refused (reserved); a refused
+  dataset's open node closed by `xml_part_finalize`, which writes all and returns 1); `composite='PartitionedDataSet'` a `.vtpd` (DataSets, no blocks; refused
   with vtkhdf); read back by `xml_part_entries` (FoXy `xml_file%parse` of the decoded assembly, depth first without
   recursion; several DataSets = `piece` entries, `entry_is_piece`)
 - `vtk_fortran_pvd_file` — `pvd_file` type: time series collections (`.pvd`), valid after each `write_dataset` (`file`,

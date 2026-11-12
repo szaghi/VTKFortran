@@ -80,6 +80,11 @@ test_passed(7) = error == 0 .and. has_line('vtkfortran_write_pvd.vtu.series', '"
                           '" name.vtu", "time" : 1.0000000000000000E+000 }') ! (no backslash literal: nvfortran escapes it)
 test_passed(7) = test_passed(7) .and. series_read('vtkfortran_write_pvd.vtu.series', [times, 1._R8P], &
                                                   [character(32) :: step_name, 'a "quoted" name.vtu'])
+! a name with a tab (written \u0009, read back), the file read twice by the same object
+error = pvd%initialize(filename='vtkfortran_write_pvd_tab.series')
+error = error + pvd%write_dataset(filename='a'//achar(9)//'b.vtu', timestep=2._R8P)
+error = error + pvd%finalize()
+test_passed(7) = test_passed(7) .and. error == 0 .and. series_twice('vtkfortran_write_pvd_tab.series', 'a'//achar(9)//'b.vtu')
 error = pvd%initialize(filename='vtkfortran_write_pvd_paraview.vtu.series') ! the three steps, read by ParaView outside
 do s=1, 3
   error = error + pvd%write_dataset(filename=trim(step_name(s)), timestep=times(s))
@@ -165,6 +170,27 @@ contains
   close(v)
   is_valid = n_close == 1 .and. trim(adjustl(last(1))) == '</Collection>' .and. trim(adjustl(last(2))) == '</VTKFile>'
   endfunction is_closed
+
+  function series_twice(filename, expected) result(is_passed)
+  !< Read a `.series` of one entry twice with the same object: its file both times.
+  character(*), intent(in)      :: filename !< File name.
+  character(*), intent(in)      :: expected !< File of the entry.
+  logical                       :: is_passed !< Check result.
+  type(pvd_file)                :: reader   !< The file read.
+  character(len=:), allocatable :: file(:)  !< Files read.
+  integer(I4P)                  :: k, e     !< Counter, error.
+
+  is_passed = .true.
+  do k=1, 2
+    e = reader%initialize(filename=filename, action='read')
+    if (e == 0) e = reader%get_datasets(file=file)
+    is_passed = is_passed .and. e == 0
+    if (is_passed) is_passed = size(file) == 1
+    if (is_passed) is_passed = file(1) == expected
+  enddo
+  e = reader%finalize()
+  if (.not.is_passed) print '(A)', 'failed: reading twice '//filename
+  endfunction series_twice
 
   function series_read(filename, times_expected, files_expected) result(is_passed)
   !< Read a `.series` file back: the times and files of its entries.

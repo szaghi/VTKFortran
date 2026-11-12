@@ -10,14 +10,15 @@ program vtk_fortran_read_composite
 !< and read back, and the two written by VTK 9.7.2 (embedded) read. A parallel Table (`.pvtt`) over two `.vtt` pieces
 !< (a numeric and a string column) and a `.vtm` with a block of pieces (`action='pieces'`), read back. An OverlappingAMR
 !< (`.vthb`: three ImageData boxes on two levels, `write_level`) written and read back, its refusals, and the `.vthb` of
-!< VTK 9.7.2 (embedded) read.
+!< VTK 9.7.2 (embedded) read. A `.vtpc` with a refused dataset still written (finalize reports it), the block name
+!< `dataset` refused, two unnamed empty datasets; a block of pieces without files refused.
 use penf
 use vtk_fortran, only : pvd_file, pvtk_file, vtk_file, vtm_file
 
 implicit none
 character(*), parameter :: pieces(2)=['vtkfortran_read_composite_01.vtu', 'vtkfortran_read_composite_02.vtu'] !< Pieces.
 type(pvtk_file)         :: a_pvtk_file    !< A parallel VTK file.
-logical                 :: test_passed(9) !< List of passed tests.
+logical                 :: test_passed(10) !< List of passed tests.
 integer(I4P)            :: p              !< Counter.
 
 do p=1, size(pieces)
@@ -32,6 +33,7 @@ test_passed(6) = check_parray()
 test_passed(7) = check_partitioned()
 test_passed(8) = check_ptable_pieces()
 test_passed(9) = check_amr()
+test_passed(10) = check_part_refusals()
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 if (.not.all(test_passed)) error stop 'some tests failed'
@@ -489,6 +491,36 @@ contains
                              file(2) == pieces(1) .and. file(3) == pieces(2) .and. file(7) == pieces(2)
   if (.not.is_passed) print '(A,10(1X,I0))', 'failed: vtkfortran_read_composite-pieces.vtm', e
   endfunction check_ptable_pieces
+  function check_part_refusals() result(is_passed)
+  !< A refused dataset in a `.vtpc` (a name used twice) leaves its block open: finalize closes it, writes every dataset
+  !< and reports the error; the block name `dataset` (reserved by vtkDataAssembly) is refused; two empty datasets without
+  !< names get names of their own; a block of pieces without files is refused.
+  logical                       :: is_passed !< Check result.
+  type(vtm_file)                :: vtm       !< The composite.
+  character(len=:), allocatable :: kind(:), file(:) !< Entries read.
+  integer(I4P),     allocatable :: level(:)  !< Entries read.
+  integer(I4P)                  :: e(8)      !< Errors.
+
+  e = 0
+  e(1) = vtm%initialize(filename='vtkfortran_read_composite_refused.vtpc', composite='PartitionedDataSetCollection')
+  e(1) = e(1) + vtm%write_block(filenames=[pieces(1)], names=['a'], name='x')
+  e(2) = merge(0, 1, vtm%write_block(filenames=pieces, names=['b', 'a'], name='y') /= 0)  ! a twice: refused
+  e(3) = vtm%write_block(filenames=[pieces(2)], names=['c'], name='z')
+  e(4) = merge(0, 1, vtm%write_block(filenames=[pieces(2)], names=['d'], name='dataset') /= 0) ! a reserved name
+  e(5) = vtm%write_block(filenames=[character(1) :: ' ', ' '], name='e')                  ! two unnamed empty datasets
+  e(6) = merge(0, 1, vtm%finalize() /= 0)                                                  ! the open blocks reported
+  e(7) = vtm%initialize(filename='vtkfortran_read_composite_refused.vtpc', action='read')
+  e(7) = e(7) + vtm%get_entries(level=level, kind=kind, file=file)
+  e(7) = e(7) + vtm%finalize()
+  if (e(7) == 0) e(7) = merge(0, 1, count(kind == 'dataset') == 5 .and. count(file == pieces(1)) == 2 .and. &
+                                    count(file == pieces(2)) == 1)
+  e(8) = vtm%initialize(filename='vtkfortran_read_composite_refused.vtm')
+  e(8) = e(8) + merge(0, 1, vtm%write_block(action='pieces', name='p') /= 0)                ! no files
+  if (vtm%finalize() /= 0) continue
+  is_passed = all(e == 0)
+  if (.not.is_passed) print '(A,8(1X,I0))', 'failed: the refusals of a .vtpc, pieces without files', e
+  endfunction check_part_refusals
+
   function check_amr() result(is_passed)
   !< An OverlappingAMR (`.vthb`): a 2D level 0 of one box (4x4 cells, spacing 1) and a level 1 of two (spacing 0.5), each
   !< box an ImageData file with the origin of the AMR and its extent in the indices of its level; read back (the levels as

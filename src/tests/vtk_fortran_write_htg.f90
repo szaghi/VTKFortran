@@ -106,6 +106,9 @@ contains
   e(10) = e(10) + r%xml_reader%read_dataarray(location='cell', data_name='depth', x=depth)
   e(11) = r%xml_reader%read_dataarray(location='cell', data_name='Normals', x=nv)
   e(12) = r%xml_reader%get_dataarray_names(location='cell', names=names)
+  e(12) = e(12) + abs(r%xml_reader%get_dataarray_info(location='cell', data_name='cd', n_tuples=nc))
+  if (e(12) == 0) e(12) = merge(0, 1, nc == 15_I8P)
+  e(12) = e(12) + abs(r%xml_reader%read_piece(nc=nc)) ! (nc is read again below)
   read_htg = all(e == 0)
   if (read_htg) read_htg = topology == 'HyperTreeGrid' .and. np_ == 1 .and. all(ext == [0, 2, 0, 2, 0, 0]) .and. &
                            np == 9_I8P .and. nc == 15_I8P .and. all(x == [0._R8P, 1._R8P, 2._R8P]) .and. size(z) == 1 .and. &
@@ -174,7 +177,7 @@ contains
   !< The refusals of an XML HyperTreeGrid, each one a call returning an error.
   logical, parameter :: t=.true.
   type(vtk_file)     :: w     !< Writer.
-  logical            :: c(14) !< Each refusal.
+  logical            :: c(15) !< Each refusal.
 
   c = .false.
   c(1) = w%initialize(format='ascii', filename='vtkfortran_write_htg_refused.htg', mesh_topology='HyperTreeGrid', &
@@ -205,8 +208,10 @@ contains
     c(14) = c(14) .and. w%xml_writer%write_tree(tree_id=0, descriptor=[t]) /= 0                 ! not a HyperTreeGrid
     if (w%finalize() /= 0) continue
   endif
+  c(15) = w%initialize(format='ascii', filename='vtkfortran_write_htg_refused.htg', mesh_topology='HyperTreeGrid') /= 0
+  if (w%finalize() /= 0) continue                                                               ! no root grid
   refusals = all(c)
-  if (.not.refusals) print '(A,14L2)', 'refusals:', c
+  if (.not.refusals) print '(A,15L2)', 'refusals:', c
   endfunction refusals
 
   logical function has_text(filename, lines)

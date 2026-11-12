@@ -15,7 +15,8 @@ program vtk_fortran_read
 !< of a `.vtt` Table (a column of other rows refused, the next column unaffected), read back; component names
 !< (`set_component_names`, the next array only) and field data of several components in every format, read back. Four
 !< BigEndian files written by VTK 9.7.2 (inline binary with UInt32 headers, appended raw with UInt64 headers; with zlib,
-!< appended base64 and appended raw), embedded below: every array, the points and the cells.
+!< appended base64 and appended raw), embedded below: every array, the points and the cells. A binary Bit array of an
+!< ImageData (its tuples from the extent, not 8 per byte) and component names not carried over a refused Table column.
 use penf
 use, intrinsic :: ieee_arithmetic, only : ieee_is_nan, ieee_is_finite, ieee_value, ieee_quiet_nan, &
                                           ieee_positive_inf, ieee_negative_inf
@@ -30,7 +31,7 @@ real(R8P),    parameter :: p(4)=[1.5_R8P, -2.25_R8P, 1.e-300_R8P, 4._R8P/3._R8P]
 real(R4P),    parameter :: v(3,4)=reshape([1,2,3, 4,5,6, 7,8,9, 10,11,12], [3,4]) * 0.1_R4P !< Point vectors.
 type(vtk_file)          :: a_vtk_file      !< A VTK file.
 integer(I4P)            :: f               !< Counter.
-logical                 :: test_passed(18) !< List of passed tests.
+logical                 :: test_passed(19) !< List of passed tests.
 
 test_passed = .true.
 do f=1, size(formats)
@@ -59,6 +60,7 @@ test_passed(15) = check_vtk_bits()
 test_passed(16) = check_string_arrays()
 test_passed(17) = check_components()
 test_passed(18) = check_big_endian()
+test_passed(19) = check_review_fixes()
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 if (.not.all(test_passed)) error stop 'some tests failed'
@@ -1044,6 +1046,46 @@ contains
 
   is_it = (.not.ieee_is_finite(v)) .and. (.not.ieee_is_nan(v)) .and. ((v > 0._R8P) .eqv. (sign > 0))
   endfunction is_inf
+  logical function check_review_fixes()
+  !< A binary `type="Bit"` point array of an ImageData without NumberOfTuples: its tuples are the points of the extent (5),
+  !< not the 8 bits of its byte; component names set before a refused Table column are not given to the next column.
+  type(vtk_file)                :: w, r     !< Writer, reader.
+  integer(I1P), allocatable     :: bits(:)  !< Bit array read.
+  character(len=:), allocatable :: names(:) !< Component names read.
+  integer(I8P)                  :: n        !< Tuples read.
+  integer(I4P)                  :: u, e(4)  !< Unit, errors.
+
+  open(newunit=u, file='vtkfortran_read_bit_image.vti', status='replace', action='write')
+  write(u, '(A)') '<?xml version="1.0"?>', &
+    '<VTKFile type="ImageData" version="1.0" byte_order="LittleEndian" header_type="UInt32">', &
+    '  <ImageData WholeExtent="0 4 0 0 0 0" Origin="0 0 0" Spacing="1 1 1">', &
+    '    <Piece Extent="0 4 0 0 0 0">', '      <PointData>', &
+    '        <DataArray type="Bit" Name="b" format="binary">AQAAAKg=</DataArray>', &
+    '      </PointData>', '      <CellData>', '      </CellData>', '    </Piece>', '  </ImageData>', '</VTKFile>'
+  close(u)
+  e = 0
+  e(1) = r%initialize(filename='vtkfortran_read_bit_image.vti', action='read')
+  e(1) = e(1) + abs(r%xml_reader%read_dataarray(location='node', data_name='b', x=bits))
+  e(1) = e(1) + abs(r%xml_reader%get_dataarray_info(location='node', data_name='b', n_tuples=n))
+  if (e(1) == 0) e(1) = merge(0, 1, size(bits) == 5 .and. n == 5_I8P)
+  if (e(1) == 0) e(1) = merge(0, 1, all(bits == [1_I1P, 0_I1P, 1_I1P, 0_I1P, 1_I1P]))
+  e(2) = r%finalize()
+  e(3) = w%initialize(format='ascii', filename='vtkfortran_read_names_refused.vtt', mesh_topology='Table')
+  e(3) = e(3) + abs(w%xml_writer%write_dataarray(location='row', action='open'))
+  e(3) = e(3) + abs(w%xml_writer%write_dataarray(data_name='a', x=[1._R8P, 2._R8P, 3._R8P]))
+  e(3) = e(3) + abs(w%xml_writer%set_component_names(['u', 'v']))
+  e(3) = e(3) + merge(0, 1, w%xml_writer%write_dataarray(data_name='r', x=[1._R8P, 2._R8P]) /= 0) ! 2 rows: refused
+  e(3) = e(3) + abs(w%xml_writer%write_dataarray(data_name='c', x=[4._R8P, 5._R8P, 6._R8P]))
+  e(3) = e(3) + abs(w%xml_writer%write_dataarray(location='row', action='close'))
+  if (w%finalize() /= 0) continue ! the refusal is reported again
+  e(4) = r%initialize(filename='vtkfortran_read_names_refused.vtt', action='read')
+  e(4) = e(4) + abs(r%xml_reader%get_dataarray_info(location='row', data_name='c', component_names=names))
+  if (e(4) == 0) e(4) = merge(0, 1, size(names) == 1 .and. len(names) == 0)
+  if (r%finalize() /= 0) continue
+  check_review_fixes = all(e == 0)
+  if (.not.check_review_fixes) print '(A,4(1X,I0))', 'failed: review fixes (bits of an image, component names)', e
+  endfunction check_review_fixes
+
   logical function check_big_endian()
   !< BigEndian files written by VTK 9.7.2 (vtkXMLUnstructuredGridWriter, SetByteOrderToBigEndian): a tetrahedron with
   !< Float64, Int32 and 3-component UInt16 point data and Float32 cell data; inline binary (UInt32 headers), appended raw

@@ -179,7 +179,9 @@ each with a block referencing two datasets already copied, and a multi-block fil
 **XML partitioned composites.** Without `format='vtkhdf'`, `composite='PartitionedDataSetCollection'` writes VTK's
 XML collection, a `.vtpc`, with the same calls: each dataset (one file) a `<Partitions name=...>` written once, the
 blocks the nodes of its `vtkDataAssembly` (stored base64 in `<DataAssembly>`, as VTK writes it; a block name must be an
-XML element name), `references` placing a dataset in other blocks, an empty file name an empty dataset.
+XML element name, not `dataset`, which vtkDataAssembly reserves), `references` placing a dataset in other blocks, an
+empty file name an empty dataset (named `dataset_<n>` without `names`). A refused dataset leaves its block open, as in
+a `.vtm`: `finalize` closes it, writes every dataset and returns the error.
 `composite='PartitionedDataSet'` writes a `.vtpd`, a flat list of partitions: `write_block(filenames=[...],
 action='write')`, no blocks (refused, as `format='vtkhdf'`: a `.vtkhdf` has partitions of its own). VTK 9.7.2 and
 ParaView read both; `vtm_file` reads them back (`get_entries`).

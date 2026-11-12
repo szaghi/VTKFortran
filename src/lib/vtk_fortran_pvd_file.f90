@@ -80,7 +80,7 @@ contains
    integer(I4P)                          :: iostat    !< IO status of the scan.
    character(len=:), allocatable         :: value     !< Attribute value.
 
-   if (self%unit /= 0_I4P) error = self%finalize()
+   error = self%finalize() ! the file of a former initialize, open or read (a .series read keeps no unit)
    call self%xml%free
    self%is_reading = .false.
    self%n_entries = 0_I4P
@@ -212,8 +212,8 @@ contains
    !<```
    !< @note `filename` is written as given: a relative path is relative to the directory of the `.pvd` file. `filename`,
    !< `group` and `name` are escaped as XML attribute values (`&`, `<`, `>`, `"`, `'`). In a `.series` file the entry is
-   !< `{ "name" : filename, "time" : timestep }` (a JSON string: `"` and `\` escaped); `part`, `group` and `name` are
-   !< refused (error 1).
+   !< `{ "name" : filename, "time" : timestep }` (a JSON string: `"` and `\` escaped, control characters as `\u00XX`, read
+   !< back); `part`, `group` and `name` are refused (error 1).
    class(pvd_file), intent(inout)        :: self     !< PVD file.
    character(*),    intent(in)           :: filename !< File name of the dataset.
    real(R8P),       intent(in)           :: timestep !< Time step (time value) of the dataset.
@@ -515,6 +515,8 @@ contains
       logical function json_string(string)
       !< A JSON string at c (escapes \" \\ \/ \n \t \r \b \f decoded): its value, c past the closing quote.
       character(len=:), allocatable, intent(out) :: string !< The string.
+      integer(I4P)                               :: code   !< A code point.
+      character(1)                               :: ch     !< Its character.
 
       string = ''
       json_string = .false.
@@ -527,6 +529,16 @@ contains
          elseif (buffer(c:c) == achar(92) .and. c < len(buffer)) then
             c = c + 1
             select case(buffer(c:c))
+            case('u') ! \uXXXX: a code point of one byte (as json_escape writes), others kept as written
+               code = -1
+               if (c + 4 <= len(buffer)) read(buffer(c+1:c+4), '(Z4)', iostat=iostat) code
+               if (code >= 0 .and. code < 256 .and. iostat == 0) then
+                  ch = achar(code) ! via a character(1): nvfortran 26.9 sizes string//achar(code) wrongly
+                  string = string//ch
+                  c = c + 4
+               else
+                  string = string//achar(92)//'u'
+               endif
             case('n')
                string = string//achar(10)
             case('t')

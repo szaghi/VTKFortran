@@ -108,6 +108,7 @@ type :: xml_reader
     procedure, pass(self), private :: geometry_dataarrays     !< Return the indexes of the geometry dataarray elements.
     procedure, pass(self), private :: piece_element           !< Return the index of a piece element.
     procedure, pass(self), private :: htg_extent              !< The extent of the root grid of a .htg.
+    procedure, pass(self), private :: location_tuples         !< The tuples of a location element of a piece.
     procedure, pass(self), private :: htg_layout              !< The trees of a .htg.
     procedure, pass(self), private :: htg_tree_id             !< Tree ids of a .htg, x fastest.
     procedure, pass(self), private :: read_connectivity_I4P   !< Read the cells (I4P).
@@ -511,6 +512,7 @@ contains
   integer(I4P)                                         :: iostat       !< IO status.
 
   if (self%is_hdf) then
+    nc = 0
     error = self%hdf%get_dataarray_info(location=location, data_name=data_name, piece=piece, data_type=data_type, &
                                         n_components=nc, n_tuples=n_tuples)
     if (present(n_components)) n_components = nc
@@ -540,14 +542,8 @@ contains
   if (present(n_tuples)) then
     n_tuples = -1_I8P
     call self%xml%get_attribute(id=id, name='NumberOfTuples', value=n_tuples, iostat=iostat)
-    if (iostat == XML_NOT_FOUND .and. self%xml%name(section) == 'RowData') then ! a column of a Table: its rows
-      call self%xml%get_attribute(id=self%xml%parent(section), name='NumberOfRows', value=n_tuples, iostat=iostat)
-      if (iostat /= 0) error = 6
-    elseif (iostat == XML_NOT_FOUND .and. self%xml%name(section) /= 'FieldData' .and. .not.self%is_parallel) then
-      p = self%xml%parent(section)
-      call piece_counts(xml=self%xml, id=p, mesh_topology=self%mesh_topology, counts=counts, extent=extent, &
-                        error=error)
-      n_tuples = merge(counts(1), counts(2), self%xml%name(section) == 'PointData')
+    if (iostat == XML_NOT_FOUND .and. self%xml%name(section) /= 'FieldData' .and. .not.self%is_parallel) then
+      error = self%location_tuples(section, n_tuples) ! the points, cells or rows of the piece
     endif
   endif
   endfunction get_dataarray_info
@@ -1133,17 +1129,9 @@ contains
       if (iostat == 0) then
         n_values = n_tuples * n_components
       else ! the tuples of the location: the points or cells of the piece, the rows of a Table
-        p = self%xml%parent(self%xml%parent(id))
-        select case(self%xml%name(self%xml%parent(id)))
-        case('PointData')
-          call self%xml%get_attribute(id=p, name='NumberOfPoints', value=n_tuples, iostat=iostat)
-        case('CellData')
-          call self%xml%get_attribute(id=p, name='NumberOfCells', value=n_tuples, iostat=iostat)
-        case('RowData')
-          call self%xml%get_attribute(id=p, name='NumberOfRows', value=n_tuples, iostat=iostat)
-        case default
-          iostat = 1
-        endselect
+        iostat = 1
+        if (.not.self%is_parallel .and. self%xml%name(self%xml%parent(id)) /= 'FieldData') &
+          iostat = self%location_tuples(self%xml%parent(id), n_tuples)
         if (iostat == 0) n_values = n_tuples * n_components
       endif
       if (n_values < 0_I8P .or. n_values > 8_I8P * size(bytes, kind=I8P)) return
@@ -2116,4 +2104,39 @@ contains
   n = max(int(dims - 1, I8P), 1_I8P)
   ids = file_ids / (n(3) * n(2)) + n(1) * (mod(file_ids / n(3), n(2)) + n(2) * mod(file_ids, n(3)))
   endfunction htg_tree_id
+  function location_tuples(self, section, n_tuples) result(error)
+  !< The tuples of a location element of a piece (PointData, CellData, RowData): the points or cells of the piece (from
+  !< its counts or extent; the root grid and the trees of a HyperTreeGrid), the rows of a Table. Error 6 if unknown.
+  class(xml_reader), intent(in)  :: self     !< XML reader.
+  integer(I4P),      intent(in)  :: section  !< Index of the location element.
+  integer(I8P),      intent(out) :: n_tuples !< Tuples.
+  integer(I4P)                   :: error    !< Error status.
+  integer(I8P)                   :: counts(6) !< Points, cells, verts, lines, strips, polys.
+  integer(I4P)                   :: extent(6) !< Extent.
+  integer(I8P), allocatable      :: ids(:), depths(:), cells(:) !< Trees of a HyperTreeGrid.
+  integer(I4P)                   :: iostat   !< IO status.
+
+  n_tuples = -1_I8P
+  error = 6
+  select case(self%xml%name(section))
+  case('RowData')
+    call self%xml%get_attribute(id=self%xml%parent(section), name='NumberOfRows', value=n_tuples, iostat=iostat)
+    if (iostat == 0) error = 0
+  case('PointData', 'CellData')
+    if (self%mesh_topology == 'HyperTreeGrid') then
+      extent = 0
+      error = self%htg_extent(extent)
+      if (self%xml%name(section) == 'PointData') then
+        n_tuples = product(int(extent(2::2) - extent(1::2), I8P) + 1_I8P)
+      elseif (error == 0) then
+        error = self%htg_layout(ids, depths, cells)
+        if (error == 0) n_tuples = sum(cells)
+      endif
+    else
+      call piece_counts(xml=self%xml, id=self%xml%parent(section), mesh_topology=self%mesh_topology, counts=counts, &
+                        extent=extent, error=error)
+      n_tuples = merge(counts(1), counts(2), self%xml%name(section) == 'PointData')
+    endif
+  endselect
+  endfunction location_tuples
 endmodule vtk_fortran_vtk_file_xml_reader
