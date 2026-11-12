@@ -2,17 +2,18 @@
 program vtk_fortran_write_vtkhdf_htg
 !< VTK_Fortran test: VTKHDF HyperTreeGrid (`mesh_topology='HyperTreeGrid'`), checked with the HDF5 bindings.
 !<
-!< With HDF5 the test writes a HyperTreeGrid of a 2x2 root grid, branch factor 2: tree 0 of depth 3 (its root and its first
-!< child refined), tree 1 of depth 2, tree 3 a masked leaf (tree 2 not written), cell data (R8P, I4P); and one of a single
-!< tree of branch factor 3 and depth 3; and a time series of 2 steps (the trees of the probe, then others, a mask in
-!< each step). It reads them back with the HDF5 bindings: the attributes, every dataset, the descriptors and the mask
-!< unpacked (bits MSB first) and compared with the bits written, the `Steps` entries of the series. VTK readers compare them with
-!< the same trees built in VTK outside this test. Then the refusals: a descriptor ending inside a depth or giving the
-!< deepest depth, a mask of the wrong size or masking a refined cell, a tree out of the root grid or written twice, point
-!< data, field data, a tree after the cell data, cell data of the wrong size, a piece without trees or coordinates, a
-!< branch factor of 4, a step without its piece, `write_tree` in another topology, the series continued
-!< (`action='append'`). The reader refuses a HyperTreeGrid (error 3).
-!< Without HDF5 the writer refuses a HyperTreeGrid; the XML formats refuse it always.
+!< With HDF5 the test writes a HyperTreeGrid of a 2x2 root grid, branch factor 2: tree 0 of depth 3 (its root and its
+!< first child refined), tree 1 of depth 2, tree 3 a masked leaf (tree 2 not written), cell data (R8P, I4P); and one of
+!< a single tree of branch factor 3 and depth 3; and a time series of 2 steps (the trees of the probe, then others, a
+!< mask in each step). It reads them back with the HDF5 bindings: the attributes, every dataset, the descriptors and the
+!< mask unpacked (bits MSB first) and compared with the bits written, the `Steps` entries of the series. VTK readers
+!< compare them with the same trees built in VTK outside this test. Then the refusals: a descriptor ending inside a
+!< depth or giving the deepest depth, a mask of the wrong size or masking a refined cell, a tree out of the root grid or
+!< written twice, point data, field data, a tree after the cell data, cell data of the wrong size, a piece without trees
+!< or coordinates, a branch factor of 4, a step without its piece, `write_tree` in another topology, the series
+!< continued (`action='append'`), the piece left open at finalize; a refused cell data open not blocking the trees. The
+!< reader refuses a HyperTreeGrid (error 3). Without HDF5 the writer refuses a HyperTreeGrid; the XML formats refuse it
+!< always.
 use penf
 use vtk_fortran, only : vtk_file
 use vtk_fortran_hdf5
@@ -242,7 +243,7 @@ contains
   !< What a HyperTreeGrid refuses (each a non-zero error). One call per statement: the order of the calls of an
   !< expression is the processor's.
   logical, parameter :: t=.true., f=.false.
-  logical            :: r(16)
+  logical            :: r(18)
 
   r = .false.
   e = w%initialize(format='vtkhdf', filename='htg_refused.vtkhdf', mesh_topology='HyperTreeGrid', &
@@ -303,7 +304,25 @@ contains
   e = w%xml_writer%write_tree(tree_id=0, descriptor=[t])
   r(16) = e /= 0                                                             ! outside the piece
   e = w%finalize()
+  ! the piece left open: finalize refuses (its trees are not written)
+  e = w%initialize(format='vtkhdf', filename='htg_refused.vtkhdf', mesh_topology='HyperTreeGrid', &
+                   nx1=0, nx2=2, ny1=0, ny2=2, nz1=0, nz2=0)
+  e = w%xml_writer%write_piece(nx1=0, nx2=2, ny1=0, ny2=2, nz1=0, nz2=0)
+  e = w%xml_writer%write_geo(x=[0._R8P, 1._R8P, 2._R8P], y=[0._R8P, 1._R8P, 2._R8P], z=[0._R8P])
+  e = w%xml_writer%write_tree(tree_id=0, descriptor=[t])
+  e = w%finalize()
+  r(17) = e /= 0                                                             ! the piece left open
+  ! cell data refused before the piece: the trees still written after it
+  e = w%initialize(format='vtkhdf', filename='htg_refused.vtkhdf', mesh_topology='HyperTreeGrid', &
+                   nx1=0, nx2=2, ny1=0, ny2=2, nz1=0, nz2=0)
+  e = w%xml_writer%write_dataarray(location='cell', action='open')
+  e = w%xml_writer%write_piece(nx1=0, nx2=2, ny1=0, ny2=2, nz1=0, nz2=0)
+  e = w%xml_writer%write_geo(x=[0._R8P, 1._R8P, 2._R8P], y=[0._R8P, 1._R8P, 2._R8P], z=[0._R8P])
+  e = w%xml_writer%write_tree(tree_id=0, descriptor=[t])
+  r(18) = e == 0                                                             ! not blocked by the refused open
+  e = w%xml_writer%write_piece()
+  e = w%finalize()
   refusals = all(r)
-  if (.not.refusals) print '(A,16L2)', 'HyperTreeGrid refusals: ', r
+  if (.not.refusals) print '(A,18L2)', 'HyperTreeGrid refusals: ', r
   endfunction refusals
 endprogram vtk_fortran_write_vtkhdf_htg

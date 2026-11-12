@@ -321,6 +321,7 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
     procedure, pass(self), private :: end_reusing   !< Check the arrays of a step without pieces, write its entries.
     procedure, pass(self), private :: end_table     !< End the columns of a Table (static, or a step).
     procedure, pass(self), private :: end_box       !< End a box of an OverlappingAMR: check its arrays.
+    procedure, pass(self), private :: is_table_complete !< A Table has the NumberOfRows entry of every step.
     procedure, pass(self), private :: end_trees     !< End the piece of a HyperTreeGrid: write its trees.
     procedure, pass(self), private :: is_recorded   !< A data array name is recorded (point or cell data).
     procedure, pass(self), private :: open_level    !< Open (or create) a level of an OverlappingAMR.
@@ -478,8 +479,9 @@ contains
   function finalize(self) result(error)
   !< Finalize the writer: write the version (the lowest one with the features used) and close the file.
   !<
-  !< A group or a piece left open is closed. The last step of a time series can be a step without pieces (it reuses the
-  !< mesh of the step before), not the first one.
+  !< A group left open is closed (the columns of a Table ended). A piece left open is refused for an OverlappingAMR and
+  !< a HyperTreeGrid, whose boxes and trees it writes. The last step of a time series can be a step without pieces (it
+  !< reuses the mesh of the step before), not the first one.
   class(vtkhdf_writer),       intent(inout) :: self  !< Writer.
   integer(I4P)                              :: error !< Error status.
 
@@ -487,12 +489,16 @@ contains
   if (self%file_id < 0_hid_kind) return
   error = 0_I4P
   if (self%topology == TOPOLOGY_TABLE) then ! the columns left open closed, ended; every step with its columns
-    if (self%group >= 0_hid_kind) then
+    if (self%group >= 0_hid_kind .and. self%group_name == 'RowData') then
       error = self%close_group()
       if (error == 0_I4P) error = self%end_table()
     elseif (self%step_pieces == 0_I8P) then
       error = refuse('the Table, or its last step, has no columns')
+    elseif (.not.self%is_table_complete()) then ! the close of its columns refused
+      error = refuse('the columns of the Table (of its last step) were refused: the file is not complete')
     endif
+  elseif (self%topology == TOPOLOGY_HTG .and. self%is_piece_open) then
+    error = refuse('the piece of the HyperTreeGrid is not closed (write_piece()): its trees are not written')
   elseif (self%topology == TOPOLOGY_HTG .and. self%is_temporal .and. self%step_pieces == 0_I8P) then
     error = refuse('the last step of the HyperTreeGrid has no piece')
   elseif (self%topology == TOPOLOGY_AMR) then ! every box closed; every step with boxes
@@ -742,7 +748,6 @@ contains
     error = refuse('write_dataarray: a HyperTreeGrid has cell data only')
     return
   endif
-  if (name == 'CellData' .and. self%topology == TOPOLOGY_HTG .and. action_ == 'OPEN') self%is_tree_data = .true.
   if ((name == 'RowData') .neqv. (self%topology == TOPOLOGY_TABLE)) then
     error = refuse('write_dataarray: the columns of a Table (location row) go in a Table, and only them')
     return
@@ -759,6 +764,7 @@ contains
       return
     endif
     error = self%open_group(name)
+    if (error == 0_I4P .and. name == 'CellData' .and. self%topology == TOPOLOGY_HTG) self%is_tree_data = .true.
     if (present(scalars)) self%active(1)%name = scalars
     if (present(vectors)) self%active(2)%name = vectors
     if (present(normals)) self%active(3)%name = normals
@@ -4368,6 +4374,7 @@ contains
   character(len=:), allocatable       :: name       !< Group name.
   real(R8P),    allocatable           :: spacings(:,:) !< Spacings, one more level.
   integer(I8P), allocatable           :: counts(:,:)   !< Counts, one more level.
+  integer(I4P)                        :: e          !< Error of a closing.
 
   error = 0_I4P
   if (self%level_group >= 0_hid_kind) error = h5_group_close(self%level_group)
@@ -4393,6 +4400,7 @@ contains
     error = h5_group_open(self%root, name, self%level_group)
   endif
   if (error /= 0_I4P) then
+    if (self%level_group >= 0_hid_kind) e = h5_group_close(self%level_group)
     self%level_group = -1_hid_kind
     error = refuse('cannot open the group '//name)
     return
@@ -4541,6 +4549,19 @@ contains
                                  [(self%tree_cells + 7_I8P) / 8_I8P], unsigned=.true.)
   if (error /= 0_I4P) error = refuse('cannot write the trees of the HyperTreeGrid')
   endfunction end_trees
+
+  function is_table_complete(self) result(complete)
+  !< Return true if the Table has its `NumberOfRows` entry of every step (one for a static Table): the close of its
+  !< columns was not refused.
+  class(vtkhdf_writer), intent(in) :: self     !< Writer.
+  logical                          :: complete !< Check result.
+  integer(I8P), allocatable        :: dims(:)  !< Shape of NumberOfRows.
+
+  complete = .false.
+  if (.not.h5_link_exists(self%root, 'NumberOfRows')) return
+  if (h5_dataset_dims(self%root, 'NumberOfRows', dims) /= 0_I4P) return
+  complete = dims(size(dims)) == max(self%n_steps, 1_I8P)
+  endfunction is_table_complete
 
   pure function is_recorded(self, data_name) result(is_recorded_)
   !< Return true if `data_name` is recorded in the list of the open data group (point or cell data).

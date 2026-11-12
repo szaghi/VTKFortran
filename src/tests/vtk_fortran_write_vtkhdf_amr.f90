@@ -2,15 +2,16 @@
 program vtk_fortran_write_vtkhdf_amr
 !< VTK_Fortran test: VTKHDF OverlappingAMR (`mesh_topology='OverlappingAMR'`), static and time series, read back.
 !<
-!< With HDF5 the test writes an OverlappingAMR of two levels: level 0 one box of 4x3x2 cells (spacing 1), level 1 two boxes
-!< of 2x2x2 cells (spacing 0.5), with point data (R8P, and a vector) and cell data (I4P); checks the file with the HDF5
-!< bindings (`Type`, `Origin`, the `Spacing` and `AMRBox` of each level) and reads it back through `vtk_file%xml_reader`
-!< (`get_levels`, `set_level`, the boxes as pieces: their extents and arrays); then a time series of 2 steps, level 1 with
-!< two boxes then one (the `Steps/Level<n>` entries checked, each step read back); then the refusals: a box outside the
-!< boxes of level 0, a box of a finer level before those of level 0, a flat box, an array of the wrong size, an array
-!< missing in a box or new in a later box, levels out of order, another spacing for a level, field data, a step without
-!< boxes, a box left open, `write_level` in another topology, `action='append'`. Without HDF5 the writer refuses an OverlappingAMR; the XML
-!< formats refuse it always.
+!< With HDF5 the test writes an OverlappingAMR of two levels: level 0 one box of 4x3x2 cells (spacing 1), level 1 two
+!< boxes of 2x2x2 cells (spacing 0.5), with point data (R8P, and a vector) and cell data (I4P); checks the file with the
+!< HDF5 bindings (`Type`, `Origin`, the `Spacing` and `AMRBox` of each level) and reads it back through
+!< `vtk_file%xml_reader` (`get_levels`, `set_level`, the boxes as pieces: their extents and arrays); then a time series
+!< of 2 steps, level 1 with two boxes then one (the `Steps/Level<n>` entries checked, each step read back); then the
+!< refusals: a box outside the boxes of level 0, a box of a finer level before those of level 0, a flat box, an array of
+!< the wrong size, an array missing in a box or new in a later box, levels out of order, another spacing for a level,
+!< field data, a step without boxes, a box left open, `write_level` in another topology, `action='append'`. A malformed
+!< file (a level spacing of 2 values, a box with no cell) built with the bindings is read with error 6. Without HDF5 the
+!< writer refuses an OverlappingAMR; the XML formats refuse it always.
 use penf
 use vtk_fortran, only : vtk_file
 use vtk_fortran_hdf5
@@ -33,7 +34,7 @@ if (.not.is_hdf5_enabled) then
 else
   ok(2) = static_amr()
   ok(3) = series_amr()
-  ok(4) = refusals()
+  ok(4) = refusals() .and. malformed()
 endif
 print '(A,4L2)', 'VTKHDF OverlappingAMR: XML refused, static, series, refusals:', ok
 
@@ -196,6 +197,33 @@ contains
   series_amr = all(c) .and. all(ee == 0)
   if (.not.series_amr) print '(A,8I3,A,4L2)', 'AMR series: errors ', ee, ' checks ', c
   endfunction series_amr
+
+  logical function malformed()
+  !< A malformed OverlappingAMR, built with the bindings: the reader returns error 6 (no out-of-bounds read).
+  type(vtk_file)    :: r
+  integer(hid_kind) :: file_id, root, level
+  real(R8P)         :: spacing(3)
+  integer(I4P)      :: ee(8), np
+
+  ee = 0
+  ee(1) = h5_file_create('amr_malformed.vtkhdf', file_id)
+  ee(2) = h5_group_create(file_id, 'VTKHDF', root)
+  ee(3) = h5_attribute_write(root, 'Type', 'OverlappingAMR')
+  ee(4) = h5_group_create(root, 'Level0', level)
+  ee(5) = h5_attribute_write(level, 'Spacing', [1._R8P, 1._R8P])         ! 2 values
+  ee(6) = h5_dataset_write_I4P(level, 'AMRBox', [0, 3, 0, -2, 0, 1], [6_I8P, 1_I8P]) ! jmax < jmin: no cell
+  ee(7) = h5_group_close(level) + h5_group_close(root)
+  ee(8) = h5_file_close(file_id)
+  malformed = all(ee == 0)
+  e = r%initialize(filename='amr_malformed.vtkhdf', action='read')
+  malformed = malformed .and. e == 0
+  e = r%xml_reader%get_info(spacing=spacing)
+  malformed = malformed .and. e == 6
+  e = r%xml_reader%read_piece(piece=1, nx1=np)
+  malformed = malformed .and. e == 6
+  e = r%finalize()
+  if (.not.malformed) print '(A,8I3)', 'malformed AMR: errors ', ee
+  endfunction malformed
 
   logical function refusals()
   !< What an OverlappingAMR refuses (each a non-zero error). One call per statement: the order of the calls of an

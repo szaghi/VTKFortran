@@ -218,25 +218,37 @@ contains
   if (present(origin)) then
     origin = 0._R8P
     if (h5_attribute_exists(self%root, 'Origin')) then
-      if (h5_attribute_read(self%root, 'Origin', rvalues) == 0_I4P) origin = rvalues(1:3)
+      if (h5_attribute_read(self%root, 'Origin', rvalues) == 0_I4P) then
+        if (size(rvalues) >= 3) origin = rvalues(1:3)
+      endif
     endif
   endif
   if (present(spacing) .and. self%mesh_topology == 'OverlappingAMR') then ! the spacing of the level read
     spacing = 1._R8P
     if (h5_group_open(self%root, 'Level'//trim(str(n=self%level, no_sign=.true.)), dset) == 0_I4P) then
-      if (h5_attribute_read(dset, 'Spacing', rvalues) == 0_I4P) spacing = rvalues(1:3)
+      if (h5_attribute_read(dset, 'Spacing', rvalues) == 0_I4P) then
+        if (size(rvalues) >= 3) then
+          spacing = rvalues(1:3)
+        else
+          error = 6 ! a malformed level
+        endif
+      endif
       e = h5_group_close(dset)
     endif
   elseif (present(spacing)) then
     spacing = 1._R8P
     if (h5_attribute_exists(self%root, 'Spacing')) then
-      if (h5_attribute_read(self%root, 'Spacing', rvalues) == 0_I4P) spacing = rvalues(1:3)
+      if (h5_attribute_read(self%root, 'Spacing', rvalues) == 0_I4P) then
+        if (size(rvalues) >= 3) spacing = rvalues(1:3)
+      endif
     endif
   endif
   if (present(direction)) then
     direction = [1._R8P, 0._R8P, 0._R8P, 0._R8P, 1._R8P, 0._R8P, 0._R8P, 0._R8P, 1._R8P]
     if (h5_attribute_exists(self%root, 'Direction')) then
-      if (h5_attribute_read(self%root, 'Direction', rvalues) == 0_I4P) direction = rvalues(1:9)
+      if (h5_attribute_read(self%root, 'Direction', rvalues) == 0_I4P) then
+        if (size(rvalues) >= 9) direction = rvalues(1:9)
+      endif
     endif
   endif
   if (present(ghost_level)) ghost_level = 0
@@ -762,9 +774,11 @@ contains
   if (present(piece)) p = int(piece, I8P)
   error = 4
   if (p < 1_I8P .or. p > n_boxes) return
-  do q=first + 1_I8P, first + p - 1_I8P
+  error = 6
+  do q=first + 1_I8P, first + p
     cells = boxes(6_I8P * q - 4_I8P:6_I8P * q:2) - boxes(6_I8P * q - 5_I8P:6_I8P * q - 1_I8P:2) + 1_I8P
-    starts = starts + [product(cells + 1_I8P), product(cells)]
+    if (any(cells < 1_I8P)) return ! a malformed box: at least one cell along every axis
+    if (q < first + p) starts = starts + [product(cells + 1_I8P), product(cells)]
   enddo
   q = first + p
   extent(1::2) = int(boxes(6_I8P * q - 5_I8P:6_I8P * q - 1_I8P:2), I4P)

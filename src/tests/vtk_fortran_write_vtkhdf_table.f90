@@ -8,7 +8,8 @@ program vtk_fortran_write_vtkhdf_table
 !< time series of 3 steps with different rows (`NumberOfRows` and `Steps/RowDataOffsets` checked, each step read back);
 !< then the refusals: columns of different rows, a name with `/`, a column missing in a step or new in a later one, a step
 !< without columns, a static Table then a step, a Table without columns, pieces and point data in a Table, columns in an
-!< UnstructuredGrid. Without HDF5 the writer refuses a Table; the XML formats refuse it always.
+!< UnstructuredGrid, a refused close of the columns (finalize refuses too); field data left open (closed by finalize, the
+!< columns ended once), without columns (refused). Without HDF5 the writer refuses a Table; the XML formats refuse it always.
 use penf
 use vtk_fortran, only : vtk_file
 use vtk_fortran_hdf5
@@ -176,7 +177,9 @@ contains
 
   logical function refusals()
   !< What a Table refuses (each a non-zero error).
-  logical :: r(10)
+  logical :: r(13)
+  integer(hid_kind)         :: file_id !< A file read back.
+  integer(I8P), allocatable :: dims(:) !< The shape of its NumberOfRows.
 
   r = .false.
   ! columns of different rows
@@ -220,7 +223,33 @@ contains
   e = w%initialize(format='vtkhdf', filename='table_refused.vtkhdf', mesh_topology='UnstructuredGrid')
   r(10) = w%xml_writer%write_dataarray(location='row', action='open') /= 0
   e = w%finalize()
+  ! field data left open: finalize closes it, the columns ended once (one NumberOfRows entry)
+  e = w%initialize(format='vtkhdf', filename='table_field.vtkhdf', mesh_topology='Table')
+  e = w%xml_writer%write_dataarray(location='row', action='open')
+  e = w%xml_writer%write_dataarray(data_name='a', x=[1._R8P, 2._R8P, 3._R8P])
+  e = w%xml_writer%write_dataarray(location='row', action='close')
+  e = w%xml_writer%write_fielddata(action='open')
+  e = w%finalize()
+  r(11) = e == 0 .and. h5_file_open('table_field.vtkhdf', file_id) == 0
+  if (r(11)) then
+    r(11) = h5_dataset_dims(file_id, 'VTKHDF/NumberOfRows', dims) == 0
+    if (r(11)) r(11) = all(dims == [1])
+    e = h5_file_close(file_id)
+  endif
+  ! no columns, field data left open: refused
+  e = w%initialize(format='vtkhdf', filename='table_refused.vtkhdf', mesh_topology='Table')
+  e = w%xml_writer%write_fielddata(action='open')
+  e = w%finalize()
+  r(12) = e /= 0
+  ! the close of the columns refused (a column written twice): finalize refuses too (the file is not complete)
+  e = w%initialize(format='vtkhdf', filename='table_refused.vtkhdf', mesh_topology='Table')
+  e = w%xml_writer%write_dataarray(location='row', action='open')
+  e = w%xml_writer%write_dataarray(data_name='a', x=[1._R8P, 2._R8P])
+  e = w%xml_writer%write_dataarray(data_name='a', x=[3._R8P, 4._R8P])
+  e = w%xml_writer%write_dataarray(location='row', action='close')
+  e = w%finalize()
+  r(13) = e /= 0
   refusals = all(r)
-  if (.not.refusals) print '(A,10L2)', 'Table refusals: ', r
+  if (.not.refusals) print '(A,13L2)', 'Table refusals: ', r
   endfunction refusals
 endprogram vtk_fortran_write_vtkhdf_table
