@@ -19,7 +19,7 @@ indexed, and its data are then read, array by array, through the `xml_reader` co
 | `get_info(mesh_topology, npieces, header_type, compressor, nx1...nz2, origin, spacing, direction)` | dataset type, number of pieces, header type and compressor of the binary data; whole extent of structured grids; origin, spacing and direction of `ImageData` |
 | `read_piece(piece, np, nc, nx1...nz2, nverts, nlines, nstrips, npolys)` | counts (`I8P`) and extent of a piece |
 | `read_geo(x, y, z, piece)` | point coordinates (`StructuredGrid`, `UnstructuredGrid`, `PolyData`) or the coordinates along each axis (`RectilinearGrid`), `R8P` or `R4P`; `ImageData` has no stored geometry, see `get_info` |
-| `read_connectivity(connectivity, offset, cell_type, face, faceoffset, piece)` | cells of an `UnstructuredGrid`, ids `I4P` or `I8P`, cell types `I1P`, polyhedra faces if present |
+| `read_connectivity(connectivity, offset, cell_type, face, faceoffset, piece)` | cells of an `UnstructuredGrid`, ids `I4P` or `I8P`, cell types `I1P`, polyhedra faces if present, as the face stream of `write_connectivity` |
 | `read_polydata_cells(block, connectivity, offset, piece)` | one block of `PolyData` cells: `block` is `'verts'`, `'lines'`, `'strips'` or `'polys'`; ids `I4P` or `I8P` |
 | `get_dataarray_names(location, names, piece)` | names of the arrays of `location`, in the order of the file |
 | `get_dataarray_info(location, data_name, piece, data_type, n_components, n_tuples)` | VTK type, components and tuples of an array, without reading it |
@@ -34,10 +34,15 @@ indexed, and its data are then read, array by array, through the `xml_reader` co
 - The output kind must hold every value of the array type: `Int8` reads into `I1P`...`I8P`, `Int16` into `I2P`...`I8P`,
   `Int32` into `I4P` or `I8P`, `Int64` into `I8P`, `Float32` into `R4P` or `R8P`, `Float64` into `R8P`. The unsigned types
   read into the signed kind of the same width with the same bits (the inverse of
-  [`write_dataarray_unsigned`](/guide/data#unsigned-integer-arrays)), or into any wider kind with their values. Any other kind is an
+  [`write_dataarray_unsigned`](/guide/data#unsigned-integer-arrays)), or into any wider kind with their values; in `ascii`
+  too (`UInt64` values above `huge(I8P)` included). Any other kind is an
   error: query the type first with `get_dataarray_info`.
 - The cells ids (`read_connectivity`, `read_polydata_cells`) can be of any integer type in the file: VTK writes `Int64` ids,
   which read into `I4P` as long as the values fit.
+- The faces of the polyhedra are read from the `faces`/`faceoffsets` arrays VTKFortran writes, or from the four arrays VTK
+  9.7.2 writes (`version="2.3"`: `face_connectivity`, `face_offsets`, `polyhedron_to_faces`,
+  `polyhedron_offsets`; a face shared by two polyhedra stored once, `-(n+1)` for the face `n` reversed, `version="2.5"`);
+  either way `read_connectivity` returns them as the face stream of `write_connectivity`.
 - The format of each array (`ascii`, `binary`, raw or base64 appended), the header type and the compressor are taken from
   the file. Files written by VTK and ParaView are read as well as those written by VTKFortran.
 

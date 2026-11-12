@@ -10,6 +10,9 @@ module vtk_fortran_vtk_file_xml_reader
 !< `.vtt`, no pieces, `npieces` 0, its columns the data arrays of `location='row'`, their tuples its `NumberOfRows`)
 !< written by VTKFortran or by VTK, in every format (ascii, binary, raw and base64 appended), uncompressed or zlib compressed
 !< (`vtkZLibDataCompressor`), with UInt32 or UInt64 headers. BigEndian files and other compressors are not supported.
+!< The polyhedra of an UnstructuredGrid are read from the `faces`/`faceoffsets` arrays VTKFortran writes or from the four
+!< arrays VTK 9.7.2 writes (XML 2.3: `face_connectivity`, `face_offsets`, `polyhedron_to_faces`, `polyhedron_offsets`; a
+!< shared face `-(n+1)`, 2.5), returned as the face stream of `write_connectivity` either way.
 !<
 !< It reads VTKHDF files too (`.vtkhdf`, HDF5, when the library is built with HDF5): `initialize` recognizes them by the
 !< HDF5 signature, and every call is then answered by a `vtkhdf_reader` (`vtk_fortran_vtk_file_vtkhdf_reader`), the API
@@ -40,7 +43,7 @@ use penf
 use vtk_fortran_dataarray_decoder
 use foxy, only : xml_index, XML_MALFORMED, XML_NOT_FOUND
 use vtk_fortran_zlib, only : zlib_uncompress_blocks
-use vtk_fortran_vtk_file_vtkhdf_reader, only : vtkhdf_reader, is_hdf5_file
+use vtk_fortran_vtk_file_vtkhdf_reader, only : vtkhdf_reader, is_hdf5_file, polyhedra_stream
 use vtk_fortran_parameters, only : ACTIVE_ROLES, active_role
 
 implicit none
@@ -119,6 +122,7 @@ type :: xml_reader
     procedure, pass(self), private :: read_geo_R8P             !< Read the geometry (R8P).
     procedure, pass(self), private :: read_geo_R4P             !< Read the geometry (R4P).
     procedure, pass(self), private :: read_ids                 !< Read a dataarray of ids (I8P) of a piece section.
+    procedure, pass(self), private :: read_faces               !< Read the faces of the polyhedra of a piece (any layout).
     procedure, pass(self), private :: read_named_dataarray     !< Return the bytes of a named dataarray.
     procedure, pass(self), private :: read_polydata_cells_I4P  !< Read polydata cells (I4P).
     procedure, pass(self), private :: read_polydata_cells_I8P  !< Read polydata cells (I8P).
@@ -609,10 +613,10 @@ contains
     cell_type = int(ids, I1P)
   endif
   if (present(face)) then
-    error = self%read_ids(piece=piece, section='Cells', data_name='faces', ids=face) ; if (error /= 0) return
+    error = self%read_faces(piece=piece, data_name='faces', ids=face) ; if (error /= 0) return
   endif
   if (present(faceoffset)) then
-    error = self%read_ids(piece=piece, section='Cells', data_name='faceoffsets', ids=faceoffset) ; if (error /= 0) return
+    error = self%read_faces(piece=piece, data_name='faceoffsets', ids=faceoffset) ; if (error /= 0) return
   endif
   endfunction read_connectivity_I8P
 
@@ -643,11 +647,11 @@ contains
     cell_type = int(ids, I1P)
   endif
   if (present(face)) then
-    error = self%read_ids(piece=piece, section='Cells', data_name='faces', ids=ids) ; if (error /= 0) return
+    error = self%read_faces(piece=piece, data_name='faces', ids=ids) ; if (error /= 0) return
     error = to_I4P(ids, face) ; if (error /= 0) return
   endif
   if (present(faceoffset)) then
-    error = self%read_ids(piece=piece, section='Cells', data_name='faceoffsets', ids=ids) ; if (error /= 0) return
+    error = self%read_faces(piece=piece, data_name='faceoffsets', ids=ids) ; if (error /= 0) return
     error = to_I4P(ids, faceoffset) ; if (error /= 0) return
   endif
   endfunction read_connectivity_I4P
@@ -1125,6 +1129,33 @@ contains
   id = pieces(piece_)
   error = 0
   endfunction piece_element
+
+  function read_faces(self, piece, data_name, ids) result(error)
+  !< Read the faces of the polyhedra of an UnstructuredGrid piece: `data_name` faces (the face stream of
+  !< `write_connectivity`) or faceoffsets (the end of the faces of each cell, -1 if none), from the `faces`/`faceoffsets`
+  !< arrays (the layout VTKFortran writes) or, without them, from the four arrays VTK 9.7.2 writes since XML 2.3
+  !< (`face_connectivity`, `face_offsets`, `polyhedron_to_faces`, `polyhedron_offsets`, end offsets; a shared face
+  !< `-(n+1)` since 2.5). A piece without polyhedra is an error 4.
+  class(xml_reader),         intent(in)           :: self      !< XML reader.
+  integer(I4P),              intent(in), optional :: piece     !< Piece, from 1 (default 1).
+  character(*),              intent(in)           :: data_name !< faces or faceoffsets.
+  integer(I8P), allocatable, intent(out)          :: ids(:)    !< Face stream, or end of the faces of each cell.
+  integer(I4P)                                    :: error     !< Error status.
+  integer(I8P), allocatable                       :: cell_offsets(:), cell_faces(:), face_offsets(:), faces(:) !< 2.3 arrays.
+
+  error = self%read_ids(piece=piece, section='Cells', data_name=data_name, ids=ids)
+  if (error /= 4 .or. self%is_hdf) return
+  error = self%read_ids(piece=piece, section='Cells', data_name='polyhedron_offsets', ids=cell_offsets)
+  if (error /= 0) return
+  error = self%read_ids(piece=piece, section='Cells', data_name='polyhedron_to_faces', ids=cell_faces)
+  if (error /= 0) return
+  error = self%read_ids(piece=piece, section='Cells', data_name='face_offsets', ids=face_offsets)
+  if (error /= 0) return
+  error = self%read_ids(piece=piece, section='Cells', data_name='face_connectivity', ids=faces)
+  if (error /= 0) return
+  ! end offsets: their start is 0
+  error = polyhedra_stream([0_I8P, cell_offsets], cell_faces, [0_I8P, face_offsets], faces, data_name == 'faceoffsets', ids)
+  endfunction read_faces
 
   function read_ids(self, piece, section, data_name, ids) result(error)
   !< Read a dataarray of ids (any integer type) of a section of a piece (e.g. Cells, Polys) into I8P.

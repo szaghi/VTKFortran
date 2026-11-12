@@ -30,6 +30,7 @@ implicit none
 private
 public :: vtkhdf_reader
 public :: is_hdf5_file
+public :: polyhedra_stream
 
 character(*), parameter :: BLOCKS(4) = ['Vertices', 'Lines   ', 'Strips  ', 'Polygons'] !< Groups of the PolyData cells.
 integer(I4P), parameter :: STEP_COLUMN(4) = [1, 2, 4, 3] !< Column of each block in the [NSteps, 4] offsets of Steps.
@@ -633,7 +634,6 @@ contains
   integer(I4P)                           :: error     !< Error status.
   integer(I8P)                           :: g, first(9), n_parts !< Partition, starts, parts of the step.
   integer(I8P), allocatable              :: offsets(:), faces(:), face_offsets(:), polyhedra(:) !< Polyhedra datasets.
-  logical,      allocatable              :: reversed(:) !< The face of a polyhedron is traversed in reverse (VTKHDF 2.9).
   character(len=:), allocatable          :: group     !< Group of a PolyData block, with the separator.
   integer(I8P)                           :: nc, n, b, c, f, i, k, m, nf, nids !< Counts, counters.
 
@@ -667,54 +667,7 @@ contains
       error = read_I8P(self%root, 'FaceOffsets', first(6) + g - 1_I8P, nf + 1_I8P, face_offsets) ; if (error /= 0) return
       nids = count_of(self%root, 'NumberOfFaceConnectivityIds', g, error) ; if (error /= 0) return
       error = read_I8P(self%root, 'FaceConnectivity', first(5), nids, faces) ; if (error /= 0) return
-      offsets = offsets - offsets(1) ; face_offsets = face_offsets - face_offsets(1)
-      error = 6
-      ! the faces of the polyhedra, from 1: since VTKHDF 2.9 a face shared by two polyhedra is stored once, -(n+1) in
-      ! PolyhedronToFaces for the face n traversed in reverse; any id out of the faces of the partition is an error
-      if (offsets(nc+1) > m .or. any(offsets(2:) < offsets(:nc))) return
-      reversed = polyhedra < 0_I8P
-      where (reversed) polyhedra = -polyhedra - 1_I8P
-      polyhedra = polyhedra + 1_I8P
-      if (any(polyhedra < 1_I8P .or. polyhedra > nf)) return
-      if (any(face_offsets(2:) < face_offsets(:nf)) .or. face_offsets(nf+1) > nids) return
-      ! the stream: for each polyhedron its faces, each one its points; faceoffsets its end, -1 if not a polyhedron
-      n = 0_I8P
-      do c=1_I8P, nc
-        k = offsets(c+1) - offsets(c)
-        if (k > 0_I8P) n = n + 1_I8P + sum(face_offsets(polyhedra(offsets(c)+1:offsets(c+1))+1) - &
-                                           face_offsets(polyhedra(offsets(c)+1:offsets(c+1))) + 1_I8P)
-      enddo
-      deallocate(ids)
-      if (data_name == 'faceoffsets') then
-        allocate(ids(nc))
-      else
-        allocate(ids(n))
-      endif
-      i = 0_I8P
-      do c=1_I8P, nc
-        k = offsets(c+1) - offsets(c)
-        if (k == 0_I8P) then
-          if (data_name == 'faceoffsets') ids(c) = -1_I8P
-          cycle
-        endif
-        if (data_name == 'faces') ids(i+1) = k
-        i = i + 1_I8P
-        do f=offsets(c)+1_I8P, offsets(c+1)
-          b = polyhedra(f) ! the face, from 1
-          m = face_offsets(b+1) - face_offsets(b)
-          if (data_name == 'faces') then
-            ids(i+1) = m
-            if (reversed(f)) then ! its points in reverse order
-              ids(i+2:i+1+m) = faces(face_offsets(b+1):face_offsets(b)+1:-1)
-            else
-              ids(i+2:i+1+m) = faces(face_offsets(b)+1:face_offsets(b+1))
-            endif
-          endif
-          i = i + 1_I8P + m
-        enddo
-        if (data_name == 'faceoffsets') ids(c) = i
-      enddo
-      error = 0
+      error = polyhedra_stream(offsets, polyhedra, face_offsets, faces, data_name == 'faceoffsets', ids)
     case default
       error = 4
     endselect
@@ -1428,6 +1381,79 @@ contains
     group = ''
   endselect
   endfunction location_group
+
+  function polyhedra_stream(cell_offsets, cell_faces, face_offsets, faces, want_offsets, ids) result(error)
+  !< The face stream of the polyhedra of a piece (`write_connectivity`'s `face`) or, `want_offsets`, the end of the faces
+  !< of each cell in it (`faceoffset`, -1 for a cell that is not a polyhedron), from the four arrays of
+  !< `vtkPolyhedronCellArray` (VTKHDF `PolyhedronOffsets`, `PolyhedronToFaces`, `FaceOffsets`, `FaceConnectivity`; XML
+  !< 2.3+ `polyhedron_offsets`, `polyhedron_to_faces`, `face_offsets`, `face_connectivity`).
+  !<
+  !< The offsets are given with their start (n+1 entries, any origin). A face shared by two polyhedra (VTKHDF 2.9, XML
+  !< 2.5: stored once, `-(n+1)` for the face `n` traversed in reverse) is given in the stream of each polyhedron, its points
+  !< reversed where marked. Offsets not increasing or out of their arrays, or a face id out of the faces, are error 6.
+  integer(I8P),              intent(in)  :: cell_offsets(:) !< Start of the faces of each cell, then their end.
+  integer(I8P),              intent(in)  :: cell_faces(:)   !< Face ids of the cells, from 0; -(n+1) reversed.
+  integer(I8P),              intent(in)  :: face_offsets(:) !< Start of the points of each face, then their end.
+  integer(I8P),              intent(in)  :: faces(:)        !< Point ids of the faces.
+  logical,                   intent(in)  :: want_offsets    !< Return the end of the faces of each cell, not the stream.
+  integer(I8P), allocatable, intent(out) :: ids(:)          !< Face stream, or end of the faces of each cell.
+  integer(I4P)                           :: error           !< Error status.
+  integer(I8P), allocatable              :: offsets(:), first(:), polyhedra(:) !< From 0; face starts; face ids from 1.
+  logical,      allocatable              :: reversed(:)     !< The face of a polyhedron is traversed in reverse.
+  integer(I8P)                           :: nc, nf, n, b, c, f, i, k, m !< Counts, counters.
+
+  allocate(ids(0))
+  error = 6
+  nc = size(cell_offsets, kind=I8P) - 1_I8P
+  nf = size(face_offsets, kind=I8P) - 1_I8P
+  if (nc < 0_I8P .or. nf < 0_I8P) return
+  offsets = cell_offsets - cell_offsets(1)
+  first = face_offsets - face_offsets(1)
+  if (any(offsets(2:) < offsets(:nc)) .or. offsets(nc+1) > size(cell_faces, kind=I8P)) return
+  if (any(first(2:) < first(:nf)) .or. first(nf+1) > size(faces, kind=I8P)) return
+  polyhedra = cell_faces
+  reversed = polyhedra < 0_I8P
+  where (reversed) polyhedra = -polyhedra - 1_I8P
+  polyhedra = polyhedra + 1_I8P
+  if (any(polyhedra < 1_I8P .or. polyhedra > nf)) return
+  ! the stream: for each polyhedron its faces, each one its points; the end of each cell in it, -1 if not a polyhedron
+  n = 0_I8P
+  do c=1_I8P, nc
+    if (offsets(c+1) > offsets(c)) n = n + 1_I8P + sum(first(polyhedra(offsets(c)+1:offsets(c+1))+1) - &
+                                                       first(polyhedra(offsets(c)+1:offsets(c+1))) + 1_I8P)
+  enddo
+  deallocate(ids)
+  if (want_offsets) then
+    allocate(ids(nc))
+  else
+    allocate(ids(n))
+  endif
+  i = 0_I8P
+  do c=1_I8P, nc
+    k = offsets(c+1) - offsets(c)
+    if (k == 0_I8P) then
+      if (want_offsets) ids(c) = -1_I8P
+      cycle
+    endif
+    if (.not.want_offsets) ids(i+1) = k
+    i = i + 1_I8P
+    do f=offsets(c)+1_I8P, offsets(c+1)
+      b = polyhedra(f) ! the face, from 1
+      m = first(b+1) - first(b)
+      if (.not.want_offsets) then
+        ids(i+1) = m
+        if (reversed(f)) then ! its points in reverse order
+          ids(i+2:i+1+m) = faces(first(b+1):first(b)+1:-1)
+        else
+          ids(i+2:i+1+m) = faces(first(b)+1:first(b+1))
+        endif
+      endif
+      i = i + 1_I8P + m
+    enddo
+    if (want_offsets) ids(c) = i
+  enddo
+  error = 0
+  endfunction polyhedra_stream
 
   function is_hdf5_file(filename) result(is_hdf5)
   !< Return true if the file starts with the HDF5 signature (`\\211HDF\\r\\n\\032\\n`).

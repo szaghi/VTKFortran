@@ -9,7 +9,7 @@ module vtk_fortran_pvd_file
 !< again after it. Therefore a run that stops before `finalize` (crash, killed job) still leaves a readable collection of all the
 !< datasets written so far, and a restarted run can continue an existing collection with `action='append'`.
 use penf
-use foxy, only : xml_index, XML_MALFORMED
+use foxy, only : xml_index, XML_MALFORMED, xml_escape
 
 implicit none
 private
@@ -149,7 +149,8 @@ contains
    !< error = pvd%write_dataset(filename='simulation_0010.vtu', timestep=0.1_R8P)
    !< error = pvd%write_dataset(filename='simulation_0010_rank1.vtu', timestep=0.1_R8P, part=1)
    !<```
-   !< @note `filename` is written as given: a relative path is relative to the directory of the `.pvd` file.
+   !< @note `filename` is written as given: a relative path is relative to the directory of the `.pvd` file. `filename`,
+   !< `group` and `name` are escaped as XML attribute values (`&`, `<`, `>`, `"`, `'`).
    class(pvd_file), intent(inout)        :: self     !< PVD file.
    character(*),    intent(in)           :: filename !< File name of the dataset.
    real(R8P),       intent(in)           :: timestep !< Time step (time value) of the dataset.
@@ -169,10 +170,10 @@ contains
    ! the `+` of positive values is dropped by hand: PENF `no_sign` would drop the `-` of negative ones too
    time = trim(str(n=timestep, compact=.true.)) ; if (time(1:1) == '+') time = time(2:)
    entry = '    <DataSet timestep="'//time//'"'
-   if (present(group)) entry = entry//' group="'//trim(adjustl(group))//'"'
+   if (present(group)) entry = entry//' group="'//xml_escape(trim(adjustl(group)), attribute=.true.)//'"'
    entry = entry//' part="'//trim(str(n=part_, no_sign=.true.))//'"'
-   if (present(name)) entry = entry//' name="'//trim(adjustl(name))//'"'
-   entry = entry//' file="'//trim(adjustl(filename))//'"/>'//new_line('a')
+   if (present(name)) entry = entry//' name="'//xml_escape(trim(adjustl(name)), attribute=.true.)//'"'
+   entry = entry//' file="'//xml_escape(trim(adjustl(filename)), attribute=.true.)//'"/>'//new_line('a')
    write(unit=self%unit, pos=self%pos_close, iostat=error) entry
    if (error /= 0) return
    self%pos_close = self%pos_close + len(entry, kind=I8P)

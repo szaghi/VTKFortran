@@ -2,9 +2,12 @@
 module vtk_fortran_dataarray_encoder
 !< DataArray encoder, codecs: "ascii", "base64".
 !<
+!< The ascii encoders write the non-finite reals as VTK writes them: `nan`, `inf`, `-inf` (`real_str`).
+!<
 !< The binary (base64) encoders can compress the data with zlib (VTK `vtkZLibDataCompressor` layout): the VTK header of the
 !< compressed data and the compressed blocks are then encoded as two separate base64 streams, as VTK does.
 use, intrinsic :: iso_c_binding, only : c_int, c_signed_char
+use, intrinsic :: ieee_arithmetic, only : ieee_is_finite, ieee_is_nan
 use befor64
 use penf
 use vtk_fortran_parameters, only : stderr
@@ -37,6 +40,11 @@ interface to_bytes
   !< Copy a dataarray into a bytes stream, element by element (a whole-array transfer result can be placed on the stack).
   module procedure to_bytes_R8P, to_bytes_R4P, to_bytes_I8P, to_bytes_I4P, to_bytes_I2P, to_bytes_I1P
 endinterface to_bytes
+
+interface real_str
+  !< A real as ASCII text: `str` for a finite value, `nan`, `inf`, `-inf` (VTK's spelling) otherwise.
+  module procedure real_str_R8P, real_str_R4P
+endinterface real_str
 
 interface encode_ascii_dataarray
   !< Ascii DataArray encoder.
@@ -148,6 +156,34 @@ interface encode_binary_dataarray
 endinterface encode_binary_dataarray
 contains
   !< ascii encoder
+  pure function real_str_R8P(n) result(text)
+  !< A real (R8P) as ASCII text: `str` for a finite value, `nan`, `inf`, `-inf` (VTK's spelling) otherwise.
+  real(R8P), intent(in)         :: n    !< Value.
+  character(len=:), allocatable :: text !< Text.
+
+  if (ieee_is_nan(n)) then
+    text = 'nan'
+  elseif (.not.ieee_is_finite(n)) then
+    text = trim(merge('inf ', '-inf', n > 0._R8P))
+  else
+    text = str(n=n)
+  endif
+  endfunction real_str_R8P
+
+  pure function real_str_R4P(n) result(text)
+  !< A real (R4P) as ASCII text: `str` for a finite value, `nan`, `inf`, `-inf` (VTK's spelling) otherwise.
+  real(R4P), intent(in)         :: n    !< Value.
+  character(len=:), allocatable :: text !< Text.
+
+  if (ieee_is_nan(n)) then
+    text = 'nan'
+  elseif (.not.ieee_is_finite(n)) then
+    text = trim(merge('inf ', '-inf', n > 0._R4P))
+  else
+    text = str(n=n)
+  endif
+  endfunction real_str_R4P
+
   function encode_ascii_dataarray1_rank1_R16P(x) result(code)
   !< Encode (Base64) a dataarray with 1 components of rank 1 (R8P).
   real(R16P),      intent(in)   :: x(1:) !< Data variable.
@@ -183,7 +219,7 @@ contains
   allocate(character(len=l*size_n) :: code)
   code(:) = ''
   do n = 1,size_n
-      code(sp+1:sp+l) = str(n=x(n))
+      code(sp+1:sp+l) = real_str(n=x(n))
       sp = sp + l
   enddo
   endfunction encode_ascii_dataarray1_rank1_R8P
@@ -203,7 +239,7 @@ contains
   allocate(character(len=l*size_n) :: code)
   code(:) = ''
   do n = 1,size_n
-      code(sp+1:sp+l) = str(n=x(n))
+      code(sp+1:sp+l) = real_str(n=x(n))
       sp = sp + l
   enddo
   endfunction encode_ascii_dataarray1_rank1_R4P
@@ -334,10 +370,10 @@ contains
   code(:) = ''
   do n2=1, size(x, dim=2, kind=I8P)
     do n1=1, size(x, dim=1, kind=I8P)-1
-      code(sp+1:sp+l) = str(n=x(n1, n2))//' '
+      code(sp+1:sp+l) = real_str(n=x(n1, n2))//' '
       sp = sp + l
     enddo
-    code(sp+1:sp+l) = str(n=x(size(x, dim=1, kind=I8P), n2))//' '
+    code(sp+1:sp+l) = real_str(n=x(size(x, dim=1, kind=I8P), n2))//' '
     sp = sp + l
   enddo
   endfunction encode_ascii_dataarray1_rank2_R8P
@@ -361,10 +397,10 @@ contains
   code(:) = ''
   do n2=1, size(x, dim=2, kind=I8P)
     do n1=1, size(x, dim=1, kind=I8P)-1
-      code(sp+1:sp+l) = str(n=x(n1, n2))//' '
+      code(sp+1:sp+l) = real_str(n=x(n1, n2))//' '
       sp = sp + l
     enddo
-    code(sp+1:sp+l) = str(n=x(size(x, dim=1, kind=I8P), n2))//' '
+    code(sp+1:sp+l) = real_str(n=x(size(x, dim=1, kind=I8P), n2))//' '
     sp = sp + l
   enddo
   endfunction encode_ascii_dataarray1_rank2_R4P
@@ -533,10 +569,10 @@ contains
   do n3=1, size(x, dim=3, kind=I8P)
     do n2=1, size(x, dim=2, kind=I8P)
       do n1=1, size(x, dim=1, kind=I8P)-1
-        code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '
+        code(sp+1:sp+l) = real_str(n=x(n1, n2, n3))//' '
         sp = sp + l
       enddo
-      code(sp+1:sp+l) = str(n=x(size(x, dim=1, kind=I8P), n2, n3))//' '
+      code(sp+1:sp+l) = real_str(n=x(size(x, dim=1, kind=I8P), n2, n3))//' '
       sp = sp + l
     enddo
   enddo
@@ -566,10 +602,10 @@ contains
   do n3=1, size(x, dim=3, kind=I8P)
     do n2=1, size(x, dim=2, kind=I8P)
       do n1=1, size(x, dim=1, kind=I8P)-1
-        code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '
+        code(sp+1:sp+l) = real_str(n=x(n1, n2, n3))//' '
         sp = sp + l
       enddo
-      code(sp+1:sp+l) = str(n=x(size(x, dim=1, kind=I8P), n2, n3))//' '
+      code(sp+1:sp+l) = real_str(n=x(size(x, dim=1, kind=I8P), n2, n3))//' '
       sp = sp + l
     enddo
   enddo
@@ -771,7 +807,7 @@ contains
     do n3=1, size(x, dim=3, kind=I8P)
       do n2=1, size(x, dim=2, kind=I8P)
         do n1=1, size(x, dim=1, kind=I8P)
-          code(sp+1:sp+l) = str(n=x(n1, n2, n3, n4))//' '
+          code(sp+1:sp+l) = real_str(n=x(n1, n2, n3, n4))//' '
           sp = sp + l
         enddo
       enddo
@@ -807,7 +843,7 @@ contains
     do n3=1, size(x, dim=3, kind=I8P)
       do n2=1, size(x, dim=2, kind=I8P)
         do n1=1, size(x, dim=1, kind=I8P)
-          code(sp+1:sp+l) = str(n=x(n1, n2, n3, n4))//' '
+          code(sp+1:sp+l) = real_str(n=x(n1, n2, n3, n4))//' '
           sp = sp + l
         enddo
       enddo
@@ -998,7 +1034,7 @@ contains
   allocate(character(len=l*size_n) :: code)
   code(:) = ''
   do n=1, size_n
-    code(sp+1:sp+l) = str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))
+    code(sp+1:sp+l) = real_str(n=x(n))//' '//real_str(n=y(n))//' '//real_str(n=z(n))
     sp = sp + l
   enddo
   endfunction encode_ascii_dataarray3_rank1_R8P
@@ -1020,7 +1056,7 @@ contains
   allocate(character(len=l*size_n) :: code)
   code(:) = ''
   do n=1, size_n
-    code(sp+1:sp+l) = str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))
+    code(sp+1:sp+l) = real_str(n=x(n))//' '//real_str(n=y(n))//' '//real_str(n=z(n))
     sp = sp + l
   enddo
   endfunction encode_ascii_dataarray3_rank1_R4P
@@ -1172,7 +1208,7 @@ contains
   do n3=1, size(x, dim=3, kind=I8P)
     do n2=1, size(x, dim=2, kind=I8P)
       do n1=1, size(x, dim=1, kind=I8P)
-        code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))
+        code(sp+1:sp+l) = real_str(n=x(n1, n2, n3))//' '//real_str(n=y(n1, n2, n3))//' '//real_str(n=z(n1, n2, n3))
         sp = sp + l
       enddo
     enddo
@@ -1205,7 +1241,7 @@ contains
   do n3=1, size(x, dim=3, kind=I8P)
     do n2=1, size(x, dim=2, kind=I8P)
       do n1=1, size(x, dim=1, kind=I8P)
-        code(sp+1:sp+l) = str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))
+        code(sp+1:sp+l) = real_str(n=x(n1, n2, n3))//' '//real_str(n=y(n1, n2, n3))//' '//real_str(n=z(n1, n2, n3))
         sp = sp + l
       enddo
     enddo
@@ -1390,8 +1426,8 @@ contains
   allocate(character(len=l*size_n) :: code)
   code(:) = ''
   do n=1, size_n
-    code(sp+1:sp+l) = str(n=u(n))//' '//str(n=v(n))//' '//str(n=w(n))// &
-                str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))
+    code(sp+1:sp+l) = real_str(n=u(n))//' '//real_str(n=v(n))//' '//real_str(n=w(n))// &
+                real_str(n=x(n))//' '//real_str(n=y(n))//' '//real_str(n=z(n))
     sp = sp + l
   enddo
   endfunction encode_ascii_dataarray6_rank1_R8P
@@ -1416,8 +1452,8 @@ contains
   allocate(character(len=l*size_n) :: code)
   code(:) = ''
   do n=1, size_n
-    code(sp+1:sp+l) = str(n=u(n))//' '//str(n=v(n))//' '//str(n=w(n))// &
-                str(n=x(n))//' '//str(n=y(n))//' '//str(n=z(n))
+    code(sp+1:sp+l) = real_str(n=u(n))//' '//real_str(n=v(n))//' '//real_str(n=w(n))// &
+                real_str(n=x(n))//' '//real_str(n=y(n))//' '//real_str(n=z(n))
     sp = sp + l
   enddo
   endfunction encode_ascii_dataarray6_rank1_R4P
@@ -1592,8 +1628,8 @@ contains
   do n3=1, size_n3
     do n2=1, size_n2
       do n1=1, size_n1
-        code(sp+1:sp+l) = str(n=u(n1, n2, n3))//' '//str(n=v(n1, n2, n3))//' '//str(n=w(n1, n2, n3))// &
-          str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))
+        code(sp+1:sp+l) = real_str(n=u(n1, n2, n3))//' '//real_str(n=v(n1, n2, n3))//' '//real_str(n=w(n1, n2, n3))// &
+          real_str(n=x(n1, n2, n3))//' '//real_str(n=y(n1, n2, n3))//' '//real_str(n=z(n1, n2, n3))
         sp = sp + l
       enddo
     enddo
@@ -1629,8 +1665,8 @@ contains
   do n3=1, size_n3
     do n2=1, size_n2
       do n1=1, size_n1
-        code(sp+1:sp+l) = str(n=u(n1, n2, n3))//' '//str(n=v(n1, n2, n3))//' '//str(n=w(n1, n2, n3))// &
-          str(n=x(n1, n2, n3))//' '//str(n=y(n1, n2, n3))//' '//str(n=z(n1, n2, n3))
+        code(sp+1:sp+l) = real_str(n=u(n1, n2, n3))//' '//real_str(n=v(n1, n2, n3))//' '//real_str(n=w(n1, n2, n3))// &
+          real_str(n=x(n1, n2, n3))//' '//real_str(n=y(n1, n2, n3))//' '//real_str(n=z(n1, n2, n3))
         sp = sp + l
       enddo
     enddo

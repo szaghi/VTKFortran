@@ -86,7 +86,8 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   after its dataset (VTK names a partitioned dataset after its group) with `Index`, unique names (not `Assembly`),
   `write_block(references='name ...')` (string form) soft-links a copy into the open block (`vtkhdf_reference`);
   references refused outside a collection; the same time series rules (VTK 9.7.2 pipeline time likewise at step 1)
-- `vtk_fortran_pvd_file` — `pvd_file` type: time series collections (`.pvd`), valid after each `write_dataset`
+- `vtk_fortran_pvd_file` — `pvd_file` type: time series collections (`.pvd`), valid after each `write_dataset` (`file`,
+  `group`, `name` escaped with FoXy `xml_escape`)
 - `vtk_fortran_vtk_writer_abstract` — format-neutral abstract writer (`vtk_writer_abstract`): the state `vtk_file` sets
   (origin, spacing, direction, header type, compression, `branch_factor`, `chunk_bytes`) and every procedure `vtk_file%xml_writer` exposes (`initialize`,
   `finalize`, `write_piece`, `write_geo`, `write_connectivity`, `write_polydata_cells`, `write_dataarray`,
@@ -95,7 +96,9 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   override a private binding from another module). `vtk_file%xml_writer` is of this type (the name is kept); the XML
   writers and the VTKHDF writer extend it
 - `vtk_fortran_vtk_file_xml_writer_abstract` — abstract XML writer, extends `vtk_writer_abstract`: implements the
-  format-neutral procedures as XML tags, plus the XML-only ones (`write_parallel_*`, used by `pvtk_file` and `vtm_file`,
+  format-neutral procedures as XML tags (attributes given as one `name="value" ...` string parsed by `write_attributes`;
+  user values, names, files, sources, go through `attr_text`, a `"` as `QUOTE_MARK` = achar(1), turned back by
+  `quotes_back` so FoXy writes `&quot;`), plus the XML-only ones (`write_parallel_*`, used by `pvtk_file` and `vtm_file`,
   whose `xml_writer` stays `class(xml_writer_abstract)`). Table (`.vtt`, #86): `location='row'` (`write_table_rows`)
   swaps the FoXy writer for one on memory (`table_writer` keeps the file writer) holding `RowData`; at the close the
   `Piece NumberOfCols NumberOfRows` tag is written, then the buffered columns (indented by 6) with `raw`: FoXy keeps a
@@ -195,14 +198,20 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   `array_slice`; `step_entry` = the step's entry of a one-per-step dataset), a dataset of a composite
   (`initialize(filename, dataset)`: root `/VTKHDF/<dataset>`, through the Assembly's soft links too).
   `xml_reader%finalize` stays pure (forgets the file); `close` closes it
-- `vtk_fortran_vtk_file_xml_reader` — `xml_reader` type: reader of serial files (any format, header type, zlib; a `.vtt` Table: `npieces` 0, `location='row'` = `Piece/RowData`, tuples from `NumberOfRows`) and parallel headers (`check_pieces`); indexes the file once with FoXy `xml_index` (tags and content positions, scan stopped at `AppendedData`), then decodes only the arrays asked for; `get_active(location, role, data_name)` the active array of a role (the
+- `vtk_fortran_vtk_file_xml_reader` — `xml_reader` type: reader of serial files (any format, header type, zlib; a `.vtt` Table: `npieces` 0, `location='row'` = `Piece/RowData`, tuples from `NumberOfRows`); polyhedra from `faces`/`faceoffsets` or from VTK 9.7.2's four arrays (`read_faces`: XML 2.3
+`face_connectivity`, `face_offsets`, `polyhedron_to_faces`, `polyhedron_offsets`, 2.5 shared faces `-(n+1)`; converted
+by `polyhedra_stream` of the VTKHDF reader, shared) and parallel headers (`check_pieces`); indexes the file once with FoXy `xml_index` (tags and content positions, scan stopped at `AppendedData`), then decodes only the arrays asked for; `get_active(location, role, data_name)` the active array of a role (the
 roles list `ACTIVE_ROLES` and `active_role` in `vtk_fortran_parameters`, shared with the VTKHDF reader); error codes 0–7 documented in the module. `pvtk_file` uses it too (`action='read'`); `vtm_file` and `pvd_file` read with `get_entries`/`get_datasets` (`vtm_file` a VTKHDF composite too:
 `vtkhdf_entries` walks its `Assembly` once at `initialize`, groups = blocks, soft links = datasets (`h5_link_target`,
 H5Lget_val: a hard link fails silently), `file` = the link target under /VTKHDF; no recursion and no arrays of
 `string`: integer arrays + one character buffer (nvfortran 26.9 corrupted string arrays grown by constructors), a
 block's path copied before the call that grows the buffer; `free_entries` at finalize and before every read)
 - `vtk_fortran_dataarray_decoder` — inverse of the encoder: ASCII/Base64/zlib data into bytes, bytes into arrays of the requested kind
+  (ASCII: `nan`/`inf`/`-inf`/`Infinity`, a sign alone before a value is its sign (`next_value`, the `+   Infinity` of
+  VTKFortran 3.x), `UInt64` above `huge(I8P)` kept with its bits (`uint64_bits`, no intermediate overflow))
 - `vtk_fortran_dataarray_encoder` — overloaded encoding routines for ASCII and Base64 (optionally zlib-compressed), covering all PENF numeric kinds and ranks 1–4
+  (ASCII reals through `real_str`: non-finite values as VTK writes them, `nan`, `inf`, `-inf`; VTK 9.7.2 reads `-inf` as
+  `+inf`, its own files too)
 - `vtk_fortran_hdf5` — HDF5 C API bindings (files, groups and their members (in creation order when tracked), links,
   attributes (overwritten), datasets of every kind, appendable, resized, deflate, read back; chunks of whole rows up to
   the optional `chunk_bytes` of `h5_dataset_write_<kind>` (default `DEFAULT_CHUNK_BYTES` = 1 MiB; never named
@@ -291,4 +300,7 @@ steps 1 and 3, cell data reused at step 4, a parallel restart at step 3), compar
 dataset and, by VTK outside the test, each step with its XML file (`vtkfortran_steps_<grid>_mpi_<s>.vt?`); ranks
 writing different arrays refused; an RG series of extent 10:16 restarted by the ranks; a step without pieces right after
 a parallel restart refused; without MPI `comm` refused, its name without "mpi" since `scripts/run_tests.sh` runs those with
-mpirun; without HDF5 the writer refuses to start); `vtk_fortran_read.F90` reads files back (every topology and format, and two files written by VTK, embedded in the test), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.
+mpirun; without HDF5 the writer refuses to start); `vtk_fortran_read.F90` reads files back (every topology and format, and two files written by VTK, embedded in the test;
+a polyhedron `.vtu` written by VTK 9.7.2 (XML 2.3) and the same with the shared face stored once (2.5); ASCII
+`nan inf -inf`, the former `+   Infinity`, UInt64 above huge(I8P); a name with `"&<>'` and NaN/±Inf in every format,
+the active scalars, and in a `.pvd`), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.

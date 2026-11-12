@@ -169,8 +169,10 @@ contains
   !< Decode the text of an ASCII DataArray into its bytes (native byte order).
   !<
   !< Values are separated by white space; values written without separation (e.g. `+0.3E+001+0.1E+002`, written by
-  !< VTKFortran up to v2.0.10) are split at the sign that follows a digit or a point. The type `String` holds the bytes of
-  !< the strings, written as integers.
+  !< VTKFortran up to v2.0.10) are split at the sign that follows a digit or a point; a sign alone before a value (`+
+  !< Infinity`, written by VTKFortran up to v3.x for non-finite reals) is the sign of that value. Reals are read as Fortran
+  !< reads them (`nan`, `inf`, `-inf`, as VTK writes them, and `Infinity`). `UInt64` values above `huge(I8P)` are kept
+  !< with their bits (two's complement). The type `String` holds the bytes of the strings, written as integers.
   character(*),              intent(in)  :: text      !< Text of the DataArray.
   character(*),              intent(in)  :: data_type !< VTK type.
   integer(I1P), allocatable, intent(out) :: bytes(:)  !< Data bytes.
@@ -185,6 +187,7 @@ contains
   real(R8P)                              :: vr        !< Real value.
   integer(I1P)                           :: b(8)      !< Bytes of a value.
   integer(I4P)                           :: iostat    !< IO status.
+  logical                                :: negative  !< A sign alone before the value is a minus.
 
   error = 6
   allocate(bytes(1:0))
@@ -202,11 +205,12 @@ contains
   allocate(bytes(1:n*sz))
   p = 1_I8P
   do i=1_I8P, n
-    call next_value(text=text, p=p, s=s, e=e)
+    call next_value(text=text, p=p, s=s, e=e, negative=negative)
     select case(data_type)
     case('Float32', 'Float64')
       read(text(s:e), *, iostat=iostat) vr
       if (iostat /= 0) return
+      if (negative) vr = -vr
       if (sz == 4_I8P) then
         b(1:4) = transfer(real(vr, R4P), b(1:4))
       else
@@ -214,7 +218,11 @@ contains
       endif
     case default
       read(text(s:e), *, iostat=iostat) vi
-      if (iostat /= 0) return
+      if (iostat /= 0) then
+        if (data_type /= 'UInt64') return
+        if (.not.uint64_bits(text(s:e), vi)) return
+      endif
+      if (negative) vi = -vi
       b = transfer(vi, b) ! the low bytes come first (little endian)
     endselect
     bytes((i-1_I8P)*sz+1_I8P:i*sz) = b(1:sz)
@@ -222,12 +230,37 @@ contains
   error = 0
   endsubroutine decode_ascii
 
-  pure subroutine next_value(text, p, s, e)
-  !< Return the next value of an ASCII text from a position, and advance the position after it.
+  pure subroutine next_value(text, p, s, e, negative)
+  !< Return the next value of an ASCII text from a position, and advance the position after it. A sign alone, followed
+  !< by a value, is the sign of that value (`negative`); the value returned is the one after it.
+  character(*), intent(in)            :: text     !< Text.
+  integer(I8P), intent(inout)         :: p        !< Current position.
+  integer(I8P), intent(out)           :: s        !< First character of the value, 0 if there are no more values.
+  integer(I8P), intent(out)           :: e        !< Last character of the value.
+  logical,      intent(out), optional :: negative !< The value is preceded by a minus alone.
+  character(len=1)                    :: sign     !< A sign alone.
+  integer(I8P)                        :: s0       !< Position of the sign alone.
+
+  if (present(negative)) negative = .false.
+  call next_token(text=text, p=p, s=s, e=e)
+  if (s == 0_I8P .or. e /= s) return
+  if (text(s:s) /= '+' .and. text(s:s) /= '-') return
+  sign = text(s:s)
+  s0 = s
+  call next_token(text=text, p=p, s=s, e=e)
+  if (s == 0_I8P) then ! a sign alone at the end: kept as the value (it does not decode)
+    s = s0 ; e = s0
+    return
+  endif
+  if (present(negative)) negative = sign == '-'
+  endsubroutine next_value
+
+  pure subroutine next_token(text, p, s, e)
+  !< Return the next token of an ASCII text from a position, and advance the position after it.
   character(*), intent(in)    :: text !< Text.
   integer(I8P), intent(inout) :: p    !< Current position.
-  integer(I8P), intent(out)   :: s    !< First character of the value, 0 if there are no more values.
-  integer(I8P), intent(out)   :: e    !< Last character of the value.
+  integer(I8P), intent(out)   :: s    !< First character of the token, 0 if there are no more tokens.
+  integer(I8P), intent(out)   :: e    !< Last character of the token.
   integer(I8P)                :: l    !< Length of the text.
 
   l = len(text, kind=I8P)
@@ -248,7 +281,39 @@ contains
     p = p + 1_I8P
   enddo
   e = p - 1_I8P
-  endsubroutine next_value
+  endsubroutine next_token
+
+  function uint64_bits(token, v) result(is_uint64)
+  !< Return the bits of an unsigned 64-bit decimal value above `huge(I8P)` (two's complement, `v - 2**64`).
+  !<
+  !< The value is `q*10 + r` (`q` its leading digits, `r` the last one); `v - 2**64 = (t*9 + r - 6) + t`, with
+  !< `t = q - 1844674407370955161` (`2**64 = 1844674407370955161*10 + 6`): no intermediate overflows.
+  character(*), intent(in)  :: token     !< Value, decimal digits with an optional `+`.
+  integer(I8P), intent(out) :: v         !< Bits of the value.
+  logical                   :: is_uint64 !< The token is an unsigned 64-bit value above huge(I8P).
+  integer(I8P)              :: q         !< Leading digits.
+  integer(I8P)              :: r         !< Last digit.
+  integer(I8P)              :: t         !< Leading digits minus those of 2**64.
+  integer                   :: f         !< First digit.
+  integer                   :: iostat    !< IO status.
+
+  is_uint64 = .false.
+  v = 0_I8P
+  f = 1
+  if (len(token) > 0) then
+    if (token(1:1) == '+') f = 2
+  endif
+  if (len(token) - f + 1 /= 20 .and. len(token) - f + 1 /= 19) return
+  if (verify(token(f:), '0123456789') /= 0) return
+  read(token(f:len(token)-1), *, iostat=iostat) q
+  if (iostat /= 0) return
+  r = int(iachar(token(len(token):len(token))) - iachar('0'), I8P)
+  if (q > 1844674407370955161_I8P .or. (q == 1844674407370955161_I8P .and. r > 5_I8P)) return ! 2**64 or more
+  if (q < 922337203685477580_I8P .or. (q == 922337203685477580_I8P .and. r < 8_I8P)) return    ! up to huge(I8P)
+  t = q - 1844674407370955161_I8P
+  v = (t * 9_I8P + (r - 6_I8P)) + t
+  is_uint64 = .true.
+  endfunction uint64_bits
 
   elemental function is_space(c) result(is_blank)
   !< Return .true. if a character is white space (blank, tab, line feed, carriage return).

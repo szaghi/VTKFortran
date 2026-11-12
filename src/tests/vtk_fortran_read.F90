@@ -6,9 +6,14 @@ program vtk_fortran_read
 !< cell and field data, strings) in every format, with UInt32 and UInt64 headers and zlib compressed when available; an
 !< image data; a polydata with 64-bit ids; a rectilinear grid of two pieces; unsigned arrays. Two files written by VTK
 !< 9.7 (embedded below; one zlib compressed) and an ASCII file with values not separated are read too. The errors of
-!< missing files, arrays and of kinds that cannot hold the values are checked.
+!< missing files, arrays and of kinds that cannot hold the values are checked. Polyhedra in the layout of VTK 9.7.2 (XML
+!< 2.3, a file written by VTK embedded below, and a shared face stored once, 2.5); ASCII non-finite reals (VTK's
+!< `nan inf -inf`, VTKFortran's former `+    Infinity`) and UInt64 values above huge(I8P); names holding `"&<>'` and
+!< non-finite values written in every format and read back, and in a `.pvd`.
 use penf
-use vtk_fortran, only : vtk_file
+use, intrinsic :: ieee_arithmetic, only : ieee_is_nan, ieee_is_finite, ieee_value, ieee_quiet_nan, &
+                                          ieee_positive_inf, ieee_negative_inf
+use vtk_fortran, only : vtk_file, pvd_file
 
 implicit none
 character(*), parameter :: formats(4)=['ascii          ', 'binary         ', 'raw            ', 'binary-appended'] !< Formats.
@@ -19,7 +24,7 @@ real(R8P),    parameter :: p(4)=[1.5_R8P, -2.25_R8P, 1.e-300_R8P, 4._R8P/3._R8P]
 real(R4P),    parameter :: v(3,4)=reshape([1,2,3, 4,5,6, 7,8,9, 10,11,12], [3,4]) * 0.1_R4P !< Point vectors.
 type(vtk_file)          :: a_vtk_file      !< A VTK file.
 integer(I4P)            :: f               !< Counter.
-logical                 :: test_passed(10) !< List of passed tests.
+logical                 :: test_passed(13) !< List of passed tests.
 
 test_passed = .true.
 do f=1, size(formats)
@@ -40,6 +45,9 @@ test_passed(7) = check_unsigned()
 test_passed(8) = check_errors()
 test_passed(9) = check_vtk_written()
 test_passed(10) = check_ascii_not_separated()
+test_passed(11) = check_vtk_polyhedra()
+test_passed(12) = check_ascii_special()
+test_passed(13) = check_names_and_non_finite()
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 if (.not.all(test_passed)) error stop 'some tests failed'
@@ -455,4 +463,268 @@ contains
   is_passed = all(e == 0) .and. all(phi == [1._R8P, 0.02_R8P, -300._R8P])
   if (.not.is_passed) print '(A)', 'failed: vtkfortran_read-not-separated.vti'
   endfunction check_ascii_not_separated
+  function check_vtk_polyhedra() result(is_passed)
+  !< Read the polyhedra of files in the layout VTK writes since XML 2.3 (`face_connectivity`, `face_offsets`,
+  !< `polyhedron_to_faces`, `polyhedron_offsets`): the file written by VTK 9.7.2 (vtkXMLUnstructuredGridWriter, ascii; two
+  !< hexahedral polyhedra and a tetrahedron between them), then the same with the face shared by the two polyhedra stored
+  !< once (XML 2.5: `-(n+1)` for the face `n` traversed in reverse).
+  logical                       :: is_passed      !< Check result.
+  character(len=:), allocatable :: text           !< File content.
+  character(len=:), allocatable :: shared         !< File content, the shared face stored once.
+  character(len=1), parameter   :: nl=new_line('a') !< New line.
+  integer(I8P),     parameter   :: cube0(31)=[6, 4,0,3,4,1, 4,6,7,10,9, 4,0,1,7,6, 4,1,4,10,7, 4,4,3,9,10, 4,3,0,6,9] !< Faces.
+  integer(I8P),     parameter   :: cube1(31)=[6, 4,1,4,5,2, 4,7,8,11,10, 4,1,2,8,7, 4,2,5,11,8, 4,5,4,10,11, 4,4,1,7,10] !< Faces.
+  integer(I8P),     parameter   :: cube1r(31)=[6, 4,1,4,5,2, 4,7,8,11,10, 4,1,2,8,7, 4,2,5,11,8, 4,5,4,10,11, &
+                                               4,7,10,4,1] !< Faces of the second polyhedron, the shared one reversed.
+  integer(I8P), allocatable     :: face(:)        !< Faces read (I8P).
+  integer(I8P), allocatable     :: faceoffset(:)  !< Face offsets read (I8P).
+  integer(I8P), allocatable     :: connect(:)     !< Connectivity read (I8P).
+  integer(I8P), allocatable     :: offset(:)      !< Offsets read (I8P).
+  integer(I4P), allocatable     :: face4(:)       !< Faces read (I4P).
+  integer(I4P), allocatable     :: faceoffset4(:) !< Face offsets read (I4P).
+  integer(I4P), allocatable     :: connect4(:)    !< Connectivity read (I4P).
+  integer(I4P), allocatable     :: offset4(:)     !< Offsets read (I4P).
+  integer(I1P), allocatable     :: cell_type(:)   !< Cell types read.
+  character(len=:), allocatable :: filename       !< File name.
+  integer(I4P)                  :: c              !< Counter.
+  integer(I4P)                  :: u              !< File unit.
+  integer(I4P)                  :: e(4)           !< Errors.
+
+  text = &
+    '<?xml version="1.0"?>'//nl//&
+    '<VTKFile type="UnstructuredGrid" version="2.3" byte_order="LittleEndian" header_type="UInt32">'//nl//&
+    '  <UnstructuredGrid>'//nl//&
+    '    <Piece NumberOfPoints="12" NumberOfCells="3">'//nl//&
+    '      <PointData>'//nl//&
+    '      </PointData>'//nl//&
+    '      <CellData>'//nl//&
+    '      </CellData>'//nl//&
+    '      <Points>'//nl//&
+    '        <DataArray type="Float32" Name="Points" NumberOfComponents="3" format="ascii" RangeMin="0" R'//&
+    'angeMax="2.449489742783178">'//nl//&
+    '          0 0 0 1 0 0'//nl//&
+    '          2 0 0 0 1 0'//nl//&
+    '          1 1 0 2 1 0'//nl//&
+    '          0 0 1 1 0 1'//nl//&
+    '          2 0 1 0 1 1'//nl//&
+    '          1 1 1 2 1 1'//nl//&
+    '          <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">'//nl//&
+    '            <Value index="0">'//nl//&
+    '              0'//nl//&
+    '            </Value>'//nl//&
+    '            <Value index="1">'//nl//&
+    '              2.4494897428'//nl//&
+    '            </Value>'//nl//&
+    '          </InformationKey>'//nl//&
+    '        </DataArray>'//nl//&
+    '      </Points>'//nl//&
+    '      <Cells>'//nl//&
+    '        <DataArray type="Int64" Name="connectivity" format="ascii" RangeMin="0" RangeMax="11">'//nl//&
+    '          0 1 3 4 6 7'//nl//&
+    '          9 10 0 1 3 6'//nl//&
+    '          1 2 4 5 7 8'//nl//&
+    '          10 11'//nl//&
+    '        </DataArray>'//nl//&
+    '        <DataArray type="Int64" Name="offsets" format="ascii" RangeMin="8" RangeMax="20">'//nl//&
+    '          8 12 20'//nl//&
+    '        </DataArray>'//nl//&
+    '        <DataArray type="UInt8" Name="types" format="ascii" RangeMin="10" RangeMax="42">'//nl//&
+    '          42 10 42'//nl//&
+    '        </DataArray>'//nl//&
+    '        <DataArray type="Int64" Name="face_connectivity" format="ascii" RangeMin="0" RangeMax="11">'//nl//&
+    '          0 3 4 1 6 7'//nl//&
+    '          10 9 0 1 7 6'//nl//&
+    '          1 4 10 7 4 3'//nl//&
+    '          9 10 3 0 6 9'//nl//&
+    '          1 4 5 2 7 8'//nl//&
+    '          11 10 1 2 8 7'//nl//&
+    '          2 5 11 8 5 4'//nl//&
+    '          10 11 4 1 7 10'//nl//&
+    '        </DataArray>'//nl//&
+    '        <DataArray type="Int64" Name="face_offsets" format="ascii" RangeMin="4" RangeMax="48">'//nl//&
+    '          4 8 12 16 20 24'//nl//&
+    '          28 32 36 40 44 48'//nl//&
+    '        </DataArray>'//nl//&
+    '        <DataArray type="Int64" Name="polyhedron_to_faces" format="ascii" RangeMin="0" RangeMax="11"'//&
+    '>'//nl//&
+    '          0 1 2 3 4 5'//nl//&
+    '          6 7 8 9 10 11'//nl//&
+    '        </DataArray>'//nl//&
+    '        <DataArray type="Int64" Name="polyhedron_offsets" format="ascii" RangeMin="6" RangeMax="12">'//nl//&
+    '          6 6 12'//nl//&
+    '        </DataArray>'//nl//&
+    '      </Cells>'//nl//&
+    '    </Piece>'//nl//&
+    '  </UnstructuredGrid>'//nl//&
+    '</VTKFile>'
+  ! the shared face (the 4th of the first polyhedron, the 6th of the second, reversed) stored once
+  shared = text
+  call replace(shared, '          10 11 4 1 7 10'//nl, '          10 11'//nl)
+  call replace(shared, '28 32 36 40 44 48', '28 32 36 40 44')
+  call replace(shared, '6 7 8 9 10 11', '6 7 8 9 10 -4')
+  call replace(shared, 'version="2.3"', 'version="2.5"')
+  is_passed = .true.
+  do c=1, 2
+    filename = 'vtkfortran_read-vtk-polyhedra-'//trim(str(c, no_sign=.true.))//'.vtu'
+    open(newunit=u, file=filename, access='stream', form='unformatted', action='write', status='replace')
+    if (c == 1) then
+      write(u) text//nl
+    else
+      write(u) shared//nl
+    endif
+    close(u)
+    e(1) = a_vtk_file%initialize(filename=filename, action='read')
+    e(2) = a_vtk_file%xml_reader%read_connectivity(connectivity=connect, offset=offset, cell_type=cell_type, face=face, &
+                                                   faceoffset=faceoffset)
+    e(3) = a_vtk_file%xml_reader%read_connectivity(connectivity=connect4, offset=offset4, face=face4, &
+                                                   faceoffset=faceoffset4)
+    e(4) = a_vtk_file%finalize()
+    is_passed = is_passed .and. all(e == 0)
+    if (.not.is_passed) exit
+    is_passed = all(cell_type == [42_I1P, 10_I1P, 42_I1P]) .and. all(offset == [8, 12, 20]) .and. &
+                all(offset4 == [8, 12, 20]) .and. all(faceoffset == [31, -1, 62]) .and. all(faceoffset4 == [31, -1, 62])
+    if (.not.is_passed) exit
+    if (c == 1) then
+      is_passed = all(face == [cube0, cube1]) .and. all(face4 == [cube0, cube1])
+    else
+      is_passed = all(face == [cube0, cube1r]) .and. all(face4 == [cube0, cube1r])
+    endif
+    if (.not.is_passed) exit
+  enddo
+  if (.not.is_passed) print '(A)', 'failed: polyhedra in the layout of VTK 9.7.2'
+  endfunction check_vtk_polyhedra
+
+  subroutine replace(text, old, new)
+  !< Replace the first occurrence of a substring.
+  character(len=:), allocatable, intent(inout) :: text !< Text.
+  character(*),                  intent(in)    :: old  !< Substring.
+  character(*),                  intent(in)    :: new  !< Replacement.
+  integer                                      :: i    !< Position.
+
+  i = index(text, old)
+  if (i == 0) error stop 'replace: substring not found'
+  text = text(:i-1)//new//text(i+len(old):)
+  endsubroutine replace
+
+  function check_ascii_special() result(is_passed)
+  !< Read ASCII values that need care: non-finite reals as VTK writes them (`nan inf -inf`) and as VTKFortran wrote them
+  !< up to v3.x (`+                Infinity`, the sign apart); UInt64 values above huge(I8P), read with their bits.
+  logical                   :: is_passed !< Check result.
+  real(R8P),    allocatable :: phi(:)    !< Float64 read.
+  real(R4P),    allocatable :: psi(:)    !< Float32 read.
+  integer(I8P), allocatable :: big(:)    !< UInt64 read.
+  integer(I4P)              :: u         !< File unit.
+  integer(I4P)              :: e(5)      !< Errors.
+
+  open(newunit=u, file='vtkfortran_read-ascii-special.vti', action='write', status='replace')
+  write(u, '(A)') '<?xml version="1.0"?>'
+  write(u, '(A)') '<VTKFile type="ImageData" version="1.0" byte_order="LittleEndian" header_type="UInt32">'
+  write(u, '(A)') '  <ImageData WholeExtent="0 5 0 0 0 0" Origin="0 0 0" Spacing="1 1 1">'
+  write(u, '(A)') '    <Piece Extent="0 5 0 0 0 0">'
+  write(u, '(A)') '      <PointData>'
+  write(u, '(A)') '        <DataArray type="Float64" Name="phi" format="ascii">'
+  write(u, '(A)') '          1.5 nan inf -inf +                Infinity -                Infinity'
+  write(u, '(A)') '        </DataArray>'
+  write(u, '(A)') '        <DataArray type="Float32" Name="psi" format="ascii">'
+  write(u, '(A)') '          -2 NaN Infinity -Infinity +       Infinity    -       Infinity'
+  write(u, '(A)') '        </DataArray>'
+  write(u, '(A)') '        <DataArray type="UInt64" Name="big" format="ascii">'
+  write(u, '(A)') '          9223372036854775807 9223372036854775808 9223372036854775809 18446744073709551614'
+  write(u, '(A)') '          +18446744073709551615 0'
+  write(u, '(A)') '        </DataArray>'
+  write(u, '(A)') '      </PointData>'
+  write(u, '(A)') '    </Piece>'
+  write(u, '(A)') '  </ImageData>'
+  write(u, '(A)') '</VTKFile>'
+  close(u)
+  e(1) = a_vtk_file%initialize(filename='vtkfortran_read-ascii-special.vti', action='read')
+  e(2) = a_vtk_file%xml_reader%read_dataarray(location='node', data_name='phi', x=phi)
+  e(3) = a_vtk_file%xml_reader%read_dataarray(location='node', data_name='psi', x=psi)
+  e(4) = a_vtk_file%xml_reader%read_dataarray(location='node', data_name='big', x=big)
+  e(5) = a_vtk_file%finalize()
+  is_passed = all(e == 0)
+  if (is_passed) is_passed = size(phi) == 6 .and. size(psi) == 6 .and. size(big) == 6
+  if (is_passed) is_passed = phi(1) == 1.5_R8P .and. ieee_is_nan(phi(2)) .and. is_inf(phi(3), 1) .and. &
+                             is_inf(phi(4), -1) .and. is_inf(phi(5), 1) .and. is_inf(phi(6), -1) .and. &
+                             psi(1) == -2._R4P .and. ieee_is_nan(psi(2)) .and. is_inf(real(psi(3), R8P), 1) .and. &
+                             is_inf(real(psi(4), R8P), -1) .and. is_inf(real(psi(5), R8P), 1) .and. &
+                             is_inf(real(psi(6), R8P), -1) .and. &
+                             all(big == [huge(1_I8P), -huge(1_I8P) - 1_I8P, -huge(1_I8P), -2_I8P, -1_I8P, 0_I8P])
+  if (.not.is_passed) print '(A,*(1X,I0))', 'failed: vtkfortran_read-ascii-special.vti', e
+  endfunction check_ascii_special
+
+  function check_names_and_non_finite() result(is_passed)
+  !< Write, in every format, an array whose name holds the characters XML escapes (`"`, `&`, `<`, `>`, `'`) and
+  !< non-finite values (NaN, +Inf, -Inf; ASCII: `nan inf -inf`, as VTK writes them), with the name as the active
+  !< scalars; read them back. A `.pvd` listing a file whose name holds them too.
+  logical                       :: is_passed  !< Check result.
+  character(*), parameter       :: name='a"b&c<d>e''f' !< Array name.
+  real(R8P)                     :: s(3)       !< Values.
+  real(R8P),    allocatable     :: sr(:)      !< Values read.
+  real(R4P),    allocatable     :: sr4(:)     !< Values read (Float32).
+  character(len=:), allocatable :: names(:)   !< Names read.
+  character(len=:), allocatable :: active     !< Active scalars read.
+  character(len=:), allocatable :: files(:)   !< Files of the .pvd read.
+  character(len=:), allocatable :: groups(:)  !< Groups of the .pvd read.
+  character(len=:), allocatable :: labels(:)  !< Names of the .pvd read.
+  type(pvd_file)                :: pvd        !< PVD file.
+  integer(I4P)                  :: f          !< Counter.
+  integer(I4P)                  :: e(10)      !< Errors.
+
+  s = [ieee_value(1._R8P, ieee_quiet_nan), ieee_value(1._R8P, ieee_positive_inf), ieee_value(1._R8P, ieee_negative_inf)]
+  is_passed = .true.
+  do f=1, size(formats)
+    e = 0
+    e(1) = a_vtk_file%initialize(format=trim(formats(f)), filename='vtkfortran_read-names-'//trim(formats(f))//'.vtu', &
+                                 mesh_topology='UnstructuredGrid')
+    e(2) = a_vtk_file%xml_writer%write_piece(np=3, nc=1)
+    e(3) = a_vtk_file%xml_writer%write_geo(np=3, nc=1, x=x(1:3), y=y(1:3), z=z(1:3))
+    e(4) = a_vtk_file%xml_writer%write_connectivity(nc=1, connectivity=[0_I4P, 1_I4P, 2_I4P], offset=[3_I4P], &
+                                                    cell_type=[5_I1P])
+    e(5) = a_vtk_file%xml_writer%write_dataarray(location='node', action='open', scalars=name)
+    e(6) = a_vtk_file%xml_writer%write_dataarray(data_name=name, x=s)
+    e(7) = a_vtk_file%xml_writer%write_dataarray(data_name='s4', x=real(s, R4P))
+    e(8) = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
+    e(9) = a_vtk_file%xml_writer%write_piece()
+    e(10) = a_vtk_file%finalize()
+    is_passed = is_passed .and. all(e == 0)
+    if (any(e /= 0)) print '(A,*(1X,I0))', 'write '//trim(formats(f)), e
+    e = 0
+    e(1) = a_vtk_file%initialize(filename='vtkfortran_read-names-'//trim(formats(f))//'.vtu', action='read')
+    e(2) = a_vtk_file%xml_reader%get_dataarray_names(location='node', names=names)
+    e(3) = a_vtk_file%xml_reader%read_dataarray(location='node', data_name=name, x=sr)
+    e(4) = a_vtk_file%xml_reader%read_dataarray(location='node', data_name='s4', x=sr4)
+    e(5) = a_vtk_file%xml_reader%get_active(location='node', role='scalars', data_name=active)
+    e(6) = a_vtk_file%finalize()
+    is_passed = is_passed .and. all(e == 0)
+    if (is_passed) is_passed = size(names) == 2 .and. size(sr) == 3 .and. size(sr4) == 3
+    if (is_passed) is_passed = trim(names(1)) == name .and. active == name
+    if (is_passed) is_passed = ieee_is_nan(sr(1)) .and. is_inf(sr(2), 1) .and. is_inf(sr(3), -1) .and. &
+                               ieee_is_nan(sr4(1)) .and. is_inf(real(sr4(2), R8P), 1) .and. is_inf(real(sr4(3), R8P), -1)
+    if (.not.is_passed) then
+      print '(A,*(1X,I0))', 'failed: vtkfortran_read-names-'//trim(formats(f))//'.vtu', e
+      return
+    endif
+  enddo
+  e = 0
+  e(1) = pvd%initialize(filename='vtkfortran_read-names.pvd')
+  e(2) = pvd%write_dataset(filename=name//'.vtu', timestep=0._R8P, name=name, group=name)
+  e(3) = pvd%finalize()
+  e(4) = pvd%initialize(filename='vtkfortran_read-names.pvd', action='read')
+  e(5) = pvd%get_datasets(group=groups, name=labels, file=files)
+  e(6) = pvd%finalize()
+  is_passed = all(e == 0)
+  if (is_passed) is_passed = size(files) == 1 .and. size(groups) == 1 .and. size(labels) == 1
+  if (is_passed) is_passed = trim(files(1)) == name//'.vtu' .and. trim(groups(1)) == name .and. trim(labels(1)) == name
+  if (.not.is_passed) print '(A,*(1X,I0))', 'failed: vtkfortran_read-names.pvd', e
+  endfunction check_names_and_non_finite
+
+  elemental function is_inf(v, sign) result(is_it)
+  !< Return .true. if a value is an infinity of a sign.
+  real(R8P),    intent(in) :: v     !< Value.
+  integer,      intent(in) :: sign  !< Sign: 1 or -1.
+  logical                  :: is_it !< Inquire result.
+
+  is_it = (.not.ieee_is_finite(v)) .and. (.not.ieee_is_nan(v)) .and. ((v > 0._R8P) .eqv. (sign > 0))
+  endfunction is_inf
 endprogram vtk_fortran_read

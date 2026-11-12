@@ -11,6 +11,8 @@ implicit none
 private
 public :: xml_writer_abstract
 
+character(len=1), parameter :: QUOTE_MARK = achar(1) !< A `"` of a user value inside an attribute string (`attr_text`).
+
 type, abstract, extends(vtk_writer_abstract) :: xml_writer_abstract
   !< VTK file abstract XML writer.
   type(string)  :: format_ch                       !< Output format, string code.
@@ -244,8 +246,36 @@ contains
    call self%writer%end(name=name, iostat=self%error)
    endsubroutine write_tag
 
+   pure function attr_text(value) result(text)
+   !< A user value (a name, a file) for an attribute string of `write_attributes`: trimmed and adjusted, every `"` given
+   !< as `QUOTE_MARK` (a control character, never in an XML 1.0 document), turned back into `"` by `write_attributes`.
+   character(*), intent(in)      :: value !< User value.
+   character(len=:), allocatable :: text  !< Value for an attribute string.
+   integer                       :: c     !< Counter.
+
+   text = trim(adjustl(value))
+   do c=1, len(text)
+      if (text(c:c) == '"') text(c:c) = QUOTE_MARK
+   enddo
+   endfunction attr_text
+
+   pure function quotes_back(value) result(text)
+   !< An attribute value of `write_attributes` with each `QUOTE_MARK` turned back into `"`.
+   character(*), intent(in)      :: value !< Attribute value.
+   character(len=:), allocatable :: text  !< Value.
+   integer                       :: c     !< Counter.
+
+   text = value
+   do c=1, len(text)
+      if (text(c:c) == QUOTE_MARK) text(c:c) = '"'
+   enddo
+   endfunction quotes_back
+
    subroutine write_attributes(self, attributes)
    !< Write the attributes of the pending start tag, given as a `name="value" ...` string.
+   !<
+   !< A `"` of a user value (a name, a file) is given as `QUOTE_MARK` (`attr_text`), so that it does not end the value:
+   !< it is turned back into `"` here, and FoXy writes it as `&quot;`.
    class(xml_writer_abstract), intent(inout) :: self       !< Writer.
    character(*),               intent(in)    :: attributes !< Tag attributes, `name="value"` pairs.
    integer(I4P)                              :: c          !< Current position.
@@ -266,7 +296,7 @@ contains
       if (c > len(attributes)) exit
       e = index(attributes(c+1:), attributes(c:c))
       if (e == 0) exit
-      call self%writer%attribute(name=name, value=trim(adjustl(attributes(c+1:c+e-1))), iostat=self%error)
+      call self%writer%attribute(name=name, value=quotes_back(trim(adjustl(attributes(c+1:c+e-1)))), iostat=self%error)
       c = c + e + 1
    enddo
    endsubroutine write_attributes
@@ -384,12 +414,12 @@ contains
    if (is_tuples_) then
       tag_attributes = 'type="'//data_type_//             &
         '" NumberOfTuples="'//count// &
-        '" Name="'//trim(adjustl(data_name))//                          &
+        '" Name="'//attr_text(data_name)//                          &
         '" format="'//self%format_ch//'"'
    else
       tag_attributes = 'type="'//data_type_//                 &
         '" NumberOfComponents="'//count// &
-        '" Name="'//trim(adjustl(data_name))//                              &
+        '" Name="'//attr_text(data_name)//                              &
         '" format="'//self%format_ch//'"'
    endif
    ! content streamed as is between start and end tags: no copy of it (issue #70)
@@ -417,13 +447,13 @@ contains
    if (is_tuples_) then
       tag_attributes =  'type="'//data_type_//            &
         '" NumberOfTuples="'//count// &
-        '" Name="'//trim(adjustl(data_name))//                          &
+        '" Name="'//attr_text(data_name)//                          &
         '" format="'//self%format_ch//                                  &
         '" offset="'//trim(str(self%ioffset, .true.))//'"'
    else
       tag_attributes = 'type="'//data_type_//                 &
         '" NumberOfComponents="'//count// &
-        '" Name="'//trim(adjustl(data_name))//                              &
+        '" Name="'//attr_text(data_name)//                              &
         '" format="'//self%format_ch//                                      &
         '" offset="'//trim(str(self%ioffset, .true.))//'"'
    endif
@@ -640,18 +670,18 @@ contains
    select case(action_%chars())
    case('OPEN')
       attributes = ''
-      if (present(scalars)) attributes = attributes//' Scalars="'//trim(adjustl(scalars))//'"'
-      if (present(vectors)) attributes = attributes//' Vectors="'//trim(adjustl(vectors))//'"'
-      if (present(normals)) attributes = attributes//' Normals="'//trim(adjustl(normals))//'"'
-      if (present(tensors)) attributes = attributes//' Tensors="'//trim(adjustl(tensors))//'"'
-      if (present(tcoords)) attributes = attributes//' TCoords="'//trim(adjustl(tcoords))//'"'
-      if (present(global_ids)) attributes = attributes//' GlobalIds="'//trim(adjustl(global_ids))//'"'
-      if (present(pedigree_ids)) attributes = attributes//' PedigreeIds="'//trim(adjustl(pedigree_ids))//'"'
-      if (present(edge_flags)) attributes = attributes//' EdgeFlag="'//trim(adjustl(edge_flags))//'"'
-      if (present(tangents)) attributes = attributes//' Tangents="'//trim(adjustl(tangents))//'"'
-      if (present(rational_weights)) attributes = attributes//' RationalWeights="'//trim(adjustl(rational_weights))//'"'
-      if (present(higher_order_degrees)) attributes = attributes//' HigherOrderDegrees="'//trim(adjustl(higher_order_degrees))//'"'
-      if (present(process_ids)) attributes = attributes//' ProcessIds="'//trim(adjustl(process_ids))//'"'
+      if (present(scalars)) attributes = attributes//' Scalars="'//attr_text(scalars)//'"'
+      if (present(vectors)) attributes = attributes//' Vectors="'//attr_text(vectors)//'"'
+      if (present(normals)) attributes = attributes//' Normals="'//attr_text(normals)//'"'
+      if (present(tensors)) attributes = attributes//' Tensors="'//attr_text(tensors)//'"'
+      if (present(tcoords)) attributes = attributes//' TCoords="'//attr_text(tcoords)//'"'
+      if (present(global_ids)) attributes = attributes//' GlobalIds="'//attr_text(global_ids)//'"'
+      if (present(pedigree_ids)) attributes = attributes//' PedigreeIds="'//attr_text(pedigree_ids)//'"'
+      if (present(edge_flags)) attributes = attributes//' EdgeFlag="'//attr_text(edge_flags)//'"'
+      if (present(tangents)) attributes = attributes//' Tangents="'//attr_text(tangents)//'"'
+      if (present(rational_weights)) attributes = attributes//' RationalWeights="'//attr_text(rational_weights)//'"'
+      if (present(higher_order_degrees)) attributes = attributes//' HigherOrderDegrees="'//attr_text(higher_order_degrees)//'"'
+      if (present(process_ids)) attributes = attributes//' ProcessIds="'//attr_text(process_ids)//'"'
       if (len(attributes) > 0) then
          call self%write_start_tag(name=location_%chars(), attributes=attributes(2:))
       else
@@ -1530,7 +1560,7 @@ contains
 
    child = self%next_vtm_index()
    buffer = 'index="'//trim(str(child, .true.))//'"'
-   if (present(name)) buffer = buffer//' name="'//trim(adjustl(name))//'"'
+   if (present(name)) buffer = buffer//' name="'//attr_text(name)//'"'
    self%vtm_index = [self%vtm_index, 0_I4P] ! a new level, its children start from 0
    call self%write_start_tag(name='Block', attributes=buffer%chars())
    error = self%error
@@ -1573,10 +1603,10 @@ contains
    type(string)                                     :: buffer               !< Buffer string.
 
    if (present(number_of_components)) then
-      buffer = 'type="'//trim(adjustl(data_type))//'" Name="'//trim(adjustl(data_name))//&
+      buffer = 'type="'//attr_text(data_type)//'" Name="'//attr_text(data_name)//&
                '" NumberOfComponents="'//trim(str(number_of_components, .true.))//'"'
    else
-      buffer = 'type="'//trim(adjustl(data_type))//'" Name="'//trim(adjustl(data_name))//'"'
+      buffer = 'type="'//attr_text(data_type)//'" Name="'//attr_text(data_name)//'"'
    endif
    call self%write_self_closing_tag(name='PDataArray', attributes=buffer%chars())
    error = self%error
@@ -1600,9 +1630,9 @@ contains
       buffer = 'Extent="'// &
                trim(str(n=nx1))//' '//trim(str(n=nx2))//' '// &
                trim(str(n=ny1))//' '//trim(str(n=ny2))//' '// &
-               trim(str(n=nz1))//' '//trim(str(n=nz2))//'" Source="'//trim(adjustl(source))//'"'
+               trim(str(n=nz1))//' '//trim(str(n=nz2))//'" Source="'//attr_text(source)//'"'
    case('PUnstructuredGrid', 'PPolyData')
-      buffer = 'Source="'//trim(adjustl(source))//'"'
+      buffer = 'Source="'//attr_text(source)//'"'
    endselect
    call self%write_self_closing_tag(name='Piece', attributes=buffer%chars())
    error = self%error
@@ -1622,12 +1652,12 @@ contains
    if (present(name)) then
       call self%write_self_closing_tag(name='DataSet',                                      &
                                        attributes='index="'//trim(str(file_index, .true.))//&
-                                                 '" file="'//trim(adjustl(filename))//      &
-                                                 '" name="'//trim(adjustl(name))//'"')
+                                                 '" file="'//attr_text(filename)//      &
+                                                 '" name="'//attr_text(name)//'"')
    else
       call self%write_self_closing_tag(name='DataSet',                                       &
                                        attributes='index="'//trim(str(file_index, .true.))// &
-                                                 '" file="'//trim(adjustl(filename))//'"')
+                                                 '" file="'//attr_text(filename)//'"')
    endif
    error = self%error
    endfunction write_parallel_block_file
@@ -1658,8 +1688,8 @@ contains
             child = self%next_vtm_index()
             call self%write_self_closing_tag(name='DataSet',                                     &
                                              attributes='index="'//trim(str(child, .true.))//               &
-                                                       '" file="'//trim(adjustl(filenames(f)))// &
-                                                       '" name="'//trim(adjustl(names(f)))//'"')
+                                                       '" file="'//attr_text(filenames(f))// &
+                                                       '" name="'//attr_text(names(f))//'"')
          enddo
       endif
    else
@@ -1667,7 +1697,7 @@ contains
          child = self%next_vtm_index()
          call self%write_self_closing_tag(name='DataSet',                                &
                                           attributes='index="'//trim(str(child, .true.))//               &
-                                                    '" file="'//trim(adjustl(filenames(f)))//'"')
+                                                    '" file="'//attr_text(filenames(f))//'"')
       enddo
    endif
    error = self%error
@@ -1709,8 +1739,8 @@ contains
             child = self%next_vtm_index()
             call self%write_self_closing_tag(name='DataSet',                                      &
                                              attributes='index="'//trim(str(child, .true.))//               &
-                                                       '" file="'//trim(adjustl(filenames_(f)))// &
-                                                       '" name="'//trim(adjustl(names_(f)))//'"')
+                                                       '" file="'//attr_text(filenames_(f)%chars())// &
+                                                       '" name="'//attr_text(names_(f)%chars())//'"')
          enddo
       endif
    else
@@ -1718,7 +1748,7 @@ contains
          child = self%next_vtm_index()
          call self%write_self_closing_tag(name='DataSet',                               &
                                           attributes='index="'//trim(str(child, .true.))//               &
-                                                    '" file="'//trim(adjustl(filenames_(f)))//'"')
+                                                    '" file="'//attr_text(filenames_(f)%chars())//'"')
       enddo
    endif
    error = self%error
