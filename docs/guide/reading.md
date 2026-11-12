@@ -84,13 +84,18 @@ the polyhedra as the face stream of `write_connectivity`; `get_info` returns `he
   arrays of `location='row'` (`get_dataarray_names`, `get_dataarray_info`, `read_dataarray`), the rows of the step read
   in a time series. A column of a time series without its `Steps/RowDataOffsets` entry is error 6 (VTK 9.7.2 cannot read
   it either). A complete program: [A time history (Table)](/manual/cookbook#a-time-history-table).
+- **OverlappingAMR**: `get_levels(n_levels)` returns its levels and `set_level(level)` (from 0, level 0 by default)
+  selects the one the following calls read: `get_info` returns the number of its boxes (`npieces`), its `spacing` and
+  the `origin`; `read_piece(piece, nx1, ..., nz2, np, nc)` the point extent and counts of a box; `read_dataarray(...,
+  piece)` its arrays (of the step read in a time series). A complete program:
+  [A block-structured AMR](/manual/cookbook#a-block-structured-amr).
 - **Memory**: each read is an HDF5 hyperslab of the piece and step asked for: memory use is about the size of the array
   read.
 - `finalize` closes the file (`free` alone forgets it without closing it: call `finalize`).
 - **Not supported**: a multi-block VTKHDF file (`vtm_file` with `format='vtkhdf'`), and `get_sources` /
   `check_pieces` (a VTKHDF file is not a parallel header). The test `src/tests/vtk_fortran_read_vtkhdf.f90` reads every
   topology and time series back, and a file of two polyhedra sharing a face; `src/tests/vtk_fortran_write_vtkhdf_table.f90`
-  the Tables.
+  the Tables, `src/tests/vtk_fortran_write_vtkhdf_amr.f90` the OverlappingAMRs.
 
 ### Parallel headers
 

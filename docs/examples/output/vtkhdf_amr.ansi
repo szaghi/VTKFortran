@@ -1,0 +1,6 @@
+$ vtkhdf_amr
+level 0: spacing 1.00, boxes 1
+  box 1: points  0 16  0  8, hottest 1.000
+level 1: spacing 0.50, boxes 2
+  box 1: points  8 16  4 12, hottest 0.368
+  box 2: points 16 24  4 12, hottest 1.000

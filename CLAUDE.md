@@ -114,7 +114,14 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   `table_rows`), `NumberOfRows` written at the close (`end_table`); a series appends the rows of each step
   (`NumberOfRows` one entry per step, `Steps/RowDataOffsets/<col>` = `row_total`, VTK's spelling, not the spec page's
   `RowDataOffets`); refused: XML formats (`vtk_file%initialize`), `comm`, a step without columns (`step_pieces` is the
-  "columns opened" flag); VTK 9.7.2 reads it, ParaView 6.1.1 does not. Point/cell/field data, active arrays as the `Attribute` attribute, unsigned,
+  "columns opened" flag); VTK 9.7.2 reads it, ParaView 6.1.1 does not. OverlappingAMR (`mesh_topology='OverlappingAMR'`,
+  `TOPOLOGY_AMR`): `write_level(level, spacing)` (the only AMR binding, deferred in `vtk_writer_abstract`, XML writers
+  refuse) opens `Level<n>` (`open_level`, `level_group`; `open_group` puts PointData/CellData in it), each box a
+  `write_piece(nx1..nz2)` (`start_box`: `AMRBox` row = cells, inside the level-0 bounds `domain`, >= 1 cell per axis)
+  closed by `write_piece()` (`end_box`: every recorded array holds the level's tuples, `level_counts`); series:
+  `Steps/Level<n>/AMRBoxOffset`, `NumberOfAMRBox`, `PointDataOffset/`, `CellDataOffset/` (VTK 9.7.2's singular names);
+  no field data, comm, reopen; VTK 9.7.2 reads it (pipeline time too), ParaView 6.1.1 not (vtkGroupDataSetsFilter).
+  Point/cell/field data, active arrays as the `Attribute` attribute, unsigned,
   deflate for `compressor='zlib'`; refusals return an error with a message on stderr (a data name empty or with `/` or
   `.`: `h5_name_invalid`, also used by `vtm_file` for block and dataset names; never renamed; HDF5 has no length limit). Arrays stored as in memory
   (`x(nc,i,j,k)` = VTKHDF `[k,j,i,nc]`), the axes of one point of a grid dropped (VTK requires it); `Version` written by
@@ -155,7 +162,8 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   `initialize` sees the HDF5 signature): every topology, partitions as pieces, time series (`get_steps`, `set_step`),
   values as HDF5 hyperslabs of the piece/step converted by the decoder (`read_dataarray_bytes`), offsets back to end
   offsets, a Table's columns as `location='row'` (`npieces` 0; a series column needs its `RowDataOffsets`, error 6
-  otherwise, as VTK), polyhedra back to the face stream (VTKHDF 2.9 shared faces, `-(n+1)` in `PolyhedronToFaces`, given to each
+  otherwise, as VTK), an OverlappingAMR level by level (`get_levels`, `set_level` from 0; its boxes as pieces, `amr_box`,
+  `prefix` = `Level<n>/`), polyhedra back to the face stream (VTKHDF 2.9 shared faces, `-(n+1)` in `PolyhedronToFaces`, given to each
   polyhedron, reversed where marked; a face id out of range is error 6; VTK 9.7.2 cannot read such files, the nightly
   of 2026-11-08 misreads the reversed faces). `xml_reader%finalize` stays pure (forgets the file); `close` closes it
 - `vtk_fortran_vtk_file_xml_reader` — `xml_reader` type: reader of serial files (any format, header type, zlib) and parallel headers (`check_pieces`); indexes the file once with FoXy `xml_index` (tags and content positions, scan stopped at `AppendedData`), then decodes only the arrays asked for; `get_active(location, role, data_name)` the active array of a role (the
@@ -206,6 +214,9 @@ offsets read back, the reuse refusals;
 `vtk_fortran_write_vtkhdf_table.f90`: Tables (a column of each kind, unsigned, 3 components; a 3-step series), read
 back with the bindings and the reader, the refusals (rows, names, missing/new columns, steps without columns, pieces,
 locations; XML refuses a Table);
+`vtk_fortran_write_vtkhdf_amr.f90`: OverlappingAMRs (two levels, three boxes, point/cell data and a vector; a
+2-step series with level 1 going from two boxes to one), read back with the bindings and the reader (`set_level`), 15
+refusals (levels, boxes outside or flat or out of order, array sizes, missing/new arrays, field data, steps, append);
 `vtk_fortran_write_vtkhdf_append.f90`: series continued with `action='append'` (restart, interrupted run), reuse across
 the restart, an orphan offset entry, a restart after a step with an empty piece;
 `vtk_fortran_write_vtkhdf_vtm.f90`: VTKHDF multi-block files (`vtm_file`, `format='vtkhdf'`): the nested assembly, a
@@ -223,5 +234,5 @@ ranks (one rank empty, I4P and I8P ids by rank), an ImageData, a RectilinearGrid
 ranks two along x, one across, one empty; otherwise rank 0 whole), an UnstructuredGrid series (pieces changing size,
 continued by the ranks after a restart, a step reusing the mesh), a PolyData series, polyhedra appearing at step 2 on the odd ranks,
 the UG and PolyData compressed (with parallel filtered writes, skipped otherwise), compared with the same files written serially and
-as `.vtu`/`.vtp`/`.vti`/`.vtr`/`.vts`, the refusals of `comm` (grid regions outside, overlapping, not covering, two; a Table); without MPI `comm` refused, its name without "mpi" since `scripts/run_tests.sh` runs those with
+as `.vtu`/`.vtp`/`.vti`/`.vtr`/`.vts`, the refusals of `comm` (grid regions outside, overlapping, not covering, two; a Table, an OverlappingAMR); without MPI `comm` refused, its name without "mpi" since `scripts/run_tests.sh` runs those with
 mpirun; without HDF5 the writer refuses to start); `vtk_fortran_read.F90` reads files back (every topology and format, and two files written by VTK, embedded in the test), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.

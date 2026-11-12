@@ -4,8 +4,10 @@ module vtk_fortran_vtk_file_vtkhdf_reader
 !< action='read')`), which dispatches its calls here when the file is an HDF5 one.
 !<
 !< It reads every dataset the VTKHDF writer writes, and the same layouts written by VTK: ImageData, RectilinearGrid,
-!< StructuredGrid (one piece), UnstructuredGrid (polyhedra included), PolyData (each partition a piece) and Table (no
-!< pieces: its columns are read with `location='row'`, the rows of the step read; `NumberOfRows`), static or time
+!< StructuredGrid (one piece), UnstructuredGrid (polyhedra included), PolyData (each partition a piece), Table (no
+!< pieces: its columns are read with `location='row'`, the rows of the step read; `NumberOfRows`) and OverlappingAMR
+!< (`get_levels`, `set_level`: the boxes of the level read, from level 0, are its pieces, `read_piece` giving their point
+!< extents, `get_info` its spacing and the origin), static or time
 !< series (`Steps`: `get_steps`, `set_step`; the step 1 by default; through the offsets of `Steps`, so that a step reusing
 !< the mesh or an array of the step before reads it as written in full). The values are read as HDF5 hyperslabs of the piece
 !< and step asked for, as the bytes of their type in the file (`read_dataarray_bytes`), then converted by the caller: the
@@ -39,6 +41,8 @@ type :: vtkhdf_reader
   integer(I8P)                  :: n_steps=0_I8P          !< Steps, 0 for a dataset that is not a time series.
   integer(I8P)                  :: step=1_I8P             !< Step read.
   integer(I4P)                  :: whole_extent(6)=0_I4P  !< Whole extent of a grid.
+  integer(I4P)                  :: n_levels=0_I4P         !< Levels of an OverlappingAMR.
+  integer(I4P)                  :: level=0_I4P            !< Level read (from 0).
   contains
     ! public methods
     procedure, pass(self) :: close                !< Close the file and reset the reader.
@@ -47,6 +51,7 @@ type :: vtkhdf_reader
     procedure, pass(self) :: get_active           !< Return the name of the active array of a role.
     procedure, pass(self) :: get_dataarray_names  !< Return the names of the dataarrays of a location.
     procedure, pass(self) :: get_info             !< Return the information of the dataset.
+    procedure, pass(self) :: get_levels           !< Return the number of levels of an OverlappingAMR.
     procedure, pass(self) :: get_steps            !< Return the times of the steps.
     procedure, pass(self) :: initialize           !< Initialize the reader: open the file.
     procedure, pass(self) :: read_dataarray_bytes !< Return the bytes, type and components of a dataarray.
@@ -55,9 +60,12 @@ type :: vtkhdf_reader
     procedure, pass(self) :: read_geo_R4P         !< Read the geometry (R4P).
     procedure, pass(self) :: read_ids             !< Read ids of the cells (connectivity, offsets, types, faces).
     procedure, pass(self) :: read_piece           !< Read the counts and extent of a piece.
+    procedure, pass(self) :: set_level            !< Select the level read of an OverlappingAMR.
     procedure, pass(self) :: set_step             !< Select the step read.
     ! private methods
+    procedure, pass(self), private :: amr_box      !< A box of the level and step read of an OverlappingAMR.
     procedure, pass(self), private :: grid_points  !< Points of the grid along each axis.
+    procedure, pass(self), private :: prefix       !< Group of the point and cell data of the level read (AMR).
     procedure, pass(self), private :: is_grid      !< The dataset is a grid (one piece).
     procedure, pass(self), private :: part         !< The partition of a piece of the step, and where it starts.
     procedure, pass(self), private :: step_value   !< An entry of a dataset of Steps for the step read.
@@ -89,11 +97,18 @@ contains
   if (h5_attribute_read(self%root, 'Type', text) /= 0_I4P) return
   error = 3
   select case(text)
-  case('ImageData', 'RectilinearGrid', 'StructuredGrid', 'UnstructuredGrid', 'PolyData', 'Table')
+  case('ImageData', 'RectilinearGrid', 'StructuredGrid', 'UnstructuredGrid', 'PolyData', 'Table', 'OverlappingAMR')
     self%mesh_topology = text
   case default
     return
   endselect
+  self%n_levels = 0
+  self%level = 0
+  if (self%mesh_topology == 'OverlappingAMR') then ! the levels Level0, Level1, ...
+    do while (h5_link_exists(self%root, 'Level'//trim(str(n=self%n_levels, no_sign=.true.))))
+      self%n_levels = self%n_levels + 1
+    enddo
+  endif
   error = 6
   if (self%mesh_topology == 'ImageData') then
     if (h5_attribute_read(self%root, 'WholeExtent', ivalues) /= 0_I4P) return
@@ -142,6 +157,8 @@ contains
   self%n_steps = 0_I8P
   self%step = 1_I8P
   self%whole_extent = 0_I4P
+  self%n_levels = 0
+  self%level = 0
   endsubroutine forget
 
   function get_info(self, mesh_topology, npieces, header_type, compressor, nx1, nx2, ny1, ny2, nz1, nz2, &
@@ -166,6 +183,11 @@ contains
   integer(I4P)                                         :: error         !< Error status.
   real(R8P), allocatable                               :: rvalues(:)    !< Values read.
   integer(I8P)                                         :: g, first(9), n_parts !< Partition, starts, parts of the step.
+  integer(I4P)                                         :: ext(6)        !< Extent of a box (AMR).
+  integer(I8P)                                         :: starts(2)     !< Points, cells before a box (AMR).
+  integer(I8P)                                         :: n_boxes       !< Boxes of the level read (AMR).
+  integer(hid_kind)                                    :: dset          !< Group of the level read (AMR).
+  integer(I4P)                                         :: e             !< Error of a closing.
 
   error = 4
   if (.not.self%is_initialized) return
@@ -175,6 +197,10 @@ contains
     npieces = 1
     if (self%mesh_topology == 'Table') then ! no pieces: its columns are read with location='row'
       npieces = 0
+    elseif (self%mesh_topology == 'OverlappingAMR') then ! the boxes of the level read
+      error = self%amr_box(1, ext, starts, n_boxes) ! n_boxes even when the level has no box in the step
+      npieces = int(n_boxes, I4P)
+      error = 0
     elseif (.not.self%is_grid()) then
       error = self%part(1, g, first, n_parts) ! n_parts even when the step has no part
       npieces = int(n_parts, I4P)
@@ -195,7 +221,13 @@ contains
       if (h5_attribute_read(self%root, 'Origin', rvalues) == 0_I4P) origin = rvalues(1:3)
     endif
   endif
-  if (present(spacing)) then
+  if (present(spacing) .and. self%mesh_topology == 'OverlappingAMR') then ! the spacing of the level read
+    spacing = 1._R8P
+    if (h5_group_open(self%root, 'Level'//trim(str(n=self%level, no_sign=.true.)), dset) == 0_I4P) then
+      if (h5_attribute_read(dset, 'Spacing', rvalues) == 0_I4P) spacing = rvalues(1:3)
+      e = h5_group_close(dset)
+    endif
+  elseif (present(spacing)) then
     spacing = 1._R8P
     if (h5_attribute_exists(self%root, 'Spacing')) then
       if (h5_attribute_read(self%root, 'Spacing', rvalues) == 0_I4P) spacing = rvalues(1:3)
@@ -244,6 +276,32 @@ contains
   error = 0
   endfunction set_step
 
+  function get_levels(self, n_levels) result(error)
+  !< Return the number of levels of an OverlappingAMR (0 for another dataset).
+  class(vtkhdf_reader), intent(in)  :: self     !< Reader.
+  integer(I4P),         intent(out) :: n_levels !< Levels.
+  integer(I4P)                      :: error    !< Error status.
+
+  n_levels = 0
+  error = 4
+  if (.not.self%is_initialized) return
+  n_levels = self%n_levels
+  error = 0
+  endfunction get_levels
+
+  function set_level(self, level) result(error)
+  !< Select the level read of an OverlappingAMR, from 0 (level 0 by default): its boxes are the pieces of the following
+  !< calls.
+  class(vtkhdf_reader), intent(inout) :: self  !< Reader.
+  integer(I4P),         intent(in)    :: level !< Level, from 0.
+  integer(I4P)                        :: error !< Error status.
+
+  error = 4
+  if (.not.self%is_initialized .or. level < 0 .or. level >= self%n_levels) return
+  self%level = level
+  error = 0
+  endfunction set_level
+
   function read_piece(self, piece, np, nc, nx1, nx2, ny1, ny2, nz1, nz2, nverts, nlines, nstrips, npolys) result(error)
   !< Read the counts and the extent of a piece of the step read (a grid has one piece, its extent the whole extent).
   class(vtkhdf_reader), intent(in)            :: self    !< Reader.
@@ -265,11 +323,28 @@ contains
   integer(I8P)                                :: grid(3) !< Points along each axis.
   integer(I8P)                                :: g, first(9), n_parts !< Partition, starts, parts of the step.
   integer(I4P)                                :: b       !< Counter.
+  integer(I4P)                                :: ext(6)  !< Extent of a box (AMR).
+  integer(I8P)                                :: starts(2) !< Points, cells before a box (AMR).
+  integer(I8P)                                :: n_boxes !< Boxes of the level read (AMR).
 
   counts = 0_I8P
   error = 4
   if (.not.self%is_initialized .or. self%mesh_topology == 'Table') return ! a Table has no pieces
-  if (self%is_grid()) then
+  if (self%mesh_topology == 'OverlappingAMR') then ! a box of the level read: its point extent
+    error = self%amr_box(piece, ext, starts, n_boxes)
+    if (error /= 0) return
+    counts(1) = product(int(ext(2::2) - ext(1::2), I8P) + 1_I8P)
+    counts(2) = product(int(ext(2::2) - ext(1::2), I8P))
+    if (present(nx1)) nx1 = ext(1)
+    if (present(nx2)) nx2 = ext(2)
+    if (present(ny1)) ny1 = ext(3)
+    if (present(ny2)) ny2 = ext(4)
+    if (present(nz1)) nz1 = ext(5)
+    if (present(nz2)) nz2 = ext(6)
+    if (present(np)) np = counts(1)
+    if (present(nc)) nc = counts(2)
+    return
+  elseif (self%is_grid()) then
     if (present(piece)) then
       if (piece /= 1) return
     endif
@@ -325,11 +400,12 @@ contains
   if (.not.self%is_initialized .or. active_role(role) == 0) return
   group = location_group(location)
   if (group /= 'PointData' .and. group /= 'CellData') return
-  if (.not.self%is_grid()) then
+  if (.not.(self%is_grid() .or. self%mesh_topology == 'OverlappingAMR')) then
     error = self%part(piece, g, first, n_parts)
     if (error /= 0) return
   endif
   error = 0
+  group = self%prefix(group)//group
   if (.not.h5_link_exists(self%root, group)) return
   if (h5_group_names(self%root, group, list) /= 0_I4P) then
     error = 6
@@ -369,11 +445,13 @@ contains
   if (.not.self%is_initialized) return
   group = location_group(location)
   if (len(group) == 0) return
-  if (group /= 'FieldData' .and. group /= 'RowData' .and. .not.(self%is_grid() .or. self%mesh_topology == 'Table')) then
+  if (group /= 'FieldData' .and. group /= 'RowData' .and. &
+      .not.(self%is_grid() .or. self%mesh_topology == 'Table' .or. self%mesh_topology == 'OverlappingAMR')) then
     error = self%part(piece, g, first, n_parts)
     if (error /= 0) return
   endif
   error = 0
+  group = self%prefix(group)//group
   if (.not.h5_link_exists(self%root, group)) return
   if (h5_group_names(self%root, group, list) /= 0_I4P) then
     error = 6
@@ -650,6 +728,63 @@ contains
   grid = int(self%whole_extent(2::2) - self%whole_extent(1::2), I8P) + 1_I8P
   endfunction grid_points
 
+  function amr_box(self, piece, extent, starts, n_boxes) result(error)
+  !< The box `piece` (from 1, default 1) of the level and step read of an OverlappingAMR: its point extent (the cells of
+  !< its `AMRBox` row, `imin, imax, ...`, are the points `imin, imax+1, ...`), the points and cells of the boxes of the
+  !< level and step before it (where its data start), and the boxes of the level in the step.
+  class(vtkhdf_reader), intent(in)           :: self      !< Reader.
+  integer(I4P),         intent(in), optional :: piece     !< Box, from 1 (default 1).
+  integer(I4P),         intent(out)          :: extent(6) !< Point extent of the box.
+  integer(I8P),         intent(out)          :: starts(2) !< Points and cells of the boxes before it.
+  integer(I8P),         intent(out)          :: n_boxes   !< Boxes of the level in the step.
+  integer(I4P)                               :: error     !< Error status.
+  integer(I8P), allocatable                  :: boxes(:)  !< AMRBox, 6 values per box.
+  character(len=:), allocatable              :: level     !< Group of the level.
+  integer(I8P)                               :: first     !< Boxes of the level before the step.
+  integer(I8P)                               :: p         !< Box, from 1.
+  integer(I8P)                               :: q         !< Counter.
+  integer(I8P)                               :: cells(3)  !< Cells of a box along each axis.
+
+  extent = 0 ; starts = 0_I8P ; n_boxes = 0_I8P
+  error = 6
+  level = 'Level'//trim(str(n=self%level, no_sign=.true.))
+  if (h5_dataset_read(self%root, level//'/AMRBox', boxes) /= 0_I4P) return
+  if (mod(size(boxes, kind=I8P), 6_I8P) /= 0_I8P) return
+  first = 0_I8P
+  n_boxes = size(boxes, kind=I8P) / 6_I8P
+  if (self%n_steps > 0_I8P) then
+    first = self%step_value(level//'/AMRBoxOffset', 1_I4P, error) ; if (error /= 0) return
+    n_boxes = self%step_value(level//'/NumberOfAMRBox', 1_I4P, error) ; if (error /= 0) return
+    error = 6
+    if (first < 0_I8P .or. n_boxes < 0_I8P .or. 6_I8P * (first + n_boxes) > size(boxes, kind=I8P)) return
+  endif
+  p = 1_I8P
+  if (present(piece)) p = int(piece, I8P)
+  error = 4
+  if (p < 1_I8P .or. p > n_boxes) return
+  do q=first + 1_I8P, first + p - 1_I8P
+    cells = boxes(6_I8P * q - 4_I8P:6_I8P * q:2) - boxes(6_I8P * q - 5_I8P:6_I8P * q - 1_I8P:2) + 1_I8P
+    starts = starts + [product(cells + 1_I8P), product(cells)]
+  enddo
+  q = first + p
+  extent(1::2) = int(boxes(6_I8P * q - 5_I8P:6_I8P * q - 1_I8P:2), I4P)
+  extent(2::2) = int(boxes(6_I8P * q - 4_I8P:6_I8P * q:2), I4P) + 1
+  error = 0
+  endfunction amr_box
+
+  pure function prefix(self, group) result(path)
+  !< The path of the data groups of the level read of an OverlappingAMR (`Level<n>/`, for PointData and CellData), empty
+  !< for the other datasets.
+  class(vtkhdf_reader), intent(in) :: self  !< Reader.
+  character(*),         intent(in) :: group !< Data group.
+  character(len=:), allocatable    :: path  !< Path of the level, with the separator.
+
+  path = ''
+  if (.not.allocated(self%mesh_topology)) return
+  if (self%mesh_topology == 'OverlappingAMR' .and. (group == 'PointData' .or. group == 'CellData')) &
+    path = 'Level'//trim(str(n=self%level, no_sign=.true.))//'/'
+  endfunction prefix
+
   elemental function is_grid(self) result(is_grid_)
   !< Return true if the dataset is a grid (ImageData, RectilinearGrid, StructuredGrid: one piece).
   class(vtkhdf_reader), intent(in) :: self     !< Reader.
@@ -774,6 +909,9 @@ contains
   character(len=:), allocatable                       :: group        !< Group of the location.
   integer(I8P), allocatable                           :: dims(:)      !< Shape of the dataset, Fortran order.
   integer(I8P), allocatable                           :: counts(:)    !< Rows of the steps of a Table.
+  integer(I4P)                                        :: ext(6)       !< Extent of a box (AMR).
+  integer(I8P)                                        :: box_starts(2) !< Points, cells before a box (AMR).
+  integer(I8P)                                        :: n_boxes      !< Boxes of the level read (AMR).
   integer(I8P)                                        :: g, starts(9), n_parts, b !< Partition, starts, parts, counter.
   integer(I8P)                                        :: grid(3)      !< Points of a grid along each axis.
   integer(I4P)                                        :: n_axes       !< Axes of the grid in the arrays.
@@ -783,8 +921,8 @@ contains
   if (.not.self%is_initialized) return
   group = location_group(location)
   if (len(group) == 0) return
-  path = group//'/'//trim(data_name)
-  if (.not.h5_link_exists(self%root, group)) return
+  path = self%prefix(group)//group//'/'//trim(data_name)
+  if (.not.h5_link_exists(self%root, self%prefix(group)//group)) return
   if (.not.h5_link_exists(self%root, path)) return
   error = 6
   if (h5_dataset_info(self%root, path, data_type, dims) /= 0_I4P) return
@@ -792,7 +930,26 @@ contains
     error = 5
     return
   endif
-  if (group == 'RowData') then ! a column of a Table: the rows of the step read (NumberOfRows, one entry per step)
+  if (self%mesh_topology == 'OverlappingAMR' .and. group /= 'FieldData') then ! a box of the level and step read
+    error = self%amr_box(piece, ext, box_starts, n_boxes) ; if (error /= 0) return
+    error = 6
+    if (size(dims) > 1) n_components = int(dims(1), I4P)
+    if (group == 'PointData') then
+      count = product(int(ext(2::2) - ext(1::2), I8P) + 1_I8P)
+      first = box_starts(1)
+    else
+      count = product(int(ext(2::2) - ext(1::2), I8P))
+      first = box_starts(2)
+    endif
+    if (self%n_steps > 0_I8P) then ! where the arrays of the step start
+      b = first
+      first = self%step_value(self%prefix(group)//trim(merge('PointDataOffset', 'CellDataOffset ', group == 'PointData'))// &
+                              '/'//trim(data_name), 1_I4P, error)
+      if (error /= 0) return
+      first = first + b
+    endif
+    n_tuples = count
+  elseif (group == 'RowData') then ! a column of a Table: the rows of the step read (NumberOfRows, one entry per step)
     if (size(dims) > 1) n_components = int(product(dims(1:size(dims)-1)), I4P)
     if (h5_dataset_read(self%root, 'NumberOfRows', counts) /= 0_I4P) return
     if (size(counts, kind=I8P) < max(self%step, 1_I8P)) return

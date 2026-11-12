@@ -43,7 +43,8 @@ space, e.g. off a small `/tmp` on HPC nodes. The `binary` format writes inline, 
 and one HDF5 dataset per array. VTK's `vtkHDFReader` and ParaView read it; any HDF5 tool (h5py, `h5dump`, HDFView) reads its
 arrays directly. It is being added step by step ([issue #51](https://github.com/szaghi/VTKFortran/issues/51)):
 every topology is written now (**ImageData**, **RectilinearGrid**, **StructuredGrid**, **UnstructuredGrid** with its
-polyhedra, **PolyData**), **Table** (columns of values), time series in one file, and one file written by MPI ranks.
+polyhedra, **PolyData**), **Table** (columns of values), **OverlappingAMR** (block-structured AMR), time series in one
+file, and one file written by MPI ranks.
 
 Choose it when the files are read by HDF5 tools too, or to use HDF5 compression; stay with the XML formats for files
 that VTKFortran reads back, and without an HDF5 library. It needs the library built with HDF5 (see
@@ -105,6 +106,22 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
   step or new after the first one, a step without columns, pieces, point and cell data, `comm`; the XML formats refuse a
   Table (VTK's XML table format, `.vtt`, is not written by VTKFortran). **VTK 9.7 reads it, ParaView 6.1 does not** (its
   VTK 9.6 does not know the type). A complete program: [A time history (Table)](/manual/cookbook#a-time-history-table).
+- **OverlappingAMR** (`mesh_topology='OverlappingAMR'`, `origin` of `initialize` its origin, a VTK
+  `vtkOverlappingAMR`): the levels of a block-structured AMR, each of uniform boxes. `write_level(level, spacing)` starts
+  a level (0, 1, ... in order; a level can be started again, with its spacing), then each box is a piece,
+  `write_piece(nx1, nx2, ny1, ny2, nz1, nz2)` (its point extent, in the indices of its level) with its point and cell
+  data, closed by `write_piece()`. The layout (measured on what VTK 9.7.2 reads; its `vtkHDFWriter` does not write an
+  OverlappingAMR): `/VTKHDF` with `Origin` and `GridDescription` (`XYZ`), a group `Level<n>` per level with `Spacing`,
+  `AMRBox` (one row per box, its cells `nx1, nx2-1, ny1, ny2-1, nz1, nz2-1`) and the arrays of its boxes one after the
+  other in `PointData` and `CellData` (x fastest in a box, `[n]` or `[n, components]`). A box has at least one cell
+  along every axis (VTK reads every box in 3D: a 2D AMR is one cell thick); a box of a finer level lies inside the bounds
+  of the boxes of level 0, which come first; every box of every level writes the same arrays. In a time series every
+  step writes its levels and boxes again (`Steps/Level<n>/AMRBoxOffset`, `NumberOfAMRBox`, `PointDataOffset/<name>`,
+  `CellDataOffset/<name>`: the names VTK 9.7.2 reads, singular, while the specification page writes them plural), the
+  file valid after each box. Refused: field data, `comm`, a step without boxes, the XML formats. Read back level by level
+  (`get_levels`, `set_level`), see [Reading](/guide/reading#vtkhdf-files). **VTK 9.7 reads it** (its pipeline time too);
+  **ParaView 6.1 does not** (its reader groups the output with a filter that refuses an OverlappingAMR). A complete
+  program: [A block-structured AMR](/manual/cookbook#a-block-structured-amr).
 - **Time series** (`Steps`): each output starts with `xml_writer%write_step(time)`; the pieces of every step are
   appended to the same datasets, a grid's arrays get a time axis (`[t, k, j, i]` in C order), and the group `Steps` holds
   the times and, for each step, where it starts in the datasets (`PartOffsets`, `PointOffsets`, ...,
@@ -145,8 +162,9 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
 - **Compression**: `compressor='zlib'` deflates every dataset (level 6, in chunks of up to 1 MiB). It needs the deflate
   filter of the HDF5 library, not `VTKFORTRAN_USE_ZLIB`: without it `initialize` returns a non-zero error.
 - **Version**: the lowest one with the features written: 2.0, 2.5 with polyhedra, 2.6 when an active array is
-  designated, 2.7 for a RectilinearGrid or StructuredGrid, 2.8 for a Table. The files are checked with VTK 9.7.2 and
-  ParaView 6.1.1 (but the RectilinearGrid, StructuredGrid and Table files, which ParaView 6.1 cannot read).
+  designated, 2.7 for a RectilinearGrid or StructuredGrid, 2.8 for a Table, 2.2 for an OverlappingAMR time series. The
+  files are checked with VTK 9.7.2 and ParaView 6.1.1 (but the RectilinearGrid, StructuredGrid, Table and
+  OverlappingAMR files, which ParaView 6.1 cannot read).
 - **Not supported**: more than one piece of a grid (ImageData, RectilinearGrid, StructuredGrid), a volatile
   file (`is_volatile`), VTKHDF pieces in parallel (`P*`) and `.pvd` files (a multi-block file is `vtm_file` with
   `format='vtkhdf'`, a `MultiBlockDataSet` or a `PartitionedDataSetCollection`, static or a time series of

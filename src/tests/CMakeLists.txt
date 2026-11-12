@@ -28,6 +28,7 @@ set(VTKFORTRAN_TESTS
   vtk_fortran_write_vtkhdf_polyh.f90
   vtk_fortran_write_vtkhdf_steps.f90
   vtk_fortran_write_vtkhdf_table.f90
+  vtk_fortran_write_vtkhdf_amr.f90
   vtk_fortran_write_vtkhdf_append.f90
   vtk_fortran_write_vtkhdf_vtm.f90
   vtk_fortran_write_vtkhdf_ranks.F90

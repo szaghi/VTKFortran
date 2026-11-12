@@ -167,6 +167,22 @@ its columns between `write_dataarray(location='row', action='open')` and `action
 - No pieces and no point or cell data. The layout, the refusals and the readers: [VTKHDF](/guide/formats#vtkhdf-hdf5);
   a complete program: [A time history (Table)](/manual/cookbook#a-time-history-table).
 
+## OverlappingAMR (VTKHDF)
+
+A block-structured AMR (a VTK `vtkOverlappingAMR`): levels of uniform boxes, each finer level of a smaller spacing,
+its boxes overlapping those of the levels before. It is written in the VTKHDF format only (`format='vtkhdf'`,
+`mesh_topology='OverlappingAMR'`, `origin` its origin): `write_level(level, spacing)` starts a level, then each box is a
+piece of it, its point extent in the indices of the level, with its point and cell data:
+
+<<< @/examples/snippets/vtkhdf_amr-write.f90
+
+- Levels 0, 1, ... in order; the boxes of level 0 come first (they bound the boxes of the finer levels).
+- A box has at least one cell along every axis: VTK reads every box in 3D, so a 2D AMR is one cell thick.
+- Every box of every level writes the same arrays; no field data. In a time series every step writes its levels and
+  boxes again.
+- The layout, the refusals and the readers: [VTKHDF](/guide/formats#vtkhdf-hdf5); a complete program:
+  [A block-structured AMR](/manual/cookbook#a-block-structured-amr).
+
 ## Multiple pieces in one file
 
 A single file can hold several pieces, e.g. the blocks of a multi-block solver written by one process without a parallel
@@ -233,6 +249,7 @@ The `mesh_topology` argument is case-sensitive:
 | `UnstructuredGrid` | `.vtu` file |
 | `PolyData` | `.vtp` file |
 | `Table` | `.vtkhdf` file only (`format='vtkhdf'`) |
+| `OverlappingAMR` | `.vtkhdf` file only (`format='vtkhdf'`, `origin`) |
 | `PRectilinearGrid` | `.pvtr` file (pvtk_file only) |
 | `PStructuredGrid` | `.pvts` file (pvtk_file only) |
 | `PUnstructuredGrid` | `.pvtu` file (pvtk_file only) |

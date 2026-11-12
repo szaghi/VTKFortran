@@ -61,6 +61,7 @@ type, abstract :: vtk_writer_abstract
     procedure(write_piece_end_tag_interface), deferred, pass(self) :: write_piece_end_tag
     procedure(write_polydata_cells_interface), deferred, pass(self) :: write_polydata_cells
     procedure(write_step_interface), deferred, pass(self) :: write_step
+    procedure(write_level_interface), deferred, pass(self) :: write_level
     procedure(free_interface), deferred, pass(self) :: free
     procedure(get_xml_volatile_interface), deferred, pass(self) :: get_xml_volatile
     procedure(write_dataarray1_rank1_R8P_interface), deferred, pass(self) :: write_dataarray1_rank1_R8P
@@ -1156,6 +1157,14 @@ abstract interface
   real(R8P),                  intent(in)    :: time
   integer(I4P)                             :: error
   endfunction write_step_interface
+
+  function write_level_interface(self, level, spacing) result(error)
+  import :: vtk_writer_abstract, I4P, R8P
+  class(vtk_writer_abstract), intent(inout) :: self
+  integer(I4P),               intent(in)    :: level
+  real(R8P),                  intent(in)    :: spacing(3)
+  integer(I4P)                             :: error
+  endfunction write_level_interface
 
   elemental subroutine free_interface(self, error)
   import :: vtk_writer_abstract, I4P

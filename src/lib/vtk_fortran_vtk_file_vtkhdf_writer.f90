@@ -65,8 +65,20 @@ module vtk_fortran_vtk_file_vtkhdf_writer
 !< each step appended (`NumberOfRows` one entry per step, `Steps/RowDataOffsets/<column>`, the spelling VTK 9.7.2
 !< writes and reads, not the `RowDataOffets` of the specification page), the file valid after each step.
 !<
+!< OverlappingAMR (`mesh_topology='OverlappingAMR'`, `origin` of `vtk_file%initialize` its origin): each level is
+!< started by `write_level(level, spacing)` (0, 1, ... in order; a level can be started again, with its spacing), its boxes
+!< are pieces, `write_piece(nx1, nx2, ny1, ny2, nz1, nz2)` (the point extent of the box in the indices of the level, at least
+!< one cell along every axis, a box of a finer level inside the bounds of the boxes of level 0), their point and cell data
+!< (`[n]` or `[n, components]`, x fastest), `write_piece()`. The layout, as VTK 9.7.2 reads it: `Origin`, `GridDescription`
+!< `XYZ`, the groups `Level<n>` with `Spacing`, `AMRBox` (one row per box: the cells `nx1, nx2-1, ny1, ny2-1, nz1, nz2-1`)
+!< and the data of the boxes appended in `PointData`, `CellData`; every box of every level writes the same arrays. In a
+!< time series every step writes its levels and boxes again (`Steps/Level<n>/AMRBoxOffset`, `NumberOfAMRBox`,
+!< `PointDataOffset/<name>`, `CellDataOffset/<name>`: the names VTK 9.7.2 reads, singular, not those of the specification
+!< page), the file valid after each box. Refused: field data, `comm`, a step without boxes, the XML formats.
+!<
 !< `Version` is written by `finalize` (and after every piece of a time series): 2.0, 2.5 with polyhedra, 2.6 when an
-!< active array is marked, 2.7 for a RectilinearGrid or a StructuredGrid, 2.8 for a Table.
+!< active array is marked, 2.7 for a RectilinearGrid or a StructuredGrid, 2.8 for a Table, 2.2 for an OverlappingAMR time
+!< series.
 use penf
 use vtk_fortran_hdf5
 use vtk_fortran_parameters, only : stderr
@@ -86,6 +98,7 @@ integer(I4P), parameter :: TOPOLOGY_POLY = 3_I4P         !< PolyData.
 integer(I4P), parameter :: TOPOLOGY_RECT = 4_I4P         !< RectilinearGrid.
 integer(I4P), parameter :: TOPOLOGY_STRG = 5_I4P         !< StructuredGrid.
 integer(I4P), parameter :: TOPOLOGY_TABLE = 6_I4P        !< Table.
+integer(I4P), parameter :: TOPOLOGY_AMR = 7_I4P          !< OverlappingAMR.
 integer(I1P), parameter :: CELL_POLYHEDRON = 42_I1P     !< VTK type of a polyhedron.
 character(*), parameter :: STEP_GROUPS(4) = ['PointDataOffsets', 'CellDataOffsets ', 'FieldDataOffsets', & !< Groups of
                                               'FieldDataSizes  ']                                       !< Steps.
@@ -150,6 +163,14 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
   character(len=:), allocatable :: row_arrays              !< Names of the columns of a Table, NUL terminated.
   integer(I8P)                  :: table_rows=-1_I8P       !< Rows of the columns of the open step (-1: no column yet).
   integer(I8P)                  :: row_total=0_I8P         !< Rows of the steps before the open one (a Table).
+  integer(hid_kind)             :: level_group=-1_hid_kind !< Group of the open level of an OverlappingAMR.
+  integer(I4P)                  :: level=-1_I4P            !< Open level (from 0), -1 if none.
+  integer(I4P)                  :: n_levels=0_I4P          !< Levels written.
+  real(R8P), allocatable        :: level_spacing(:,:)      !< Spacing of each level, `(3, n_levels)`.
+  integer(I8P), allocatable     :: level_counts(:,:)       !< Of each level: boxes, points, cells written, and the same
+                                                           !< at the start of the open step, `(6, n_levels)`.
+  logical                       :: has_domain=.false.      !< A box of level 0 is written (in the open step).
+  real(R8P)                     :: domain(6)=0._R8P        !< Bounds of the boxes of level 0: x, y, z min and max.
   logical                       :: is_parallel=.false.     !< The file is written by the ranks of an MPI communicator.
   integer(I4P)                  :: region(6)=0_I4P         !< Region of this rank of a grid written from ranks: its extent.
   integer(I4P)                  :: rank=0_I4P              !< Rank of this process in `comm`.
@@ -162,6 +183,7 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
     procedure, pass(self) :: write_piece_end_tag
     procedure, pass(self) :: write_step
     procedure, pass(self) :: write_dataarray_location_tag
+    procedure, pass(self) :: write_level
     procedure, pass(self) :: write_fielddata_tag
     procedure, pass(self) :: write_fielddata1_rank0
     procedure, pass(self) :: write_fielddata1_rank1
@@ -265,6 +287,10 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
     procedure, pass(self), private :: poly_blocks   !< Check or write the four blocks of cells of a PolyData piece.
     procedure, pass(self), private :: end_reusing   !< Check the arrays of a step without pieces, write its entries.
     procedure, pass(self), private :: end_table     !< End the columns of a Table (static, or a step).
+    procedure, pass(self), private :: end_box       !< End a box of an OverlappingAMR: check its arrays.
+    procedure, pass(self), private :: is_recorded   !< A data array name is recorded (point or cell data).
+    procedure, pass(self), private :: open_level    !< Open (or create) a level of an OverlappingAMR.
+    procedure, pass(self), private :: start_box     !< Start a box of an OverlappingAMR (write_piece of the level).
     procedure, pass(self), private :: is_reusing    !< The open step has no piece: it reuses the mesh of the step before.
     procedure, pass(self), private :: is_written_in_step !< A point or cell array is written in the open step.
     procedure, pass(self), private :: record_array  !< Record the name of a point or cell data array.
@@ -307,7 +333,7 @@ contains
   integer(hid_kind)                                :: block_group   !< Group of a block of PolyData cells.
   integer(I4P)                                     :: b             !< Counter.
 
-  self%file_id = -1_hid_kind ; self%root = -1_hid_kind ; self%group = -1_hid_kind
+  self%file_id = -1_hid_kind ; self%root = -1_hid_kind ; self%group = -1_hid_kind ; self%level_group = -1_hid_kind
   call self%reset
   if (.not.is_hdf5_enabled) then
     error = refuse('the library is built without HDF5 (VTKFORTRAN_USE_HDF5)')
@@ -335,14 +361,16 @@ contains
   case('Table')
     self%topology = TOPOLOGY_TABLE
     self%version_minor = 8_I8P
+  case('OverlappingAMR')
+    self%topology = TOPOLOGY_AMR
   case default
     error = refuse('topology '//trim(adjustl(mesh_topology))//' is not supported')
     return
   endselect
-  if (self%topology == TOPOLOGY_TABLE .and. self%is_parallel) then
-    error = refuse('comm: a Table is written by one process')
+  if ((self%topology == TOPOLOGY_TABLE .or. self%topology == TOPOLOGY_AMR) .and. self%is_parallel) then
+    error = refuse('comm: a '//trim(adjustl(mesh_topology))//' is written by one process')
     return
-  elseif (.not.self%is_partitioned() .and. self%topology /= TOPOLOGY_TABLE) then
+  elseif (.not.self%is_partitioned() .and. self%topology /= TOPOLOGY_TABLE .and. self%topology /= TOPOLOGY_AMR) then
     if (.not.(present(nx1).and.present(nx2).and.present(ny1).and.present(ny2).and.present(nz1).and.present(nz2))) then
       error = refuse(trim(adjustl(mesh_topology))//' needs its whole extent: nx1, nx2, ny1, ny2, nz1, nz2')
       return
@@ -390,6 +418,10 @@ contains
     if (error == 0_I4P) error = h5_attribute_write(self%root, 'Type', 'UnstructuredGrid')
   elseif (self%topology == TOPOLOGY_TABLE) then
     if (error == 0_I4P) error = h5_attribute_write(self%root, 'Type', 'Table')
+  elseif (self%topology == TOPOLOGY_AMR) then
+    if (error == 0_I4P) error = h5_attribute_write(self%root, 'Type', 'OverlappingAMR')
+    if (error == 0_I4P) error = h5_attribute_write(self%root, 'Origin', self%origin)
+    if (error == 0_I4P) error = h5_attribute_write(self%root, 'GridDescription', 'XYZ')
   else
     if (error == 0_I4P) error = h5_attribute_write(self%root, 'Type', 'PolyData')
     do b=1, size(BLOCKS)
@@ -417,6 +449,12 @@ contains
     elseif (self%step_pieces == 0_I8P) then
       error = refuse('the Table, or its last step, has no columns')
     endif
+  elseif (self%topology == TOPOLOGY_AMR) then ! every box closed; every step with boxes
+    if (self%is_piece_open) then
+      error = refuse('the last box of the OverlappingAMR is not closed (write_piece())')
+    elseif (self%step_pieces == 0_I8P) then
+      error = refuse('the OverlappingAMR, or its last step, has no box')
+    endif
   elseif (self%is_temporal .and. self%step_pieces == 0_I8P .and. self%n_steps == 1_I8P) then
     error = refuse('the first step has no piece: the file holds no step')
   elseif (self%is_reusing()) then ! a step without pieces: the arrays written, the entries
@@ -428,10 +466,13 @@ contains
   if (self%group >= 0_hid_kind) then
     if (h5_group_close(self%group) /= 0_I4P) error = 1_I4P
   endif
+  if (self%level_group >= 0_hid_kind) then
+    if (h5_group_close(self%level_group) /= 0_I4P) error = 1_I4P
+  endif
   if (h5_attribute_write(self%root, 'Version', [2_I8P, self%version_minor]) /= 0_I4P) error = 1_I4P
   if (h5_group_close(self%root) /= 0_I4P) error = 1_I4P
   if (h5_file_close(self%file_id) /= 0_I4P) error = 1_I4P
-  self%file_id = -1_hid_kind ; self%root = -1_hid_kind ; self%group = -1_hid_kind
+  self%file_id = -1_hid_kind ; self%root = -1_hid_kind ; self%group = -1_hid_kind ; self%level_group = -1_hid_kind
   call self%reset
   self%is_parallel = .false.
   endfunction finalize
@@ -453,6 +494,8 @@ contains
   if (self%file_id < 0_hid_kind .or. self%is_piece_open .or. self%group >= 0_hid_kind) return
   if (self%topology == TOPOLOGY_TABLE) then
     error = refuse('a Table has no pieces: its columns are written with write_dataarray(location=row, ...)')
+  elseif (self%topology == TOPOLOGY_AMR) then ! a box of the open level
+    error = self%start_box([nx1, nx2, ny1, ny2, nz1, nz2])
   elseif (self%is_partitioned()) then
     error = refuse('write_piece(nx1, ..., nz2) is for a grid: the piece of an UnstructuredGrid or a PolyData is '// &
                    'write_piece(np, ...)')
@@ -499,12 +542,14 @@ contains
   error = 0_I4P
   if (self%is_partitioned()) then
     error = self%end_partition()
+  elseif (self%topology == TOPOLOGY_AMR) then
+    error = self%end_box()
   elseif ((self%topology == TOPOLOGY_RECT .or. self%topology == TOPOLOGY_STRG) .and. .not.self%is_geo_written &
           .and. .not.(self%is_temporal .and. self%geo_slices > 0_I8P)) then ! a later step reuses the geometry
     error = refuse('the piece of a RectilinearGrid or StructuredGrid needs write_geo (in the first step)')
   endif
   if (error == 0_I4P .and. self%is_temporal) then
-    if (.not.self%is_partitioned()) then ! the arrays of a grid: one time slice, or none after the first step
+    if (.not.self%is_partitioned() .and. self%topology /= TOPOLOGY_AMR) then ! a grid: one time slice, or none after step 1
       error = self%check_arrays('PointData', 1_I8P, self%n_steps > 1_I8P)
       if (error == 0_I4P) error = self%check_arrays('CellData', 1_I8P, self%n_steps > 1_I8P)
     endif
@@ -542,6 +587,8 @@ contains
     error = refuse('write_step: a time series starts with write_step, before its first piece and field data')
   elseif (self%topology == TOPOLOGY_TABLE .and. (self%step_pieces > 0_I8P .neqv. self%is_temporal)) then
     error = refuse('write_step: a time series of a Table starts with write_step, every step with its columns')
+  elseif (self%topology == TOPOLOGY_AMR .and. self%is_temporal .and. self%step_pieces == 0_I8P) then
+    error = refuse('write_step: every step of an OverlappingAMR writes its boxes')
   elseif (self%is_temporal .and. self%step_pieces == 0_I8P .and. self%n_steps == 1_I8P) then
     error = refuse('write_step: the first step has no piece')
   elseif (self%is_temporal .and. time <= self%step_time) then
@@ -564,6 +611,14 @@ contains
       self%step_time = time
       self%step_pieces = 0_I8P
       self%step_local = 0_I4P
+      if (self%topology == TOPOLOGY_AMR) then ! the levels are started again; the counts at the start of the step
+        self%version_minor = max(self%version_minor, 2_I8P)
+        if (allocated(self%level_counts)) self%level_counts(4:6, :) = self%level_counts(1:3, :)
+        self%has_domain = .false.
+        if (self%level_group >= 0_hid_kind) error = h5_group_close(self%level_group)
+        self%level_group = -1_hid_kind
+        self%level = -1_I4P
+      endif
       if (self%topology == TOPOLOGY_TABLE) then ! the rows of the steps before; the offsets group
         self%row_total = self%row_total + max(self%table_rows, 0_I8P)
         self%table_rows = -1_I8P
@@ -574,7 +629,7 @@ contains
       endif
       self%step_start = [int(self%n_pieces, I8P), self%total_points, self%total_cells, self%totals(4:)]
       self%step_blocks = self%block_totals
-      error = self%roll_arrays()
+      if (error == 0_I4P .and. self%topology /= TOPOLOGY_AMR) error = self%roll_arrays()
     endif
   endif
   endfunction write_step
@@ -659,6 +714,42 @@ contains
   endif
   endfunction write_dataarray_location_tag
 
+  function write_level(self, level, spacing) result(error)
+  !< Start the level `level` (0, 1, ... in order; a level started before can be started again, with its spacing) of an
+  !< OverlappingAMR, of spacing `spacing`: its boxes follow, each a `write_piece(nx1, ..., nz2)` (its point extent in the
+  !< indices of the level) with its point and cell data, closed by `write_piece()`. In a time series every step starts
+  !< its levels again.
+  class(vtkhdf_writer),       intent(inout) :: self
+  integer(I4P),               intent(in)    :: level
+  real(R8P),                  intent(in)    :: spacing(3)
+  integer(I4P)                              :: error
+
+  error = 1_I4P
+  if (self%file_id < 0_hid_kind) return
+  if (self%topology /= TOPOLOGY_AMR) then
+    error = refuse('write_level is for an OverlappingAMR')
+  elseif (self%is_piece_open .or. self%group >= 0_hid_kind) then
+    error = refuse('write_level: outside the boxes and the data groups')
+  elseif (level < 0_I4P .or. level > self%n_levels) then
+    error = refuse('write_level: the levels are 0, 1, ... in order (the next new one is '// &
+                   trim(str(n=self%n_levels, no_sign=.true.))//')')
+  elseif (.not.all(spacing > 0._R8P)) then
+    error = refuse('write_level: the spacing must be positive')
+  elseif (self%is_temporal .and. self%n_steps == 0_I8P) then
+    error = refuse('write_level: a time series starts with write_step')
+  else
+    error = 0_I4P
+    if (level < self%n_levels) then
+      if (any(spacing /= self%level_spacing(:, level + 1_I4P))) error = 1_I4P
+    endif
+    if (error /= 0_I4P) then
+      error = refuse('write_level: the spacing of a level is fixed')
+    else
+      error = self%open_level(level, spacing)
+    endif
+  endif
+  endfunction write_level
+
   function write_fielddata_tag(self, action) result(error)
   !< Open or close the group of the field data (outside the piece).
   class(vtkhdf_writer),       intent(inout) :: self
@@ -670,6 +761,10 @@ contains
   error = 1_I4P
   if (action_ == 'OPEN') then
     if (self%file_id < 0_hid_kind .or. self%is_piece_open .or. self%group >= 0_hid_kind) return
+    if (self%topology == TOPOLOGY_AMR) then
+      error = refuse('field data of an OverlappingAMR are not supported')
+      return
+    endif
     error = self%open_group('FieldData')
   elseif (action_ == 'CLOSE') then
     if (self%group < 0_hid_kind) return
@@ -743,7 +838,7 @@ contains
   class(vtkhdf_writer),       intent(inout)         :: self
   integer(I4P),               intent(out), optional :: error
 
-  self%file_id = -1_hid_kind ; self%root = -1_hid_kind ; self%group = -1_hid_kind
+  self%file_id = -1_hid_kind ; self%root = -1_hid_kind ; self%group = -1_hid_kind ; self%level_group = -1_hid_kind
   call self%reset
   self%is_parallel = .false.
   if (present(error)) error = 0_I4P
@@ -2260,7 +2355,7 @@ contains
   error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
-  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P) then
+  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P .and. self%topology /= TOPOLOGY_AMR) then
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
     return
   endif
@@ -2271,6 +2366,13 @@ contains
       return
     endif
     self%table_rows = dims(size(dims))
+    error = store_R8P(self, self%group, data_name, x, dims)
+  elseif (self%topology == TOPOLOGY_AMR .and. self%group_name /= 'FieldData') then ! a box
+    if (is_new .and. (self%level_counts(1, self%level + 1_I4P) > 1_I8P .or. &
+                      (.not.self%is_recorded(data_name) .and. self%n_pieces > 1_I4P))) then
+      error = refuse('the array '//data_name//' is not in the first box: every box of every level writes the same arrays')
+      return
+    endif
     error = store_R8P(self, self%group, data_name, x, dims)
   elseif (self%is_partitioned() .and. self%group_name /= 'FieldData') then
     if (is_new .and. self%local_pieces > 1_I4P) then
@@ -2321,7 +2423,7 @@ contains
   error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
-  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P) then
+  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P .and. self%topology /= TOPOLOGY_AMR) then
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
     return
   endif
@@ -2332,6 +2434,13 @@ contains
       return
     endif
     self%table_rows = dims(size(dims))
+    error = store_R4P(self, self%group, data_name, x, dims)
+  elseif (self%topology == TOPOLOGY_AMR .and. self%group_name /= 'FieldData') then ! a box
+    if (is_new .and. (self%level_counts(1, self%level + 1_I4P) > 1_I8P .or. &
+                      (.not.self%is_recorded(data_name) .and. self%n_pieces > 1_I4P))) then
+      error = refuse('the array '//data_name//' is not in the first box: every box of every level writes the same arrays')
+      return
+    endif
     error = store_R4P(self, self%group, data_name, x, dims)
   elseif (self%is_partitioned() .and. self%group_name /= 'FieldData') then
     if (is_new .and. self%local_pieces > 1_I4P) then
@@ -2383,7 +2492,7 @@ contains
   error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
-  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P) then
+  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P .and. self%topology /= TOPOLOGY_AMR) then
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
     return
   endif
@@ -2394,6 +2503,13 @@ contains
       return
     endif
     self%table_rows = dims(size(dims))
+    error = store_I8P(self, self%group, data_name, x, dims, unsigned=unsigned)
+  elseif (self%topology == TOPOLOGY_AMR .and. self%group_name /= 'FieldData') then ! a box
+    if (is_new .and. (self%level_counts(1, self%level + 1_I4P) > 1_I8P .or. &
+                      (.not.self%is_recorded(data_name) .and. self%n_pieces > 1_I4P))) then
+      error = refuse('the array '//data_name//' is not in the first box: every box of every level writes the same arrays')
+      return
+    endif
     error = store_I8P(self, self%group, data_name, x, dims, unsigned=unsigned)
   elseif (self%is_partitioned() .and. self%group_name /= 'FieldData') then
     if (is_new .and. self%local_pieces > 1_I4P) then
@@ -2445,7 +2561,7 @@ contains
   error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
-  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P) then
+  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P .and. self%topology /= TOPOLOGY_AMR) then
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
     return
   endif
@@ -2456,6 +2572,13 @@ contains
       return
     endif
     self%table_rows = dims(size(dims))
+    error = store_I4P(self, self%group, data_name, x, dims, unsigned=unsigned)
+  elseif (self%topology == TOPOLOGY_AMR .and. self%group_name /= 'FieldData') then ! a box
+    if (is_new .and. (self%level_counts(1, self%level + 1_I4P) > 1_I8P .or. &
+                      (.not.self%is_recorded(data_name) .and. self%n_pieces > 1_I4P))) then
+      error = refuse('the array '//data_name//' is not in the first box: every box of every level writes the same arrays')
+      return
+    endif
     error = store_I4P(self, self%group, data_name, x, dims, unsigned=unsigned)
   elseif (self%is_partitioned() .and. self%group_name /= 'FieldData') then
     if (is_new .and. self%local_pieces > 1_I4P) then
@@ -2507,7 +2630,7 @@ contains
   error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
-  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P) then
+  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P .and. self%topology /= TOPOLOGY_AMR) then
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
     return
   endif
@@ -2518,6 +2641,13 @@ contains
       return
     endif
     self%table_rows = dims(size(dims))
+    error = store_I2P(self, self%group, data_name, x, dims, unsigned=unsigned)
+  elseif (self%topology == TOPOLOGY_AMR .and. self%group_name /= 'FieldData') then ! a box
+    if (is_new .and. (self%level_counts(1, self%level + 1_I4P) > 1_I8P .or. &
+                      (.not.self%is_recorded(data_name) .and. self%n_pieces > 1_I4P))) then
+      error = refuse('the array '//data_name//' is not in the first box: every box of every level writes the same arrays')
+      return
+    endif
     error = store_I2P(self, self%group, data_name, x, dims, unsigned=unsigned)
   elseif (self%is_partitioned() .and. self%group_name /= 'FieldData') then
     if (is_new .and. self%local_pieces > 1_I4P) then
@@ -2569,7 +2699,7 @@ contains
   error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
-  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P) then
+  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P .and. self%topology /= TOPOLOGY_AMR) then
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
     return
   endif
@@ -2580,6 +2710,13 @@ contains
       return
     endif
     self%table_rows = dims(size(dims))
+    error = store_I1P(self, self%group, data_name, x, dims, unsigned=unsigned)
+  elseif (self%topology == TOPOLOGY_AMR .and. self%group_name /= 'FieldData') then ! a box
+    if (is_new .and. (self%level_counts(1, self%level + 1_I4P) > 1_I8P .or. &
+                      (.not.self%is_recorded(data_name) .and. self%n_pieces > 1_I4P))) then
+      error = refuse('the array '//data_name//' is not in the first box: every box of every level writes the same arrays')
+      return
+    endif
     error = store_I1P(self, self%group, data_name, x, dims, unsigned=unsigned)
   elseif (self%is_partitioned() .and. self%group_name /= 'FieldData') then
     if (is_new .and. self%local_pieces > 1_I4P) then
@@ -3493,6 +3630,16 @@ contains
     endif
     grid = [n / n_components, 1_I8P, 1_I8P]
     is_axis = [.true., .false., .false.]
+  elseif (self%topology == TOPOLOGY_AMR) then ! a box of an OverlappingAMR: its points or cells, x fastest
+    grid = [self%np_piece, 1_I8P, 1_I8P]
+    if (self%group_name == 'CellData') grid(1) = self%nc_piece
+    is_axis = [.true., .false., .false.]
+    if (n /= grid(1) * n_components) then
+      error = refuse('the array '//data_name//' has '//trim(str(n=n, no_sign=.true.))//' values, the box needs '// &
+                     trim(str(n=grid(1) * n_components, no_sign=.true.))//' ('// &
+                     trim(str(n=n_components, no_sign=.true.))//' components)')
+      return
+    endif
   elseif (self%is_partitioned()) then
     grid = [self%np_piece, 1_I8P, 1_I8P]
     if (self%group_name == 'CellData') grid(1) = self%nc_piece
@@ -3626,16 +3773,20 @@ contains
   endfunction mark_active
 
   function open_group(self, name) result(error)
-  !< Open the data group `name` of /VTKHDF, creating it (creation order tracked: the arrays keep the order written).
+  !< Open the data group `name` of /VTKHDF (of the open level of an OverlappingAMR), creating it (creation order tracked:
+  !< the arrays keep the order written).
   class(vtkhdf_writer), intent(inout) :: self  !< Writer.
   character(*),         intent(in)    :: name  !< Group name.
   integer(I4P)                        :: error !< Error status.
   integer(I4P)                        :: r     !< Counter.
+  integer(hid_kind)                   :: base  !< Parent: /VTKHDF, or the open level of an OverlappingAMR.
 
-  if (h5_link_exists(self%root, name)) then
-    error = h5_group_open(self%root, name, self%group)
+  base = self%root
+  if (self%topology == TOPOLOGY_AMR .and. name /= 'FieldData') base = self%level_group
+  if (h5_link_exists(base, name)) then
+    error = h5_group_open(base, name, self%group)
   else
-    error = h5_group_create(self%root, name, self%group, track_order=.true.)
+    error = h5_group_create(base, name, self%group, track_order=.true.)
   endif
   if (error /= 0_I4P) then
     self%group = -1_hid_kind
@@ -3761,7 +3912,9 @@ contains
   character(*),         intent(in)    :: data_name !< Data name.
   character(len=:), allocatable       :: names     !< Names, updated (not an assignment of a component to itself).
 
-  if (.not.(self%is_partitioned() .or. self%is_temporal .or. self%group_name == 'RowData')) return
+  if (.not.(self%is_partitioned() .or. self%is_temporal .or. self%group_name == 'RowData' .or. &
+            self%topology == TOPOLOGY_AMR)) return
+  if (self%topology == TOPOLOGY_AMR .and. self%is_recorded(data_name)) return ! the name of another level
   if (self%group_name == 'FieldData') then
     if (self%is_temporal) then
       names = self%field_arrays//data_name//NAMES_SEPARATOR
@@ -3846,7 +3999,8 @@ contains
   class(vtkhdf_writer), intent(in) :: self        !< Writer.
   logical                          :: is_reusing_ !< Check result.
 
-  is_reusing_ = self%is_temporal .and. self%n_steps > 1_I8P .and. self%step_pieces == 0_I8P
+  is_reusing_ = self%is_temporal .and. self%n_steps > 1_I8P .and. self%step_pieces == 0_I8P .and. &
+                self%topology /= TOPOLOGY_AMR .and. self%topology /= TOPOLOGY_TABLE
   endfunction is_reusing
 
   subroutine region_block(self, cells, n_components, dims, mem_dims, mem_start, file_start, count)
@@ -4041,6 +4195,154 @@ contains
   endif
   endfunction end_table
 
+  function open_level(self, level, spacing) result(error)
+  !< Open the level `level` of an OverlappingAMR, the group `Level<level>` (created with its `Spacing` for a new level).
+  class(vtkhdf_writer), intent(inout) :: self       !< Writer.
+  integer(I4P),         intent(in)    :: level      !< Level, from 0.
+  real(R8P),            intent(in)    :: spacing(3) !< Spacing of the level.
+  integer(I4P)                        :: error      !< Error status.
+  character(len=:), allocatable       :: name       !< Group name.
+  real(R8P),    allocatable           :: spacings(:,:) !< Spacings, one more level.
+  integer(I8P), allocatable           :: counts(:,:)   !< Counts, one more level.
+
+  error = 0_I4P
+  if (self%level_group >= 0_hid_kind) error = h5_group_close(self%level_group)
+  self%level_group = -1_hid_kind
+  self%level = -1_I4P
+  name = 'Level'//trim(str(n=level, no_sign=.true.))
+  if (level == self%n_levels) then ! a new level
+    if (error == 0_I4P) error = h5_group_create(self%root, name, self%level_group, track_order=.true.)
+    if (error == 0_I4P) error = h5_attribute_write(self%level_group, 'Spacing', spacing)
+    if (error == 0_I4P) then
+      allocate(spacings(3, level + 1), counts(6, level + 1))
+      counts = 0_I8P
+      if (level > 0_I4P) then
+        spacings(:, 1:level) = self%level_spacing
+        counts(:, 1:level) = self%level_counts
+      endif
+      spacings(:, level + 1) = spacing
+      call move_alloc(spacings, self%level_spacing)
+      call move_alloc(counts, self%level_counts)
+      self%n_levels = level + 1_I4P
+    endif
+  elseif (error == 0_I4P) then
+    error = h5_group_open(self%root, name, self%level_group)
+  endif
+  if (error /= 0_I4P) then
+    self%level_group = -1_hid_kind
+    error = refuse('cannot open the group '//name)
+    return
+  endif
+  self%level = level
+  endfunction open_level
+
+  function start_box(self, extent) result(error)
+  !< Start a box of the open level of an OverlappingAMR: its point extent `nx1, nx2, ...` (at least one cell along every
+  !< axis: VTK reads every box in 3D), inside the bounds of the boxes of level 0 (of the step) for a finer level; its
+  !< row of `AMRBox`, the cells `nx1, nx2-1, ny1, ny2-1, nz1, nz2-1`.
+  class(vtkhdf_writer), intent(inout) :: self      !< Writer.
+  integer(I4P),         intent(in)    :: extent(6) !< Point extent of the box.
+  integer(I4P)                        :: error     !< Error status.
+  real(R8P)                           :: lo(3)     !< Lower corner of the box.
+  real(R8P)                           :: hi(3)     !< Upper corner of the box.
+  real(R8P)                           :: h(3)      !< Spacing of the level.
+  real(R8P)                           :: tol       !< Tolerance of the comparison of the corners.
+  integer(I4P)                        :: l         !< Level, from 1.
+
+  error = 1_I4P
+  if (self%level < 0_I4P) then
+    error = refuse('write_piece: a box of an OverlappingAMR is written in a level (write_level before)')
+    return
+  elseif (any(extent(2::2) <= extent(1::2))) then
+    error = refuse('write_piece: a box of an OverlappingAMR has at least one cell along every axis (nx2 > nx1, '// &
+                   'ny2 > ny1, nz2 > nz1: VTK reads every box in 3D)')
+    return
+  endif
+  l = self%level + 1_I4P
+  h = self%level_spacing(:, l)
+  lo = self%origin + real(extent(1::2), R8P) * h
+  hi = self%origin + real(extent(2::2), R8P) * h
+  if (self%level == 0_I4P) then
+    if (.not.self%has_domain) then
+      self%domain(1:3) = lo ; self%domain(4:6) = hi
+    else
+      self%domain(1:3) = min(self%domain(1:3), lo) ; self%domain(4:6) = max(self%domain(4:6), hi)
+    endif
+    self%has_domain = .true.
+  else
+    if (.not.self%has_domain) then
+      error = refuse('write_piece: the boxes of level 0 come first (they bound the boxes of the finer levels)')
+      return
+    endif
+    tol = 1.e-9_R8P * maxval(abs([self%domain, h]))
+    if (any(lo < self%domain(1:3) - tol) .or. any(hi > self%domain(4:6) + tol)) then
+      error = refuse('write_piece: the box is outside the boxes of level 0 (their bounds)')
+      return
+    endif
+  endif
+  error = store_I4P(self, self%level_group, 'AMRBox', [extent(1), extent(2) - 1_I4P, extent(3), extent(4) - 1_I4P, &
+                                                      extent(5), extent(6) - 1_I4P], [6_I8P, 1_I8P])
+  if (error /= 0_I4P) then
+    error = refuse('cannot write the AMRBox of the box')
+    return
+  endif
+  self%np_piece = product(int(extent(2::2) - extent(1::2), I8P) + 1_I8P)
+  self%nc_piece = product(int(extent(2::2) - extent(1::2), I8P))
+  self%level_counts(1:3, l) = self%level_counts(1:3, l) + [1_I8P, self%np_piece, self%nc_piece]
+  self%n_pieces = self%n_pieces + 1_I4P
+  self%step_pieces = self%step_pieces + 1_I8P
+  self%is_piece_open = .true.
+  endfunction start_box
+
+  function end_box(self) result(error)
+  !< End a box of an OverlappingAMR: every point and cell array written once in it (every box of every level writes
+  !< the same arrays).
+  class(vtkhdf_writer), intent(inout) :: self  !< Writer.
+  integer(I4P)                        :: error !< Error status.
+
+  error = level_arrays('PointData', self%point_arrays, self%level_counts(2, self%level + 1_I4P))
+  if (error == 0_I4P) error = level_arrays('CellData', self%cell_arrays, self%level_counts(3, self%level + 1_I4P))
+  contains
+    function level_arrays(group, names, tuples) result(error)
+    !< Check that every array of the list holds the tuples of the boxes of the level.
+    character(*), intent(in)  :: group  !< PointData or CellData.
+    character(*), intent(in)  :: names  !< Names, each followed by NAMES_SEPARATOR.
+    integer(I8P), intent(in)  :: tuples !< Tuples of the boxes of the level.
+    integer(I4P)              :: error  !< Error status.
+    integer(I8P), allocatable :: dims(:) !< Shape of a dataset.
+    integer(I8P)              :: first, last !< Bounds of a name.
+
+    error = 0_I4P
+    first = 1_I8P
+    do while (first <= len(names, kind=I8P) .and. error == 0_I4P)
+      last = first - 1_I8P + index(names(first:), NAMES_SEPARATOR, kind=I8P)
+      error = 1_I4P
+      if (h5_link_exists(self%level_group, group//'/'//names(first:last-1))) &
+        error = h5_dataset_dims(self%level_group, group//'/'//names(first:last-1), dims)
+      if (error == 0_I4P) then
+        if (dims(size(dims)) /= tuples) error = 1_I4P
+      endif
+      if (error /= 0_I4P) error = refuse('the array '//names(first:last-1)//' of '//group//' is not written once in '// &
+                                         'every box of every level')
+      first = last + 1_I8P
+    enddo
+    endfunction level_arrays
+  endfunction end_box
+
+  pure function is_recorded(self, data_name) result(is_recorded_)
+  !< Return true if `data_name` is recorded in the list of the open data group (point or cell data).
+  class(vtkhdf_writer), intent(in) :: self         !< Writer.
+  character(*),         intent(in) :: data_name    !< Data name.
+  logical                          :: is_recorded_ !< Check result.
+
+  is_recorded_ = .false.
+  if (self%group_name == 'PointData') then
+    is_recorded_ = index(NAMES_SEPARATOR//self%point_arrays, NAMES_SEPARATOR//data_name//NAMES_SEPARATOR) > 0
+  elseif (self%group_name == 'CellData') then
+    is_recorded_ = index(NAMES_SEPARATOR//self%cell_arrays, NAMES_SEPARATOR//data_name//NAMES_SEPARATOR) > 0
+  endif
+  endfunction is_recorded
+
   function end_reusing(self) result(error)
   !< Check the arrays of a step without pieces (each one written for all the points or cells of the mesh reused, or
   !< not at all) and write the `Steps` entries of the step.
@@ -4156,7 +4458,8 @@ contains
   case('PolyData')
     self%topology = TOPOLOGY_POLY
   case default
-    error = refuse('action append: '//filename//' holds no dataset VTKFortran writes')
+    error = refuse('action append: '//filename//' is not an ImageData, RectilinearGrid, StructuredGrid, '// &
+                   'UnstructuredGrid or PolyData: it cannot be continued')
     return
   endselect
   if (.not.h5_link_exists(self%root, 'Steps')) then
@@ -4525,6 +4828,12 @@ contains
   self%row_arrays = ''
   self%table_rows = -1_I8P
   self%row_total = 0_I8P
+  self%level = -1_I4P
+  self%n_levels = 0_I4P
+  if (allocated(self%level_spacing)) deallocate(self%level_spacing)
+  if (allocated(self%level_counts)) deallocate(self%level_counts)
+  self%has_domain = .false.
+  self%domain = 0._R8P
   do r=1, size(ROLES)
     if (allocated(self%active(r)%name)) deallocate(self%active(r)%name)
   enddo
@@ -4702,6 +5011,7 @@ contains
   integer(I8P)                        :: last      !< Separator after a name.
   character(len=:), allocatable       :: name      !< An array name.
   logical                             :: reused    !< A field data array not written in the step.
+  integer(I4P)                        :: lv        !< A level of an OverlappingAMR, from 1.
 
   k = self%n_steps
   if (h5_link_exists(self%root, 'Steps/Values')) then
@@ -4739,6 +5049,32 @@ contains
     if (error == 0_I4P) error = self%step_entry('ZCoordinatesOffsets', [(self%geo_slices - 1_I8P) * grid(3)])
   elseif (self%topology == TOPOLOGY_STRG) then ! in time slices (required by VTK)
     if (error == 0_I4P) error = self%step_entry('PointOffsets', [self%geo_slices - 1_I8P])
+  elseif (self%topology == TOPOLOGY_AMR) then ! each level: its boxes in the step, where they and their arrays start
+    do lv=1_I4P, self%n_levels
+      name = 'Level'//trim(str(n=lv - 1_I4P, no_sign=.true.))
+      if (error == 0_I4P .and. .not.h5_link_exists(self%root, 'Steps/'//name)) then
+        error = h5_group_create(self%root, 'Steps/'//name, steps, track_order=.true.)
+        if (error == 0_I4P) error = h5_group_close(steps)
+        if (error == 0_I4P) error = h5_group_create(self%root, 'Steps/'//name//'/PointDataOffset', steps, track_order=.true.)
+        if (error == 0_I4P) error = h5_group_close(steps)
+        if (error == 0_I4P) error = h5_group_create(self%root, 'Steps/'//name//'/CellDataOffset', steps, track_order=.true.)
+        if (error == 0_I4P) error = h5_group_close(steps)
+      endif
+      if (error == 0_I4P) error = self%step_entry(name//'/AMRBoxOffset', [self%level_counts(4, lv)])
+      if (error == 0_I4P) error = self%step_entry(name//'/NumberOfAMRBox', [self%level_counts(1, lv) - self%level_counts(4, lv)])
+      first = 1_I8P
+      do while (first <= len(self%point_arrays, kind=I8P) .and. error == 0_I4P)
+        last = first - 1_I8P + index(self%point_arrays(first:), NAMES_SEPARATOR, kind=I8P)
+        error = self%step_entry(name//'/PointDataOffset/'//self%point_arrays(first:last-1), [self%level_counts(5, lv)])
+        first = last + 1_I8P
+      enddo
+      first = 1_I8P
+      do while (first <= len(self%cell_arrays, kind=I8P) .and. error == 0_I4P)
+        last = first - 1_I8P + index(self%cell_arrays(first:), NAMES_SEPARATOR, kind=I8P)
+        error = self%step_entry(name//'/CellDataOffset/'//self%cell_arrays(first:last-1), [self%level_counts(6, lv)])
+        first = last + 1_I8P
+      enddo
+    enddo
   elseif (self%topology == TOPOLOGY_TABLE) then ! the rows of the step (NumberOfRows, one per step), where they start
     if (error == 0_I4P .and. h5_link_exists(self%root, 'NumberOfRows')) &
       error = h5_dataset_resize(self%root, 'NumberOfRows', k - 1_I8P)
@@ -4752,10 +5088,10 @@ contains
   endif
   ! point and cell data: where each array was written in the step, or its offset of the step before (reused); tuples,
   ! time slices for a grid
-  if (error == 0_I4P) error = array_entries('PointData', 'PointDataOffsets', self%point_arrays, self%point_start, &
-                                            self%point_prev)
-  if (error == 0_I4P) error = array_entries('CellData', 'CellDataOffsets', self%cell_arrays, self%cell_start, &
-                                            self%cell_prev)
+  if (error == 0_I4P .and. self%topology /= TOPOLOGY_AMR) &
+    error = array_entries('PointData', 'PointDataOffsets', self%point_arrays, self%point_start, self%point_prev)
+  if (error == 0_I4P .and. self%topology /= TOPOLOGY_AMR) &
+    error = array_entries('CellData', 'CellDataOffsets', self%cell_arrays, self%cell_start, self%cell_prev)
   ! field data: one component, their tuples of the step after those of the steps before
   first = 1_I8P
   do while (first <= len(self%field_arrays, kind=I8P) .and. error == 0_I4P)

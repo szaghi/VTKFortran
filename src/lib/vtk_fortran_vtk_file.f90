@@ -74,8 +74,9 @@ contains
    !<
    !<### Writing
    !<
-   !< `format` and `mesh_topology` are required. `mesh_topology='Table'` (columns of values, no mesh) is written in the
-   !< VTKHDF format only: the XML formats refuse it.
+   !< `format` and `mesh_topology` are required. `mesh_topology='Table'` (columns of values, no mesh) and
+   !< `'OverlappingAMR'` (the boxes of the levels of a block-structured AMR, `origin` its origin) are written in the VTKHDF
+   !< format only: the XML formats refuse them.
    !<
    !<### Writing one file from MPI ranks
    !<
@@ -207,7 +208,8 @@ contains
    if (.not.(present(format).and.present(mesh_topology))) return
    fformat = trim(adjustl(format))
    fformat = fformat%upper()
-   if (upper_case(trim(adjustl(mesh_topology))) == 'TABLE' .and. fformat /= 'VTKHDF') return ! a Table: VTKHDF only
+   ! a Table, an OverlappingAMR: VTKHDF only
+   if (any(upper_case(trim(adjustl(mesh_topology))) == ['TABLE         ', 'OVERLAPPINGAMR']) .and. fformat /= 'VTKHDF') return
    error = 0_I4P
    select case(fformat%chars())
    case('ASCII')

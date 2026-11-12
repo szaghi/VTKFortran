@@ -33,6 +33,7 @@ type, abstract, extends(vtk_writer_abstract) :: xml_writer_abstract
     procedure,                                 pass(self) :: get_xml_volatile             !< Return the XML volatile string file.
     procedure,                                 pass(self) :: write_polydata_cells         !< Write cell blocks of polydata.
     procedure,                                 pass(self) :: write_step                   !< Start a time step (VTKHDF only).
+    procedure,                                 pass(self) :: write_level                  !< Start an AMR level (VTKHDF only).
     procedure,                                 pass(self) :: write_dataarray_location_tag !< Write dataarray location tag.
     procedure,                                 pass(self) :: write_dataarray_tag          !< Write dataarray tag.
     procedure,                                 pass(self) :: write_dataarray_tag_appended !< Write dataarray appended tag.
@@ -1350,6 +1351,16 @@ contains
 
    error = 1_I4P
    endfunction write_step
+
+   function write_level(self, level, spacing) result(error)
+   !< Start a level of an OverlappingAMR: a VTKHDF feature (`format='vtkhdf'`), an error in the XML formats.
+   class(xml_writer_abstract), intent(inout) :: self       !< Writer.
+   integer(I4P),               intent(in)    :: level      !< Level, from 0.
+   real(R8P),                  intent(in)    :: spacing(3) !< Spacing of the level.
+   integer(I4P)                              :: error      !< Error status.
+
+   error = 1_I4P
+   endfunction write_level
 
    ! write_parallel methods
    function write_parallel_open_block(self, name) result(error)

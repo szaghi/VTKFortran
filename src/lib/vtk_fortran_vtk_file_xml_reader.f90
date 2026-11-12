@@ -13,7 +13,8 @@ module vtk_fortran_vtk_file_xml_reader
 !< It reads VTKHDF files too (`.vtkhdf`, HDF5, when the library is built with HDF5): `initialize` recognizes them by the
 !< HDF5 signature, and every call is then answered by a `vtkhdf_reader` (`vtk_fortran_vtk_file_vtkhdf_reader`), the API
 !< unchanged; a VTKHDF time series is read one step at a time (`get_steps`, `set_step`; the step 1 by default). A VTKHDF
-!< Table has no pieces (`npieces` 0): its columns are the data arrays of `location='row'`.
+!< Table has no pieces (`npieces` 0): its columns are the data arrays of `location='row'`. A VTKHDF OverlappingAMR is
+!< read one level at a time (`get_levels`, `set_level`; level 0 by default), its boxes the pieces of the level.
 !<
 !< It reads the parallel headers too (PImageData, PRectilinearGrid, PStructuredGrid, PUnstructuredGrid, PPolyData): their
 !< information, the declared arrays (`get_dataarray_names`, `get_dataarray_info`), the pieces (`get_sources`, `read_piece`
@@ -86,6 +87,8 @@ type :: xml_reader
     generic               :: read_geo => read_geo_R8P, read_geo_R4P !< Read the geometry.
     procedure, pass(self) :: read_piece           !< Read the counts and extent of a piece.
     procedure, pass(self) :: set_step             !< Select the step read of a VTKHDF time series.
+    procedure, pass(self) :: get_levels           !< Return the number of levels of a VTKHDF OverlappingAMR.
+    procedure, pass(self) :: set_level            !< Select the level read of a VTKHDF OverlappingAMR.
     generic               :: read_polydata_cells => read_polydata_cells_I4P, read_polydata_cells_I8P !< Read polydata cells.
     ! private methods
     procedure, pass(self), private :: dataarray_bytes         !< Return the bytes of a dataarray element.
@@ -707,6 +710,35 @@ contains
   error = 4
   if (self%is_initialized .and. step == 1) error = 0
   endfunction set_step
+
+  function get_levels(self, n_levels) result(error)
+  !< Return the number of levels of a VTKHDF OverlappingAMR (0 for another dataset, and for an XML file).
+  class(xml_reader), intent(in)  :: self     !< XML reader.
+  integer(I4P),      intent(out) :: n_levels !< Levels.
+  integer(I4P)                   :: error    !< Error status.
+
+  if (self%is_hdf) then
+    error = self%hdf%get_levels(n_levels=n_levels)
+    return
+  endif
+  n_levels = 0
+  error = 4
+  if (self%is_initialized) error = 0
+  endfunction get_levels
+
+  function set_level(self, level) result(error)
+  !< Select the level read (from 0) of a VTKHDF OverlappingAMR: its boxes are the pieces of the following calls
+  !< (`get_info` gives their number and the spacing of the level, `read_piece` the point extent of each box).
+  class(xml_reader), intent(inout) :: self  !< XML reader.
+  integer(I4P),      intent(in)    :: level !< Level, from 0.
+  integer(I4P)                     :: error !< Error status.
+
+  if (self%is_hdf) then
+    error = self%hdf%set_level(level=level)
+    return
+  endif
+  error = 4
+  endfunction set_level
 
   function get_sources(self, sources) result(error)
   !< Return the files of the pieces of a parallel header (the `Source` attributes), as written in the file.

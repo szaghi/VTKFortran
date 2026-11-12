@@ -253,6 +253,23 @@ Both are read back with the reader of the library, the columns with `location='r
 A Table is VTKHDF 2.8: **VTK 9.7 reads it** (`vtkHDFReader` gives a `vtkTable`), **ParaView 6.1 does not** (its VTK
 9.6 does not know the type). See [VTKHDF](/guide/formats#vtkhdf-hdf5) for the layout.
 
+### A block-structured AMR
+
+A block-structured AMR in one file, an OverlappingAMR: level 0 covers the domain with one box, level 1 refines two
+boxes around a hot spot at half the spacing. Each level starts with `write_level`, each box is a piece of it (its point
+extent in the indices of the level), with its arrays:
+
+<<< @/examples/snippets/vtkhdf_amr-write.f90
+
+The file is read back level by level, the boxes of a level as its pieces:
+
+<<< @/examples/snippets/vtkhdf_amr-read.f90
+
+<<< @/examples/output/vtkhdf_amr.ansi{ansi}
+
+**VTK 9.7 reads it** (`vtkHDFReader` gives a `vtkOverlappingAMR`); **ParaView 6.1 does not**: its VTKHDF reader passes
+the output to a filter that refuses an OverlappingAMR. See [VTKHDF](/guide/formats#vtkhdf-hdf5) for the layout.
+
 ### More than 2^31 points or cells
 
 <<< @/examples/snippets/ids_64bit.f90

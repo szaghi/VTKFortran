@@ -29,8 +29,8 @@ program vtk_fortran_write_vtkhdf_ranks
 !< each, compared here dataset by dataset (values: the parallel file stores the widest kind of ids the ranks give), and
 !< a `.vtu`/`.vtp`/`.vti`/`.vtr`/`.vts` of each (VTK readers compare the two outside this test). The refusals of
 !< `comm` are checked too, those of the grid regions (outside the whole extent, overlapping, not covering it, two per
-!< rank), of the time series (different times on the ranks, a grid) and of a Table included. Without MPI `comm` is
-!< refused.
+!< rank), of the time series (different times on the ranks, a grid), of a Table and of an OverlappingAMR included.
+!< Without MPI `comm` is refused.
 !<
 !< Its name has no "mpi": `scripts/run_tests.sh` runs those with `mpirun` in every build, MPI or not. Without MPI it
 !< runs alone; with MPI on any number of ranks (CTest: 4).
@@ -540,7 +540,7 @@ contains
   logical function refusals()
   !< The refusals of comm, by every rank (the files created are finalized by all of them).
   integer(I4P) :: error
-  logical      :: ok(15)
+  logical      :: ok(16)
   integer(I4P) :: ext(6) !< Region of this rank.
 
   ok = .false.
@@ -576,6 +576,8 @@ contains
                                 compressor='zlib', comm=comm) /= 0                 ! zlib for a grid from ranks
   ok(15) = a_vtk_file%initialize(format='vtkhdf', filename='refused_table.vtkhdf', mesh_topology='Table', &
                                  comm=comm) /= 0                                   ! a Table: one process
+  ok(16) = a_vtk_file%initialize(format='vtkhdf', filename='refused_amr.vtkhdf', mesh_topology='OverlappingAMR', &
+                                 comm=comm) /= 0                                   ! an AMR: one process
   ok(3) = a_vtk_file%initialize(format='raw', filename='refused.vtu', mesh_topology='UnstructuredGrid', comm=comm) /= 0
   ok(4) = a_vtk_file%initialize(filename='vtkfortran_unst_mpi.vtkhdf', action='read', comm=comm) /= 0
   error = a_vtk_file%initialize(format='vtkhdf', filename='refused_pieces.vtkhdf', mesh_topology='UnstructuredGrid', &
@@ -607,6 +609,6 @@ contains
   endif
   error = a_vtk_file%finalize()
   refusals = all(ok)
-  if (.not.refusals) print '(A,I0,A,15L2)', 'rank ', rank, ' refusals: ', ok
+  if (.not.refusals) print '(A,I0,A,16L2)', 'rank ', rank, ' refusals: ', ok
   endfunction refusals
 endprogram vtk_fortran_write_vtkhdf_ranks
