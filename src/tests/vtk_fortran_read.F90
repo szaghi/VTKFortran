@@ -11,7 +11,8 @@ program vtk_fortran_read
 !< `nan inf -inf`, VTKFortran's former `+    Infinity`) and UInt64 values above huge(I8P); names holding `"&<>'` and
 !< non-finite values written in every format and read back, and in a `.pvd`; a 6-component ASCII array (written
 !< u v w x y z, w and x joined) with non-finite values where w and x meet; `type="Bit"` arrays of two files written by
-!< VTK 9.7.2 (ascii, binary), embedded below.
+!< VTK 9.7.2 (ascii, binary), embedded below; string arrays written as point and cell data in every format and as a column
+!< of a `.vtt` Table (a column of other rows refused, the next column unaffected), read back.
 use penf
 use, intrinsic :: ieee_arithmetic, only : ieee_is_nan, ieee_is_finite, ieee_value, ieee_quiet_nan, &
                                           ieee_positive_inf, ieee_negative_inf
@@ -26,7 +27,7 @@ real(R8P),    parameter :: p(4)=[1.5_R8P, -2.25_R8P, 1.e-300_R8P, 4._R8P/3._R8P]
 real(R4P),    parameter :: v(3,4)=reshape([1,2,3, 4,5,6, 7,8,9, 10,11,12], [3,4]) * 0.1_R4P !< Point vectors.
 type(vtk_file)          :: a_vtk_file      !< A VTK file.
 integer(I4P)            :: f               !< Counter.
-logical                 :: test_passed(15) !< List of passed tests.
+logical                 :: test_passed(16) !< List of passed tests.
 
 test_passed = .true.
 do f=1, size(formats)
@@ -52,6 +53,7 @@ test_passed(12) = check_ascii_special()
 test_passed(13) = check_names_and_non_finite()
 test_passed(14) = check_six_non_finite()
 test_passed(15) = check_vtk_bits()
+test_passed(16) = check_string_arrays()
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 if (.not.all(test_passed)) error stop 'some tests failed'
@@ -759,6 +761,69 @@ contains
                              ieee_is_nan(t(4,2)) .and. t(3,3) == 3._R8P .and. t(4,3) == -4._R8P
   if (.not.is_passed) print '(A,*(1X,I0))', 'failed: vtkfortran_read-six.vtu', e
   endfunction check_six_non_finite
+
+  function check_string_arrays() result(is_passed)
+  !< String arrays (VTK's String): point and cell data written in every format, a column of a Table (`.vtt`) next to a
+  !< numeric one, read back; a string column of other rows refused, the numeric column after it written as usual.
+  logical                       :: is_passed !< Check result.
+  character(len=:), allocatable :: pl(:)     !< Point strings read.
+  character(len=:), allocatable :: cl(:)     !< Cell strings read.
+  character(len=:), allocatable :: data_type !< Type read.
+  real(R8P),        allocatable :: v(:)      !< Numeric column read.
+  integer(I4P)                  :: f         !< Counter.
+  integer(I4P)                  :: e(12)     !< Errors.
+
+  is_passed = .true.
+  do f=1, size(formats)
+    e = 0
+    e(1) = a_vtk_file%initialize(format=trim(formats(f)), filename='vtkfortran_read-strings-'//trim(formats(f))//'.vtu', &
+                                 mesh_topology='UnstructuredGrid')
+    e(2) = a_vtk_file%xml_writer%write_piece(np=3, nc=1)
+    e(3) = a_vtk_file%xml_writer%write_geo(np=3, nc=1, x=x(1:3), y=y(1:3), z=z(1:3))
+    e(4) = a_vtk_file%xml_writer%write_connectivity(nc=1, connectivity=[0_I4P, 1_I4P, 2_I4P], offset=[3_I4P], &
+                                                    cell_type=[5_I1P])
+    e(5) = a_vtk_file%xml_writer%write_dataarray(location='node', action='open')
+    e(6) = a_vtk_file%xml_writer%write_dataarray(data_name='pl', x=[character(7) :: 'inlet', 'wall', 'out let'])
+    e(7) = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
+    e(8) = a_vtk_file%xml_writer%write_dataarray(location='cell', action='open')
+    e(9) = a_vtk_file%xml_writer%write_dataarray(data_name='cl', x=['tri'])
+    e(10) = a_vtk_file%xml_writer%write_dataarray(location='cell', action='close')
+    e(11) = a_vtk_file%xml_writer%write_piece()
+    e(12) = a_vtk_file%finalize()
+    is_passed = is_passed .and. all(e == 0)
+    e = 0
+    e(1) = a_vtk_file%initialize(filename='vtkfortran_read-strings-'//trim(formats(f))//'.vtu', action='read')
+    e(2) = a_vtk_file%xml_reader%read_dataarray(location='node', data_name='pl', x=pl)
+    e(3) = a_vtk_file%xml_reader%read_dataarray(location='cell', data_name='cl', x=cl)
+    e(4) = a_vtk_file%xml_reader%get_dataarray_info(location='node', data_name='pl', data_type=data_type)
+    e(5) = a_vtk_file%finalize()
+    is_passed = is_passed .and. all(e == 0)
+    if (is_passed) is_passed = size(pl) == 3 .and. size(cl) == 1 .and. data_type == 'String'
+    if (is_passed) is_passed = pl(1) == 'inlet' .and. pl(2) == 'wall' .and. pl(3) == 'out let' .and. cl(1) == 'tri'
+    if (.not.is_passed) then
+      print '(A,*(1X,I0))', 'failed: vtkfortran_read-strings-'//trim(formats(f))//'.vtu', e
+      return
+    endif
+  enddo
+  ! a Table: a string column next to a numeric one; a string column of 2 rows refused, the next column written
+  e = 0
+  e(1) = a_vtk_file%initialize(format='binary', filename='vtkfortran_read-strings.vtt', mesh_topology='Table')
+  e(2) = a_vtk_file%xml_writer%write_dataarray(location='row', action='open')
+  e(3) = a_vtk_file%xml_writer%write_dataarray(data_name='name', x=[character(5) :: 'alpha', 'beta', 'gamma'])
+  e(4) = merge(0, 1, a_vtk_file%xml_writer%write_dataarray(data_name='short', x=['a', 'b']) /= 0) ! 2 rows: refused
+  e(5) = a_vtk_file%xml_writer%write_dataarray(data_name='value', x=[1._R8P, 2._R8P, 3._R8P])
+  e(6) = a_vtk_file%xml_writer%write_dataarray(location='row', action='close')
+  e(7) = a_vtk_file%finalize()
+  e(8) = a_vtk_file%initialize(filename='vtkfortran_read-strings.vtt', action='read')
+  e(9) = a_vtk_file%xml_reader%read_dataarray(location='row', data_name='name', x=pl)
+  e(10) = a_vtk_file%xml_reader%read_dataarray(location='row', data_name='value', x=v)
+  e(11) = merge(0, 1, a_vtk_file%xml_reader%read_dataarray(location='row', data_name='short', x=cl) == 4) ! not written
+  e(12) = a_vtk_file%finalize()
+  is_passed = all(e == 0)
+  if (is_passed) is_passed = size(pl) == 3 .and. size(v) == 3
+  if (is_passed) is_passed = pl(1) == 'alpha' .and. pl(3) == 'gamma' .and. all(v == [1._R8P, 2._R8P, 3._R8P])
+  if (.not.is_passed) print '(A,*(1X,I0))', 'failed: vtkfortran_read-strings.vtt', e
+  endfunction check_string_arrays
 
   function check_vtk_bits() result(is_passed)
   !< Read `type="Bit"` arrays (vtkBitArray) of files written by VTK 9.7.2 (vtkXMLUnstructuredGridWriter, ascii and

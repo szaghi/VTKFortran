@@ -56,6 +56,7 @@ public :: h5_attribute_exists
 public :: h5_dataset_write_R8P, h5_dataset_write_R4P, h5_dataset_write_I8P, h5_dataset_write_I4P, h5_dataset_write_I2P
 public :: h5_dataset_write_I1P
 public :: h5_dataset_write_strings
+public :: h5_dataset_append_strings
 public :: h5_dataset_append_R8P, h5_dataset_append_R4P, h5_dataset_append_I8P, h5_dataset_append_I4P
 public :: h5_dataset_append_I2P, h5_dataset_append_I1P
 public :: h5_dataset_slab_R8P, h5_dataset_slab_R4P, h5_dataset_slab_I8P, h5_dataset_slab_I4P, h5_dataset_slab_I2P
@@ -1393,24 +1394,10 @@ contains
   character(kind=c_char), allocatable, target :: chars(:) !< The strings, each ended by a NUL.
   type(c_ptr),            allocatable, target :: ptrs(:)  !< Where each one starts.
   integer(c_int64_t)                      :: dtype       !< Variable-length string type.
-  integer(I8P)                            :: i, c, k     !< Counters.
 
   error = 1_I4P
-  allocate(chars(max(1, sum(len_trim(x)) + size(x))), ptrs(max(1, size(x)))) ! (c_loc of a zero-size array: not allowed)
-  ptrs = c_null_ptr
-  k = 0_I8P
-  do i=1_I8P, size(x, kind=I8P)
-    do c=1_I8P, int(len_trim(x(i)), I8P)
-      chars(k + c) = x(i)(c:c)
-    enddo
-    chars(k + len_trim(x(i)) + 1_I8P) = c_null_char
-    k = k + len_trim(x(i)) + 1_I8P
-  enddo
-  k = 1_I8P
-  do i=1_I8P, size(x, kind=I8P)
-    ptrs(i) = c_loc(chars(k))
-    k = k + len_trim(x(i)) + 1_I8P
-  enddo
+  allocate(chars(max(1, sum(len_trim(x)) + size(x))), ptrs(max(1, size(x))))
+  call c_strings(x, chars, ptrs)
   dtype = H5Tcopy(H5T_C_S1_g)
   if (dtype < 0) return
   if (H5Tset_size(dtype, -1_c_size_t) >= 0) & ! H5T_VARIABLE
@@ -1421,6 +1408,54 @@ contains
   error = 1_I4P
 #endif
   endfunction h5_dataset_write_strings
+
+  function h5_dataset_append_strings(loc_id, name, x) result(error)
+  !< Append variable-length strings (trailing blanks dropped) to an appendable string dataset of `h5_dataset_write_strings`.
+  integer(hid_kind), intent(in) :: loc_id !< Parent (file or group).
+  character(*),      intent(in) :: name   !< Dataset name.
+  character(*),      intent(in) :: x(:)   !< Strings appended.
+  integer(I4P)                  :: error  !< Error status.
+#ifdef VTKFORTRAN_USE_HDF5
+  character(kind=c_char), allocatable, target :: chars(:) !< The strings, each ended by a NUL.
+  type(c_ptr),            allocatable, target :: ptrs(:)  !< Where each one starts.
+  integer(c_int64_t)                      :: dtype  !< Variable-length string type.
+
+  error = 0_I4P
+  if (size(x) == 0) return
+  allocate(chars(max(1, sum(len_trim(x)) + size(x))), ptrs(max(1, size(x))))
+  call c_strings(x, chars, ptrs)
+  error = 1_I4P
+  dtype = H5Tcopy(H5T_C_S1_g)
+  if (dtype < 0) return
+  if (H5Tset_size(dtype, -1_c_size_t) >= 0) error = dataset_append(loc_id, name, dtype, [size(x, kind=I8P)], c_loc(ptrs))
+  if (H5Tclose(dtype) < 0) error = 1_I4P
+#else
+  error = 1_I4P
+#endif
+  endfunction h5_dataset_append_strings
+
+#ifdef VTKFORTRAN_USE_HDF5
+  subroutine c_strings(x, chars, ptrs)
+  !< The strings (trailing blanks dropped) as C strings: one buffer, each ended by a NUL, and a pointer to each. The caller
+  !< allocates both, `chars(max(1, sum(len_trim(x)) + size(x)))` and `ptrs(max(1, size(x)))` (not allocated here:
+  !< nvfortran 26.9 crashes deallocating an intent(out) allocatable array of characters on entry).
+  character(*),                   intent(in)    :: x(:)     !< Strings.
+  character(kind=c_char), target, intent(inout) :: chars(:) !< The strings, each ended by a NUL.
+  type(c_ptr),                    intent(inout) :: ptrs(:)  !< Where each one starts.
+  integer(I8P)                                  :: i, c, k  !< Counters.
+
+  chars = c_null_char
+  ptrs = c_null_ptr
+  k = 0_I8P
+  do i=1_I8P, size(x, kind=I8P)
+    ptrs(i) = c_loc(chars(k + 1_I8P))
+    do c=1_I8P, int(len_trim(x(i)), I8P)
+      chars(k + c) = x(i)(c:c)
+    enddo
+    k = k + len_trim(x(i)) + 1_I8P
+  enddo
+  endsubroutine c_strings
+#endif
 
   function h5_dataset_write_I4P(loc_id, name, x, dims, appendable, deflate, unsigned, comm, chunk_bytes) result(error)
   !< Create a dataset of `I4P` values (HDF5 native int32, or uint32 with `unsigned=.true.`), shape `dims` in Fortran order.

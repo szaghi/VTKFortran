@@ -31,6 +31,7 @@ type, abstract :: vtk_writer_abstract
     procedure(write_connectivity_I4P_interface), deferred, pass(self) :: write_connectivity_I4P
     procedure(write_connectivity_I8P_interface), deferred, pass(self) :: write_connectivity_I8P
     procedure(write_dataarray_location_tag_interface), deferred, pass(self) :: write_dataarray_location_tag
+    procedure(write_dataarray_strings_interface), deferred, pass(self) :: write_dataarray_strings
     procedure(write_fielddata1_rank0_interface), deferred, pass(self) :: write_fielddata1_rank0
     procedure(write_fielddata1_rank1_interface), deferred, pass(self) :: write_fielddata1_rank1
     procedure(write_fielddata_tag_interface), deferred, pass(self) :: write_fielddata_tag
@@ -168,7 +169,8 @@ type, abstract :: vtk_writer_abstract
                write_dataarray6_rank3_I4P, &
                write_dataarray6_rank3_I2P, &
                write_dataarray6_rank3_I1P, &
-               write_dataarray_location_tag
+               write_dataarray_location_tag, &
+               write_dataarray_strings
     generic :: write_fielddata => &
                write_fielddata1_rank0, &
                write_fielddata1_rank1, &
@@ -862,6 +864,16 @@ abstract interface
   character(*),               intent(in), optional :: process_ids
   integer(I4P)                             :: error
   endfunction write_dataarray_location_tag_interface
+
+  function write_dataarray_strings_interface(self, data_name, x) result(error)
+  !< Write a string array (VTK's `String`, a vtkStringArray) of the open location: point, cell data or a Table column, one
+  !< string per tuple (trailing blanks dropped).
+  import :: vtk_writer_abstract, I4P
+  class(vtk_writer_abstract), intent(inout) :: self
+  character(*),               intent(in)    :: data_name
+  character(*),               intent(in)    :: x(1:)
+  integer(I4P)                             :: error
+  endfunction write_dataarray_strings_interface
 
   function write_fielddata1_rank0_interface(self, data_name, x) result(error)
   import :: vtk_writer_abstract, I4P

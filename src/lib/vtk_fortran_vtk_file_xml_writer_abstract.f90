@@ -75,6 +75,7 @@ type, abstract, extends(vtk_writer_abstract) :: xml_writer_abstract
     procedure, pass(self) :: write_fielddata1_rank0            !< Write FieldData tag (data 1, rank 0).
     procedure, pass(self) :: write_fielddata1_rank1            !< Write FieldData tag (data 1, rank 1).
     procedure, pass(self), private :: write_fielddata_strings           !< Write FieldData tag (strings).
+    procedure, pass(self) :: write_dataarray_strings           !< Write a string array (point, cell data, Table column).
     procedure, pass(self), private :: dataarray_tag_overrides           !< Apply the one-shot overrides of DataArray tag.
     procedure, pass(self), private :: next_vtm_index                    !< Return (and count) the next multi-block child index.
     procedure, pass(self) :: write_fielddata_tag               !< Write FieldData tag.
@@ -497,17 +498,21 @@ contains
    character(*),               intent(in)    :: data_name !< Name of the column.
    logical                                   :: is_ok     !< The DataArray is written.
 
+   integer(I8P)                              :: rows      !< Rows of the column.
+
    is_ok = .true.
    if (.not.self%is_row_open) return
-   if (self%table_rows >= 0_I8P .and. self%n_tuples /= self%table_rows) then
+   rows = self%n_tuples
+   if (self%tuples_override >= 0_I8P) rows = self%tuples_override ! a column of strings: one per row, not per byte
+   if (self%table_rows >= 0_I8P .and. rows /= self%table_rows) then
       write(stderr, '(A)') 'error: VTKFortran XML writer: the column '//trim(adjustl(data_name))//' has '// &
-                           trim(str(n=self%n_tuples, no_sign=.true.))//' rows, the other columns '// &
+                           trim(str(n=rows, no_sign=.true.))//' rows, the other columns '// &
                            trim(str(n=self%table_rows, no_sign=.true.))
       self%error = 1_I4P
       is_ok = .false.
       return
    endif
-   self%table_rows = self%n_tuples
+   self%table_rows = rows
    self%table_columns = self%table_columns + 1_I4P
    endfunction is_table_column
 
@@ -803,6 +808,30 @@ contains
    self%tuples_override = size(x, kind=I8P)
    error = self%write_dataarray(data_name=data_name, x=bytes, is_tuples=.true.)
    endfunction write_fielddata_strings
+
+   function write_dataarray_strings(self, data_name, x) result(error)
+   !< Write a string array of the open location (point data, cell data, a Table column) as VTK does: `<Array type="String"
+   !< NumberOfTuples="size(x)">`, the bytes of each string (trailing blanks trimmed) followed by a NUL, encoded as Int8
+   !< data in the selected format. One string per tuple (a Table: one per row).
+   !<
+   !<### Example of usage
+   !<
+   !<```fortran
+   !< error = vtk%xml_writer%write_dataarray(location='node', action='open')
+   !< error = vtk%xml_writer%write_dataarray(data_name='label', x=['inlet ', 'wall  ', 'outlet'])
+   !< error = vtk%xml_writer%write_dataarray(location='node', action='close')
+   !<```
+   class(xml_writer_abstract), intent(inout) :: self      !< Writer.
+   character(*),               intent(in)    :: data_name !< Data name.
+   character(*),               intent(in)    :: x(1:)     !< Strings.
+   integer(I4P)                              :: error     !< Error status.
+
+   error = self%write_fielddata_strings(data_name=data_name, x=x)
+   ! the one-shot overrides are consumed by the tag; a refused column (a Table of other rows) leaves them set: unset
+   if (self%tag_name_override%is_allocated()) call self%tag_name_override%free
+   if (self%data_type_override%is_allocated()) call self%data_type_override%free
+   self%tuples_override = -1_I8P
+   endfunction write_dataarray_strings
 
    function write_fielddata_tag(self, action) result(error)
    !< Write `<FieldData>`/`</FieldData>` start/end tag.

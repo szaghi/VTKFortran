@@ -183,8 +183,9 @@ after each box. Refused: field data, `comm`, a step without boxes, the XML forma
   once, with the extents of `initialize`; the piece of a RectilinearGrid or StructuredGrid needs its `write_geo`.
 - **Data arrays**: every kind, rank and layout of `write_dataarray`, and `write_dataarray_unsigned` (HDF5 unsigned types).
   An array whose size does not match the grid or the piece is refused. Active arrays (`scalars=`, `vectors=`, ...,
-  `global_ids=`, ..., `process_ids=`: every role of VTK) become the `Attribute` attribute of their dataset; field data are numeric only: a string is refused (VTK 9.7 crashes
-  on string field data, or drops them). See [Data arrays](/guide/data).
+  `global_ids=`, ..., `process_ids=`: every role of VTK) become the `Attribute` attribute of their dataset; field data
+  strings are variable-length string datasets (as vtkHDFWriter writes them; refused with `comm`), string point, cell or
+  row data are refused (VTK 9.7.2 reads strings as field data only). See [Data arrays](/guide/data).
 - **Compression**: `compressor='zlib'` deflates every dataset (level 6, by chunks). It needs the deflate filter of the
   HDF5 library, not `VTKFORTRAN_USE_ZLIB`: without it `initialize` returns a non-zero error.
 - **Chunks**: the datasets that grow (the partitions of an UnstructuredGrid or a PolyData, every dataset of a time

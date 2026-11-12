@@ -15,7 +15,9 @@ program vtk_fortran_read_vtkhdf
 !< temporal field data without `Steps/FieldDataSizes` (optional: one tuple per step), the file rebuilt with the bindings;
 !< the arrays of a 2D ImageData built with the bindings: the axes of more than one point (as VTK) read, with and without
 !< components, an array keeping the axis of one point (the literal shape of the specification) refused (error 6); string
-!< arrays as vtkHDFWriter writes them (variable-length strings: field data and point data), added with the bindings.
+!< arrays as vtkHDFWriter writes them (variable-length strings: field data and point data), added with the bindings;
+!< string field data written by the writer, static (an ImageData) and in a time series (an UnstructuredGrid of 2 steps,
+!< other strings at each step), read back step by step.
 !< Without HDF5 the reader refuses a VTKHDF file.
 use penf
 use vtk_fortran, only : vtk_file
@@ -23,7 +25,7 @@ use vtk_fortran_hdf5
 
 implicit none
 type(vtk_file)                :: w, r                    !< Writer, reader.
-logical                       :: ok(15)                  !< Checks.
+logical                       :: ok(16)                  !< Checks.
 integer(I4P)                  :: e, i                    !< Error, counter.
 integer(I4P), parameter       :: cube(31) = [6, 4, 0, 3, 2, 1,  4, 4, 5, 6, 7,  4, 0, 1, 5, 4,  4, 1, 2, 6, 5, &
                                              4, 2, 3, 7, 6,  4, 3, 0, 4, 7] !< Faces of a unit cube.
@@ -51,8 +53,9 @@ else
   ok(13) = field_sizes_optional()
   ok(14) = grid_axes()
   ok(15) = string_arrays()
-  print '(A,15L2)', 'VTKHDF read: image, rect, strg, unst, poly, series, image series, I4P, errors, shared faces, reused, '// &
-                    'vlen strings, FieldDataSizes optional, grid axes, string arrays:', ok
+  ok(16) = string_field_data()
+  print '(A,16L2)', 'VTKHDF read: image, rect, strg, unst, poly, series, image series, I4P, errors, shared faces, reused, '// &
+                    'vlen strings, FieldDataSizes optional, grid axes, string arrays, string field data:', ok
 endif
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(ok)
@@ -619,6 +622,61 @@ contains
   e = r%finalize()
   if (.not.string_arrays) print '(A,4I3)', 'string arrays: errors ', ee
   endfunction string_arrays
+
+  logical function string_field_data()
+  !< String field data written by the writer (as vtkHDFWriter writes a vtkStringArray): static in an ImageData, and in a
+  !< 2-step time series of an UnstructuredGrid (other strings, of other counts, at each step); read back.
+  character(len=:), allocatable :: x(:)
+  integer(I4P)                  :: ee(8), s
+
+  ee = 0
+  ee(1) = w%initialize(format='vtkhdf', filename='read_string_field.vtkhdf', mesh_topology='ImageData', &
+                       nx1=0, nx2=1, ny1=0, ny2=1, nz1=0, nz2=0, origin=[0._R8P, 0._R8P, 0._R8P], &
+                       spacing=[1._R8P, 1._R8P, 1._R8P])
+  ee(2) = w%xml_writer%write_fielddata(action='open')
+  ee(2) = ee(2) + abs(w%xml_writer%write_fielddata(data_name='species', x=[character(3) :: 'N2', 'O2', 'Ar']))
+  ee(2) = ee(2) + abs(w%xml_writer%write_fielddata(data_name='case', x='cavity flow'))
+  ee(2) = ee(2) + abs(w%xml_writer%write_fielddata(action='close'))
+  ee(3) = w%xml_writer%write_piece(nx1=0, nx2=1, ny1=0, ny2=1, nz1=0, nz2=0)
+  ee(3) = ee(3) + abs(w%xml_writer%write_piece())
+  ee(3) = ee(3) + abs(w%finalize())
+  string_field_data = all(ee(1:3) == 0) .and. r%initialize(filename='read_string_field.vtkhdf', action='read') == 0
+  e = r%xml_reader%read_dataarray(location='field', data_name='species', x=x)
+  string_field_data = string_field_data .and. e == 0
+  if (string_field_data) string_field_data = size(x) == 3
+  if (string_field_data) string_field_data = x(1) == 'N2' .and. x(3) == 'Ar'
+  e = r%xml_reader%read_dataarray(location='field', data_name='case', x=x)
+  string_field_data = string_field_data .and. e == 0
+  if (string_field_data) string_field_data = size(x) == 1
+  if (string_field_data) string_field_data = x(1) == 'cavity flow'
+  e = r%finalize()
+  ! a time series: step 1 two strings, step 2 three
+  ee(4) = w%initialize(format='vtkhdf', filename='read_string_field_series.vtkhdf', mesh_topology='UnstructuredGrid')
+  do s=1, 2
+    ee(5) = ee(5) + abs(w%xml_writer%write_step(time=real(s, R8P)))
+    ee(6) = ee(6) + abs(w%xml_writer%write_fielddata(action='open'))
+    if (s == 1) ee(6) = ee(6) + abs(w%xml_writer%write_fielddata(data_name='events', x=[character(5) :: 'start', 'mesh']))
+    if (s == 2) ee(6) = ee(6) + abs(w%xml_writer%write_fielddata(data_name='events', x=[character(7) :: 'restart', 'x', 'y']))
+    ee(6) = ee(6) + abs(w%xml_writer%write_fielddata(action='close'))
+    ee(7) = ee(7) + abs(tetra(4, 0._R8P))
+  enddo
+  ee(8) = w%finalize()
+  string_field_data = string_field_data .and. all(ee == 0) .and. &
+                      r%initialize(filename='read_string_field_series.vtkhdf', action='read') == 0
+  do s=1, 2
+    e = r%xml_reader%set_step(s)
+    e = e + abs(r%xml_reader%read_dataarray(location='field', data_name='events', x=x))
+    string_field_data = string_field_data .and. e == 0
+    if (.not.string_field_data) exit
+    if (s == 1) string_field_data = size(x) == 2
+    if (s == 2) string_field_data = size(x) == 3
+    if (.not.string_field_data) exit
+    if (s == 1) string_field_data = x(1) == 'start' .and. x(2) == 'mesh'
+    if (s == 2) string_field_data = x(1) == 'restart' .and. x(3) == 'y'
+  enddo
+  e = r%finalize()
+  if (.not.string_field_data) print '(A,8I3)', 'string field data: errors ', ee
+  endfunction string_field_data
 
   function cell_data(cid) result(error)
   !< The cell data cid of a piece, then the end of the piece.

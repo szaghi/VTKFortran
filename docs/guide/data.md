@@ -83,8 +83,17 @@ them as string arrays. Trailing blanks of each string are trimmed, so a Fortran 
 is. In ParaView, field data are listed in the Spreadsheet view (attribute *Field Data*) and are available to filters and Python.
 VTKFortran reads them back with `read_dataarray(location='field', ...)`, see [Reading files](/guide/reading).
 
-In the VTKHDF format, field data are the datasets of the group `FieldData`, numeric only: a `character` value makes
-`write_fielddata` return a non-zero error (VTK 9.7 crashes on string field data, or drops them).
+In the VTKHDF format, field data are the datasets of the group `FieldData`; strings are variable-length string datasets,
+as VTK's `vtkHDFWriter` writes them (in a time series the strings of each step, of any number; refused with `comm`:
+parallel HDF5 writes no variable-length type). VTK 9.7.2 reads them, static and step by step.
+
+## String arrays
+
+Point data, cell data and the columns of a Table can be strings too: `write_dataarray(data_name=..., x=strings)`, a
+`character` rank-1 array, one string per point, cell or row (trailing blanks trimmed), written as VTK writes a
+vtkStringArray, `<Array type="String">`, in every XML format; read back into a `character(len=:), allocatable :: x(:)`.
+In a `.pvtu`/`.pvtr`/... header declare them with `write_parallel_dataarray(data_name=..., data_type='String')` (a
+`PArray`). In the VTKHDF format they are refused: VTK 9.7.2 reads the strings of a VTKHDF file as field data only.
 
 ## Active arrays
 

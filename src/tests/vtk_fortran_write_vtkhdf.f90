@@ -10,8 +10,9 @@ program vtk_fortran_write_vtkhdf
 !<- `vtkfortran_write_vtkhdf_2d.vtkhdf`: a 3x2x1 points grid (2D: the z axis is dropped from the datasets, as VTK
 !<  requires), compressed if HDF5 has deflate.
 !<
-!< Refusals are checked too: string field data, an array of the wrong size, names with '/' or '.' or empty (point and
-!< field data), a second piece, a parallel header topology, a volatile file. Without HDF5 the writer refuses to start. VTK readers open both files outside this test.
+!< Refusals are checked too: string point data (VTK reads strings as field data only), an array of the wrong size, names
+!< with '/' or '.' or empty (point and field data), a second piece, a parallel header topology, a volatile file. Without
+!< HDF5 the writer refuses to start. VTK readers open both files outside this test.
 use penf
 use vtk_fortran, only : vtk_file
 use vtk_fortran_hdf5
@@ -66,7 +67,7 @@ else
   e(2) = a_vtk_file%xml_writer%write_fielddata(action='open')
   e(3) = a_vtk_file%xml_writer%write_fielddata(data_name='time', x=1.5_R8P)
   e(4) = a_vtk_file%xml_writer%write_fielddata(data_name='cycle', x=[7_I4P, 8_I4P])
-  e(5) = merge(0, 1, a_vtk_file%xml_writer%write_fielddata(data_name='label', x='refused') /= 0) ! strings are refused
+  e(5) = merge(0, 1, a_vtk_file%xml_writer%write_fielddata(data_name='a/b', x='refused') /= 0) ! a '/' in a string name
   e(21) = merge(0, 1, a_vtk_file%xml_writer%write_fielddata(data_name='run.id', x=1_I4P) /= 0) ! a '.' in the name
   e(6) = a_vtk_file%xml_writer%write_fielddata(action='close')
   e(7) = a_vtk_file%xml_writer%write_piece(nx1=0, nx2=ni-1, ny1=0, ny2=nj-1, nz1=0, nz2=nk-1)
@@ -79,6 +80,7 @@ else
   e(22) = merge(0, 1, a_vtk_file%xml_writer%write_dataarray(data_name='u/v', x=vx) /= 0)        ! a '/' in the name
   e(23) = merge(0, 1, a_vtk_file%xml_writer%write_dataarray(data_name='u.v', x=vx) /= 0)        ! a '.' in the name
   e(24) = merge(0, 1, a_vtk_file%xml_writer%write_dataarray(data_name=' ', x=vx) /= 0)          ! an empty name
+  e(24) = e(24) + merge(0, 1, a_vtk_file%xml_writer%write_dataarray(data_name='s', x=['a', 'b']) /= 0) ! strings: field data
   e(14) = a_vtk_file%xml_writer%write_dataarray(location='node', action='close')
   e(15) = a_vtk_file%xml_writer%write_dataarray(location='cell', action='open', scalars='c')
   e(16) = a_vtk_file%xml_writer%write_dataarray(data_name='c', x=c)

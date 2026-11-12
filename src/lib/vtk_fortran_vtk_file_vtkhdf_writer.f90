@@ -225,6 +225,7 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
     procedure, pass(self) :: write_fielddata1_rank0
     procedure, pass(self) :: write_fielddata1_rank1
     procedure, pass(self) :: free
+    procedure, pass(self) :: write_dataarray_strings
     procedure, pass(self) :: get_xml_volatile
     procedure, pass(self) :: write_dataarray1_rank1_R8P
     procedure, pass(self) :: write_dataarray1_rank1_R4P
@@ -956,7 +957,7 @@ contains
   type is(integer(I1P))
     error = put_I1P(self, data_name, [x], 1_I8P, 1_I4P)
   type is(character(*))
-    error = refuse('string field data are not supported (the VTK reader of VTKHDF crashes on them)')
+    error = put_strings(self, data_name, [x])
   class default
     error = refuse('field data of this type are not supported')
   endselect
@@ -986,7 +987,7 @@ contains
   type is(integer(I1P))
     error = put_I1P(self, data_name, x, size(x, kind=I8P), 1_I4P)
   type is(character(*))
-    error = refuse('string field data are not supported (the VTK reader of VTKHDF crashes on them)')
+    error = put_strings(self, data_name, x)
   class default
     error = refuse('field data of this type are not supported')
   endselect
@@ -1002,6 +1003,20 @@ contains
   self%is_parallel = .false.
   if (present(error)) error = 0_I4P
   endsubroutine free
+
+  function write_dataarray_strings(self, data_name, x) result(error)
+  !< A string array of point, cell data or a Table column: refused (VTK 9.7.2 reads the strings of a
+  !< VTKHDF file as field data only: give them with `write_fielddata`).
+  class(vtkhdf_writer),       intent(inout) :: self
+  character(*),               intent(in)    :: data_name
+  character(*),               intent(in)    :: x(1:)
+  integer(I4P)                              :: error
+
+  error = 1_I4P
+  if (self%group < 0_hid_kind) return
+  error = refuse('the string array '//data_name//' of '//self%group_name//' is not written: VTK 9.7.2 reads the '// &
+                 'strings of a VTKHDF file as field data only (write_fielddata)')
+  endfunction write_dataarray_strings
 
   pure subroutine get_xml_volatile(self, xml_volatile, error)
   !< No volatile (in memory) file in VTKHDF: an error.
@@ -4223,6 +4238,43 @@ contains
     call move_alloc(more, values)
     endsubroutine grow
   endsubroutine record_array
+
+  function put_strings(self, data_name, x) result(error)
+  !< Write field data strings as vtkHDFWriter writes a vtkStringArray: a dataset of variable-length strings (trailing
+  !< blanks dropped), appended to step after step in a time series (`FieldDataOffsets`/`FieldDataSizes` as numeric field
+  !< data). Refused with a communicator (parallel HDF5 writes no variable-length type).
+  class(vtkhdf_writer), intent(inout) :: self      !< Writer.
+  character(*),         intent(in)    :: data_name !< Data name.
+  character(*),         intent(in)    :: x(:)      !< Strings.
+  integer(I4P)                        :: error     !< Error status.
+  logical                             :: is_new    !< The dataset is created (not appended to).
+
+  error = 1_I4P
+  if (self%group < 0_hid_kind .or. self%group_name /= 'FieldData') return
+  if (len(h5_name_invalid(data_name)) > 0) then ! a VTKHDF name: no / nor .
+    error = refuse('the array name "'//data_name//'" '//h5_name_invalid(data_name))
+    return
+  endif
+  if (self%is_parallel) then
+    error = refuse('string field data are not written with comm: parallel HDF5 writes no variable-length strings')
+    return
+  endif
+  is_new = .not.h5_link_exists(self%group, data_name)
+  if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P) then
+    error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
+    return
+  endif
+  if (self%is_temporal .and. .not.is_new) then
+    error = h5_dataset_append_strings(self%group, data_name, x)
+  else
+    error = h5_dataset_write_strings(self%group, data_name, x, appendable=self%is_temporal, chunk_bytes=self%chunk_bytes)
+  endif
+  if (error /= 0_I4P) then
+    error = refuse('cannot write the dataset '//data_name)
+    return
+  endif
+  if (is_new) call self%record_array(data_name)
+  endfunction put_strings
 
   function check_arrays(self, group, rows, may_reuse) result(error)
   !< Check that every point (`group` PointData) or cell (CellData) array holds `rows` tuples (time slices for a grid) more

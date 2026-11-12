@@ -94,7 +94,9 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
 - `vtk_fortran_vtk_writer_abstract` — format-neutral abstract writer (`vtk_writer_abstract`): the state `vtk_file` sets
   (origin, spacing, direction, header type, compression, `branch_factor`, `chunk_bytes`) and every procedure `vtk_file%xml_writer` exposes (`initialize`,
   `finalize`, `write_piece`, `write_geo`, `write_connectivity`, `write_polydata_cells`, `write_dataarray`,
-  `write_dataarray_unsigned`, `write_fielddata`, `write_step`, `free`, `get_xml_volatile`; `write_dataarray` opening a
+  `write_dataarray_unsigned`, `write_dataarray_strings` (in the `write_dataarray` generic: a `character` rank-1 `x`),
+  `write_fielddata`, `write_step`, `free`, `get_xml_volatile` (XML strings: `<Array type="String">` through
+  `write_fielddata_strings`, overrides unset after a refused Table column); `write_dataarray` opening a
   location takes the 12 attribute roles of VTK, `scalars` ... `tcoords`, `global_ids` ... `process_ids`), all deferred and PUBLIC (ifx does not
   override a private binding from another module). `vtk_file%xml_writer` is of this type (the name is kept); the XML
   writers and the VTKHDF writer extend it
@@ -144,7 +146,9 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   series: every step its piece, the trees appended (`store_*`, the mask always), `tree_totals` = the trees, depth
   entries, bytes, cells of the steps before, the `Steps` entries VTK writes (TreeIdsOffsets, DescriptorsOffsets in
   bytes, ...); refused: point/field data, a step without its piece, comm, append; read back by the reader (#87).
-  Point/cell/field data, active arrays as the `Attribute` attribute, unsigned,
+  Point/cell/field data (field data strings: variable-length string datasets, `put_strings`, appended per step, refused
+  with comm; string point/cell/row data refused: VTK reads VTKHDF strings as field data only; 91 bindings),
+  active arrays as the `Attribute` attribute, unsigned,
   deflate for `compressor='zlib'`; refusals return an error with a message on stderr (a data name empty or with `/` or
   `.`: `h5_name_invalid`, also used by `vtm_file` for block and dataset names; never renamed; HDF5 has no length limit). Arrays stored as in memory
   (`x(nc,i,j,k)` = VTKHDF `[k,j,i,nc]`), the axes of one point of a grid dropped (VTK requires it); every chunked
@@ -309,7 +313,7 @@ the same `vtm_file` reading a composite after a refused read;
 (Version 2.9, the file built with the bindings), a face id out of range, series storing once the mesh and arrays; variable-length `Type` and `Attribute`; temporal field
 data without `FieldDataSizes`; a 2D ImageData's arrays with the axes VTK writes read, one keeping a one-point axis
 refused; variable-length string field and point data added with the bindings, read as
-`String`);
+`String`; string field data written by the writer, static and in a 2-step series);
 `vtk_fortran_write_vtkhdf_polyh.f90`: polyhedra (one piece; three pieces with polyhedra in the second), each also
 written as a `.vtu`; `vtk_fortran_write_vtkhdf_grids.f90`: RectilinearGrid and StructuredGrid (3D/2D/1D, the four StructuredGrid
 `write_geo` layouts), each also written as a `.vtr`/`.vts`; `vtk_fortran_write_vtkhdf_poly.f90`: PolyData, the four
@@ -330,5 +334,6 @@ mpirun; without HDF5 the writer refuses to start); `vtk_fortran_read.F90` reads 
 a polyhedron `.vtu` written by VTK 9.7.2 (XML 2.3) and the same with the shared face stored once (2.5); ASCII
 `nan inf -inf`, the former `+   Infinity`, UInt64 above huge(I8P); a name with `"&<>'` and NaN/±Inf in every format,
 the active scalars, and in a `.pvd`; a 6-component ASCII array with non-finite values where w and x join; `type="Bit"` arrays of two files written by VTK 9.7.2,
-ascii and binary), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files, `PArray`
+ascii and binary; string point and cell data in every format and a `.vtt` string column (a column of other
+rows refused, the next one unaffected)), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files, `PArray`
 string arrays (a VTK 9.7.2 header and piece embedded, and a header of the library over that piece).
