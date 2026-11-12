@@ -119,7 +119,9 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
 - `vtk_fortran_vtk_file_vtkhdf_reader` — `vtkhdf_reader`: VTKHDF files read through `xml_reader` (dispatched when
   `initialize` sees the HDF5 signature): every topology, partitions as pieces, time series (`get_steps`, `set_step`),
   values as HDF5 hyperslabs of the piece/step converted by the decoder (`read_dataarray_bytes`), offsets back to end
-  offsets, polyhedra back to the face stream. `xml_reader%finalize` stays pure (forgets the file); `close` closes it
+  offsets, polyhedra back to the face stream (VTKHDF 2.9 shared faces, `-(n+1)` in `PolyhedronToFaces`, given to each
+  polyhedron, reversed where marked; a face id out of range is error 6; VTK 9.7.2 cannot read such files, the nightly
+  of 2026-11-08 misreads the reversed faces). `xml_reader%finalize` stays pure (forgets the file); `close` closes it
 - `vtk_fortran_vtk_file_xml_reader` — `xml_reader` type: reader of serial files (any format, header type, zlib) and parallel headers (`check_pieces`); indexes the file once with FoXy `xml_index` (tags and content positions, scan stopped at `AppendedData`), then decodes only the arrays asked for; error codes 0–7 documented in the module. `pvtk_file` uses it too (`action='read'`); `vtm_file` and `pvd_file` read with `get_entries`/`get_datasets`
 - `vtk_fortran_dataarray_decoder` — inverse of the encoder: ASCII/Base64/zlib data into bytes, bytes into arrays of the requested kind
 - `vtk_fortran_dataarray_encoder` — overloaded encoding routines for ASCII and Base64 (optionally zlib-compressed), covering all PENF numeric kinds and ranks 1–4
@@ -164,7 +166,8 @@ UnstructuredGrid, every cell type but polyhedra, two pieces, I8P ids, each also 
 `vtk_fortran_write_vtkhdf_steps.f90`: time series of every topology, each step also written as an XML file;
 `vtk_fortran_write_vtkhdf_append.f90`: series continued with `action='append'` (restart, interrupted run);
 `vtk_fortran_write_vtkhdf_vtm.f90`: a VTKHDF multi-block file (`vtm_file`, `format='vtkhdf'`);
-`vtk_fortran_read_vtkhdf.f90`: VTKHDF files read back (every topology, time series);
+`vtk_fortran_read_vtkhdf.f90`: VTKHDF files read back (every topology, time series, two polyhedra sharing a face
+(Version 2.9, the file built with the bindings), a face id out of range);
 `vtk_fortran_write_vtkhdf_polyh.f90`: polyhedra (one piece; three pieces with polyhedra in the second), each also
 written as a `.vtu`; `vtk_fortran_write_vtkhdf_grids.f90`: RectilinearGrid and StructuredGrid (3D/2D/1D, the four StructuredGrid
 `write_geo` layouts), each also written as a `.vtr`/`.vts`; `vtk_fortran_write_vtkhdf_poly.f90`: PolyData, the four

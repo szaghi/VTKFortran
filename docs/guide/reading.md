@@ -69,6 +69,12 @@ are the partitions of the file. The offsets are returned as VTKFortran writes th
 the polyhedra as the face stream of `write_connectivity`; `get_info` returns `header_type='HDF5'`, `compressor='none'`
 (HDF5 decompresses its datasets itself). Files written by VTK's `vtkHDFWriter` are read too.
 
+- **Polyhedra with shared faces** (VTKHDF 2.9): a face shared by two polyhedra is stored once, and the polyhedron that
+  traverses it in reverse lists the face `n` as `-(n+1)` in `PolyhedronToFaces`. The reader gives the face in the stream
+  of each polyhedron that uses it, its points in reverse order where it is marked so: the stream is the one
+  `write_connectivity` takes, valid for every format. A face id out of the faces of the piece is error 6 (the data do
+  not decode).
+
 - **Time series**: `get_steps(times)` returns the times of the steps (none for a file that is not a time series), and
   `set_step(step)` selects the step that the following calls read (the step 1 by default). The pieces are those of the
   step.
@@ -77,7 +83,7 @@ the polyhedra as the face stream of `write_connectivity`; `get_info` returns `he
 - `finalize` closes the file (`free` alone forgets it without closing it: call `finalize`).
 - **Not supported**: a multi-block VTKHDF file (`vtm_file` with `format='vtkhdf'`), and `get_sources` /
   `check_pieces` (a VTKHDF file is not a parallel header). The test `src/tests/vtk_fortran_read_vtkhdf.f90` reads every
-  topology and time series back.
+  topology and time series back, and a file of two polyhedra sharing a face.
 
 ### Parallel headers
 

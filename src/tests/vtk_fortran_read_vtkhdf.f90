@@ -7,14 +7,16 @@ program vtk_fortran_read_vtkhdf
 !< names, types and values of its arrays, field data), a RectilinearGrid and a StructuredGrid (geometry), an
 !< UnstructuredGrid of two pieces with a polyhedron (counts, points, cells, faces, cell data of each piece), a PolyData
 !< (its blocks), a time series of an UnstructuredGrid (two parts, then one) and of an ImageData (steps, times, the data
-!< of each step), I8P ids read as I4P; the error codes. Without HDF5 the reader refuses a VTKHDF file.
+!< of each step), I8P ids read as I4P; the error codes; two polyhedra sharing a face (VTKHDF 2.9: the face stored once,
+!< referenced reversed by the second polyhedron), the file built with the HDF5 bindings, read back as the face stream of
+!< each polyhedron, and a face id out of range (error 6). Without HDF5 the reader refuses a VTKHDF file.
 use penf
 use vtk_fortran, only : vtk_file
-use vtk_fortran_hdf5, only : is_hdf5_enabled
+use vtk_fortran_hdf5
 
 implicit none
 type(vtk_file)                :: w, r                    !< Writer, reader.
-logical                       :: ok(9)                   !< Checks.
+logical                       :: ok(10)                  !< Checks.
 integer(I4P)                  :: e, i                    !< Error, counter.
 integer(I4P), parameter       :: cube(31) = [6, 4, 0, 3, 2, 1,  4, 4, 5, 6, 7,  4, 0, 1, 5, 4,  4, 1, 2, 6, 5, &
                                              4, 2, 3, 7, 6,  4, 3, 0, 4, 7] !< Faces of a unit cube.
@@ -36,7 +38,8 @@ else
   ok(7) = image_series()
   ok(8) = ids_i4p()
   ok(9) = errors()
-  print '(A,9L2)', 'VTKHDF read: image, rect, strg, unst, poly, series, image series, I4P, errors:', ok
+  ok(10) = shared_faces()
+  print '(A,10L2)', 'VTKHDF read: image, rect, strg, unst, poly, series, image series, I4P, errors, shared faces:', ok
 endif
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(ok)
@@ -306,6 +309,71 @@ contains
   errors = all(is)
   if (.not.errors) print '(A,5L2)', 'errors: ', is
   endfunction errors
+
+  logical function shared_faces()
+  !< Two hexahedra as polyhedra sharing the face x=1 (VTKHDF 2.9): 11 faces, the shared one (5) stored once, oriented
+  !< outwards for the first cell, referenced as -(5+1) by the second; read back, each polyhedron has its own copy of the
+  !< face, reversed in the second. A copy of the file with a face id out of range is error 6.
+  integer(I4P), parameter   :: stream(62) = [6, 4, 0, 3, 9, 6,  4, 0, 6, 7, 1,  4, 3, 4, 10, 9,  4, 0, 1, 4, 3, &
+                                             4, 6, 9, 10, 7,  4, 1, 4, 10, 7, &
+                                             6, 4, 7, 10, 4, 1,  4, 2, 8, 11, 5,  4, 1, 7, 8, 2,  4, 4, 5, 11, 10, &
+                                             4, 1, 2, 5, 4,  4, 7, 10, 11, 8] !< Expected face stream.
+  integer(I4P), allocatable :: connect(:), offset(:), face(:), faceoffset(:)
+  integer(I1P), allocatable :: types(:)
+
+  shared_faces = polyhedra_file('read_shared_faces.vtkhdf', [0_I8P, 1_I8P, 2_I8P, 3_I8P, 4_I8P, 5_I8P, &
+                                                             -6_I8P, 6_I8P, 7_I8P, 8_I8P, 9_I8P, 10_I8P])
+  shared_faces = shared_faces .and. polyhedra_file('read_shared_faces_bad.vtkhdf', [0_I8P, 1_I8P, 2_I8P, 3_I8P, 4_I8P, &
+                                                   5_I8P, -6_I8P, 6_I8P, 7_I8P, 8_I8P, 9_I8P, 11_I8P])
+  shared_faces = shared_faces .and. r%initialize(filename='read_shared_faces.vtkhdf', action='read') == 0
+  e = r%xml_reader%read_connectivity(connectivity=connect, offset=offset, cell_type=types, face=face, faceoffset=faceoffset)
+  shared_faces = shared_faces .and. e == 0 .and. all(offset == [8, 16]) .and. all(types == [42_I1P, 42_I1P])
+  if (shared_faces) shared_faces = size(face) == 62 .and. all(faceoffset == [31, 62])
+  if (shared_faces) shared_faces = all(face == stream)
+  e = r%finalize()
+  shared_faces = shared_faces .and. r%initialize(filename='read_shared_faces_bad.vtkhdf', action='read') == 0
+  e = r%xml_reader%read_connectivity(connectivity=connect, offset=offset, face=face, faceoffset=faceoffset)
+  shared_faces = shared_faces .and. e == 6
+  e = r%finalize()
+  if (.not.shared_faces) print '(A)', 'shared faces: different'
+  endfunction shared_faces
+
+  logical function polyhedra_file(filename, faces_of) result(ok)
+  !< The file of the two hexahedra, `faces_of` their faces (PolyhedronToFaces), written with the HDF5 bindings.
+  character(*), intent(in)  :: filename    !< File name.
+  integer(I8P), intent(in)  :: faces_of(:) !< Faces of the polyhedra.
+  integer(I8P), parameter   :: fc(44) = [0, 3, 9, 6,  0, 6, 7, 1,  3, 4, 10, 9,  0, 1, 4, 3,  6, 9, 10, 7, &
+                                         1, 4, 10, 7, &
+                                         2, 8, 11, 5,  1, 7, 8, 2,  4, 5, 11, 10,  1, 2, 5, 4,  7, 10, 11, 8] !< Faces.
+  integer(hid_kind)         :: file_id, root
+  real(R8P)                 :: points(3,0:11)
+  integer(I4P)              :: p
+
+  do p=0, 11 ! x = mod(p, 3), y = mod(p / 3, 2), z = p / 6
+    points(:,p) = [real(mod(p, 3), R8P), real(mod(p / 3, 2), R8P), real(p / 6, R8P)]
+  enddo
+  ok = h5_file_create(filename, file_id) == 0
+  ok = ok .and. h5_group_create(file_id, 'VTKHDF', root) == 0
+  if (.not.ok) return
+  e = h5_attribute_write(root, 'Version', [2_I8P, 9_I8P])
+  e = max(e, h5_attribute_write(root, 'Type', 'UnstructuredGrid'))
+  e = max(e, h5_dataset_write_I8P(root, 'NumberOfPoints', [12_I8P], [1_I8P]))
+  e = max(e, h5_dataset_write_I8P(root, 'NumberOfCells', [2_I8P], [1_I8P]))
+  e = max(e, h5_dataset_write_I8P(root, 'NumberOfConnectivityIds', [16_I8P], [1_I8P]))
+  e = max(e, h5_dataset_write_R8P(root, 'Points', points, [3_I8P, 12_I8P]))
+  e = max(e, h5_dataset_write_I8P(root, 'Connectivity', [0_I8P, 1_I8P, 3_I8P, 4_I8P, 6_I8P, 7_I8P, 9_I8P, 10_I8P, &
+                                                         1_I8P, 2_I8P, 4_I8P, 5_I8P, 7_I8P, 8_I8P, 10_I8P, 11_I8P], [16_I8P]))
+  e = max(e, h5_dataset_write_I8P(root, 'Offsets', [0_I8P, 8_I8P, 16_I8P], [3_I8P]))
+  e = max(e, h5_dataset_write_I1P(root, 'Types', [42_I1P, 42_I1P], [2_I8P], unsigned=.true.))
+  e = max(e, h5_dataset_write_I8P(root, 'NumberOfFaces', [11_I8P], [1_I8P]))
+  e = max(e, h5_dataset_write_I8P(root, 'NumberOfFaceConnectivityIds', [44_I8P], [1_I8P]))
+  e = max(e, h5_dataset_write_I8P(root, 'NumberOfPolyhedronToFaceIds', [12_I8P], [1_I8P]))
+  e = max(e, h5_dataset_write_I8P(root, 'FaceConnectivity', fc, [44_I8P]))
+  e = max(e, h5_dataset_write_I8P(root, 'FaceOffsets', [(4_I8P * p, p=0, 11)], [12_I8P]))
+  e = max(e, h5_dataset_write_I8P(root, 'PolyhedronToFaces', faces_of, [12_I8P]))
+  e = max(e, h5_dataset_write_I8P(root, 'PolyhedronOffsets', [0_I8P, 6_I8P, 12_I8P], [3_I8P]))
+  ok = e == 0 .and. h5_group_close(root) == 0 .and. h5_file_close(file_id) == 0
+  endfunction polyhedra_file
 
   function cell_data(cid) result(error)
   !< The cell data cid of a piece, then the end of the piece.

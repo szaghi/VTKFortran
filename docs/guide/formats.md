@@ -84,7 +84,9 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
   with the counts `NumberOfFaces`, `NumberOfFaceConnectivityIds` and `NumberOfPolyhedronToFaceIds` of each piece. Once a
   file has polyhedra every piece has these entries, zeros for a piece without polyhedra. The faces are checked before
   anything is written: a cell is a polyhedron (type 42) if and only if its `faceoffset` is not `-1`, each face has at
-  least 3 points, and the faces of a cell end at its `faceoffset`.
+  least 3 points, and the faces of a cell end at its `faceoffset`. The writer stores each face of each polyhedron, a
+  face shared by two polyhedra twice: valid in every 2.x version. The reader also reads the shared faces of VTKHDF 2.9
+  (stored once, `-(n+1)` for the face `n` traversed in reverse), see [Reading](/guide/reading#vtkhdf-files).
 - **PolyData** (`Type` `PolyData`): each piece is a partition too, with its entry of `NumberOfPoints` and its `Points`.
   Its cells are in four groups, `Vertices`, `Lines`, `Strips` and `Polygons`, the blocks of `write_polydata_cells`:
   each group has its own `NumberOfCells`, `NumberOfConnectivityIds`, `Connectivity` and `Offsets` (from 0 in each
