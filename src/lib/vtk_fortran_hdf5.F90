@@ -16,7 +16,8 @@ module vtk_fortran_hdf5
 !< (C order): the array
 !< `x(nc, ni, nj, nk)` is the HDF5 dataset `[nk, nj, ni, nc]`. An appendable dataset grows along its last Fortran
 !< dimension (the first HDF5 one). A dataset written by blocks (`h5_dataset_slab_<kind>`: in a parallel file, each rank
-!< its block of a grid) is created with its whole shape, then each block written where it goes.
+!< its block of a grid) is created with its whole shape, then each block written where it goes; with `append` (a time
+!< series of a grid) it grows along its last dimension, each block written in the new rows.
 !< An appendable or deflated dataset is chunked by whole rows (its last Fortran dimension): as many as fit in the optional
 !< `chunk_bytes` of `h5_dataset_write_<kind>` (default `DEFAULT_CHUNK_BYTES`, 1 MiB), at least one, at most the rows
 !< written when it is created; `h5_dataset_chunk` reads the chunk shape back.
@@ -1261,7 +1262,8 @@ contains
 #endif
   endfunction h5_dataset_write_I1P
 
-  function h5_dataset_slab_R8P(loc_id, name, x, dims, mem_dims, mem_start, file_start, count, create) result(error)
+  function h5_dataset_slab_R8P(loc_id, name, x, dims, mem_dims, mem_start, file_start, count, create, append, &
+                               chunk_bytes) result(error)
   !< Write the block `count` of the values `x` (R8P; shape `mem_dims`, the block at `mem_start`) into the dataset `name`,
   !< at `file_start` (Fortran order, from 0); with `create`, the dataset is created first, shape `dims` (in a parallel file
   !< by every rank: collective; the blocks are then written by each rank alone). An empty block writes nothing.
@@ -1274,17 +1276,20 @@ contains
   integer(I8P),      intent(in)           :: file_start(:) !< Start of the block in the dataset, from 0.
   integer(I8P),      intent(in)           :: count(:)      !< Shape of the block.
   logical,           intent(in)           :: create        !< Create the dataset first.
+  logical,           intent(in), optional :: append        !< Grow along the last dimension (see `dataset_slab`).
+  integer(I8P),      intent(in), optional :: chunk_bytes   !< Bytes of a chunk at most, with append (default 1 MiB).
   integer(I4P)                            :: error         !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
   error = dataset_slab(loc_id, name, H5T_NATIVE_DOUBLE_g, dims, mem_dims, mem_start, file_start, count, &
-                       c_loc(x), create)
+                       c_loc(x), create, append, chunk_bytes)
 #else
   error = 1_I4P
 #endif
   endfunction h5_dataset_slab_R8P
 
-  function h5_dataset_slab_R4P(loc_id, name, x, dims, mem_dims, mem_start, file_start, count, create) result(error)
+  function h5_dataset_slab_R4P(loc_id, name, x, dims, mem_dims, mem_start, file_start, count, create, append, &
+                               chunk_bytes) result(error)
   !< Write the block `count` of the values `x` (R4P; shape `mem_dims`, the block at `mem_start`) into the dataset `name`,
   !< at `file_start` (Fortran order, from 0); with `create`, the dataset is created first, shape `dims` (in a parallel file
   !< by every rank: collective; the blocks are then written by each rank alone). An empty block writes nothing.
@@ -1297,17 +1302,20 @@ contains
   integer(I8P),      intent(in)           :: file_start(:) !< Start of the block in the dataset, from 0.
   integer(I8P),      intent(in)           :: count(:)      !< Shape of the block.
   logical,           intent(in)           :: create        !< Create the dataset first.
+  logical,           intent(in), optional :: append        !< Grow along the last dimension (see `dataset_slab`).
+  integer(I8P),      intent(in), optional :: chunk_bytes   !< Bytes of a chunk at most, with append (default 1 MiB).
   integer(I4P)                            :: error         !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
   error = dataset_slab(loc_id, name, H5T_NATIVE_FLOAT_g, dims, mem_dims, mem_start, file_start, count, &
-                       c_loc(x), create)
+                       c_loc(x), create, append, chunk_bytes)
 #else
   error = 1_I4P
 #endif
   endfunction h5_dataset_slab_R4P
 
-  function h5_dataset_slab_I8P(loc_id, name, x, dims, mem_dims, mem_start, file_start, count, create, unsigned) result(error)
+  function h5_dataset_slab_I8P(loc_id, name, x, dims, mem_dims, mem_start, file_start, count, create, unsigned, &
+                               append, chunk_bytes) result(error)
   !< Write the block `count` of the values `x` (I8P; shape `mem_dims`, the block at `mem_start`) into the dataset `name`,
   !< at `file_start` (Fortran order, from 0); with `create`, the dataset is created first, shape `dims` (in a parallel file
   !< by every rank: collective; the blocks are then written by each rank alone). An empty block writes nothing.
@@ -1320,19 +1328,22 @@ contains
   integer(I8P),      intent(in)           :: file_start(:) !< Start of the block in the dataset, from 0.
   integer(I8P),      intent(in)           :: count(:)      !< Shape of the block.
   logical,           intent(in)           :: create        !< Create the dataset first.
+  logical,           intent(in), optional :: append        !< Grow along the last dimension (see `dataset_slab`).
+  integer(I8P),      intent(in), optional :: chunk_bytes   !< Bytes of a chunk at most, with append (default 1 MiB).
   logical,           intent(in), optional :: unsigned      !< Store the bits as the unsigned type of their width.
   integer(I4P)                            :: error         !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
   error = dataset_slab(loc_id, name, merge(H5T_NATIVE_UINT64_g, H5T_NATIVE_INT64_g, is_true(unsigned)), dims, mem_dims, mem_start, &
                        file_start, count, &
-                       c_loc(x), create)
+                       c_loc(x), create, append, chunk_bytes)
 #else
   error = 1_I4P
 #endif
   endfunction h5_dataset_slab_I8P
 
-  function h5_dataset_slab_I4P(loc_id, name, x, dims, mem_dims, mem_start, file_start, count, create, unsigned) result(error)
+  function h5_dataset_slab_I4P(loc_id, name, x, dims, mem_dims, mem_start, file_start, count, create, unsigned, &
+                               append, chunk_bytes) result(error)
   !< Write the block `count` of the values `x` (I4P; shape `mem_dims`, the block at `mem_start`) into the dataset `name`,
   !< at `file_start` (Fortran order, from 0); with `create`, the dataset is created first, shape `dims` (in a parallel file
   !< by every rank: collective; the blocks are then written by each rank alone). An empty block writes nothing.
@@ -1345,19 +1356,22 @@ contains
   integer(I8P),      intent(in)           :: file_start(:) !< Start of the block in the dataset, from 0.
   integer(I8P),      intent(in)           :: count(:)      !< Shape of the block.
   logical,           intent(in)           :: create        !< Create the dataset first.
+  logical,           intent(in), optional :: append        !< Grow along the last dimension (see `dataset_slab`).
+  integer(I8P),      intent(in), optional :: chunk_bytes   !< Bytes of a chunk at most, with append (default 1 MiB).
   logical,           intent(in), optional :: unsigned      !< Store the bits as the unsigned type of their width.
   integer(I4P)                            :: error         !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
   error = dataset_slab(loc_id, name, merge(H5T_NATIVE_UINT32_g, H5T_NATIVE_INT32_g, is_true(unsigned)), dims, mem_dims, mem_start, &
                        file_start, count, &
-                       c_loc(x), create)
+                       c_loc(x), create, append, chunk_bytes)
 #else
   error = 1_I4P
 #endif
   endfunction h5_dataset_slab_I4P
 
-  function h5_dataset_slab_I2P(loc_id, name, x, dims, mem_dims, mem_start, file_start, count, create, unsigned) result(error)
+  function h5_dataset_slab_I2P(loc_id, name, x, dims, mem_dims, mem_start, file_start, count, create, unsigned, &
+                               append, chunk_bytes) result(error)
   !< Write the block `count` of the values `x` (I2P; shape `mem_dims`, the block at `mem_start`) into the dataset `name`,
   !< at `file_start` (Fortran order, from 0); with `create`, the dataset is created first, shape `dims` (in a parallel file
   !< by every rank: collective; the blocks are then written by each rank alone). An empty block writes nothing.
@@ -1370,19 +1384,22 @@ contains
   integer(I8P),      intent(in)           :: file_start(:) !< Start of the block in the dataset, from 0.
   integer(I8P),      intent(in)           :: count(:)      !< Shape of the block.
   logical,           intent(in)           :: create        !< Create the dataset first.
+  logical,           intent(in), optional :: append        !< Grow along the last dimension (see `dataset_slab`).
+  integer(I8P),      intent(in), optional :: chunk_bytes   !< Bytes of a chunk at most, with append (default 1 MiB).
   logical,           intent(in), optional :: unsigned      !< Store the bits as the unsigned type of their width.
   integer(I4P)                            :: error         !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
   error = dataset_slab(loc_id, name, merge(H5T_NATIVE_UINT16_g, H5T_NATIVE_INT16_g, is_true(unsigned)), dims, mem_dims, mem_start, &
                        file_start, count, &
-                       c_loc(x), create)
+                       c_loc(x), create, append, chunk_bytes)
 #else
   error = 1_I4P
 #endif
   endfunction h5_dataset_slab_I2P
 
-  function h5_dataset_slab_I1P(loc_id, name, x, dims, mem_dims, mem_start, file_start, count, create, unsigned) result(error)
+  function h5_dataset_slab_I1P(loc_id, name, x, dims, mem_dims, mem_start, file_start, count, create, unsigned, &
+                               append, chunk_bytes) result(error)
   !< Write the block `count` of the values `x` (I1P; shape `mem_dims`, the block at `mem_start`) into the dataset `name`,
   !< at `file_start` (Fortran order, from 0); with `create`, the dataset is created first, shape `dims` (in a parallel file
   !< by every rank: collective; the blocks are then written by each rank alone). An empty block writes nothing.
@@ -1395,13 +1412,15 @@ contains
   integer(I8P),      intent(in)           :: file_start(:) !< Start of the block in the dataset, from 0.
   integer(I8P),      intent(in)           :: count(:)      !< Shape of the block.
   logical,           intent(in)           :: create        !< Create the dataset first.
+  logical,           intent(in), optional :: append        !< Grow along the last dimension (see `dataset_slab`).
+  integer(I8P),      intent(in), optional :: chunk_bytes   !< Bytes of a chunk at most, with append (default 1 MiB).
   logical,           intent(in), optional :: unsigned      !< Store the bits as the unsigned type of their width.
   integer(I4P)                            :: error         !< Error status.
 
 #ifdef VTKFORTRAN_USE_HDF5
   error = dataset_slab(loc_id, name, merge(H5T_NATIVE_UINT8_g, H5T_NATIVE_INT8_g, is_true(unsigned)), dims, mem_dims, mem_start, &
                        file_start, count, &
-                       c_loc(x), create)
+                       c_loc(x), create, append, chunk_bytes)
 #else
   error = 1_I4P
 #endif
@@ -2063,9 +2082,15 @@ contains
   if (H5Dclose(dset) < 0) error = 1_I4P
   endfunction dataset_append
 
-  function dataset_slab(loc_id, name, memtype, dims, mem_dims, mem_start, file_start, count, buffer, create) result(error)
+  function dataset_slab(loc_id, name, memtype, dims, mem_dims, mem_start, file_start, count, buffer, create, append, &
+                        chunk_bytes) result(error)
   !< Write the block `count` of the values (shape `mem_dims`, the block at `mem_start`) into the dataset `name` at
   !< `file_start` (Fortran order, from 0), creating it first (shape `dims`, type `memtype`) with `create`.
+  !<
+  !< With `append` the dataset grows along its last Fortran dimension (a time series written by the ranks of a parallel
+  !< file): created (`create`) appendable, chunked as `dataset_write` chunks it (whole rows up to `chunk_bytes`, at most
+  !< `dims(last)`), or else extended by `dims(last)` rows (collective in a parallel file), the block written after the
+  !< rows it had (`file_start(last)` counted from them).
   integer(hid_kind),  intent(in) :: loc_id        !< Parent (file or group).
   character(*),       intent(in) :: name          !< Dataset name.
   integer(c_int64_t), intent(in) :: memtype       !< Type of the values in memory (and in the file).
@@ -2076,21 +2101,64 @@ contains
   integer(I8P),       intent(in) :: count(:)      !< Shape of the block.
   type(c_ptr),        intent(in) :: buffer        !< Values.
   logical,            intent(in) :: create        !< Create the dataset first.
+  logical,  optional, intent(in) :: append        !< Grow the dataset along its last dimension.
+  integer(I8P), optional, intent(in) :: chunk_bytes !< Bytes of a chunk at most (default 1 MiB), with append.
   integer(I4P)                   :: error         !< Error status.
   integer(c_int64_t)             :: dset          !< Dataset.
   integer(c_int64_t)             :: space         !< Dataspace of the dataset.
   integer(c_int64_t)             :: memspace      !< Dataspace of the values.
+  integer(c_int64_t)             :: dcpl          !< Dataset creation properties.
+  integer(c_long_long)           :: cdims(size(dims)) !< Shape, C order.
+  integer(c_long_long), target   :: maxdims(size(dims)) !< Maximum shape, C order.
+  integer(c_long_long)           :: chunk(size(dims)) !< Chunk shape, C order.
+  integer(I8P), allocatable      :: old(:)        !< Shape before the extension, Fortran order.
+  integer(I8P)                   :: start(size(dims)) !< Start of the block in the dataset.
+  integer(I8P)                   :: cbytes        !< Bytes of a chunk at most.
+  logical                        :: is_append     !< Grow the dataset.
 
   error = 1_I4P
   if (size(dims) < 1 .or. size(mem_dims) /= size(dims) .or. size(mem_start) /= size(dims) .or. &
       size(file_start) /= size(dims) .or. size(count) /= size(dims)) return
-  if (create) then
+  is_append = is_true(append)
+  cbytes = DEFAULT_CHUNK_BYTES ; if (present(chunk_bytes)) cbytes = chunk_bytes
+  start = file_start
+  if (create .and. is_append) then ! appendable, chunked by whole rows
+    if (cbytes < 1_I8P) return
+    cdims = c_dims(dims)
+    maxdims = cdims ; maxdims(1) = H5S_UNLIMITED
+    chunk = max(1_c_long_long, cdims)
+    chunk(1) = max(1_c_long_long, min(cdims(1), int(cbytes / (int(H5Tget_size(memtype), I8P) * product(chunk(2:))), &
+                                                    c_long_long)))
+    space = H5Screate_simple(int(size(dims), c_int), cdims, c_loc(maxdims))
+    if (space < 0) return
+    dcpl = H5Pcreate(H5P_CLS_DATASET_CREATE_ID_g)
+    dset = -1
+    if (dcpl >= 0) then
+      if (H5Pset_chunk(dcpl, int(size(dims), c_int), chunk) >= 0) &
+        dset = H5Dcreate2(loc_id, trim(name)//c_null_char, memtype, space, H5P_DEFAULT, dcpl, H5P_DEFAULT)
+      if (H5Pclose(dcpl) < 0) dset = -1
+    endif
+    if (H5Sclose(space) < 0) dset = -1
+  elseif (create) then
     space = H5Screate_simple(int(size(dims), c_int), c_dims(dims), c_null_ptr)
     if (space < 0) return
     dset = H5Dcreate2(loc_id, trim(name)//c_null_char, memtype, space, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT)
     if (H5Sclose(space) < 0) dset = -1
   else
     dset = H5Dopen2(loc_id, trim(name)//c_null_char, H5P_DEFAULT)
+    if (dset >= 0 .and. is_append) then ! extended by dims(last) rows, the block after the rows it had
+      if (dataset_dims(dset, old) /= 0_I4P) allocate(old(0))
+      if (size(old) /= size(dims)) then
+        if (H5Dclose(dset) < 0) error = 1_I4P
+        return
+      endif
+      start(size(dims)) = start(size(dims)) + old(size(dims))
+      old(size(dims)) = old(size(dims)) + dims(size(dims))
+      if (H5Dset_extent(dset, c_dims(old)) < 0) then
+        if (H5Dclose(dset) < 0) error = 1_I4P
+        return
+      endif
+    endif
   endif
   if (dset < 0) return
   if (product(count) == 0_I8P) then ! an empty block: nothing to write
@@ -2099,7 +2167,7 @@ contains
     space = H5Dget_space(dset)
     memspace = H5Screate_simple(int(size(dims), c_int), c_dims(mem_dims), c_null_ptr)
     if (space >= 0 .and. memspace >= 0) then
-      if (H5Sselect_hyperslab(space, H5S_SELECT_SET, c_dims(file_start), c_null_ptr, c_dims(count), c_null_ptr) >= 0 .and. &
+      if (H5Sselect_hyperslab(space, H5S_SELECT_SET, c_dims(start), c_null_ptr, c_dims(count), c_null_ptr) >= 0 .and. &
           H5Sselect_hyperslab(memspace, H5S_SELECT_SET, c_dims(mem_start), c_null_ptr, c_dims(count), c_null_ptr) >= 0) then
         if (H5Dwrite(dset, memtype, memspace, space, H5P_DEFAULT, buffer) >= 0) error = 0_I4P
       endif

@@ -90,11 +90,12 @@ contains
    !< RectilinearGrid or StructuredGrid of the whole extent given here, each rank one region of it (`write_piece` with
    !< its sub-extent, its arrays and geometry of that region; the regions checked: inside the whole extent, not
    !< overlapping, covering it; an empty one, an upper bound before its lower one, writes nothing). Every rank makes the
-   !< same calls, with the same arrays in the same order: the HDF5 calls are collective. A time series of an
-   !< UnstructuredGrid or a PolyData too: every rank calls `write_step` with the same time, then writes its piece of the
-   !< step; `action='append'` with `comm` continues one (a parallel restart). Polyhedra (on any ranks) and
-   !< `compressor='zlib'` (an HDF5 1.10.2 or later with the deflate filter: parallel filtered writes, collective) too.
-   !< Refused with `comm`: a time series of a grid, `compressor='zlib'` for a grid, the other formats, `action='read'`.
+   !< same calls, with the same arrays in the same order: the HDF5 calls are collective (ranks writing different arrays
+   !< in a call are refused on every rank). A time series too: every rank calls `write_step` with the same time, then
+   !< writes its piece (its region of a grid) of the step; `action='append'` with `comm` continues one (a parallel
+   !< restart). Polyhedra (on any ranks) and `compressor='zlib'` (an HDF5 1.10.2 or later with the deflate filter:
+   !< parallel filtered writes, collective) too. Refused with `comm`: `compressor='zlib'` for a grid, the other formats,
+   !< `action='read'`.
    !<
    !<```fortran
    !< error = vtk%initialize(format='vtkhdf', filename='mesh.vtkhdf', mesh_topology='UnstructuredGrid', &

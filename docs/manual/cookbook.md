@@ -341,14 +341,14 @@ UnstructuredGrid, a PolyData), or its own region of the grid (ImageData, Rectili
 - **Every call is collective**: the ranks create and extend the datasets together, then each one writes its rows after
   those of the ranks before. Every rank calls every procedure, with the same arrays in the same order. Wrong arguments
   on some ranks in a call they all make (a size, a negative count, `face` without `faceoffset`) are refused on every
-  rank; but ranks making different calls (one stops calling, or, in a step reusing the mesh, writes an array the others
-  do not) cannot be told apart from slow ones: the others wait for it.
+  rank, and so are ranks writing different arrays in the same call; but a rank leaving a call out (one stops calling,
+  or, in a step reusing the mesh, writes an array the others do not) cannot be told apart from a slow one: the others
+  wait for it.
 - An UnstructuredGrid or a PolyData, one piece per rank; a rank can have an empty piece (`np=0`, `nc=0`). A PolyData
   piece without cells still calls `write_polydata_cells()`, with no blocks.
 - Polyhedra (on any ranks: the others write zero entries for their pieces) and `compressor='zlib'` (an HDF5 1.10.2 or
   later with the deflate filter: a deflated dataset needs collective writes, which the ranks then make) are written as
-  in serial. Refused with `comm`: a time series of a grid, `compressor='zlib'` for a grid, the XML formats,
-  `action='read'`. A refusal comes on every rank, also when only one rank's values are
+  in serial. Refused with `comm`: `compressor='zlib'` for a grid, the XML formats, `action='read'`. A refusal comes on every rank, also when only one rank's values are
   wrong (their size, say): the ranks agree on the error before the collective calls, none is left waiting.
 
 A **time series** from the ranks: every rank calls `write_step` with the same time (checked: different times are an
@@ -365,7 +365,7 @@ rank writing the arrays of its own part. Here the blocks of the four ranks, the 
   of the ranks before, written once. A rank's arrays in a step without pieces hold the points (cells) of its own part.
 - `initialize(format='vtkhdf', filename=..., action='append', comm=...)` continues the series from the ranks (a parallel
   restart); a step reusing the mesh after it needs the same number of ranks as the parts of the last step.
-- A time series of a grid from the ranks is not supported yet (refused).
+- A time series of a grid works the same way, a region per rank in each step: see below.
 
 A grid (ImageData, RectilinearGrid, StructuredGrid) is written by **regions**: `initialize` gets the whole extent,
 `write_piece` the region of the rank, and its arrays (and coordinates or points) are those of the region. Here an
@@ -384,6 +384,13 @@ ImageData of 8x4 cells, one region of 4x2 cells per rank:
   boundary is written by the region that starts there. The coordinates of a RectilinearGrid shared by regions must be
   equal; the lowest rank writes them.
 - The file is the one the whole grid written by one process would make: VTK and ParaView read it as any ImageData.
+- A **time series** of a grid: every rank calls `write_step` with the same time, then `write_piece` with its region of
+  the step (checked at every step: it may change, the whole extent does not) and the arrays of the region. Each dataset
+  grows by one time slice per step, each rank writing its block of it; a step without `write_geo` reuses the geometry
+  of the step before, an array not written its values (the ranks make the same calls).
+  `action='append'` with `comm` continues the series (a parallel restart). The file is, dataset by dataset, the one
+  the whole grid written by one process would make (`src/tests/vtk_fortran_write_vtkhdf_ranks.F90` checks it on 1 to
+  4 ranks, VTK 9.7.2 each step against its XML file).
 - It needs the library built with `VTKFORTRAN_USE_MPI` (CMake `-DVTKFORTRAN_USE_MPI=ON`, FoBiS mode
   `static-gnu-hdf5-mpi`) and a parallel HDF5; `initialize` returns an error otherwise
   ([Installation](/guide/installation#one-file-from-mpi-ranks)). Built with `mpifort`, run with `mpirun -np 4`.

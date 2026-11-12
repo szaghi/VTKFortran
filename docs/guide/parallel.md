@@ -260,7 +260,7 @@ of the file tells where each step starts in the datasets that the steps share. A
 **MPI processes** write their own files at the same time with no limitation: they share no memory. Each rank writes its
 piece, one rank the header, see [Write from MPI ranks](/manual/cookbook#write-from-mpi-ranks).
 With a parallel HDF5 the ranks can also write **one** `.vtkhdf` file together, each rank a partition of it (or a
-region of a grid), no header, time series included (UnstructuredGrid, PolyData): see
+region of a grid), no header, time series included: see
 [Write one .vtkhdf from MPI ranks](/manual/cookbook#write-one-vtkhdf-from-mpi-ranks).
 
 **OpenMP threads** writing (or reading) different files at the same time is a matter of the compiler that builds the

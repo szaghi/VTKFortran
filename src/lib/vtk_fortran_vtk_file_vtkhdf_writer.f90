@@ -333,6 +333,7 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
     procedure, pass(self), private :: is_written_in_step !< A point or cell array is written in the open step.
     procedure, pass(self), private :: record_array  !< Record the name of a point or cell data array.
     procedure, pass(self), private :: agree         !< With comm, the largest error of the ranks.
+    procedure, pass(self), private :: agree_name    !< With comm, refuse an array that is not the same on every rank.
     procedure, pass(self), private :: axis_runs     !< The coordinates of an axis that this rank writes (RectilinearGrid).
     procedure, pass(self), private :: points_block  !< The block of the points of a StructuredGrid that this rank writes.
     procedure, pass(self), private :: region_block  !< The block of a grid array that this rank writes.
@@ -639,9 +640,7 @@ contains
   is_same_time = .true. ! with comm, the same time on every rank (no short-circuit: the collective call apart)
   if (self%is_parallel) is_same_time = h5_mpi_max(self%comm, transfer(time, 0_I8P)) == &
                                        -h5_mpi_max(self%comm, -transfer(time, 0_I8P))
-  if (self%is_parallel .and. .not.self%is_partitioned()) then
-    error = refuse('write_step: a time series of a grid is not written by the ranks of comm')
-  elseif (.not.is_same_time) then
+  if (.not.is_same_time) then
     error = refuse('write_step: the ranks of comm give different times')
   elseif (self%is_piece_open .or. self%group >= 0_hid_kind) then
     error = refuse('write_step: outside the pieces and the data groups')
@@ -2506,6 +2505,8 @@ contains
   endif
   error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
+  if (self%is_parallel) error = self%agree_name(data_name) ! the same array on every rank
+  if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
   if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P .and. self%topology /= TOPOLOGY_AMR) then
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
@@ -2537,7 +2538,14 @@ contains
   elseif (self%is_parallel .and. self%group_name /= 'FieldData') then ! a grid: the block of this rank
     call self%region_block(self%group_name == 'CellData', n_components, dims, mem_dims, mem_start, &
                            file_start, count)
-    error = h5_dataset_slab_R8P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true.)
+    if (self%is_temporal) then ! the time axis last: one slice more per step, each rank its block
+      dims = [dims, 1_I8P] ; mem_dims = [mem_dims, 1_I8P] ; mem_start = [mem_start, 0_I8P]
+      file_start = [file_start, 0_I8P] ; count = [count, 1_I8P]
+      error = h5_dataset_slab_R8P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, is_new, &
+                          append=.true., chunk_bytes=self%chunk_bytes)
+    else
+      error = h5_dataset_slab_R8P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true.)
+    endif
   elseif (self%is_temporal .and. self%group_name /= 'FieldData') then ! a grid: the time axis last
     error = store_R8P(self, self%group, data_name, x, [dims, 1_I8P])
   elseif (self%is_temporal .and. self%is_parallel) then ! field data: written once (by rank 0)
@@ -2577,6 +2585,8 @@ contains
   endif
   error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
+  if (self%is_parallel) error = self%agree_name(data_name) ! the same array on every rank
+  if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
   if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P .and. self%topology /= TOPOLOGY_AMR) then
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
@@ -2608,7 +2618,14 @@ contains
   elseif (self%is_parallel .and. self%group_name /= 'FieldData') then ! a grid: the block of this rank
     call self%region_block(self%group_name == 'CellData', n_components, dims, mem_dims, mem_start, &
                            file_start, count)
-    error = h5_dataset_slab_R4P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true.)
+    if (self%is_temporal) then ! the time axis last: one slice more per step, each rank its block
+      dims = [dims, 1_I8P] ; mem_dims = [mem_dims, 1_I8P] ; mem_start = [mem_start, 0_I8P]
+      file_start = [file_start, 0_I8P] ; count = [count, 1_I8P]
+      error = h5_dataset_slab_R4P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, is_new, &
+                          append=.true., chunk_bytes=self%chunk_bytes)
+    else
+      error = h5_dataset_slab_R4P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true.)
+    endif
   elseif (self%is_temporal .and. self%group_name /= 'FieldData') then ! a grid: the time axis last
     error = store_R4P(self, self%group, data_name, x, [dims, 1_I8P])
   elseif (self%is_temporal .and. self%is_parallel) then ! field data: written once (by rank 0)
@@ -2649,6 +2666,8 @@ contains
   endif
   error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
+  if (self%is_parallel) error = self%agree_name(data_name) ! the same array on every rank
+  if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
   if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P .and. self%topology /= TOPOLOGY_AMR) then
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
@@ -2680,7 +2699,14 @@ contains
   elseif (self%is_parallel .and. self%group_name /= 'FieldData') then ! a grid: the block of this rank
     call self%region_block(self%group_name == 'CellData', n_components, dims, mem_dims, mem_start, &
                            file_start, count)
-    error = h5_dataset_slab_I8P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true., unsigned=unsigned)
+    if (self%is_temporal) then ! the time axis last: one slice more per step, each rank its block
+      dims = [dims, 1_I8P] ; mem_dims = [mem_dims, 1_I8P] ; mem_start = [mem_start, 0_I8P]
+      file_start = [file_start, 0_I8P] ; count = [count, 1_I8P]
+      error = h5_dataset_slab_I8P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, is_new, &
+                          unsigned=unsigned, append=.true., chunk_bytes=self%chunk_bytes)
+    else
+      error = h5_dataset_slab_I8P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true., unsigned=unsigned)
+    endif
   elseif (self%is_temporal .and. self%group_name /= 'FieldData') then ! a grid: the time axis last
     error = store_I8P(self, self%group, data_name, x, [dims, 1_I8P], unsigned=unsigned)
   elseif (self%is_temporal .and. self%is_parallel) then ! field data: written once (by rank 0)
@@ -2721,6 +2747,8 @@ contains
   endif
   error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
+  if (self%is_parallel) error = self%agree_name(data_name) ! the same array on every rank
+  if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
   if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P .and. self%topology /= TOPOLOGY_AMR) then
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
@@ -2752,7 +2780,14 @@ contains
   elseif (self%is_parallel .and. self%group_name /= 'FieldData') then ! a grid: the block of this rank
     call self%region_block(self%group_name == 'CellData', n_components, dims, mem_dims, mem_start, &
                            file_start, count)
-    error = h5_dataset_slab_I4P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true., unsigned=unsigned)
+    if (self%is_temporal) then ! the time axis last: one slice more per step, each rank its block
+      dims = [dims, 1_I8P] ; mem_dims = [mem_dims, 1_I8P] ; mem_start = [mem_start, 0_I8P]
+      file_start = [file_start, 0_I8P] ; count = [count, 1_I8P]
+      error = h5_dataset_slab_I4P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, is_new, &
+                          unsigned=unsigned, append=.true., chunk_bytes=self%chunk_bytes)
+    else
+      error = h5_dataset_slab_I4P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true., unsigned=unsigned)
+    endif
   elseif (self%is_temporal .and. self%group_name /= 'FieldData') then ! a grid: the time axis last
     error = store_I4P(self, self%group, data_name, x, [dims, 1_I8P], unsigned=unsigned)
   elseif (self%is_temporal .and. self%is_parallel) then ! field data: written once (by rank 0)
@@ -2793,6 +2828,8 @@ contains
   endif
   error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
+  if (self%is_parallel) error = self%agree_name(data_name) ! the same array on every rank
+  if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
   if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P .and. self%topology /= TOPOLOGY_AMR) then
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
@@ -2824,7 +2861,14 @@ contains
   elseif (self%is_parallel .and. self%group_name /= 'FieldData') then ! a grid: the block of this rank
     call self%region_block(self%group_name == 'CellData', n_components, dims, mem_dims, mem_start, &
                            file_start, count)
-    error = h5_dataset_slab_I2P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true., unsigned=unsigned)
+    if (self%is_temporal) then ! the time axis last: one slice more per step, each rank its block
+      dims = [dims, 1_I8P] ; mem_dims = [mem_dims, 1_I8P] ; mem_start = [mem_start, 0_I8P]
+      file_start = [file_start, 0_I8P] ; count = [count, 1_I8P]
+      error = h5_dataset_slab_I2P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, is_new, &
+                          unsigned=unsigned, append=.true., chunk_bytes=self%chunk_bytes)
+    else
+      error = h5_dataset_slab_I2P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true., unsigned=unsigned)
+    endif
   elseif (self%is_temporal .and. self%group_name /= 'FieldData') then ! a grid: the time axis last
     error = store_I2P(self, self%group, data_name, x, [dims, 1_I8P], unsigned=unsigned)
   elseif (self%is_temporal .and. self%is_parallel) then ! field data: written once (by rank 0)
@@ -2865,6 +2909,8 @@ contains
   endif
   error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
+  if (self%is_parallel) error = self%agree_name(data_name) ! the same array on every rank
+  if (error /= 0_I4P) return
   is_new = .not.h5_link_exists(self%group, data_name)
   if (self%is_temporal .and. is_new .and. self%n_steps > 1_I8P .and. self%topology /= TOPOLOGY_AMR) then
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
@@ -2896,7 +2942,14 @@ contains
   elseif (self%is_parallel .and. self%group_name /= 'FieldData') then ! a grid: the block of this rank
     call self%region_block(self%group_name == 'CellData', n_components, dims, mem_dims, mem_start, &
                            file_start, count)
-    error = h5_dataset_slab_I1P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true., unsigned=unsigned)
+    if (self%is_temporal) then ! the time axis last: one slice more per step, each rank its block
+      dims = [dims, 1_I8P] ; mem_dims = [mem_dims, 1_I8P] ; mem_start = [mem_start, 0_I8P]
+      file_start = [file_start, 0_I8P] ; count = [count, 1_I8P]
+      error = h5_dataset_slab_I1P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, is_new, &
+                          unsigned=unsigned, append=.true., chunk_bytes=self%chunk_bytes)
+    else
+      error = h5_dataset_slab_I1P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true., unsigned=unsigned)
+    endif
   elseif (self%is_temporal .and. self%group_name /= 'FieldData') then ! a grid: the time axis last
     error = store_I1P(self, self%group, data_name, x, [dims, 1_I8P], unsigned=unsigned)
   elseif (self%is_temporal .and. self%is_parallel) then ! field data: written once (by rank 0)
@@ -3220,18 +3273,27 @@ contains
   integer(I4P)                     :: error     !< Error status.
   integer(I8P), allocatable        :: runs(:,:) !< Runs of entries written by this rank.
   integer(I8P)                     :: grid(3)   !< Points along x, y, z.
+  integer(I8P)                     :: shift     !< Entries of the steps before (time series).
   integer                          :: r         !< Counter.
 
   grid = self%grid_points()
-  error = h5_dataset_slab_R8P(self%root, name, values, [grid(a)], [size(values, kind=I8P)], [0_I8P], [0_I8P], &
-                              [0_I8P], .true.)
+  shift = 0_I8P
+  if (self%is_temporal) then ! the coordinates of the step after those of the steps before
+    shift = self%geo_slices * grid(a)
+    error = h5_dataset_slab_R8P(self%root, name, values, [grid(a)], [size(values, kind=I8P)], [0_I8P], &
+                                [0_I8P], [0_I8P], .not.h5_link_exists(self%root, name), append=.true., &
+                                chunk_bytes=self%chunk_bytes)
+  else
+    error = h5_dataset_slab_R8P(self%root, name, values, [grid(a)], [size(values, kind=I8P)], [0_I8P], &
+                                [0_I8P], [0_I8P], .true.)
+  endif
   call self%axis_runs(a, runs)
   ! as many writes on every rank (the largest number of runs; empty ones beyond its own): the dataset is opened
   ! the same number of times by every rank (H5Dopen is collective with collective metadata operations)
   do r=1, int(h5_mpi_max(self%comm, size(runs, dim=2, kind=I8P)))
     if (r <= size(runs, dim=2)) then
       if (error == 0_I4P) error = h5_dataset_slab_R8P(self%root, name, values, [grid(a)], [size(values, kind=I8P)], &
-                                                    runs(1:1, r), runs(2:2, r), runs(3:3, r), .false.)
+                                                    runs(1:1, r), runs(2:2, r) + shift, runs(3:3, r), .false.)
     else
       if (error == 0_I4P) error = h5_dataset_slab_R8P(self%root, name, values, [grid(a)], [size(values, kind=I8P)], &
                                                     [0_I8P], [0_I8P], [0_I8P], .false.)
@@ -3265,7 +3327,12 @@ contains
   endif
   error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
-  if (self%is_parallel) then ! every rank creates Points, writes its block
+  if (self%is_parallel .and. self%is_temporal) then ! a slice more: Points [t, k, j, i, 3] in C order
+    error = h5_dataset_slab_R8P(self%root, 'Points', xyz, [3_I8P, self%grid_points(), 1_I8P], &
+                                [mem_dims, 1_I8P], [0_I8P, 0_I8P, 0_I8P, 0_I8P, 0_I8P], [file_start, 0_I8P], &
+                                [count, 1_I8P], .not.h5_link_exists(self%root, 'Points'), append=.true., &
+                                chunk_bytes=self%chunk_bytes)
+  elseif (self%is_parallel) then ! every rank creates Points, writes its block
     error = h5_dataset_slab_R8P(self%root, 'Points', xyz, [3_I8P, self%grid_points()], mem_dims, &
                                 [0_I8P, 0_I8P, 0_I8P, 0_I8P], file_start, count, .true.)
   elseif (self%is_temporal) then ! the time axis last: Points [t, k, j, i, 3] in C order
@@ -3332,18 +3399,27 @@ contains
   integer(I4P)                     :: error     !< Error status.
   integer(I8P), allocatable        :: runs(:,:) !< Runs of entries written by this rank.
   integer(I8P)                     :: grid(3)   !< Points along x, y, z.
+  integer(I8P)                     :: shift     !< Entries of the steps before (time series).
   integer                          :: r         !< Counter.
 
   grid = self%grid_points()
-  error = h5_dataset_slab_R4P(self%root, name, values, [grid(a)], [size(values, kind=I8P)], [0_I8P], [0_I8P], &
-                              [0_I8P], .true.)
+  shift = 0_I8P
+  if (self%is_temporal) then ! the coordinates of the step after those of the steps before
+    shift = self%geo_slices * grid(a)
+    error = h5_dataset_slab_R4P(self%root, name, values, [grid(a)], [size(values, kind=I8P)], [0_I8P], &
+                                [0_I8P], [0_I8P], .not.h5_link_exists(self%root, name), append=.true., &
+                                chunk_bytes=self%chunk_bytes)
+  else
+    error = h5_dataset_slab_R4P(self%root, name, values, [grid(a)], [size(values, kind=I8P)], [0_I8P], &
+                                [0_I8P], [0_I8P], .true.)
+  endif
   call self%axis_runs(a, runs)
   ! as many writes on every rank (the largest number of runs; empty ones beyond its own): the dataset is opened
   ! the same number of times by every rank (H5Dopen is collective with collective metadata operations)
   do r=1, int(h5_mpi_max(self%comm, size(runs, dim=2, kind=I8P)))
     if (r <= size(runs, dim=2)) then
       if (error == 0_I4P) error = h5_dataset_slab_R4P(self%root, name, values, [grid(a)], [size(values, kind=I8P)], &
-                                                    runs(1:1, r), runs(2:2, r), runs(3:3, r), .false.)
+                                                    runs(1:1, r), runs(2:2, r) + shift, runs(3:3, r), .false.)
     else
       if (error == 0_I4P) error = h5_dataset_slab_R4P(self%root, name, values, [grid(a)], [size(values, kind=I8P)], &
                                                     [0_I8P], [0_I8P], [0_I8P], .false.)
@@ -3377,7 +3453,12 @@ contains
   endif
   error = self%agree(error) ! with comm, a refusal on every rank before the collective writes
   if (error /= 0_I4P) return
-  if (self%is_parallel) then ! every rank creates Points, writes its block
+  if (self%is_parallel .and. self%is_temporal) then ! a slice more: Points [t, k, j, i, 3] in C order
+    error = h5_dataset_slab_R4P(self%root, 'Points', xyz, [3_I8P, self%grid_points(), 1_I8P], &
+                                [mem_dims, 1_I8P], [0_I8P, 0_I8P, 0_I8P, 0_I8P, 0_I8P], [file_start, 0_I8P], &
+                                [count, 1_I8P], .not.h5_link_exists(self%root, 'Points'), append=.true., &
+                                chunk_bytes=self%chunk_bytes)
+  elseif (self%is_parallel) then ! every rank creates Points, writes its block
     error = h5_dataset_slab_R4P(self%root, 'Points', xyz, [3_I8P, self%grid_points()], mem_dims, &
                                 [0_I8P, 0_I8P, 0_I8P, 0_I8P], file_start, count, .true.)
   elseif (self%is_temporal) then ! the time axis last: Points [t, k, j, i, 3] in C order
@@ -4251,7 +4332,7 @@ contains
   integer                             :: r, q      !< Ranks.
 
   error = 0_I4P
-  if (self%n_pieces > 0_I4P) error = refuse('write_piece: one region per rank of comm')
+  if (self%n_pieces > 0_I4P .and. .not.self%is_temporal) error = refuse('write_piece: one region per rank of comm')
   error = self%agree(error) ! a second region on one rank: refused on every rank, before the gather
   if (error /= 0_I4P) return
   error = 1_I4P
@@ -4295,6 +4376,25 @@ contains
   self%rank = h5_mpi_rank(self%comm)
   error = 0_I4P
   endfunction start_region
+
+  function agree_name(self, data_name) result(error)
+  !< With comm, refuse on every rank the array `data_name` when the ranks write different arrays at this call (each rank
+  !< compares a hash of its name with those of the others: collective). A rank leaving a call out is not detected.
+  class(vtkhdf_writer), intent(in) :: self      !< Writer.
+  character(*),         intent(in) :: data_name !< Name of the array of this rank.
+  integer(I4P)                     :: error     !< Error status.
+  integer(I8P)                     :: hash      !< Hash of the name.
+  integer                          :: c         !< Counter.
+
+  hash = int(len(data_name), I8P)
+  do c=1, len(data_name)
+    hash = mod(hash * 131_I8P + int(ichar(data_name(c:c)), I8P), 2147483647_I8P) ! 2**31 - 1: no overflow
+  enddo
+  error = 0_I4P
+  if (h5_mpi_max(self%comm, hash) /= -h5_mpi_max(self%comm, -hash)) &
+    error = refuse('the ranks of comm write different arrays (this rank '//data_name//'): every rank writes the '// &
+                   'same arrays in the same order')
+  endfunction agree_name
 
   function agree(self, error) result(agreed)
   !< With comm, the largest error of the ranks: a refusal by one rank (a size of its own values, say) is a refusal by
@@ -4652,8 +4752,8 @@ contains
   !< Every rank calls every procedure, with the same arrays in the same order (the HDF5 calls are collective): its piece is
   !< one partition of the UnstructuredGrid or PolyData, appended after the pieces of the ranks before (one piece per rank,
   !< in each step of a time series; polyhedra on some ranks only: the others write zero entries; compressor zlib with an
-  !< HDF5 of parallel filtered writes, the writes collective), or its region of a grid. Refused: a time series of a grid,
-  !< compressor zlib for a grid.
+  !< HDF5 of parallel filtered writes, the writes collective), or its region of a grid (in each step of a time series too:
+  !< one slice more of every dataset, each rank its block). Refused: compressor zlib for a grid.
   class(vtkhdf_writer), intent(inout) :: self !< Writer.
   integer(I4P),         intent(in)    :: comm !< MPI communicator (Fortran handle).
 

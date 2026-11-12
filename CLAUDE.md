@@ -155,9 +155,13 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   (`h5_dataset_slab_<kind>`), the points of an upper boundary inside the extent left to the next region; RG coordinates
   by `axis_runs`, the entries no lower rank has, as many writes on every rank); a check of a rank's own values before
   a collective call goes through `agree` (`h5_mpi_max` of the errors: every rank refuses, none hangs; also
-  `start_partition`, `start_region`, `write_connectivity`); ranks making different calls hang (documented, not
-  detectable); refused:
-  a grid time series, zlib for a grid, a second piece or region in a step. Polyhedra with comm: decided at
+  `start_partition`, `start_region`, `write_connectivity`); every parallel `put_<kind>` compares a hash of the array
+  name over the ranks (`agree_name`): different arrays in a call refused on every rank; a rank leaving a call out
+  hangs the others (documented, not detectable); grid time series (#88): a region per rank per step (`start_region`
+  each step), every dataset one time slice more (`h5_dataset_slab_<kind>(..., append=.true.)`: created appendable,
+  chunked as `dataset_write`, or extended by `dims(last)` collectively, the block after the old rows; RG coordinates
+  offset by `geo_slices * grid(a)`), Steps entries as serial (rank 0), reopen with comm generic; refused:
+  zlib for a grid, a second piece or region in a step. Polyhedra with comm: decided at
   `write_connectivity` (`h5_mpi_max` of a flag), `start_polyhedra` writes the zero entries of the earlier parts once
   (rank 0), ranks without faces `no_faces` (the same store sequence as `put_faces`, `add_face_totals` after it); zlib with
   comm: `h5_parallel_filters_available` (HDF5 >= 1.10.2 + deflate), appends collective (`vtkfortran_h5_dxpl_mpio_collective`
@@ -256,5 +260,8 @@ continued by the ranks after a restart, a step reusing the mesh), a PolyData ser
 the UG and PolyData compressed (with parallel filtered writes, skipped otherwise), compared with the same files written serially and
 as `.vtu`/`.vtp`/`.vti`/`.vtr`/`.vts`, the refusals of `comm` (grid regions outside, overlapping, not covering, two; a Table, an OverlappingAMR, a
 HyperTreeGrid), an UnstructuredGrid with `chunk_bytes` (chunks sized from all the ranks' rows, its `.vtu` twin), `chunk_bytes`
-different on the ranks refused; without MPI `comm` refused, its name without "mpi" since `scripts/run_tests.sh` runs those with
+different on the ranks refused; ImageData, RectilinearGrid and StructuredGrid series of 4 steps by regions (geometry at
+steps 1 and 3, cell data reused at step 4, a parallel restart at step 3), compared with the serial series dataset by
+dataset and, by VTK outside the test, each step with its XML file (`vtkfortran_steps_<grid>_mpi_<s>.vt?`); ranks
+writing different arrays refused; without MPI `comm` refused, its name without "mpi" since `scripts/run_tests.sh` runs those with
 mpirun; without HDF5 the writer refuses to start); `vtk_fortran_read.F90` reads files back (every topology and format, and two files written by VTK, embedded in the test), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.
