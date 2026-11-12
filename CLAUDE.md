@@ -214,6 +214,8 @@ H5Lget_val: a hard link fails silently), `file` = the link target under /VTKHDF;
 `string`: integer arrays + one character buffer (nvfortran 26.9 corrupted string arrays grown by constructors), a
 block's path copied before the call that grows the buffer; `free_entries` at finalize and before every read)
 - `vtk_fortran_dataarray_decoder` — inverse of the encoder: ASCII/Base64/zlib data into bytes, bytes into arrays of the requested kind
+  (`Bit` arrays: `data_type_size` 1; the XML reader unpacks the binary ones, MSB first, to the tuples of the location
+  (`NumberOfTuples`, or the piece's points/cells/rows) and hands them on as `UInt8` 0/1)
   (ASCII: `nan`/`inf`/`-inf`/`Infinity`, a sign alone before a value is its sign (`next_value`, the `+   Infinity` of
   VTKFortran 3.x), `UInt64` above `huge(I8P)` kept with its bits (`uint64_bits`, no intermediate overflow))
 - `vtk_fortran_dataarray_encoder` — overloaded encoding routines for ASCII and Base64 (optionally zlib-compressed), covering all PENF numeric kinds and ranks 1–4
@@ -222,7 +224,9 @@ block's path copied before the call that grows the buffer; `free_entries` at fin
   non-finite value, so finite files keep their bytes)
 - `vtk_fortran_hdf5` — HDF5 C API bindings (files, groups and their members (in creation order when tracked), links,
   attributes (overwritten; strings fixed or variable length: `h5_attribute_write(..., variable_length=)`, read either way,
-  `H5Tis_variable_str` + `H5free_memory`), datasets of every kind, appendable, resized, deflate, read back; chunks of whole rows up to
+  `H5Tis_variable_str` + `H5free_memory`), string datasets (`h5_dataset_write_strings`: variable-length, as vtkHDFWriter writes a
+  vtkStringArray; `h5_dataset_info` type `String`, `h5_dataset_read_bytes` gives each string then a NUL, VTK's String
+  bytes, variable or fixed length; VTK 9.7.2 reads strings as field data only), datasets of every kind, appendable, resized, deflate, read back; chunks of whole rows up to
   the optional `chunk_bytes` of `h5_dataset_write_<kind>` (default `DEFAULT_CHUNK_BYTES` = 1 MiB; never named
   `CHUNK_BYTES`: Fortran is case insensitive, it would be the dummy), at most the rows of the creation, read back by
   `h5_dataset_chunk`); always compiled, stubs without
@@ -300,7 +304,8 @@ the same `vtm_file` reading a composite after a refused read;
 `vtk_fortran_read_vtkhdf.f90`: VTKHDF files read back (every topology, time series, two polyhedra sharing a face
 (Version 2.9, the file built with the bindings), a face id out of range, series storing once the mesh and arrays; variable-length `Type` and `Attribute`; temporal field
 data without `FieldDataSizes`; a 2D ImageData's arrays with the axes VTK writes read, one keeping a one-point axis
-refused);
+refused; variable-length string field and point data added with the bindings, read as
+`String`);
 `vtk_fortran_write_vtkhdf_polyh.f90`: polyhedra (one piece; three pieces with polyhedra in the second), each also
 written as a `.vtu`; `vtk_fortran_write_vtkhdf_grids.f90`: RectilinearGrid and StructuredGrid (3D/2D/1D, the four StructuredGrid
 `write_geo` layouts), each also written as a `.vtr`/`.vts`; `vtk_fortran_write_vtkhdf_poly.f90`: PolyData, the four
@@ -320,4 +325,5 @@ a parallel restart refused; without MPI `comm` refused, its name without "mpi" s
 mpirun; without HDF5 the writer refuses to start); `vtk_fortran_read.F90` reads files back (every topology and format, and two files written by VTK, embedded in the test;
 a polyhedron `.vtu` written by VTK 9.7.2 (XML 2.3) and the same with the shared face stored once (2.5); ASCII
 `nan inf -inf`, the former `+   Infinity`, UInt64 above huge(I8P); a name with `"&<>'` and NaN/±Inf in every format,
-the active scalars, and in a `.pvd`; a 6-component ASCII array with non-finite values where w and x join), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.
+the active scalars, and in a `.pvd`; a 6-component ASCII array with non-finite values where w and x join; `type="Bit"` arrays of two files written by VTK 9.7.2,
+ascii and binary), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.

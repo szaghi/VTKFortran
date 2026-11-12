@@ -35,12 +35,13 @@ contains
   elemental function data_type_size(data_type) result(bytes)
   !< Return the size in bytes of a value of a VTK type (0 for an unknown type).
   !<
-  !< The type `String` (field data strings) counts the bytes of the strings.
+  !< The type `String` (field data strings) counts the bytes of the strings; `Bit` (vtkBitArray) one byte per value as
+  !< ASCII text, packed 8 values per byte otherwise (the reader unpacks them).
   character(*), intent(in) :: data_type !< VTK type.
   integer(I8P)             :: bytes     !< Size in bytes.
 
   select case(data_type)
-  case('Int8', 'UInt8', 'String')
+  case('Int8', 'UInt8', 'String', 'Bit')
     bytes = 1_I8P
   case('Int16', 'UInt16')
     bytes = 2_I8P

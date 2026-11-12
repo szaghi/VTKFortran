@@ -18,7 +18,8 @@ module vtk_fortran_vtk_file_vtkhdf_reader
 !< memory used is about the size of the array read. The offsets are returned as VTKFortran writes them (the end of each
 !< cell), the faces of the polyhedra as the face stream of `write_connectivity`: a face shared by two polyhedra (VTKHDF
 !< 2.9, a negative id in `PolyhedronToFaces` for a face traversed in reverse) is given in the stream of each polyhedron,
-!< reversed where marked.
+!< reversed where marked. String datasets (variable or fixed length, as vtkHDFWriter writes a vtkStringArray) are
+!< read as the type `String`.
 !<
 !< The error codes are the ones of `xml_reader`: 1 the file cannot be read, 2 not a VTKHDF file, 3 unsupported (composite
 !< files, an unknown type), 4 not found, 5 the kind cannot hold the values, 6 the data do not decode (inconsistent).

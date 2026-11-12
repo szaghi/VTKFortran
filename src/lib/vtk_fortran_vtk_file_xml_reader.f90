@@ -10,6 +10,7 @@ module vtk_fortran_vtk_file_xml_reader
 !< `.vtt`, no pieces, `npieces` 0, its columns the data arrays of `location='row'`, their tuples its `NumberOfRows`)
 !< written by VTKFortran or by VTK, in every format (ascii, binary, raw and base64 appended), uncompressed or zlib compressed
 !< (`vtkZLibDataCompressor`), with UInt32 or UInt64 headers. BigEndian files and other compressors are not supported.
+!< `Bit` arrays (vtkBitArray, packed MSB first in the binary formats) are read as integers 0 and 1.
 !< The polyhedra of an UnstructuredGrid are read from the `faces`/`faceoffsets` arrays VTKFortran writes or from the four
 !< arrays VTK 9.7.2 writes (XML 2.3: `face_connectivity`, `face_offsets`, `polyhedron_to_faces`, `polyhedron_offsets`; a
 !< shared face `-(n+1)`, 2.5), returned as the face stream of `write_connectivity` either way.
@@ -968,6 +969,10 @@ contains
   integer(I8P)                               :: n_tuples     !< Number of tuples declared.
   integer(I8P)                               :: sz           !< Size of a value.
   integer(I4P)                               :: iostat       !< IO status.
+  integer(I1P), allocatable                  :: bits(:)      !< Packed bits of a Bit array.
+  integer(I8P)                               :: n_values     !< Values of a Bit array.
+  integer(I8P)                               :: v            !< Counter.
+  integer(I4P)                               :: p            !< Index of the piece element.
 
   allocate(bytes(1:0))
   data_type = ''
@@ -1007,6 +1012,41 @@ contains
     error = 3
   endselect
   if (error /= 0) return
+  if (data_type == 'Bit') then ! vtkBitArray: one value per bit, MSB first, but in ASCII; read as UInt8 values 0 and 1
+    if (value /= 'ascii') then
+      error = 6
+      n_values = 8_I8P * size(bytes, kind=I8P)
+      call self%xml%get_attribute(id=id, name='NumberOfTuples', value=n_tuples, iostat=iostat)
+      if (iostat == 0) then
+        n_values = n_tuples * n_components
+      else ! the tuples of the location: the points or cells of the piece, the rows of a Table
+        p = self%xml%parent(self%xml%parent(id))
+        select case(self%xml%name(self%xml%parent(id)))
+        case('PointData')
+          call self%xml%get_attribute(id=p, name='NumberOfPoints', value=n_tuples, iostat=iostat)
+        case('CellData')
+          call self%xml%get_attribute(id=p, name='NumberOfCells', value=n_tuples, iostat=iostat)
+        case('RowData')
+          call self%xml%get_attribute(id=p, name='NumberOfRows', value=n_tuples, iostat=iostat)
+        case default
+          iostat = 1
+        endselect
+        if (iostat == 0) n_values = n_tuples * n_components
+      endif
+      if (n_values < 0_I8P .or. n_values > 8_I8P * size(bytes, kind=I8P)) return
+      bits = bytes
+      deallocate(bytes)
+      allocate(bytes(n_values))
+      do v=1_I8P, n_values
+        bytes(v) = merge(1_I1P, 0_I1P, btest(bits((v - 1_I8P) / 8_I8P + 1_I8P), 7_I8P - mod(v - 1_I8P, 8_I8P)))
+      enddo
+    endif
+    if (any(bytes /= 0_I1P .and. bytes /= 1_I1P)) then
+      error = 6
+      return
+    endif
+    data_type = 'UInt8'
+  endif
   ! consistency of the size with the type, the components and the declared tuples
   error = 6
   if (mod(size(bytes, kind=I8P), sz) /= 0_I8P) return

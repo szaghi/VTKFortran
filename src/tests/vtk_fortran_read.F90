@@ -10,7 +10,8 @@ program vtk_fortran_read
 !< 2.3, a file written by VTK embedded below, and a shared face stored once, 2.5); ASCII non-finite reals (VTK's
 !< `nan inf -inf`, VTKFortran's former `+    Infinity`) and UInt64 values above huge(I8P); names holding `"&<>'` and
 !< non-finite values written in every format and read back, and in a `.pvd`; a 6-component ASCII array (written
-!< u v w x y z, w and x joined) with non-finite values where w and x meet.
+!< u v w x y z, w and x joined) with non-finite values where w and x meet; `type="Bit"` arrays of two files written by
+!< VTK 9.7.2 (ascii, binary), embedded below.
 use penf
 use, intrinsic :: ieee_arithmetic, only : ieee_is_nan, ieee_is_finite, ieee_value, ieee_quiet_nan, &
                                           ieee_positive_inf, ieee_negative_inf
@@ -25,7 +26,7 @@ real(R8P),    parameter :: p(4)=[1.5_R8P, -2.25_R8P, 1.e-300_R8P, 4._R8P/3._R8P]
 real(R4P),    parameter :: v(3,4)=reshape([1,2,3, 4,5,6, 7,8,9, 10,11,12], [3,4]) * 0.1_R4P !< Point vectors.
 type(vtk_file)          :: a_vtk_file      !< A VTK file.
 integer(I4P)            :: f               !< Counter.
-logical                 :: test_passed(14) !< List of passed tests.
+logical                 :: test_passed(15) !< List of passed tests.
 
 test_passed = .true.
 do f=1, size(formats)
@@ -50,6 +51,7 @@ test_passed(11) = check_vtk_polyhedra()
 test_passed(12) = check_ascii_special()
 test_passed(13) = check_names_and_non_finite()
 test_passed(14) = check_six_non_finite()
+test_passed(15) = check_vtk_bits()
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(test_passed)
 if (.not.all(test_passed)) error stop 'some tests failed'
@@ -757,6 +759,158 @@ contains
                              ieee_is_nan(t(4,2)) .and. t(3,3) == 3._R8P .and. t(4,3) == -4._R8P
   if (.not.is_passed) print '(A,*(1X,I0))', 'failed: vtkfortran_read-six.vtu', e
   endfunction check_six_non_finite
+
+  function check_vtk_bits() result(is_passed)
+  !< Read `type="Bit"` arrays (vtkBitArray) of files written by VTK 9.7.2 (vtkXMLUnstructuredGridWriter, ascii and
+  !< binary: one value per bit, MSB first, the last byte padded): 11 points, `bits` (1 component) and `b3` (3 components),
+  !< read as 0/1 integers; `get_dataarray_info` gives the type `Bit`.
+  logical                       :: is_passed !< Check result.
+  character(len=:), allocatable :: text      !< File content.
+  character(len=1), parameter   :: nl=new_line('a') !< New line.
+  integer(I1P),     parameter   :: pattern(11) = [1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0] !< The bits written.
+  integer(I1P),     allocatable :: b(:)      !< bits read.
+  integer(I4P),     allocatable :: b3(:)     !< b3 read.
+  character(len=:), allocatable :: data_type !< Type of b3.
+  integer(I4P)                  :: nc, u, f  !< Components, file unit, counter.
+  integer(I4P)                  :: e(5)      !< Errors.
+
+  is_passed = .true.
+  do f=1, 2
+    if (f == 1) then
+      text = &
+        '<?xml version="1.0"?>'//nl//&
+        '<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32">'//nl//&
+        '  <UnstructuredGrid>'//nl//&
+        '    <Piece NumberOfPoints="11" NumberOfCells="0">'//nl//&
+        '      <PointData>'//nl//&
+        '        <DataArray type="Bit" Name="bits" format="ascii" RangeMin="0" RangeMax="1">'//nl//&
+        '          1 0 1 1 0 0'//nl//&
+        '          0 1 1 1 0'//nl//&
+        '        </DataArray>'//nl//&
+        '        <DataArray type="Bit" Name="b3" NumberOfComponents="3" format="ascii" RangeMin="0" RangeMax='//&
+        '"1.7320508075688772">'//nl//&
+        '          1 0 1 1 0 0'//nl//&
+        '          0 1 1 1 0 1'//nl//&
+        '          0 1 1 0 0 0'//nl//&
+        '          1 1 1 0 1 0'//nl//&
+        '          1 1 0 0 0 1'//nl//&
+        '          1 1 0'//nl//&
+        '          <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">'//nl//&
+        '            <Value index="0">'//nl//&
+        '              0'//nl//&
+        '            </Value>'//nl//&
+        '            <Value index="1">'//nl//&
+        '              1.7320508076'//nl//&
+        '            </Value>'//nl//&
+        '          </InformationKey>'//nl//&
+        '        </DataArray>'//nl//&
+        '      </PointData>'//nl//&
+        '      <CellData>'//nl//&
+        '      </CellData>'//nl//&
+        '      <Points>'//nl//&
+        '        <DataArray type="Float32" Name="Points" NumberOfComponents="3" format="ascii" RangeMin="0" R'//&
+        'angeMax="10">'//nl//&
+        '          0 0 0 1 0 0'//nl//&
+        '          2 0 0 3 0 0'//nl//&
+        '          4 0 0 5 0 0'//nl//&
+        '          6 0 0 7 0 0'//nl//&
+        '          8 0 0 9 0 0'//nl//&
+        '          10 0 0'//nl//&
+        '          <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">'//nl//&
+        '            <Value index="0">'//nl//&
+        '              0'//nl//&
+        '            </Value>'//nl//&
+        '            <Value index="1">'//nl//&
+        '              10'//nl//&
+        '            </Value>'//nl//&
+        '          </InformationKey>'//nl//&
+        '        </DataArray>'//nl//&
+        '      </Points>'//nl//&
+        '      <Cells>'//nl//&
+        '        <DataArray type="Int64" Name="connectivity" format="ascii" RangeMin="1e+299" RangeMax="-1e+2'//&
+        '99">'//nl//&
+        '        </DataArray>'//nl//&
+        '        <DataArray type="Int64" Name="offsets" format="ascii" RangeMin="1e+299" RangeMax="-1e+299">'//nl//&
+        '        </DataArray>'//nl//&
+        '        <DataArray type="UInt8" Name="types" format="ascii" RangeMin="1e+299" RangeMax="-1e+299">'//nl//&
+        '        </DataArray>'//nl//&
+        '      </Cells>'//nl//&
+        '    </Piece>'//nl//&
+        '  </UnstructuredGrid>'//nl//&
+        '</VTKFile>'
+    else
+      text = &
+        '<?xml version="1.0"?>'//nl//&
+        '<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32">'//nl//&
+        '  <UnstructuredGrid>'//nl//&
+        '    <Piece NumberOfPoints="11" NumberOfCells="0">'//nl//&
+        '      <PointData>'//nl//&
+        '        <DataArray type="Bit" Name="bits" format="binary" RangeMin="0" RangeMax="1">'//nl//&
+        '          AgAAALHA'//nl//&
+        '        </DataArray>'//nl//&
+        '        <DataArray type="Bit" Name="b3" NumberOfComponents="3" format="binary" RangeMin="0" RangeMax'//&
+        '="1.7320508075688772">'//nl//&
+        '          BQAAALHWOscA'//nl//&
+        '          <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">'//nl//&
+        '            <Value index="0">'//nl//&
+        '              0'//nl//&
+        '            </Value>'//nl//&
+        '            <Value index="1">'//nl//&
+        '              1.7320508076'//nl//&
+        '            </Value>'//nl//&
+        '          </InformationKey>'//nl//&
+        '        </DataArray>'//nl//&
+        '      </PointData>'//nl//&
+        '      <CellData>'//nl//&
+        '      </CellData>'//nl//&
+        '      <Points>'//nl//&
+        '        <DataArray type="Float32" Name="Points" NumberOfComponents="3" format="binary" RangeMin="0" '//&
+        'RangeMax="10">'//nl//&
+        '          hAAAAAAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAEAAAAAAAAAAAAAAQEAAAAAAAAAAAAAAgEAAAAAAAAAAAAAAoE'//&
+        'AAAAAAAAAAAAAAwEAAAAAAAAAAAAAA4EAAAAAAAAAAAAAAAEEAAAAAAAAAAAAAEEEAAAAAAAAAAAAAIEEAAAAAAAAAAA=='//nl//&
+        '          <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">'//nl//&
+        '            <Value index="0">'//nl//&
+        '              0'//nl//&
+        '            </Value>'//nl//&
+        '            <Value index="1">'//nl//&
+        '              10'//nl//&
+        '            </Value>'//nl//&
+        '          </InformationKey>'//nl//&
+        '        </DataArray>'//nl//&
+        '      </Points>'//nl//&
+        '      <Cells>'//nl//&
+        '        <DataArray type="Int64" Name="connectivity" format="binary" RangeMin="1e+299" RangeMax="-1e+'//&
+        '299">'//nl//&
+        '          AAAAAA=='//nl//&
+        '        </DataArray>'//nl//&
+        '        <DataArray type="Int64" Name="offsets" format="binary" RangeMin="1e+299" RangeMax="-1e+299">'//nl//&
+        '          AAAAAA=='//nl//&
+        '        </DataArray>'//nl//&
+        '        <DataArray type="UInt8" Name="types" format="binary" RangeMin="1e+299" RangeMax="-1e+299">'//nl//&
+        '          AAAAAA=='//nl//&
+        '        </DataArray>'//nl//&
+        '      </Cells>'//nl//&
+        '    </Piece>'//nl//&
+        '  </UnstructuredGrid>'//nl//&
+        '</VTKFile>'
+    endif
+    open(newunit=u, file='vtkfortran_read-vtk-bits-'//trim(str(f, no_sign=.true.))//'.vtu', access='stream', &
+         form='unformatted', action='write', status='replace')
+    write(u) text//nl
+    close(u)
+    e(1) = a_vtk_file%initialize(filename='vtkfortran_read-vtk-bits-'//trim(str(f, no_sign=.true.))//'.vtu', action='read')
+    e(2) = a_vtk_file%xml_reader%read_dataarray(location='node', data_name='bits', x=b)
+    e(3) = a_vtk_file%xml_reader%read_dataarray(location='node', data_name='b3', x=b3)
+    e(4) = a_vtk_file%xml_reader%get_dataarray_info(location='node', data_name='b3', data_type=data_type, n_components=nc)
+    e(5) = a_vtk_file%finalize()
+    is_passed = is_passed .and. all(e == 0)
+    if (.not.is_passed) exit
+    is_passed = all(b == pattern) .and. size(b3) == 33 .and. data_type == 'Bit' .and. nc == 3
+    if (is_passed) is_passed = all(b3 == int([pattern, pattern, pattern], I4P))
+    if (.not.is_passed) exit
+  enddo
+  if (.not.is_passed) print '(A,*(1X,I0))', 'failed: Bit arrays written by VTK 9.7.2', e
+  endfunction check_vtk_bits
 
   elemental function is_inf(v, sign) result(is_it)
   !< Return .true. if a value is an infinity of a sign.

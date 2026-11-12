@@ -55,6 +55,7 @@ public :: h5_attribute_exists
 ! SELECT RANK): see issue #72
 public :: h5_dataset_write_R8P, h5_dataset_write_R4P, h5_dataset_write_I8P, h5_dataset_write_I4P, h5_dataset_write_I2P
 public :: h5_dataset_write_I1P
+public :: h5_dataset_write_strings
 public :: h5_dataset_append_R8P, h5_dataset_append_R4P, h5_dataset_append_I8P, h5_dataset_append_I4P
 public :: h5_dataset_append_I2P, h5_dataset_append_I1P
 public :: h5_dataset_slab_R8P, h5_dataset_slab_R4P, h5_dataset_slab_I8P, h5_dataset_slab_I4P, h5_dataset_slab_I2P
@@ -1094,7 +1095,8 @@ contains
   endfunction h5_dataset_chunk
 
   function h5_dataset_info(loc_id, name, data_type, dims) result(error)
-  !< Return the VTK type of a numeric dataset (Float64, Float32, Int64, ..., UInt8) and its shape (Fortran order).
+  !< Return the VTK type of a dataset (Float64, Float32, Int64, ..., UInt8; String for a string dataset, fixed or variable
+  !< length, as vtkHDFWriter writes a vtkStringArray) and its shape (Fortran order).
   integer(hid_kind),             intent(in)  :: loc_id    !< Parent (file or group).
   character(*),                  intent(in)  :: name      !< Dataset name (or path).
   character(len=:), allocatable, intent(out) :: data_type !< VTK type, empty if not a numeric type.
@@ -1103,7 +1105,7 @@ contains
 #ifdef VTKFORTRAN_USE_HDF5
   integer(c_int64_t)                         :: dset      !< Dataset.
   integer(c_int64_t)                         :: dtype     !< Its type.
-  integer(c_int)                             :: class     !< Type class: 0 integer, 1 float.
+  integer(c_int)                             :: class     !< Type class: 0 integer, 1 float, 3 string.
   integer(c_int)                             :: sign      !< Sign of an integer: 0 unsigned, 1 two's complement.
   integer(c_size_t)                          :: bytes     !< Size of a value.
 
@@ -1126,6 +1128,8 @@ contains
         if (bytes == 2_c_size_t) data_type = 'Int16'
         if (bytes == 1_c_size_t) data_type = 'Int8'
         if (sign == 0_c_int .and. len(data_type) > 0) data_type = 'U'//data_type
+      elseif (class == 3_c_int) then
+        data_type = 'String'
       endif
       error = 0_I4P
       if (H5Tclose(dtype) < 0) error = 1_I4P
@@ -1141,7 +1145,8 @@ contains
 
   function h5_dataset_read_bytes(loc_id, name, first, count, bytes) result(error)
   !< Read the slice `first+1 ... first+count` of the last Fortran dimension (the first HDF5 one) of a numeric dataset, all
-  !< of its other dimensions, as the bytes of its values in the native type of the file's type (see `h5_dataset_info`).
+  !< of its other dimensions, as the bytes of its values in the native type of the file's type (see `h5_dataset_info`); of
+  !< a string dataset (fixed or variable length), the bytes of its strings, each one followed by a NUL (VTK's String).
   integer(hid_kind),         intent(in)  :: loc_id   !< Parent (file or group).
   character(*),              intent(in)  :: name     !< Dataset name (or path).
   integer(I8P),              intent(in)  :: first    !< Values (rows) skipped along the last dimension.
@@ -1166,6 +1171,12 @@ contains
   if (size(dims) > 0) then
     if (first >= 0_I8P .and. count >= 0_I8P .and. first + count <= dims(size(dims))) then
       dtype = H5Dget_type(dset)
+      if (H5Tget_class(dtype) == 3_c_int) then ! strings: as the bytes of the XML String type (each one ended by a NUL)
+        error = read_strings(dset, dtype, dims, first, count, bytes)
+        if (H5Tclose(dtype) < 0) error = 1_I4P
+        if (H5Dclose(dset) < 0) error = 1_I4P
+        return
+      endif
       memtype = H5Tget_native_type(dtype, 1_c_int) ! H5T_DIR_ASCEND
       dims(size(dims)) = count
       allocate(buffer(max(1_I8P, product(dims) * int(H5Tget_size(memtype), I8P))))
@@ -1201,6 +1212,87 @@ contains
   error = 1_I4P
 #endif
   endfunction h5_dataset_read_bytes
+
+#ifdef VTKFORTRAN_USE_HDF5
+  function read_strings(dset, dtype, dims, first, count, bytes) result(error)
+  !< The strings `first+1 ... first+count` along the last Fortran dimension of a string dataset (all of its other
+  !< dimensions), as bytes: each string, then a NUL. Variable-length strings are read as C pointers and freed; fixed-length
+  !< ones are cut at their first NUL.
+  integer(c_int64_t),        intent(in)  :: dset     !< Dataset.
+  integer(c_int64_t),        intent(in)  :: dtype    !< Its type (a string type).
+  integer(I8P),              intent(in)  :: dims(:)  !< Its shape, Fortran order.
+  integer(I8P),              intent(in)  :: first    !< Strings skipped along the last dimension.
+  integer(I8P),              intent(in)  :: count    !< Strings read along the last dimension.
+  integer(I1P), allocatable, intent(out) :: bytes(:) !< Bytes of the strings, each ended by a NUL.
+  integer(I4P)                           :: error    !< Error status.
+  integer(I8P), allocatable              :: slab(:)  !< Shape of the slice, Fortran order.
+  integer(c_long_long), allocatable      :: cstart(:), ccount(:) !< Slice, C order.
+  type(c_ptr),            allocatable, target :: ptrs(:)  !< Variable-length strings.
+  character(kind=c_char), allocatable, target :: chars(:) !< Fixed-length strings.
+  character(kind=c_char), pointer        :: text(:)  !< A variable-length string.
+  integer(c_int64_t)                     :: filespace, memspace !< Dataspaces.
+  integer(c_size_t)                      :: sz       !< Size of a fixed-length string.
+  integer(c_size_t)                      :: l        !< Length of a string.
+  integer(I8P)                           :: n, i, k  !< Strings, counters.
+  logical                                :: is_vlen  !< Variable-length strings.
+
+  allocate(bytes(0))
+  error = 1_I4P
+  slab = dims
+  slab(size(slab)) = count
+  n = product(slab)
+  is_vlen = H5Tis_variable_str(dtype) > 0
+  sz = H5Tget_size(dtype)
+  if (n == 0_I8P) then
+    error = 0_I4P
+    return
+  endif
+  ccount = c_dims(slab)
+  allocate(cstart(size(slab)))
+  cstart = 0_c_long_long
+  cstart(1) = int(first, c_long_long)
+  filespace = H5Dget_space(dset)
+  memspace = H5Screate_simple(int(size(slab), c_int), ccount, c_null_ptr)
+  if (filespace >= 0 .and. memspace >= 0) then
+    if (H5Sselect_hyperslab(filespace, H5S_SELECT_SET, cstart, c_null_ptr, ccount, c_null_ptr) >= 0) then
+      if (is_vlen) then
+        allocate(ptrs(n))
+        ptrs = c_null_ptr
+        if (H5Dread(dset, dtype, memspace, filespace, H5P_DEFAULT, c_loc(ptrs)) >= 0) then
+          error = 0_I4P
+          do i=1_I8P, n
+            if (c_associated(ptrs(i))) then
+              l = c_strlen(ptrs(i))
+              call c_f_pointer(ptrs(i), text, [l])
+              bytes = [bytes, (transfer(text(k), 0_I1P), k=1_I8P, int(l, I8P))]
+              if (H5free_memory(ptrs(i)) < 0) error = 1_I4P
+            endif
+            bytes = [bytes, 0_I1P]
+          enddo
+        endif
+      else
+        allocate(chars(n * int(sz, I8P)))
+        if (H5Dread(dset, dtype, memspace, filespace, H5P_DEFAULT, c_loc(chars)) >= 0) then
+          error = 0_I4P
+          do i=1_I8P, n
+            do k=(i - 1_I8P) * int(sz, I8P) + 1_I8P, i * int(sz, I8P)
+              if (chars(k) == c_null_char) exit
+              bytes = [bytes, transfer(chars(k), 0_I1P)]
+            enddo
+            bytes = [bytes, 0_I1P]
+          enddo
+        endif
+      endif
+    endif
+  endif
+  if (memspace >= 0) then
+    if (H5Sclose(memspace) < 0) error = 1_I4P
+  endif
+  if (filespace >= 0) then
+    if (H5Sclose(filespace) < 0) error = 1_I4P
+  endif
+  endfunction read_strings
+#endif
 
   function h5_dataset_resize(loc_id, name, n) result(error)
   !< Resize an appendable dataset along its last Fortran dimension (the first HDF5 one) to `n`: values past it are
@@ -1287,6 +1379,48 @@ contains
   error = 1_I4P
 #endif
   endfunction h5_dataset_write_I8P
+
+  function h5_dataset_write_strings(loc_id, name, x, appendable, chunk_bytes) result(error)
+  !< Create a rank-1 dataset of variable-length ASCII strings (as vtkHDFWriter writes a vtkStringArray), one per element of
+  !< `x`, its trailing blanks dropped.
+  integer(hid_kind), intent(in)           :: loc_id      !< Parent (file or group).
+  character(*),      intent(in)           :: name        !< Dataset name.
+  character(*),      intent(in)           :: x(:)        !< Strings.
+  logical,           intent(in), optional :: appendable  !< Chunked, unlimited.
+  integer(I8P),      intent(in), optional :: chunk_bytes !< Bytes of a chunk at most (default 1 MiB), at least 1.
+  integer(I4P)                            :: error       !< Error status.
+#ifdef VTKFORTRAN_USE_HDF5
+  character(kind=c_char), allocatable, target :: chars(:) !< The strings, each ended by a NUL.
+  type(c_ptr),            allocatable, target :: ptrs(:)  !< Where each one starts.
+  integer(c_int64_t)                      :: dtype       !< Variable-length string type.
+  integer(I8P)                            :: i, c, k     !< Counters.
+
+  error = 1_I4P
+  allocate(chars(max(1, sum(len_trim(x)) + size(x))), ptrs(max(1, size(x)))) ! (c_loc of a zero-size array: not allowed)
+  ptrs = c_null_ptr
+  k = 0_I8P
+  do i=1_I8P, size(x, kind=I8P)
+    do c=1_I8P, int(len_trim(x(i)), I8P)
+      chars(k + c) = x(i)(c:c)
+    enddo
+    chars(k + len_trim(x(i)) + 1_I8P) = c_null_char
+    k = k + len_trim(x(i)) + 1_I8P
+  enddo
+  k = 1_I8P
+  do i=1_I8P, size(x, kind=I8P)
+    ptrs(i) = c_loc(chars(k))
+    k = k + len_trim(x(i)) + 1_I8P
+  enddo
+  dtype = H5Tcopy(H5T_C_S1_g)
+  if (dtype < 0) return
+  if (H5Tset_size(dtype, -1_c_size_t) >= 0) & ! H5T_VARIABLE
+    error = dataset_write(loc_id, name, dtype, int(c_sizeof(c_null_ptr), I8P), [size(x, kind=I8P)], c_loc(ptrs), &
+                          appendable=appendable, chunk_bytes=chunk_bytes)
+  if (H5Tclose(dtype) < 0) error = 1_I4P
+#else
+  error = 1_I4P
+#endif
+  endfunction h5_dataset_write_strings
 
   function h5_dataset_write_I4P(loc_id, name, x, dims, appendable, deflate, unsigned, comm, chunk_bytes) result(error)
   !< Create a dataset of `I4P` values (HDF5 native int32, or uint32 with `unsigned=.true.`), shape `dims` in Fortran order.

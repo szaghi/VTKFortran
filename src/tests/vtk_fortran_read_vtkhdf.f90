@@ -14,7 +14,8 @@ program vtk_fortran_read_vtkhdf
 !< read as written; variable-length string attributes (`Type`, the `Attribute` of an active array; as h5py writes them);
 !< temporal field data without `Steps/FieldDataSizes` (optional: one tuple per step), the file rebuilt with the bindings;
 !< the arrays of a 2D ImageData built with the bindings: the axes of more than one point (as VTK) read, with and without
-!< components, an array keeping the axis of one point (the literal shape of the specification) refused (error 6).
+!< components, an array keeping the axis of one point (the literal shape of the specification) refused (error 6); string
+!< arrays as vtkHDFWriter writes them (variable-length strings: field data and point data), added with the bindings.
 !< Without HDF5 the reader refuses a VTKHDF file.
 use penf
 use vtk_fortran, only : vtk_file
@@ -22,7 +23,7 @@ use vtk_fortran_hdf5
 
 implicit none
 type(vtk_file)                :: w, r                    !< Writer, reader.
-logical                       :: ok(14)                  !< Checks.
+logical                       :: ok(15)                  !< Checks.
 integer(I4P)                  :: e, i                    !< Error, counter.
 integer(I4P), parameter       :: cube(31) = [6, 4, 0, 3, 2, 1,  4, 4, 5, 6, 7,  4, 0, 1, 5, 4,  4, 1, 2, 6, 5, &
                                              4, 2, 3, 7, 6,  4, 3, 0, 4, 7] !< Faces of a unit cube.
@@ -49,8 +50,9 @@ else
   ok(12) = vlen_strings()
   ok(13) = field_sizes_optional()
   ok(14) = grid_axes()
-  print '(A,14L2)', 'VTKHDF read: image, rect, strg, unst, poly, series, image series, I4P, errors, shared faces, reused, '// &
-                    'vlen strings, FieldDataSizes optional, grid axes:', ok
+  ok(15) = string_arrays()
+  print '(A,15L2)', 'VTKHDF read: image, rect, strg, unst, poly, series, image series, I4P, errors, shared faces, reused, '// &
+                    'vlen strings, FieldDataSizes optional, grid axes, string arrays:', ok
 endif
 
 print "(A,L1)", new_line('a')//'Are all tests passed? ', all(ok)
@@ -578,6 +580,45 @@ contains
   e = r%finalize()
   if (.not.grid_axes) print '(A,4I3)', 'grid axes: errors ', ee
   endfunction grid_axes
+
+  logical function string_arrays()
+  !< String arrays as vtkHDFWriter writes a vtkStringArray (variable-length strings), added with the bindings to a file of
+  !< the writer: field data `labels` and point data `tags`; read into character arrays, their type `String`; a numeric
+  !< read of them refused.
+  character(len=:), allocatable :: labels(:), tags(:), data_type
+  integer(hid_kind)             :: file_id, group
+  real(R8P), allocatable        :: v(:)
+  integer(I4P)                  :: ee(4), nc
+  integer(I8P)                  :: nt
+
+  ee = 0
+  ee(1) = w%initialize(format='vtkhdf', filename='read_strings.vtkhdf', mesh_topology='UnstructuredGrid')
+  ee(1) = ee(1) + abs(tetra(4, 0._R8P))
+  ee(1) = ee(1) + abs(w%finalize())
+  ee(2) = h5_file_open('read_strings.vtkhdf', file_id, readwrite=.true.)
+  ee(2) = ee(2) + abs(h5_group_create(file_id, 'VTKHDF/FieldData', group))
+  ee(2) = ee(2) + abs(h5_dataset_write_strings(group, 'labels', [character(5) :: 'hello', 'world', '']))
+  ee(2) = ee(2) + abs(h5_group_close(group))
+  ee(3) = h5_group_open(file_id, 'VTKHDF/PointData', group)
+  ee(3) = ee(3) + abs(h5_dataset_write_strings(group, 'tags', [character(6) :: 'p0', 'p1 a', 'p2', 'last']))
+  ee(3) = ee(3) + abs(h5_group_close(group))
+  ee(4) = h5_file_close(file_id)
+  string_arrays = all(ee == 0) .and. r%initialize(filename='read_strings.vtkhdf', action='read') == 0
+  e = r%xml_reader%read_dataarray(location='field', data_name='labels', x=labels)
+  string_arrays = string_arrays .and. e == 0
+  if (string_arrays) string_arrays = size(labels) == 3
+  if (string_arrays) string_arrays = labels(1) == 'hello' .and. labels(2) == 'world' .and. labels(3) == ''
+  e = r%xml_reader%get_dataarray_info(location='node', data_name='tags', data_type=data_type, n_components=nc, n_tuples=nt)
+  string_arrays = string_arrays .and. e == 0
+  if (string_arrays) string_arrays = data_type == 'String' .and. nc == 1 .and. nt == 4_I8P
+  e = r%xml_reader%read_dataarray(location='node', data_name='tags', x=tags)
+  string_arrays = string_arrays .and. e == 0
+  if (string_arrays) string_arrays = size(tags) == 4
+  if (string_arrays) string_arrays = tags(2) == 'p1 a' .and. tags(4) == 'last'
+  string_arrays = string_arrays .and. r%xml_reader%read_dataarray(location='node', data_name='tags', x=v) /= 0
+  e = r%finalize()
+  if (.not.string_arrays) print '(A,4I3)', 'string arrays: errors ', ee
+  endfunction string_arrays
 
   function cell_data(cid) result(error)
   !< The cell data cid of a piece, then the end of the piece.

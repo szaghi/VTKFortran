@@ -29,8 +29,9 @@ indexed, and its data are then read, array by array, through the `xml_reader` co
 - `location` is `'node'`, `'cell'` or `'field'` (field data), case insensitive (`'row'` for the columns of a Table). `piece` counts from 1 and defaults to 1; field
   data belong to the dataset and ignore it. The outputs are allocatable: they are allocated by the reader.
 - `read_dataarray` returns the values flattened, rank 1 with the components interleaved, or with shape
-  `(n_components, n_tuples)` for a rank-2 output; field data strings (type `String`) go into a
-  `character(len=:), allocatable :: x(:)` output.
+  `(n_components, n_tuples)` for a rank-2 output; strings (type `String`, field, point or cell data) go into a
+  `character(len=:), allocatable :: x(:)` output. `Bit` arrays (vtkBitArray: one value per bit, packed MSB first in the
+  binary formats) are read as integers 0 and 1, into any integer kind; `get_dataarray_info` gives their type `Bit`.
 - The output kind must hold every value of the array type: `Int8` reads into `I1P`...`I8P`, `Int16` into `I2P`...`I8P`,
   `Int32` into `I4P` or `I8P`, `Int64` into `I8P`, `Float32` into `R4P` or `R8P`, `Float64` into `R8P`. The unsigned types
   read into the signed kind of the same width with the same bits (the inverse of
@@ -73,8 +74,9 @@ with the same calls: `initialize(filename, action='read')` recognizes it by its 
 `xml_reader` answers from it. Every topology is read, polyhedra included; the pieces of an UnstructuredGrid or PolyData
 are the partitions of the file. The offsets are returned as VTKFortran writes them (the end of each cell), the faces of
 the polyhedra as the face stream of `write_connectivity`; `get_info` returns `header_type='HDF5'`, `compressor='none'`
-(HDF5 decompresses its datasets itself). Files written by VTK's `vtkHDFWriter` are read too, but for string arrays
-(variable-length strings), which are not read. The string attributes
+(HDF5 decompresses its datasets itself). Files written by VTK's `vtkHDFWriter` are read too, string arrays included
+(string datasets, variable or fixed length, as `String`: VTK 9.7.2 writes and reads them as field data only). The string
+attributes
 (`Type`, the `Attribute` of an active array) can be of fixed or variable length (h5py writes variable-length ones); the
 temporal field data can omit `Steps/FieldDataSizes` (one tuple per step, as the specification says). The arrays of an
 ImageData, RectilinearGrid or StructuredGrid have the axes of more than one point, as VTK writes and reads them; an array
