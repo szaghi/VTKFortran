@@ -43,7 +43,7 @@ space, e.g. off a small `/tmp` on HPC nodes. The `binary` format writes inline, 
 and one HDF5 dataset per array. VTK's `vtkHDFReader` and ParaView read it; any HDF5 tool (h5py, `h5dump`, HDFView) reads its
 arrays directly. It is being added step by step ([issue #51](https://github.com/szaghi/VTKFortran/issues/51)):
 every topology is written now (**ImageData**, **RectilinearGrid**, **StructuredGrid**, **UnstructuredGrid** with its
-polyhedra, **PolyData**), time series in one file, and one file written by MPI ranks.
+polyhedra, **PolyData**), **Table** (columns of values), time series in one file, and one file written by MPI ranks.
 
 Choose it when the files are read by HDF5 tools too, or to use HDF5 compression; stay with the XML formats for files
 that VTKFortran reads back, and without an HDF5 library. It needs the library built with HDF5 (see
@@ -95,6 +95,16 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
   `write_polydata_cells`. Each block keeps the kind of its ids (I4P or I8P; I8P when its connectivity and its offsets
   differ). Cell data follow the order of the blocks, as in the XML formats. A complete program:
   [A PolyData in a .vtkhdf file](/manual/cookbook#a-polydata-in-a-vtkhdf-file).
+- **Table** (`mesh_topology='Table'`, VTKHDF 2.8, a VTK `vtkTable`): columns of values, no mesh and no pieces. The
+  columns are written between `write_dataarray(location='row', action='open')` and `action='close'`, each a
+  `write_dataarray(data_name, x)` of any kind (or `write_dataarray_unsigned`), with components as a data array: the
+  dataset `RowData/<name>` of shape `[rows, components]`. Every column has the same rows (checked), written in
+  `NumberOfRows`. In a time series each step writes the same columns, its rows appended (`NumberOfRows` one entry per
+  step, `Steps/RowDataOffsets/<name>` where each column starts: the spelling VTK writes and reads, the specification page
+  spells it `RowDataOffets`); the file is valid after each step. Refused: a column with other rows, a column missing in a
+  step or new after the first one, a step without columns, pieces, point and cell data, `comm`; the XML formats refuse a
+  Table (VTK's XML table format, `.vtt`, is not written by VTKFortran). **VTK 9.7 reads it, ParaView 6.1 does not** (its
+  VTK 9.6 does not know the type). A complete program: [A time history (Table)](/manual/cookbook#a-time-history-table).
 - **Time series** (`Steps`): each output starts with `xml_writer%write_step(time)`; the pieces of every step are
   appended to the same datasets, a grid's arrays get a time axis (`[t, k, j, i]` in C order), and the group `Steps` holds
   the times and, for each step, where it starts in the datasets (`PartOffsets`, `PointOffsets`, ...,
@@ -135,8 +145,8 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
 - **Compression**: `compressor='zlib'` deflates every dataset (level 6, in chunks of up to 1 MiB). It needs the deflate
   filter of the HDF5 library, not `VTKFORTRAN_USE_ZLIB`: without it `initialize` returns a non-zero error.
 - **Version**: the lowest one with the features written: 2.0, 2.5 with polyhedra, 2.6 when an active array is
-  designated, 2.7 for a RectilinearGrid or StructuredGrid. The files are checked with VTK 9.7.2 and ParaView 6.1.1 (but
-  the RectilinearGrid and StructuredGrid files, which ParaView 6.1 cannot read).
+  designated, 2.7 for a RectilinearGrid or StructuredGrid, 2.8 for a Table. The files are checked with VTK 9.7.2 and
+  ParaView 6.1.1 (but the RectilinearGrid, StructuredGrid and Table files, which ParaView 6.1 cannot read).
 - **Not supported**: more than one piece of a grid (ImageData, RectilinearGrid, StructuredGrid), a volatile
   file (`is_volatile`), VTKHDF pieces in parallel (`P*`) and `.pvd` files (a multi-block file is `vtm_file` with
   `format='vtkhdf'`, static or a time series of UnstructuredGrid and PolyData blocks, see

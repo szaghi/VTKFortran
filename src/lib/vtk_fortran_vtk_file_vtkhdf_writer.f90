@@ -58,8 +58,15 @@ module vtk_fortran_vtk_file_vtkhdf_writer
 !< read from the file, and every dataset is trimmed to the pieces recorded by the last complete piece (a run interrupted
 !< in a piece leaves the data of that piece, dropped).
 !<
+!< Table (`mesh_topology='Table'`, VTKHDF 2.8): no pieces; its columns are written with `write_dataarray(location='row',
+!< action='open')`, `write_dataarray(data_name, x)` (any kind, components as for the other data arrays: `RowData/<name>`,
+!< `[rows, components]` in C order), `write_dataarray(location='row', action='close')`: every column the same rows, and
+!< `NumberOfRows`. In a time series every step writes every column (the same columns as the first step), the rows of
+!< each step appended (`NumberOfRows` one entry per step, `Steps/RowDataOffsets/<column>`, the spelling VTK 9.7.2
+!< writes and reads, not the `RowDataOffets` of the specification page), the file valid after each step.
+!<
 !< `Version` is written by `finalize` (and after every piece of a time series): 2.0, 2.5 with polyhedra, 2.6 when an
-!< active array is marked, 2.7 for a RectilinearGrid or a StructuredGrid.
+!< active array is marked, 2.7 for a RectilinearGrid or a StructuredGrid, 2.8 for a Table.
 use penf
 use vtk_fortran_hdf5
 use vtk_fortran_parameters, only : stderr
@@ -78,6 +85,7 @@ integer(I4P), parameter :: TOPOLOGY_UNSTRUCTURED = 2_I4P !< UnstructuredGrid.
 integer(I4P), parameter :: TOPOLOGY_POLY = 3_I4P         !< PolyData.
 integer(I4P), parameter :: TOPOLOGY_RECT = 4_I4P         !< RectilinearGrid.
 integer(I4P), parameter :: TOPOLOGY_STRG = 5_I4P         !< StructuredGrid.
+integer(I4P), parameter :: TOPOLOGY_TABLE = 6_I4P        !< Table.
 integer(I1P), parameter :: CELL_POLYHEDRON = 42_I1P     !< VTK type of a polyhedron.
 character(*), parameter :: STEP_GROUPS(4) = ['PointDataOffsets', 'CellDataOffsets ', 'FieldDataOffsets', & !< Groups of
                                               'FieldDataSizes  ']                                       !< Steps.
@@ -139,6 +147,9 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
   logical                       :: is_reopened=.false.     !< A time series reopened (`reopen`): the extent start unknown.
   character(len=:), allocatable :: point_arrays            !< Names of the point data arrays, NUL terminated.
   character(len=:), allocatable :: cell_arrays             !< Names of the cell data arrays, NUL terminated.
+  character(len=:), allocatable :: row_arrays              !< Names of the columns of a Table, NUL terminated.
+  integer(I8P)                  :: table_rows=-1_I8P       !< Rows of the columns of the open step (-1: no column yet).
+  integer(I8P)                  :: row_total=0_I8P         !< Rows of the steps before the open one (a Table).
   logical                       :: is_parallel=.false.     !< The file is written by the ranks of an MPI communicator.
   integer(I4P)                  :: region(6)=0_I4P         !< Region of this rank of a grid written from ranks: its extent.
   integer(I4P)                  :: rank=0_I4P              !< Rank of this process in `comm`.
@@ -253,6 +264,7 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
     procedure, pass(self), private :: poly_block    !< Check or write a block of cells of a PolyData piece.
     procedure, pass(self), private :: poly_blocks   !< Check or write the four blocks of cells of a PolyData piece.
     procedure, pass(self), private :: end_reusing   !< Check the arrays of a step without pieces, write its entries.
+    procedure, pass(self), private :: end_table     !< End the columns of a Table (static, or a step).
     procedure, pass(self), private :: is_reusing    !< The open step has no piece: it reuses the mesh of the step before.
     procedure, pass(self), private :: is_written_in_step !< A point or cell array is written in the open step.
     procedure, pass(self), private :: record_array  !< Record the name of a point or cell data array.
@@ -320,11 +332,17 @@ contains
   case('StructuredGrid')
     self%topology = TOPOLOGY_STRG
     self%version_minor = 7_I8P
+  case('Table')
+    self%topology = TOPOLOGY_TABLE
+    self%version_minor = 8_I8P
   case default
     error = refuse('topology '//trim(adjustl(mesh_topology))//' is not supported')
     return
   endselect
-  if (.not.self%is_partitioned()) then
+  if (self%topology == TOPOLOGY_TABLE .and. self%is_parallel) then
+    error = refuse('comm: a Table is written by one process')
+    return
+  elseif (.not.self%is_partitioned() .and. self%topology /= TOPOLOGY_TABLE) then
     if (.not.(present(nx1).and.present(nx2).and.present(ny1).and.present(ny2).and.present(nz1).and.present(nz2))) then
       error = refuse(trim(adjustl(mesh_topology))//' needs its whole extent: nx1, nx2, ny1, ny2, nz1, nz2')
       return
@@ -370,6 +388,8 @@ contains
     if (error == 0_I4P) error = h5_attribute_write(self%root, 'Dimensions', self%grid_points())
   elseif (self%topology == TOPOLOGY_UNSTRUCTURED) then
     if (error == 0_I4P) error = h5_attribute_write(self%root, 'Type', 'UnstructuredGrid')
+  elseif (self%topology == TOPOLOGY_TABLE) then
+    if (error == 0_I4P) error = h5_attribute_write(self%root, 'Type', 'Table')
   else
     if (error == 0_I4P) error = h5_attribute_write(self%root, 'Type', 'PolyData')
     do b=1, size(BLOCKS)
@@ -390,7 +410,14 @@ contains
   error = 1_I4P
   if (self%file_id < 0_hid_kind) return
   error = 0_I4P
-  if (self%is_temporal .and. self%step_pieces == 0_I8P .and. self%n_steps == 1_I8P) then
+  if (self%topology == TOPOLOGY_TABLE) then ! the columns left open closed, ended; every step with its columns
+    if (self%group >= 0_hid_kind) then
+      error = self%close_group()
+      if (error == 0_I4P) error = self%end_table()
+    elseif (self%step_pieces == 0_I8P) then
+      error = refuse('the Table, or its last step, has no columns')
+    endif
+  elseif (self%is_temporal .and. self%step_pieces == 0_I8P .and. self%n_steps == 1_I8P) then
     error = refuse('the first step has no piece: the file holds no step')
   elseif (self%is_reusing()) then ! a step without pieces: the arrays written, the entries
     if (self%group >= 0_hid_kind) then
@@ -424,7 +451,9 @@ contains
 
   error = 1_I4P
   if (self%file_id < 0_hid_kind .or. self%is_piece_open .or. self%group >= 0_hid_kind) return
-  if (self%is_partitioned()) then
+  if (self%topology == TOPOLOGY_TABLE) then
+    error = refuse('a Table has no pieces: its columns are written with write_dataarray(location=row, ...)')
+  elseif (self%is_partitioned()) then
     error = refuse('write_piece(nx1, ..., nz2) is for a grid: the piece of an UnstructuredGrid or a PolyData is '// &
                    'write_piece(np, ...)')
   elseif (self%is_temporal .and. self%step_pieces > 0_I8P) then
@@ -511,6 +540,8 @@ contains
     error = refuse('write_step: outside the pieces and the data groups')
   elseif (.not.self%is_temporal .and. (self%n_pieces > 0_I4P .or. h5_link_exists(self%root, 'FieldData'))) then
     error = refuse('write_step: a time series starts with write_step, before its first piece and field data')
+  elseif (self%topology == TOPOLOGY_TABLE .and. (self%step_pieces > 0_I8P .neqv. self%is_temporal)) then
+    error = refuse('write_step: a time series of a Table starts with write_step, every step with its columns')
   elseif (self%is_temporal .and. self%step_pieces == 0_I8P .and. self%n_steps == 1_I8P) then
     error = refuse('write_step: the first step has no piece')
   elseif (self%is_temporal .and. time <= self%step_time) then
@@ -533,6 +564,14 @@ contains
       self%step_time = time
       self%step_pieces = 0_I8P
       self%step_local = 0_I4P
+      if (self%topology == TOPOLOGY_TABLE) then ! the rows of the steps before; the offsets group
+        self%row_total = self%row_total + max(self%table_rows, 0_I8P)
+        self%table_rows = -1_I8P
+        if (.not.h5_link_exists(self%root, 'Steps/RowDataOffsets')) then
+          error = h5_group_create(self%root, 'Steps/RowDataOffsets', group_id, track_order=.true.)
+          if (error == 0_I4P) error = h5_group_close(group_id)
+        endif
+      endif
       self%step_start = [int(self%n_pieces, I8P), self%total_points, self%total_cells, self%totals(4:)]
       self%step_blocks = self%block_totals
       error = self%roll_arrays()
@@ -545,7 +584,8 @@ contains
       higher_order_degrees, process_ids) &
       result(error)
   !< Open or close the group of the point (`node`) or cell (`cell`) data, inside the piece (or in a step without pieces,
-  !< which reuses the mesh of the step before: its arrays hold the points or cells of all the parts reused).
+  !< which reuses the mesh of the step before: its arrays hold the points or cells of all the parts reused), or the
+  !< group of the columns (`row`) of a Table (no piece; once, or once in each step of a time series).
   !<
   !< When opening, `scalars`, `vectors`, `normals`, `tensors`, `tcoords`, `global_ids`, `pedigree_ids`, `edge_flags`,
   !< `tangents`, `rational_weights`, `higher_order_degrees` and `process_ids` name the active array of each role of VTK:
@@ -577,12 +617,26 @@ contains
     name = 'PointData'
   elseif (location_ == 'CELL') then
     name = 'CellData'
+  elseif (location_ == 'ROW') then
+    name = 'RowData'
   else
+    return
+  endif
+  if ((name == 'RowData') .neqv. (self%topology == TOPOLOGY_TABLE)) then
+    error = refuse('write_dataarray: the columns of a Table (location row) go in a Table, and only them')
     return
   endif
   if (action_ == 'OPEN') then
     ! inside the piece, or in a step without pieces (it reuses the mesh of the step before)
-    if (.not.(self%is_piece_open .or. self%is_reusing()) .or. self%group >= 0_hid_kind) return
+    if (name == 'RowData') then ! the columns of a Table (no piece): once per step
+      if (self%group >= 0_hid_kind .or. self%step_pieces > 0_I8P) then
+        error = refuse('write_dataarray: the columns of a Table are written once (in each step)')
+        return
+      endif
+      self%step_pieces = 1_I8P ! the columns of the Table (of the step) opened
+    elseif (.not.(self%is_piece_open .or. self%is_reusing()) .or. self%group >= 0_hid_kind) then
+      return
+    endif
     error = self%open_group(name)
     if (present(scalars)) self%active(1)%name = scalars
     if (present(vectors)) self%active(2)%name = vectors
@@ -601,6 +655,7 @@ contains
     if (self%group_name /= name) return
     error = self%close_group()
     if (error == 0_I4P .and. self%is_reusing()) error = self%end_reusing() ! the file valid after the group
+    if (error == 0_I4P .and. name == 'RowData') error = self%end_table() ! the rows checked, written
   endif
   endfunction write_dataarray_location_tag
 
@@ -2209,7 +2264,15 @@ contains
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
     return
   endif
-  if (self%is_partitioned() .and. self%group_name /= 'FieldData') then
+  if (self%group_name == 'RowData') then ! a column of a Table: the rows of the others
+    if (self%table_rows >= 0_I8P .and. dims(size(dims)) /= self%table_rows) then
+      error = refuse('the column '//data_name//' has '//trim(str(n=dims(size(dims)), no_sign=.true.))// &
+                     ' rows, the other columns '//trim(str(n=self%table_rows, no_sign=.true.)))
+      return
+    endif
+    self%table_rows = dims(size(dims))
+    error = store_R8P(self, self%group, data_name, x, dims)
+  elseif (self%is_partitioned() .and. self%group_name /= 'FieldData') then
     if (is_new .and. self%local_pieces > 1_I4P) then
       error = refuse('the array '//data_name//' is not in the first piece: every piece writes the same arrays')
       return
@@ -2262,7 +2325,15 @@ contains
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
     return
   endif
-  if (self%is_partitioned() .and. self%group_name /= 'FieldData') then
+  if (self%group_name == 'RowData') then ! a column of a Table: the rows of the others
+    if (self%table_rows >= 0_I8P .and. dims(size(dims)) /= self%table_rows) then
+      error = refuse('the column '//data_name//' has '//trim(str(n=dims(size(dims)), no_sign=.true.))// &
+                     ' rows, the other columns '//trim(str(n=self%table_rows, no_sign=.true.)))
+      return
+    endif
+    self%table_rows = dims(size(dims))
+    error = store_R4P(self, self%group, data_name, x, dims)
+  elseif (self%is_partitioned() .and. self%group_name /= 'FieldData') then
     if (is_new .and. self%local_pieces > 1_I4P) then
       error = refuse('the array '//data_name//' is not in the first piece: every piece writes the same arrays')
       return
@@ -2316,7 +2387,15 @@ contains
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
     return
   endif
-  if (self%is_partitioned() .and. self%group_name /= 'FieldData') then
+  if (self%group_name == 'RowData') then ! a column of a Table: the rows of the others
+    if (self%table_rows >= 0_I8P .and. dims(size(dims)) /= self%table_rows) then
+      error = refuse('the column '//data_name//' has '//trim(str(n=dims(size(dims)), no_sign=.true.))// &
+                     ' rows, the other columns '//trim(str(n=self%table_rows, no_sign=.true.)))
+      return
+    endif
+    self%table_rows = dims(size(dims))
+    error = store_I8P(self, self%group, data_name, x, dims, unsigned=unsigned)
+  elseif (self%is_partitioned() .and. self%group_name /= 'FieldData') then
     if (is_new .and. self%local_pieces > 1_I4P) then
       error = refuse('the array '//data_name//' is not in the first piece: every piece writes the same arrays')
       return
@@ -2370,7 +2449,15 @@ contains
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
     return
   endif
-  if (self%is_partitioned() .and. self%group_name /= 'FieldData') then
+  if (self%group_name == 'RowData') then ! a column of a Table: the rows of the others
+    if (self%table_rows >= 0_I8P .and. dims(size(dims)) /= self%table_rows) then
+      error = refuse('the column '//data_name//' has '//trim(str(n=dims(size(dims)), no_sign=.true.))// &
+                     ' rows, the other columns '//trim(str(n=self%table_rows, no_sign=.true.)))
+      return
+    endif
+    self%table_rows = dims(size(dims))
+    error = store_I4P(self, self%group, data_name, x, dims, unsigned=unsigned)
+  elseif (self%is_partitioned() .and. self%group_name /= 'FieldData') then
     if (is_new .and. self%local_pieces > 1_I4P) then
       error = refuse('the array '//data_name//' is not in the first piece: every piece writes the same arrays')
       return
@@ -2424,7 +2511,15 @@ contains
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
     return
   endif
-  if (self%is_partitioned() .and. self%group_name /= 'FieldData') then
+  if (self%group_name == 'RowData') then ! a column of a Table: the rows of the others
+    if (self%table_rows >= 0_I8P .and. dims(size(dims)) /= self%table_rows) then
+      error = refuse('the column '//data_name//' has '//trim(str(n=dims(size(dims)), no_sign=.true.))// &
+                     ' rows, the other columns '//trim(str(n=self%table_rows, no_sign=.true.)))
+      return
+    endif
+    self%table_rows = dims(size(dims))
+    error = store_I2P(self, self%group, data_name, x, dims, unsigned=unsigned)
+  elseif (self%is_partitioned() .and. self%group_name /= 'FieldData') then
     if (is_new .and. self%local_pieces > 1_I4P) then
       error = refuse('the array '//data_name//' is not in the first piece: every piece writes the same arrays')
       return
@@ -2478,7 +2573,15 @@ contains
     error = refuse('the array '//data_name//' is not in the first step: every step writes the same arrays')
     return
   endif
-  if (self%is_partitioned() .and. self%group_name /= 'FieldData') then
+  if (self%group_name == 'RowData') then ! a column of a Table: the rows of the others
+    if (self%table_rows >= 0_I8P .and. dims(size(dims)) /= self%table_rows) then
+      error = refuse('the column '//data_name//' has '//trim(str(n=dims(size(dims)), no_sign=.true.))// &
+                     ' rows, the other columns '//trim(str(n=self%table_rows, no_sign=.true.)))
+      return
+    endif
+    self%table_rows = dims(size(dims))
+    error = store_I1P(self, self%group, data_name, x, dims, unsigned=unsigned)
+  elseif (self%is_partitioned() .and. self%group_name /= 'FieldData') then
     if (is_new .and. self%local_pieces > 1_I4P) then
       error = refuse('the array '//data_name//' is not in the first piece: every piece writes the same arrays')
       return
@@ -3382,9 +3485,9 @@ contains
 
   error = 1_I4P
   if (self%group < 0_hid_kind .or. n_components < 1_I4P) return
-  if (self%group_name == 'FieldData') then
+  if (self%group_name == 'FieldData' .or. self%group_name == 'RowData') then
     if (mod(n, int(n_components, I8P)) /= 0_I8P) then
-      error = refuse('the field data '//data_name//' has '//trim(str(n=n, no_sign=.true.))// &
+      error = refuse('the array '//data_name//' has '//trim(str(n=n, no_sign=.true.))// &
                      ' values, not a multiple of its '//trim(str(n=n_components, no_sign=.true.))//' components')
       return
     endif
@@ -3658,7 +3761,7 @@ contains
   character(*),         intent(in)    :: data_name !< Data name.
   character(len=:), allocatable       :: names     !< Names, updated (not an assignment of a component to itself).
 
-  if (.not.(self%is_partitioned() .or. self%is_temporal)) return
+  if (.not.(self%is_partitioned() .or. self%is_temporal .or. self%group_name == 'RowData')) return
   if (self%group_name == 'FieldData') then
     if (self%is_temporal) then
       names = self%field_arrays//data_name//NAMES_SEPARATOR
@@ -3672,6 +3775,9 @@ contains
     names = self%cell_arrays//data_name//NAMES_SEPARATOR
     self%cell_arrays = names
     call grow(self%cell_start) ; call grow(self%cell_prev)
+  elseif (self%group_name == 'RowData') then
+    names = self%row_arrays//data_name//NAMES_SEPARATOR
+    self%row_arrays = names
   endif
   contains
     subroutine grow(values)
@@ -3911,6 +4017,29 @@ contains
     file_start = 0_I8P ; count = 0_I8P
   endif
   endsubroutine points_block
+
+  function end_table(self) result(error)
+  !< End the columns of a Table (the static table, or a step of a time series): every column written once, with the
+  !< rows of the others; `NumberOfRows` (one entry per step), and the `Steps` entries of the step (time, `RowDataOffsets`
+  !< of each column): the file is valid after it.
+  class(vtkhdf_writer), intent(inout) :: self      !< Writer.
+  integer(I4P)                        :: error     !< Error status.
+  integer(I8P), allocatable           :: tuples(:) !< Rows of each column.
+
+  error = array_tuples(self%root, 'RowData', self%row_arrays, tuples)
+  if (error /= 0_I4P) return
+  if (self%table_rows < 0_I8P) self%table_rows = 0_I8P
+  if (any(tuples /= self%row_total + self%table_rows)) then
+    error = refuse('every column of a Table is written once in every step, with the same rows')
+    return
+  endif
+  if (self%is_temporal) then
+    error = self%write_steps()
+  else
+    error = store_I8P(self, self%root, 'NumberOfRows', [self%table_rows], [1_I8P])
+    if (error /= 0_I4P) error = refuse('cannot write the number of rows')
+  endif
+  endfunction end_table
 
   function end_reusing(self) result(error)
   !< Check the arrays of a step without pieces (each one written for all the points or cells of the mesh reused, or
@@ -4393,6 +4522,9 @@ contains
   self%is_reopened = .false.
   self%point_arrays = ''
   self%cell_arrays = ''
+  self%row_arrays = ''
+  self%table_rows = -1_I8P
+  self%row_total = 0_I8P
   do r=1, size(ROLES)
     if (allocated(self%active(r)%name)) deallocate(self%active(r)%name)
   enddo
@@ -4607,6 +4739,16 @@ contains
     if (error == 0_I4P) error = self%step_entry('ZCoordinatesOffsets', [(self%geo_slices - 1_I8P) * grid(3)])
   elseif (self%topology == TOPOLOGY_STRG) then ! in time slices (required by VTK)
     if (error == 0_I4P) error = self%step_entry('PointOffsets', [self%geo_slices - 1_I8P])
+  elseif (self%topology == TOPOLOGY_TABLE) then ! the rows of the step (NumberOfRows, one per step), where they start
+    if (error == 0_I4P .and. h5_link_exists(self%root, 'NumberOfRows')) &
+      error = h5_dataset_resize(self%root, 'NumberOfRows', k - 1_I8P)
+    if (error == 0_I4P) error = store_I8P(self, self%root, 'NumberOfRows', [max(self%table_rows, 0_I8P)], [1_I8P])
+    first = 1_I8P
+    do while (first <= len(self%row_arrays, kind=I8P) .and. error == 0_I4P)
+      last = first - 1_I8P + index(self%row_arrays(first:), NAMES_SEPARATOR, kind=I8P)
+      error = self%step_entry('RowDataOffsets/'//self%row_arrays(first:last-1), [self%row_total])
+      first = last + 1_I8P
+    enddo
   endif
   ! point and cell data: where each array was written in the step, or its offset of the step before (reused); tuples,
   ! time slices for a grid

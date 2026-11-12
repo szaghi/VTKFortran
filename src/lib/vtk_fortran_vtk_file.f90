@@ -74,7 +74,8 @@ contains
    !<
    !<### Writing
    !<
-   !< `format` and `mesh_topology` are required.
+   !< `format` and `mesh_topology` are required. `mesh_topology='Table'` (columns of values, no mesh) is written in the
+   !< VTKHDF format only: the XML formats refuse it.
    !<
    !<### Writing one file from MPI ranks
    !<
@@ -206,6 +207,7 @@ contains
    if (.not.(present(format).and.present(mesh_topology))) return
    fformat = trim(adjustl(format))
    fformat = fformat%upper()
+   if (upper_case(trim(adjustl(mesh_topology))) == 'TABLE' .and. fformat /= 'VTKHDF') return ! a Table: VTKHDF only
    error = 0_I4P
    select case(fformat%chars())
    case('ASCII')

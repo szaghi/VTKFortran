@@ -155,6 +155,18 @@ write the points with `write_geo`, then the blocks with `write_polydata_cells`:
   partition of the file, each block a group. See [VTKHDF](/guide/formats#vtkhdf-hdf5) and the recipe
   [A PolyData in a .vtkhdf file](/manual/cookbook#a-polydata-in-a-vtkhdf-file).
 
+## Table (VTKHDF)
+
+A Table holds columns of values, with no mesh: time histories, probes, integrals (a VTK `vtkTable`). It is written in the VTKHDF format only (`format='vtkhdf'`, `mesh_topology='Table'`),
+its columns between `write_dataarray(location='row', action='open')` and `action='close'`, every column of the same rows:
+
+<<< @/examples/snippets/vtkhdf_table-history.f90
+
+- A column is any `write_dataarray` (every kind, components as for a data array) or `write_dataarray_unsigned`.
+- In a time series (`write_step(time)` before each output) every step writes the same columns, with any number of rows.
+- No pieces and no point or cell data. The layout, the refusals and the readers: [VTKHDF](/guide/formats#vtkhdf-hdf5);
+  a complete program: [A time history (Table)](/manual/cookbook#a-time-history-table).
+
 ## Multiple pieces in one file
 
 A single file can hold several pieces, e.g. the blocks of a multi-block solver written by one process without a parallel
@@ -220,6 +232,7 @@ The `mesh_topology` argument is case-sensitive:
 | `StructuredGrid` | `.vts` file |
 | `UnstructuredGrid` | `.vtu` file |
 | `PolyData` | `.vtp` file |
+| `Table` | `.vtkhdf` file only (`format='vtkhdf'`) |
 | `PRectilinearGrid` | `.pvtr` file (pvtk_file only) |
 | `PStructuredGrid` | `.pvts` file (pvtk_file only) |
 | `PUnstructuredGrid` | `.pvtu` file (pvtk_file only) |

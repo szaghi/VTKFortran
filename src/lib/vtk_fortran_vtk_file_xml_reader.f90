@@ -12,7 +12,8 @@ module vtk_fortran_vtk_file_xml_reader
 !<
 !< It reads VTKHDF files too (`.vtkhdf`, HDF5, when the library is built with HDF5): `initialize` recognizes them by the
 !< HDF5 signature, and every call is then answered by a `vtkhdf_reader` (`vtk_fortran_vtk_file_vtkhdf_reader`), the API
-!< unchanged; a VTKHDF time series is read one step at a time (`get_steps`, `set_step`; the step 1 by default).
+!< unchanged; a VTKHDF time series is read one step at a time (`get_steps`, `set_step`; the step 1 by default). A VTKHDF
+!< Table has no pieces (`npieces` 0): its columns are the data arrays of `location='row'`.
 !<
 !< It reads the parallel headers too (PImageData, PRectilinearGrid, PStructuredGrid, PUnstructuredGrid, PPolyData): their
 !< information, the declared arrays (`get_dataarray_names`, `get_dataarray_info`), the pieces (`get_sources`, `read_piece`
@@ -383,7 +384,7 @@ contains
   !<
   !< The names are blank padded to the length of the longest one; a location without dataarrays returns no names.
   class(xml_reader),             intent(in)           :: self     !< XML reader.
-  character(*),                  intent(in)           :: location !< Location: node, cell or field.
+  character(*),                  intent(in)           :: location !< Location: node, cell, field or row (Table).
   character(len=:), allocatable, intent(out)          :: names(:) !< Names of the dataarrays.
   integer(I4P),                  intent(in), optional :: piece    !< Piece, from 1 (default 1, ignored for field data).
   integer(I4P)                                        :: error    !< Error status.
@@ -443,7 +444,7 @@ contains
   !< The number of tuples is the `NumberOfTuples` attribute when present, otherwise the number of points or cells of the
   !< piece; -1 when unknown (field data without `NumberOfTuples`, arrays declared by a parallel header).
   class(xml_reader),             intent(in)            :: self         !< XML reader.
-  character(*),                  intent(in)            :: location     !< Location: node, cell or field.
+  character(*),                  intent(in)            :: location     !< Location: node, cell, field or row (Table).
   character(*),                  intent(in)            :: data_name    !< Name of the dataarray.
   integer(I4P),                  intent(in),  optional :: piece        !< Piece, from 1 (default 1, ignored for field data).
   character(len=:), allocatable, intent(out), optional :: data_type    !< VTK type, e.g. Float64, Int32, UInt8, String.
@@ -486,7 +487,7 @@ contains
   function read_dataarray_strings(self, location, data_name, x, piece) result(error)
   !< Read a dataarray of strings (type String, as field data strings are written).
   class(xml_reader),             intent(in)           :: self      !< XML reader.
-  character(*),                  intent(in)           :: location  !< Location: node, cell or field.
+  character(*),                  intent(in)           :: location  !< Location: node, cell, field or row (Table).
   character(*),                  intent(in)           :: data_name !< Name of the dataarray.
   character(len=:), allocatable, intent(out)          :: x(:)      !< Strings, blank padded to the longest one.
   integer(I4P),                  intent(in), optional :: piece     !< Piece, from 1 (default 1, ignored for field data).
@@ -933,7 +934,7 @@ contains
   function find_dataarray(self, location, data_name, piece, id, section) result(error)
   !< Return the index of a named dataarray element of a location, and of the location element (0 if absent).
   class(xml_reader), intent(in)           :: self      !< XML reader.
-  character(*),      intent(in)           :: location  !< Location: node, cell or field.
+  character(*),      intent(in)           :: location  !< Location: node, cell, field or row (Table).
   character(*),      intent(in)           :: data_name !< Name of the dataarray.
   integer(I4P),      intent(in), optional :: piece     !< Piece, from 1 (default 1, ignored for field data).
   integer(I4P),      intent(out)          :: id        !< Index of the dataarray element, 0 if not found.
@@ -1086,7 +1087,7 @@ contains
   function read_named_dataarray(self, location, data_name, piece, bytes, data_type, n_components) result(error)
   !< Return the bytes, the VTK type and the number of components of a named dataarray of a location.
   class(xml_reader),             intent(in)           :: self         !< XML reader.
-  character(*),                  intent(in)           :: location     !< Location: node, cell or field.
+  character(*),                  intent(in)           :: location     !< Location: node, cell, field or row (Table).
   character(*),                  intent(in)           :: data_name    !< Name of the dataarray.
   integer(I4P),                  intent(in), optional :: piece        !< Piece, from 1 (default 1, ignored for field data).
   integer(I1P),     allocatable, intent(out)          :: bytes(:)     !< Bytes of the dataarray.
@@ -1115,7 +1116,7 @@ contains
   function read_dataarray_rank1_R8P(self, location, data_name, x, piece) result(error)
   !< Read a dataarray, flattened (components interleaved), into an array (R8P).
   class(xml_reader),        intent(in)           :: self      !< XML reader.
-  character(*),             intent(in)           :: location  !< Location: node, cell or field.
+  character(*),             intent(in)           :: location  !< Location: node, cell, field or row (Table).
   character(*),             intent(in)           :: data_name !< Name of the dataarray.
   real(R8P),    allocatable, intent(out)          :: x(:)      !< Values.
   integer(I4P),             intent(in), optional :: piece     !< Piece, from 1 (default 1, ignored for field data).
@@ -1134,7 +1135,7 @@ contains
   function read_dataarray_rank1_R4P(self, location, data_name, x, piece) result(error)
   !< Read a dataarray, flattened (components interleaved), into an array (R4P).
   class(xml_reader),        intent(in)           :: self      !< XML reader.
-  character(*),             intent(in)           :: location  !< Location: node, cell or field.
+  character(*),             intent(in)           :: location  !< Location: node, cell, field or row (Table).
   character(*),             intent(in)           :: data_name !< Name of the dataarray.
   real(R4P),    allocatable, intent(out)          :: x(:)      !< Values.
   integer(I4P),             intent(in), optional :: piece     !< Piece, from 1 (default 1, ignored for field data).
@@ -1153,7 +1154,7 @@ contains
   function read_dataarray_rank1_I8P(self, location, data_name, x, piece) result(error)
   !< Read a dataarray, flattened (components interleaved), into an array (I8P).
   class(xml_reader),        intent(in)           :: self      !< XML reader.
-  character(*),             intent(in)           :: location  !< Location: node, cell or field.
+  character(*),             intent(in)           :: location  !< Location: node, cell, field or row (Table).
   character(*),             intent(in)           :: data_name !< Name of the dataarray.
   integer(I8P), allocatable, intent(out)          :: x(:)      !< Values.
   integer(I4P),             intent(in), optional :: piece     !< Piece, from 1 (default 1, ignored for field data).
@@ -1172,7 +1173,7 @@ contains
   function read_dataarray_rank1_I4P(self, location, data_name, x, piece) result(error)
   !< Read a dataarray, flattened (components interleaved), into an array (I4P).
   class(xml_reader),        intent(in)           :: self      !< XML reader.
-  character(*),             intent(in)           :: location  !< Location: node, cell or field.
+  character(*),             intent(in)           :: location  !< Location: node, cell, field or row (Table).
   character(*),             intent(in)           :: data_name !< Name of the dataarray.
   integer(I4P), allocatable, intent(out)          :: x(:)      !< Values.
   integer(I4P),             intent(in), optional :: piece     !< Piece, from 1 (default 1, ignored for field data).
@@ -1191,7 +1192,7 @@ contains
   function read_dataarray_rank1_I2P(self, location, data_name, x, piece) result(error)
   !< Read a dataarray, flattened (components interleaved), into an array (I2P).
   class(xml_reader),        intent(in)           :: self      !< XML reader.
-  character(*),             intent(in)           :: location  !< Location: node, cell or field.
+  character(*),             intent(in)           :: location  !< Location: node, cell, field or row (Table).
   character(*),             intent(in)           :: data_name !< Name of the dataarray.
   integer(I2P), allocatable, intent(out)          :: x(:)      !< Values.
   integer(I4P),             intent(in), optional :: piece     !< Piece, from 1 (default 1, ignored for field data).
@@ -1210,7 +1211,7 @@ contains
   function read_dataarray_rank1_I1P(self, location, data_name, x, piece) result(error)
   !< Read a dataarray, flattened (components interleaved), into an array (I1P).
   class(xml_reader),        intent(in)           :: self      !< XML reader.
-  character(*),             intent(in)           :: location  !< Location: node, cell or field.
+  character(*),             intent(in)           :: location  !< Location: node, cell, field or row (Table).
   character(*),             intent(in)           :: data_name !< Name of the dataarray.
   integer(I1P), allocatable, intent(out)          :: x(:)      !< Values.
   integer(I4P),             intent(in), optional :: piece     !< Piece, from 1 (default 1, ignored for field data).
@@ -1229,7 +1230,7 @@ contains
   function read_dataarray_rank2_R8P(self, location, data_name, x, piece) result(error)
   !< Read a dataarray into an array of shape (number of components, number of tuples) (R8P).
   class(xml_reader),        intent(in)           :: self      !< XML reader.
-  character(*),             intent(in)           :: location  !< Location: node, cell or field.
+  character(*),             intent(in)           :: location  !< Location: node, cell, field or row (Table).
   character(*),             intent(in)           :: data_name !< Name of the dataarray.
   real(R8P),    allocatable, intent(out)          :: x(:,:)    !< Values.
   integer(I4P),             intent(in), optional :: piece     !< Piece, from 1 (default 1, ignored for field data).
@@ -1256,7 +1257,7 @@ contains
   function read_dataarray_rank2_R4P(self, location, data_name, x, piece) result(error)
   !< Read a dataarray into an array of shape (number of components, number of tuples) (R4P).
   class(xml_reader),        intent(in)           :: self      !< XML reader.
-  character(*),             intent(in)           :: location  !< Location: node, cell or field.
+  character(*),             intent(in)           :: location  !< Location: node, cell, field or row (Table).
   character(*),             intent(in)           :: data_name !< Name of the dataarray.
   real(R4P),    allocatable, intent(out)          :: x(:,:)    !< Values.
   integer(I4P),             intent(in), optional :: piece     !< Piece, from 1 (default 1, ignored for field data).
@@ -1283,7 +1284,7 @@ contains
   function read_dataarray_rank2_I8P(self, location, data_name, x, piece) result(error)
   !< Read a dataarray into an array of shape (number of components, number of tuples) (I8P).
   class(xml_reader),        intent(in)           :: self      !< XML reader.
-  character(*),             intent(in)           :: location  !< Location: node, cell or field.
+  character(*),             intent(in)           :: location  !< Location: node, cell, field or row (Table).
   character(*),             intent(in)           :: data_name !< Name of the dataarray.
   integer(I8P), allocatable, intent(out)          :: x(:,:)    !< Values.
   integer(I4P),             intent(in), optional :: piece     !< Piece, from 1 (default 1, ignored for field data).
@@ -1310,7 +1311,7 @@ contains
   function read_dataarray_rank2_I4P(self, location, data_name, x, piece) result(error)
   !< Read a dataarray into an array of shape (number of components, number of tuples) (I4P).
   class(xml_reader),        intent(in)           :: self      !< XML reader.
-  character(*),             intent(in)           :: location  !< Location: node, cell or field.
+  character(*),             intent(in)           :: location  !< Location: node, cell, field or row (Table).
   character(*),             intent(in)           :: data_name !< Name of the dataarray.
   integer(I4P), allocatable, intent(out)          :: x(:,:)    !< Values.
   integer(I4P),             intent(in), optional :: piece     !< Piece, from 1 (default 1, ignored for field data).
@@ -1337,7 +1338,7 @@ contains
   function read_dataarray_rank2_I2P(self, location, data_name, x, piece) result(error)
   !< Read a dataarray into an array of shape (number of components, number of tuples) (I2P).
   class(xml_reader),        intent(in)           :: self      !< XML reader.
-  character(*),             intent(in)           :: location  !< Location: node, cell or field.
+  character(*),             intent(in)           :: location  !< Location: node, cell, field or row (Table).
   character(*),             intent(in)           :: data_name !< Name of the dataarray.
   integer(I2P), allocatable, intent(out)          :: x(:,:)    !< Values.
   integer(I4P),             intent(in), optional :: piece     !< Piece, from 1 (default 1, ignored for field data).
@@ -1364,7 +1365,7 @@ contains
   function read_dataarray_rank2_I1P(self, location, data_name, x, piece) result(error)
   !< Read a dataarray into an array of shape (number of components, number of tuples) (I1P).
   class(xml_reader),        intent(in)           :: self      !< XML reader.
-  character(*),             intent(in)           :: location  !< Location: node, cell or field.
+  character(*),             intent(in)           :: location  !< Location: node, cell, field or row (Table).
   character(*),             intent(in)           :: data_name !< Name of the dataarray.
   integer(I1P), allocatable, intent(out)          :: x(:,:)    !< Values.
   integer(I4P),             intent(in), optional :: piece     !< Piece, from 1 (default 1, ignored for field data).

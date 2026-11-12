@@ -4,7 +4,8 @@ module vtk_fortran_vtk_file_vtkhdf_reader
 !< action='read')`), which dispatches its calls here when the file is an HDF5 one.
 !<
 !< It reads every dataset the VTKHDF writer writes, and the same layouts written by VTK: ImageData, RectilinearGrid,
-!< StructuredGrid (one piece), UnstructuredGrid (polyhedra included) and PolyData (each partition a piece), static or time
+!< StructuredGrid (one piece), UnstructuredGrid (polyhedra included), PolyData (each partition a piece) and Table (no
+!< pieces: its columns are read with `location='row'`, the rows of the step read; `NumberOfRows`), static or time
 !< series (`Steps`: `get_steps`, `set_step`; the step 1 by default; through the offsets of `Steps`, so that a step reusing
 !< the mesh or an array of the step before reads it as written in full). The values are read as HDF5 hyperslabs of the piece
 !< and step asked for, as the bytes of their type in the file (`read_dataarray_bytes`), then converted by the caller: the
@@ -88,7 +89,7 @@ contains
   if (h5_attribute_read(self%root, 'Type', text) /= 0_I4P) return
   error = 3
   select case(text)
-  case('ImageData', 'RectilinearGrid', 'StructuredGrid', 'UnstructuredGrid', 'PolyData')
+  case('ImageData', 'RectilinearGrid', 'StructuredGrid', 'UnstructuredGrid', 'PolyData', 'Table')
     self%mesh_topology = text
   case default
     return
@@ -172,7 +173,9 @@ contains
   if (present(mesh_topology)) mesh_topology = self%mesh_topology
   if (present(npieces)) then
     npieces = 1
-    if (.not.self%is_grid()) then
+    if (self%mesh_topology == 'Table') then ! no pieces: its columns are read with location='row'
+      npieces = 0
+    elseif (.not.self%is_grid()) then
       error = self%part(1, g, first, n_parts) ! n_parts even when the step has no part
       npieces = int(n_parts, I4P)
       error = 0
@@ -265,7 +268,7 @@ contains
 
   counts = 0_I8P
   error = 4
-  if (.not.self%is_initialized) return
+  if (.not.self%is_initialized .or. self%mesh_topology == 'Table') return ! a Table has no pieces
   if (self%is_grid()) then
     if (present(piece)) then
       if (piece /= 1) return
@@ -349,10 +352,10 @@ contains
   endfunction get_active
 
   function get_dataarray_names(self, location, names, piece) result(error)
-  !< Return the names of the dataarrays of a location (node, cell or field), in the order they were written (their names'
-  !< order if the file does not track it), blank padded to the longest one.
+  !< Return the names of the dataarrays of a location (node, cell, field, or row: the columns of a Table), in the order
+  !< they were written (their names' order if the file does not track it), blank padded to the longest one.
   class(vtkhdf_reader),          intent(in)           :: self     !< Reader.
-  character(*),                  intent(in)           :: location !< Location: node, cell or field.
+  character(*),                  intent(in)           :: location !< Location: node, cell, field or row (Table).
   character(len=:), allocatable, intent(out)          :: names(:) !< Names of the dataarrays.
   integer(I4P),                  intent(in), optional :: piece    !< Piece, from 1 (default 1, ignored for field data).
   integer(I4P)                                        :: error    !< Error status.
@@ -366,7 +369,7 @@ contains
   if (.not.self%is_initialized) return
   group = location_group(location)
   if (len(group) == 0) return
-  if (group /= 'FieldData' .and. .not.self%is_grid()) then
+  if (group /= 'FieldData' .and. group /= 'RowData' .and. .not.(self%is_grid() .or. self%mesh_topology == 'Table')) then
     error = self%part(piece, g, first, n_parts)
     if (error /= 0) return
   endif
@@ -399,7 +402,7 @@ contains
   function get_dataarray_info(self, location, data_name, piece, data_type, n_components, n_tuples) result(error)
   !< Return the VTK type, the number of components and the number of tuples (of the piece and step read) of a dataarray.
   class(vtkhdf_reader),          intent(in)            :: self         !< Reader.
-  character(*),                  intent(in)            :: location     !< Location: node, cell or field.
+  character(*),                  intent(in)            :: location     !< Location: node, cell, field or row (Table).
   character(*),                  intent(in)            :: data_name    !< Name of the dataarray.
   integer(I4P),                  intent(in),  optional :: piece        !< Piece, from 1 (default 1, ignored for field data).
   character(len=:), allocatable, intent(out), optional :: data_type    !< VTK type, e.g. Float64, Int32, UInt8.
@@ -423,7 +426,7 @@ contains
   function read_dataarray_bytes(self, location, data_name, piece, bytes, data_type, n_components) result(error)
   !< Return the bytes (of the piece and step read), the VTK type and the number of components of a named dataarray.
   class(vtkhdf_reader),          intent(in)           :: self         !< Reader.
-  character(*),                  intent(in)           :: location     !< Location: node, cell or field.
+  character(*),                  intent(in)           :: location     !< Location: node, cell, field or row (Table).
   character(*),                  intent(in)           :: data_name    !< Name of the dataarray.
   integer(I4P),                  intent(in), optional :: piece        !< Piece, from 1 (default 1, ignored for field data).
   integer(I1P),     allocatable, intent(out)          :: bytes(:)     !< Bytes of the dataarray.
@@ -755,9 +758,10 @@ contains
   ! non type-bound helpers
   function array_slice(self, location, data_name, piece, path, data_type, first, count, n_components, n_tuples) result(error)
   !< Where a dataarray of the piece and step read is: its dataset, the rows to skip and to read along its last dimension
-  !< (tuples of a partition, a time slice of a grid, the tuples of a step of field data), its type, components, tuples.
+  !< (tuples of a partition, a time slice of a grid, the tuples of a step of field data, the rows of a step of a Table
+  !< column), its type, components, tuples. A column of a time series needs its `Steps/RowDataOffsets` entry (as VTK).
   class(vtkhdf_reader),          intent(in)           :: self         !< Reader.
-  character(*),                  intent(in)           :: location     !< Location: node, cell or field.
+  character(*),                  intent(in)           :: location     !< Location: node, cell, field or row (Table).
   character(*),                  intent(in)           :: data_name    !< Name of the dataarray.
   integer(I4P),                  intent(in), optional :: piece        !< Piece, from 1 (default 1, ignored for field data).
   character(len=:), allocatable, intent(out)          :: path         !< Dataset.
@@ -769,6 +773,7 @@ contains
   integer(I4P)                                        :: error        !< Error status.
   character(len=:), allocatable                       :: group        !< Group of the location.
   integer(I8P), allocatable                           :: dims(:)      !< Shape of the dataset, Fortran order.
+  integer(I8P), allocatable                           :: counts(:)    !< Rows of the steps of a Table.
   integer(I8P)                                        :: g, starts(9), n_parts, b !< Partition, starts, parts, counter.
   integer(I8P)                                        :: grid(3)      !< Points of a grid along each axis.
   integer(I4P)                                        :: n_axes       !< Axes of the grid in the arrays.
@@ -787,7 +792,17 @@ contains
     error = 5
     return
   endif
-  if (group == 'FieldData') then
+  if (group == 'RowData') then ! a column of a Table: the rows of the step read (NumberOfRows, one entry per step)
+    if (size(dims) > 1) n_components = int(product(dims(1:size(dims)-1)), I4P)
+    if (h5_dataset_read(self%root, 'NumberOfRows', counts) /= 0_I4P) return
+    if (size(counts, kind=I8P) < max(self%step, 1_I8P)) return
+    count = counts(self%step)
+    if (self%n_steps > 0_I8P) then
+      if (.not.h5_link_exists(self%root, 'Steps/RowDataOffsets/'//trim(data_name))) return
+      first = self%step_value('RowDataOffsets/'//trim(data_name), 1_I4P, error) ; if (error /= 0) return
+    endif
+    n_tuples = count
+  elseif (group == 'FieldData') then
     count = dims(size(dims))
     if (size(dims) > 1) n_components = int(product(dims(1:size(dims)-1)), I4P)
     if (self%n_steps > 0_I8P .and. h5_link_exists(self%root, 'Steps/FieldDataOffsets/'//trim(data_name))) then
@@ -1040,7 +1055,8 @@ contains
   endfunction read_I8P
 
   function location_group(location) result(group)
-  !< The group of a location: node PointData, cell CellData, field FieldData (case insensitive), empty otherwise.
+  !< The group of a location: node PointData, cell CellData, field FieldData, row RowData (case insensitive), empty
+  !< otherwise.
   character(*), intent(in)      :: location !< Location.
   character(len=:), allocatable :: group    !< Group.
   character(len=:), allocatable :: l        !< Location, lower case.
@@ -1057,6 +1073,8 @@ contains
     group = 'CellData'
   case('field')
     group = 'FieldData'
+  case('row')
+    group = 'RowData'
   case default
     group = ''
   endselect

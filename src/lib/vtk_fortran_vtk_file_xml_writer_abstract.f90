@@ -515,6 +515,9 @@ contains
       location_ = 'CellData'
    case('NODE')
       location_ = 'PointData'
+   case('ROW') ! the columns of a Table: VTKHDF only
+      error = 1_I4P
+      return
    endselect
    select case(self%topology%chars())
    case('PRectilinearGrid', 'PStructuredGrid', 'PUnstructuredGrid', 'PImageData', 'PPolyData')

@@ -106,11 +106,16 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   `PolyhedronToFaces`, `PolyhedronOffsets` and their counts, zero entries for the pieces without, Version 2.5).
   PolyData: each piece a partition too, the four blocks of `write_polydata_cells` in the groups `Vertices`, `Lines`,
   `Strips`, `Polygons`, all four always written (VTK reads nothing without one), a block not given gets zero entries,
-  `nc` of `write_geo` unused as in XML. Point/cell/field data, active arrays as the `Attribute` attribute, unsigned,
+  `nc` of `write_geo` unused as in XML. Table (`mesh_topology='Table'`, Version 2.8): no pieces, columns in `RowData`
+  written with `write_dataarray(location='row', action='open'|'close')` (every kind, components; the same rows,
+  `table_rows`), `NumberOfRows` written at the close (`end_table`); a series appends the rows of each step
+  (`NumberOfRows` one entry per step, `Steps/RowDataOffsets/<col>` = `row_total`, VTK's spelling, not the spec page's
+  `RowDataOffets`); refused: XML formats (`vtk_file%initialize`), `comm`, a step without columns (`step_pieces` is the
+  "columns opened" flag); VTK 9.7.2 reads it, ParaView 6.1.1 does not. Point/cell/field data, active arrays as the `Attribute` attribute, unsigned,
   deflate for `compressor='zlib'`; refusals return an error with a message on stderr (a data name empty or with `/` or
   `.`: `h5_name_invalid`, also used by `vtm_file` for block and dataset names; never renamed; HDF5 has no length limit). Arrays stored as in memory
   (`x(nc,i,j,k)` = VTKHDF `[k,j,i,nc]`), the axes of one point of a grid dropped (VTK requires it); `Version` written by
-  `finalize` (2.0, 2.5 with polyhedra, 2.6 with active arrays, 2.7 for RG/SG). Its procedures repeat the abstract
+  `finalize` (2.0, 2.5 with polyhedra, 2.6 with active arrays, 2.7 for RG/SG, 2.8 Table). Its procedures repeat the abstract
   interfaces, one per kind and layout, all funnelled into the private `put_<kind>` (and `store_<kind>` for the appended
   datasets of an UnstructuredGrid and PolyData): change the kinds together. Time series (`write_step`, `Steps`): the
   `Steps` entries of the open step rewritten at the end of every piece (file valid after it); what a step does not
@@ -146,7 +151,8 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
 - `vtk_fortran_vtk_file_vtkhdf_reader` — `vtkhdf_reader`: VTKHDF files read through `xml_reader` (dispatched when
   `initialize` sees the HDF5 signature): every topology, partitions as pieces, time series (`get_steps`, `set_step`),
   values as HDF5 hyperslabs of the piece/step converted by the decoder (`read_dataarray_bytes`), offsets back to end
-  offsets, polyhedra back to the face stream (VTKHDF 2.9 shared faces, `-(n+1)` in `PolyhedronToFaces`, given to each
+  offsets, a Table's columns as `location='row'` (`npieces` 0; a series column needs its `RowDataOffsets`, error 6
+  otherwise, as VTK), polyhedra back to the face stream (VTKHDF 2.9 shared faces, `-(n+1)` in `PolyhedronToFaces`, given to each
   polyhedron, reversed where marked; a face id out of range is error 6; VTK 9.7.2 cannot read such files, the nightly
   of 2026-11-08 misreads the reversed faces). `xml_reader%finalize` stays pure (forgets the file); `close` closes it
 - `vtk_fortran_vtk_file_xml_reader` — `xml_reader` type: reader of serial files (any format, header type, zlib) and parallel headers (`check_pieces`); indexes the file once with FoXy `xml_index` (tags and content positions, scan stopped at `AppendedData`), then decodes only the arrays asked for; `get_active(location, role, data_name)` the active array of a role (the
@@ -194,6 +200,9 @@ UnstructuredGrid, every cell type but polyhedra, two pieces, I8P ids, each also 
 `vtk_fortran_write_vtkhdf_steps.f90`: time series of every topology, each step also written as an XML file, and five
 storing once what does not change (a mesh reused by steps without pieces, grid geometry and arrays reused), their
 offsets read back, the reuse refusals;
+`vtk_fortran_write_vtkhdf_table.f90`: Tables (a column of each kind, unsigned, 3 components; a 3-step series), read
+back with the bindings and the reader, the refusals (rows, names, missing/new columns, steps without columns, pieces,
+locations; XML refuses a Table);
 `vtk_fortran_write_vtkhdf_append.f90`: series continued with `action='append'` (restart, interrupted run), reuse across
 the restart, an orphan offset entry, a restart after a step with an empty piece;
 `vtk_fortran_write_vtkhdf_vtm.f90`: VTKHDF multi-block files (`vtm_file`, `format='vtkhdf'`): the nested assembly, a
@@ -210,5 +219,5 @@ ranks (one rank empty, I4P and I8P ids by rank), an ImageData, a RectilinearGrid
 ranks two along x, one across, one empty; otherwise rank 0 whole), an UnstructuredGrid series (pieces changing size,
 continued by the ranks after a restart, a step reusing the mesh), a PolyData series, polyhedra appearing at step 2 on the odd ranks,
 the UG and PolyData compressed (with parallel filtered writes, skipped otherwise), compared with the same files written serially and
-as `.vtu`/`.vtp`/`.vti`/`.vtr`/`.vts`, the refusals of `comm` (grid regions outside, overlapping, not covering, two); without MPI `comm` refused, its name without "mpi" since `scripts/run_tests.sh` runs those with
+as `.vtu`/`.vtp`/`.vti`/`.vtr`/`.vts`, the refusals of `comm` (grid regions outside, overlapping, not covering, two; a Table); without MPI `comm` refused, its name without "mpi" since `scripts/run_tests.sh` runs those with
 mpirun; without HDF5 the writer refuses to start); `vtk_fortran_read.F90` reads files back (every topology and format, and two files written by VTK, embedded in the test), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.

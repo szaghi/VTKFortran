@@ -232,6 +232,27 @@ The steps of each mesh, written as for a single series:
 - ParaView 6.1.1 plays every step of every block. The rules and readers in detail:
   [Multi-block in one VTKHDF file](/guide/parallel#multi-block-in-one-vtkhdf-file).
 
+### A time history (Table)
+
+Time histories, probes and integrals are columns of values, without a mesh: a Table. Here the history of a damped
+oscillator, one row per time step, written at the end of the run as the columns of one Table:
+
+<<< @/examples/snippets/vtkhdf_table-history.f90
+
+A time series of Tables keeps the rows of each output apart: here three probes of a travelling wave, one row per probe
+at each output, the file valid after each step:
+
+<<< @/examples/snippets/vtkhdf_table-probes.f90
+
+Both are read back with the reader of the library, the columns with `location='row'`:
+
+<<< @/examples/snippets/vtkhdf_table-read.f90
+
+<<< @/examples/output/vtkhdf_table.ansi{ansi}
+
+A Table is VTKHDF 2.8: **VTK 9.7 reads it** (`vtkHDFReader` gives a `vtkTable`), **ParaView 6.1 does not** (its VTK
+9.6 does not know the type). See [VTKHDF](/guide/formats#vtkhdf-hdf5) for the layout.
+
 ### More than 2^31 points or cells
 
 <<< @/examples/snippets/ids_64bit.f90

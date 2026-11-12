@@ -1,0 +1,8 @@
+$ vtkhdf_table
+history.vtkhdf: 41 rows; the displacement every 2 time units:
+    1.000 -0.373 -0.399  0.530 -0.111 -0.273
+probes.vtkhdf: 4 steps; the wave at the probes:
+  t = 0.00:  0.707  0.000 -0.707
+  t = 0.50:  0.383  0.383 -0.924
+  t = 1.00:  0.000  0.707 -1.000
+  t = 1.50: -0.383  0.924 -0.924
