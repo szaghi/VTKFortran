@@ -14,11 +14,12 @@ program vtk_fortran_write_vtkhdf_vtm
 !<- `vtkfortran_pdc_nested`, `vtkfortran_pdc_series`: the same two as `PartitionedDataSetCollection`s
 !<  (`composite='PartitionedDataSetCollection'`), each with one more block, `checked`, that references two datasets
 !<  already copied (`references=`), without a new copy;
-!<- `vtkfortran_vtm_references`: a multi-block file whose block `checked` references two datasets of the other blocks.
+!<- `vtkfortran_vtm_references`: a multi-block file whose block `checked` references two datasets of the other blocks;
+!<- `vtkfortran_vtm_gridseries`: a time series of an ImageData series block and an UnstructuredGrid series block.
 !<
 !< The files are read back with the HDF5 bindings (the type, the links of the tree; the steps of each block of the
 !< series; the copies of a collection named after their datasets, their `Index`, a referenced dataset copied once).
-!< Refusals are checked too: a time-series ImageData block, a static block after a series block and the reverse, a
+!< Refusals are checked too: a time-series Table block, a static block after a series block and the reverse, a
 !< series with another number of steps or other times, block and dataset names with '/' or '.'; in a collection a
 !< dataset name used twice or `Assembly`, a reference to a dataset not copied; in a multi-block file a reference to a name
 !< given to two datasets or never written; references in an XML `.vtm`, an unknown composite, a VTKHDF
@@ -87,6 +88,15 @@ else
   write(u, '(A)') 'solid/series_tetra series_tetra.vtkhdf', 'solid/series_tetra_2 series_tetra_2.vtkhdf', &
                   'surface/series_skin series_skin.vtkhdf'
   close(u)
+  ! a time series of an ImageData block and an UnstructuredGrid block (grid series: #90 C4)
+  e(17) = table_series('series_table.vtkhdf')
+  e(17) = max(e(17), abs(a_vtm_file%initialize(filename='vtkfortran_vtm_gridseries.vtkhdf', format='vtkhdf')))
+  e(17) = max(e(17), abs(a_vtm_file%write_block(filenames='series_fluid.vtkhdf', name='fluid')))
+  e(17) = max(e(17), abs(a_vtm_file%write_block(filenames='series_tetra.vtkhdf', name='solid')))
+  e(17) = max(e(17), abs(a_vtm_file%finalize()))
+  open(newunit=u, file='vtkfortran_vtm_gridseries.txt', status='replace')
+  write(u, '(A)') 'fluid/series_fluid series_fluid.vtkhdf', 'solid/series_tetra series_tetra.vtkhdf'
+  close(u)
   ! the same two as collections, each with a block referencing two datasets already copied
   e(14) = a_vtm_file%initialize(filename='vtkfortran_pdc_nested.vtkhdf', format='vtkhdf', &
                                 composite='PartitionedDataSetCollection')
@@ -139,8 +149,8 @@ else
     endif
     u = h5_file_close(file_id)
   endif
-  test_passed(1) = all(e(1:16) == 0)
-  if (.not.test_passed(1)) print '(A,16I2)', 'errors of the files: ', e(1:16)
+  test_passed(1) = all(e(1:17) == 0)
+  if (.not.test_passed(1)) print '(A,17I2)', 'errors of the files: ', e(1:17)
   test_passed(2) = refusals()
 
   ! read back the nested assembly
@@ -196,6 +206,10 @@ else
                      [character(14) :: 'solid', 'series_tetra', 'series_tetra_2', 'surface', 'series_skin'], &
                      [character(7) :: '', 'Block_1', 'Block_2', '', 'Block_3'], &
                      [character(14) :: '', 'series_tetra', 'series_tetra_2', '', 'series_skin']) .and. test_passed(9)
+  test_passed(9) = read_composite('vtkfortran_vtm_gridseries.vtkhdf', [1, 2, 1, 2], 'bdbd', &
+                     [character(12) :: 'fluid', 'series_fluid', 'solid', 'series_tetra'], &
+                     [character(7) :: '', 'Block_1', '', 'Block_2'], &
+                     [character(12) :: '', 'series_fluid', '', 'series_tetra']) .and. test_passed(9)
   test_passed(9) = read_composite('vtkfortran_pdc_series.vtkhdf', [1, 2, 2, 1, 2, 1, 2, 2], 'bddbdbdd', &
                      [character(14) :: 'solid', 'series_tetra', 'series_tetra_2', 'surface', 'series_skin', 'checked', &
                       'series_skin', 'series_tetra'], &
@@ -519,6 +533,22 @@ contains
   error = max(error, abs(a_vtk_file%finalize()))
   endfunction triangles
 
+  function table_series(filename) result(error)
+  !< A Table time series of 3 steps at 0.5, 1, 1.5: one column of two rows.
+  character(*), intent(in) :: filename  !< File name.
+  integer(I4P)             :: error     !< Error status.
+  integer(I4P)             :: s         !< Counter.
+
+  error = a_vtk_file%initialize(format='vtkhdf', filename=filename, mesh_topology='Table')
+  do s=1, 3
+    error = max(error, abs(a_vtk_file%xml_writer%write_step(time=0.5_R8P * s)))
+    error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(location='row', action='open')))
+    error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(data_name='a', x=[1._R8P, 2._R8P] * s)))
+    error = max(error, abs(a_vtk_file%xml_writer%write_dataarray(location='row', action='close')))
+  enddo
+  error = max(error, abs(a_vtk_file%finalize()))
+  endfunction table_series
+
   function image(filename, n_steps) result(error)
   !< A 2D ImageData with point data; a time series of n_steps steps if n_steps > 0.
   character(*), intent(in) :: filename  !< File name.
@@ -591,7 +621,7 @@ contains
   ok(5) = a_vtm_file%finalize() /= 0                                                       ! a block left open
   ! a time series
   error = a_vtm_file%initialize(filename='refused_vtm_series.vtkhdf', format='vtkhdf')
-  ok(6) = a_vtm_file%write_block(filenames='series_fluid.vtkhdf', name='a') /= 0          ! a time-series grid
+  ok(6) = a_vtm_file%write_block(filenames='series_table.vtkhdf', name='a') /= 0          ! a time-series Table
   error = a_vtm_file%write_block(filenames='series_tetra.vtkhdf', name='b')
   ok(7) = a_vtm_file%write_block(filenames='fluid.vtkhdf', name='c') /= 0                 ! a static block after a series
   ok(8) = a_vtm_file%write_block(filenames='series_short.vtkhdf', name='d') /= 0          ! another number of steps

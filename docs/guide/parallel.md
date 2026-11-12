@@ -187,11 +187,14 @@ meshes moving together: see [A time series of several meshes in one .vtkhdf file
   (VTK cannot read the mix, VTK issue 19963). Make a fixed part a time series too, the same mesh at every step.
 - Every block has **the same steps**: their number and their times, compared exactly (the specification requires it).
   A block with other steps is refused, the message naming the first step that differs.
-- The time-series blocks are **UnstructuredGrid or PolyData**, of one or more parts per step. A time-series ImageData,
-  RectilinearGrid or StructuredGrid block is refused: VTK 9.7.2 reads such a block without any of its arrays.
-- **Readers**: ParaView 6.1.1 plays every step of every block. VTK 9.7.2 reads each step with
-  `vtkHDFReader::SetStep`, but its pipeline time (`UpdateTimeStep`) leaves a multi-block file at the first step (a single
-  dataset follows it).
+- The time-series blocks are of any type but a **Table** (VTK 9.7.2 reads a Table-series block without rows): an
+  UnstructuredGrid or PolyData of one or more parts per step, an ImageData, RectilinearGrid, StructuredGrid or
+  HyperTreeGrid.
+- **Readers**: ParaView 6.1.1 plays every step of every block (it reads no RectilinearGrid nor StructuredGrid VTKHDF
+  file, a block or not). VTK 9.7.2 reads each step with `vtkHDFReader::SetStep` called before the first update; its
+  pipeline time (`UpdateTimeStep`), or `SetStep` after `UpdateInformation`, leaves an UnstructuredGrid or PolyData
+  block at the first step and a grid block without its arrays, VTK's own multi-block files too (a single dataset
+  follows it).
 - A refused file leaves the block opened for it by `write_block` open, as a missing file does: `finalize` then returns
   an error.
 

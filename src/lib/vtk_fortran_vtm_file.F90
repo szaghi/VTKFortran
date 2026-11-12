@@ -9,10 +9,11 @@ module vtk_fortran_vtm_file
 !< extension), point to the copies.
 !<
 !< Time series: a file is either static or a time series, decided by its first block. The blocks of a time series must
-!< all be UnstructuredGrid or PolyData series with the same steps (`NSteps`, and the times of `Steps/Values` compared
-!< exactly), as the VTKHDF specification requires. ParaView 6.1.1 plays every step of every block; VTK 9.7.2 reads every
-!< step with `vtkHDFReader%SetStep`, but its pipeline time (`UpdateTimeStep`) leaves a multi-block file at the first step.
-!< Refused: a time-series ImageData, RectilinearGrid or StructuredGrid block (VTK 9.7.2 reads it without any array), a
+!< all have the same steps (`NSteps`, and the times of `Steps/Values` compared exactly), as the VTKHDF specification
+!< requires. ParaView 6.1.1 plays every step of every block (it reads no RectilinearGrid nor StructuredGrid VTKHDF file);
+!< VTK 9.7.2 reads every step with `vtkHDFReader%SetStep` before its first update, but its pipeline time
+!< (`UpdateTimeStep`) leaves an UnstructuredGrid or PolyData block at the first step and a grid block without arrays (its
+!< own files too). Refused: a time-series Table block (VTK 9.7.2 reads it without rows), a
 !< static block in a time series or the reverse (VTK fails on the mix, VTK issue 19963), a series with other steps; a
 !< composite source (a MultiBlockDataSet or a PartitionedDataSetCollection: the blocks of a composite are not composite,
 !< VTKHDF specification; its absolute Assembly links would point at this file's blocks, and VTK 9.7.2 crashes on it) and
@@ -1276,10 +1277,10 @@ contains
    !< Copy the dataset of a `.vtkhdf` file into the VTKHDF file, as `Block_<n>` (as `<name>` with the attribute `Index` in a
    !< collection), and link it in the open block, named `name` or after the file (without directory and extension). The
    !< time series rules are checked on the file before the copy: the first block decides whether the file is static or a
-   !< time series; a series block must be an UnstructuredGrid or a PolyData with the steps of the first one (their number
-   !< and times, compared exactly). An empty `filename` is an empty dataset (VTK's null block) of a multi-block file: a group
-   !< `Block_<n>` without attributes, linked as `name` (or `Block_<n>`); it does not take part in the time series rules. It
-   !< is refused in a collection (VTK 9.7.2 then reads none of its datasets).
+   !< time series; a series block has the steps of the first one (their number and times, compared exactly), and is not a
+   !< Table (VTK 9.7.2 reads a Table-series block without rows). An empty `filename` is an empty dataset (VTK's null block)
+   !< of a multi-block file: a group `Block_<n>` without attributes, linked as `name` (or `Block_<n>`); it does not take
+   !< part in the time series rules. It is refused in a collection (VTK 9.7.2 then reads none of its datasets).
    class(vtm_file), intent(inout)        :: self      !< VTM file.
    character(*),    intent(in)           :: filename  !< File of the dataset.
    character(*),    intent(in), optional :: name      !< Dataset name.
@@ -1371,9 +1372,8 @@ contains
                   'own Assembly would point at the blocks of this file'
       elseif (topology == 'OverlappingAMR') then
          reason = 'is an OverlappingAMR, a composite in VTK: VTK 9.7.2 reads a multi-block with such a block without it'
-      elseif (n_steps > 0_I8P .and. topology /= 'UnstructuredGrid' .and. topology /= 'PolyData') then
-         reason = 'is a time series of a '//topology//': VTK 9.7.2 reads the time-series grid blocks of a multi-block '// &
-                  'file without their arrays (UnstructuredGrid and PolyData series are accepted)'
+      elseif (n_steps > 0_I8P .and. topology == 'Table') then
+         reason = 'is a time series of a Table: VTK 9.7.2 reads such a block of a composite without rows'
       elseif (self%n_steps == 0_I8P .and. n_steps > 0_I8P) then
          reason = 'is a time series, the blocks before are not (a file is either static or a time series)'
       elseif (self%n_steps > 0_I8P .and. n_steps == 0_I8P) then

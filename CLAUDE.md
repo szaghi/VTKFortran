@@ -85,10 +85,11 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   a composite or OverlappingAMR source refused (blocks are not composite: its Assembly would point at this file's blocks);
   an empty file name = an empty dataset (`Block_<n>` group without attributes, linked; refused in a collection: VTK 9.7.2
   then reads none of its datasets), read back with an empty `file` (`has_type`);
-  all static or all time series (the first block decides), series blocks UnstructuredGrid or PolyData with the same
-  `NSteps` and times (grid series refused: VTK 9.7.2 reads them without arrays), checked on the file before the copy.
-  ParaView 6.1.1 plays every step; VTK 9.7.2 reads each with `SetStep`, its pipeline time stays at step 1 on a
-  multi-block (fine on a single dataset). `composite='PartitionedDataSetCollection'` (`is_collection`): each copy named
+  all static or all time series (the first block decides), series blocks of the same `NSteps` and times, any type but a
+  Table (#90 C4: VTK 9.7.2 reads a Table-series block without rows; grid series accepted since 2026-11-12), checked on
+  the file before the copy. ParaView 6.1.1 plays every step (no RG/SG VTKHDF at all); VTK 9.7.2 reads each with
+  `SetStep` before the first update; its pipeline time (or SetStep after UpdateInformation) leaves UG/PolyData blocks at
+  step 1 and grid blocks without arrays, its own files too (fine on a single dataset). `composite='PartitionedDataSetCollection'` (`is_collection`): each copy named
   after its dataset (VTK names a partitioned dataset after its group) with `Index`, unique names (not `Assembly`),
   `write_block(references='name ...')` (string form) soft-links a copy into the open block (`vtkhdf_reference`);
   in a multi-block too (#90 C5: `leaf_links` = name NUL Block_<n> NUL of each linked dataset; a name of several
@@ -321,7 +322,7 @@ refusals (levels, boxes outside or flat or out of order, array sizes, missing/ne
 the restart, an orphan offset entry, a restart after a step with an empty piece;
 `vtk_fortran_write_vtkhdf_vtm.f90`: VTKHDF multi-block files (`vtm_file`, `format='vtkhdf'`): the nested assembly, a
 time series of two UnstructuredGrid series (one of two parts) and a PolyData series, both also as
-PartitionedDataSetCollections with a block of references, a multi-block referencing two datasets, the refusals (grid series, static and series mixed, other
+PartitionedDataSetCollections with a block of references, a multi-block referencing two datasets, a series of an ImageData and an UnstructuredGrid block, the refusals (Table series, static and series mixed, other
 steps or times; collection names, references, composites; a composite or an OverlappingAMR as a block source); the four files read back (`vtm_file` read: the entries;
 a collection with two datasets the Assembly misses, added with the bindings, listed by Index; empty datasets in a
 multi-block file (read back without file) and refused in a collection;
