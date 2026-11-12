@@ -10,6 +10,11 @@ homepage = "https://github.com/szaghi/VTKFortran"
 [library]
 source-dir = "src/lib"
 
+# the C preprocessor: fpm then evaluates the #ifdef blocks when it scans the module dependencies, so the guarded
+# `use mpi_f08` of vtk_fortran_hdf5.F90 (VTKFORTRAN_USE_MPI, defined only by the MPI builds) is not a dependency
+[preprocess]
+[preprocess.cpp]
+
 [install]
 library = true
 

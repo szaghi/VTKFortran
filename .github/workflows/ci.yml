@@ -52,3 +52,26 @@ jobs:
         path: coverage-docs.tgz
         if-no-files-found: error
         retention-days: 1
+
+  # the fpm build of the library, as a downstream fpm project builds it: fpm scans the sources for module dependencies
+  # itself, so a `use` that only FoBiS and CMake guard (an #ifdef without [preprocess.cpp]) fails here first
+  fpm:
+    runs-on: ubuntu-latest
+    container: ghcr.io/szaghi/fortran-toolchains:gnu-16.2
+    permissions:
+      contents: read
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup fpm
+      uses: fortran-lang/setup-fpm@v9
+      with:
+        # the v9 default (v0.12.0) rejects the [features] table of fpm.toml
+        fpm-version: v0.13.0
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build with fpm
+      run: fpm build --profile release
