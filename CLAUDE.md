@@ -129,7 +129,12 @@ VTKFortran is a Fortran 2008 library for reading/writing VTK XML format files. I
   (`h5_dataset_slab_<kind>`), the points of an upper boundary inside the extent left to the next region; RG coordinates
   by `axis_runs`, the entries no lower rank has, as many writes on every rank); a check of a rank's own values before
   a collective call goes through `agree` (`h5_mpi_max` of the errors: every rank refuses, none hangs); refused:
-  `write_step`, polyhedra, zlib, a second piece or region; a PolyData piece without cells calls `write_polydata_cells()` (the implicit empty blocks of
+  a grid time series, polyhedra, zlib, a second piece or region in a step. Time series (UG/PolyData) with comm:
+  `write_step` checks the same time (max/min of its bits), `n_pieces`/`step_pieces` global (sums), `local_pieces`/
+  `step_local` per process, `Steps` entries and temporal field data written by rank 0 (others append 0 rows), totals of
+  ids/blocks summed; a reusing step: each rank its part (`np_piece`); `reopen` with comm (`h5_file_open(comm=)`; the
+  rank's part of the last mesh if the parts = ranks); reopen trims each array to the largest offset+rows over the
+  complete steps (`step_tuples`); a PolyData piece without cells calls `write_polydata_cells()` (the implicit empty blocks of
   `end_partition` would come out of the collective order)
 - `vtk_fortran_vtk_file_vtkhdf_reader` — `vtkhdf_reader`: VTKHDF files read through `xml_reader` (dispatched when
   `initialize` sees the HDF5 signature): every topology, partitions as pieces, time series (`get_steps`, `set_step`),
@@ -183,7 +188,7 @@ UnstructuredGrid, every cell type but polyhedra, two pieces, I8P ids, each also 
 storing once what does not change (a mesh reused by steps without pieces, grid geometry and arrays reused), their
 offsets read back, the reuse refusals;
 `vtk_fortran_write_vtkhdf_append.f90`: series continued with `action='append'` (restart, interrupted run), reuse across
-the restart;
+the restart, an orphan offset entry, a restart after a step with an empty piece;
 `vtk_fortran_write_vtkhdf_vtm.f90`: VTKHDF multi-block files (`vtm_file`, `format='vtkhdf'`): the nested assembly, a
 time series of two UnstructuredGrid series (one of two parts) and a PolyData series, the refusals (grid series, static
 and series mixed, other steps or times);
@@ -195,6 +200,7 @@ written as a `.vtu`; `vtk_fortran_write_vtkhdf_grids.f90`: RectilinearGrid and S
 blocks, three pieces with different blocks (one without cells),
 I8P, each also written as a `.vtp`; `vtk_fortran_write_vtkhdf_ranks.F90`: an UnstructuredGrid and a PolyData from MPI
 ranks (one rank empty, I4P and I8P ids by rank), an ImageData, a RectilinearGrid and a StructuredGrid by regions (on 4
-ranks two along x, one across, one empty; otherwise rank 0 whole), compared with the same files written serially and
+ranks two along x, one across, one empty; otherwise rank 0 whole), an UnstructuredGrid series (pieces changing size,
+continued by the ranks after a restart, a step reusing the mesh) and a PolyData series, compared with the same files written serially and
 as `.vtu`/`.vtp`/`.vti`/`.vtr`/`.vts`, the refusals of `comm` (grid regions outside, overlapping, not covering, two); without MPI `comm` refused, its name without "mpi" since `scripts/run_tests.sh` runs those with
 mpirun; without HDF5 the writer refuses to start); `vtk_fortran_read.F90` reads files back (every topology and format, and two files written by VTK, embedded in the test), `vtk_fortran_read_composite.f90` parallel headers (and their check), multi-block and time series files.

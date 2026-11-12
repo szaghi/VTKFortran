@@ -1,0 +1,5 @@
+$ mpirun -np 4 vtkhdf_mpi_series
+series.vtkhdf, the steps:
+  NumberOfParts            4   4   4   4   4   4
+  PointOffsets             0   0   0   0   0   0
+  PointDataOffsets/wave    0  72 144 216 288 360

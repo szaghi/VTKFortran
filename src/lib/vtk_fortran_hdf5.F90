@@ -458,13 +458,18 @@ contains
 #endif
   endfunction h5_mpi_sum
 
-  function h5_file_open(filename, file_id, readwrite) result(error)
-  !< Open an existing file, read-only or (`readwrite=.true.`) for reading and writing.
+  function h5_file_open(filename, file_id, readwrite, comm) result(error)
+  !< Open an existing file, read-only or (`readwrite=.true.`) for reading and writing; with `comm` (a Fortran MPI
+  !< communicator) as a parallel file, opened by every rank of it (as `h5_file_create`).
   character(*),          intent(in)           :: filename  !< File name.
   integer(hid_kind),     intent(out)          :: file_id   !< File identifier.
   logical,               intent(in), optional :: readwrite !< Open for writing too.
+  integer(I4P),          intent(in), optional :: comm      !< MPI communicator (Fortran handle).
   integer(I4P)                                :: error     !< Error status.
   integer(c_int)                              :: flags     !< Access flags.
+#ifdef VTKFORTRAN_USE_HDF5
+  integer(c_int64_t)                          :: fapl      !< File access properties.
+#endif
 
   file_id = -1_hid_kind
   error = h5_initialize()
@@ -474,8 +479,22 @@ contains
     if (readwrite) flags = H5F_ACC_RDWR
   endif
 #ifdef VTKFORTRAN_USE_HDF5
-  file_id = H5Fopen(trim(filename)//c_null_char, flags, H5P_DEFAULT)
+  fapl = H5P_DEFAULT
+  if (present(comm)) then
+    error = 1_I4P
+#ifdef VTKFORTRAN_USE_MPI
+    fapl = vtkfortran_h5_fapl_mpio(int(comm, c_int))
+#endif
+    if (fapl < 0 .or. .not.is_mpi_enabled) return
+    error = 0_I4P
+  endif
+  file_id = H5Fopen(trim(filename)//c_null_char, flags, fapl)
   if (file_id < 0) error = 1_I4P
+  if (present(comm)) then
+    if (H5Pclose(fapl) < 0) error = 1_I4P
+  endif
+#else
+  if (present(comm)) error = 1_I4P
 #endif
   endfunction h5_file_open
 

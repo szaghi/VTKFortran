@@ -289,9 +289,25 @@ UnstructuredGrid, a PolyData), or its own region of the grid (ImageData, Rectili
   stops calling leaves the others waiting.
 - An UnstructuredGrid or a PolyData, one piece per rank; a rank can have an empty piece (`np=0`, `nc=0`). A PolyData
   piece without cells still calls `write_polydata_cells()`, with no blocks.
-- Refused with `comm`: time series, polyhedra, `compressor='zlib'` (a deflated dataset needs collective writes), the
-  XML formats, `action='read'` and `'append'`. A refusal comes on every rank, also when only one rank's values are
+- Refused with `comm`: a time series of a grid, polyhedra, `compressor='zlib'` (a deflated dataset needs collective
+  writes), the XML formats, `action='read'`. A refusal comes on every rank, also when only one rank's values are
   wrong (their size, say): the ranks agree on the error before the collective calls, none is left waiting.
+
+A **time series** from the ranks: every rank calls `write_step` with the same time (checked: different times are an
+error on every rank), then writes its piece of the step; a step without pieces reuses the mesh of the step before, each
+rank writing the arrays of its own part. Here the blocks of the four ranks, the mesh written at the first step only:
+
+<<< @/examples/snippets/vtkhdf_mpi_series-write.f90
+
+<<< @/examples/output/vtkhdf_mpi_series.ansi{ansi}
+
+<p align="center"><img src="../examples/images/vtkhdf_mpi_series.gif" alt="a wave travelling along the four blocks of the ranks, the six steps of the VTKHDF file they wrote together, played by ParaView"></p>
+
+- The `Steps` entries are those of all the ranks: a part per rank in each step (`NumberOfParts`), offsets of the totals
+  of the ranks before, written once. A rank's arrays in a step without pieces hold the points (cells) of its own part.
+- `initialize(format='vtkhdf', filename=..., action='append', comm=...)` continues the series from the ranks (a parallel
+  restart); a step reusing the mesh after it needs the same number of ranks as the parts of the last step.
+- A time series of a grid from the ranks is not supported yet (refused).
 
 A grid (ImageData, RectilinearGrid, StructuredGrid) is written by **regions**: `initialize` gets the whole extent,
 `write_piece` the region of the rank, and its arrays (and coordinates or points) are those of the region. Here an

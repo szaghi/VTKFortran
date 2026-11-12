@@ -43,7 +43,9 @@ module vtk_fortran_vtk_file_vtkhdf_writer
 !< data are written for every array (`PointDataOffsets`, `CellDataOffsets`): tuples, time slices for a grid.
 !<
 !< From MPI ranks (`set_comm`): an UnstructuredGrid or PolyData piece per rank (a partition, appended after the ranks
-!< before), or a region per rank of one ImageData, RectilinearGrid or StructuredGrid (`write_piece(nx1, ..., nz2)` with
+!< before; in a time series a piece per rank in each step, every rank calling `write_step` with the same time, the
+!< `Steps` entries the totals of all the ranks, written once; `reopen` by the ranks for a parallel restart), or a region
+!< per rank of one ImageData, RectilinearGrid or StructuredGrid (`write_piece(nx1, ..., nz2)` with
 !< the rank's sub-extent): the datasets are created with the whole extent, by every rank, and each rank writes the block
 !< of its region, the points of a boundary shared with the next region excluded (that region writes them), the
 !< coordinates of a RectilinearGrid entries no rank before has. The regions are checked when they start (gathered on
@@ -95,7 +97,9 @@ type, extends(vtk_writer_abstract) :: vtkhdf_writer
   integer(hid_kind)             :: group=-1_hid_kind       !< Open data group (PointData, CellData, FieldData).
   character(len=:), allocatable :: group_name              !< Name of the open data group, empty if none.
   integer(I4P)                  :: whole_extent(6)=0_I4P   !< Whole extent: nx1, nx2, ny1, ny2, nz1, nz2.
-  integer(I4P)                  :: n_pieces=0_I4P          !< Pieces started.
+  integer(I4P)                  :: n_pieces=0_I4P          !< Pieces started (with comm, the partitions of all the ranks).
+  integer(I4P)                  :: local_pieces=0_I4P      !< Pieces started by this process.
+  integer(I4P)                  :: step_local=0_I4P        !< Pieces started by this process in the open step.
   logical                       :: is_piece_open=.false.   !< A piece is open.
   integer(I8P)                  :: version_minor=0_I8P     !< Minor version needed by the features written.
   type(active_array)            :: active(12)              !< Active arrays of the open group, one per role.
@@ -483,13 +487,19 @@ contains
   class(vtkhdf_writer),       intent(inout) :: self
   real(R8P),                  intent(in)    :: time
   integer(I4P)                              :: error
-  integer(hid_kind)                         :: group_id !< A group of Steps.
-  integer(I4P)                              :: g        !< Counter.
+  integer(hid_kind)                         :: group_id     !< A group of Steps.
+  integer(I4P)                              :: g            !< Counter.
+  logical                                   :: is_same_time !< The ranks give the same time.
 
   error = 1_I4P
   if (self%file_id < 0_hid_kind) return
-  if (self%is_parallel) then
-    error = refuse('write_step: a time series is not written by the ranks of comm')
+  is_same_time = .true. ! with comm, the same time on every rank (no short-circuit: the collective call apart)
+  if (self%is_parallel) is_same_time = h5_mpi_max(self%comm, transfer(time, 0_I8P)) == &
+                                       -h5_mpi_max(self%comm, -transfer(time, 0_I8P))
+  if (self%is_parallel .and. .not.self%is_partitioned()) then
+    error = refuse('write_step: a time series of a grid is not written by the ranks of comm')
+  elseif (.not.is_same_time) then
+    error = refuse('write_step: the ranks of comm give different times')
   elseif (self%is_piece_open .or. self%group >= 0_hid_kind) then
     error = refuse('write_step: outside the pieces and the data groups')
   elseif (.not.self%is_temporal .and. (self%n_pieces > 0_I4P .or. h5_link_exists(self%root, 'FieldData'))) then
@@ -515,6 +525,7 @@ contains
       self%n_steps = self%n_steps + 1_I8P
       self%step_time = time
       self%step_pieces = 0_I8P
+      self%step_local = 0_I4P
       self%step_start = [int(self%n_pieces, I8P), self%total_points, self%total_cells, self%totals(4:)]
       self%step_blocks = self%block_totals
       error = self%roll_arrays()
@@ -523,7 +534,8 @@ contains
   endfunction write_step
 
   function write_dataarray_location_tag(self, location, action, scalars, vectors, normals, tensors, tcoords, &
-      global_ids, pedigree_ids, edge_flags, tangents, rational_weights, higher_order_degrees, process_ids) &
+      global_ids, pedigree_ids, edge_flags, tangents, rational_weights, &
+      higher_order_degrees, process_ids) &
       result(error)
   !< Open or close the group of the point (`node`) or cell (`cell`) data, inside the piece (or in a step without pieces,
   !< which reuses the mesh of the step before: its arrays hold the points or cells of all the parts reused).
@@ -2169,7 +2181,7 @@ contains
     return
   endif
   if (self%is_partitioned() .and. self%group_name /= 'FieldData') then
-    if (is_new .and. self%n_pieces > 1_I4P) then
+    if (is_new .and. self%local_pieces > 1_I4P) then
       error = refuse('the array '//data_name//' is not in the first piece: every piece writes the same arrays')
       return
     endif
@@ -2180,6 +2192,9 @@ contains
     error = h5_dataset_slab_R8P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true.)
   elseif (self%is_temporal .and. self%group_name /= 'FieldData') then ! a grid: the time axis last
     error = store_R8P(self, self%group, data_name, x, [dims, 1_I8P])
+  elseif (self%is_temporal .and. self%is_parallel) then ! field data: written once (by rank 0)
+    if (self%rank /= 0_I4P) dims(size(dims)) = 0_I8P
+    error = store_R8P(self, self%group, data_name, x, dims)
   elseif (self%is_temporal) then
     error = store_R8P(self, self%group, data_name, x, dims)
   else
@@ -2219,7 +2234,7 @@ contains
     return
   endif
   if (self%is_partitioned() .and. self%group_name /= 'FieldData') then
-    if (is_new .and. self%n_pieces > 1_I4P) then
+    if (is_new .and. self%local_pieces > 1_I4P) then
       error = refuse('the array '//data_name//' is not in the first piece: every piece writes the same arrays')
       return
     endif
@@ -2230,6 +2245,9 @@ contains
     error = h5_dataset_slab_R4P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true.)
   elseif (self%is_temporal .and. self%group_name /= 'FieldData') then ! a grid: the time axis last
     error = store_R4P(self, self%group, data_name, x, [dims, 1_I8P])
+  elseif (self%is_temporal .and. self%is_parallel) then ! field data: written once (by rank 0)
+    if (self%rank /= 0_I4P) dims(size(dims)) = 0_I8P
+    error = store_R4P(self, self%group, data_name, x, dims)
   elseif (self%is_temporal) then
     error = store_R4P(self, self%group, data_name, x, dims)
   else
@@ -2270,7 +2288,7 @@ contains
     return
   endif
   if (self%is_partitioned() .and. self%group_name /= 'FieldData') then
-    if (is_new .and. self%n_pieces > 1_I4P) then
+    if (is_new .and. self%local_pieces > 1_I4P) then
       error = refuse('the array '//data_name//' is not in the first piece: every piece writes the same arrays')
       return
     endif
@@ -2281,6 +2299,9 @@ contains
     error = h5_dataset_slab_I8P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true., unsigned=unsigned)
   elseif (self%is_temporal .and. self%group_name /= 'FieldData') then ! a grid: the time axis last
     error = store_I8P(self, self%group, data_name, x, [dims, 1_I8P], unsigned=unsigned)
+  elseif (self%is_temporal .and. self%is_parallel) then ! field data: written once (by rank 0)
+    if (self%rank /= 0_I4P) dims(size(dims)) = 0_I8P
+    error = store_I8P(self, self%group, data_name, x, dims, unsigned=unsigned)
   elseif (self%is_temporal) then
     error = store_I8P(self, self%group, data_name, x, dims, unsigned=unsigned)
   else
@@ -2321,7 +2342,7 @@ contains
     return
   endif
   if (self%is_partitioned() .and. self%group_name /= 'FieldData') then
-    if (is_new .and. self%n_pieces > 1_I4P) then
+    if (is_new .and. self%local_pieces > 1_I4P) then
       error = refuse('the array '//data_name//' is not in the first piece: every piece writes the same arrays')
       return
     endif
@@ -2332,6 +2353,9 @@ contains
     error = h5_dataset_slab_I4P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true., unsigned=unsigned)
   elseif (self%is_temporal .and. self%group_name /= 'FieldData') then ! a grid: the time axis last
     error = store_I4P(self, self%group, data_name, x, [dims, 1_I8P], unsigned=unsigned)
+  elseif (self%is_temporal .and. self%is_parallel) then ! field data: written once (by rank 0)
+    if (self%rank /= 0_I4P) dims(size(dims)) = 0_I8P
+    error = store_I4P(self, self%group, data_name, x, dims, unsigned=unsigned)
   elseif (self%is_temporal) then
     error = store_I4P(self, self%group, data_name, x, dims, unsigned=unsigned)
   else
@@ -2372,7 +2396,7 @@ contains
     return
   endif
   if (self%is_partitioned() .and. self%group_name /= 'FieldData') then
-    if (is_new .and. self%n_pieces > 1_I4P) then
+    if (is_new .and. self%local_pieces > 1_I4P) then
       error = refuse('the array '//data_name//' is not in the first piece: every piece writes the same arrays')
       return
     endif
@@ -2383,6 +2407,9 @@ contains
     error = h5_dataset_slab_I2P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true., unsigned=unsigned)
   elseif (self%is_temporal .and. self%group_name /= 'FieldData') then ! a grid: the time axis last
     error = store_I2P(self, self%group, data_name, x, [dims, 1_I8P], unsigned=unsigned)
+  elseif (self%is_temporal .and. self%is_parallel) then ! field data: written once (by rank 0)
+    if (self%rank /= 0_I4P) dims(size(dims)) = 0_I8P
+    error = store_I2P(self, self%group, data_name, x, dims, unsigned=unsigned)
   elseif (self%is_temporal) then
     error = store_I2P(self, self%group, data_name, x, dims, unsigned=unsigned)
   else
@@ -2423,7 +2450,7 @@ contains
     return
   endif
   if (self%is_partitioned() .and. self%group_name /= 'FieldData') then
-    if (is_new .and. self%n_pieces > 1_I4P) then
+    if (is_new .and. self%local_pieces > 1_I4P) then
       error = refuse('the array '//data_name//' is not in the first piece: every piece writes the same arrays')
       return
     endif
@@ -2434,6 +2461,9 @@ contains
     error = h5_dataset_slab_I1P(self%group, data_name, x, dims, mem_dims, mem_start, file_start, count, .true., unsigned=unsigned)
   elseif (self%is_temporal .and. self%group_name /= 'FieldData') then ! a grid: the time axis last
     error = store_I1P(self, self%group, data_name, x, [dims, 1_I8P], unsigned=unsigned)
+  elseif (self%is_temporal .and. self%is_parallel) then ! field data: written once (by rank 0)
+    if (self%rank /= 0_I4P) dims(size(dims)) = 0_I8P
+    error = store_I1P(self, self%group, data_name, x, dims, unsigned=unsigned)
   elseif (self%is_temporal) then
     error = store_I1P(self, self%group, data_name, x, dims, unsigned=unsigned)
   else
@@ -2645,7 +2675,11 @@ contains
   if (error == 0_I4P) error = store_I8P(self, self%root, 'NumberOfConnectivityIds', [n_ids], [1_I8P])
   if (error /= 0_I4P) error = refuse('cannot write the cells')
   if (error == 0_I4P) self%is_connectivity_written = .true.
-  if (error == 0_I4P) self%totals(4) = self%totals(4) + n_ids
+  if (error == 0_I4P .and. self%is_parallel) then ! the ids of all the ranks
+    self%totals(4) = self%totals(4) + h5_mpi_sum(self%comm, n_ids)
+  elseif (error == 0_I4P) then
+    self%totals(4) = self%totals(4) + n_ids
+  endif
   endfunction put_cells_I4P
 
   function put_cells_I8P(self, nc, connectivity, offset, cell_type) result(error)
@@ -2675,7 +2709,11 @@ contains
   if (error == 0_I4P) error = store_I8P(self, self%root, 'NumberOfConnectivityIds', [n_ids], [1_I8P])
   if (error /= 0_I4P) error = refuse('cannot write the cells')
   if (error == 0_I4P) self%is_connectivity_written = .true.
-  if (error == 0_I4P) self%totals(4) = self%totals(4) + n_ids
+  if (error == 0_I4P .and. self%is_parallel) then ! the ids of all the ranks
+    self%totals(4) = self%totals(4) + h5_mpi_sum(self%comm, n_ids)
+  elseif (error == 0_I4P) then
+    self%totals(4) = self%totals(4) + n_ids
+  endif
   endfunction put_cells_I8P
 
   function put_coordinates_R8P(self, x, y, z) result(error)
@@ -3149,8 +3187,13 @@ contains
   if (error == 0_I4P) error = store_I8P(self, self%root, group//'NumberOfCells', [nc], [1_I8P])
   if (error == 0_I4P) error = store_I8P(self, self%root, group//'NumberOfConnectivityIds', [n_ids], [1_I8P])
   if (error == 0_I4P) then
-    self%block_totals(b) = self%block_totals(b) + nc
-    self%block_totals(4+b) = self%block_totals(4+b) + n_ids
+    if (self%is_parallel) then ! the cells and ids of all the ranks
+      self%block_totals(b) = self%block_totals(b) + h5_mpi_sum(self%comm, nc)
+      self%block_totals(4+b) = self%block_totals(4+b) + h5_mpi_sum(self%comm, n_ids)
+    else
+      self%block_totals(b) = self%block_totals(b) + nc
+      self%block_totals(4+b) = self%block_totals(4+b) + n_ids
+    endif
   endif
   endfunction put_block_I4P
 
@@ -3191,8 +3234,13 @@ contains
   if (error == 0_I4P) error = store_I8P(self, self%root, group//'NumberOfCells', [nc], [1_I8P])
   if (error == 0_I4P) error = store_I8P(self, self%root, group//'NumberOfConnectivityIds', [n_ids], [1_I8P])
   if (error == 0_I4P) then
-    self%block_totals(b) = self%block_totals(b) + nc
-    self%block_totals(4+b) = self%block_totals(4+b) + n_ids
+    if (self%is_parallel) then ! the cells and ids of all the ranks
+      self%block_totals(b) = self%block_totals(b) + h5_mpi_sum(self%comm, nc)
+      self%block_totals(4+b) = self%block_totals(4+b) + h5_mpi_sum(self%comm, n_ids)
+    else
+      self%block_totals(b) = self%block_totals(b) + nc
+      self%block_totals(4+b) = self%block_totals(4+b) + n_ids
+    endif
   endif
   endfunction put_block_I8P
 
@@ -3318,7 +3366,10 @@ contains
   elseif (self%is_partitioned()) then
     grid = [self%np_piece, 1_I8P, 1_I8P]
     if (self%group_name == 'CellData') grid(1) = self%nc_piece
-    if (self%is_reusing()) then ! a step without pieces: the points or cells of all the parts of the mesh reused
+    if (self%is_reusing() .and. self%is_parallel) then ! with comm, the points or cells of the rank's part of the mesh
+      grid(1) = self%np_piece
+      if (self%group_name == 'CellData') grid(1) = self%nc_piece
+    elseif (self%is_reusing()) then ! a step without pieces: the points or cells of all the parts of the mesh reused
       grid(1) = self%total_points - self%mesh_start(2)
       if (self%group_name == 'CellData') then
         if (self%topology == TOPOLOGY_UNSTRUCTURED) then
@@ -3873,6 +3924,7 @@ contains
 
   self%is_parallel = .true.
   self%comm = comm
+  self%rank = h5_mpi_rank(comm)
   endsubroutine set_comm
 
   function reopen(self, filename) result(error)
@@ -3893,6 +3945,7 @@ contains
   integer(I8P)                        :: grid(3)   !< Points of a grid along each axis.
   integer(hid_kind)                   :: steps     !< Group Steps.
   integer(I8P)                        :: rows(2)   !< Points and cells of the mesh of the last step.
+  integer(I8P), allocatable           :: point_rows(:), cell_rows(:) !< Points and cells of each step (slices: 1).
 
   self%file_id = -1_hid_kind ; self%root = -1_hid_kind ; self%group = -1_hid_kind
   call self%reset
@@ -3900,7 +3953,11 @@ contains
     error = refuse('the library is built without HDF5 (VTKFORTRAN_USE_HDF5)')
     return
   endif
-  error = h5_file_open(filename, self%file_id, readwrite=.true.)
+  if (self%is_parallel) then ! every rank of comm (a parallel restart)
+    error = h5_file_open(filename, self%file_id, readwrite=.true., comm=self%comm)
+  else
+    error = h5_file_open(filename, self%file_id, readwrite=.true.)
+  endif
   if (error == 0_I4P) error = h5_group_open(self%file_id, 'VTKHDF', self%root)
   if (error /= 0_I4P) then
     error = refuse('action append: cannot open '//filename//' as a VTKHDF file')
@@ -3952,7 +4009,25 @@ contains
     if (error /= 0_I4P) return
     n_parts = ivalues(k) + counts(k)
     self%n_pieces = int(n_parts, I4P)
+    self%local_pieces = int(n_parts, I4P)
     self%step_pieces = counts(k)
+    if (self%is_parallel) then ! the part of this rank in the last mesh, for a step reusing it (its parts in rank order)
+      self%np_piece = -1_I8P ; self%nc_piece = -1_I8P ! another number of ranks than the parts: no reuse
+      if (counts(k) == h5_mpi_sum(self%comm, 1_I8P)) then
+        error = h5_dataset_read(self%root, 'NumberOfPoints', more)
+        if (error == 0_I4P) self%np_piece = more(ivalues(k) + self%rank + 1)
+        if (self%topology == TOPOLOGY_UNSTRUCTURED) then
+          if (error == 0_I4P) error = h5_dataset_read(self%root, 'NumberOfCells', more)
+          if (error == 0_I4P) self%nc_piece = more(ivalues(k) + self%rank + 1)
+        else
+          self%nc_piece = 0_I8P
+          do b=1_I8P, size(BLOCKS, kind=I8P)
+            if (error == 0_I4P) error = h5_dataset_read(self%root, trim(BLOCKS(b))//'/NumberOfCells', more)
+            if (error == 0_I4P) self%nc_piece = self%nc_piece + more(ivalues(k) + self%rank + 1)
+          enddo
+        endif
+      endif
+    endif
     error = trimmed_counts(self%root, n_parts, 'NumberOfPoints', self%total_points)
     if (error == 0_I4P) error = trim_to(self%root, 'Points', self%total_points)
     if (self%topology == TOPOLOGY_UNSTRUCTURED) then
@@ -4001,10 +4076,11 @@ contains
       enddo
       rows = [self%total_points - self%mesh_start(2), self%total_cells - sum(self%mesh_blocks(1:4))]
     endif
-    ! the arrays: the tuples of the mesh from their offset of the last step (repeated by the steps that reused them)
-    if (error == 0_I4P) error = trimmed_arrays(self%root, 'PointData', k, rows(1), self%mesh_start(2), self%point_arrays, &
-                                               self%point_start, self%point_prev)
-    if (error == 0_I4P) error = trimmed_arrays(self%root, 'CellData', k, rows(2), self%total_cells - rows(2), &
+    ! the arrays: the tuples each complete step reads (its offset and the points or cells of its parts)
+    if (error == 0_I4P) error = step_tuples(self%root, self%topology, ivalues(1:k), counts(1:k), point_rows, cell_rows)
+    if (error == 0_I4P) error = trimmed_arrays(self%root, 'PointData', k, point_rows, self%mesh_start(2), &
+                                               self%point_arrays, self%point_start, self%point_prev)
+    if (error == 0_I4P) error = trimmed_arrays(self%root, 'CellData', k, cell_rows, self%total_cells - rows(2), &
                                                self%cell_arrays, self%cell_start, self%cell_prev)
   else
     ! a grid: its extent (the start of a RectilinearGrid or StructuredGrid one is not stored), a time slice per step
@@ -4033,9 +4109,10 @@ contains
       if (error == 0_I4P) error = trim_to(self%root, 'Points', self%geo_slices)
     endif
     ! the arrays: one time slice from their offset of the last step (k - 1 for a file without data offsets)
-    if (error == 0_I4P) error = trimmed_arrays(self%root, 'PointData', k, 1_I8P, k - 1_I8P, self%point_arrays, &
+    point_rows = [(1_I8P, b=1_I8P, k)] ! one time slice per step
+    if (error == 0_I4P) error = trimmed_arrays(self%root, 'PointData', k, point_rows, k - 1_I8P, self%point_arrays, &
                                                self%point_start, self%point_prev)
-    if (error == 0_I4P) error = trimmed_arrays(self%root, 'CellData', k, 1_I8P, k - 1_I8P, self%cell_arrays, &
+    if (error == 0_I4P) error = trimmed_arrays(self%root, 'CellData', k, point_rows, k - 1_I8P, self%cell_arrays, &
                                                self%cell_start, self%cell_prev)
   endif
   ! field data: the tuples of the complete steps (a group not written is empty)
@@ -4097,13 +4174,14 @@ contains
     endfunction trimmed_counts
 
     function trimmed_arrays(root, group, k, rows, default, list, start, prev) result(error)
-    !< Trim every array of `group` to the `rows` tuples (slices) of the last complete step `k` from its offset at that step
-    !< (`Steps/<group>Offsets/<name>`, `default` without it), list their names (none if the group was never written), and
-    !< start their bookkeeping: tuples at the start of the next step, offset of the last one.
+    !< Trim every array of `group` to the tuples (slices) the complete steps read: the largest end, offset of a step plus its
+    !< `rows`, over the steps 1 to `k` (a step that reused an array, or wrote none of it, points before the end of the
+    !< ones before); without its offsets dataset, the `rows` of the step k from `default`. List their names (none if the
+    !< group was never written) and start their bookkeeping: tuples at the start of the next step, offset of step k.
     integer(hid_kind),             intent(in)  :: root     !< Group /VTKHDF.
     character(*),                  intent(in)  :: group    !< PointData or CellData.
     integer(I8P),                  intent(in)  :: k        !< Last complete step (NSteps).
-    integer(I8P),                  intent(in)  :: rows     !< Tuples (slices) of the last step.
+    integer(I8P),                  intent(in)  :: rows(:)  !< Tuples (slices) of each step, 1 to k.
     integer(I8P),                  intent(in)  :: default  !< Offset of an array without its offsets dataset.
     character(len=:), allocatable, intent(out) :: list     !< Names, each followed by NAMES_SEPARATOR.
     integer(I8P), allocatable,     intent(out) :: start(:) !< Tuples of each array kept.
@@ -4112,6 +4190,7 @@ contains
     integer(I8P), allocatable                  :: offsets(:) !< Offsets of an array.
     integer(I8P)                               :: first, last !< Bounds of a name.
     integer(I8P)                               :: offset   !< Offset of an array at the last step.
+    integer(I8P)                               :: length   !< Tuples kept.
 
     list = ''
     allocate(start(0), prev(0))
@@ -4121,23 +4200,58 @@ contains
     do while (first <= len(list, kind=I8P) .and. error == 0_I4P)
       last = first - 1_I8P + index(list(first:), NAMES_SEPARATOR, kind=I8P)
       offset = default
+      length = default + rows(k)
       if (h5_link_exists(root, 'Steps/'//group//'Offsets/'//list(first:last-1))) then
         error = h5_dataset_read(root, 'Steps/'//group//'Offsets/'//list(first:last-1), offsets)
-        ! the entry of step k: an interrupted run may have left one more, of a step not complete
+        ! the entries of steps 1 to k: an interrupted run may have left one more, of a step not complete
         if (error == 0_I4P) then
-          if (size(offsets, kind=I8P) >= k) then
+          if (size(offsets, kind=I8P) >= k .and. size(rows, kind=I8P) >= k) then
             offset = offsets(k)
+            length = maxval(offsets(1:k) + rows(1:k))
           else
             error = 1_I4P
           endif
         endif
       endif
-      if (error == 0_I4P) error = trim_to(root, group//'/'//list(first:last-1), offset + rows)
-      start = [start, offset + rows]
+      if (error == 0_I4P) error = trim_to(root, group//'/'//list(first:last-1), length)
+      start = [start, length]
       prev = [prev, offset]
       first = last + 1_I8P
     enddo
     endfunction trimmed_arrays
+
+    function step_tuples(root, topology, part_offsets, parts, point_rows, cell_rows) result(error)
+    !< The points and cells of each step of an UnstructuredGrid or PolyData: those of its parts (`NumberOfPoints`,
+    !< `NumberOfCells` or the cells of the four PolyData blocks).
+    integer(hid_kind),         intent(in)  :: root            !< Group /VTKHDF.
+    integer(I4P),              intent(in)  :: topology        !< Topology.
+    integer(I8P),              intent(in)  :: part_offsets(:) !< First part of each step, from 0.
+    integer(I8P),              intent(in)  :: parts(:)        !< Parts of each step.
+    integer(I8P), allocatable, intent(out) :: point_rows(:)   !< Points of each step.
+    integer(I8P), allocatable, intent(out) :: cell_rows(:)    !< Cells of each step.
+    integer(I4P)                           :: error           !< Error status.
+    integer(I8P), allocatable              :: n(:)            !< Counts of the parts.
+    integer(I8P)                           :: j, b            !< Counters.
+
+    allocate(point_rows(size(parts)), cell_rows(size(parts)))
+    cell_rows = 0_I8P
+    error = h5_dataset_read(root, 'NumberOfPoints', n)
+    if (error /= 0_I4P) return
+    do j=1, size(parts, kind=I8P)
+      point_rows(j) = sum(n(part_offsets(j)+1:part_offsets(j)+parts(j)))
+    enddo
+    do b=1_I8P, merge(1_I8P, 4_I8P, topology == TOPOLOGY_UNSTRUCTURED)
+      if (topology == TOPOLOGY_UNSTRUCTURED) then
+        error = h5_dataset_read(root, 'NumberOfCells', n)
+      else
+        error = h5_dataset_read(root, trim(BLOCKS(b))//'/NumberOfCells', n)
+      endif
+      if (error /= 0_I4P) return
+      do j=1, size(parts, kind=I8P)
+        cell_rows(j) = cell_rows(j) + sum(n(part_offsets(j)+1:part_offsets(j)+parts(j)))
+      enddo
+    enddo
+    endfunction step_tuples
 
     function step_value(root, name, k, column, value) result(error)
     !< The entry of the step k of `Steps/name`: its value, or its value of the column `column` (VTK order of the blocks:
@@ -4194,6 +4308,8 @@ contains
   self%group_name = ''
   self%whole_extent = 0_I4P
   self%n_pieces = 0_I4P
+  self%local_pieces = 0_I4P
+  self%step_local = 0_I4P
   self%is_piece_open = .false.
   self%version_minor = 0_I8P
   self%topology = 0_I4P
@@ -4266,8 +4382,8 @@ contains
     endif
     self%block_cells = block_cells
   endif
-  if (self%is_parallel .and. self%n_pieces > 0_I4P) then
-    error = refuse('write_piece: one piece per rank of comm')
+  if (self%is_parallel .and. self%step_local > 0_I4P) then
+    error = refuse('write_piece: one piece per rank of comm (in each step of a time series)')
     return
   endif
   if (self%is_reusing()) then
@@ -4276,8 +4392,15 @@ contains
       return
     endif
   endif
-  self%n_pieces = self%n_pieces + 1_I4P
-  self%step_pieces = self%step_pieces + 1_I8P
+  self%local_pieces = self%local_pieces + 1_I4P
+  self%step_local = self%step_local + 1_I4P
+  if (self%is_parallel) then ! one partition per rank: the parts of the file are those of all the ranks
+    self%n_pieces = self%n_pieces + int(h5_mpi_sum(self%comm, 1_I8P), I4P)
+    self%step_pieces = self%step_pieces + h5_mpi_sum(self%comm, 1_I8P)
+  else
+    self%n_pieces = self%n_pieces + 1_I4P
+    self%step_pieces = self%step_pieces + 1_I8P
+  endif
   self%np_piece = np
   self%nc_piece = nc
   if (self%is_parallel) then ! the datasets hold the pieces of all the ranks
@@ -4333,8 +4456,11 @@ contains
   integer(I4P)                        :: error     !< Error status.
   integer(I8P), allocatable           :: zeros(:)  !< Entries of the steps before, for a dataset new at a later step.
   integer(I8P)                        :: n         !< Values per step.
+  integer(I8P)                        :: rows      !< Rows written by this process (with comm, rank 0 alone).
 
   n = size(values, kind=I8P)
+  rows = 1_I8P
+  if (self%is_parallel .and. self%rank /= 0_I4P) rows = 0_I8P ! with comm, written once (by rank 0), extended by all
   error = 0_I4P
   if (h5_link_exists(self%root, 'Steps/'//name)) then
     error = h5_dataset_resize(self%root, 'Steps/'//name, self%n_steps - 1_I8P)
@@ -4342,16 +4468,16 @@ contains
     allocate(zeros(n * (self%n_steps - 1_I8P)))
     zeros = 0_I8P
     if (n == 1_I8P) then
-      error = store_I8P(self, self%root, 'Steps/'//name, zeros, [self%n_steps - 1_I8P])
+      error = store_I8P(self, self%root, 'Steps/'//name, zeros, [rows * (self%n_steps - 1_I8P)])
     else
-      error = store_I8P(self, self%root, 'Steps/'//name, zeros, [n, self%n_steps - 1_I8P])
+      error = store_I8P(self, self%root, 'Steps/'//name, zeros, [n, rows * (self%n_steps - 1_I8P)])
     endif
   endif
   if (error == 0_I4P) then
     if (n == 1_I8P) then
-      error = store_I8P(self, self%root, 'Steps/'//name, values, [1_I8P])
+      error = store_I8P(self, self%root, 'Steps/'//name, values, [rows])
     else
-      error = store_I8P(self, self%root, 'Steps/'//name, values, [n, 1_I8P])
+      error = store_I8P(self, self%root, 'Steps/'//name, values, [n, rows])
     endif
   endif
   endfunction step_entry
@@ -4379,7 +4505,8 @@ contains
     error = h5_dataset_resize(self%root, 'Steps/Values', k - 1_I8P)
     if (error /= 0_I4P) return
   endif
-  error = store_R8P(self, self%root, 'Steps/Values', [self%step_time], [1_I8P])
+  error = store_R8P(self, self%root, 'Steps/Values', [self%step_time], &
+                    [merge(0_I8P, 1_I8P, self%is_parallel .and. self%rank /= 0_I4P)]) ! with comm, once (rank 0)
   if (self%is_partitioned()) then
     ! the parts of the step, or those of the last step with pieces (a step without pieces reuses its mesh)
     if (self%step_pieces > 0_I8P) then

@@ -73,7 +73,7 @@ built with HDF5 ([Installation](/guide/installation#optional-hdf5-vtkhdf)). It i
 | Time series in one file (`Steps`): `write_step`, valid after every piece, restart with `action='append'`; a fixed mesh, unchanged geometry or arrays stored once | ✅ |
 | Multi-block (`vtm_file` with `format='vtkhdf'`): the `.vtkhdf` datasets copied in, the tree of the blocks as `Assembly`; static, or time series of Unstructured Grids and Polydata | ✅ |
 | Reading VTKHDF files back (`action='read'`): every topology, time series step by step | ✅ |
-| One file from MPI ranks (`comm`, a parallel HDF5): Unstructured Grid and Polydata, one partition per rank; Image Data, Rectilinear and Structured Grids, one region per rank | ✅ |
+| One file from MPI ranks (`comm`, a parallel HDF5): Unstructured Grid and Polydata, one partition per rank, time series too (restart with `action='append'`); Image Data, Rectilinear and Structured Grids, one region per rank | ✅ |
 
 ## VTK Legacy Exporters
 

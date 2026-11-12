@@ -84,8 +84,10 @@ contains
    !< RectilinearGrid or StructuredGrid of the whole extent given here, each rank one region of it (`write_piece` with
    !< its sub-extent, its arrays and geometry of that region; the regions checked: inside the whole extent, not
    !< overlapping, covering it; an empty one, an upper bound before its lower one, writes nothing). Every rank makes the
-   !< same calls, with the same arrays in the same order: the HDF5 calls are collective. Refused with `comm`: time series,
-   !< polyhedra, `compressor='zlib'`, the other formats, `action='read'` and `'append'`.
+   !< same calls, with the same arrays in the same order: the HDF5 calls are collective. A time series of an
+   !< UnstructuredGrid or a PolyData too: every rank calls `write_step` with the same time, then writes its piece of the
+   !< step; `action='append'` with `comm` continues one (a parallel restart). Refused with `comm`: a time series of a
+   !< grid, polyhedra, `compressor='zlib'`, the other formats, `action='read'`.
    !<
    !<```fortran
    !< error = vtk%initialize(format='vtkhdf', filename='mesh.vtkhdf', mesh_topology='UnstructuredGrid', &
@@ -172,8 +174,8 @@ contains
    call self%xml_reader%close
    self%is_reading = .false.
    if (present(action)) then
-      if (present(comm) .and. upper_case(trim(adjustl(action))) /= 'WRITE') then
-         error = 1_I4P ! a file is read, or continued, by one rank
+      if (present(comm) .and. upper_case(trim(adjustl(action))) == 'READ') then
+         error = 1_I4P ! a file is read by one rank
          return
       endif
       select case(upper_case(trim(adjustl(action))))
@@ -189,6 +191,7 @@ contains
          allocate(vtkhdf_writer :: self%xml_writer)
          select type(writer => self%xml_writer)
          type is(vtkhdf_writer)
+            if (present(comm)) call writer%set_comm(comm) ! continued by the ranks of comm
             error = writer%reopen(filename=filename)
          endselect
          return

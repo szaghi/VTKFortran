@@ -114,7 +114,10 @@ The file, as an HDF5 tool lists it (the program reads it back with the HDF5 bind
   equal). The regions must lie inside the whole extent, not overlap in cells and cover it (checked when they start, on
   every rank); an empty region (an upper bound before its lower one) writes nothing. The file is the one the whole grid
   written by one process makes. Every call is collective (same calls, same arrays, same order on every rank); the
-  writes of the ranks are independent (MPI-IO). Refused with `comm`: time series, polyhedra, compression. Complete
+  writes of the ranks are independent (MPI-IO). A time series of an UnstructuredGrid or a PolyData too: every rank
+  calls `write_step` with the same time and writes its piece of each step (or, in a step without pieces, the arrays of
+  its part of the mesh reused); the `Steps` entries are the totals of the ranks, written once; `action='append'` with
+  `comm` continues it. Refused with `comm`: a time series of a grid, polyhedra, compression. Complete
   programs: [Write one .vtkhdf from MPI ranks](/manual/cookbook#write-one-vtkhdf-from-mpi-ranks).
 - **No transposition.** An array is stored as it is in memory (an ImageData, RectilinearGrid or StructuredGrid): a
   Fortran `velocity(3,0:nx,0:ny,0:nz)` is the dataset of shape `[nz+1, ny+1, nx+1, 3]` in C order (the order HDF5 tools
