@@ -65,3 +65,115 @@ branch = "master"
 [dependencies.StringiFor]
 git = "https://github.com/szaghi/StringiFor"
 branch = "master"
+
+# the tests of src/tests that need no HDF5, zlib, MPI or OpenMP, run by `fpm test` (fpm looks in test/); the others
+# need the libraries the FoBiS and CMake builds link
+[build]
+auto-executables = false
+auto-examples = false
+auto-tests = false
+
+[[test]]
+name = "vtk_fortran_use_module_basic"
+source-dir = "src/tests"
+main = "vtk_fortran_use_module_basic.f90"
+
+[[test]]
+name = "vtk_fortran_write_fielddata"
+source-dir = "src/tests"
+main = "vtk_fortran_write_fielddata.f90"
+
+[[test]]
+name = "vtk_fortran_write_header_uint64"
+source-dir = "src/tests"
+main = "vtk_fortran_write_header_uint64.f90"
+
+[[test]]
+name = "vtk_fortran_write_i8p"
+source-dir = "src/tests"
+main = "vtk_fortran_write_i8p.f90"
+
+[[test]]
+name = "vtk_fortran_write_multipiece"
+source-dir = "src/tests"
+main = "vtk_fortran_write_multipiece.f90"
+
+[[test]]
+name = "vtk_fortran_write_pvd"
+source-dir = "src/tests"
+main = "vtk_fortran_write_pvd.f90"
+
+[[test]]
+name = "vtk_fortran_write_pvtr"
+source-dir = "src/tests"
+main = "vtk_fortran_write_pvtr.f90"
+
+[[test]]
+name = "vtk_fortran_write_pvts"
+source-dir = "src/tests"
+main = "vtk_fortran_write_pvts.f90"
+
+[[test]]
+name = "vtk_fortran_write_pvtu"
+source-dir = "src/tests"
+main = "vtk_fortran_write_pvtu.f90"
+
+[[test]]
+name = "vtk_fortran_write_unsigned"
+source-dir = "src/tests"
+main = "vtk_fortran_write_unsigned.f90"
+
+[[test]]
+name = "vtk_fortran_write_volatile"
+source-dir = "src/tests"
+main = "vtk_fortran_write_volatile.f90"
+
+[[test]]
+name = "vtk_fortran_write_vti"
+source-dir = "src/tests"
+main = "vtk_fortran_write_vti.f90"
+
+[[test]]
+name = "vtk_fortran_write_vtm"
+source-dir = "src/tests"
+main = "vtk_fortran_write_vtm.f90"
+
+[[test]]
+name = "vtk_fortran_write_vtm_nested"
+source-dir = "src/tests"
+main = "vtk_fortran_write_vtm_nested.f90"
+
+[[test]]
+name = "vtk_fortran_write_vtm_scratch"
+source-dir = "src/tests"
+main = "vtk_fortran_write_vtm_scratch.f90"
+
+[[test]]
+name = "vtk_fortran_write_vtp"
+source-dir = "src/tests"
+main = "vtk_fortran_write_vtp.f90"
+
+[[test]]
+name = "vtk_fortran_write_vtr"
+source-dir = "src/tests"
+main = "vtk_fortran_write_vtr.f90"
+
+[[test]]
+name = "vtk_fortran_write_vts"
+source-dir = "src/tests"
+main = "vtk_fortran_write_vts.f90"
+
+[[test]]
+name = "vtk_fortran_write_vtu"
+source-dir = "src/tests"
+main = "vtk_fortran_write_vtu.f90"
+
+[[test]]
+name = "vtk_fortran_write_vtu_polyhedron"
+source-dir = "src/tests"
+main = "vtk_fortran_write_vtu_polyhedron.f90"
+
+[[test]]
+name = "vtk_fortran_write_vtu_tensor"
+source-dir = "src/tests"
+main = "vtk_fortran_write_vtu_tensor.f90"
