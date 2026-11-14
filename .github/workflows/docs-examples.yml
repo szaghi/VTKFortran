@@ -1,47 +1,28 @@
 name: Docs examples
 
-# Project-owned workflow (not managed by `fobis scaffold`): the programs of docs/examples are built and run, and
-# their snippets, outputs and terminal images regenerated; the committed ones, included by the documentation, must
-# match what the code produces. The ParaView renders (images/*.png, *.gif) are regenerated locally only: without
-# pvpython, scripts/docs_examples.sh keeps the committed ones (and the outputs of the MPI programs, without MPI). HDF5 is
-# installed: the VTKHDF programs (!hdf5) are run and checked.
-
+# The committed outputs of the documentation's examples must match their sources: scripts/docs_examples.sh
+# regenerates them in the project's toolchain image, then any change or new file under the fobos [scaffold]
+# docs_examples paths fails with the diff, by the reusable workflow of fortran-toolchains
+# (https://github.com/szaghi/fortran-toolchains). Managed by fobis scaffold while [scaffold] docs_examples is set.
 on:
   push:
     branches: ["**"]
     tags-ignore: ["**"]
   pull_request:
 
+# a newer push to the same ref supersedes the running check
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
 jobs:
-  docs-examples:
-    name: docs examples / gfortran-14
-    runs-on: ubuntu-24.04
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Setup build environment
-      uses: ./.github/actions/setup-build-env
-      with:
-        gcc-version: '14'
-
-    - name: Install HDF5
-      run: sudo apt-get install -y libhdf5-dev
-
-    - name: Fetch dependencies
-      run: fobis fetch
-
-    - name: Build and run the examples
-      run: bash scripts/docs_examples.sh
-
-    - name: Check the committed snippets, outputs and images
-      run: |
-        git add --intent-to-add docs/examples
-        git diff --exit-code -- docs/examples || {
-          echo "::error::docs/examples is out of date: run 'bash scripts/docs_examples.sh' and commit the result"
-          exit 1
-        }
+  check:
+    uses: szaghi/fortran-toolchains/.github/workflows/generated.yml@v1
+    with:
+      command: bash scripts/docs_examples.sh
+      paths: 'docs/examples'
+      toolchain: 'linux-gnu'
+      apt-packages: 'libhdf5-dev'

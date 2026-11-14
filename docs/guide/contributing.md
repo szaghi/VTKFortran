@@ -40,8 +40,8 @@ python3 scripts/docs_diagrams.py                               # redraw the diag
 
 The marker comments of a program (`!run`, `!region`, `!cast`, `!render`, ...) say what is generated: they are described
 at the top of `scripts/docs_examples.sh`. Commit `docs/examples/` with the change: the *Docs examples* workflow fails when
-the committed snippets, outputs or terminal images differ from what the programs produce (it uses gfortran 14:
-`FC=gfortran-14` to match it). The ParaView renders (`*.png`, `*.gif`) are regenerated only where ParaView is installed,
+the committed snippets, outputs or terminal images differ from what the programs produce (it uses gfortran 16.2 and
+Open MPI 5.0.11, in the fortran-toolchains image). The ParaView renders (`*.png`, `*.gif`) are regenerated only where ParaView is installed,
 the outputs of the MPI examples (`!mpi`) only with `MPIFC`: otherwise the committed ones are kept. Keep the examples small,
 their meshes are made to be looked at.
 

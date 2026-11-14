@@ -23,15 +23,15 @@ scripts/run_tests.sh                 # Run all executables in ./exe/: pass/fail 
 
 ### Documentation examples
 ```bash
-FC=gfortran-14 PVPYTHON=<paraview>/bin/pvpython MPIFC=<openmpi>/bin/mpifort bash scripts/docs_examples.sh   # regenerate docs/examples
+PVPYTHON=<paraview>/bin/pvpython MPIFC=<openmpi>/bin/mpifort bash scripts/docs_examples.sh   # regenerate docs/examples (gfortran 16.2, as CI)
 ```
 Programs in `docs/examples/src/` with markers (`!run`, `!region`, `!cast`, `!render`, ...); the pages include the
 generated snippets, outputs, terminal casts (`scripts/ansi2svg.py`) and ParaView renders (`scripts/render_vtk.py`, PNG or
 GIF for a `.pvd`; `!mpi` programs need `MPIFC`, `!hdf5` ones the HDF5 C library in `HDF5_LIB`, default Ubuntu's
 libhdf5-dev, `!mpi` + `!hdf5` ones `MPIFC` and a parallel HDF5 installed in `HDF5_MPI` (e.g. ADAM's
 `~/fortran/adam/lib/hdf5/develop/gnu/16.2.0` with Open MPI 5.0.11's mpifort), otherwise their committed outputs are
-kept). The *Docs examples* workflow (with libhdf5-dev) checks all but
-the renders and the MPI runs (no ParaView, no MPI in CI). The reference pages
+kept). The *Docs examples* workflow (the gnu-16.2 image with libhdf5-dev: `MPIFC` is set there) checks all but the
+renders and the `!mpi` + `!hdf5` runs (no ParaView, no `HDF5_MPI` in CI). The reference pages
 (`docs/guide/*.md`) hold no code of their own: their snippets are regions of `ref_<page>.f90`, programs that also read
 back what they write and stop with an error otherwise.
 Generated, git-ignored, rebuilt by the Docs workflow: `docs/api/` (`formal generate ...`, rule `makedoc`), the coverage
@@ -61,11 +61,13 @@ is excluded by the non-MPI FoBiS modes (`exclude_dirs = $EXDIRS src/mpi/`): they
 default, `icx`, is often missing). CI: job `hdf5-mpi` of `hdf5.yml` in the toolchain image (FoBiS with the varset
 `toolchain-image`, and CMake; the MPI test on 4 ranks); locally ADAM's HDF5 2.3.0 + Open MPI 5.0.11, the same stack.
 
-CI toolchain: `ci.yml` (tests, coverage) and the build job of `docs.yml` run in the container
-`ghcr.io/szaghi/fortran-toolchains:gnu-16.2` (repo `~/fortran/fortran-toolchains`: gfortran 16.2, Open MPI 5.0.11, HDF5
-2.3.0 parallel with deflate, FoBiS, formal), set by `[scaffold] toolchain_image` in `fobos` (FoBiS >= 3.16.5 renders it;
-an older `fobis scaffold sync` would revert both workflows to the bare runner). On the bare runner: the serial
-`hdf5` job (gfortran 14, Ubuntu's HDF5 1.10, the oldest supported), *Docs examples* and `install.yml`.
+CI toolchain: every scaffold workflow is a thin caller of a reusable workflow of `szaghi/fortran-toolchains` pinned at
+`@v1` (repo `~/fortran/fortran-toolchains`), rendered from the `fobos` `[scaffold]` section: `toolchain = linux-gnu` is
+the `gnu-16.2` image (gfortran 16.2, Open MPI 5.0.11, HDF5 2.3.0 parallel with deflate, FoBiS, formal), where `ci.yml`
+(tests, coverage), `docs.yml`, `fpm.yml` (`fpm = true`) and *Docs examples* (`docs_examples = docs/examples`) run, with
+`toolchain_packages = libhdf5-dev` installed first (the `!hdf5` examples). On a fresh runner: the serial `hdf5` job
+(Ubuntu's gfortran 14 and HDF5 1.10, the oldest supported: Ubuntu 24.04 has no gfortran 16 release) and `install.yml`
+(`apt_packages`).
 
 ## Architecture
 
