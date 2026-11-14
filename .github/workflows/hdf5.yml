@@ -21,20 +21,27 @@ concurrency:
 
 jobs:
   hdf5:
-    name: hdf5 / gfortran-14
+    name: hdf5 / gfortran-14 (Ubuntu's libhdf5-dev)
     runs-on: ubuntu-24.04
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Setup build environment
-      uses: ./.github/actions/setup-build-env
-      with:
-        gcc-version: '14'
-
-    - name: Install HDF5
-      run: sudo apt-get install -y libhdf5-dev
+    # a fresh Ubuntu 24.04 runner, not an image: its serial HDF5 1.10 is the oldest supported. Its compiler is Ubuntu's
+    # gfortran 14: Ubuntu 24.04 has no gfortran 16 release (the toolchain PPA ships a 16.0.1 snapshot, which crashes
+    # in FoXy's add_tag on vtk_fortran_read_composite; gfortran 16.2 in the image of hdf5-mpi passes)
+    - name: Install gfortran 14, HDF5, FoBiS and CMake
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gfortran-14 zlib1g-dev libhdf5-dev
+        sudo update-alternatives --install /usr/bin/gfortran gfortran /usr/bin/gfortran-14 100 \
+                                 --slave /usr/bin/gcov gcov /usr/bin/gcov-14
+        python3 -m venv "$RUNNER_TEMP/venv" # Ubuntu's python3 is externally managed (PEP 668)
+        "$RUNNER_TEMP/venv/bin/pip" install --quiet FoBiS.py cmake # cmake: not on every runner image (act's)
+        echo "$RUNNER_TEMP/venv/bin" >> "$GITHUB_PATH"
+        gfortran --version | sed -n 1p
+        "$RUNNER_TEMP/venv/bin/fobis" --version
 
     - name: Fetch dependencies
       run: fobis fetch
