@@ -151,6 +151,12 @@ render() { # render ID FILE [OPTIONS]
 }
 if [ -d "$ex/files" ]; then cp -R "$ex/files/." "$run_dir/"; fi
 path=$build/bin
+# Open MPI refuses to run as root unless allowed: a container runs as root (the fortran-toolchains images allow it in
+# their environment), so the permission is passed through the minimal environment of the runs
+ompi_root=()
+for v in OMPI_ALLOW_RUN_AS_ROOT OMPI_ALLOW_RUN_AS_ROOT_CONFIRM; do
+  if [ -n "${!v:-}" ]; then ompi_root+=("$v=${!v}"); fi
+done
 run() { # run [-s] ID COMMAND
   local show=0 status=0
   if [ "$1" = -s ]; then show=1; shift; fi
@@ -159,7 +165,8 @@ run() { # run [-s] ID COMMAND
   {
     printf '$ %s\n' "$cmd"
     (cd "$run_dir" && env -i HOME="$run_dir" PATH="$path:/usr/bin:/bin" SHELL=/bin/bash LC_ALL=C \
-                     LD_LIBRARY_PATH="$ld_path" GFORTRAN_UNBUFFERED_PRECONNECTED=y bash -c "$cmd" 2>&1) || status=$?
+                     LD_LIBRARY_PATH="$ld_path" GFORTRAN_UNBUFFERED_PRECONNECTED=y \
+                     ${ompi_root[@]+"${ompi_root[@]}"} bash -c "$cmd" 2>&1) || status=$?
     if [ $show = 1 ]; then printf '[exit status %d]\n' "$status"; fi
   } | sed -e "s|$run_dir|$home|g" > "$ex/output/$id.ansi"
 }
