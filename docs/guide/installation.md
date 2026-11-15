@@ -42,7 +42,7 @@ CMake and FoBiS.py builds need the fetched dependencies; fpm fetches its own (se
 | [PENF](https://github.com/szaghi/PENF) | Portable numeric kind parameters (`I4P`, `R8P`, etc.) — used everywhere |
 | [BeFoR64](https://github.com/szaghi/BeFoR64) | Base64 encode/decode for binary XML data |
 | [StringiFor](https://github.com/szaghi/StringiFor) | OOP `string` type used throughout the writer classes |
-| [FoXy](https://github.com/Fortran-FOSS-Programmers/FoXy) | XML streaming (`xml_writer`, used by the writers) and file indexing (`xml_index`, used by the readers) |
+| [FoXy](https://github.com/szaghi/FoXy) | XML streaming (`xml_writer`, used by the writers) and file indexing (`xml_index`, used by the readers) |
 | [FACE](https://github.com/szaghi/FACE) | ANSI terminal colour output |
 
 ## Build with CMake (preferred)

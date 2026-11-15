@@ -51,7 +51,7 @@ release-omp = ["opt", "warn", "check", "debug", "omp"]
 
 [dependencies]
 [dependencies.FoXy]
-git = "https://github.com/Fortran-FOSS-Programmers/FoXy"
+git = "https://github.com/szaghi/FoXy"
 branch = "master"
 
 [dependencies.PENF]

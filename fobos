@@ -19,7 +19,7 @@ skip               = docs/guide/contributing.md
 deps_dir   = src/third_party
 BeFoR64    = https://github.com/szaghi/BeFoR64
 FACE       = https://github.com/szaghi/FACE
-FoXy       = https://github.com/Fortran-FOSS-Programmers/FoXy
+FoXy       = https://github.com/szaghi/FoXy
 PENF       = https://github.com/szaghi/PENF
 StringiFor = https://github.com/szaghi/StringiFor
 
