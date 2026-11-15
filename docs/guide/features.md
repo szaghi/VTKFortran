@@ -112,7 +112,7 @@ by gfortran, whose static variables for deferred-length string results are share
 
 | Compiler | Status |
 |----------|--------|
-| GNU gfortran 12.5, 13.4, 14.3, 16.2 | ✅ Every test passes (the CI uses gfortran 16.2, the serial HDF5 job gfortran 14) |
+| GNU gfortran 12.5, 13.4, 14.3, 16.2 | ✅ Every test passes (the CI uses gfortran 16.2) |
 | GNU gfortran 11.5 | ⚠️ Builds; the two `.vtm` tests crash |
 | Intel ifx 2025.3 | ✅ Every test passes (the discontinued ifort is not tested) |
 | NVIDIA nvfortran 26.9 | ✅ Every test passes (built with CMake) |

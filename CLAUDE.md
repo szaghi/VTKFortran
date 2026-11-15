@@ -65,9 +65,9 @@ CI toolchain: every scaffold workflow is a thin caller of a reusable workflow of
 `@v1` (repo `~/fortran/fortran-toolchains`), rendered from the `fobos` `[scaffold]` section: `toolchain = linux-gnu` is
 the `gnu-16.2` image (gfortran 16.2, Open MPI 5.0.11, HDF5 2.3.0 parallel with deflate, FoBiS, formal), where `ci.yml`
 (tests, coverage), `docs.yml`, `fpm.yml` (`fpm = true`) and *Docs examples* (`docs_examples = docs/examples`) run, with
-`toolchain_packages = libhdf5-dev` installed first (the `!hdf5` examples). On a fresh runner: the serial `hdf5` job
-(Ubuntu's gfortran 14 and HDF5 1.10, the oldest supported: Ubuntu 24.04 has no gfortran 16 release) and `install.yml`
-(`apt_packages`).
+`toolchain_packages = libhdf5-dev` installed first (the `!hdf5` examples); `hdf5.yml` (project-owned) builds with HDF5
+and MPI there too. No older toolchain or HDF5 is tested (fortran-toolchains #2 rule 3). On a fresh runner:
+`install.yml` (`apt_packages`).
 
 ## Architecture
 

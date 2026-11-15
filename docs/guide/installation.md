@@ -10,7 +10,7 @@ A Fortran 2008 compiler is required:
 
 | Compiler | Version |
 |----------|---------|
-| GNU gfortran | 12 or newer: 12.5, 13.4, 14.3 and 16.2 pass every test (the CI: 16.2, and 14.3 for HDF5 1.10); 11.5 builds, but the two `.vtm` tests crash |
+| GNU gfortran | 12 or newer: 12.5, 13.4, 14.3 and 16.2 pass every test (the CI: 16.2); 11.5 builds, but the two `.vtm` tests crash |
 | Intel Fortran (ifx) | 2025.3 passes every test (the fobos Intel modes run `ifx`; the discontinued ifort is not tested) |
 | NVIDIA nvfortran | 26.9 passes every test (built with CMake: the fobos file has no NVIDIA modes) |
 
