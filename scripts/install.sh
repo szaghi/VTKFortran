@@ -337,7 +337,7 @@ if [ -n "$HEADERS" ]; then
   comm -13 "$WORK/before" "$WORK/after" > "$WORK/new"
   moddirs=$(grep -E '\.s?mod$' "$WORK/new" | sed -e '/\//!s|.*|.|' -e 's|/[^/]*$||' | sort -u)
   [ -n "$moddirs" ] || die "[installer] headers: the build installed no module file to put them next to"
-  set -f; patterns=($HEADERS); set +f
+  read -r -a patterns <<< "$HEADERS"   # split on blanks; the globs are expanded below, in the sources
   for pattern in "${patterns[@]}"; do
     matched=0
     for f in $pattern; do
