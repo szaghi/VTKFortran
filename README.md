@@ -75,6 +75,22 @@ See [`src/tests/`](src/tests/) for more examples covering rectilinear, unstructu
 
 ## Install
 
+### One-line install
+
+```bash
+curl -fsSL https://github.com/szaghi/VTKFortran/releases/latest/download/install.sh | bash
+```
+
+It installs the latest release into `~/.local` with the build system you choose among those VTKFortran ships
+(`--build fobis|fpm|cmake`: a menu asks when you do not say), the compiler you name (`--fc`, `--gnu`, `--intel`), one
+install per compiler (`lib/vtkfortran/<compiler>-<version>/`, `include/vtkfortran/<compiler>-<version>/`), and makes it
+usable through pkg-config (`pkg-config --cflags --libs vtkfortran`, with `PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig`).
+The release carries VTKFortran's dependencies (BeFoR64, FACE, FoXy, PENF, StringiFor), so CMake needs no network. It
+builds the library without the optional zlib and HDF5 (VTKHDF) support: for those, build VTKFortran as below. Pass
+options after `bash -s --`, e.g. `... | bash -s -- --build cmake --prefix /opt/vtkfortran`; `--help` lists them all,
+`--uninstall` removes the install. The installer is FoBiS's
+([One-line installer](https://szaghi.github.io/FoBiS/cookbook/installer)).
+
 ### CMake
 
 **Clone, build, and test:**
